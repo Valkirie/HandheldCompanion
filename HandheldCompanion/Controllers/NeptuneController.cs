@@ -115,11 +115,18 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.L2] = L2 > Gamepad.TriggerThreshold;
             Inputs.ButtonState[ButtonFlags.R2] = R2 > Gamepad.TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.LeftThumb] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
-            Inputs.ButtonState[ButtonFlags.RightThumb] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
-
             Inputs.ButtonState[ButtonFlags.LeftThumbTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
             Inputs.ButtonState[ButtonFlags.RightThumbTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
+
+            // you don't want to combine touch + click
+            Inputs.ButtonState[ButtonFlags.LeftThumb] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
+            if (Inputs.ButtonState[ButtonFlags.LeftThumb])
+                Inputs.ButtonState[ButtonFlags.LeftThumbTouch] = false;
+
+            // you don't want to combine touch + click
+            Inputs.ButtonState[ButtonFlags.RightThumb] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
+            if (Inputs.ButtonState[ButtonFlags.RightThumb])
+                Inputs.ButtonState[ButtonFlags.RightThumbTouch] = false;
 
             Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[NeptuneControllerButton.BtnL1];
             Inputs.ButtonState[ButtonFlags.R2] = input.State.ButtonState[NeptuneControllerButton.BtnR1];
@@ -155,8 +162,6 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.R2] = (short)R2;
 
             Inputs.ButtonState[ButtonFlags.LPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
-            Inputs.ButtonState[ButtonFlags.LPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
-
             if (Inputs.ButtonState[ButtonFlags.LPadTouch])
             {
                 Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[NeptuneControllerAxis.LeftPadX];
@@ -168,9 +173,20 @@ namespace HandheldCompanion.Controllers
                 Inputs.AxisState[AxisFlags.LeftPadY] = 0;
             }
 
-            Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
-            Inputs.ButtonState[ButtonFlags.RPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
+            Inputs.ButtonState[ButtonFlags.LPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
+            if (Inputs.ButtonState[ButtonFlags.LPadClick])
+            {
+                // temp
+                if (Inputs.AxisState[AxisFlags.LeftPadY] >= 21844)
+                    Inputs.ButtonState[ButtonFlags.LPadClickUp] = true;
+                else if (Inputs.AxisState[AxisFlags.LeftPadY] <= -21844)
+                        Inputs.ButtonState[ButtonFlags.LPadClickDown] = true;
 
+                // you don't want to combine touch + click
+                Inputs.ButtonState[ButtonFlags.LPadTouch] = false;
+            }
+
+            Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
             if (Inputs.ButtonState[ButtonFlags.RPadTouch])
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[NeptuneControllerAxis.RightPadX];
@@ -180,6 +196,13 @@ namespace HandheldCompanion.Controllers
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = 0;
                 Inputs.AxisState[AxisFlags.RightPadY] = 0;
+            }
+
+            Inputs.ButtonState[ButtonFlags.RPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
+            if (Inputs.ButtonState[ButtonFlags.LPadClick])
+            {
+                // you don't want to combine touch + click
+                Inputs.ButtonState[ButtonFlags.LPadTouch] = false;
             }
 
             // temporary workaround
