@@ -13,6 +13,6 @@
             <ui:FontIcon Name="QuickIcon" Height="40"/>
         </Button>
 
-        <TextBlock Name="QuickName" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center"/>
+        <TextBlock Name="QuickName" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}" HorizontalAlignment="Center" TextAlignment="Center"/>
     </ui:SimpleStackPanel>
 </UserControl>

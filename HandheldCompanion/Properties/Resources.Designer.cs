@@ -523,6 +523,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display Action center.
+        /// </summary>
+        public static string InputsHotkey_shortcutControlCenter {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutControlCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display and hide Windows Action center.
+        /// </summary>
+        public static string InputsHotkey_shortcutControlCenterDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutControlCenterDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom shortcut.
         /// </summary>
         public static string InputsHotkey_shortcutCustom {

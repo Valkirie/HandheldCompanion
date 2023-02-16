@@ -310,6 +310,18 @@ namespace HandheldCompanion.Managers
                     case "shortcutTaskManager":
                         KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
+                    case "shortcutActionCenter":
+                        {
+                            var uri = new Uri("ms-actioncenter");
+                            var success = Windows.System.Launcher.LaunchUriAsync(uri);
+                        }
+                        break;
+                    case "shortcutControlCenter":
+                        {
+                            var uri = new Uri("ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true");
+                            var success = Windows.System.Launcher.LaunchUriAsync(uri);
+                        }
+                        break;
                     case "suspendResumeTask":
                         {
                             var sProcess = ProcessManager.GetSuspendedProcess();
