@@ -199,7 +199,7 @@ namespace HandheldCompanion.Managers
             {
                 AxisFlags axis = axisState.Key;
                 short value = axisState.Value;
-                bool below_deadzone = Math.Abs(value) <= ControllerState.AxisDeadzones[axis];
+                bool below_deadzone = Math.Abs((int)value) <= ControllerState.AxisDeadzones[axis];
 
                 // skip, if not mapped
                 if (!currentLayout.AxisLayout.ContainsKey(axis))
