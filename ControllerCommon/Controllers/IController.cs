@@ -42,8 +42,8 @@ namespace ControllerCommon.Controllers
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
-            // ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
-            // ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
+            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
         };
 
         protected List<AxisFlags> AxisSupport = new()
@@ -317,15 +317,14 @@ namespace ControllerCommon.Controllers
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
         {
-            if (!IsButtonSupported(button))
-                return null;
-
             FontIcon FontIcon = new FontIcon()
             {
                 Glyph = GetGlyph(button),
                 FontSize = FontIconSize,
-                FontFamily = FontFamily
             };
+
+            if (IsButtonSupported(button))
+                FontIcon.FontFamily = FontFamily;
 
             Brush FontBrush = GetGlyphColor(button);
             FontIcon.Foreground = FontBrush;
@@ -335,15 +334,14 @@ namespace ControllerCommon.Controllers
 
         public FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
         {
-            if (!IsAxisSupported(axis))
-                return null;
-
             FontIcon FontIcon = new FontIcon()
             {
                 Glyph = GetGlyph(axis),
                 FontSize = FontIconSize,
-                FontFamily = FontFamily
             };
+
+            if (IsAxisSupported(axis))
+                FontIcon.FontFamily = FontFamily;
 
             Brush FontBrush = GetGlyphColor(axis);
             FontIcon.Foreground = FontBrush;
