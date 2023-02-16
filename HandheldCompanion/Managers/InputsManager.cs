@@ -395,8 +395,7 @@ namespace HandheldCompanion.Managers
                 InputsChordType InputsType = chord.InputsType;
                 ButtonState State = chord.State;
 
-                if (InputsType.HasFlag(lookup.InputsType) &&
-                    State.Equals(lookup.State))
+                if (InputsType.HasFlag(lookup.InputsType) && State.Equals(lookup.State))
                     keys.Add(key);
             }
 
