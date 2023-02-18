@@ -4,11 +4,8 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
-using PrecisionTiming;
 using SharpDX.XInput;
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 

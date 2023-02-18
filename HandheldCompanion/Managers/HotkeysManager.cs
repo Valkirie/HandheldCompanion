@@ -135,7 +135,8 @@ namespace HandheldCompanion.Managers
             if (hotkey is null)
                 return;
 
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -148,7 +149,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                 }
-            }));
+            });
         }
 
         private static void StartListening(Hotkey hotkey, ListenerType type)
@@ -178,7 +179,7 @@ namespace HandheldCompanion.Managers
                     }
                     break;
                 case true:
-                        hotkey.Unpinned();
+                    hotkey.Unpinned();
                     break;
             }
 
@@ -193,7 +194,8 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // we use @ as a special character to link two ore more listeners together
                 listener = listener.TrimEnd('@');
@@ -206,7 +208,7 @@ namespace HandheldCompanion.Managers
                     // overwrite current file
                     SerializeHotkey(hotkey, true);
                 }
-            }));
+            });
         }
 
         private static Hotkey ProcessHotkey(string fileName)
@@ -249,10 +251,11 @@ namespace HandheldCompanion.Managers
 
             foreach (Hotkey hotkey in hotkeys)
             {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     hotkey.Highlight();
-                }));
+                });
 
                 // These are special shortcut keys with no related events
                 if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
@@ -306,6 +309,18 @@ namespace HandheldCompanion.Managers
                         break;
                     case "shortcutTaskManager":
                         KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
+                        break;
+                    case "shortcutActionCenter":
+                        {
+                            var uri = new Uri("ms-actioncenter");
+                            var success = Windows.System.Launcher.LaunchUriAsync(uri);
+                        }
+                        break;
+                    case "shortcutControlCenter":
+                        {
+                            var uri = new Uri("ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true");
+                            var success = Windows.System.Launcher.LaunchUriAsync(uri);
+                        }
                         break;
                     case "suspendResumeTask":
                         {

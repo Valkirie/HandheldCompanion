@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
+﻿using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using System.Linq;
 using WindowsInput.Events;

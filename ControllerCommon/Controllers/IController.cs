@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
+﻿using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
@@ -216,7 +215,7 @@ namespace ControllerCommon.Controllers
             if (State.IsEmpty())
                 return;
 
-            foreach(var button in State.Buttons)
+            foreach (var button in State.Buttons)
                 InjectedButtons[button] = IsKeyDown;
 
             LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
@@ -297,6 +296,22 @@ namespace ControllerCommon.Controllers
                     return "\u21BA";
                 case ButtonFlags.RightThumb:
                     return "\u21BB";
+                case ButtonFlags.LStickUp:
+                    return "\u21BE";
+                case ButtonFlags.LStickDown:
+                    return "\u21C2";
+                case ButtonFlags.LStickLeft:
+                    return "\u21BC";
+                case ButtonFlags.LStickRight:
+                    return "\u21C0";
+                case ButtonFlags.RStickUp:
+                    return "\u21BF";
+                case ButtonFlags.RStickDown:
+                    return "\u21C3";
+                case ButtonFlags.RStickLeft:
+                    return "\u21BD";
+                case ButtonFlags.RStickRight:
+                    return "\u21C1";
             }
 
             return button.ToString();
@@ -304,12 +319,16 @@ namespace ControllerCommon.Controllers
 
         public virtual string GetGlyph(AxisFlags axis)
         {
-            switch(axis)
+            switch (axis)
             {
                 case AxisFlags.LeftThumbX:
                     return "\u21C4";
                 case AxisFlags.LeftThumbY:
                     return "\u21C5";
+                case AxisFlags.RightThumbX:
+                    return "\u21C6";
+                case AxisFlags.RightThumbY:
+                    return "\u21F5";
             }
 
             return axis.ToString();

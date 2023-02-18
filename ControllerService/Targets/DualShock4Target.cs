@@ -1,5 +1,4 @@
 ﻿using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
@@ -139,9 +138,9 @@ namespace ControllerService.Targets
                     tempDPad = DualShock4DPadDirection.Northwest;
                 else if (Inputs.ButtonState[ButtonFlags.DPadUp] && Inputs.ButtonState[ButtonFlags.DPadRight])
                     tempDPad = DualShock4DPadDirection.Northeast;
-                else if(Inputs.ButtonState[ButtonFlags.DPadDown] && Inputs.ButtonState[ButtonFlags.DPadLeft])
+                else if (Inputs.ButtonState[ButtonFlags.DPadDown] && Inputs.ButtonState[ButtonFlags.DPadLeft])
                     tempDPad = DualShock4DPadDirection.Southwest;
-                else if(Inputs.ButtonState[ButtonFlags.DPadDown] && Inputs.ButtonState[ButtonFlags.DPadRight])
+                else if (Inputs.ButtonState[ButtonFlags.DPadDown] && Inputs.ButtonState[ButtonFlags.DPadRight])
                     tempDPad = DualShock4DPadDirection.Southeast;
                 else if (Inputs.ButtonState[ButtonFlags.DPadUp])
                     tempDPad = DualShock4DPadDirection.North;
@@ -149,7 +148,7 @@ namespace ControllerService.Targets
                     tempDPad = DualShock4DPadDirection.South;
                 else if (Inputs.ButtonState[ButtonFlags.DPadLeft])
                     tempDPad = DualShock4DPadDirection.West;
-                else if(Inputs.ButtonState[ButtonFlags.DPadRight])
+                else if (Inputs.ButtonState[ButtonFlags.DPadRight])
                     tempDPad = DualShock4DPadDirection.East;
 
                 if (Inputs.ButtonState[ButtonFlags.Special])

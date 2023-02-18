@@ -1,6 +1,5 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
-using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
@@ -9,7 +8,6 @@ using Nefarius.ViGEm.Client;
 using PrecisionTiming;
 using System;
 using System.Numerics;
-using Platform = ControllerCommon.Platforms.PlatformType;
 
 namespace ControllerService.Targets
 {

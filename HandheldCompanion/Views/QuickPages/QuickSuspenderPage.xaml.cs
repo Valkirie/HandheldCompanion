@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.QuickPages
@@ -20,7 +21,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             try
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     var element = processEx.GetControl();
                     if (CurrentProcesses.Children.Contains(element))
@@ -36,7 +38,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             try
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     processEx.DrawControl();
                     var element = processEx.GetControl();

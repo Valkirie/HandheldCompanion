@@ -5,7 +5,6 @@ using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -42,7 +41,8 @@ namespace HandheldCompanion.Views.Pages
             if (type == InputsHotkey.InputsHotkeyType.Embedded)
                 return;
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SimpleStackPanel stackPanel = new()
                 {
@@ -68,7 +68,8 @@ namespace HandheldCompanion.Views.Pages
             if (DeviceType is not null && DeviceType != MainWindow.handheldDevice.GetType())
                 return;
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 HotkeyControl control = hotkey.GetControl();
 

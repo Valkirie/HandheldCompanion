@@ -1,17 +1,14 @@
 ﻿using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;

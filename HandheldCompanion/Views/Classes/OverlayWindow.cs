@@ -126,7 +126,8 @@ namespace HandheldCompanion.Views.Classes
 
         public virtual void UpdateVisibility()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (Visibility)
                 {

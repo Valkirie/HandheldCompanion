@@ -123,7 +123,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void HotkeysManager_CommandExecuted(string listener)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (listener)
                 {
@@ -198,7 +199,8 @@ namespace HandheldCompanion.Views.QuickPages
                 // update current profile
                 currentProfile = profile;
 
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     // manage visibility here too...
                     b_CreateProfile.Visibility = Visibility.Collapsed;
@@ -238,7 +240,8 @@ namespace HandheldCompanion.Views.QuickPages
             // update current process
             currentProcess = processEx;
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
 

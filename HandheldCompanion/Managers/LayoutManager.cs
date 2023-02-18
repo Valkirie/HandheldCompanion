@@ -1,19 +1,13 @@
-﻿using ABI.System.Numerics;
-using ControllerCommon;
+﻿using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using Gma.System.MouseKeyHook.HotKeys;
-using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using Newtonsoft.Json;
 using System;
-using System.Globalization;
 using System.IO;
-using System.Numerics;
-using static HandheldCompanion.Simulators.MouseSimulator;
 using Vector2 = System.Numerics.Vector2;
 
 namespace HandheldCompanion.Managers
@@ -71,7 +65,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogError("Could not parse layout {0}", fileName);
                 return;
             }
-            
+
             // update current layout
             // todo: support multiple layouts when non-gaming ?
             desktopLayout = layout;
@@ -101,7 +95,7 @@ namespace HandheldCompanion.Managers
                 case "shortcutDesktopLayout":
                     {
                         bool toggle = Convert.ToBoolean(value);
-                        switch(toggle)
+                        switch (toggle)
                         {
                             case true:
                                 currentLayout = desktopLayout;

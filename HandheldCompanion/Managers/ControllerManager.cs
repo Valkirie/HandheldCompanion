@@ -4,6 +4,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Views;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -11,8 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using DeviceType = SharpDX.DirectInput.DeviceType;
-using ButtonState = ControllerCommon.Inputs.ButtonState;
-using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace HandheldCompanion.Managers
 {
@@ -101,7 +100,8 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -148,7 +148,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                 }
-            }));
+            });
         }
 
         private static void SystemManager_Initialized()
@@ -184,8 +184,8 @@ namespace HandheldCompanion.Managers
             int VendorId = details.attributes.VendorID;
             int ProductId = details.attributes.ProductID;
 
-            // use dispatcher because we're drawing UI elements when initializing the controller object
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // initialize controller vars
                 Joystick joystick = null;
@@ -283,7 +283,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-            }));
+            });
         }
 
         private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
@@ -326,8 +326,8 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // use dispatcher because we're drawing UI elements when initializing the controller object
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 XInputController controller = new(_controller);
 
@@ -350,7 +350,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
-            }));
+            });
         }
 
         private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)

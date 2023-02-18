@@ -6,15 +6,12 @@ using PInvoke;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Attributes = ControllerCommon.Managers.Hid.Attributes;
 using Capabilities = ControllerCommon.Managers.Hid.Capabilities;
-using Path = System.IO.Path;
 
 namespace ControllerCommon.Managers
 {
@@ -413,7 +410,7 @@ namespace ControllerCommon.Managers
                     deviceEx.isXInput = true;
 
                     LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
-                    XUsbDeviceArrived?.Invoke(deviceEx, obj);                    
+                    XUsbDeviceArrived?.Invoke(deviceEx, obj);
                 }
             }
             catch { }

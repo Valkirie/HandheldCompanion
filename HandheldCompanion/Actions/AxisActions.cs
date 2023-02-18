@@ -47,7 +47,7 @@ namespace HandheldCompanion.Actions
             value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
 
             // Apply anti deadzone adjustments
-            switch(Axis)
+            switch (Axis)
             {
                 case AxisFlags.L2:
                 case AxisFlags.R2:

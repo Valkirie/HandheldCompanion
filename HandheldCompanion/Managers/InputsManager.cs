@@ -1,8 +1,6 @@
 using ControllerCommon;
-using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
-using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Views;
 using PrecisionTiming;
@@ -14,7 +12,6 @@ using System.Windows.Forms;
 using WindowsInput.Events;
 using ButtonState = ControllerCommon.Inputs.ButtonState;
 using KeyboardSimulator = HandheldCompanion.Simulators.KeyboardSimulator;
-using MouseSimulator = HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Managers
 {
@@ -395,8 +392,7 @@ namespace HandheldCompanion.Managers
                 InputsChordType InputsType = chord.InputsType;
                 ButtonState State = chord.State;
 
-                if (InputsType.HasFlag(lookup.InputsType) &&
-                    State.Equals(lookup.State))
+                if (InputsType.HasFlag(lookup.InputsType) && State.Equals(lookup.State))
                     keys.Add(key);
             }
 

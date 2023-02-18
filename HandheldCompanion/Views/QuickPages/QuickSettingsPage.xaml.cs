@@ -1,9 +1,4 @@
-﻿using ControllerCommon.Managers;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
-using NAudio.CoreAudioApi;
-using System;
+﻿using HandheldCompanion.Managers;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -75,7 +70,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (Monitor.TryEnter(brightnessLock))
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     SliderBrightness.Value = brightness;
                 });
@@ -88,7 +84,8 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (Monitor.TryEnter(volumeLock))
             {
-                Dispatcher.Invoke(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     // todo: update volume icon on update
                     SliderVolume.Value = volume;
