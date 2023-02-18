@@ -62,9 +62,9 @@ namespace ControllerCommon.Inputs
 
         public void AddRange(ButtonState buttonState)
         {
-            foreach (var state in buttonState.State)
-                if (state.Value)
-                    this[state.Key] = state.Value;
+            // only add pressed button
+            foreach (var state in buttonState.State.Where(a => a.Value))
+                this[state.Key] = state.Value;
         }
 
         public override bool Equals(object obj)
