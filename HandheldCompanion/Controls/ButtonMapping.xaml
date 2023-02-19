@@ -25,7 +25,6 @@
                     <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
                         <ComboBoxItem Content="None" IsEnabled="True"/>
                         <ComboBoxItem Content="Button" IsEnabled="True"/>
-                        <ComboBoxItem Content="Axis" IsEnabled="True"/>
                         <ComboBoxItem Content="Keyboard" IsEnabled="True"/>
                         <ComboBoxItem Content="Mouse" IsEnabled="True"/>
                     </ComboBox>
@@ -73,7 +72,7 @@
                                     <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
                                 </ui:SimpleStackPanel>
-                            </Grid>                    
+                            </Grid>
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel Spacing="6">
@@ -86,48 +85,11 @@
                                 <TextBlock Text="Press to toggle" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
                                 <ui:ToggleSwitch Name="Toggle_Toggle" Grid.Column="1" HorizontalAlignment="Right" Toggled="Toggle_Toggle_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
-                            </Grid>                            
-                        
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
-                            
-                        </ui:SimpleStackPanel>
-                    </ui:SimpleStackPanel>
-                </Grid>
-
-                <!-- Button 2 Axis -->
-                <Grid Name="Button2Axis" d:Visibility="Visible"
-                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
-
-                    <ui:SimpleStackPanel Spacing="12">                        
-                        <ui:SimpleStackPanel Spacing="6">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="Axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
-
-                                <ui:RadioButtons Name="AxisPolarity" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="2" SelectedIndex="0" SelectionChanged="AxisPolarity_SelectionChanged">
-                                    <RadioButton Content="Positive"/>
-                                    <RadioButton Content="Negative"/>
-                                </ui:RadioButtons>
                             </Grid>
 
                             <!-- Separator -->
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
-                            <Grid>
-                                <TextBlock Text="Axis value (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <TextBox Text="{Binding Value, ElementName=Axis_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
-                            </Grid>
-
-                            <Slider Name="Axis_Slider" Value="100" Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="Axis_Slider_ValueChanged"/>
-
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
-                            
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>

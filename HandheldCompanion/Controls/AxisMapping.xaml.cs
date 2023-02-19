@@ -17,14 +17,14 @@ namespace HandheldCompanion.Controls
     /// </summary>
     public partial class AxisMapping : UserControl
     {
-        private AxisFlags Axis;
+        private AxisLayoutFlags Axis;
         private IActions Actions;
 
         #region events
         public event DeletedEventHandler Deleted;
-        public delegate void DeletedEventHandler(AxisFlags axis);
+        public delegate void DeletedEventHandler(AxisLayoutFlags axis);
         public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(AxisFlags axis, IActions action);
+        public delegate void UpdatedEventHandler(AxisLayoutFlags axis, IActions action);
         #endregion
 
         public AxisMapping()
@@ -32,7 +32,7 @@ namespace HandheldCompanion.Controls
             InitializeComponent();
         }
 
-        public AxisMapping(AxisFlags axis) : this()
+        public AxisMapping(AxisLayoutFlags axis) : this()
         {
             this.Axis = axis;
             this.Icon.Glyph = axis.ToString();
@@ -94,7 +94,7 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
-                foreach (AxisFlags axis in Enum.GetValues(typeof(AxisFlags)))
+                foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
                 {
                     if (controller.IsAxisSupported(axis))
                     {
@@ -156,7 +156,7 @@ namespace HandheldCompanion.Controls
                 case ActionType.Axis:
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;
-                        ((AxisActions)this.Actions).Axis = (AxisFlags)buttonLabel.Tag;
+                        ((AxisActions)this.Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
                     }
                     break;
 

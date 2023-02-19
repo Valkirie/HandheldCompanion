@@ -243,6 +243,36 @@
   <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
     <value>Windows</value>
   </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.L2" xml:space="preserve">
+    <value>LT</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.R2" xml:space="preserve">
+    <value>RT</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
   <data name="Enum.Output.LeftStick" xml:space="preserve">
     <value>Left joystick</value>
   </data>

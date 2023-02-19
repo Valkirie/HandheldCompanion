@@ -78,12 +78,12 @@ namespace HandheldCompanion.Views.Pages.Profiles
             currentLayout.UpdateLayout(button, action);
         }
 
-        private void AxisMapping_Deleted(AxisFlags axis)
+        private void AxisMapping_Deleted(AxisLayoutFlags axis)
         {
             currentLayout.RemoveLayout(axis);
         }
 
-        private void AxisMapping_Updated(AxisFlags axis, IActions action)
+        private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
         {
             currentLayout.UpdateLayout(axis, action);
         }

@@ -11,7 +11,7 @@ namespace ControllerCommon
         public string Name { get; set; } = string.Empty;
 
         public Dictionary<ButtonFlags, IActions> ButtonLayout { get; set; }
-        public Dictionary<AxisFlags, IActions> AxisLayout { get; set; }
+        public Dictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; }
 
         #region events
         public event UpdatedEventHandler Updated;
@@ -35,7 +35,7 @@ namespace ControllerCommon
             Updated?.Invoke(this);
         }
 
-        public void UpdateLayout(AxisFlags axis, IActions action)
+        public void UpdateLayout(AxisLayoutFlags axis, IActions action)
         {
             this.AxisLayout[axis] = action;
             Updated?.Invoke(this);
@@ -47,7 +47,7 @@ namespace ControllerCommon
             Updated?.Invoke(this);
         }
 
-        public void RemoveLayout(AxisFlags axis)
+        public void RemoveLayout(AxisLayoutFlags axis)
         {
             this.AxisLayout.Remove(axis);
             Updated?.Invoke(this);

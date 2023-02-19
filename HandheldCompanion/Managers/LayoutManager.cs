@@ -124,15 +124,12 @@ namespace HandheldCompanion.Managers
             if (currentLayout is null)
                 return controllerState;
 
-            // consume origin button state
             outputState.ButtonState = controllerState.ButtonState.Clone() as ButtonState;
+            outputState.AxisState = controllerState.AxisState.Clone() as AxisState;
+
+            // consume origin button state
             foreach (ButtonFlags button in currentLayout.ButtonLayout.Keys)
                 outputState.ButtonState[button] = false;
-
-            // consume origin axis state
-            outputState.AxisState = controllerState.AxisState.Clone() as AxisState;
-            foreach (AxisFlags axis in currentLayout.AxisLayout.Keys)
-                outputState.AxisState[axis] = 0;
 
             foreach (var buttonState in controllerState.ButtonState.State)
             {
@@ -158,19 +155,6 @@ namespace HandheldCompanion.Managers
                         }
                         break;
 
-                    // button to axis
-                    case ActionType.Axis:
-                        {
-                            if (!value)
-                                continue;
-
-                            AxisActions aAction = action as AxisActions;
-                            aAction.Execute(button, value);
-
-                            outputState.AxisState[aAction.Axis] = aAction.GetValue();
-                        }
-                        break;
-
                     // button to keyboard key
                     case ActionType.Keyboard:
                         {
@@ -189,9 +173,21 @@ namespace HandheldCompanion.Managers
                 }
             }
 
-            foreach (var axisState in controllerState.AxisState.State)
+            foreach (var axisLayout in currentLayout.AxisLayout)
             {
-                AxisFlags axis = axisState.Key;
+                AxisLayoutFlags flags = axisLayout.Key;
+                AxisLayout layout = AxisLayout.Layouts[flags];
+
+                IActions actions = axisLayout.Value;
+
+                // consume origin axis state
+                foreach (AxisFlags axis in layout.axis)
+                    outputState.AxisState[axis] = 0;
+            }
+
+            /* foreach (var axisState in controllerState.AxisState.State)
+            {
+                AxisLayout axis = axisState.Key;
                 short value = axisState.Value;
                 bool below_deadzone = Math.Abs((int)value) <= ControllerState.AxisDeadzones[axis];
 
@@ -262,7 +258,7 @@ namespace HandheldCompanion.Managers
 
                 outputState.AxisState[ThumbX] = (short)InputUtils.ApplyAntiDeadzone(ThumbVector, ThumbAntiDeadZoneX).X;
                 outputState.AxisState[ThumbY] = (short)InputUtils.ApplyAntiDeadzone(ThumbVector, ThumbAntiDeadZoneY).Y;
-            }
+            } */
 
             return outputState;
         }

@@ -21,14 +21,14 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch,
         };
 
-        public static List<AxisFlags> LeftThumbAxis = new()
+        public static List<AxisLayoutFlags> LeftThumbAxis = new()
         {
-            AxisFlags.LeftThumbX, AxisFlags.LeftThumbY,
-            AxisFlags.RightPadX, AxisFlags.RightPadY,
+            AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
+            AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad,
         };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisFlags, AxisMapping> MappingAxis = new();
+        public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
 
         public JoysticksPage()
         {
@@ -45,7 +45,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 MappingButtons.Add(button, buttonMapping);
             }
 
-            foreach (AxisFlags axis in LeftThumbAxis)
+            foreach (AxisLayoutFlags axis in LeftThumbAxis)
             {
                 AxisMapping axisMapping = new AxisMapping(axis);
                 LeftJoystickStackPanel.Children.Add(axisMapping);
@@ -86,17 +86,19 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (var mapping in MappingAxis)
             {
-                AxisFlags axis = mapping.Key;
+                AxisLayoutFlags flags = mapping.Key;
+                AxisLayout layout = AxisLayout.Layouts[flags];
+
                 AxisMapping axisMapping = mapping.Value;
 
                 // update mapping visibility
-                if (!Controller.IsAxisSupported(axis))
+                if (!Controller.IsAxisSupported(flags))
                     axisMapping.Visibility = Visibility.Collapsed;
                 else
                     axisMapping.Visibility = Visibility.Visible;
 
                 // update icon
-                FontIcon newIcon = Controller.GetFontIcon(axis);
+                FontIcon newIcon = Controller.GetFontIcon(flags);
 
                 // unsupported button
                 if (newIcon is null)
@@ -117,7 +119,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             // do something
         }
 
-        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisFlags, IActions> axisMapping)
+        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
         {
             foreach (ButtonMapping mapping in MappingButtons.Values)
                 mapping.Reset();
@@ -140,7 +142,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (var pair in axisMapping)
             {
-                AxisFlags axis = pair.Key;
+                AxisLayoutFlags axis = pair.Key;
                 IActions actions = pair.Value;
 
                 if (!MappingAxis.ContainsKey(axis))
