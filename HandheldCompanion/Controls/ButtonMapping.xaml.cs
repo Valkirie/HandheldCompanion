@@ -128,32 +128,6 @@ namespace HandheldCompanion.Controls
                 Turbo_Slider.Value = ((ButtonActions)this.Actions).TurboDelay;
                 Toggle_Toggle.IsOn = ((ButtonActions)this.Actions).Toggle;
             }
-            else if (type == ActionType.Axis)
-            {
-                if (this.Actions is null || this.Actions is not AxisActions)
-                    this.Actions = new AxisActions();
-
-                // we need a controller to get compatible buttons
-                if (controller is null)
-                    return;
-
-                foreach (AxisFlags axis in Enum.GetValues(typeof(AxisFlags)))
-                {
-                    if (controller.IsAxisSupported(axis))
-                    {
-                        // create a label, store ButtonFlags as Tag and Label as controller specific string
-                        Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
-                        TargetComboBox.Items.Add(buttonLabel);
-
-                        if (axis.Equals(((AxisActions)this.Actions).Axis))
-                            TargetComboBox.SelectedItem = buttonLabel;
-                    }
-                }
-
-                // settings
-                Axis_Slider.Value = ((AxisActions)this.Actions).AxisPercentage;
-                AxisPolarity.SelectedIndex = ((AxisActions)this.Actions).AxisPolarity;
-            }
             else if (type == ActionType.Keyboard)
             {
                 if (this.Actions is null || this.Actions is not KeyboardActions)
@@ -209,13 +183,6 @@ namespace HandheldCompanion.Controls
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;
                         ((ButtonActions)this.Actions).Button = (ButtonFlags)buttonLabel.Tag;
-                    }
-                    break;
-
-                case ActionType.Axis:
-                    {
-                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
-                        ((AxisActions)this.Actions).Axis = (AxisFlags)buttonLabel.Tag;
                     }
                     break;
 
@@ -305,24 +272,6 @@ namespace HandheldCompanion.Controls
                     ((MouseActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
                     break;
             }
-        }
-        #endregion
-
-        #region Button2Axis
-        private void Axis_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (this.Actions is null || this.Actions.ActionType != ActionType.Axis)
-                return;
-
-            ((AxisActions)this.Actions).AxisPercentage = Axis_Slider.Value;
-        }
-
-        private void AxisPolarity_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (this.Actions is null || this.Actions.ActionType != ActionType.Axis)
-                return;
-
-            ((AxisActions)this.Actions).AxisPolarity = (byte)AxisPolarity.SelectedIndex;
         }
         #endregion
     }

@@ -73,8 +73,8 @@ namespace HandheldCompanion.Controllers
             ButtonSupport.Add(ButtonFlags.L5);
             ButtonSupport.Add(ButtonFlags.R5);
 
-            AxisSupport.Add(AxisFlags.RightPadX);
-            AxisSupport.Add(AxisFlags.RightPadY);
+            AxisSupport.Add(AxisLayoutFlags.LeftPad);
+            AxisSupport.Add(AxisLayoutFlags.RightPad);
         }
 
         public override string ToString()

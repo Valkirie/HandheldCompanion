@@ -45,11 +45,10 @@ namespace ControllerCommon.Controllers
             ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
         };
 
-        protected List<AxisFlags> AxisSupport = new()
+        protected List<AxisLayoutFlags> AxisSupport = new()
         {
-            AxisFlags.LeftThumbX, AxisFlags.LeftThumbY,
-            AxisFlags.RightThumbX, AxisFlags.RightThumbY,
-            AxisFlags.L2, AxisFlags.R2,
+            AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
+            AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
 
         protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
@@ -293,9 +292,9 @@ namespace ControllerCommon.Controllers
                 case ButtonFlags.DPadRight:
                     return "\u21A0"; // Button Y
                 case ButtonFlags.LeftThumb:
-                    return "\u21BA";
+                    return "\u21CB";
                 case ButtonFlags.RightThumb:
-                    return "\u21BB";
+                    return "\u21CC";
                 case ButtonFlags.LStickUp:
                     return "\u21BE";
                 case ButtonFlags.LStickDown:
@@ -334,6 +333,19 @@ namespace ControllerCommon.Controllers
             return null;
         }
 
+        public virtual string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.LeftThumb:
+                    return "\u21BA";
+                case AxisLayoutFlags.RightThumb:
+                    return "\u21BB";
+            }
+
+            return axis.ToString();
+        }
+
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
         {
             FontIcon FontIcon = new FontIcon()
@@ -354,7 +366,7 @@ namespace ControllerCommon.Controllers
             return FontIcon;
         }
 
-        public FontIcon GetFontIcon(AxisFlags axis, int FontIconSize = 20)
+        public FontIcon GetFontIcon(AxisLayoutFlags axis, int FontIconSize = 20)
         {
             FontIcon FontIcon = new FontIcon()
             {
@@ -382,7 +394,7 @@ namespace ControllerCommon.Controllers
             return null;
         }
 
-        public Brush GetGlyphColor(AxisFlags axis)
+        public Brush GetGlyphColor(AxisLayoutFlags axis)
         {
             /* if (AxisBrush.ContainsKey(axis))
                 return AxisBrush[axis]; */
@@ -395,7 +407,7 @@ namespace ControllerCommon.Controllers
             return ButtonSupport.Contains(button);
         }
 
-        public bool IsAxisSupported(AxisFlags axis)
+        public bool IsAxisSupported(AxisLayoutFlags axis)
         {
             return AxisSupport.Contains(axis);
         }
@@ -405,7 +417,7 @@ namespace ControllerCommon.Controllers
             return EnumUtils.GetDescriptionFromEnumValue(button, this.GetType().Name);
         }
 
-        public string GetAxisName(AxisFlags axis)
+        public string GetAxisName(AxisLayoutFlags axis)
         {
             return EnumUtils.GetDescriptionFromEnumValue(axis, this.GetType().Name);
         }

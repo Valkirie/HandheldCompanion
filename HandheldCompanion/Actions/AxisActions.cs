@@ -8,11 +8,7 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public class AxisActions : IActions
     {
-        public AxisFlags Axis { get; set; }
-
-        // Button to axis
-        public double AxisPercentage { get; set; } = 100.0d;
-        public byte AxisPolarity { get; set; } = 0;
+        public AxisLayoutFlags Axis { get; set; }
 
         // Axis to axis
         public bool AxisInverted { get; set; } = false;
@@ -26,7 +22,7 @@ namespace HandheldCompanion.Actions
             this.Value = (short)0;
         }
 
-        public AxisActions(AxisFlags axis) : this()
+        public AxisActions(AxisLayoutFlags axis) : this()
         {
             this.Axis = axis;
         }
@@ -34,11 +30,6 @@ namespace HandheldCompanion.Actions
         public short GetValue()
         {
             return Convert.ToInt16(this.Value);
-        }
-
-        public override void Execute(ButtonFlags button, bool value)
-        {
-            this.Value = (short)(this.AxisPercentage * short.MaxValue / 100.0d) * (AxisPolarity == 0 ? 1 : -1);
         }
 
         public override void Execute(AxisFlags axis, short value)
@@ -49,8 +40,8 @@ namespace HandheldCompanion.Actions
             // Apply anti deadzone adjustments
             switch (Axis)
             {
-                case AxisFlags.L2:
-                case AxisFlags.R2:
+                case AxisLayoutFlags.L2:
+                case AxisLayoutFlags.R2:
                     value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
                     break;
             }

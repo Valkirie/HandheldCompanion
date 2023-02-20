@@ -439,6 +439,96 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LB.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_L1 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LT.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RB.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_R1 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.R1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RT.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Menu.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Left joystick.
         /// </summary>
         public static string Enum_Output_LeftStick {
