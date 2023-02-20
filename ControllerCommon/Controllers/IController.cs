@@ -314,7 +314,7 @@ namespace ControllerCommon.Controllers
                     return "\u21C1";
             }
 
-            return button.ToString();
+            return null;
         }
 
         public virtual string GetGlyph(AxisFlags axis)
@@ -331,7 +331,7 @@ namespace ControllerCommon.Controllers
                     return "\u21F5";
             }
 
-            return axis.ToString();
+            return null;
         }
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
@@ -344,6 +344,9 @@ namespace ControllerCommon.Controllers
 
             if (IsButtonSupported(button))
                 FontIcon.FontFamily = FontFamily;
+
+            if (FontIcon.Glyph is null)
+                FontIcon.Glyph = button.ToString();
 
             Brush FontBrush = GetGlyphColor(button);
             FontIcon.Foreground = FontBrush;
@@ -361,6 +364,9 @@ namespace ControllerCommon.Controllers
 
             if (IsAxisSupported(axis))
                 FontIcon.FontFamily = FontFamily;
+
+            if (FontIcon.Glyph is null)
+                FontIcon.Glyph = axis.ToString();
 
             Brush FontBrush = GetGlyphColor(axis);
             FontIcon.Foreground = FontBrush;
