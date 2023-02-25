@@ -20,8 +20,8 @@ namespace ControllerCommon.Controllers
             { AxisLayoutFlags.LeftThumb, Gamepad.LeftThumbDeadZone },
             { AxisLayoutFlags.L2, Gamepad.TriggerThreshold },
             { AxisLayoutFlags.R2, Gamepad.TriggerThreshold },
-            { AxisLayoutFlags.RightPad, Gamepad.RightThumbDeadZone },
-            { AxisLayoutFlags.LeftPad, Gamepad.LeftThumbDeadZone },
+            { AxisLayoutFlags.RightPad, Gamepad.TriggerThreshold },
+            { AxisLayoutFlags.LeftPad, Gamepad.TriggerThreshold },
         };
 
         public int Timestamp;

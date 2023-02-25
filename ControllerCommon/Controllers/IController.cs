@@ -343,7 +343,7 @@ namespace ControllerCommon.Controllers
                     return "\u21BB";
             }
 
-            return axis.ToString();
+            return null;
         }
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)

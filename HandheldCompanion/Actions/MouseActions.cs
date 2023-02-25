@@ -35,16 +35,6 @@ namespace HandheldCompanion.Actions
 
             this.Value = (short)0;
             this.prevValue = (short)0;
-
-            this.UpdateTimer = new PrecisionTimer();
-            this.UpdateTimer.SetInterval(300);
-            this.UpdateTimer.SetAutoResetMode(false);
-            this.UpdateTimer.Tick += (e, sender) => ResetCursor();
-        }
-
-        private void ResetCursor()
-        {
-            entrypoint = Convert.ToInt16(prevValue);
         }
 
         public MouseActions(MouseActionsType type) : this()
@@ -120,57 +110,14 @@ namespace HandheldCompanion.Actions
 
         public override void Execute(AxisFlags axis, short value)
         {
-            /* if (IsTrackpad)
-            {
-                // no touch input
-                if (value == 0)
-                {
-                    entrypoint = 0;
-                    prevValue = 0;
-                    return;
-                }
-
-                // touch input
-                var MousePosition = MouseSimulator.GetMousePosition();
-                if (Convert.ToInt16(prevValue) == 0)
-                {
-                    entrypoint = value;
-                    prevValue = value;
-                    entryMousePos = MousePosition;
-                    return;
-                }
-
-                // get travel distance between two ticks (10ms)
-                double dist = Math.Abs(value - Convert.ToInt16(prevValue));
-
-                // get relative distance between entry point and current point
-                var output = (value - Convert.ToInt16(entrypoint)) / 300;
-
-                // update previous value
-                prevValue = value;
-
-                switch (MouseType)
-                {
-                    case MouseActionsType.MoveByX:
-                        int outputX = (int)(entryMousePos.X + output);
-                        MouseSimulator.MoveTo(outputX, MousePosition.Y);
-                        break;
-                    case MouseActionsType.MoveByY:
-                        int outputY = (int)(entryMousePos.Y - output);
-                        MouseSimulator.MoveTo(MousePosition.X, outputY);
-                        break;
-                }
-
-                return;
-            } */
         }
 
-        private short entrypoint = 0;
         private Vector2 entryMousePos = new();
         private bool IsPressed = false;
 
         private Vector2 Vector = new();
         private Vector2 prevVector = new();
+        private Vector2 entryVector = new();
 
         public void Execute(AxisLayout layout)
         {
@@ -207,18 +154,20 @@ namespace HandheldCompanion.Actions
                             if (!IsPressed)
                             {
                                 prevVector = layout.vector;
+                                entryVector = layout.vector;
+
                                 entryMousePos = new Vector2(MouseSimulator.GetMousePosition().X, MouseSimulator.GetMousePosition().Y);
+                                
                                 IsPressed = true;
+
                                 return;
                             }
 
-                            // get travel distance between ticks
-                            Vector2 distance = (prevVector - layout.vector) / short.MaxValue;
-
-                            Debug.WriteLine($"dist: {distance.Length()}");
+                            Vector2 travelVector = (prevVector - layout.vector) / short.MaxValue;
+                            Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
 
                             // compute
-                            Vector = entryMousePos + (layout.vector / short.MaxValue) * Sensivity * 10.0f * (1.0f + distance.Length());
+                            Vector = entryMousePos + pointVector;
                             MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
 
                             // update previous position
