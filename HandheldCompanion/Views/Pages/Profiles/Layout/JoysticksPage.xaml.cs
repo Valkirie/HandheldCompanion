@@ -71,17 +71,14 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 if (!Controller.IsButtonSupported(button))
                     buttonMapping.Visibility = Visibility.Collapsed;
                 else
+                {
                     buttonMapping.Visibility = Visibility.Visible;
 
-                // update icon
-                FontIcon newIcon = Controller.GetFontIcon(button);
-
-                // unsupported button
-                if (newIcon is null)
-                    continue;
-
-                buttonMapping.UpdateIcon(newIcon);
-                buttonMapping.Update();
+                    // update icon
+                    FontIcon newIcon = Controller.GetFontIcon(button);
+                    buttonMapping.UpdateIcon(newIcon);
+                    buttonMapping.Update();
+                }
             }
 
             foreach (var mapping in MappingAxis)
@@ -95,17 +92,14 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 if (!Controller.IsAxisSupported(flags))
                     axisMapping.Visibility = Visibility.Collapsed;
                 else
+                {
                     axisMapping.Visibility = Visibility.Visible;
 
-                // update icon
-                FontIcon newIcon = Controller.GetFontIcon(flags);
-
-                // unsupported button
-                if (newIcon is null)
-                    continue;
-
-                axisMapping.UpdateIcon(newIcon);
-                axisMapping.Update();
+                    // update icon
+                    FontIcon newIcon = Controller.GetFontIcon(flags);
+                    axisMapping.UpdateIcon(newIcon);
+                    axisMapping.Update();
+                }
             }
         }
 

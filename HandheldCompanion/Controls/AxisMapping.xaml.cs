@@ -69,7 +69,6 @@ namespace HandheldCompanion.Controls
                 return;
 
             // clear current dropdown values
-            TargetComboBox.Items.Clear();
             TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
             // get current controller
@@ -81,9 +80,7 @@ namespace HandheldCompanion.Controls
             if (type == ActionType.None)
             {
                 Deleted?.Invoke(Axis);
-            }
-            else if (type == ActionType.Button)
-            {
+                return;
             }
             else if (type == ActionType.Axis)
             {
@@ -94,6 +91,7 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
+                TargetComboBox.Items.Clear();
                 foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
                 {
                     if (controller.IsAxisSupported(axis))
@@ -113,14 +111,12 @@ namespace HandheldCompanion.Controls
                 Axis_OuterDeadzone_Slider.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
                 Axis_AntiDeadZone_Slider.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
             }
-            else if (type == ActionType.Keyboard)
-            {
-            }
             else if (type == ActionType.Mouse)
             {
                 if (this.Actions is null || this.Actions is not MouseActions)
                     this.Actions = new MouseActions();
 
+                TargetComboBox.Items.Clear();
                 foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
                 {
                     // skip button related actions
@@ -140,15 +136,15 @@ namespace HandheldCompanion.Controls
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (this.Actions is null)
+                return;
+
             if (TargetComboBox.SelectedItem is null)
                 return;
 
             // generate IActions based on settings
             switch (this.Actions.ActionType)
             {
-                case ActionType.None:
-                    break;
-
                 case ActionType.Button:
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;

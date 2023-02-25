@@ -5,6 +5,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
+using LiveCharts.Wpf;
 using ModernWpf.Controls;
 using System;
 using System.Windows;
@@ -88,7 +89,6 @@ namespace HandheldCompanion.Controls
                 return;
 
             // clear current dropdown values
-            TargetComboBox.Items.Clear();
             TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
             // get current controller
@@ -100,6 +100,7 @@ namespace HandheldCompanion.Controls
             if (type == ActionType.None)
             {
                 Deleted?.Invoke(Button);
+                return;
             }
             else if (type == ActionType.Button)
             {
@@ -110,6 +111,7 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
+                TargetComboBox.Items.Clear();
                 foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
                 {
                     if (controller.IsButtonSupported(button))
@@ -134,6 +136,7 @@ namespace HandheldCompanion.Controls
                     this.Actions = new KeyboardActions();
 
                 // localize me ?
+                TargetComboBox.Items.Clear();
                 foreach (VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
                     TargetComboBox.Items.Add(key);
 
@@ -149,6 +152,7 @@ namespace HandheldCompanion.Controls
                 if (this.Actions is null || this.Actions is not MouseActions)
                     this.Actions = new MouseActions();
 
+                TargetComboBox.Items.Clear();
                 foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
                 {
                     // skip axis related actions
@@ -166,19 +170,22 @@ namespace HandheldCompanion.Controls
                 Turbo_Slider.Value = ((MouseActions)this.Actions).TurboDelay;
                 Toggle_Toggle.IsOn = ((MouseActions)this.Actions).Toggle;
             }
+
+            // update button mapping
+            Updated?.Invoke(Button, Actions);
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (this.Actions is null)
+                return;
+
             if (TargetComboBox.SelectedItem is null)
                 return;
 
             // generate IActions based on settings
             switch (this.Actions.ActionType)
             {
-                case ActionType.None:
-                    break;
-
                 case ActionType.Button:
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;

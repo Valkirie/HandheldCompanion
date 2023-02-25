@@ -69,7 +69,8 @@ namespace ControllerCommon.Controllers
         protected PrecisionTimer InputsTimer;
 
         // UI
-        protected FontFamily FontFamily = new("PromptFont");
+        protected FontFamily GlyphFontFamily = new("PromptFont");
+        protected FontFamily DefaultFontFamily = new("Segeo WP");
 
         protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
         protected Grid ui_grid = new Grid();
@@ -346,42 +347,48 @@ namespace ControllerCommon.Controllers
             return null;
         }
 
-        public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 20)
+        public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
         {
             FontIcon FontIcon = new FontIcon()
             {
                 Glyph = GetGlyph(button),
                 FontSize = FontIconSize,
+                Foreground = GetGlyphColor(button)
             };
 
-            if (IsButtonSupported(button))
-                FontIcon.FontFamily = FontFamily;
-
-            if (FontIcon.Glyph is null)
+            if (FontIcon.Glyph is not null)
+            {
+                FontIcon.FontFamily = GlyphFontFamily;
+                FontIcon.FontSize = 20;
+            }
+            else
+            {
                 FontIcon.Glyph = button.ToString();
-
-            Brush FontBrush = GetGlyphColor(button);
-            FontIcon.Foreground = FontBrush;
+                FontIcon.FontFamily = DefaultFontFamily;
+            }
 
             return FontIcon;
         }
 
-        public FontIcon GetFontIcon(AxisLayoutFlags axis, int FontIconSize = 20)
+        public FontIcon GetFontIcon(AxisLayoutFlags axis, int FontIconSize = 14)
         {
             FontIcon FontIcon = new FontIcon()
             {
                 Glyph = GetGlyph(axis),
                 FontSize = FontIconSize,
+                Foreground = GetGlyphColor(axis)
             };
 
-            if (IsAxisSupported(axis))
-                FontIcon.FontFamily = FontFamily;
-
-            if (FontIcon.Glyph is null)
+            if (FontIcon.Glyph is not null)
+            {
+                FontIcon.FontFamily = GlyphFontFamily;
+                FontIcon.FontSize = 20;
+            }
+            else
+            {
                 FontIcon.Glyph = axis.ToString();
-
-            Brush FontBrush = GetGlyphColor(axis);
-            FontIcon.Foreground = FontBrush;
+                FontIcon.FontFamily = DefaultFontFamily;
+            }
 
             return FontIcon;
         }

@@ -171,6 +171,8 @@ namespace HandheldCompanion.Controllers
             ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
+            AxisSupport.Add(AxisLayoutFlags.LeftPad);
+
             DrawControls();
             RefreshControls();
         }
