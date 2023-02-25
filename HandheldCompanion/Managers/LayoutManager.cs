@@ -5,9 +5,12 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using HandheldCompanion.Actions;
+using LiveCharts.Wpf;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Windows.Documents;
 using Vector2 = System.Numerics.Vector2;
 
 namespace HandheldCompanion.Managers
@@ -176,13 +179,49 @@ namespace HandheldCompanion.Managers
             foreach (var axisLayout in currentLayout.AxisLayout)
             {
                 AxisLayoutFlags flags = axisLayout.Key;
+
                 AxisLayout layout = AxisLayout.Layouts[flags];
 
-                IActions actions = axisLayout.Value;
-
-                // consume origin axis state
                 foreach (AxisFlags axis in layout.axis)
+                {
+                    switch(axis)
+                    {
+                        case AxisFlags.LeftThumbX:
+                        case AxisFlags.RightThumbX:
+                        case AxisFlags.L2:
+                        case AxisFlags.R2:
+                        case AxisFlags.LeftPadX:
+                        case AxisFlags.RightPadX:
+                            layout.vector.X = outputState.AxisState[axis];
+                            break;
+
+                        default:
+                            layout.vector.Y = outputState.AxisState[axis];
+                            break;
+                    }
+
+                    // consume origin values
                     outputState.AxisState[axis] = 0;
+                }
+
+                // pull action
+                IActions action = axisLayout.Value;
+                switch (action.ActionType)
+                {
+                    case ActionType.Axis:
+                        {
+                            AxisActions aAction = action as AxisActions;
+                            aAction.Execute(layout);
+                        }
+                        break;
+
+                    case ActionType.Mouse:
+                        {
+                            MouseActions mAction = action as MouseActions;
+                            mAction.Execute(layout);
+                        }
+                        break;
+                }
             }
 
             /* foreach (var axisState in controllerState.AxisState.State)

@@ -1,9 +1,17 @@
 ﻿using ControllerCommon.Actions;
+using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Simulators;
+using LiveCharts.Wpf;
 using PrecisionTiming;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
+using System.Numerics;
+using System.Windows.Documents;
 using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Actions
@@ -18,7 +26,6 @@ namespace HandheldCompanion.Actions
 
         // settings
         public float Sensivity { get; set; } = 20.0f;
-        public bool IsTrackpad { get; set; } = true;
 
         public MouseActions()
         {
@@ -111,12 +118,9 @@ namespace HandheldCompanion.Actions
             }
         }
 
-        private short entrypoint = 0;
-        private Point entryMousePos = new(0, 0);
-
         public override void Execute(AxisFlags axis, short value)
         {
-            if (IsTrackpad)
+            /* if (IsTrackpad)
             {
                 // no touch input
                 if (value == 0)
@@ -158,21 +162,71 @@ namespace HandheldCompanion.Actions
                 }
 
                 return;
-            }
+            } */
+        }
 
-            short MoveBy = (short)(Convert.ToDouble(value) / short.MaxValue * Sensivity);
+        private short entrypoint = 0;
+        private Vector2 entryMousePos = new();
+        private bool IsPressed = false;
+
+        private Vector2 Vector = new();
+        private Vector2 prevVector = new();
+
+        public void Execute(AxisLayout layout)
+        {
+            if (layout.vector.Length() < ControllerState.AxisDeadzones[layout.flags])
+                layout.vector *= 0.0f;
+
+            layout.vector.Y *= -1;
 
             switch (MouseType)
             {
-                case MouseActionsType.MoveByX:
-                    MouseSimulator.MoveBy(MoveBy, 0);
+                case MouseActionsType.MoveBy:
+                    {
+                        if (layout.vector == Vector2.Zero)
+                            return;
+
+                        // apply sensivity
+                        Vector = (layout.vector / short.MaxValue) * Sensivity;
+
+                        MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
+                    }
                     break;
-                case MouseActionsType.MoveByY:
-                    MouseSimulator.MoveBy(0, -MoveBy);
+
+                case MouseActionsType.MoveTo:
+                    {
+                        if (layout.vector == Vector2.Zero)
+                        {
+                            IsPressed = false;
+                            prevVector = Vector2.Zero;
+                            return;
+                        }
+                        else
+                        {
+                            // update entry point
+                            if (!IsPressed)
+                            {
+                                prevVector = layout.vector;
+                                entryMousePos = new Vector2(MouseSimulator.GetMousePosition().X, MouseSimulator.GetMousePosition().Y);
+                                IsPressed = true;
+                                return;
+                            }
+
+                            // get travel distance between ticks
+                            Vector2 distance = (prevVector - layout.vector) / short.MaxValue;
+
+                            Debug.WriteLine($"dist: {distance.Length()}");
+
+                            // compute
+                            Vector = entryMousePos + (layout.vector / short.MaxValue) * Sensivity * 10.0f * (1.0f + distance.Length());
+                            MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
+
+                            // update previous position
+                            prevVector = layout.vector;
+                        }
+                    }
                     break;
             }
-
-            this.prevValue = value;
         }
     }
 }

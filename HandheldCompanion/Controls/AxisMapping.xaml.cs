@@ -123,7 +123,7 @@ namespace HandheldCompanion.Controls
 
                 foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
                 {
-                    // skip axis related actions
+                    // skip button related actions
                     if (mouseType <= MouseActionsType.MiddleButton)
                         continue;
 
@@ -133,6 +133,9 @@ namespace HandheldCompanion.Controls
 
                 TargetComboBox.SelectedItem = ((MouseActions)this.Actions).MouseType;
             }
+
+            // update button mapping
+            Updated?.Invoke(Axis, Actions);
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)

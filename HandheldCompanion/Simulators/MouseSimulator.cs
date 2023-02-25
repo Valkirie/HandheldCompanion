@@ -12,8 +12,8 @@ namespace HandheldCompanion.Simulators
             LeftButton = 0,
             RightButton = 1,
             MiddleButton = 2,
-            MoveByX = 3,
-            MoveByY = 4
+            MoveBy = 3,
+            MoveTo = 4
         }
 
         private static InputSimulator InputSimulator;

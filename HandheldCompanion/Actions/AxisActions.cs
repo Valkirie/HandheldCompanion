@@ -2,6 +2,7 @@
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using System;
+using System.Collections.Generic;
 
 namespace HandheldCompanion.Actions
 {
@@ -47,6 +48,10 @@ namespace HandheldCompanion.Actions
             }
 
             this.Value = (short)(value * (AxisInverted ? -1 : 1));
+        }
+
+        public void Execute(AxisLayout layout)
+        {
         }
     }
 }
