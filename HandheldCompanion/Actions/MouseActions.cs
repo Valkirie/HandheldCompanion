@@ -128,6 +128,7 @@ namespace HandheldCompanion.Actions
 
             switch (MouseType)
             {
+                case MouseActionsType.ScrollBy:
                 case MouseActionsType.MoveBy:
                     {
                         if (layout.vector == Vector2.Zero)
@@ -136,10 +137,17 @@ namespace HandheldCompanion.Actions
                         // apply sensivity
                         Vector = (layout.vector / short.MaxValue) * Sensivity;
 
-                        MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
+                        if (MouseType == MouseActionsType.MoveBy)
+                            MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
+                        else if (MouseType == MouseActionsType.ScrollBy)
+                        {
+                            MouseSimulator.HorizontalScroll((int)Vector.X);
+                            MouseSimulator.VerticalScroll((int)Vector.Y);
+                        }
                     }
                     break;
 
+                case MouseActionsType.ScrollTo:
                 case MouseActionsType.MoveTo:
                     {
                         if (layout.vector == Vector2.Zero)
@@ -163,12 +171,18 @@ namespace HandheldCompanion.Actions
                                 return;
                             }
 
+                            // compute
                             Vector2 travelVector = (prevVector - layout.vector) / short.MaxValue;
                             Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
-
-                            // compute
                             Vector = entryMousePos + pointVector;
-                            MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
+
+                            if (MouseType == MouseActionsType.MoveTo)                                
+                                MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
+                            else
+                            {
+                                MouseSimulator.HorizontalScroll((int)Vector.X);
+                                MouseSimulator.VerticalScroll((int)Vector.Y);
+                            }
 
                             // update previous position
                             prevVector = layout.vector;

@@ -13,9 +13,9 @@ using static HandheldCompanion.Simulators.MouseSimulator;
 namespace HandheldCompanion.Controls
 {
     /// <summary>
-    /// Interaction logic for AxisMapping.xaml
+    /// Interaction logic for JoystickMapping.xaml
     /// </summary>
-    public partial class AxisMapping : UserControl
+    public partial class JoystickMapping : UserControl
     {
         private AxisLayoutFlags Axis;
         private IActions Actions;
@@ -27,12 +27,12 @@ namespace HandheldCompanion.Controls
         public delegate void UpdatedEventHandler(AxisLayoutFlags axis, IActions action);
         #endregion
 
-        public AxisMapping()
+        public JoystickMapping()
         {
             InitializeComponent();
         }
 
-        public AxisMapping(AxisLayoutFlags axis) : this()
+        public JoystickMapping(AxisLayoutFlags axis) : this()
         {
             this.Axis = axis;
             this.Icon.Glyph = axis.ToString();

@@ -28,7 +28,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
+        public Dictionary<AxisLayoutFlags, JoystickMapping> MappingAxis = new();
 
         public JoysticksPage()
         {
@@ -47,7 +47,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (AxisLayoutFlags axis in LeftThumbAxis)
             {
-                AxisMapping axisMapping = new AxisMapping(axis);
+                JoystickMapping axisMapping = new JoystickMapping(axis);
                 LeftJoystickStackPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
@@ -86,7 +86,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 AxisLayoutFlags flags = mapping.Key;
                 AxisLayout layout = AxisLayout.Layouts[flags];
 
-                AxisMapping axisMapping = mapping.Value;
+                JoystickMapping axisMapping = mapping.Value;
 
                 // update mapping visibility
                 if (!Controller.IsAxisSupported(flags))
@@ -118,7 +118,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonMapping mapping in MappingButtons.Values)
                 mapping.Reset();
 
-            foreach (AxisMapping mapping in MappingAxis.Values)
+            foreach (JoystickMapping mapping in MappingAxis.Values)
                 mapping.Reset();
 
             foreach (var pair in buttonMapping)
@@ -143,7 +143,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     continue;
 
                 // update actions
-                AxisMapping mapping = MappingAxis[axis];
+                JoystickMapping mapping = MappingAxis[axis];
                 mapping.SetIActions(actions);
             }
         }

@@ -188,14 +188,14 @@ namespace HandheldCompanion.Managers
                     {
                         case AxisFlags.LeftThumbX:
                         case AxisFlags.RightThumbX:
-                        case AxisFlags.L2:
-                        case AxisFlags.R2:
                         case AxisFlags.LeftPadX:
                         case AxisFlags.RightPadX:
                             layout.vector.X = outputState.AxisState[axis];
                             break;
 
                         default:
+                        case AxisFlags.L2:
+                        case AxisFlags.R2:
                             layout.vector.Y = outputState.AxisState[axis];
                             break;
                     }

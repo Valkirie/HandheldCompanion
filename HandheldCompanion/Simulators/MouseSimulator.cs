@@ -13,7 +13,9 @@ namespace HandheldCompanion.Simulators
             RightButton = 1,
             MiddleButton = 2,
             MoveBy = 3,
-            MoveTo = 4
+            MoveTo = 4,
+            ScrollBy = 5,
+            ScrollTo = 6,
         }
 
         private static InputSimulator InputSimulator;
@@ -63,6 +65,16 @@ namespace HandheldCompanion.Simulators
         public static void MoveTo(int x, int y)
         {
             InputSimulator.Mouse.MoveMouseTo(x, y);
+        }
+
+        public static void HorizontalScroll(int x)
+        {
+            InputSimulator.Mouse.HorizontalScroll(x);
+        }
+
+        public static void VerticalScroll(int y)
+        {
+            InputSimulator.Mouse.VerticalScroll(y);
         }
 
         public static Point GetMousePosition()

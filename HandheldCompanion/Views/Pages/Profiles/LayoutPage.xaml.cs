@@ -61,7 +61,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 buttonMapping.Deleted += ButtonMapping_Deleted;
             }
 
-            foreach (AxisMapping axisMapping in joysticksPage.MappingAxis.Values)
+            foreach (JoystickMapping axisMapping in joysticksPage.MappingAxis.Values)
             {
                 axisMapping.Updated += AxisMapping_Updated;
                 axisMapping.Deleted += AxisMapping_Deleted;

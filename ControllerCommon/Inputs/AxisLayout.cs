@@ -30,20 +30,20 @@ namespace ControllerCommon.Inputs
         public Vector2 vector = new();
         public string glyph;
 
-        public AxisLayout(AxisLayoutFlags flags, AxisFlags axisX)
+        public AxisLayout(AxisLayoutFlags flags, AxisFlags axisY)
         {
             this.flags = flags;
-            axis.Add(axisX);
+            axis.Add(axisY);
         }
 
-        public AxisLayout(AxisLayoutFlags flags, AxisFlags axisX, AxisFlags axisY) : this(flags, axisX)
+        public AxisLayout(AxisLayoutFlags flags, AxisFlags axisX, AxisFlags axisY) : this(flags, axisY)
         {
-            axis.Add(axisY);
+            axis.Add(axisX);
         }
 
         public override string ToString()
         {
-            return "TEST";
+            return flags.ToString();
         }
     }
 
