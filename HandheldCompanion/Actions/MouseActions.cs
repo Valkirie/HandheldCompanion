@@ -139,7 +139,7 @@ namespace HandheldCompanion.Actions
 
                         if (MouseType == MouseActionsType.MoveBy)
                             MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
-                        else if (MouseType == MouseActionsType.ScrollBy)
+                        else
                         {
                             MouseSimulator.HorizontalScroll((int)Vector.X);
                             MouseSimulator.VerticalScroll((int)Vector.Y);
@@ -172,7 +172,7 @@ namespace HandheldCompanion.Actions
                             }
 
                             // compute
-                            Vector2 travelVector = (prevVector - layout.vector) / short.MaxValue;
+                            Vector2 travelVector = (prevVector - layout.vector) / 1000f;
                             Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
                             Vector = entryMousePos + pointVector;
 
@@ -180,8 +180,8 @@ namespace HandheldCompanion.Actions
                                 MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
                             else
                             {
-                                MouseSimulator.HorizontalScroll((int)Vector.X);
-                                MouseSimulator.VerticalScroll((int)Vector.Y);
+                                MouseSimulator.HorizontalScroll((int)travelVector.X);
+                                MouseSimulator.VerticalScroll((int)travelVector.Y);
                             }
 
                             // update previous position

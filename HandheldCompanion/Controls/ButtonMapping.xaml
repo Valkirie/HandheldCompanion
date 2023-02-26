@@ -25,6 +25,7 @@
                     <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
                         <ComboBoxItem Content="None" IsEnabled="True"/>
                         <ComboBoxItem Content="Button" IsEnabled="True"/>
+                        <ComboBoxItem Content="Axis" IsEnabled="False"/>
                         <ComboBoxItem Content="Keyboard" IsEnabled="True"/>
                         <ComboBoxItem Content="Mouse" IsEnabled="True"/>
                     </ComboBox>
