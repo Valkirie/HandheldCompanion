@@ -143,8 +143,10 @@ namespace HandheldCompanion.Actions
                         }
                         else
                         {
-                            MouseSimulator.HorizontalScroll((int)Vector.X);
-                            MouseSimulator.VerticalScroll((int)Vector.Y);
+                            if (Math.Abs(layout.vector.X) > ControllerState.AxisDeadzones[layout.flags])
+                                MouseSimulator.HorizontalScroll((int)(1.0f * Math.Sign(layout.vector.X)));
+                            if (Math.Abs(layout.vector.Y) > ControllerState.AxisDeadzones[layout.flags])
+                                MouseSimulator.VerticalScroll((int)(1.0f * Math.Sign(layout.vector.Y)));
                         }
                     }
                     break;
@@ -183,14 +185,13 @@ namespace HandheldCompanion.Actions
                             }
                             else
                             {
-                                Vector2 travelVector = (prevVector - layout.vector) / short.MaxValue;
+                                Vector2 travelVector = (prevVector - layout.vector) / Sensivity;
+                                int scrollY = (int)Math.Round(travelVector.Y);
 
-                                Debug.WriteLine($"t:{travelVector.Length()},x:{layout.vector.X},y:{layout.vector.Y}");
+                                Debug.WriteLine($"t:{travelVector.Length()},x:{travelVector.X},y:{scrollY}");
 
-                                if (Math.Abs(layout.vector.X) > ControllerState.AxisDeadzones[layout.flags])
-                                    MouseSimulator.HorizontalScroll((int)(1.0f * Math.Sign(layout.vector.X)));
-                                if (Math.Abs(layout.vector.Y) > ControllerState.AxisDeadzones[layout.flags])
-                                    MouseSimulator.VerticalScroll((int)(1.0f * Math.Sign(layout.vector.Y)));
+                                // MouseSimulator.HorizontalScroll((int)(travelVector.X));
+                                MouseSimulator.VerticalScroll(scrollY);
                             }
 
                             // update previous position

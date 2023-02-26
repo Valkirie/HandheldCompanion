@@ -74,6 +74,7 @@ namespace HandheldCompanion.Simulators
 
         public static void VerticalScroll(int y)
         {
+            InputSimulator.Mouse.MouseWheelClickSize = 1;
             InputSimulator.Mouse.VerticalScroll(y);
         }
 
