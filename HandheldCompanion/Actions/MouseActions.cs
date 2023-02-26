@@ -138,7 +138,9 @@ namespace HandheldCompanion.Actions
                         Vector = (layout.vector / short.MaxValue) * Sensivity;
 
                         if (MouseType == MouseActionsType.MoveBy)
+                        {
                             MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
+                        }
                         else
                         {
                             MouseSimulator.HorizontalScroll((int)Vector.X);
@@ -172,16 +174,23 @@ namespace HandheldCompanion.Actions
                             }
 
                             // compute
-                            Vector2 travelVector = (prevVector - layout.vector) / 1000f;
-                            Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
-                            Vector = entryMousePos + pointVector;
+                            if (MouseType == MouseActionsType.MoveTo)
+                            {
+                                Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
+                                Vector = entryMousePos + pointVector;
 
-                            if (MouseType == MouseActionsType.MoveTo)                                
                                 MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
+                            }
                             else
                             {
-                                MouseSimulator.HorizontalScroll((int)travelVector.X);
-                                MouseSimulator.VerticalScroll((int)travelVector.Y);
+                                Vector2 travelVector = (prevVector - layout.vector) / short.MaxValue;
+
+                                Debug.WriteLine($"t:{travelVector.Length()},x:{layout.vector.X},y:{layout.vector.Y}");
+
+                                if (Math.Abs(layout.vector.X) > ControllerState.AxisDeadzones[layout.flags])
+                                    MouseSimulator.HorizontalScroll((int)(1.0f * Math.Sign(layout.vector.X)));
+                                if (Math.Abs(layout.vector.Y) > ControllerState.AxisDeadzones[layout.flags])
+                                    MouseSimulator.VerticalScroll((int)(1.0f * Math.Sign(layout.vector.Y)));
                             }
 
                             // update previous position
