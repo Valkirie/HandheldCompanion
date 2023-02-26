@@ -143,10 +143,8 @@ namespace HandheldCompanion.Actions
                         }
                         else
                         {
-                            if (Math.Abs(layout.vector.X) > ControllerState.AxisDeadzones[layout.flags])
-                                MouseSimulator.HorizontalScroll((int)(1.0f * Math.Sign(layout.vector.X)));
-                            if (Math.Abs(layout.vector.Y) > ControllerState.AxisDeadzones[layout.flags])
-                                MouseSimulator.VerticalScroll((int)(1.0f * Math.Sign(layout.vector.Y)));
+                            MouseSimulator.HorizontalScroll((int)(Sensivity * Math.Sign(layout.vector.X)));
+                            MouseSimulator.VerticalScroll((int)(Sensivity * Math.Sign(layout.vector.Y)));
                         }
                     }
                     break;
