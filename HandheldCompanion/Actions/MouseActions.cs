@@ -135,7 +135,7 @@ namespace HandheldCompanion.Actions
                             return;
 
                         // apply sensivity
-                        Vector = (layout.vector / short.MaxValue) * Sensivity;
+                        Vector = (layout.vector / short.MaxValue) * Sensivity * ((float)ControllerState.AxisDeadzones[layout.flags] / short.MaxValue);
 
                         if (MouseType == MouseActionsType.MoveBy)
                         {
@@ -143,8 +143,8 @@ namespace HandheldCompanion.Actions
                         }
                         else
                         {
-                            MouseSimulator.HorizontalScroll((int)(Sensivity * Math.Sign(layout.vector.X)));
-                            MouseSimulator.VerticalScroll((int)(Sensivity * Math.Sign(layout.vector.Y)));
+                            MouseSimulator.HorizontalScroll((int)(Sensivity * Vector.X));
+                            MouseSimulator.VerticalScroll((int)(Sensivity * Vector.Y));
                         }
                     }
                     break;
