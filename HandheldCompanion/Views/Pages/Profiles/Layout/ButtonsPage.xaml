@@ -27,6 +27,13 @@
             <ui:SimpleStackPanel Spacing="6" Name="BumpersStackPanel">
             </ui:SimpleStackPanel>
 
+            <!-- BACK GRIPS -->
+            <Grid x:Name="gridBACKGRIPS" Visibility="Collapsed">
+                <TextBlock Text="BACK GRIPS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                <ui:SimpleStackPanel Spacing="6" Name="BACKGRIPSStackPanel">
+                </ui:SimpleStackPanel>
+            </Grid>
+
             <!-- MENU -->
             <TextBlock Text="MENU" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
             <ui:SimpleStackPanel Spacing="6" Name="MenuStackPanel">

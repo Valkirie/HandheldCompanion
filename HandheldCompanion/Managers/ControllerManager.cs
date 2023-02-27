@@ -40,6 +40,7 @@ namespace HandheldCompanion.Managers
             { UserIndex.Four, true },
         };
 
+        private static XInputController? defaultController = new XInputController();
         private static IController? targetController;
         private static ProcessEx? foregroundProcess;
 
@@ -69,7 +70,7 @@ namespace HandheldCompanion.Managers
 
             // summon an empty controller, used to feed Layout UI
             // todo: improve me
-            ControllerSelected?.Invoke(new XInputController());
+            ControllerSelected?.Invoke(defaultController);
 
             LogManager.LogInformation("{0} has started", "ControllerManager");
         }
@@ -440,7 +441,7 @@ namespace HandheldCompanion.Managers
 
         public static IController GetTargetController()
         {
-            return targetController;
+            return targetController is not null ? targetController : defaultController;
         }
 
         private static void UpdateInputs(ControllerState controllerState)

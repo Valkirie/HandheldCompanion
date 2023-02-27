@@ -60,13 +60,8 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                 // update icon
                 FontIcon newIcon = Controller.GetFontIcon(button);
-
-                // unsupported button
-                if (newIcon is null)
-                    continue;
-
-                buttonMapping.UpdateIcon(newIcon);
-                buttonMapping.Update();
+                string newLabel = Controller.GetButtonName(button);
+                buttonMapping.UpdateIcon(newIcon, newLabel);
             }
         }
 

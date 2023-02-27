@@ -320,8 +320,7 @@ namespace ControllerCommon.Controllers
                 case ButtonFlags.RStickRight:
                     return "\u21C1";
             }
-
-            return null;
+            return "\u2753";
         }
 
         public virtual string GetGlyph(AxisFlags axis)
@@ -337,8 +336,7 @@ namespace ControllerCommon.Controllers
                 case AxisFlags.RightThumbY:
                     return "\u21F5";
             }
-
-            return null;
+            return "\u2753";
         }
 
         public virtual string GetGlyph(AxisLayoutFlags axis)
@@ -350,8 +348,7 @@ namespace ControllerCommon.Controllers
                 case AxisLayoutFlags.RightThumb:
                     return "\u21BB";
             }
-
-            return null;
+            return "\u2753";
         }
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
@@ -367,11 +364,6 @@ namespace ControllerCommon.Controllers
             {
                 FontIcon.FontFamily = GlyphFontFamily;
                 FontIcon.FontSize = 20;
-            }
-            else
-            {
-                FontIcon.Glyph = button.ToString();
-                FontIcon.FontFamily = DefaultFontFamily;
             }
 
             return FontIcon;
@@ -390,11 +382,6 @@ namespace ControllerCommon.Controllers
             {
                 FontIcon.FontFamily = GlyphFontFamily;
                 FontIcon.FontSize = 20;
-            }
-            else
-            {
-                FontIcon.Glyph = axis.ToString();
-                FontIcon.FontFamily = DefaultFontFamily;
             }
 
             return FontIcon;

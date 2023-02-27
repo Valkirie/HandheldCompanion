@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace ControllerCommon.Inputs
 {
@@ -6,24 +7,63 @@ namespace ControllerCommon.Inputs
     public enum ButtonFlags : byte
     {
         None = 0,
-        DPadUp = 1, DPadDown = 2, DPadLeft = 3, DPadRight = 4,
-        Start = 5, Back = 6,
-        LeftThumb = 7, RightThumb = 8,
+
+        [Description("DPad Up")]
+        DPadUp = 1,
+        [Description("DPad Down")]
+        DPadDown = 2,
+        [Description("DPad Left")]
+        DPadLeft = 3,
+        [Description("DPad Right")]
+        DPadRight = 4,
+
+        [Description("Start")]
+        Start = 5,
+        [Description("Back")]
+        Back = 6,
+
+        [Description("Click")]
+        LeftThumb = 7,
+        [Description("Click")]
+        RightThumb = 8,
+
         L1 = 9, R1 = 10, L2 = 11, R2 = 12,
         B1 = 13, B2 = 14, B3 = 15, B4 = 16, B5 = 17, B6 = 18, B7 = 19, B8 = 20,
-        LStickUp = 21, LStickDown = 22, LStickLeft = 23, LStickRight = 24,
-        RStickUp = 25, RStickDown = 26, RStickLeft = 27, RStickRight = 28,
+
+        [Description("Up")]
+        LStickUp = 21,
+        [Description("Down")]
+        LStickDown = 22,
+        [Description("Left")]
+        LStickLeft = 23,
+        [Description("Right")]
+        LStickRight = 24,
+
+        [Description("Up")]
+        RStickUp = 25,
+        [Description("Down")]
+        RStickDown = 26,
+        [Description("Left")]
+        RStickLeft = 27,
+        [Description("Right")]
+        RStickRight = 28,
+
         Special = 29,
+
         OEM1 = 30, OEM2 = 31, OEM3 = 32, OEM4 = 33, OEM5 = 34,
         OEM6 = 35, OEM7 = 36, OEM8 = 37, OEM9 = 38, OEM10 = 39,
 
         // Steam Deck
         LPadTouch = 40, RPadTouch = 41,
         LPadClick = 42, RPadClick = 43,
-        L3 = 44, R3 = 45,
         L4 = 46, R4 = 47,
         L5 = 48, R5 = 49,
-        LeftThumbTouch = 50, RightThumbTouch = 51,
+
+        [Description("Touch")]
+        LeftThumbTouch = 50,
+        [Description("Touch")]
+        RightThumbTouch = 51,
+
         LPadClickUp = 52, LPadClickDown = 53, LPadClickLeft = 54, LPadClickRight = 55,
         RPadClickUp = 56, RPadClickDown = 57, RPadClickLeft = 58, RPadClickRight = 59,
     }

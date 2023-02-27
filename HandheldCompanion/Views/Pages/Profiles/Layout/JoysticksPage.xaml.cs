@@ -19,12 +19,22 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         public static List<ButtonFlags> LeftThumbButtons = new()
         {
             ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch,
+            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
         };
-
         public static List<AxisLayoutFlags> LeftThumbAxis = new()
         {
-            AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
-            AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad,
+            AxisLayoutFlags.LeftThumb,
+        };
+
+        // RIGHT JOYSTICK
+        public static List<ButtonFlags> RightThumbButtons = new()
+        {
+            ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch,
+            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+        };
+        public static List<AxisLayoutFlags> RightThumbAxis = new()
+        {
+            AxisLayoutFlags.RightThumb,
         };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
@@ -52,6 +62,22 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                 MappingAxis.Add(axis, axisMapping);
             }
+
+            foreach (ButtonFlags button in RightThumbButtons)
+            {
+                ButtonMapping buttonMapping = new ButtonMapping(button);
+                RightJoystickStackPanel.Children.Add(buttonMapping);
+
+                MappingButtons.Add(button, buttonMapping);
+            }
+
+            foreach (AxisLayoutFlags axis in RightThumbAxis)
+            {
+                JoystickMapping axisMapping = new JoystickMapping(axis);
+                RightJoystickStackPanel.Children.Add(axisMapping);
+
+                MappingAxis.Add(axis, axisMapping);
+            }
         }
 
         public JoysticksPage(string Tag) : this()
@@ -76,8 +102,9 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                     // update icon
                     FontIcon newIcon = Controller.GetFontIcon(button);
-                    buttonMapping.UpdateIcon(newIcon);
-                    buttonMapping.Update();
+                    string newLabel = Controller.GetButtonName(button);
+
+                    buttonMapping.UpdateIcon(newIcon, newLabel);
                 }
             }
 
@@ -97,8 +124,8 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                     // update icon
                     FontIcon newIcon = Controller.GetFontIcon(flags);
-                    axisMapping.UpdateIcon(newIcon);
-                    axisMapping.Update();
+                    string newLabel = Controller.GetAxisName(flags);
+                    axisMapping.UpdateIcon(newIcon, newLabel);
                 }
             }
         }

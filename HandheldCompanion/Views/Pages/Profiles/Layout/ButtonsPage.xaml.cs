@@ -29,9 +29,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         {
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.L2, ButtonFlags.R2,
-            ButtonFlags.L3, ButtonFlags.R3,
-            ButtonFlags.L4, ButtonFlags.R4,
-            ButtonFlags.L5, ButtonFlags.R5,
             ButtonFlags.LPadClick, ButtonFlags.RPadClick,
             ButtonFlags.LPadTouch, ButtonFlags.RPadTouch
         };
@@ -40,6 +37,13 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         public static List<ButtonFlags> MENU = new()
         {
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special
+        };
+
+        // BACK GRIPS
+        public static List<ButtonFlags> BACKGRIPS = new()
+        {
+            ButtonFlags.L4, ButtonFlags.R4,
+            ButtonFlags.L5, ButtonFlags.R5,
         };
 
         // OEM
@@ -54,9 +58,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         public ButtonsPage()
         {
             InitializeComponent();
-
-            // manage layout pages visibility
-            gridOEM.Visibility = MainWindow.CurrentDevice.OEMButtons.Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
@@ -85,6 +86,14 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 Mapping.Add(button, buttonMapping);
             }
 
+            foreach (ButtonFlags button in BACKGRIPS)
+            {
+                ButtonMapping buttonMapping = new ButtonMapping(button);
+                BACKGRIPSStackPanel.Children.Add(buttonMapping);
+
+                Mapping.Add(button, buttonMapping);
+            }
+
             foreach (ButtonFlags button in OEM)
             {
                 if (!MainWindow.CurrentDevice.OEMButtons.Contains(button))
@@ -96,6 +105,9 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                 Mapping.Add(button, buttonMapping);
             }
+
+            // manage layout pages visibility
+            gridOEM.Visibility = MainWindow.CurrentDevice.OEMButtons.Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)
@@ -118,14 +130,13 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                 // update icon
                 FontIcon newIcon = Controller.GetFontIcon(button);
-
-                // unsupported button
-                if (newIcon is null)
-                    continue;
-
-                buttonMapping.UpdateIcon(newIcon);
-                buttonMapping.Update();
+                string newLabel = Controller.GetButtonName(button);
+                buttonMapping.UpdateIcon(newIcon, newLabel);
             }
+
+            // manage layout pages visibility
+            bool HasBackGrips = Controller.IsButtonSupported(ButtonFlags.L4) || Controller.IsButtonSupported(ButtonFlags.L5) || Controller.IsButtonSupported(ButtonFlags.R4) || Controller.IsButtonSupported(ButtonFlags.R5);
+            gridBACKGRIPS.Visibility = HasBackGrips ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public ButtonsPage(string Tag) : this()

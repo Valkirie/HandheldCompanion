@@ -53,13 +53,16 @@ namespace HandheldCompanion.Controls
                 case ButtonFlags.OEM8:
                 case ButtonFlags.OEM9:
                 case ButtonFlags.OEM10:
-                    this.Icon.Glyph = MainWindow.CurrentDevice.GetButtonName(button);
                     break;
             }
+
+            this.Name.Text = MainWindow.CurrentDevice.GetButtonName(button);
         }
 
-        public void UpdateIcon(FontIcon newIcon)
+        public void UpdateIcon(FontIcon newIcon, string newLabel)
         {
+            this.Name.Text = newLabel;
+
             this.Icon.Glyph = newIcon.Glyph;
             this.Icon.FontFamily = newIcon.FontFamily;
             this.Icon.FontSize = newIcon.FontSize;
@@ -68,6 +71,8 @@ namespace HandheldCompanion.Controls
                 this.Icon.Foreground = newIcon.Foreground;
             else
                 this.Icon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+            this.Update();
         }
 
         internal void SetIActions(IActions actions)
@@ -89,6 +94,7 @@ namespace HandheldCompanion.Controls
                 return;
 
             // clear current dropdown values
+            TargetComboBox.Items.Clear();
             TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
             // get current controller
@@ -111,7 +117,6 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
-                TargetComboBox.Items.Clear();
                 foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
                 {
                     if (controller.IsButtonSupported(button))
@@ -136,7 +141,6 @@ namespace HandheldCompanion.Controls
                     this.Actions = new KeyboardActions();
 
                 // localize me ?
-                TargetComboBox.Items.Clear();
                 foreach (VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
                     TargetComboBox.Items.Add(key);
 
@@ -152,7 +156,6 @@ namespace HandheldCompanion.Controls
                 if (this.Actions is null || this.Actions is not MouseActions)
                     this.Actions = new MouseActions();
 
-                TargetComboBox.Items.Clear();
                 foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
                 {
                     // skip axis related actions
@@ -210,7 +213,7 @@ namespace HandheldCompanion.Controls
             Updated?.Invoke(Button, Actions);
         }
 
-        public void Update()
+        private void Update()
         {
             // force full update
             Action_SelectionChanged(null, null);

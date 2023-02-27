@@ -15,13 +15,15 @@
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
                     <ColumnDefinition Width="80"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="80" HorizontalAlignment="Left"/>
+                <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Name="Name" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                     <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
                         <ComboBoxItem Content="None" IsEnabled="True"/>
                         <ComboBoxItem Content="Button" IsEnabled="False"/>
