@@ -1,4 +1,5 @@
 using ControllerCommon.Actions;
+using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
@@ -39,6 +40,10 @@ namespace HandheldCompanion.Views.Pages.Profiles
         public LayoutPage(string Tag) : this()
         {
             this.Tag = Tag;
+
+            // manage layout pages visibility
+            navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads) ? Visibility.Visible : Visibility.Collapsed;
+            navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) || MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) || MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor) ? Visibility.Visible : Visibility.Collapsed;
 
             // create controller related pages
             this._pages = new()

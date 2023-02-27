@@ -21,7 +21,7 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
 
             // initialize components
-            OEMControllerRadio.IsEnabled = MainWindow.handheldDevice.ProductSupported;
+            OEMControllerRadio.IsEnabled = MainWindow.CurrentDevice.ProductSupported;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }

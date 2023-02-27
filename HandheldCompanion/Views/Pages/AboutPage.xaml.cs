@@ -29,22 +29,22 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateDevice(PnPDevice device)
         {
             // Device visual
-            Uri ImageSource = new Uri($"pack://application:,,,/Resources/{MainWindow.handheldDevice.ProductIllustration}.png");
+            Uri ImageSource = new Uri($"pack://application:,,,/Resources/{MainWindow.CurrentDevice.ProductIllustration}.png");
 
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // Motherboard properties
-                LabelManufacturer.Text = MainWindow.handheldDevice.ManufacturerName;
-                LabelProductName.Text = MainWindow.handheldDevice.ProductName;
+                LabelManufacturer.Text = MainWindow.CurrentDevice.ManufacturerName;
+                LabelProductName.Text = MainWindow.CurrentDevice.ProductName;
                 HandheldGrid.Visibility = Visibility.Visible;
 
                 VersionValue.Text = MainWindow.fileVersionInfo.FileVersion;
 
-                SensorInternal.Text = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows] ? MainWindow.handheldDevice.InternalSensorName : string.Empty;
-                SensorExternal.Text = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU] ? MainWindow.handheldDevice.ExternalSensorName : string.Empty;
+                SensorInternal.Text = MainWindow.CurrentDevice.Capacities.HasFlag(ControllerCommon.Devices.DeviceCapacities.InternalSensor) ? MainWindow.CurrentDevice.InternalSensorName : string.Empty;
+                SensorExternal.Text = MainWindow.CurrentDevice.Capacities.HasFlag(ControllerCommon.Devices.DeviceCapacities.ExternalSensor) ? MainWindow.CurrentDevice.ExternalSensorName : string.Empty;
 
-                if (!MainWindow.handheldDevice.ProductSupported)
+                if (!MainWindow.CurrentDevice.ProductSupported)
                 {
                     WarningBorder.Visibility = Visibility.Visible;
                     WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";

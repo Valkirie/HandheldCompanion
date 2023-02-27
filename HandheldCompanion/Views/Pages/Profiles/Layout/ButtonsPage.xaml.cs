@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages.Profiles.Controller
@@ -54,6 +55,9 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         {
             InitializeComponent();
 
+            // manage layout pages visibility
+            gridOEM.Visibility = MainWindow.CurrentDevice.OEMButtons.Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
+
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
             // draw UI
@@ -83,7 +87,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (ButtonFlags button in OEM)
             {
-                if (!MainWindow.handheldDevice.OEMButtons.Contains(button))
+                if (!MainWindow.CurrentDevice.OEMButtons.Contains(button))
                     continue;
 
                 ButtonMapping buttonMapping = new ButtonMapping(button);

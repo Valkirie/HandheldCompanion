@@ -138,6 +138,9 @@ namespace HandheldCompanion.Controllers
         private XInputStateSecret State;
         private XInputStateSecret prevState;
 
+        public XInputController()
+        { }
+
         public XInputController(Controller controller)
         {
             Controller = controller;

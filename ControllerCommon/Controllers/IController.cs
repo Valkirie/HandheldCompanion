@@ -18,6 +18,7 @@ namespace ControllerCommon.Controllers
         None = 0,
         Gyroscope = 1,
         Accelerometer = 2,
+        Trackpad = 3,
     }
 
     public abstract class IController
@@ -121,6 +122,11 @@ namespace ControllerCommon.Controllers
         public bool HasAccelerometer()
         {
             return Capacities.HasFlag(ControllerCapacities.Accelerometer);
+        }
+
+        public bool HasTrackpad()
+        {
+            return Capacities.HasFlag(ControllerCapacities.Trackpad);
         }
 
         public bool IsVirtual()

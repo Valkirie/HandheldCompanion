@@ -122,7 +122,7 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case OverlayModelMode.OEM:
                     {
-                        switch (MainWindow.handheldDevice.ProductModel)
+                        switch (MainWindow.CurrentDevice.ProductModel)
                         {
                             case "AYANEO2021":
                                 newModel = new ModelAYANEO2021();

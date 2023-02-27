@@ -49,7 +49,13 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="GyroPage">
+            <ui:NavigationViewItem Name="navTrackpads" Content="Trackpads" Tag="TrackpadsPage" Visibility="Collapsed">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;"></ui:FontIcon>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="GyroPage" Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>

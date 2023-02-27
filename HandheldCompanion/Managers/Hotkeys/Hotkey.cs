@@ -233,7 +233,7 @@ namespace HandheldCompanion.Managers
             if (HasInput())
             {
                 IController controller = ControllerManager.GetTargetController();
-                IDevice device = MainWindow.handheldDevice;
+                IDevice device = MainWindow.CurrentDevice;
 
                 foreach (ButtonFlags button in inputsChord.State.Buttons)
                 {

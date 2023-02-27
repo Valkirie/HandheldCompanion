@@ -33,9 +33,11 @@
             </ui:SimpleStackPanel>
 
             <!-- OEM -->
-            <TextBlock Text="OEM" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="OEMStackPanel">
-            </ui:SimpleStackPanel>
+            <Grid x:Name="gridOEM" Visibility="Collapsed">
+                <TextBlock Text="OEM" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                <ui:SimpleStackPanel Spacing="6" Name="OEMStackPanel">
+                </ui:SimpleStackPanel>
+            </Grid>
 
         </ui:SimpleStackPanel>
     </Grid>

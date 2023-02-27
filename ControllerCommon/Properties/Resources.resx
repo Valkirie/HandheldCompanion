@@ -258,18 +258,6 @@
   <data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
     <value>View</value>
   </data>
-  <data name="Enum.NeptuneController.ButtonFlags.L1" xml:space="preserve">
-    <value>LB</value>
-  </data>
-  <data name="Enum.NeptuneController.ButtonFlags.L2" xml:space="preserve">
-    <value>LT</value>
-  </data>
-  <data name="Enum.NeptuneController.ButtonFlags.R1" xml:space="preserve">
-    <value>RB</value>
-  </data>
-  <data name="Enum.NeptuneController.ButtonFlags.R2" xml:space="preserve">
-    <value>RT</value>
-  </data>
   <data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>

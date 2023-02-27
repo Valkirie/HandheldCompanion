@@ -195,7 +195,7 @@ namespace HandheldCompanion.Managers
                 }
                 else
                 {
-                    DeviceChord chord = MainWindow.handheldDevice.OEMChords.Where(a => a.state == currentChord.State).FirstOrDefault();
+                    DeviceChord chord = MainWindow.CurrentDevice.OEMChords.Where(a => a.state == currentChord.State).FirstOrDefault();
                     if (chord is null)
                         return;
 
@@ -296,7 +296,7 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            foreach (DeviceChord pair in MainWindow.handheldDevice.OEMChords.Where(a => !a.silenced))
+            foreach (DeviceChord pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
             {
                 List<KeyCode> chord = pair.chords[args.IsKeyDown];
                 if (KeyIndex >= chord.Count)
@@ -331,7 +331,7 @@ namespace HandheldCompanion.Managers
                 // search for matching triggers
                 string buffer_keys = GetChord(BufferKeys);
 
-                foreach (DeviceChord chord in MainWindow.handheldDevice.OEMChords.Where(a => a.chords[args.IsKeyDown].Count == BufferKeys.Count))
+                foreach (DeviceChord chord in MainWindow.CurrentDevice.OEMChords.Where(a => a.chords[args.IsKeyDown].Count == BufferKeys.Count))
                 {
                     // compare ordered enumerable
                     string chord_keys = chord.GetChord(args.IsKeyDown);

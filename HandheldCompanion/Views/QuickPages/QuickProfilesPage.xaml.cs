@@ -214,7 +214,7 @@ namespace HandheldCompanion.Views.QuickPages
                     cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)profile.MotionMode;
 
                     // Sustained TDP settings (slow, stapm, long)
-                    double[] TDP = profile.TDPOverrideValues is not null ? profile.TDPOverrideValues : MainWindow.handheldDevice.nTDP;
+                    double[] TDP = profile.TDPOverrideValues is not null ? profile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
                     TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                     TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
@@ -356,7 +356,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             // create profile
             currentProfile = new Profile(currentProcess.Path);
-            currentProfile.TDPOverrideValues = MainWindow.handheldDevice.nTDP;
+            currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
             // if an update is pending, execute it and stop timer
             if (UpdateTimer.IsRunning())

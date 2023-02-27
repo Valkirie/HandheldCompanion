@@ -372,17 +372,17 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.B4:
                     return "\u21D1"; // Button Y
                 case ButtonFlags.L1:
-                    return "\u2198";
+                    return "\u21B0";
                 case ButtonFlags.R1:
-                    return "\u2199";
+                    return "\u21B1";
                 case ButtonFlags.Back:
                     return "\u21FA";
                 case ButtonFlags.Start:
                     return "\u21FB";
                 case ButtonFlags.L2:
-                    return "\u2196";
+                    return "\u21B2";
                 case ButtonFlags.R2:
-                    return "\u2197";
+                    return "\u21B3";
                 case ButtonFlags.Special:
                     return "\uE001";
             }

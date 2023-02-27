@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             Type DeviceType = hotkey.inputsHotkey.DeviceType;
-            if (DeviceType is not null && DeviceType != MainWindow.handheldDevice.GetType())
+            if (DeviceType is not null && DeviceType != MainWindow.CurrentDevice.GetType())
                 return;
 
             // UI thread

@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf;
@@ -137,9 +138,9 @@ namespace HandheldCompanion.Views.Pages
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                SensorInternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows];
-                SensorExternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU];
-                SensorController.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Controller];
+                SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor);
+                SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor);
+                SensorController.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor);
             });
         }
 

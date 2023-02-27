@@ -53,7 +53,7 @@ namespace HandheldCompanion.Views.Pages
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
 
             // device specific settings
-            Type DeviceType = MainWindow.handheldDevice.GetType();
+            Type DeviceType = MainWindow.CurrentDevice.GetType();
             if (DeviceType == typeof(SteamDeck))
                 SteamDeckPanel.Visibility = Visibility.Visible;
         }

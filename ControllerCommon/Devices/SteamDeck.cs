@@ -13,7 +13,7 @@ namespace ControllerCommon.Devices
             this.ProductModel = "SteamDeck";
 
             // Steam Controller Neptune
-            this.hasSensors[Utils.DeviceUtils.SensorFamily.Controller] = true;
+            this.Capacities |= DeviceCapacities.ControllerSensor;
 
             // https://www.steamdeck.com/en/tech
             this.nTDP = new double[] { 10, 10, 15 };

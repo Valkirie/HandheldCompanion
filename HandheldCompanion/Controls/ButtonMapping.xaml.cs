@@ -53,7 +53,7 @@ namespace HandheldCompanion.Controls
                 case ButtonFlags.OEM8:
                 case ButtonFlags.OEM9:
                 case ButtonFlags.OEM10:
-                    this.Icon.Glyph = MainWindow.handheldDevice.GetButtonName(button);
+                    this.Icon.Glyph = MainWindow.CurrentDevice.GetButtonName(button);
                     break;
             }
         }

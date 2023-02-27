@@ -35,8 +35,8 @@ namespace HandheldCompanion.Views.QuickPages
             DesktopManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
             DesktopManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
 
-            GPUSlider.Minimum = MainWindow.handheldDevice.GfxClock[0];
-            GPUSlider.Maximum = MainWindow.handheldDevice.GfxClock[1];
+            GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
+            GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
         }
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -269,7 +269,7 @@ namespace HandheldCompanion.Views.QuickPages
             else
             {
                 // restore default TDP and halt watchdog
-                MainWindow.performanceManager.RequestTDP(MainWindow.handheldDevice.nTDP);
+                MainWindow.performanceManager.RequestTDP(MainWindow.CurrentDevice.nTDP);
 
                 MainWindow.performanceManager.StopTDPWatchdog();
             }

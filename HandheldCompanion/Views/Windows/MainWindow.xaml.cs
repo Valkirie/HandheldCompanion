@@ -34,7 +34,7 @@ namespace HandheldCompanion.Views
     public partial class MainWindow : Window
     {
         // devices vars
-        public static IDevice handheldDevice;
+        public static IDevice CurrentDevice;
 
         // page vars
         private static Dictionary<string, Page> _pages = new();
@@ -143,8 +143,8 @@ namespace HandheldCompanion.Views
             this.Title += $" ({fileVersionInfo.FileVersion})";
 
             // initialize device
-            handheldDevice = IDevice.GetDefault();
-            handheldDevice.PullSensors();
+            CurrentDevice = IDevice.GetDefault();
+            CurrentDevice.PullSensors();
 
             // initialize pipe client
             PipeClient.Initialize("ControllerService");
@@ -318,7 +318,7 @@ namespace HandheldCompanion.Views
 
         private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
         {
-            handheldDevice.PullSensors();
+            CurrentDevice.PullSensors();
 
             aboutPage.UpdateDevice(device);
             settingsPage.UpdateDevice(device);

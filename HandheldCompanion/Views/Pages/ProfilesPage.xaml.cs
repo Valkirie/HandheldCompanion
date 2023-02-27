@@ -270,7 +270,7 @@ namespace HandheldCompanion.Views.Pages
                     Profile profile = new Profile(path);
 
                     // set default value(s)
-                    profile.TDPOverrideValues = MainWindow.handheldDevice.nTDP;
+                    profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                     bool exists = false;
 
@@ -381,7 +381,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
 
                 // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.handheldDevice.nTDP;
+                double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
                 TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                 TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 

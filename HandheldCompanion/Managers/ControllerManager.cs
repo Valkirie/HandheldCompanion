@@ -67,6 +67,10 @@ namespace HandheldCompanion.Managers
             IsInitialized = true;
             Initialized?.Invoke();
 
+            // summon an empty controller, used to feed Layout UI
+            // todo: improve me
+            ControllerSelected?.Invoke(new XInputController());
+
             LogManager.LogInformation("{0} has started", "ControllerManager");
         }
 
@@ -398,6 +402,9 @@ namespace HandheldCompanion.Managers
             if (controller is null)
                 return;
 
+            if (controller.IsVirtual())
+                return;
+
             // update target controller
             targetController = controller;
 
@@ -445,8 +452,10 @@ namespace HandheldCompanion.Managers
             // todo: pass inputs to (re)mapper
             controllerState = LayoutManager.MapController(controllerState);
 
-            // Neptune controller specific scenarios
+            // Controller specific scenarios
             if (targetController is not null)
+            {
+                // Neptune controller
                 if (targetController.GetType() == typeof(NeptuneController))
                 {
                     NeptuneController neptuneController = (NeptuneController)targetController;
@@ -469,6 +478,7 @@ namespace HandheldCompanion.Managers
                         }
                     }
                 }
+            }
 
             // pass inputs to service
             PipeClient.SendMessage(new PipeClientInputs(controllerState));

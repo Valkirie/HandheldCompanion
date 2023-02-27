@@ -104,7 +104,7 @@ namespace HandheldCompanion.Managers
                         bool TDPoverride = GetBoolean("ConfigurableTDPOverride");
 
                         double TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideDown"]);
-                        return TDPoverride ? Properties.Settings.Default["ConfigurableTDPOverrideDown"] : MainWindow.handheldDevice.cTDP[0];
+                        return TDPoverride ? Properties.Settings.Default["ConfigurableTDPOverrideDown"] : MainWindow.CurrentDevice.cTDP[0];
                     }
 
                 case "ConfigurableTDPOverrideUp":
@@ -112,7 +112,7 @@ namespace HandheldCompanion.Managers
                         bool TDPoverride = GetBoolean("ConfigurableTDPOverride");
 
                         double TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideUp"]);
-                        return TDPoverride ? Properties.Settings.Default["ConfigurableTDPOverrideUp"] : MainWindow.handheldDevice.cTDP[1];
+                        return TDPoverride ? Properties.Settings.Default["ConfigurableTDPOverrideUp"] : MainWindow.CurrentDevice.cTDP[1];
                     }
 
                 case "QuickToolsPerformanceTDPSustainedValue":
@@ -120,7 +120,7 @@ namespace HandheldCompanion.Managers
                         bool TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
 
                         double TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPSustainedValue"]);
-                        return TDPvalue != 0 ? Properties.Settings.Default["QuickToolsPerformanceTDPSustainedValue"] : MainWindow.handheldDevice.nTDP[(int)PowerType.Slow];
+                        return TDPvalue != 0 ? Properties.Settings.Default["QuickToolsPerformanceTDPSustainedValue"] : MainWindow.CurrentDevice.nTDP[(int)PowerType.Slow];
                     }
 
                 case "QuickToolsPerformanceTDPBoostValue":
@@ -128,7 +128,7 @@ namespace HandheldCompanion.Managers
                         bool TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
 
                         double TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]);
-                        return TDPvalue != 0 ? Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"] : MainWindow.handheldDevice.nTDP[(int)PowerType.Fast];
+                        return TDPvalue != 0 ? Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"] : MainWindow.CurrentDevice.nTDP[(int)PowerType.Fast];
                     }
 
                 case "QuickToolsPerformanceGPUValue":
