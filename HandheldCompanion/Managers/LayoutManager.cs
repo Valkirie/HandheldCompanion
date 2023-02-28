@@ -180,29 +180,17 @@ namespace HandheldCompanion.Managers
             {
                 AxisLayoutFlags flags = axisLayout.Key;
 
-                AxisLayout layout = AxisLayout.Layouts[flags];
+                // read origin values
+                AxisLayout InLayout = AxisLayout.Layouts[flags];
+                AxisFlags InAxisX = InLayout.GetAxisFlags('X');
+                AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
 
-                foreach (AxisFlags axis in layout.axis)
-                {
-                    switch(axis)
-                    {
-                        case AxisFlags.LeftThumbX:
-                        case AxisFlags.RightThumbX:
-                        case AxisFlags.LeftPadX:
-                        case AxisFlags.RightPadX:
-                            layout.vector.X = outputState.AxisState[axis];
-                            break;
+                InLayout.vector.X = outputState.AxisState[InAxisX];
+                InLayout.vector.Y = outputState.AxisState[InAxisY];
 
-                        default:
-                        case AxisFlags.L2:
-                        case AxisFlags.R2:
-                            layout.vector.Y = outputState.AxisState[axis];
-                            break;
-                    }
-
-                    // consume origin values
-                    outputState.AxisState[axis] = 0;
-                }
+                // consume origin values
+                outputState.AxisState[InAxisX] = 0;
+                outputState.AxisState[InAxisY] = 0;
 
                 // pull action
                 IActions action = axisLayout.Value;
@@ -211,14 +199,22 @@ namespace HandheldCompanion.Managers
                     case ActionType.Axis:
                         {
                             AxisActions aAction = action as AxisActions;
-                            aAction.Execute(layout);
+                            aAction.Execute(InLayout);
+
+                            // read output axis
+                            AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
+                            AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
+                            AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+
+                            outputState.AxisState[OutAxisX] = (short)aAction.GetValue().X;
+                            outputState.AxisState[OutAxisY] = (short)aAction.GetValue().Y;
                         }
                         break;
 
                     case ActionType.Mouse:
                         {
                             MouseActions mAction = action as MouseActions;
-                            mAction.Execute(layout);
+                            mAction.Execute(InLayout);
                         }
                         break;
                 }

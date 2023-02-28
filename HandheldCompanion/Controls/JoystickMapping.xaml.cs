@@ -110,10 +110,11 @@ namespace HandheldCompanion.Controls
                 }
 
                 // settings
-                Axis_Invert.IsOn = ((AxisActions)this.Actions).AxisInverted;
-                Axis_InnerDeadzone_Slider.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
-                Axis_OuterDeadzone_Slider.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
-                Axis_AntiDeadZone_Slider.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
+                Axis2AxisImproveCircularity.IsOn = ((AxisActions)this.Actions).ImproveCircularity;
+                Axis2AxisInvertAxis.IsOn = ((AxisActions)this.Actions).AxisInverted;
+                Axis2AxisInnerDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
+                Axis2AxisOuterDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
+                Axis2AxisAntiDeadzone.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
             }
             else if (type == ActionType.Mouse)
             {
@@ -131,9 +132,13 @@ namespace HandheldCompanion.Controls
                 }
 
                 TargetComboBox.SelectedItem = ((MouseActions)this.Actions).MouseType;
+
+                // settings
+                Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
+                Axis2MouseImprovePrecision.IsOn = ((MouseActions)this.Actions).EnhancePrecision;
             }
 
-            // update button mapping
+            // update axis mapping
             Updated?.Invoke(Axis, Actions);
         }
 
@@ -175,7 +180,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update button mapping
+            // update axis mapping
             Updated?.Invoke(Axis, Actions);
         }
 
@@ -200,9 +205,12 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Axis:
-                    ((AxisActions)this.Actions).AxisInverted = Axis_Invert.IsOn;
+                    ((AxisActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
                     break;
             }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
         }
 
         private void Axis_InnerDeadzone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -213,9 +221,12 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Axis:
-                    ((AxisActions)this.Actions).AxisDeadZoneInner = (int)Axis_InnerDeadzone_Slider.Value;
+                    ((AxisActions)this.Actions).AxisDeadZoneInner = (int)Axis2AxisInnerDeadzone.Value;
                     break;
             }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
         }
 
         private void Axis_OuterDeadzone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -226,9 +237,12 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Axis:
-                    ((AxisActions)this.Actions).AxisDeadZoneOuter = (int)Axis_OuterDeadzone_Slider.Value;
+                    ((AxisActions)this.Actions).AxisDeadZoneOuter = (int)Axis2AxisOuterDeadzone.Value;
                     break;
             }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
         }
 
         private void Axis_AntiDeadZone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -239,9 +253,60 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Axis:
-                    ((AxisActions)this.Actions).AxisAntiDeadZone = (int)Axis_AntiDeadZone_Slider.Value;
+                    ((AxisActions)this.Actions).AxisAntiDeadZone = (int)Axis2AxisAntiDeadzone.Value;
                     break;
             }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
+        }
+
+        private void Axis2AxisImproveCircularity_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Axis:
+                    ((AxisActions)this.Actions).ImproveCircularity = Axis2AxisImproveCircularity.IsOn;
+                    break;
+            }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
+        }
+
+        private void Axis2MousePointerSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).Sensivity = (int)Axis2MousePointerSpeed.Value;
+                    break;
+            }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
+        }
+
+        private void Axis2MouseImprovePrecision_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).EnhancePrecision = Axis2MouseImprovePrecision.IsOn;
+                    break;
+            }
+
+            // update axis mapping
+            Updated?.Invoke(Axis, Actions);
         }
     }
 }

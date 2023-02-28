@@ -25,6 +25,7 @@ namespace HandheldCompanion.Actions
         private bool IsCursorUp { get; set; }
 
         // settings
+        public bool EnhancePrecision { get; set; } = false;
         public float Sensivity { get; set; } = 20.0f;
 
         public MouseActions()

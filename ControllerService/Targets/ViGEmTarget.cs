@@ -90,13 +90,6 @@ namespace ControllerService.Targets
             LeftThumb = new Vector2(Inputs.AxisState[AxisFlags.LeftThumbX], Inputs.AxisState[AxisFlags.LeftThumbY]);
             RightThumb = new Vector2(Inputs.AxisState[AxisFlags.RightThumbX], Inputs.AxisState[AxisFlags.RightThumbY]);
 
-            // Improve joystick circularity
-            if (ControllerService.currentProfile.thumb_improve_circularity_left)
-                LeftThumb = InputUtils.ImproveCircularity(LeftThumb);
-
-            if (ControllerService.currentProfile.thumb_improve_circularity_right)
-                RightThumb = InputUtils.ImproveCircularity(RightThumb);
-
             if (ControllerService.currentProfile.MotionEnabled)
             {
                 if ((ControllerService.currentProfile.MotionMode == MotionMode.Off && Inputs.ButtonState.Contains(ControllerService.currentProfile.MotionTrigger)) ||

@@ -244,6 +244,9 @@ namespace HandheldCompanion.Controls
                     ((MouseActions)this.Actions).Turbo = Toggle_Turbo.IsOn;
                     break;
             }
+
+            // update button mapping
+            Updated?.Invoke(Button, Actions);
         }
 
         private void Turbo_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -263,6 +266,9 @@ namespace HandheldCompanion.Controls
                     ((MouseActions)this.Actions).TurboDelay = (byte)Turbo_Slider.Value;
                     break;
             }
+
+            // update button mapping
+            Updated?.Invoke(Button, Actions);
         }
 
         private void Toggle_Toggle_Toggled(object sender, RoutedEventArgs e)
@@ -282,6 +288,9 @@ namespace HandheldCompanion.Controls
                     ((MouseActions)this.Actions).Toggle = Toggle_Toggle.IsOn;
                     break;
             }
+
+            // update button mapping
+            Updated?.Invoke(Button, Actions);
         }
         #endregion
     }

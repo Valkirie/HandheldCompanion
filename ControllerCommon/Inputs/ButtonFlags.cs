@@ -54,8 +54,16 @@ namespace ControllerCommon.Inputs
         OEM6 = 35, OEM7 = 36, OEM8 = 37, OEM9 = 38, OEM10 = 39,
 
         // Steam Deck
-        LPadTouch = 40, RPadTouch = 41,
-        LPadClick = 42, RPadClick = 43,
+        [Description("Touch")]
+        LPadTouch = 40,
+        [Description("Touch")]
+        RPadTouch = 41,
+
+        [Description("Click")]
+        LPadClick = 42,
+        [Description("Click")]
+        RPadClick = 43,
+
         L4 = 46, R4 = 47,
         L5 = 48, R5 = 49,
 
@@ -67,25 +75,4 @@ namespace ControllerCommon.Inputs
         LPadClickUp = 52, LPadClickDown = 53, LPadClickLeft = 54, LPadClickRight = 55,
         RPadClickUp = 56, RPadClickDown = 57, RPadClickLeft = 58, RPadClickRight = 59,
     }
-
-    /*
-    [Serializable]
-    public class ButtonFlags
-    {
-        private ButtonFlags _ButtonFlags;
-
-        public ButtonFlags this[ButtonFlags button]
-        {
-            get
-            {
-                return _ButtonFlags;
-            }
-
-            set
-            {
-                _ButtonFlags = value;
-            }
-        }
-    }
-    */
 }

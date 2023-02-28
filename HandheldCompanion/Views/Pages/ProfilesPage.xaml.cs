@@ -347,7 +347,6 @@ namespace HandheldCompanion.Views.Pages
             {
                 // enable all expanders
                 ProfileDetails.IsEnabled = true;
-                ControllerSettings.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
 
@@ -368,9 +367,6 @@ namespace HandheldCompanion.Views.Pages
                 // Global settings
                 cB_Whitelist.IsChecked = currentProfile.Whitelisted;
                 cB_Wrapper.IsChecked = currentProfile.XInputPlus;
-
-                // Controller settings
-                Toggle_ThumbImproveCircularityLeft.IsOn = currentProfile.thumb_improve_circularity_left;
 
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.GyrometerMultiplier;
@@ -470,9 +466,6 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
             currentProfile.XInputPlus = (bool)cB_Wrapper.IsChecked;
 
-            // Controller settings
-            currentProfile.thumb_improve_circularity_left = (bool)Toggle_ThumbImproveCircularityLeft.IsOn;
-
             // Motion control settings
             currentProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
             currentProfile.AccelerometerMultiplier = (float)tb_ProfileAcceleroValue.Value;
@@ -537,16 +530,6 @@ namespace HandheldCompanion.Views.Pages
         }
 
         private void Toggle_EnableProfile_Toggled(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
-
-        private void Toggle_ThumbImproveCircularityLeft_Toggled(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
-
-        private void Toggle_ThumbImproveCircularityRight_Toggled(object sender, RoutedEventArgs e)
         {
             // do something
         }

@@ -26,24 +26,26 @@ namespace ControllerCommon.Inputs
         };
 
         public AxisLayoutFlags flags = AxisLayoutFlags.None;
-        public List<AxisFlags> axis = new();
+        private Dictionary<char, AxisFlags> axis = new();
         public Vector2 vector = new();
-        public string glyph;
 
         public AxisLayout(AxisLayoutFlags flags, AxisFlags axisY)
         {
             this.flags = flags;
-            axis.Add(axisY);
+            axis.Add('Y', axisY);
         }
 
         public AxisLayout(AxisLayoutFlags flags, AxisFlags axisX, AxisFlags axisY) : this(flags, axisY)
         {
-            axis.Add(axisX);
+            axis.Add('X', axisX);
         }
 
-        public override string ToString()
+        public AxisFlags GetAxisFlags(char axisName)
         {
-            return flags.ToString();
+            if (axis.ContainsKey(axisName))
+                return axis[axisName];
+
+            return AxisFlags.None;
         }
     }
 

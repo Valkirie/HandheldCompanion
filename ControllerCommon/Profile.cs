@@ -76,9 +76,6 @@ namespace ControllerCommon
 
         public int SteeringAxis { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
 
-        public bool thumb_improve_circularity_left { get; set; } = true;
-        public bool thumb_improve_circularity_right { get; set; } = true;
-
         public bool MotionEnabled { get; set; }
         public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;
         public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;

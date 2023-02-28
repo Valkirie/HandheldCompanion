@@ -180,57 +180,6 @@
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
-                    
-                    <Expander Name="ControllerSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">
-                        <Expander.Header>
-                            <DockPanel Margin="0,12,12,12">
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Center"/>
-
-                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettings}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ControllerSettingsDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                </ui:SimpleStackPanel>
-                            </DockPanel>
-                        </Expander.Header>
-
-                        <Expander.Content>
-                            <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
-
-                                <!-- Improve circularity left -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityLeft}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:ToggleSwitch Grid.Column="1" Name="Toggle_ThumbImproveCircularityLeft" Toggled="Toggle_ThumbImproveCircularityLeft_Toggled"/>
-                                </Grid>
-
-                                <!-- Separator -->
-                                <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
-
-                                <!-- Improve circularity right -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                                        <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityRight}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_ThumbImproveCircularityDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-
-                                    <ui:ToggleSwitch Grid.Column="1" Name="Toggle_ThumbImproveCircularityRight" Toggled="Toggle_ThumbImproveCircularityRight_Toggled"/>
-                                </Grid>
-                            </ui:SimpleStackPanel>
-                        </Expander.Content>
-                    </Expander>
 
                     <!-- Power settings -->
                     <Expander Name="PowerSettings" Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsEnabled="false">

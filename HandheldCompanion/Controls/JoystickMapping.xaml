@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HandheldCompanion.Controls"
+             xmlns:resx="clr-namespace:HandheldCompanion.Properties"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              Visibility="Collapsed"
              mc:Ignorable="d" 
@@ -38,21 +39,38 @@
         </Expander.Header>
         <Expander.Content>
             <StackPanel>
-                <!-- Axis 2 Axis/Mouse -->
+                <!-- Axis 2 Axis -->
                 <Grid Name="Axis2Axis" d:Visibility="Visible"
-                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|4}">
+                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
 
                     <ui:SimpleStackPanel Spacing="12">                        
                         <ui:SimpleStackPanel Spacing="6">
+
+                            <!-- Improve circularity -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Invert Axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Improve circularity" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
-                                <ui:ToggleSwitch Name="Axis_Invert" Grid.Column="1" HorizontalAlignment="Right" Toggled="Axis_Invert_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
+                                <ui:ToggleSwitch Name="Axis2AxisImproveCircularity" Grid.Column="1" Toggled="Axis2AxisImproveCircularity_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
+                            <!-- Invert Axis -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Invert axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2AxisInvertAxis" Grid.Column="1" Toggled="Axis_Invert_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->
@@ -63,10 +81,10 @@
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock Text="Inner deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Value, ElementName=Axis_InnerDeadzone_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2AxisInnerDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis_InnerDeadzone_Slider" FlowDirection="LeftToRight" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged"/>
+                                    <Slider Name="Axis2AxisInnerDeadzone" FlowDirection="LeftToRight" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -78,10 +96,10 @@
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock Text="Outer deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Value, ElementName=Axis_OuterDeadzone_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2AxisOuterDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis_OuterDeadzone_Slider" FlowDirection="RightToLeft" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged"/>
+                                    <Slider Name="Axis2AxisOuterDeadzone" FlowDirection="RightToLeft" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -93,16 +111,56 @@
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock Text="Anti deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Value, ElementName=Axis_AntiDeadZone_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2AxisAntiDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis_AntiDeadZone_Slider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged"/>
+                                    <Slider Name="Axis2AxisAntiDeadzone" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
                             <!-- Separator -->
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
+
+                <!-- Axis 2 Mouse -->
+                <Grid Name="Axis2Mouse" d:Visibility="Visible"
+                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+
+                    <ui:SimpleStackPanel Spacing="12">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Enhance pointer precision" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2MouseImprovePrecision" Grid.Column="1" Toggled="Axis2MouseImprovePrecision_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
+                            <!-- Sensivity -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Mouse pointer speed" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis2MousePointerSpeed" Minimum="10" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis2MousePointerSpeed_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
