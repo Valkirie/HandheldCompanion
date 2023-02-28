@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Inputs;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 using System.Windows.Media;
 
@@ -110,8 +111,11 @@ namespace HandheldCompanion.Controllers
                     break;
             }
 
-            Inputs.AxisState[AxisFlags.R2] = (short)(State.RotationY * byte.MaxValue / ushort.MaxValue);
             Inputs.AxisState[AxisFlags.L2] = (short)(State.RotationX * byte.MaxValue / ushort.MaxValue);
+            Inputs.AxisState[AxisFlags.R2] = (short)(State.RotationY * byte.MaxValue / ushort.MaxValue);
+
+            Inputs.ButtonState[ButtonFlags.L3] = Inputs.AxisState[AxisFlags.L2] > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R3] = Inputs.AxisState[AxisFlags.R2] > Gamepad.TriggerThreshold * 8;
 
             Inputs.AxisState[AxisFlags.LeftThumbX] = (short)(Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue));
             Inputs.AxisState[AxisFlags.LeftThumbY] = (short)(Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue));
@@ -158,8 +162,10 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.Start:
                     return "\u21E8";
                 case ButtonFlags.L2:
+                case ButtonFlags.L3:
                     return "\u21B2";
                 case ButtonFlags.R2:
+                case ButtonFlags.R3:
                     return "\u21B3";
                 case ButtonFlags.Special:
                     return "\uE000";

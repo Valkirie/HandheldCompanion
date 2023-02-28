@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
@@ -474,9 +475,17 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "InputsManager");
         }
 
-        public static void UpdateReport(ButtonState State)
+        public static void UpdateReport(ButtonState buttonState)
         {
-            if (prevState.Equals(State))
+            // short-press or half-press inputs shouldn't be used as hotkeys
+            buttonState.State[ButtonFlags.L3] = false;
+            buttonState.State[ButtonFlags.R3] = false;
+            buttonState.State[ButtonFlags.LeftThumbTouch] = false;
+            buttonState.State[ButtonFlags.RightThumbTouch] = false;
+            buttonState.State[ButtonFlags.LPadTouch] = false;
+            buttonState.State[ButtonFlags.RPadTouch] = false;
+
+            if (prevState.Equals(buttonState))
                 return;
 
             GamepadResetTimer.Stop();
@@ -485,7 +494,7 @@ namespace HandheldCompanion.Managers
             bool IsKeyUp = false;
 
             // IsKeyDown (filter on "fake" keys)
-            if (!State.IsEmpty())
+            if (!buttonState.IsEmpty())
             {
                 // reset hold timer
                 InputsChordHoldTimer.Stop();
@@ -493,18 +502,18 @@ namespace HandheldCompanion.Managers
 
                 if (GamepadClearPending)
                 {
-                    currentChord.State = State.Clone() as ButtonState;
+                    currentChord.State = buttonState.Clone() as ButtonState;
                     GamepadClearPending = false;
                 }
                 else
-                    currentChord.State.AddRange(State);
+                    currentChord.State.AddRange(buttonState);
 
                 currentChord.InputsType = InputsChordType.Click;
 
                 IsKeyDown = true;
             }
             // IsKeyUp
-            else if (State.IsEmpty() && !currentChord.State.IsEmpty())
+            else if (buttonState.IsEmpty() && !currentChord.State.IsEmpty())
             {
                 GamepadClearPending = true;
 
@@ -519,7 +528,7 @@ namespace HandheldCompanion.Managers
                 currentChord.State.Clear();
             }
 
-            prevState = State.Clone() as ButtonState;
+            prevState = buttonState.Clone() as ButtonState;
 
             GamepadResetTimer.Start();
         }

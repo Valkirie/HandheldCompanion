@@ -21,16 +21,15 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         // A,B,X,Y
         public static List<ButtonFlags> ABXY = new()
         {
-            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4, ButtonFlags.B5, ButtonFlags.B6, ButtonFlags.B7
+            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4, ButtonFlags.B5, ButtonFlags.B6, ButtonFlags.B7, ButtonFlags.B8
         };
 
         // BUMPERS
         public static List<ButtonFlags> BUMPERS = new()
         {
             ButtonFlags.L1, ButtonFlags.R1,
-            ButtonFlags.L2, ButtonFlags.R2,
-            ButtonFlags.LPadClick, ButtonFlags.RPadClick,
-            ButtonFlags.LPadTouch, ButtonFlags.RPadTouch
+            ButtonFlags.L2, ButtonFlags.L3,
+            ButtonFlags.R2, ButtonFlags.R3,
         };
 
         // MENU

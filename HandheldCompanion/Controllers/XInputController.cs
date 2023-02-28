@@ -215,6 +215,9 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.L2] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
             Inputs.ButtonState[ButtonFlags.R2] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
 
+            Inputs.ButtonState[ButtonFlags.L3] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R3] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
+
             Inputs.ButtonState[ButtonFlags.LeftThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
             Inputs.ButtonState[ButtonFlags.RightThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
 
@@ -343,8 +346,10 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.Start:
                     return "\u21FB";
                 case ButtonFlags.L2:
+                case ButtonFlags.L3:
                     return "\u2196";
                 case ButtonFlags.R2:
+                case ButtonFlags.R3:
                     return "\u2197";
                 case ButtonFlags.Special:
                     return "\uE001";

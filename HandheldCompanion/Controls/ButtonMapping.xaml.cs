@@ -125,7 +125,7 @@ namespace HandheldCompanion.Controls
 
                 foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
                 {
-                    if (controller.IsButtonSupported(button))
+                    if (controller.IsButtonSupported(button) && !controller.IsButtonBlacklisted(button))
                     {
                         // create a label, store ButtonFlags as Tag and Label as controller specific string
                         Label buttonLabel = new Label() { Tag = button, Content = controller.GetButtonName(button) };

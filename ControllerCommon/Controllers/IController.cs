@@ -34,6 +34,15 @@ namespace ControllerCommon.Controllers
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
+        // buttons that should only be used as inputs
+        protected List<ButtonFlags> ButtonBlackList = new()
+        {
+            ButtonFlags.L2, ButtonFlags.R2,
+            ButtonFlags.L3, ButtonFlags.R3,
+            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
+            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+        };
+
         protected List<ButtonFlags> ButtonSupport = new()
         {
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
@@ -41,6 +50,7 @@ namespace ControllerCommon.Controllers
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
             ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.L2, ButtonFlags.R2,
+            ButtonFlags.L3, ButtonFlags.R3,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
             ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
             ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
@@ -401,6 +411,11 @@ namespace ControllerCommon.Controllers
                 return AxisBrush[axis]; */
 
             return null;
+        }
+
+        public bool IsButtonBlacklisted(ButtonFlags button)
+        {
+            return ButtonBlackList.Contains(button);
         }
 
         public bool IsButtonSupported(ButtonFlags button)

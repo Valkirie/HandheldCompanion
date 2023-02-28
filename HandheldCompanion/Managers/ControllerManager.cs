@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Controllers;
@@ -447,10 +448,13 @@ namespace HandheldCompanion.Managers
         private static void UpdateInputs(ControllerState controllerState)
         {
             // pass inputs to InputsManager
-            InputsManager.UpdateReport(controllerState.ButtonState);
+            ButtonState InputsState = controllerState.ButtonState.Clone() as ButtonState;
+            InputsManager.UpdateReport(InputsState);
+
+            // pass inputs to Overlay Model
             MainWindow.overlayModel.UpdateReport(controllerState);
 
-            // todo: pass inputs to (re)mapper
+            // pass inputs to Layout Manager
             controllerState = LayoutManager.MapController(controllerState);
 
             // Controller specific scenarios

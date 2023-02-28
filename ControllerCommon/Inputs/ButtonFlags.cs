@@ -27,7 +27,17 @@ namespace ControllerCommon.Inputs
         [Description("Click")]
         RightThumb = 8,
 
-        L1 = 9, R1 = 10, L2 = 11, R2 = 12,
+        L1 = 9, R1 = 10,
+
+        [Description("Soft pull")]
+        L2 = 11,
+        [Description("Soft pull")]
+        R2 = 12,
+        [Description("Full pull")]
+        L3 = 44,
+        [Description("Full pull")]
+        R3 = 45,
+
         B1 = 13, B2 = 14, B3 = 15, B4 = 16, B5 = 17, B6 = 18, B7 = 19, B8 = 20,
 
         [Description("Up")]

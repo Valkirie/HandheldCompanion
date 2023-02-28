@@ -113,6 +113,9 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.L2] = L2 > Gamepad.TriggerThreshold;
             Inputs.ButtonState[ButtonFlags.R2] = R2 > Gamepad.TriggerThreshold;
 
+            Inputs.ButtonState[ButtonFlags.L3] = L2 > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R3] = R2 > Gamepad.TriggerThreshold * 8;
+
             Inputs.ButtonState[ButtonFlags.LeftThumbTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
             Inputs.ButtonState[ButtonFlags.RightThumbTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
 
@@ -380,8 +383,10 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.Start:
                     return "\u21FB";
                 case ButtonFlags.L2:
+                case ButtonFlags.L3:
                     return "\u21B2";
                 case ButtonFlags.R2:
+                case ButtonFlags.R3:
                     return "\u21B3";
                 case ButtonFlags.Special:
                     return "\uE001";

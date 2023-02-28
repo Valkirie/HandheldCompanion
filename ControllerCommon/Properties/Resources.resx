@@ -153,57 +153,6 @@
   <data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
     <value>Options</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
-    <value>Button A</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
-    <value>Always On</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
-    <value>Button B</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
-    <value>Back</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
-    <value>DPad Down</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
-    <value>DPad Left</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
-    <value>DPad Right</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
-    <value>DPad Up</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
-    <value>Left Shoulder</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
-    <value>Left Thumb</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
-    <value>Left Trigger</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
-    <value>Right Shoulder</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
-    <value>Right Thumb</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
-    <value>Right Trigger</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
-    <value>Start</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
-    <value>Button X</value>
-  </data>
-  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
-    <value>Button Y</value>
-  </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
     <value>Emulated DualShock 4 controller</value>
   </data>
@@ -321,14 +270,8 @@
   <data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
     <value>LB</value>
   </data>
-  <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
-    <value>LT</value>
-  </data>
   <data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
     <value>RB</value>
-  </data>
-  <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
-    <value>RT</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
     <value>Guide</value>

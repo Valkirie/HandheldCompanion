@@ -169,159 +169,6 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Button A.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_A {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.A", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Always On.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Button B.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_B {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.B", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Back.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_Back {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Back", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à DPad Down.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadDown {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadDown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à DPad Left.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadLeft {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadLeft", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à DPad Right.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadRight {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadRight", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à DPad Up.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadUp {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadUp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Left Shoulder.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_LeftShoulder {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftShoulder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Left Thumb.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_LeftThumb {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftThumb", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Left Trigger.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_LeftTrigger {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftTrigger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Right Shoulder.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_RightShoulder {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightShoulder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Right Thumb.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_RightThumb {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightThumb", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Right Trigger.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_RightTrigger {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightTrigger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Start.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_Start {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Button X.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_X {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.X", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Button Y.
-        /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_Y {
-            get {
-                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Y", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Emulated DualShock 4 controller.
         /// </summary>
         public static string Enum_HIDmode_DualShock4Controller {
@@ -673,29 +520,11 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à LT.
-        /// </summary>
-        public static string Enum_XInputController_ButtonFlags_L2 {
-            get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à RB.
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_R1 {
             get {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à RT.
-        /// </summary>
-        public static string Enum_XInputController_ButtonFlags_R2 {
-            get {
-                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R2", resourceCulture);
             }
         }
         
