@@ -154,20 +154,19 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
         public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping)
         {
-            foreach (ButtonMapping mapping in Mapping.Values)
-                mapping.Reset();
-
-            foreach (var pair in buttonMapping)
+            foreach (var pair in Mapping)
             {
                 ButtonFlags button = pair.Key;
-                IActions actions = pair.Value;
+                ButtonMapping mapping = pair.Value;
 
-                if (!Mapping.ContainsKey(button))
+                if (buttonMapping.ContainsKey(button))
+                {
+                    IActions actions = buttonMapping[button];
+                    mapping.SetIActions(actions);
                     continue;
+                }
 
-                // update actions
-                ButtonMapping mapping = Mapping[button];
-                mapping.SetIActions(actions);
+                mapping.Reset();
             }
         }
     }

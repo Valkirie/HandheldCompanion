@@ -17,7 +17,7 @@ namespace ControllerCommon.Actions
     [Serializable]
     public abstract class IActions
     {
-        public ActionType ActionType { get; set; }
+        public ActionType ActionType { get; set; } = ActionType.None;
 
         protected object Value;
         protected object prevValue;

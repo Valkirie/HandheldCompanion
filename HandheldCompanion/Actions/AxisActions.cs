@@ -39,10 +39,10 @@ namespace HandheldCompanion.Actions
             value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
 
             // Apply anti deadzone adjustments
-            switch (Axis)
+            switch (axis)
             {
-                case AxisLayoutFlags.L2:
-                case AxisLayoutFlags.R2:
+                case AxisFlags.L2:
+                case AxisFlags.R2:
                     value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
                     break;
             }

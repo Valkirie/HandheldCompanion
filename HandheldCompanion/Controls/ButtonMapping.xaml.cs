@@ -8,6 +8,7 @@ using HandheldCompanion.Views;
 using LiveCharts.Wpf;
 using ModernWpf.Controls;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Simulators.MouseSimulator;
@@ -21,6 +22,7 @@ namespace HandheldCompanion.Controls
     {
         private ButtonFlags Button;
         private IActions Actions;
+        private object updateLock = new();
 
         #region events
         public event DeletedEventHandler Deleted;
@@ -91,6 +93,10 @@ namespace HandheldCompanion.Controls
 
             // we're not ready yet
             if (TargetComboBox is null)
+                return;
+
+            // we're busy
+            if (!Monitor.TryEnter(updateLock))
                 return;
 
             // clear current dropdown values
@@ -186,6 +192,10 @@ namespace HandheldCompanion.Controls
             if (TargetComboBox.SelectedItem is null)
                 return;
 
+            // we're busy
+            if (!Monitor.TryEnter(updateLock))
+                return;
+
             // generate IActions based on settings
             switch (this.Actions.ActionType)
             {
@@ -222,8 +232,12 @@ namespace HandheldCompanion.Controls
 
         public void Reset()
         {
-            ActionComboBox.SelectedItem = null;
-            TargetComboBox.SelectedItem = null;
+            if (Monitor.TryEnter(updateLock))
+            {
+                ActionComboBox.SelectedIndex = 0;
+                TargetComboBox.SelectedItem = null;
+                Monitor.Exit(updateLock);
+            }
         }
 
         #region Button2Button

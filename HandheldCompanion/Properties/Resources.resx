@@ -1160,4 +1160,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="InputsHotkey_shortcutControlCenterDesc" xml:space="preserve">
     <value>Display and hide Windows Action center</value>
   </data>
+  <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
+    <value>Controller layout</value>
+  </data>
 </root>

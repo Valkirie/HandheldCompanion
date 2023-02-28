@@ -125,14 +125,15 @@
                     </ui:SimpleStackPanel>
                 </Grid>
 
-
                 <!-- Axis 2 Mouse -->
                 <Grid Name="Axis2Mouse" d:Visibility="Visible"
                       Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
 
                     <ui:SimpleStackPanel Spacing="12">
                         <ui:SimpleStackPanel Spacing="6">
-                            <Grid>
+
+                            <!-- Implement me ! -->
+                            <Grid IsEnabled="False">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
                                     <ColumnDefinition MinWidth="80"></ColumnDefinition>

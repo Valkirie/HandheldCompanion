@@ -142,36 +142,34 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
         public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
         {
-            foreach (ButtonMapping mapping in MappingButtons.Values)
-                mapping.Reset();
-
-            foreach (JoystickMapping mapping in MappingAxis.Values)
-                mapping.Reset();
-
-            foreach (var pair in buttonMapping)
+            foreach (var pair in MappingButtons)
             {
                 ButtonFlags button = pair.Key;
-                IActions actions = pair.Value;
+                ButtonMapping mapping = pair.Value;
 
-                if (!MappingButtons.ContainsKey(button))
+                if (buttonMapping.ContainsKey(button))
+                {
+                    IActions actions = buttonMapping[button];
+                    mapping.SetIActions(actions);
                     continue;
+                }
 
-                // update actions
-                ButtonMapping mapping = MappingButtons[button];
-                mapping.SetIActions(actions);
+                mapping.Reset();
             }
 
-            foreach (var pair in axisMapping)
+            foreach (var pair in MappingAxis)
             {
                 AxisLayoutFlags axis = pair.Key;
-                IActions actions = pair.Value;
+                JoystickMapping mapping = pair.Value;
 
-                if (!MappingAxis.ContainsKey(axis))
+                if (axisMapping.ContainsKey(axis))
+                {
+                    IActions actions = axisMapping[axis];
+                    mapping.SetIActions(actions);
                     continue;
+                }
 
-                // update actions
-                JoystickMapping mapping = MappingAxis[axis];
-                mapping.SetIActions(actions);
+                mapping.Reset();
             }
         }
     }

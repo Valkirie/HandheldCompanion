@@ -8,6 +8,7 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public struct AxisLayout
     {
+        public static AxisLayout None = new AxisLayout(AxisLayoutFlags.None);
         public static AxisLayout LeftThumb = new AxisLayout(AxisLayoutFlags.LeftThumb, AxisFlags.LeftThumbX, AxisFlags.LeftThumbY);
         public static AxisLayout RightThumb = new AxisLayout(AxisLayoutFlags.RightThumb, AxisFlags.RightThumbX, AxisFlags.RightThumbY);
         public static AxisLayout L2 = new AxisLayout(AxisLayoutFlags.L2, AxisFlags.L2);
@@ -17,6 +18,7 @@ namespace ControllerCommon.Inputs
 
         public static Dictionary<AxisLayoutFlags, AxisLayout> Layouts = new()
         {
+            { AxisLayoutFlags.None, None },
             { AxisLayoutFlags.LeftThumb, LeftThumb },
             { AxisLayoutFlags.RightThumb, RightThumb },
             { AxisLayoutFlags.L2, L2 },
@@ -29,9 +31,13 @@ namespace ControllerCommon.Inputs
         private Dictionary<char, AxisFlags> axis = new();
         public Vector2 vector = new();
 
-        public AxisLayout(AxisLayoutFlags flags, AxisFlags axisY)
+        public AxisLayout(AxisLayoutFlags flags)
         {
             this.flags = flags;
+        }
+
+        public AxisLayout(AxisLayoutFlags flags, AxisFlags axisY) : this(flags)
+        {
             axis.Add('Y', axisY);
         }
 

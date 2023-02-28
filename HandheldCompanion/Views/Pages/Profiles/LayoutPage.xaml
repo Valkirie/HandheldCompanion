@@ -9,7 +9,7 @@
       xmlns:ui="http://schemas.modernwpf.com/2019"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+      Title="{x:Static resx:Resources.ProfilesPage_ControllerLayout}"
       Loaded="Page_Loaded">
 
     <ui:NavigationView

@@ -6,6 +6,7 @@ using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Simulators.MouseSimulator;
@@ -19,6 +20,7 @@ namespace HandheldCompanion.Controls
     {
         private AxisLayoutFlags Axis;
         private IActions Actions;
+        private object updateLock = new();
 
         #region events
         public event DeletedEventHandler Deleted;
@@ -72,6 +74,10 @@ namespace HandheldCompanion.Controls
             if (TargetComboBox is null)
                 return;
 
+            // we're busy
+            if (!Monitor.TryEnter(updateLock))
+                return;
+
             // clear current dropdown values
             TargetComboBox.Items.Clear();
             TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
@@ -98,6 +104,14 @@ namespace HandheldCompanion.Controls
 
                 foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
                 {
+                    // you can't map thumbs to triggers
+                    if (axis == AxisLayoutFlags.L2 || axis == AxisLayoutFlags.R2)
+                        continue;
+
+                    // you can't map trackpads
+                    if (axis == AxisLayoutFlags.LeftPad || axis == AxisLayoutFlags.RightPad)
+                        continue;
+
                     if (controller.IsAxisSupported(axis))
                     {
                         // create a label, store ButtonFlags as Tag and Label as controller specific string
@@ -150,6 +164,10 @@ namespace HandheldCompanion.Controls
             if (TargetComboBox.SelectedItem is null)
                 return;
 
+            // we're busy
+            if (!Monitor.TryEnter(updateLock))
+                return;
+
             // generate IActions based on settings
             switch (this.Actions.ActionType)
             {
@@ -193,8 +211,12 @@ namespace HandheldCompanion.Controls
 
         public void Reset()
         {
-            ActionComboBox.SelectedItem = null;
-            TargetComboBox.SelectedItem = null;
+            if (Monitor.TryEnter(updateLock))
+            {
+                ActionComboBox.SelectedIndex = 0;
+                TargetComboBox.SelectedItem = null;
+                Monitor.Exit(updateLock);
+            }
         }
 
         private void Axis_Invert_Toggled(object sender, RoutedEventArgs e)
