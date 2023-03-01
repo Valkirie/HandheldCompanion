@@ -189,5 +189,18 @@ namespace HandheldCompanion.Controllers
 
             return base.GetGlyph(axis);
         }
+
+        public override string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.L2:
+                    return "\u21B2";
+                case AxisLayoutFlags.R2:
+                    return "\u21B3";
+            }
+
+            return base.GetGlyph(axis);
+        }
     }
 }

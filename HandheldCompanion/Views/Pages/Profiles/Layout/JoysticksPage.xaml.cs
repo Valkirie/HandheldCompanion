@@ -16,29 +16,15 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     public partial class JoysticksPage : Page
     {
         // LEFT JOYSTICK
-        public static List<ButtonFlags> LeftThumbButtons = new()
-        {
-            ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch,
-            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
-        };
-        public static List<AxisLayoutFlags> LeftThumbAxis = new()
-        {
-            AxisLayoutFlags.LeftThumb,
-        };
+        public static List<ButtonFlags> LeftThumbButtons = new() { ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight };
+        public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftThumb };
 
         // RIGHT JOYSTICK
-        public static List<ButtonFlags> RightThumbButtons = new()
-        {
-            ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch,
-            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
-        };
-        public static List<AxisLayoutFlags> RightThumbAxis = new()
-        {
-            AxisLayoutFlags.RightThumb,
-        };
+        public static List<ButtonFlags> RightThumbButtons = new() { ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight };
+        public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightThumb };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisLayoutFlags, JoystickMapping> MappingAxis = new();
+        public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
 
         public JoysticksPage()
         {
@@ -57,7 +43,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (AxisLayoutFlags axis in LeftThumbAxis)
             {
-                JoystickMapping axisMapping = new JoystickMapping(axis);
+                AxisMapping axisMapping = new AxisMapping(axis);
                 LeftJoystickStackPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
@@ -73,7 +59,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (AxisLayoutFlags axis in RightThumbAxis)
             {
-                JoystickMapping axisMapping = new JoystickMapping(axis);
+                AxisMapping axisMapping = new AxisMapping(axis);
                 RightJoystickStackPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
@@ -113,7 +99,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 AxisLayoutFlags flags = mapping.Key;
                 AxisLayout layout = AxisLayout.Layouts[flags];
 
-                JoystickMapping axisMapping = mapping.Value;
+                AxisMapping axisMapping = mapping.Value;
 
                 // update mapping visibility
                 if (!Controller.IsAxisSupported(flags))
@@ -128,16 +114,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     axisMapping.UpdateIcon(newIcon, newLabel);
                 }
             }
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
-
-        public void Page_Closed()
-        {
-            // do something
         }
 
         public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
@@ -160,7 +136,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (var pair in MappingAxis)
             {
                 AxisLayoutFlags axis = pair.Key;
-                JoystickMapping mapping = pair.Value;
+                AxisMapping mapping = pair.Value;
 
                 if (axisMapping.ContainsKey(axis))
                 {
@@ -171,6 +147,16 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
                 mapping.Reset();
             }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            // do something
+        }
+
+        public void Page_Closed()
+        {
+            // do something
         }
     }
 }

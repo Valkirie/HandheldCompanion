@@ -14,9 +14,9 @@ using static HandheldCompanion.Simulators.MouseSimulator;
 namespace HandheldCompanion.Controls
 {
     /// <summary>
-    /// Interaction logic for JoystickMapping.xaml
+    /// Interaction logic for AxisMapping.xaml
     /// </summary>
-    public partial class JoystickMapping : UserControl
+    public partial class AxisMapping : UserControl
     {
         private AxisLayoutFlags Axis;
         private IActions Actions;
@@ -29,12 +29,12 @@ namespace HandheldCompanion.Controls
         public delegate void UpdatedEventHandler(AxisLayoutFlags axis, IActions action);
         #endregion
 
-        public JoystickMapping()
+        public AxisMapping()
         {
             InitializeComponent();
         }
 
-        public JoystickMapping(AxisLayoutFlags axis) : this()
+        public AxisMapping(AxisLayoutFlags axis) : this()
         {
             this.Axis = axis;
             this.Icon.Glyph = axis.ToString();
@@ -104,10 +104,6 @@ namespace HandheldCompanion.Controls
 
                 foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
                 {
-                    // you can't map thumbs to triggers
-                    if (axis == AxisLayoutFlags.L2 || axis == AxisLayoutFlags.R2)
-                        continue;
-
                     // you can't map trackpads
                     if (axis == AxisLayoutFlags.LeftPad || axis == AxisLayoutFlags.RightPad)
                         continue;

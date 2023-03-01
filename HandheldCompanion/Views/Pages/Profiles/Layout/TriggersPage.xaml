@@ -15,7 +15,18 @@
       Loaded="Page_Loaded">
 
     <Grid Name="MainGrid">
-        <ui:SimpleStackPanel Spacing="6">            
+        <ui:SimpleStackPanel Spacing="6">
+
+            <!-- LEFT TRIGGER -->
+            <TextBlock Text="LEFT TRIGGER" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftTriggerStackPanel">
+            </ui:SimpleStackPanel>
+
+            <!-- RIGHT TRIGGER -->
+            <TextBlock Text="RIGHT TRIGGER" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="RightTriggerStackPanel">
+            </ui:SimpleStackPanel>
+            
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

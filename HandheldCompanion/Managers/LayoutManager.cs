@@ -134,6 +134,20 @@ namespace HandheldCompanion.Managers
             foreach (ButtonFlags button in currentLayout.ButtonLayout.Keys)
                 outputState.ButtonState[button] = false;
 
+            // consume origin axis state
+            foreach (var axisLayout in currentLayout.AxisLayout)
+            {
+                AxisLayoutFlags flags = axisLayout.Key;
+
+                // read origin values
+                AxisLayout InLayout = AxisLayout.Layouts[flags];
+                AxisFlags InAxisX = InLayout.GetAxisFlags('X');
+                AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
+
+                outputState.AxisState[InAxisX] = 0;
+                outputState.AxisState[InAxisY] = 0;
+            }
+            
             foreach (var buttonState in controllerState.ButtonState.State)
             {
                 ButtonFlags button = buttonState.Key;
@@ -185,12 +199,8 @@ namespace HandheldCompanion.Managers
                 AxisFlags InAxisX = InLayout.GetAxisFlags('X');
                 AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
 
-                InLayout.vector.X = outputState.AxisState[InAxisX];
-                InLayout.vector.Y = outputState.AxisState[InAxisY];
-
-                // consume origin values
-                outputState.AxisState[InAxisX] = 0;
-                outputState.AxisState[InAxisY] = 0;
+                InLayout.vector.X = controllerState.AxisState[InAxisX];
+                InLayout.vector.Y = controllerState.AxisState[InAxisY];
 
                 // pull action
                 IActions action = axisLayout.Value;
