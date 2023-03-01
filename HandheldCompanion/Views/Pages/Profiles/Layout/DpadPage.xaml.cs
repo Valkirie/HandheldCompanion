@@ -15,11 +15,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     /// </summary>
     public partial class DpadPage : Page
     {
-        // A,B,X,Y
-        public static List<ButtonFlags> DPAD = new()
-        {
-            ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight
-        };
+        public static List<ButtonFlags> DPAD = new() { ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight };
 
         public Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
 

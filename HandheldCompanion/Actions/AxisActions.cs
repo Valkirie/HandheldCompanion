@@ -23,7 +23,7 @@ namespace HandheldCompanion.Actions
 
         public AxisActions()
         {
-            this.ActionType = ActionType.Axis;
+            this.ActionType = ActionType.Joystick;
             this.Vector = new();
             this.prevVector = new();
         }

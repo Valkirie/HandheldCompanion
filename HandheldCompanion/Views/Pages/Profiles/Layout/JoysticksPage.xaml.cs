@@ -15,11 +15,8 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     /// </summary>
     public partial class JoysticksPage : Page
     {
-        // LEFT JOYSTICK
         public static List<ButtonFlags> LeftThumbButtons = new() { ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight };
         public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftThumb };
-
-        // RIGHT JOYSTICK
         public static List<ButtonFlags> RightThumbButtons = new() { ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight };
         public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightThumb };
 

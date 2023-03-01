@@ -132,6 +132,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\TriggerMapping.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\AxisMapping.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

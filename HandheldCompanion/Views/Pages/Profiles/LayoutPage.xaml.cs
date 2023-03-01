@@ -66,10 +66,16 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 buttonMapping.Deleted += ButtonMapping_Deleted;
             }
 
-            foreach (AxisMapping axisMapping in triggersPage.MappingAxis.Values.Union(joysticksPage.MappingAxis.Values))
+            foreach (AxisMapping axisMapping in joysticksPage.MappingAxis.Values)
             {
                 axisMapping.Updated += AxisMapping_Updated;
                 axisMapping.Deleted += AxisMapping_Deleted;
+            }
+
+            foreach (TriggerMapping AxisMapping in triggersPage.MappingAxis.Values)
+            {
+                AxisMapping.Updated += AxisMapping_Updated;
+                AxisMapping.Deleted += AxisMapping_Deleted;
             }
         }
 

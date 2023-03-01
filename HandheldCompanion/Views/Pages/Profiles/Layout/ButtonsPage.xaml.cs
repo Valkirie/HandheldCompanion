@@ -18,39 +18,11 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     /// </summary>
     public partial class ButtonsPage : Page
     {
-        // A,B,X,Y
-        public static List<ButtonFlags> ABXY = new()
-        {
-            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4, ButtonFlags.B5, ButtonFlags.B6, ButtonFlags.B7, ButtonFlags.B8
-        };
-
-        // BUMPERS
-        public static List<ButtonFlags> BUMPERS = new()
-        {
-            ButtonFlags.L1, ButtonFlags.R1,
-            ButtonFlags.L2, ButtonFlags.L3,
-            ButtonFlags.R2, ButtonFlags.R3,
-        };
-
-        // MENU
-        public static List<ButtonFlags> MENU = new()
-        {
-            ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special
-        };
-
-        // BACK GRIPS
-        public static List<ButtonFlags> BACKGRIPS = new()
-        {
-            ButtonFlags.L4, ButtonFlags.R4,
-            ButtonFlags.L5, ButtonFlags.R5,
-        };
-
-        // OEM
-        public static List<ButtonFlags> OEM = new()
-        {
-            ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5,
-            ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10
-        };
+        public static List<ButtonFlags> ABXY = new() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4, ButtonFlags.B5, ButtonFlags.B6, ButtonFlags.B7, ButtonFlags.B8 };
+        public static List<ButtonFlags> BUMPERS = new() { ButtonFlags.L1, ButtonFlags.R1 };
+        public static List<ButtonFlags> MENU = new() { ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special };
+        public static List<ButtonFlags> BACKGRIPS = new() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 };
+        public static List<ButtonFlags> OEM = new() { ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10 };
 
         public Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
 

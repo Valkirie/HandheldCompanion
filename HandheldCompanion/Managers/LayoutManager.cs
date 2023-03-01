@@ -206,7 +206,7 @@ namespace HandheldCompanion.Managers
                 IActions action = axisLayout.Value;
                 switch (action.ActionType)
                 {
-                    case ActionType.Axis:
+                    case ActionType.Joystick:
                         {
                             AxisActions aAction = action as AxisActions;
                             aAction.Execute(InLayout);
@@ -225,6 +225,19 @@ namespace HandheldCompanion.Managers
                         {
                             MouseActions mAction = action as MouseActions;
                             mAction.Execute(InLayout);
+                        }
+                        break;
+
+                    case ActionType.Trigger:
+                        {
+                            TriggerActions tAction = action as TriggerActions;
+                            tAction.Execute(InAxisY, (short)InLayout.vector.Y);
+
+                            // read output axis
+                            AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
+                            AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+
+                            outputState.AxisState[OutAxisY] = (short)tAction.GetValue();
                         }
                         break;
                 }

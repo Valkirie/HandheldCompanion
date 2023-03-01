@@ -93,7 +93,7 @@ namespace HandheldCompanion.Controls
                 Deleted?.Invoke(Axis);
                 return;
             }
-            else if (type == ActionType.Axis)
+            else if (type == ActionType.Joystick)
             {
                 if (this.Actions is null || this.Actions is not AxisActions)
                     this.Actions = new AxisActions();
@@ -104,6 +104,10 @@ namespace HandheldCompanion.Controls
 
                 foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
                 {
+                    // you can't map thumbs to triggers
+                    if (axis == AxisLayoutFlags.L2 || axis == AxisLayoutFlags.R2)
+                        continue;
+
                     // you can't map trackpads
                     if (axis == AxisLayoutFlags.LeftPad || axis == AxisLayoutFlags.RightPad)
                         continue;
@@ -174,7 +178,7 @@ namespace HandheldCompanion.Controls
                     }
                     break;
 
-                case ActionType.Axis:
+                case ActionType.Joystick:
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;
                         ((AxisActions)this.Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
@@ -222,7 +226,7 @@ namespace HandheldCompanion.Controls
 
             switch (this.Actions.ActionType)
             {
-                case ActionType.Axis:
+                case ActionType.Joystick:
                     ((AxisActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
                     break;
             }
@@ -238,7 +242,7 @@ namespace HandheldCompanion.Controls
 
             switch (this.Actions.ActionType)
             {
-                case ActionType.Axis:
+                case ActionType.Joystick:
                     ((AxisActions)this.Actions).AxisDeadZoneInner = (int)Axis2AxisInnerDeadzone.Value;
                     break;
             }
@@ -254,7 +258,7 @@ namespace HandheldCompanion.Controls
 
             switch (this.Actions.ActionType)
             {
-                case ActionType.Axis:
+                case ActionType.Joystick:
                     ((AxisActions)this.Actions).AxisDeadZoneOuter = (int)Axis2AxisOuterDeadzone.Value;
                     break;
             }
@@ -270,7 +274,7 @@ namespace HandheldCompanion.Controls
 
             switch (this.Actions.ActionType)
             {
-                case ActionType.Axis:
+                case ActionType.Joystick:
                     ((AxisActions)this.Actions).AxisAntiDeadZone = (int)Axis2AxisAntiDeadzone.Value;
                     break;
             }
@@ -286,7 +290,7 @@ namespace HandheldCompanion.Controls
 
             switch (this.Actions.ActionType)
             {
-                case ActionType.Axis:
+                case ActionType.Joystick:
                     ((AxisActions)this.Actions).ImproveCircularity = Axis2AxisImproveCircularity.IsOn;
                     break;
             }

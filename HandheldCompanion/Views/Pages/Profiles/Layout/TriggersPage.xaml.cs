@@ -17,12 +17,11 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     {
         public static List<ButtonFlags> LeftTrigger = new() { ButtonFlags.L2, ButtonFlags.L3 };
         public static List<AxisLayoutFlags> LeftTriggerAxis = new() { AxisLayoutFlags.L2 };
-
         public static List<ButtonFlags> RightTrigger = new() { ButtonFlags.R2, ButtonFlags.R3 };
         public static List<AxisLayoutFlags> RightTriggerAxis = new() { AxisLayoutFlags.R2 };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
+        public Dictionary<AxisLayoutFlags, TriggerMapping> MappingAxis = new();
 
         public TriggersPage()
         {
@@ -41,7 +40,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (AxisLayoutFlags axis in LeftTriggerAxis)
             {
-                AxisMapping axisMapping = new AxisMapping(axis);
+                TriggerMapping axisMapping = new TriggerMapping(axis);
                 LeftTriggerStackPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
@@ -57,7 +56,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
             foreach (AxisLayoutFlags axis in RightTriggerAxis)
             {
-                AxisMapping axisMapping = new AxisMapping(axis);
+                TriggerMapping axisMapping = new TriggerMapping(axis);
                 RightTriggerStackPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
@@ -97,7 +96,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 AxisLayoutFlags flags = mapping.Key;
                 AxisLayout layout = AxisLayout.Layouts[flags];
 
-                AxisMapping axisMapping = mapping.Value;
+                TriggerMapping axisMapping = mapping.Value;
 
                 // update mapping visibility
                 if (!Controller.IsAxisSupported(flags))
@@ -134,7 +133,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (var pair in MappingAxis)
             {
                 AxisLayoutFlags axis = pair.Key;
-                AxisMapping mapping = pair.Value;
+                TriggerMapping mapping = pair.Value;
 
                 if (axisMapping.ContainsKey(axis))
                 {

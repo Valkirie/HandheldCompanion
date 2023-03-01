@@ -9,9 +9,10 @@ namespace ControllerCommon.Actions
     {
         None = 0,
         Button = 1,
-        Axis = 2,
+        Joystick = 2,
         Keyboard = 3,
-        Mouse = 4
+        Mouse = 4,
+        Trigger = 5
     }
 
     [Serializable]

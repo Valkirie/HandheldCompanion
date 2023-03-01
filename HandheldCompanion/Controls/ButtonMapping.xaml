@@ -30,6 +30,7 @@
                         <ComboBoxItem Content="Axis" IsEnabled="False"/>
                         <ComboBoxItem Content="Keyboard" IsEnabled="True"/>
                         <ComboBoxItem Content="Mouse" IsEnabled="True"/>
+                        <ComboBoxItem Content="Trigger" IsEnabled="False"/>
                     </ComboBox>
 
                     <ComboBox Name="TargetComboBox" Width="140" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged" IsEnabled="False"/>
