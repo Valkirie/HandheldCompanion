@@ -14,6 +14,7 @@ namespace ControllerCommon.Devices
 
             // Steam Controller Neptune
             this.Capacities |= DeviceCapacities.ControllerSensor;
+            this.Capacities |= DeviceCapacities.Trackpads;
 
             // https://www.steamdeck.com/en/tech
             this.nTDP = new double[] { 10, 10, 15 };

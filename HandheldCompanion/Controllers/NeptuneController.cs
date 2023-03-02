@@ -6,8 +6,10 @@ using HandheldCompanion.Managers;
 using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace HandheldCompanion.Controllers
 {
@@ -75,6 +77,14 @@ namespace HandheldCompanion.Controllers
 
             AxisSupport.Add(AxisLayoutFlags.LeftPad);
             AxisSupport.Add(AxisLayoutFlags.RightPad);
+
+            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.LPadClick, ButtonFlags.LPadTouch, ButtonFlags.LPadClickUp, ButtonFlags.LPadClickDown, ButtonFlags.LPadClickLeft, ButtonFlags.LPadClickRight });
+            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.RPadClick, ButtonFlags.RPadTouch, ButtonFlags.RPadClickUp, ButtonFlags.RPadClickDown, ButtonFlags.RPadClickLeft, ButtonFlags.RPadClickRight });
+
+            // Specific buttons that shouldn't be mappable
+            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
+            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.LPadClick, ButtonFlags.LPadTouch, ButtonFlags.LPadClickUp, ButtonFlags.LPadClickDown, ButtonFlags.LPadClickLeft, ButtonFlags.LPadClickRight });
+            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.RPadClick, ButtonFlags.RPadTouch, ButtonFlags.RPadClickUp, ButtonFlags.RPadClickDown, ButtonFlags.RPadClickLeft, ButtonFlags.RPadClickRight });
         }
 
         public override string ToString()

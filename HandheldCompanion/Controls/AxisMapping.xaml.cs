@@ -102,25 +102,14 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
-                foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
+                foreach (AxisLayoutFlags axis in controller.GetAxis())
                 {
-                    // you can't map thumbs to triggers
-                    if (axis == AxisLayoutFlags.L2 || axis == AxisLayoutFlags.R2)
-                        continue;
+                    // create a label, store ButtonFlags as Tag and Label as controller specific string
+                    Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
+                    TargetComboBox.Items.Add(buttonLabel);
 
-                    // you can't map trackpads
-                    if (axis == AxisLayoutFlags.LeftPad || axis == AxisLayoutFlags.RightPad)
-                        continue;
-
-                    if (controller.IsAxisSupported(axis))
-                    {
-                        // create a label, store ButtonFlags as Tag and Label as controller specific string
-                        Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
-                        TargetComboBox.Items.Add(buttonLabel);
-
-                        if (axis.Equals(((AxisActions)this.Actions).Axis))
-                            TargetComboBox.SelectedItem = buttonLabel;
-                    }
+                    if (axis.Equals(((AxisActions)this.Actions).Axis))
+                        TargetComboBox.SelectedItem = buttonLabel;
                 }
 
                 // settings

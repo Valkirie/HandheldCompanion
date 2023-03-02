@@ -123,17 +123,14 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
-                foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
+                foreach (ButtonFlags button in controller.GetButtons())
                 {
-                    if (controller.IsButtonSupported(button) && !controller.IsButtonBlacklisted(button))
-                    {
-                        // create a label, store ButtonFlags as Tag and Label as controller specific string
-                        Label buttonLabel = new Label() { Tag = button, Content = controller.GetButtonName(button) };
-                        TargetComboBox.Items.Add(buttonLabel);
+                    // create a label, store ButtonFlags as Tag and Label as controller specific string
+                    Label buttonLabel = new Label() { Tag = button, Content = controller.GetButtonName(button) };
+                    TargetComboBox.Items.Add(buttonLabel);
 
-                        if (button.Equals(((ButtonActions)this.Actions).Button))
-                            TargetComboBox.SelectedItem = buttonLabel;
-                    }
+                    if (button.Equals(((ButtonActions)this.Actions).Button))
+                        TargetComboBox.SelectedItem = buttonLabel;
                 }
 
                 // settings

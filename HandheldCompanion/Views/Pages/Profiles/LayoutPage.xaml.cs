@@ -25,7 +25,9 @@ namespace HandheldCompanion.Views.Pages.Profiles
         private DpadPage dpadPage = new();
         private TriggersPage triggersPage = new();
         private JoysticksPage joysticksPage = new();
+        private TrackpadsPage trackpadsPage = new();
         private GyroPage gyroPage = new();
+
         private Dictionary<string, Page> _pages;
 
         private string preNavItemTag;
@@ -42,7 +44,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             this.Tag = Tag;
 
             // manage layout pages visibility
-            navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads) ? Visibility.Visible : Visibility.Collapsed;
+            navTrackpads.Visibility = Visibility.Visible; // MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads) ? Visibility.Visible : Visibility.Collapsed;
             navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) || MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) || MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor) ? Visibility.Visible : Visibility.Collapsed;
 
             // create controller related pages
@@ -52,30 +54,33 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 { "ButtonsPage", buttonsPage },
                 { "DpadPage", dpadPage },
 
-                // axis
+                // triger
                 { "TriggersPage", triggersPage },
+
+                // axis
                 { "JoysticksPage", joysticksPage },
+                { "TrackpadsPage", trackpadsPage },
 
                 // gyro
                 { "GyroPage", gyroPage },
             };
 
-            foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values.Union(dpadPage.Mapping.Values).Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values))
+            foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values.Union(dpadPage.Mapping.Values).Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values).Union(trackpadsPage.MappingButtons.Values))
             {
                 buttonMapping.Updated += ButtonMapping_Updated;
                 buttonMapping.Deleted += ButtonMapping_Deleted;
-            }
-
-            foreach (AxisMapping axisMapping in joysticksPage.MappingAxis.Values)
-            {
-                axisMapping.Updated += AxisMapping_Updated;
-                axisMapping.Deleted += AxisMapping_Deleted;
             }
 
             foreach (TriggerMapping AxisMapping in triggersPage.MappingAxis.Values)
             {
                 AxisMapping.Updated += AxisMapping_Updated;
                 AxisMapping.Deleted += AxisMapping_Deleted;
+            }
+
+            foreach (AxisMapping axisMapping in joysticksPage.MappingAxis.Values.Union(trackpadsPage.MappingAxis.Values))
+            {
+                axisMapping.Updated += AxisMapping_Updated;
+                axisMapping.Deleted += AxisMapping_Deleted;
             }
         }
 

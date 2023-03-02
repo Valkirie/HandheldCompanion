@@ -5,6 +5,7 @@ using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,13 +35,17 @@ namespace ControllerCommon.Controllers
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
-        // buttons that should only be used as inputs
         protected List<ButtonFlags> ButtonBlackList = new()
         {
             ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.L3, ButtonFlags.R3,
             ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
             ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+        };
+
+        protected List<AxisLayoutFlags> AxisBlackList = new()
+        {
+            AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad
         };
 
         protected List<ButtonFlags> ButtonSupport = new()
@@ -413,9 +418,35 @@ namespace ControllerCommon.Controllers
             return null;
         }
 
+        public IEnumerable<ButtonFlags> GetButtons()
+        {
+            IEnumerable<ButtonFlags> buttons = Enum.GetValues(typeof(ButtonFlags)).Cast<ButtonFlags>();
+
+            return buttons.Where(a => IsButtonSupported(a) && !IsButtonBlacklisted(a));
+        }
+
+        public IEnumerable<AxisLayoutFlags> GetAxis()
+        {
+            IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
+
+            return axis.Where(a => IsAxisSupported(a) && !IsAxisBlacklisted(a) && !IsAxisTrigger(a));
+        }
+
+        public IEnumerable<AxisLayoutFlags> GetTriggers()
+        {
+            IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
+
+            return axis.Where(a => IsAxisSupported(a) && !IsAxisBlacklisted(a) && IsAxisTrigger(a));
+        }
+
         public bool IsButtonBlacklisted(ButtonFlags button)
         {
             return ButtonBlackList.Contains(button);
+        }
+
+        public bool IsAxisBlacklisted(AxisLayoutFlags axis)
+        {
+            return AxisBlackList.Contains(axis);
         }
 
         public bool IsButtonSupported(ButtonFlags button)
@@ -426,6 +457,11 @@ namespace ControllerCommon.Controllers
         public bool IsAxisSupported(AxisLayoutFlags axis)
         {
             return AxisSupport.Contains(axis);
+        }
+
+        public bool IsAxisTrigger(AxisLayoutFlags axis)
+        {
+            return axis is AxisLayoutFlags.L2 || axis is AxisLayoutFlags.R2;
         }
 
         public string GetButtonName(ButtonFlags button)
