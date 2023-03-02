@@ -114,7 +114,8 @@ namespace HandheldCompanion.Controls
                 Deleted?.Invoke(Button);
                 return;
             }
-            else if (type == ActionType.Button)
+            
+            if (type == ActionType.Button)
             {
                 if (this.Actions is null || this.Actions is not ButtonActions)
                     this.Actions = new ButtonActions();

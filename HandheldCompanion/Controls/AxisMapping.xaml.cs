@@ -93,7 +93,8 @@ namespace HandheldCompanion.Controls
                 Deleted?.Invoke(Axis);
                 return;
             }
-            else if (type == ActionType.Joystick)
+            
+            if (type == ActionType.Joystick)
             {
                 if (this.Actions is null || this.Actions is not AxisActions)
                     this.Actions = new AxisActions();

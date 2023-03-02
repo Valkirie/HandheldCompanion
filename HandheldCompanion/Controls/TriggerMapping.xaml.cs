@@ -93,7 +93,8 @@ namespace HandheldCompanion.Controls
                 Deleted?.Invoke(Axis);
                 return;
             }
-            else if (type == ActionType.Trigger)
+            
+            if (type == ActionType.Trigger)
             {
                 if (this.Actions is null || this.Actions is not TriggerActions)
                     this.Actions = new TriggerActions();
