@@ -128,6 +128,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             dpadPage.Refresh(currentLayout.ButtonLayout);
             joysticksPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
             triggersPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+            trackpadsPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
         }
 
         private void CurrentLayout_Updated(Layout layout)
