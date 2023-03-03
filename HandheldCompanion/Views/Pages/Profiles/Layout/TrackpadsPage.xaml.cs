@@ -15,9 +15,9 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     /// </summary>
     public partial class TrackpadsPage : Page
     {
-        public static List<ButtonFlags> LeftButtons = new() { ButtonFlags.LPadTouch, ButtonFlags.LPadClick, ButtonFlags.LPadClickUp, ButtonFlags.LPadClickDown, ButtonFlags.LPadClickLeft, ButtonFlags.LPadClickRight };
+        public static List<ButtonFlags> LeftButtons = new() { ButtonFlags.LPadTouch, ButtonFlags.LPadClick, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight };
         public static List<AxisLayoutFlags> LeftAxis = new() { AxisLayoutFlags.LeftPad };
-        public static List<ButtonFlags> RightButtons = new() { ButtonFlags.RPadTouch, ButtonFlags.RPadClick, ButtonFlags.RPadClickUp, ButtonFlags.RPadClickDown, ButtonFlags.RPadClickLeft, ButtonFlags.RPadClickRight };
+        public static List<ButtonFlags> RightButtons = new() { ButtonFlags.RPadTouch, ButtonFlags.RPadClick, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight };
         public static List<AxisLayoutFlags> RightAxis = new() { AxisLayoutFlags.RightPad };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();

@@ -15,9 +15,9 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
     /// </summary>
     public partial class JoysticksPage : Page
     {
-        public static List<ButtonFlags> LeftThumbButtons = new() { ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight };
+        public static List<ButtonFlags> LeftThumbButtons = new() { ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight };
         public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftThumb };
-        public static List<ButtonFlags> RightThumbButtons = new() { ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight };
+        public static List<ButtonFlags> RightThumbButtons = new() { ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight };
         public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightThumb };
 
         public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();

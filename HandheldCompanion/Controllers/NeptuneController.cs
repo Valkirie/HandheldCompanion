@@ -24,9 +24,7 @@ namespace HandheldCompanion.Controllers
         private bool lastLeftHapticOn = false;
         private bool lastRightHapticOn = false;
 
-        // temporary workaround
-        private bool lastLeftPadClick = false;
-        private bool lastRightPadClick = false;
+        private const short TrackPadInner = 21844;
 
         private NeptuneControllerInputState prevState;
 
@@ -78,13 +76,13 @@ namespace HandheldCompanion.Controllers
             AxisSupport.Add(AxisLayoutFlags.LeftPad);
             AxisSupport.Add(AxisLayoutFlags.RightPad);
 
-            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.LPadClick, ButtonFlags.LPadTouch, ButtonFlags.LPadClickUp, ButtonFlags.LPadClickDown, ButtonFlags.LPadClickLeft, ButtonFlags.LPadClickRight });
-            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.RPadClick, ButtonFlags.RPadTouch, ButtonFlags.RPadClickUp, ButtonFlags.RPadClickDown, ButtonFlags.RPadClickLeft, ButtonFlags.RPadClickRight });
+            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.LPadClick, ButtonFlags.LPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.RPadClick, ButtonFlags.RPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
 
             // Specific buttons that shouldn't be mappable
             ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
-            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.LPadClick, ButtonFlags.LPadTouch, ButtonFlags.LPadClickUp, ButtonFlags.LPadClickDown, ButtonFlags.LPadClickLeft, ButtonFlags.LPadClickRight });
-            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.RPadClick, ButtonFlags.RPadTouch, ButtonFlags.RPadClickUp, ButtonFlags.RPadClickDown, ButtonFlags.RPadClickLeft, ButtonFlags.RPadClickRight });
+            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.LPadClick, ButtonFlags.LPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.RPadClick, ButtonFlags.RPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
         }
 
         public override string ToString()
@@ -145,19 +143,19 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.DPadRight] = input.State.ButtonState[NeptuneControllerButton.BtnDpadRight];
 
             // Left Stick
-            Inputs.ButtonState[ButtonFlags.LStickLeft] = input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LStickRight] = input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LStickDown] = input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LStickUp] = input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbLeft] = input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbRight] = input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbDown] = input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbUp] = input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone;
 
             Inputs.AxisState[AxisFlags.LeftThumbX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
             Inputs.AxisState[AxisFlags.LeftThumbY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
 
             // Right Stick
-            Inputs.ButtonState[ButtonFlags.RStickLeft] = input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RStickRight] = input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RStickDown] = input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RStickUp] = input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbLeft] = input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbRight] = input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbDown] = input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbUp] = input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.RightThumbDeadZone;
 
             Inputs.AxisState[AxisFlags.RightThumbX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
             Inputs.AxisState[AxisFlags.RightThumbY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
@@ -180,17 +178,15 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.LPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
             if (Inputs.ButtonState[ButtonFlags.LPadClick])
             {
-                if (Inputs.AxisState[AxisFlags.LeftPadY] >= 26000)
-                    Inputs.ButtonState[ButtonFlags.LPadClickUp] = true;
-                else if (Inputs.AxisState[AxisFlags.LeftPadY] <= -26000)
-                        Inputs.ButtonState[ButtonFlags.LPadClickDown] = true;
+                if (Inputs.AxisState[AxisFlags.LeftPadY] >= TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.LeftPadClickUp] = true;
+                else if (Inputs.AxisState[AxisFlags.LeftPadY] <= -TrackPadInner)
+                        Inputs.ButtonState[ButtonFlags.LeftPadClickDown] = true;
 
-                if (Inputs.AxisState[AxisFlags.LeftPadX] >= 26000)
-                    Inputs.ButtonState[ButtonFlags.LPadClickRight] = true;
-                else if (Inputs.AxisState[AxisFlags.LeftPadX] <= -26000)
-                    Inputs.ButtonState[ButtonFlags.LPadClickLeft] = true;
-
-                Console.WriteLine($"X:{Inputs.AxisState[AxisFlags.LeftPadX]},Y:{Inputs.AxisState[AxisFlags.LeftPadY]}");
+                if (Inputs.AxisState[AxisFlags.LeftPadX] >= TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.LeftPadClickRight] = true;
+                else if (Inputs.AxisState[AxisFlags.LeftPadX] <= -TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.LeftPadClickLeft] = true;
             }
 
             // Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
@@ -206,15 +202,17 @@ namespace HandheldCompanion.Controllers
             }
 
             Inputs.ButtonState[ButtonFlags.RPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
-
-            // temporary workaround
-            if (IsLizardMouseEnabled())
+            if (Inputs.ButtonState[ButtonFlags.RPadClick])
             {
-                if (Inputs.ButtonState[ButtonFlags.LPadClick] != lastLeftPadClick)
-                    lastLeftPadClick = Inputs.ButtonState[ButtonFlags.LPadClick];
+                if (Inputs.AxisState[AxisFlags.RightPadY] >= TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.RightPadClickUp] = true;
+                else if (Inputs.AxisState[AxisFlags.RightPadY] <= -TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
 
-                if (Inputs.ButtonState[ButtonFlags.RPadClick] != lastRightPadClick)
-                    lastRightPadClick = Inputs.ButtonState[ButtonFlags.RPadClick];
+                if (Inputs.AxisState[AxisFlags.RightPadX] >= TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.RightPadClickRight] = true;
+                else if (Inputs.AxisState[AxisFlags.RightPadX] <= -TrackPadInner)
+                    Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = true;
             }
 
             // update states

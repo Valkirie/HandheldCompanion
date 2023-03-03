@@ -67,10 +67,10 @@ namespace HandheldCompanion.Models
                             case ButtonFlags.B3:
                             case ButtonFlags.B4:
                             case ButtonFlags.Back:
-                            case ButtonFlags.RStickDown:
-                            case ButtonFlags.RStickLeft:
-                            case ButtonFlags.RStickRight:
-                            case ButtonFlags.RStickUp:
+                            case ButtonFlags.RightThumbDown:
+                            case ButtonFlags.RightThumbLeft:
+                            case ButtonFlags.RightThumbRight:
+                            case ButtonFlags.RightThumbUp:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
                             case ButtonFlags.B1:

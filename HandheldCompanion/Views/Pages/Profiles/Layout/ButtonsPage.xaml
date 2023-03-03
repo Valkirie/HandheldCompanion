@@ -28,11 +28,11 @@
             </ui:SimpleStackPanel>
 
             <!-- BACK GRIPS -->
-            <Grid x:Name="gridBACKGRIPS" Visibility="Collapsed">
+            <ui:SimpleStackPanel Spacing="6" x:Name="gridBACKGRIPS" Visibility="Collapsed">
                 <TextBlock Text="BACK GRIPS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                 <ui:SimpleStackPanel Spacing="6" Name="BACKGRIPSStackPanel">
                 </ui:SimpleStackPanel>
-            </Grid>
+            </ui:SimpleStackPanel>
 
             <!-- MENU -->
             <TextBlock Text="MENU" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
@@ -40,11 +40,11 @@
             </ui:SimpleStackPanel>
 
             <!-- OEM -->
-            <Grid x:Name="gridOEM" Visibility="Collapsed">
+            <ui:SimpleStackPanel Spacing="6" x:Name="gridOEM" Visibility="Collapsed">
                 <TextBlock Text="OEM" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                 <ui:SimpleStackPanel Spacing="6" Name="OEMStackPanel">
                 </ui:SimpleStackPanel>
-            </Grid>
+            </ui:SimpleStackPanel>
 
         </ui:SimpleStackPanel>
     </Grid>

@@ -41,22 +41,22 @@ namespace ControllerCommon.Inputs
         B1 = 13, B2 = 14, B3 = 15, B4 = 16, B5 = 17, B6 = 18, B7 = 19, B8 = 20,
 
         [Description("Up")]
-        LStickUp = 21,
+        LeftThumbUp = 21,
         [Description("Down")]
-        LStickDown = 22,
+        LeftThumbDown = 22,
         [Description("Left")]
-        LStickLeft = 23,
+        LeftThumbLeft = 23,
         [Description("Right")]
-        LStickRight = 24,
+        LeftThumbRight = 24,
 
         [Description("Up")]
-        RStickUp = 25,
+        RightThumbUp = 25,
         [Description("Down")]
-        RStickDown = 26,
+        RightThumbDown = 26,
         [Description("Left")]
-        RStickLeft = 27,
+        RightThumbLeft = 27,
         [Description("Right")]
-        RStickRight = 28,
+        RightThumbRight = 28,
 
         Special = 29,
 
@@ -82,7 +82,7 @@ namespace ControllerCommon.Inputs
         [Description("Touch")]
         RightThumbTouch = 51,
 
-        LPadClickUp = 52, LPadClickDown = 53, LPadClickLeft = 54, LPadClickRight = 55,
-        RPadClickUp = 56, RPadClickDown = 57, RPadClickLeft = 58, RPadClickRight = 59,
+        LeftPadClickUp = 52, LeftPadClickDown = 53, LeftPadClickLeft = 54, LeftPadClickRight = 55,
+        RightPadClickUp = 56, RightPadClickDown = 57, RightPadClickLeft = 58, RightPadClickRight = 59,
     }
 }

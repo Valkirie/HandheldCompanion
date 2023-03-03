@@ -180,17 +180,17 @@ namespace HandheldCompanion.Controllers
 
             ButtonSupport.Add(ButtonFlags.LPadClick);
             ButtonSupport.Add(ButtonFlags.LPadTouch);
-            ButtonSupport.Add(ButtonFlags.LPadClickUp);
-            ButtonSupport.Add(ButtonFlags.LPadClickDown);
-            ButtonSupport.Add(ButtonFlags.LPadClickLeft);
-            ButtonSupport.Add(ButtonFlags.LPadClickRight);
+            ButtonSupport.Add(ButtonFlags.LeftPadClickUp);
+            ButtonSupport.Add(ButtonFlags.LeftPadClickDown);
+            ButtonSupport.Add(ButtonFlags.LeftPadClickLeft);
+            ButtonSupport.Add(ButtonFlags.LeftPadClickRight);
 
             ButtonSupport.Add(ButtonFlags.RPadClick);
             ButtonSupport.Add(ButtonFlags.RPadTouch);
-            ButtonSupport.Add(ButtonFlags.RPadClickUp);
-            ButtonSupport.Add(ButtonFlags.RPadClickDown);
-            ButtonSupport.Add(ButtonFlags.RPadClickLeft);
-            ButtonSupport.Add(ButtonFlags.RPadClickRight);
+            ButtonSupport.Add(ButtonFlags.RightPadClickUp);
+            ButtonSupport.Add(ButtonFlags.RightPadClickDown);
+            ButtonSupport.Add(ButtonFlags.RightPadClickLeft);
+            ButtonSupport.Add(ButtonFlags.RightPadClickRight);
 
             DrawControls();
             RefreshControls();
@@ -248,19 +248,19 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
 
             // Left Stick
-            Inputs.ButtonState[ButtonFlags.LStickLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LStickRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LStickDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LStickUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
 
             Inputs.AxisState[AxisFlags.LeftThumbX] = Gamepad.LeftThumbX;
             Inputs.AxisState[AxisFlags.LeftThumbY] = Gamepad.LeftThumbY;
 
             // Right Stick
-            Inputs.ButtonState[ButtonFlags.RStickLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RStickRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RStickDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RStickUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
 
             Inputs.AxisState[AxisFlags.RightThumbX] = Gamepad.RightThumbX;
             Inputs.AxisState[AxisFlags.RightThumbY] = Gamepad.RightThumbY;

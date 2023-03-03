@@ -39,8 +39,8 @@ namespace ControllerCommon.Controllers
         {
             ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.L3, ButtonFlags.R3,
-            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
-            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+            ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
+            ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
         };
 
         protected List<AxisLayoutFlags> AxisBlackList = new()
@@ -57,8 +57,8 @@ namespace ControllerCommon.Controllers
             ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.L3, ButtonFlags.R3,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
-            ButtonFlags.LStickUp, ButtonFlags.LStickDown, ButtonFlags.LStickLeft, ButtonFlags.LStickRight,
-            ButtonFlags.RStickUp, ButtonFlags.RStickDown, ButtonFlags.RStickLeft, ButtonFlags.RStickRight,
+            ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
+            ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
         };
 
         protected List<AxisLayoutFlags> AxisSupport = new()
@@ -318,21 +318,21 @@ namespace ControllerCommon.Controllers
                     return "\u21CB";
                 case ButtonFlags.RightThumb:
                     return "\u21CC";
-                case ButtonFlags.LStickUp:
+                case ButtonFlags.LeftThumbUp:
                     return "\u21BE";
-                case ButtonFlags.LStickDown:
+                case ButtonFlags.LeftThumbDown:
                     return "\u21C2";
-                case ButtonFlags.LStickLeft:
+                case ButtonFlags.LeftThumbLeft:
                     return "\u21BC";
-                case ButtonFlags.LStickRight:
+                case ButtonFlags.LeftThumbRight:
                     return "\u21C0";
-                case ButtonFlags.RStickUp:
+                case ButtonFlags.RightThumbUp:
                     return "\u21BF";
-                case ButtonFlags.RStickDown:
+                case ButtonFlags.RightThumbDown:
                     return "\u21C3";
-                case ButtonFlags.RStickLeft:
+                case ButtonFlags.RightThumbLeft:
                     return "\u21BD";
-                case ButtonFlags.RStickRight:
+                case ButtonFlags.RightThumbRight:
                     return "\u21C1";
             }
             return "\u2753";
