@@ -85,7 +85,7 @@
                                         <TextBox Text="{Binding Value, ElementName=Axis2AxisInnerDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis2AxisInnerDeadzone" FlowDirection="LeftToRight" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged"/>
+                                    <Slider Name="Axis2AxisInnerDeadzone" FlowDirection="LeftToRight" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -100,7 +100,7 @@
                                         <TextBox Text="{Binding Value, ElementName=Axis2AxisOuterDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis2AxisOuterDeadzone" FlowDirection="RightToLeft" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged"/>
+                                    <Slider Name="Axis2AxisOuterDeadzone" FlowDirection="RightToLeft" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -115,7 +115,7 @@
                                         <TextBox Text="{Binding Value, ElementName=Axis2AxisAntiDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis2AxisAntiDeadzone" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged"/>
+                                    <Slider Name="Axis2AxisAntiDeadzone" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -156,7 +156,7 @@
                                         <TextBox Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
 
-                                    <Slider Name="Axis2MousePointerSpeed" Minimum="10" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Axis2MousePointerSpeed_ValueChanged"/>
+                                    <Slider Name="Axis2MousePointerSpeed" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis2MousePointerSpeed_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
