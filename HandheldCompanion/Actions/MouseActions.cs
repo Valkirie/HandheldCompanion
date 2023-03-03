@@ -26,7 +26,7 @@ namespace HandheldCompanion.Actions
 
         // settings
         public bool EnhancePrecision { get; set; } = false;
-        public float Sensivity { get; set; } = 20.0f;
+        public float Sensivity { get; set; } = 10.0f;
 
         public MouseActions()
         {
