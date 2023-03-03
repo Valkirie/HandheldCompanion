@@ -82,7 +82,22 @@ namespace ControllerCommon.Inputs
         [Description("Touch")]
         RightThumbTouch = 51,
 
-        LeftPadClickUp = 52, LeftPadClickDown = 53, LeftPadClickLeft = 54, LeftPadClickRight = 55,
-        RightPadClickUp = 56, RightPadClickDown = 57, RightPadClickLeft = 58, RightPadClickRight = 59,
+        [Description("Up")]
+        LeftPadClickUp = 52,
+        [Description("Down")]
+        LeftPadClickDown = 53,
+        [Description("Left")]
+        LeftPadClickLeft = 54,
+        [Description("Right")]
+        LeftPadClickRight = 55,
+
+        [Description("Up")]
+        RightPadClickUp = 56,
+        [Description("Down")]
+        RightPadClickDown = 57,
+        [Description("Left")]
+        RightPadClickLeft = 58,
+        [Description("Right")]
+        RightPadClickRight = 59,
     }
 }

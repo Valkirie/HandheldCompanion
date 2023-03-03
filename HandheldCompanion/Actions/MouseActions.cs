@@ -131,6 +131,7 @@ namespace HandheldCompanion.Actions
             {
                 // MoveBy
                 // ScrollBy
+                default:
                 case AxisLayoutFlags.LeftThumb:
                 case AxisLayoutFlags.RightThumb:
                     {
