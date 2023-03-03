@@ -127,10 +127,12 @@ namespace HandheldCompanion.Actions
 
             layout.vector.Y *= -1;
 
-            switch (MouseType)
+            switch(layout.flags)
             {
-                case MouseActionsType.ScrollBy:
-                case MouseActionsType.MoveBy:
+                // MoveBy
+                // ScrollBy
+                case AxisLayoutFlags.LeftThumb:
+                case AxisLayoutFlags.RightThumb:
                     {
                         if (layout.vector == Vector2.Zero)
                             return;
@@ -138,7 +140,7 @@ namespace HandheldCompanion.Actions
                         // apply sensivity
                         Vector = (layout.vector / short.MaxValue) * Sensivity * ((float)ControllerState.AxisDeadzones[layout.flags] / short.MaxValue);
 
-                        if (MouseType == MouseActionsType.MoveBy)
+                        if (MouseType == MouseActionsType.Move)
                         {
                             MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
                         }
@@ -150,8 +152,10 @@ namespace HandheldCompanion.Actions
                     }
                     break;
 
-                case MouseActionsType.ScrollTo:
-                case MouseActionsType.MoveTo:
+                // MoveTo
+                // ScrollTo
+                case AxisLayoutFlags.LeftPad:
+                case AxisLayoutFlags.RightPad:
                     {
                         if (layout.vector == Vector2.Zero)
                         {
@@ -168,14 +172,14 @@ namespace HandheldCompanion.Actions
                                 entryVector = layout.vector;
 
                                 entryMousePos = new Vector2(MouseSimulator.GetMousePosition().X, MouseSimulator.GetMousePosition().Y);
-                                
+
                                 IsPressed = true;
 
                                 return;
                             }
 
                             // compute
-                            if (MouseType == MouseActionsType.MoveTo)
+                            if (MouseType == MouseActionsType.Move)
                             {
                                 Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
                                 Vector = entryMousePos + pointVector;
@@ -196,8 +200,8 @@ namespace HandheldCompanion.Actions
                             // update previous position
                             prevVector = layout.vector;
                         }
+                        break;
                     }
-                    break;
             }
         }
     }
