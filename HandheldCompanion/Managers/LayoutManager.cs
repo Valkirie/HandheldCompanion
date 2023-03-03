@@ -4,20 +4,23 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
+using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Managers.Layouts;
 using LiveCharts.Wpf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Documents;
+using static HandheldCompanion.Simulators.MouseSimulator;
 using Vector2 = System.Numerics.Vector2;
 
 namespace HandheldCompanion.Managers
 {
     static class LayoutManager
     {
-        public static Layout desktopLayout = new("Desktop");
+        public static Layout desktopLayout = LayoutTemplates.DesktopLayout;
         public static Layout profileLayout = new();
         private static Layout currentLayout;
 

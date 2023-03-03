@@ -104,9 +104,9 @@ namespace ControllerService
         private static bool prevLeftPadClick, prevRightPadClick;
         public static void UpdateInputs(ControllerState Inputs)
         {
-            if (prevLeftPadTouch != Inputs.ButtonState[ButtonFlags.LPadTouch])
+            if (prevLeftPadTouch != Inputs.ButtonState[ButtonFlags.LeftPadTouch])
             {
-                if (Inputs.ButtonState[ButtonFlags.LPadTouch])
+                if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
                 {
                     TouchPacketCounter++;
                     LeftPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
@@ -116,12 +116,12 @@ namespace ControllerService
                     LeftPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                 }
 
-                prevLeftPadTouch = Inputs.ButtonState[ButtonFlags.LPadTouch];
+                prevLeftPadTouch = Inputs.ButtonState[ButtonFlags.LeftPadTouch];
             }
 
-            if (prevRightPadTouch != Inputs.ButtonState[ButtonFlags.RPadTouch])
+            if (prevRightPadTouch != Inputs.ButtonState[ButtonFlags.RightPadTouch])
             {
-                if (Inputs.ButtonState[ButtonFlags.RPadTouch])
+                if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
                 {
                     TouchPacketCounter++;
                     RightPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
@@ -131,30 +131,30 @@ namespace ControllerService
                     RightPadTouch.RawTrackingNum |= TOUCH_DISABLE;
                 }
 
-                prevRightPadTouch = Inputs.ButtonState[ButtonFlags.RPadTouch];
+                prevRightPadTouch = Inputs.ButtonState[ButtonFlags.RightPadTouch];
             }
 
-            if (Inputs.ButtonState[ButtonFlags.LPadTouch])
+            if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
             {
                 LeftPadTouch.X = (short)(Inputs.AxisState[AxisFlags.LeftPadX] * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
                 LeftPadTouch.Y = (short)(Inputs.AxisState[AxisFlags.LeftPadY] * TOUCHPAD_HEIGHT / ushort.MaxValue);
             }
 
-            if (Inputs.ButtonState[ButtonFlags.RPadTouch])
+            if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
             {
                 RightPadTouch.X = (short)((Inputs.AxisState[AxisFlags.RightPadX] * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
                 RightPadTouch.Y = (short)(Inputs.AxisState[AxisFlags.RightPadY] * TOUCHPAD_HEIGHT / ushort.MaxValue);
             }
 
-            if (prevLeftPadClick != Inputs.ButtonState[ButtonFlags.LPadClick] || prevRightPadClick != Inputs.ButtonState[ButtonFlags.RPadClick])
+            if (prevLeftPadClick != Inputs.ButtonState[ButtonFlags.LeftPadClick] || prevRightPadClick != Inputs.ButtonState[ButtonFlags.RightPadClick])
             {
-                if (Inputs.ButtonState[ButtonFlags.LPadClick] || Inputs.ButtonState[ButtonFlags.RPadClick])
+                if (Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick])
                     OutputClickButton = true;
                 else
                     OutputClickButton = false;
 
-                prevLeftPadClick = Inputs.ButtonState[ButtonFlags.LPadClick];
-                prevRightPadClick = Inputs.ButtonState[ButtonFlags.RPadClick];
+                prevLeftPadClick = Inputs.ButtonState[ButtonFlags.LeftPadClick];
+                prevRightPadClick = Inputs.ButtonState[ButtonFlags.RightPadClick];
             }
         }
     }

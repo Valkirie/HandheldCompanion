@@ -598,7 +598,7 @@ namespace ControllerService
                 if (Inputs.AxisState[AxisFlags.L2] == byte.MaxValue) outputData[outIdx] |= 0x01;
 
                 outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.Special]); // (hidReport.PS) ? (byte)1 : 
-                outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.LPadClick] || Inputs.ButtonState[ButtonFlags.RPadClick]); // (hidReport.TouchButton) ? (byte)1 : 
+                outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick]); // (hidReport.TouchButton) ? (byte)1 : 
 
                 //Left stick
                 outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.AxisState[AxisFlags.LeftThumbX]);

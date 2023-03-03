@@ -23,8 +23,8 @@ namespace HandheldCompanion.Controllers
             ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
 
             // Specific buttons
-            ButtonSupport.Add(ButtonFlags.LPadClick);
-            ButtonSupport.Add(ButtonFlags.RPadClick);
+            ButtonSupport.Add(ButtonFlags.LeftPadClick);
+            ButtonSupport.Add(ButtonFlags.RightPadClick);
         }
 
         public override string ToString()
@@ -76,8 +76,8 @@ namespace HandheldCompanion.Controllers
 
             Inputs.ButtonState[ButtonFlags.Special] = State.Buttons[12];
 
-            Inputs.ButtonState[ButtonFlags.LPadClick] = State.Buttons[13];
-            Inputs.ButtonState[ButtonFlags.RPadClick] = State.Buttons[13];
+            Inputs.ButtonState[ButtonFlags.LeftPadClick] = State.Buttons[13];
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = State.Buttons[13];
 
             switch (State.PointOfViewControllers[0])
             {
@@ -169,8 +169,8 @@ namespace HandheldCompanion.Controllers
                     return "\u21B3";
                 case ButtonFlags.Special:
                     return "\uE000";
-                case ButtonFlags.LPadClick:
-                case ButtonFlags.RPadClick:
+                case ButtonFlags.LeftPadClick:
+                case ButtonFlags.RightPadClick:
                     return "\u21E7";
             }
 

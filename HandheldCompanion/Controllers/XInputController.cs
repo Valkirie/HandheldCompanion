@@ -178,15 +178,15 @@ namespace HandheldCompanion.Controllers
             AxisSupport.Add(AxisLayoutFlags.LeftPad);
             AxisSupport.Add(AxisLayoutFlags.RightPad);
 
-            ButtonSupport.Add(ButtonFlags.LPadClick);
-            ButtonSupport.Add(ButtonFlags.LPadTouch);
+            ButtonSupport.Add(ButtonFlags.LeftPadClick);
+            ButtonSupport.Add(ButtonFlags.LeftPadTouch);
             ButtonSupport.Add(ButtonFlags.LeftPadClickUp);
             ButtonSupport.Add(ButtonFlags.LeftPadClickDown);
             ButtonSupport.Add(ButtonFlags.LeftPadClickLeft);
             ButtonSupport.Add(ButtonFlags.LeftPadClickRight);
 
-            ButtonSupport.Add(ButtonFlags.RPadClick);
-            ButtonSupport.Add(ButtonFlags.RPadTouch);
+            ButtonSupport.Add(ButtonFlags.RightPadClick);
+            ButtonSupport.Add(ButtonFlags.RightPadTouch);
             ButtonSupport.Add(ButtonFlags.RightPadClickUp);
             ButtonSupport.Add(ButtonFlags.RightPadClickDown);
             ButtonSupport.Add(ButtonFlags.RightPadClickLeft);

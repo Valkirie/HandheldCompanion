@@ -33,6 +33,12 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Managers\HWiNFO\**" />
+    <EmbeddedResource Remove="Managers\HWiNFO\**" />
+    <None Remove="Managers\HWiNFO\**" />
+    <Page Remove="Managers\HWiNFO\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
@@ -2180,10 +2186,6 @@
     <Page Update="Views\Windows\OverlayQuickTools.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Managers\HWiNFO\" />
   </ItemGroup>
 
 </Project>

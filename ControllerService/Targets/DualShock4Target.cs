@@ -153,7 +153,7 @@ namespace ControllerService.Targets
 
                 if (Inputs.ButtonState[ButtonFlags.Special])
                     tempSpecial |= DualShock4SpecialButton.Ps.Value;
-                if (Inputs.ButtonState[ButtonFlags.LPadClick] || Inputs.ButtonState[ButtonFlags.RPadClick])
+                if (Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick])
                     tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
 
                 outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));

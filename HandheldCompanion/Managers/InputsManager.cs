@@ -482,8 +482,8 @@ namespace HandheldCompanion.Managers
             buttonState.State[ButtonFlags.R3] = false;
             buttonState.State[ButtonFlags.LeftThumbTouch] = false;
             buttonState.State[ButtonFlags.RightThumbTouch] = false;
-            buttonState.State[ButtonFlags.LPadTouch] = false;
-            buttonState.State[ButtonFlags.RPadTouch] = false;
+            buttonState.State[ButtonFlags.LeftPadTouch] = false;
+            buttonState.State[ButtonFlags.RightPadTouch] = false;
 
             if (prevState.Equals(buttonState))
                 return;

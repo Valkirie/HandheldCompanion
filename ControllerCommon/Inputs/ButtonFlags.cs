@@ -65,14 +65,14 @@ namespace ControllerCommon.Inputs
 
         // Steam Deck
         [Description("Touch")]
-        LPadTouch = 40,
+        LeftPadTouch = 40,
         [Description("Touch")]
-        RPadTouch = 41,
+        RightPadTouch = 41,
 
         [Description("Click")]
-        LPadClick = 42,
+        LeftPadClick = 42,
         [Description("Click")]
-        RPadClick = 43,
+        RightPadClick = 43,
 
         L4 = 46, R4 = 47,
         L5 = 48, R5 = 49,
