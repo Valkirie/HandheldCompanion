@@ -163,7 +163,7 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.L2] = (short)L2;
             Inputs.AxisState[AxisFlags.R2] = (short)R2;
 
-            // Inputs.ButtonState[ButtonFlags.LPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
+            Inputs.ButtonState[ButtonFlags.LPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
             if (input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch])
             {
                 Inputs.AxisState[AxisFlags.LeftPadX] = input.State.AxesState[NeptuneControllerAxis.LeftPadX];
@@ -189,7 +189,7 @@ namespace HandheldCompanion.Controllers
                     Inputs.ButtonState[ButtonFlags.LeftPadClickLeft] = true;
             }
 
-            // Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
+            Inputs.ButtonState[ButtonFlags.RPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
             if (input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch])
             {
                 Inputs.AxisState[AxisFlags.RightPadX] = input.State.AxesState[NeptuneControllerAxis.RightPadX];
