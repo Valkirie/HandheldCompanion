@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using System.Windows.Navigation;
 using Windows.System.Power;
 using Application = System.Windows.Application;
@@ -54,8 +55,6 @@ namespace HandheldCompanion.Views.Windows
             Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("QuickToolsLeft"));
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
-
-            SourceInitialized += QuickTools_SourceInitialized;
         }
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
@@ -114,14 +113,12 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
-        private void QuickTools_SourceInitialized(object? sender, EventArgs e)
-        {
-            // this.HideMinimizeAndMaximizeButtons();
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // do something
+            var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+
+            if (hwndSource != null)
+                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
         }
 
         public void UpdateVisibility()
@@ -140,12 +137,6 @@ namespace HandheldCompanion.Views.Windows
                         this.Activate();
                         break;
                 }
-
-                // force update
-                this.UpdateLayout();
-                this.InvalidateArrange();
-                this.InvalidateMeasure();
-                this.InvalidateVisual();
             });
         }
 
