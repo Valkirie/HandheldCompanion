@@ -184,9 +184,6 @@ namespace HandheldCompanion.Managers
             {
                 var profile = GetProfileFromExec(proc.Name);
 
-                if (!profile.Enabled)
-                    return;
-
                 // skip if is current profile
                 if (currentProfile == profile)
                     return;

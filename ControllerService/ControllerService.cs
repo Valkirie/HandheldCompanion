@@ -374,7 +374,7 @@ namespace ControllerService
                 return;
 
             // restore default profile
-            if (profile is null || !profile.Enabled)
+            if (profile is null)
                 profile = defaultProfile;
 
             // update current profile
