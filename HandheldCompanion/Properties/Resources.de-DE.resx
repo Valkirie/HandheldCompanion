@@ -118,49 +118,49 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutPage_About" xml:space="preserve">
-    <value>About</value>
+    <value>Über</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki.</value>
+    <value>Eine Kombination aus einem Windows-Dienst und einer für die Touch-Oberfläche optimierten GUI, um Ihr Handheld-Gaming-Computer-Erlebnis zu verbessern. Zu den Funktionen gehören: Bewegungssteuerung (Gyrometer), virtuelle Controller-Simulation, Quick-Tools-Overlay, virtuelle Touchpads, 3D-Controller-Modell, anwendungsbasiertes Profileinstellungssystem. Handheld Companion basiert auf dem ViGEmBus-Treiber und den ViGEmClient-Bibliotheken sowie dem HidHide-Filtertreiber für den Kernel-Modus. Die Algorithmen zur Bewegungssteuerung basieren auf der Arbeit von Jibbsmart und den verfügbaren Informationen im GyroWiki.</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accelerometer</value>
   </data>
   <data name="AboutPage_Author" xml:space="preserve">
-    <value>Author</value>
+    <value>Autor</value>
   </data>
   <data name="AboutPage_Contributors" xml:space="preserve">
-    <value>Contributors</value>
+    <value>Mitwirkende</value>
   </data>
   <data name="AboutPage_Description" xml:space="preserve">
-    <value>Description</value>
+    <value>Beschreibung</value>
   </data>
   <data name="AboutPage_Donate" xml:space="preserve">
-    <value>Donate</value>
+    <value>Spenden</value>
   </data>
   <data name="AboutPage_Gyrometer" xml:space="preserve">
     <value>Gyrometer</value>
   </data>
   <data name="AboutPage_Inclinometer" xml:space="preserve">
-    <value>Inclinometer</value>
+    <value>Neigungssensor</value>
   </data>
   <data name="AboutPage_NotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
   <data name="AboutPage_RelatedLinks" xml:space="preserve">
-    <value>Related Links</value>
+    <value>Weitere Links</value>
   </data>
   <data name="AboutPage_SensorExternal" xml:space="preserve">
-    <value>External</value>
+    <value>Extern</value>
   </data>
   <data name="AboutPage_SensorInternal" xml:space="preserve">
-    <value>Internal</value>
+    <value>Intern</value>
   </data>
   <data name="AboutPage_SensorName" xml:space="preserve">
-    <value>Sensor name</value>
+    <value>Sensor-Name</value>
   </data>
   <data name="AboutPage_SensorSpecification" xml:space="preserve">
-    <value>Sensor specification</value>
+    <value>Sensor-Spezifikation</value>
   </data>
   <data name="AboutPage_Service" xml:space="preserve">
     <value>Service</value>
@@ -182,13 +182,13 @@
     <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ControllerPage_CloakDevice" xml:space="preserve">
-    <value>Cloak physical controller</value>
+    <value>Physikalische Steuerung verdecken</value>
   </data>
   <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
-    <value>Change physical controller visibility to other applications</value>
+    <value>Änderung der Sichtbarkeit des physischen Controllers für andere Anwendungen</value>
   </data>
   <data name="ControllerPage_Connect" xml:space="preserve">
-    <value>Connect</value>
+    <value>Verbunden</value>
   </data>
   <data name="ControllerPage_Controller" xml:space="preserve">
     <value>Controller</value>
@@ -197,25 +197,25 @@
     <value>Controller cloaking</value>
   </data>
   <data name="ControllerPage_DeviceSettings" xml:space="preserve">
-    <value>Controller settings</value>
+    <value>Controller-Einstellungen</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Getrennt</value>
   </data>
   <data name="ControllerPage_InputDevices" xml:space="preserve">
-    <value>Input devices</value>
+    <value>Eingabegeräte</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
-    <value>Uncloak on close</value>
+    <value>Aufdecken beim Schließen</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
-    <value>Restore visibility of all physical controllers to other applications on service exit</value>
+    <value>Wiederherstellung der Sichtbarkeit aller physischen Steuerungen für andere Anwendungen bei Beendigung des Dienstes</value>
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
-    <value>Vibration strength</value>
+    <value>Vibrations-Intensität</value>
   </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>Change controller vibration strength</value>
+    <value>Vibrationsstärke des Controllers ändern</value>
   </data>
   <data name="Default.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Default.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -224,88 +224,88 @@
     <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
-    <value>Decrease thermal power limit (TDP)</value>
+    <value>Thermal power limit (TDP) verringern</value>
   </data>
   <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
-    <value>Decrease system or currently applied profile TDP by one watt</value>
+    <value>Verringern Sie den TDP des Systems oder des aktuell verwendeten Profils um ein Watt</value>
   </data>
   <data name="InputsHotkey_fallbackInput" xml:space="preserve">
-    <value>Press to define hotkey input</value>
+    <value>Drücken, um die Hotkey-Eingabe zu definieren</value>
   </data>
   <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
-    <value>Press to define keyboard output</value>
+    <value>Drücken, um die Hotkey-Ausgabe zu definieren</value>
   </data>
   <data name="InputsHotkey_increaseTDP" xml:space="preserve">
-    <value>Increase thermal power limit (TDP)</value>
+    <value>Thermal power limit (TDP) erhöhen</value>
   </data>
   <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
-    <value>Increase system or currently applied profile TDP by one watt</value>
+    <value>Erhöhen Sie den TDP des Systems oder des aktuell verwendeten Profils um ein Watt</value>
   </data>
   <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
     <value>Display 3D controller</value>
   </data>
   <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
-    <value>Change 3D hotkey by pressing a button or a special key</value>
+    <value>Ändern des 3D-Hotkeys durch Drücken eines Hotkeys oder einer speziellen Taste</value>
   </data>
   <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
     <value>Display virtual trackpads</value>
   </data>
   <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
+    <value>Hotkey durch Drücken eines Buttons oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_quickTools" xml:space="preserve">
-    <value>Summon quick tools window</value>
+    <value>Fenster für Schnellwerkzeuge aufrufen</value>
   </data>
   <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
-    <value>Custom shortcut</value>
+    <value>Benutzerdefinierte Verknüpfung</value>
   </data>
   <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
-    <value>Display and hide the desktop</value>
+    <value>Desktop anzeigen und ausblenden</value>
   </data>
   <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
-    <value>Press this key: Windows + D</value>
+    <value>Drücke diese Tasten: Windows + D</value>
   </data>
   <data name="InputsHotkey_shortcutESC" xml:space="preserve">
     <value>Escape</value>
   </data>
   <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
-    <value>Press this key: Escape</value>
+    <value>Drücke diese Tasten: Escape</value>
   </data>
   <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
-    <value>Switches between window and full screen</value>
+    <value>Zwischen Fenster und Vollbild wechseln</value>
   </data>
   <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
-    <value>Press this key: Alt + Enter</value>
+    <value>Drücke diese Tasten: Alt + Enter</value>
   </data>
   <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
-    <value>Guide or PS button</value>
+    <value>Guide oder PS-Button</value>
   </data>
   <data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
-    <value>Simulate a Xbox Guide or Sony PS button input</value>
+    <value>Xbox Guide oder Sony-PS-Button Eingabe simulieren</value>
   </data>
   <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
     <value>Display touch keyboard</value>
   </data>
   <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
     <value>Force application shutdown</value>
   </data>
   <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
     <value>Display and hide main window</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_SteamDeckLizardButtons" xml:space="preserve">
     <value>Lizard mode (Buttons)</value>
