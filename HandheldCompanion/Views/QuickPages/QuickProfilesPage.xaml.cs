@@ -172,6 +172,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (profile.Executable == currentProfile.Executable)
                 ProcessManager_ForegroundChanged(currentProcess, null);
+
+            currentProfile = null;
         }
 
         private void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
