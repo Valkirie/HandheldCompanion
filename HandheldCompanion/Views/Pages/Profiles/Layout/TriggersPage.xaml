@@ -17,16 +17,22 @@
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
 
+            <!-- LEFT TRIGGER BUTTONS -->
+            <TextBlock Text="LEFT TRIGGER BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftTriggerButtonsPanel" />
+
             <!-- LEFT TRIGGER -->
             <TextBlock Text="LEFT TRIGGER" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="LeftTriggerStackPanel">
-            </ui:SimpleStackPanel>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftTriggerPanel" />
+
+            <!-- RIGHT TRIGGER BUTTONS -->
+            <TextBlock Text="RIGHT TRIGGER BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="RightTriggerButtonsPanel" />
 
             <!-- RIGHT TRIGGER -->
             <TextBlock Text="RIGHT TRIGGER" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="RightTriggerStackPanel">
-            </ui:SimpleStackPanel>
-            
+            <ui:SimpleStackPanel Spacing="6" Name="RightTriggerPanel" />
+
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
@@ -12,6 +13,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Simulators.MouseSimulator;
+using static HandheldCompanion.Simulators.KeyboardSimulator;
+using KeyboardSimulator = HandheldCompanion.Simulators.KeyboardSimulator;
+using ControllerCommon.Utils;
 
 namespace HandheldCompanion.Controls
 {
@@ -144,11 +148,15 @@ namespace HandheldCompanion.Controls
                 if (this.Actions is null || this.Actions is not KeyboardActions)
                     this.Actions = new KeyboardActions();
 
-                // localize me ?
                 foreach (VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
-                    TargetComboBox.Items.Add(key);
+                {
+                    // create a label, store VirtualKeyCode as Tag and Label as controller specific string
+                    Label buttonLabel = new Label() { Tag = key, Content = KeyboardSimulator.GetVirtualKey(key) };
+                    TargetComboBox.Items.Add(buttonLabel);
 
-                TargetComboBox.SelectedItem = ((KeyboardActions)this.Actions).Key;
+                    if (key.Equals(((KeyboardActions)this.Actions).Key))
+                        TargetComboBox.SelectedItem = buttonLabel;
+                }
 
                 // settings
                 Toggle_Turbo.IsOn = ((KeyboardActions)this.Actions).Turbo;
@@ -170,11 +178,13 @@ namespace HandheldCompanion.Controls
                             continue;
                     }
 
-                    // localize me ?
-                    TargetComboBox.Items.Add(mouseType);
-                }
+                    // create a label, store MouseActionsType as Tag and Label as controller specific string
+                    Label buttonLabel = new Label() { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
+                    TargetComboBox.Items.Add(buttonLabel);
 
-                TargetComboBox.SelectedItem = ((MouseActions)this.Actions).MouseType;
+                    if (mouseType.Equals(((MouseActions)this.Actions).MouseType))
+                        TargetComboBox.SelectedItem = buttonLabel;
+                }
 
                 // settings
                 Toggle_Turbo.IsOn = ((MouseActions)this.Actions).Turbo;
@@ -210,13 +220,15 @@ namespace HandheldCompanion.Controls
 
                 case ActionType.Keyboard:
                     {
-                        ((KeyboardActions)this.Actions).Key = (VirtualKeyCode)TargetComboBox.SelectedItem;
+                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
+                        ((KeyboardActions)this.Actions).Key = (VirtualKeyCode)buttonLabel.Tag;
                     }
                     break;
 
                 case ActionType.Mouse:
                     {
-                        ((MouseActions)this.Actions).MouseType = (MouseActionsType)TargetComboBox.SelectedItem;
+                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
+                        ((MouseActions)this.Actions).MouseType = (MouseActionsType)buttonLabel.Tag;
                     }
                     break;
             }

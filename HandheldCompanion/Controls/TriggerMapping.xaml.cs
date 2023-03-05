@@ -105,7 +105,7 @@ namespace HandheldCompanion.Controls
 
                 foreach (AxisLayoutFlags axis in controller.GetTriggers())
                 {
-                    // create a label, store ButtonFlags as Tag and Label as controller specific string
+                    // create a label, store AxisLayoutFlags as Tag and Label as controller specific string
                     Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
                     TargetComboBox.Items.Add(buttonLabel);
 
@@ -133,13 +133,6 @@ namespace HandheldCompanion.Controls
             // generate IActions based on settings
             switch (this.Actions.ActionType)
             {
-                case ActionType.Button:
-                    {
-                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
-                        ((ButtonActions)this.Actions).Button = (ButtonFlags)buttonLabel.Tag;
-                    }
-                    break;
-
                 case ActionType.Trigger:
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;

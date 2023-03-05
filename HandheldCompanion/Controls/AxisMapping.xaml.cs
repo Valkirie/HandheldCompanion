@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
@@ -136,11 +137,13 @@ namespace HandheldCompanion.Controls
                             continue;
                     }
 
-                    // localize me ?
-                    TargetComboBox.Items.Add(mouseType);
-                }
+                    // create a label, store MouseActionsType as Tag and Label as controller specific string
+                    Label buttonLabel = new Label() { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
+                    TargetComboBox.Items.Add(buttonLabel);
 
-                TargetComboBox.SelectedItem = ((MouseActions)this.Actions).MouseType;
+                    if (mouseType.Equals(((MouseActions)this.Actions).MouseType))
+                        TargetComboBox.SelectedItem = buttonLabel;
+                }
 
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
@@ -166,13 +169,6 @@ namespace HandheldCompanion.Controls
             // generate IActions based on settings
             switch (this.Actions.ActionType)
             {
-                case ActionType.Button:
-                    {
-                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
-                        ((ButtonActions)this.Actions).Button = (ButtonFlags)buttonLabel.Tag;
-                    }
-                    break;
-
                 case ActionType.Joystick:
                     {
                         Label buttonLabel = TargetComboBox.SelectedItem as Label;
@@ -180,15 +176,10 @@ namespace HandheldCompanion.Controls
                     }
                     break;
 
-                case ActionType.Keyboard:
-                    {
-                        ((KeyboardActions)this.Actions).Key = (VirtualKeyCode)TargetComboBox.SelectedItem;
-                    }
-                    break;
-
                 case ActionType.Mouse:
                     {
-                        ((MouseActions)this.Actions).MouseType = (MouseActionsType)TargetComboBox.SelectedItem;
+                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
+                        ((MouseActions)this.Actions).MouseType = (MouseActionsType)buttonLabel.Tag;
                     }
                     break;
             }

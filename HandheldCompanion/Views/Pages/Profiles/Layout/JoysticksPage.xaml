@@ -17,14 +17,21 @@
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
 
+            <!-- LEFT JOYSTICK BUTTONS -->
+            <TextBlock Text="LEFT JOYSTICK BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftJoystickButtonsPanel" />
+
             <!-- LEFT JOYSTICK -->
             <TextBlock Text="LEFT JOYSTICK" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="LeftJoystickStackPanel">
-            </ui:SimpleStackPanel>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftJoystickPanel" />
 
+            <!-- RIGHT JOYSTICK BUTTONS -->
+            <TextBlock Text="RIGHT JOYSTICK BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="RightJoystickButtonsPanel" />
+            
             <!-- RIGHT JOYSTICK -->
             <TextBlock Text="RIGHT JOYSTICK" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="RightJoystickStackPanel">
+            <ui:SimpleStackPanel Spacing="6" Name="RightJoystickPanel">
             </ui:SimpleStackPanel>
 
         </ui:SimpleStackPanel>

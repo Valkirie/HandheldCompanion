@@ -386,7 +386,7 @@ namespace ControllerCommon.Controllers
             if (FontIcon.Glyph is not null)
             {
                 FontIcon.FontFamily = GlyphFontFamily;
-                FontIcon.FontSize = 20;
+                FontIcon.FontSize = 28;
             }
 
             return FontIcon;
@@ -404,7 +404,7 @@ namespace ControllerCommon.Controllers
             if (FontIcon.Glyph is not null)
             {
                 FontIcon.FontFamily = GlyphFontFamily;
-                FontIcon.FontSize = 20;
+                FontIcon.FontSize = 28;
             }
 
             return FontIcon;

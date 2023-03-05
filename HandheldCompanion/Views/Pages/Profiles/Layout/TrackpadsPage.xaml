@@ -17,15 +17,21 @@
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
 
+            <!-- LEFT TRACKPAD BUTTONS -->
+            <TextBlock Text="LEFT TRACKPAD BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftTrackpadButtonsPanel" />
+            
             <!-- LEFT TRACKPAD -->
             <TextBlock Text="LEFT TRACKPAD" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="LeftTrackpadStackPanel">
-            </ui:SimpleStackPanel>
+            <ui:SimpleStackPanel Spacing="6" Name="LeftTrackpadPanel" />
+
+            <!-- RIGHT TRACKPAD BUTTONS -->
+            <TextBlock Text="RIGHT TRACKPAD BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+            <ui:SimpleStackPanel Spacing="6" Name="RightTrackpadButtonsPanel" />
 
             <!-- RIGHT TRACKPAD -->
             <TextBlock Text="RIGHT TRACKPAD" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="RightTrackpadStackPanel">
-            </ui:SimpleStackPanel>
+            <ui:SimpleStackPanel Spacing="6" Name="RightTrackpadPanel" />
 
         </ui:SimpleStackPanel>
     </Grid>

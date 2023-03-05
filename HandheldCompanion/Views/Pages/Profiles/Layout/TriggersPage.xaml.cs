@@ -33,7 +33,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonFlags button in LeftTrigger)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
-                LeftTriggerStackPanel.Children.Add(buttonMapping);
+                LeftTriggerButtonsPanel.Children.Add(buttonMapping);
 
                 MappingButtons.Add(button, buttonMapping);
             }
@@ -41,7 +41,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (AxisLayoutFlags axis in LeftTriggerAxis)
             {
                 TriggerMapping axisMapping = new TriggerMapping(axis);
-                LeftTriggerStackPanel.Children.Add(axisMapping);
+                LeftTriggerPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
             }
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonFlags button in RightTrigger)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
-                RightTriggerStackPanel.Children.Add(buttonMapping);
+                RightTriggerButtonsPanel.Children.Add(buttonMapping);
 
                 MappingButtons.Add(button, buttonMapping);
             }
@@ -57,7 +57,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (AxisLayoutFlags axis in RightTriggerAxis)
             {
                 TriggerMapping axisMapping = new TriggerMapping(axis);
-                RightTriggerStackPanel.Children.Add(axisMapping);
+                RightTriggerPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
             }

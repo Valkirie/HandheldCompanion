@@ -33,7 +33,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonFlags button in LeftButtons)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
-                LeftTrackpadStackPanel.Children.Add(buttonMapping);
+                LeftTrackpadButtonsPanel.Children.Add(buttonMapping);
 
                 MappingButtons.Add(button, buttonMapping);
             }
@@ -41,7 +41,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (AxisLayoutFlags axis in LeftAxis)
             {
                 AxisMapping axisMapping = new AxisMapping(axis);
-                LeftTrackpadStackPanel.Children.Add(axisMapping);
+                LeftTrackpadPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
             }
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonFlags button in RightButtons)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
-                RightTrackpadStackPanel.Children.Add(buttonMapping);
+                RightTrackpadButtonsPanel.Children.Add(buttonMapping);
 
                 MappingButtons.Add(button, buttonMapping);
             }
@@ -57,7 +57,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (AxisLayoutFlags axis in RightAxis)
             {
                 AxisMapping axisMapping = new AxisMapping(axis);
-                RightTrackpadStackPanel.Children.Add(axisMapping);
+                RightTrackpadPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
             }

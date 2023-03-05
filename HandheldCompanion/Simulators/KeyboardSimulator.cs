@@ -1,6 +1,7 @@
 ﻿using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers;
+using System.Runtime.InteropServices;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Simulators
@@ -8,6 +9,9 @@ namespace HandheldCompanion.Simulators
     public static class KeyboardSimulator
     {
         private static InputSimulator InputSimulator;
+
+        [DllImport("user32.dll")]
+        static extern int MapVirtualKey(int uCode, uint uMapType);
 
         static KeyboardSimulator()
         {
@@ -70,6 +74,15 @@ namespace HandheldCompanion.Simulators
         public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
         {
             InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
+        }
+
+        public static string GetVirtualKey(VirtualKeyCode key)
+        {
+            char c = (char)MapVirtualKey((int)key, (uint)2);
+            if (char.IsControl(c))
+                return key.ToString();
+
+            return c.ToString();
         }
     }
 }

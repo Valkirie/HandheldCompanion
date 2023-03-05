@@ -55,7 +55,7 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="GyroPage" Visibility="Collapsed">
+            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="GyroPage" Visibility="Collapsed" IsEnabled="False">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"></ui:FontIcon>
                 </ui:NavigationViewItem.Icon>

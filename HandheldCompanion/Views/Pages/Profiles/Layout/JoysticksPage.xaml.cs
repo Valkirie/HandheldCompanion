@@ -33,7 +33,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonFlags button in LeftThumbButtons)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
-                LeftJoystickStackPanel.Children.Add(buttonMapping);
+                LeftJoystickButtonsPanel.Children.Add(buttonMapping);
 
                 MappingButtons.Add(button, buttonMapping);
             }
@@ -41,7 +41,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (AxisLayoutFlags axis in LeftThumbAxis)
             {
                 AxisMapping axisMapping = new AxisMapping(axis);
-                LeftJoystickStackPanel.Children.Add(axisMapping);
+                LeftJoystickPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
             }
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (ButtonFlags button in RightThumbButtons)
             {
                 ButtonMapping buttonMapping = new ButtonMapping(button);
-                RightJoystickStackPanel.Children.Add(buttonMapping);
+                RightJoystickButtonsPanel.Children.Add(buttonMapping);
 
                 MappingButtons.Add(button, buttonMapping);
             }
@@ -57,7 +57,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             foreach (AxisLayoutFlags axis in RightThumbAxis)
             {
                 AxisMapping axisMapping = new AxisMapping(axis);
-                RightJoystickStackPanel.Children.Add(axisMapping);
+                RightJoystickPanel.Children.Add(axisMapping);
 
                 MappingAxis.Add(axis, axisMapping);
             }
