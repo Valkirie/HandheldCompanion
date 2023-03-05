@@ -20,21 +20,21 @@ namespace HandheldCompanion.Actions
     [Serializable]
     public enum MouseActionsType
     {
-        [Description("Left Mouse Click")]
+        [Description("Left Button")]
         LeftButton = 0,
-        [Description("Right Mouse Click")]
+        [Description("Right Button")]
         RightButton = 1,
-        [Description("Middle Mouse Click")]
+        [Description("Middle Button")]
         MiddleButton = 2,
 
-        [Description("Joystick Mouse")]
+        [Description("Move Cursor")]
         Move = 3,
         [Description("Scroll Wheel")]
         Scroll = 4,
 
-        [Description("Scroll Wheel Up")]
+        [Description("Scroll Up")]
         ScrollUp = 5,
-        [Description("Scroll Wheel Down")]
+        [Description("Scroll Down")]
         ScrollDown = 6,
     }
 
