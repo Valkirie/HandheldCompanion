@@ -60,6 +60,18 @@ namespace ControllerCommon.Inputs
             return true;
         }
 
+        public bool ContainsTrue(AxisState axisState)
+        {
+            if (this.IsEmpty() || axisState.IsEmpty())
+                return false;
+
+            foreach (var state in axisState.State.Where(a => a.Value is not 0))
+                if (this[state.Key] != state.Value)
+                    return false;
+
+            return true;
+        }
+
         public void AddRange(AxisState axisState)
         {
             foreach (var state in axisState.State)
