@@ -22,9 +22,9 @@ namespace ControllerCommon.Inputs
         [Description("Back")]
         Back = 6,
 
-        [Description("Click")]
+        [Description("Left Thumb Click")]
         LeftThumb = 7,
-        [Description("Click")]
+        [Description("Right Thumb Click")]
         RightThumb = 8,
 
         L1 = 9, R1 = 10,

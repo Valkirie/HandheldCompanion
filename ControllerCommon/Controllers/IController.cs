@@ -39,8 +39,16 @@ namespace ControllerCommon.Controllers
         {
             ButtonFlags.L2, ButtonFlags.R2,
             ButtonFlags.L3, ButtonFlags.R3,
+            ButtonFlags.L4, ButtonFlags.R4,
+            ButtonFlags.L5, ButtonFlags.R5,
+
             ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
             ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
+
+            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch,
+            ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
+            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch,
+            ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
         };
 
         protected List<AxisLayoutFlags> AxisBlackList = new()
