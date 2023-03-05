@@ -12,7 +12,9 @@ namespace HandheldCompanion.Actions
         public ButtonActions()
         {
             this.ActionType = ActionType.Button;
+
             this.Value = false;
+            this.prevValue = false;
         }
 
         public ButtonActions(ButtonFlags button) : this()

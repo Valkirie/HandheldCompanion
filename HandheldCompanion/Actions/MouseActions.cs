@@ -57,8 +57,8 @@ namespace HandheldCompanion.Actions
             this.IsCursorDown = false;
             this.IsCursorUp = true;
 
-            this.Value = (short)0;
-            this.prevValue = (short)0;
+            this.Value = false;
+            this.prevValue = false;
         }
 
         public MouseActions(MouseActionsType type) : this()
