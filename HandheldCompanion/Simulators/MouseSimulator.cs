@@ -1,21 +1,13 @@
 ﻿using GregsStack.InputSimulatorStandard;
+using HandheldCompanion.Actions;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace HandheldCompanion.Simulators
 {
     public static class MouseSimulator
     {
-        [Serializable]
-        public enum MouseActionsType
-        {
-            LeftButton = 0,
-            RightButton = 1,
-            MiddleButton = 2,
-            Move = 3,
-            Scroll = 4
-        }
-
         private static InputSimulator InputSimulator;
 
         static MouseSimulator()
@@ -23,7 +15,7 @@ namespace HandheldCompanion.Simulators
             InputSimulator = new InputSimulator();
         }
 
-        public static void MouseDown(MouseActionsType type)
+        public static void MouseDown(MouseActionsType type, int scrollAmountInClicks = 0)
         {
             switch (type)
             {
@@ -35,6 +27,14 @@ namespace HandheldCompanion.Simulators
                     break;
                 case MouseActionsType.MiddleButton:
                     InputSimulator.Mouse.MiddleButtonDown();
+                    break;
+                case MouseActionsType.ScrollUp:
+                    InputSimulator.Mouse.MouseWheelClickSize = 100;
+                    InputSimulator.Mouse.VerticalScroll(scrollAmountInClicks);
+                    break;
+                case MouseActionsType.ScrollDown:
+                    InputSimulator.Mouse.MouseWheelClickSize = 100;
+                    InputSimulator.Mouse.VerticalScroll(-scrollAmountInClicks);
                     break;
             }
         }
@@ -67,6 +67,7 @@ namespace HandheldCompanion.Simulators
 
         public static void HorizontalScroll(int x)
         {
+            InputSimulator.Mouse.MouseWheelClickSize = 1;
             InputSimulator.Mouse.HorizontalScroll(x);
         }
 

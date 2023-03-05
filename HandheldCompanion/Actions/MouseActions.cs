@@ -7,6 +7,7 @@ using LiveCharts.Wpf;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -16,6 +17,27 @@ using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Actions
 {
+    [Serializable]
+    public enum MouseActionsType
+    {
+        [Description("Left Mouse Click")]
+        LeftButton = 0,
+        [Description("Right Mouse Click")]
+        RightButton = 1,
+        [Description("Middle Mouse Click")]
+        MiddleButton = 2,
+
+        [Description("Joystick Mouse")]
+        Move = 3,
+        [Description("Scroll Wheel")]
+        Scroll = 4,
+
+        [Description("Scroll Wheel Up")]
+        ScrollUp = 5,
+        [Description("Scroll Wheel Down")]
+        ScrollDown = 6,
+    }
+
     [Serializable]
     public class MouseActions : IActions
     {
@@ -27,6 +49,7 @@ namespace HandheldCompanion.Actions
         // settings
         public bool EnhancePrecision { get; set; } = false;
         public float Sensivity { get; set; } = 10.0f;
+        public int scrollAmountInClicks { get; set; } = 1;
 
         public MouseActions()
         {
@@ -93,7 +116,7 @@ namespace HandheldCompanion.Actions
 
                         IsCursorDown = true;
                         IsCursorUp = false;
-                        MouseSimulator.MouseDown(MouseType);
+                        MouseSimulator.MouseDown(MouseType, scrollAmountInClicks);
                     }
                     break;
                 case false:

@@ -162,9 +162,13 @@ namespace HandheldCompanion.Controls
 
                 foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
                 {
-                    // skip axis related actions
-                    if (mouseType > MouseActionsType.MiddleButton)
-                        continue;
+                    // skip specific scenarios
+                    switch(mouseType)
+                    {
+                        case MouseActionsType.Move:
+                        case MouseActionsType.Scroll:
+                            continue;
+                    }
 
                     // localize me ?
                     TargetComboBox.Items.Add(mouseType);
