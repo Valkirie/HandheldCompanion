@@ -393,7 +393,7 @@ namespace HandheldCompanion.Managers
                 InputsChordType InputsType = chord.InputsType;
                 ButtonState State = chord.State;
 
-                if (InputsType.HasFlag(lookup.InputsType) && State.Equals(lookup.State))
+                if (InputsType.HasFlag(lookup.InputsType) && (State.Buttons.Count() != 0 && lookup.State.Contains(State)))
                     keys.Add(key);
             }
 
@@ -579,7 +579,7 @@ namespace HandheldCompanion.Managers
 
             TriggerUpdated?.Invoke(currentHotkey.Listener, inputsChord, currentType);
 
-            LogManager.LogDebug("Trigger: {0} updated. buttons: {1}, type: {2}", currentHotkey.Listener, inputsChord.State, inputsChord.InputsType);
+            LogManager.LogDebug("Trigger: {0} updated. buttons: {1}, type: {2}", currentHotkey.Listener, string.Join(",", inputsChord.State.Buttons), inputsChord.InputsType);
 
             currentHotkey = new();
             currentChord = new();
