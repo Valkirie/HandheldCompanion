@@ -92,8 +92,8 @@ namespace ControllerService.Targets
 
             if (ControllerService.currentProfile.MotionEnabled)
             {
-                if ((ControllerService.currentProfile.MotionMode == MotionMode.Off && Inputs.ButtonState.Contains(ControllerService.currentProfile.MotionTrigger)) ||
-                    (ControllerService.currentProfile.MotionMode == MotionMode.On && !Inputs.ButtonState.Contains(ControllerService.currentProfile.MotionTrigger)))
+                if ((ControllerService.currentProfile.MotionMode == MotionMode.Off && Inputs.ButtonState.ContainsTrue(ControllerService.currentProfile.MotionTrigger)) ||
+                    (ControllerService.currentProfile.MotionMode == MotionMode.On && !Inputs.ButtonState.ContainsTrue(ControllerService.currentProfile.MotionTrigger)))
                 {
                     switch (ControllerService.currentProfile.MotionInput)
                     {

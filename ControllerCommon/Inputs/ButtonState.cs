@@ -60,6 +60,18 @@ namespace ControllerCommon.Inputs
             return true;
         }
 
+        public bool ContainsTrue(ButtonState buttonState)
+        {
+            if (this.IsEmpty() || buttonState.IsEmpty())
+                return false;
+
+            foreach (var state in buttonState.State.Where(a => a.Value is true))
+                if (this[state.Key] != state.Value)
+                    return false;
+
+            return true;
+        }
+
         public void AddRange(ButtonState buttonState)
         {
             // only add pressed button
