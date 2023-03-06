@@ -290,52 +290,52 @@
     <value>Xbox Guide oder Sony-PS-Button Eingabe simulieren</value>
   </data>
   <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
-    <value>Display touch keyboard</value>
+    <value>Touchdisplay-Tastatur</value>
   </data>
   <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
     <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
-    <value>Force application shutdown</value>
+    <value>Beenden der Anwendung erzwingen</value>
   </data>
   <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
     <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
-    <value>Display and hide main window</value>
+    <value>Hauptfenster anzeigen und ausblenden</value>
   </data>
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
   <data name="InputsHotkey_SteamDeckLizardButtons" xml:space="preserve">
-    <value>Lizard mode (Buttons)</value>
+    <value>Lizard mode (Schaltflächen)</value>
   </data>
   <data name="InputsHotkey_SteamDeckLizardButtonsDesc" xml:space="preserve">
-    <value>Toggle buttons from or into lizard brain (mouse and keyboard emulation)</value>
+    <value>Schaltflächen von oder nach lizard brain (Maus- und Tastaturemulation)</value>
   </data>
   <data name="InputsHotkey_SteamDeckLizardMouse" xml:space="preserve">
-    <value>Lizard mode (Mouse)</value>
+    <value>Lizard mode (Maus)</value>
   </data>
   <data name="InputsHotkey_SteamDeckLizardMouseDesc" xml:space="preserve">
-    <value>Toggle trackpads from or into lizard brain (mouse and keyboard emulation)</value>
+    <value>Umschalten der Trackpads von oder auf lizard brain (Maus- und Tastaturemulation)</value>
   </data>
   <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
-    <value>Open Task Manager</value>
+    <value>Task-Manager öffnen</value>
   </data>
   <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
-    <value>Press this key: Ctrl + Shift + Esc</value>
+    <value>Drücke diese Tasten: Ctrl + Shift + Esc</value>
   </data>
   <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
-    <value>Open Task view</value>
+    <value>Aufgabenansicht öffnen</value>
   </data>
   <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
-    <value>Press this key: Windows + Tab</value>
+    <value>Drücke diese Tasten: Windows + Tab</value>
   </data>
   <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
     <value>Toggle Suspender</value>
   </data>
   <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
-    <value>Suspend or resume the foreground application</value>
+    <value>Unterbrechen oder Fortsetzen der Vordergrundanwendung</value>
   </data>
   <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -344,7 +344,7 @@
     <value>Handheld Companion</value>
   </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
-    <value>About</value>
+    <value>Über</value>
   </data>
   <data name="MainWindow_navController" xml:space="preserve">
     <value>Controller</value>
@@ -353,118 +353,118 @@
     <value>Overlay</value>
   </data>
   <data name="MainWindow_navProfiles" xml:space="preserve">
-    <value>Profiles</value>
+    <value>Profile</value>
   </data>
   <data name="MainWindow_OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="MainWindow_serviceDeploy" xml:space="preserve">
-    <value>Deploy service</value>
+    <value>Dienst bereitstellen</value>
   </data>
   <data name="MainWindow_ServiceManager" xml:space="preserve">
-    <value>Service manager</value>
+    <value>Service-Manager</value>
   </data>
   <data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
-    <value>Oups. There was an issue while we tried to start the service.</value>
+    <value>Oups. Beim Versuch, den Dienst zu starten, trat ein Problem auf.</value>
   </data>
   <data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
-    <value>Oups. There was an issue while we tried to stop the service.</value>
+    <value>Oups. Beim Versuch, den Dienst zu stoppen, trat ein Problem auf.</value>
   </data>
   <data name="MainWindow_serviceRemove" xml:space="preserve">
-    <value>Remove service</value>
+    <value>Service entfernen</value>
   </data>
   <data name="MainWindow_serviceStart" xml:space="preserve">
-    <value>Start service</value>
+    <value>Service starten</value>
   </data>
   <data name="MainWindow_serviceStop" xml:space="preserve">
-    <value>Stop service</value>
+    <value>Service stoppen</value>
   </data>
   <data name="MainWindow_Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
   </data>
   <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
     <value>8BitDo Lite 2</value>
   </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
-    <value>Alignment</value>
+    <value>Ausrichtung</value>
   </data>
   <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
-    <value>Change 3D controller overlay alignment</value>
+    <value>Ausrichtung des 3D-Controller-Overlays ändern</value>
   </data>
   <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
-    <value>Change trackpads overlay alignment</value>
+    <value>Trackpad-Overlay-Ausrichtung ändern</value>
   </data>
   <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
-    <value>Always on top</value>
+    <value>Immer ganz oben</value>
   </data>
   <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
-    <value>When toggled, 3D controller overlay will stay on top of other windows</value>
+    <value>Wenn umgeschaltet, bleibt das 3D-Controller-Overlay über anderen Fenstern.</value>
   </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
-    <value>Back</value>
+    <value>Schwarz</value>
   </data>
   <data name="OverlayPage_CameraAngle" xml:space="preserve">
-    <value>Face camera</value>
+    <value>Kamera-Ausrichtung</value>
   </data>
   <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
-    <value>Change 3D controller overlay model behaviour for facing the camera</value>
+    <value>Ändern Sie das Verhalten des 3D-Controller-Overlay-Modells für die Ausrichtung der Kamera</value>
   </data>
   <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
     <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
+    <value>Ändern Sie den Winkel, in Grad</value>
   </data>
   <data name="OverlayPage_Color" xml:space="preserve">
-    <value>Background Color</value>
+    <value>Hintergrundfarbe</value>
   </data>
   <data name="OverlayPage_ColorDesc" xml:space="preserve">
-    <value>Change 3D controller overlay background color</value>
+    <value>Hintergrundfarbe des 3D-Controller-Overlays ändern</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
-    <value>Controller options</value>
+    <value>Controller-Optionen</value>
   </data>
   <data name="OverlayPage_DualSenseController" xml:space="preserve">
     <value>Playstation DualSense</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
-    <value>Emulated controller</value>
+    <value>Emulierter Controller</value>
   </data>
   <data name="OverlayPage_FaceCamera" xml:space="preserve">
-    <value>Face camera</value>
+    <value>Kamera-Ausrichtung</value>
   </data>
   <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
-    <value>3D Model slowly rotates to face camera as default position</value>
+    <value>3D-Modell dreht sich langsam in Richtung Kamera als Standardposition</value>
   </data>
   <data name="OverlayPage_Listening" xml:space="preserve">
-    <value>Listening...</value>
+    <value>Warten...</value>
   </data>
   <data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
     <value>MACHENIKE HG510</value>
   </data>
   <data name="OverlayPage_MainTrigger" xml:space="preserve">
-    <value>Main trigger</value>
+    <value>Hauptschalter</value>
   </data>
   <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
-    <value>Change 3D controller overlay main trigger</value>
+    <value>3D-Controller-Overlay-Hauptschalter ändern</value>
   </data>
   <data name="OverlayPage_MotionActivated" xml:space="preserve">
-    <value>Motion</value>
+    <value>Bewegung</value>
   </data>
   <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
-    <value>Model will move in accordance with user movements based on sensor information</value>
+    <value>Das Modell bewegt sich entsprechend den Bewegungen des Benutzers auf der Grundlage von Sensorinformationen</value>
   </data>
   <data name="OverlayPage_N64Controller" xml:space="preserve">
     <value>N64</value>
   </data>
   <data name="OverlayPage_OEMController" xml:space="preserve">
-    <value>OEM controller</value>
+    <value>OEM Controller</value>
   </data>
   <data name="OverlayPage_Opacity" xml:space="preserve">
-    <value>Opacity</value>
+    <value>Deckkraft</value>
   </data>
   <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
-    <value>Change 3D controller overlay opacity</value>
+    <value>Deckkraft der 3D-Controller-Überlagerung ändern</value>
   </data>
   <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
     <value>Change trackpads overlay opacity</value>
