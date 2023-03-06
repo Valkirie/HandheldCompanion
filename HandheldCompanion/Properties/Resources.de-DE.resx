@@ -401,7 +401,7 @@
     <value>Wenn umgeschaltet, bleibt das 3D-Controller-Overlay über anderen Fenstern.</value>
   </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
-    <value>Schwarz</value>
+    <value>Zurück</value>
   </data>
   <data name="OverlayPage_CameraAngle" xml:space="preserve">
     <value>Kamera-Ausrichtung</value>
@@ -488,34 +488,34 @@
     <value>Anti-Aliasing</value>
   </data>
   <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
-    <value>Change the render anti-aliasing status</value>
+    <value>Ändern des Rendering-Anti-Aliasing-Status</value>
   </data>
   <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
-    <value>Change the render settings of your stationary 3D overlay controller model</value>
+    <value>Ändern Sie die Rendereinstellungen Ihres stationären 3D-Overlay-Controller-Modells</value>
   </data>
   <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
-    <value>Update rate</value>
+    <value>Aktualisierungsrate</value>
   </data>
   <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
-    <value>Change the render update rate, in update per second</value>
+    <value>Ändern Sie die Render-Update-Rate, in Update pro Sekunde</value>
   </data>
   <data name="OverlayPage_Size" xml:space="preserve">
-    <value>Size</value>
+    <value>Größe</value>
   </data>
   <data name="OverlayPage_SizeDesc" xml:space="preserve">
-    <value>Change 3D controller overlay size</value>
+    <value>Größe des 3D-Controller-Overlays änderne</value>
   </data>
   <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
-    <value>Change trackpads overlay size</value>
+    <value>Trackpad-Overlay-Größe ändern</value>
   </data>
   <data name="OverlayPage_StartButton" xml:space="preserve">
     <value>Start</value>
   </data>
   <data name="OverlayPage_ToyController" xml:space="preserve">
-    <value>Fisher-Price controller</value>
+    <value>Fisher-Price Controller</value>
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
-    <value>Trackpads options</value>
+    <value>Optionen für Trackpads</value>
   </data>
   <data name="OverlayPage_XboxOneController" xml:space="preserve">
     <value>Xbox One</value>
@@ -539,235 +539,235 @@
     <value>Suspend</value>
   </data>
   <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
-    <value>Additional settings</value>
+    <value>Zusätzliche Einstellungen</value>
   </data>
   <data name="ProfileSettingsMode0_AimingDownSights" xml:space="preserve">
-    <value>Aiming down sights motion multiplier</value>
+    <value>Bewegungsmultiplikator für das Abwärtszielen</value>
   </data>
   <data name="ProfileSettingsMode0_AimingDownSightsActivation" xml:space="preserve">
-    <value>Activation button</value>
+    <value>Taste zur Aktivierung</value>
   </data>
   <data name="ProfileSettingsMode0_AimingDownSightsDesc" xml:space="preserve">
-    <value>An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button</value>
+    <value>Ein zusätzlicher Multiplikator für die Bewegungsempfindlichkeit beim Anvisieren der Visierung oder des Zielfernrohrs durch die Verwendung der konfigurierten Aktivierungstaste</value>
   </data>
   <data name="ProfileSettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
-    <value>Multiplier value</value>
+    <value>Multiplikatorwert</value>
   </data>
   <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
-    <value>Camera options</value>
+    <value>Kamera-Optionen</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponseCurve" xml:space="preserve">
-    <value>Custom response curve</value>
+    <value>Benutzerdefinierte Reaktionskurve</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
-    <value>Output sent to game</value>
+    <value>Ausgabe an das Spiel gesendet</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponseIntensity" xml:space="preserve">
-    <value>Movement intensity</value>
+    <value>Bewegungsintensität</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
-    <value>Agressive</value>
+    <value>Aggressiv</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
-    <value>Default</value>
+    <value>Standard</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
-    <value>Preset options</value>
+    <value>Voreingestellte Optionen</value>
   </data>
   <data name="ProfileSettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
-    <value>Precise</value>
+    <value>Präzise</value>
   </data>
   <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
-    <value>Flick duration</value>
+    <value>Streifendauer</value>
   </data>
   <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
-    <value>Change the flick duration, calibrate to 180 degree turn, in milliseconds</value>
+    <value>Ändern Sie die Streifendauer, kalibrieren Sie auf eine 180-Grad-Drehung, in Millisekunden</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
     <value>Flick stick (experimental)</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
-    <value>Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating</value>
+    <value>Richten Sie die Kamera in Richtung des (rechten) Joysticks, drehen Sie die Kamera rein in der horizontalen Ebene durch Drehen</value>
   </data>
   <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
-    <value>Enable flick stick</value>
+    <value>Aktiviere flick stick</value>
   </data>
   <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
-    <value>Sensitivity</value>
+    <value>Empfindlichkeit</value>
   </data>
   <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
-    <value>Change the motion sensitivity of the horizontal and vertical axis</value>
+    <value>Ändern Sie die Bewegungsempfindlichkeit der horizontalen und vertikalen Achse</value>
   </data>
   <data name="ProfileSettingsMode0_SensitivityX" xml:space="preserve">
-    <value>Sensitivity X</value>
+    <value>Empfindlichkeit X</value>
   </data>
   <data name="ProfileSettingsMode0_SensitivityXDesc" xml:space="preserve">
-    <value>Change the motion sensitivity of the horizontal axis</value>
+    <value>Ändern Sie die Bewegungsempfindlichkeit der horizontalen Achse</value>
   </data>
   <data name="ProfileSettingsMode0_SensitivityY" xml:space="preserve">
-    <value>Sensitivity Y</value>
+    <value>Empfindlichkeit Y</value>
   </data>
   <data name="ProfileSettingsMode0_SensitivityYDesc" xml:space="preserve">
-    <value>Change the motion sensitivity of the vertical axis</value>
+    <value>Ändern Sie die Bewegungsempfindlichkeit der vertikalen Achse</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
-    <value>Stick sensitivtity</value>
+    <value>Stick-Empfindlichkeit</value>
   </data>
   <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
-    <value>Change the rotation rate</value>
+    <value>Drehrate ändern</value>
   </data>
   <data name="ProfileSettingsMode1_AdditionalSettings" xml:space="preserve">
-    <value>Additional settings</value>
+    <value>Zusätzliche Einstellungen</value>
   </data>
   <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
     <value>Deadzone</value>
   </data>
   <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>Change the steering deadzone, in degree. Improves steering straight</value>
+    <value>Ändern Sie die Deadzone in Grad. Verbessert das Geradeauslaufen</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
-    <value>Joystick game Input</value>
+    <value>Joystick-Spiel Eingabe</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
-    <value>Joystick steering</value>
+    <value>Joystick-Lenkung</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
-    <value>Joystick steering options</value>
+    <value>Joystick-Lenkung-Optionen</value>
   </data>
   <data name="ProfileSettingsMode1_JoystickSteeringPreview" xml:space="preserve">
-    <value>Joystick steering preview</value>
+    <value>Joystick-Lenkung-Vorschau</value>
   </data>
   <data name="ProfileSettingsMode1_MaxSteeringAngle" xml:space="preserve">
-    <value>Max steering angle</value>
+    <value>Maximaler Lenkwinkel</value>
   </data>
   <data name="ProfileSettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
-    <value>Change the maximum steering angle value, in degree</value>
+    <value>Den maximalen Lenkwinkelwert in Grad ändern</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearity" xml:space="preserve">
-    <value>Steering linearity</value>
+    <value>Linearität der Lenkung</value>
   </data>
   <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
-    <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping</value>
+    <value>Abbildung zwischen Eingabe und Lenkung. Niedrigere Werte sorgen für mehr Genauigkeit in der Nähe der Vollsperrung, aber weniger Genauigkeit in der Nähe der Mitte. Höhere Werte bieten mehr Genauigkeit in der Nähe der Mitte, aber weniger Genauigkeit in der Nähe der vollen Blockierung. 1.0 ist eine lineare Abbildung</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
-    <value>Accelerometer multiplier</value>
+    <value>Beschleunigungsmesser-Multiplikator</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
-    <value>Change the system reported accelerometer value</value>
+    <value>Ändern Sie den vom System gemeldeten Beschleunigungsmesserwert</value>
   </data>
   <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
-    <value>Additional settings</value>
+    <value>Zusätzliche Einstellungen</value>
   </data>
   <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
-    <value>Anti-deadzone</value>
+    <value>Anti-Deadzone</value>
   </data>
   <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
-    <value>Change the in-game anti-deadzone, in percentage</value>
+    <value>Ändern Sie die Anti-Deadzone im Spiel, in Prozent</value>
   </data>
   <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
     <value> %</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
-    <value>Are you sure you want to delete?</value>
+    <value>Sind Sie sicher, dass Sie dies löschen wollen?</value>
   </data>
   <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
-    <value>This item will be deleted immediatly. You can't undo this action.</value>
+    <value>Dieses Element wird sofort gelöscht. Sie können diese Aktion nicht rückgängig machen.</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
-    <value>Are you sure you want to overwrite?</value>
+    <value>Sind Sie sicher, dass Sie dies überschreiben wollen?</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
-    <value>This item will be overwriten. You can't undo this action.</value>
+    <value>Dieses Element wird überschrieben. Sie können diese Aktion nicht rückgängig machen.</value>
   </data>
   <data name="ProfilesPage_BoostPower" xml:space="preserve">
     <value>Boost power limit</value>
   </data>
   <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
-    <value>Change boost thermal power limit</value>
+    <value>Ändere boost thermal power limit</value>
   </data>
   <data name="ProfilesPage_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Abbruch</value>
   </data>
   <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
-    <value>Create a new profile</value>
+    <value>Erstelle ein neues Profil</value>
   </data>
   <data name="ProfilesPage_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Löschen</value>
   </data>
   <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
-    <value>Delete profile</value>
+    <value>Profil löschen</value>
   </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
-    <value>Enable profile</value>
+    <value>Profil aktivieren</value>
   </data>
   <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
-    <value>The profile will be automatically applied when the associated application is detected</value>
+    <value>Das Profil wird automatisch angewendet, wenn die zugehörige Anwendung erkannt wird.</value>
   </data>
   <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
-    <value>Global settings</value>
+    <value>Globale Einstellungen</value>
   </data>
   <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
-    <value>Change the global profiles settings</value>
+    <value>Ändern Sie die globalen Profileinstellungen</value>
   </data>
   <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
-    <value>Gyrometer multiplier</value>
+    <value>Gyrometer-Multiplikator</value>
   </data>
   <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
-    <value>Change the system reported gyrometer value</value>
+    <value>Ändern Sie den vom System gemeldeten Gyrometerwert</value>
   </data>
   <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
-    <value>Gyro steering axis</value>
+    <value>Gyro-Lenkachse</value>
   </data>
   <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
-    <value>For controlling the horizontal movement of the controller, you can use either the yaw or roll axis</value>
+    <value>Zur Steuerung der horizontalen Bewegung des Controllers können Sie entweder die Yaw- oder die Rollachse verwenden</value>
   </data>
   <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
-    <value>Invert horizontal axis</value>
+    <value>Horizontale Achse invertieren</value>
   </data>
   <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
-    <value>Invert vertical axis</value>
+    <value>Vertikale Achse invertieren</value>
   </data>
   <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
-    <value>Motion control settings</value>
+    <value>Einstellungen der Bewegungssteuerung</value>
   </data>
   <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
-    <value>Change the global motion control settings</value>
+    <value>Ändern Sie die globalen Bewegungssteuerungseinstellungen</value>
   </data>
   <data name="ProfilesPage_OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
-    <value>Power settings</value>
+    <value>Energie-Einstellungen</value>
   </data>
   <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
-    <value>Change the power settings</value>
+    <value>Ändern Sie die Energieeinstellungen</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
-    <value>Profile details</value>
+    <value>Profil-Details</value>
   </data>
   <data name="ProfilesPage_ProfileName" xml:space="preserve">
-    <value>Profile name</value>
+    <value>Profilname</value>
   </data>
   <data name="ProfilesPage_ProfilePath" xml:space="preserve">
-    <value>Profile path</value>
+    <value>Profilpfad</value>
   </data>
   <data name="ProfilesPage_Profiles" xml:space="preserve">
-    <value>Profiles</value>
+    <value>Profile</value>
   </data>
   <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
-    <value>Profile selection</value>
+    <value>Profilauswahl</value>
   </data>
   <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
-    <value>Select the profile you would like to edit</value>
+    <value>Wählen Sie das Profil, das Sie bearbeiten möchten</value>
   </data>
   <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
-    <value>Profile settings</value>
+    <value>Profileinstellungen</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
-    <value>Profile updated</value>
+    <value>Profil aktualisieren</value>
   </data>
   <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
-    <value>was updated.</value>
+    <value>wurden aktualisiert.</value>
   </data>
   <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>Roll</value>
@@ -779,16 +779,16 @@
     <value>Y</value>
   </data>
   <data name="ProfilesPage_StyleofInput" xml:space="preserve">
-    <value>Style of input</value>
+    <value>Art der Eingabe</value>
   </data>
   <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
-    <value>The physical inputs of the controller can be programmed to act like different types of devices</value>
+    <value>Die physikalischen Controllereingaben können so programmiert werden, dass sie sich wie verschiedene Gerätetypen verhalten</value>
   </data>
   <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
-    <value>Output device</value>
+    <value>Ausgabegerät</value>
   </data>
   <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
-    <value>Select the device that will receive the motion commands</value>
+    <value>Wählen Sie das Gerät, das die Bewegungsbefehle empfangen soll</value>
   </data>
   <data name="ProfilesPage_SustainedPower" xml:space="preserve">
     <value>Sustained power limit</value>
@@ -797,38 +797,38 @@
     <value>Change sustained thermal power limit</value>
   </data>
   <data name="ProfilesPage_TDPOverride" xml:space="preserve">
-    <value>Thermal Power (TDP) Override</value>
+    <value>Thermal Power (TDP) überschreiben</value>
   </data>
   <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
-    <value>Override the processor thermal power limit</value>
+    <value>Überschreiben Sie das thermal power limit des Prozessors</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
-    <value>Enable universal motion controler</value>
+    <value>Aktivieren der universellen Bewegungssteuerung/value>
   </data>
   <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
-    <value>Disabled, turn on with button(s)</value>
+    <value>Deaktiviert, einschalten mit Taste(n)</value>
   </data>
   <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
-    <value>Enabled, turn off with button(s)</value>
+    <value>Aktiviert, ausschalten mit Taste(n)</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
     <value>Motion activation</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
-    <value>With motion input disabled, use selected button(s) to enable motion, 
-with motion input enabled, use selected button(s) to disable motion.</value>
+    <value>Wenn die Bewegungseingabe deaktiviert ist, verwenden Sie die ausgewählte(n) Taste(n), um die Bewegung zu aktivieren, 
+Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste(n), um die Bewegung zu deaktivieren.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
-    <value>Select the device that will receive the motion commands</value>
+    <value>Wählen Sie das Gerät, das die Bewegungsbefehle empfangen soll</value>
   </data>
   <data name="ProfilesPage_UMCSettings" xml:space="preserve">
     <value>Universal motion control settings</value>
   </data>
   <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
-    <value>Translate device motions into controller inputs</value>
+    <value>Übersetzen von Gerätebewegungen in Controllereingaben</value>
   </data>
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
-    <value>Update profile</value>
+    <value>Profil aktualisieren</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
     <value>Allow the application to access device physical controller</value>
