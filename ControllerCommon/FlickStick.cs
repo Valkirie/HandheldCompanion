@@ -12,7 +12,6 @@ namespace ControllerCommon
         private float FlickProgress = 0.0f;
         private float FlickSize = 0.0f;
         private double UpdateTimePreviousMilliSeconds;
-        private Vector2 Stick;
         private Vector2 LastStick;
         private OneEuroFilterPair JoystickFilter = new OneEuroFilterPair();
         private Vector2 StickFiltered;
@@ -21,7 +20,6 @@ namespace ControllerCommon
         private float[] InputBuffer = new float[16];
         private int CurrentInputIndex;
 
-        private float FlickTime = 0.1f;
         private float FlickTimePartial = 0.01f;
 
         public FlickStick()
