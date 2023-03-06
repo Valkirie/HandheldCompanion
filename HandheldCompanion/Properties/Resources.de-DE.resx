@@ -121,7 +121,7 @@
     <value>Über</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Eine Kombination aus einem Windows-Dienst und einer für die Touch-Oberfläche optimierten GUI, um Ihr Handheld-Gaming-Computer-Erlebnis zu verbessern. Zu den Funktionen gehören: Bewegungssteuerung (Gyrometer), virtuelle Controller-Simulation, Quick-Tools-Overlay, virtuelle Touchpads, 3D-Controller-Modell, anwendungsbasiertes Profileinstellungssystem. Handheld Companion basiert auf dem ViGEmBus-Treiber und den ViGEmClient-Bibliotheken sowie dem HidHide-Filtertreiber für den Kernel-Modus. Die Algorithmen zur Bewegungssteuerung basieren auf der Arbeit von Jibbsmart und den verfügbaren Informationen im GyroWiki.</value>
+    <value>Eine Kombination aus einem Windows-Dienst und einer für das Touch-Overlay optimierten GUI, um Ihr Handheld-Gaming-Computer-Erlebnis zu verbessern. Zu den Funktionen gehören: Bewegungssteuerung (Gyrometer), virtuelle Controller-Simulation, Quick-Tools-Overlay, virtuelle Touchpads, 3D-Controller-Modell, anwendungsbasiertes Profileinstellungssystem. Handheld Companion basiert auf dem ViGEmBus-Treiber und den ViGEmClient-Bibliotheken sowie dem HidHide-Filtertreiber für den Kernel-Modus. Die Algorithmen zur Bewegungssteuerung basieren auf der Arbeit von Jibbsmart und den verfügbaren Informationen im GyroWiki.</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accelerometer</value>
