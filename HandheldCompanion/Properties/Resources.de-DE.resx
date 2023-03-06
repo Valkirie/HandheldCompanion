@@ -831,43 +831,43 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Profil aktualisieren</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
-    <value>Allow the application to access device physical controller</value>
+    <value>Der Anwendung den Zugriff auf den physischen Controller des Geräts ermöglichen</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Translates DirectInput calls to XInput calls</value>
+    <value>Übersetzt DirectInput-Calls in XInput-Calls</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Yaw</value>
   </data>
   <data name="ProfilesPage_Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>Ja</value>
   </data>
   <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
     <value>Properties.Resources.ControllerPage_Disconnect</value>
   </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
-    <value>Manual GPU Clock Control</value>
+    <value>Manuelle GPU-Takteinstellungen</value>
   </data>
   <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
-    <value>Sets the GPU to a fixed clock</value>
+    <value>Setzt die GPU auf einen festen Takt</value>
   </data>
   <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
     <value> MHz</value>
   </data>
   <data name="QuickPerformancePage_PowerMode" xml:space="preserve">
-    <value>Power mode</value>
+    <value>Leistungsmodus</value>
   </data>
   <data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
-    <value>Balanced</value>
+    <value>Ausgeglichen</value>
   </data>
   <data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
-    <value>Optimize your device based on power use and performance</value>
+    <value>Optimieren Sie Ihr Gerät auf der Grundlage von Stromverbrauch und Leistung</value>
   </data>
   <data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
-    <value>Efficiency</value>
+    <value>Effizienz</value>
   </data>
   <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
-    <value>Performance</value>
+    <value>Leistung</value>
   </data>
   <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
     <value>Boost</value>
@@ -876,10 +876,10 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Thermal Power (TDP) Limit</value>
   </data>
   <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
-    <value>Limits processor power for less total power</value>
+    <value>Begrenze Prozessorleistung für weniger Gesamtleistung</value>
   </data>
   <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
-    <value>Thermal Power Limit is overwritten by a profile</value>
+    <value>Thermal Power Limit wird von einem Profil überschrieben</value>
   </data>
   <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
     <value>Sustained</value>
@@ -888,67 +888,67 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value> W</value>
   </data>
   <data name="QuickProfilesPage_Create" xml:space="preserve">
-    <value>Create profile</value>
+    <value>Profil erstellen</value>
   </data>
   <data name="QuickProfilesPage_Waiting" xml:space="preserve">
-    <value>Waiting for foreground process...</value>
+    <value>Warten auf einen Prozess im Vordergrund...</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
-    <value>Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled.</value>
+    <value>Bietet Gyroskop- und Beschleunigungssensor-Unterstützung für Windows-Handheld-Gamingcomputer über einen virtuellen Controller. Wenn der Dienst aktiviert ist, wird der eingebettete Controller für Anwendungen außerhalb der Whitelist getarnt. Wenn der Dienst deaktiviert ist, wird der eingebettete Controller enttarnt und der virtuelle Controller deaktiviert.</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
-    <value>Controller Service</value>
+    <value>Controller-Service</value>
   </data>
   <data name="SettingsPage_AppLanguage" xml:space="preserve">
-    <value>Language</value>
+    <value>Sprache</value>
   </data>
   <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
-    <value>The application language</value>
+    <value>Die Anwendungssprache</value>
   </data>
   <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
-    <value>Restart required</value>
+    <value>Neustart erforderlich</value>
   </data>
   <data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
-    <value>In order for the changes to take effect, please restart the application</value>
+    <value>Damit die Änderungen wirksam werden, starten Sie bitte die Anwendung neu</value>
   </data>
   <data name="SettingsPage_AppTheme" xml:space="preserve">
-    <value>Application theme</value>
+    <value>Anwendungs-Theme</value>
   </data>
   <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
-    <value>The application theme, light or dark mode</value>
+    <value>Das Anwednungs-Theme, light oder dark mode</value>
   </data>
   <data name="SettingsPage_AutoStartApp" xml:space="preserve">
-    <value>Auto-start application</value>
+    <value>Autostart-Anwendung</value>
   </data>
   <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
-    <value>The application will start automatically when I sign in to Windows</value>
+    <value>Die Anwendung wird automatisch gestartet, wenn ich mich bei Windows anmelde</value>
   </data>
   <data name="SettingsPage_Backdrop" xml:space="preserve">
-    <value>Use Acrylic backdrop</value>
+    <value>Acrylhintergrund verwenden</value>
   </data>
   <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
-    <value>Acrylic</value>
+    <value>Acryl</value>
   </data>
   <data name="SettingsPage_BackdropDesc" xml:space="preserve">
-    <value>The application will use acrylic backdrop</value>
+    <value>Für die Anwendung wird ein Acrylhintergrund verwendet</value>
   </data>
   <data name="SettingsPage_BackdropMica" xml:space="preserve">
-    <value>Mica</value>
+    <value>Glimmer</value>
   </data>
   <data name="SettingsPage_BackdropNone" xml:space="preserve">
-    <value>None</value>
+    <value>Kein</value>
   </data>
   <data name="SettingsPage_BackdropTabbed" xml:space="preserve">
     <value>Tabbed</value>
   </data>
   <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
-    <value>Check for updates</value>
+    <value>Nach Aktualisierungen suchen</value>
   </data>
   <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
-    <value>Close minimizes</value>
+    <value>Minimiert schließen</value>
   </data>
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
-    <value>The application will be minimized instead of closed</value>
+    <value>Die Anwendung wird minimiert und nicht geschlossen</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
     <value>Download</value>
@@ -960,136 +960,136 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>EcoQoS</value>
   </data>
   <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
-    <value>Throttle inactive or background processes and applications to improve energy efficency</value>
+    <value>Inaktive oder im Hintergrund ablaufende Prozesse und Anwendungen drosseln, um die Energieeffizienz zu verbessern</value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
-    <value>General options</value>
+    <value>Allgemeine Optionen</value>
   </data>
   <data name="SettingsPage_HaltWithCompanion" xml:space="preserve">
-    <value>Halt with Companion</value>
+    <value>Stoppen mit Companion</value>
   </data>
   <data name="SettingsPage_HaltWithCompanionDesc" xml:space="preserve">
-    <value>Automatically turn off service when companion is closed</value>
+    <value>Automatisches Ausschalten des Dienstes, wenn Companion geschlossen wird</value>
   </data>
   <data name="SettingsPage_InstallNow" xml:space="preserve">
-    <value>Install now</value>
+    <value>Jetzt installieren</value>
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
-    <value>Last checked: </value>
+    <value>Zuletzt geprüft: </value>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
-    <value>Notification options</value>
+    <value>Optionen für Benachrichtigungen</value>
   </data>
   <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
-    <value>Open application in background</value>
+    <value>Anwendung im Hintergrund öffnen</value>
   </data>
   <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
-    <value>The application will initially start minimized and appear on the taskbar</value>
+    <value>Die Anwendung wird minimiert gestartet und erscheint in der Taskleiste</value>
   </data>
   <data name="SettingsPage_SensorExternal" xml:space="preserve">
-    <value>External</value>
+    <value>Extern</value>
   </data>
   <data name="SettingsPage_SensorInternal" xml:space="preserve">
-    <value>Internal</value>
+    <value>Intern</value>
   </data>
   <data name="SettingsPage_SensorOptions" xml:space="preserve">
-    <value>Sensor options</value>
+    <value>Sensor-Optionen</value>
   </data>
   <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
-    <value>External sensor placement direction</value>
+    <value>Externer Sensor Ausrichtung</value>
   </data>
   <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
-    <value>Select on which side of the device the senor has been mounted</value>
+    <value>Wählen Sie aus, auf welcher Seite des Geräts der Sensor montiert wurde</value>
   </data>
   <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
-    <value>External sensor upside down</value>
+    <value>Externer Sensor verkehrt herum</value>
   </data>
   <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
-    <value>Sensor has been mounted upside down, possible with USB-C convertor</value>
+    <value>Der Sensor wurde verkehrt herum montiert, möglich mit USB-C-Konvertern</value>
   </data>
   <data name="SettingsPage_SensorSelection" xml:space="preserve">
-    <value>Sensor selection</value>
+    <value>Sensorauswahl</value>
   </data>
   <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
-    <value>Select the desired sensor used for motion input</value>
+    <value>Wählen Sie den gewünschten Sensor für die Bewegungseingabe aus.</value>
   </data>
   <data name="SettingsPage_ServiceOptions" xml:space="preserve">
-    <value>Service options</value>
+    <value>Service-Optionen</value>
   </data>
   <data name="SettingsPage_Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Einstellungen</value>
   </data>
   <data name="SettingsPage_StartupType" xml:space="preserve">
-    <value>Startup type</value>
+    <value>Starttyp</value>
   </data>
   <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
-    <value>Used by the service manager to define the service startup type</value>
+    <value>Wird vom Dienstmanager verwendet, um den Starttyp des Dienstes zu definieren</value>
   </data>
   <data name="SettingsPage_StartWithCompanion" xml:space="preserve">
-    <value>Start with Companion</value>
+    <value>Starten mit Companion</value>
   </data>
   <data name="SettingsPage_StartWithCompanionDesc" xml:space="preserve">
-    <value>Automatically turn on service when companion starts</value>
+    <value>Automatisches Einschalten des Dienstes beim Start von Companion</value>
   </data>
   <data name="SettingsPage_TDPMax" xml:space="preserve">
-    <value>Maximum Power</value>
+    <value>Maximale Leistung</value>
   </data>
   <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
-    <value>The maximum power in watts supplied to the processor</value>
+    <value>Die maximale Leistung in Watt, die dem Prozessor zugeführt wird</value>
   </data>
   <data name="SettingsPage_TDPMin" xml:space="preserve">
-    <value>Minimum Power</value>
+    <value>Minimale Leistung</value>
   </data>
   <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
-    <value>The minimum power in watts supplied to the processor</value>
+    <value>Die Mindestleistung in Watt, die dem Prozessor zugeführt wird</value>
   </data>
   <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
-    <value>Configurable Power (cTDP) override</value>
+    <value>Configurable Power (cTDP) konfigurieren</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
-    <value>Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications</value>
+    <value>Ermöglicht die Änderung der minimalen und maximalen Leistungswerte (TDP) über die CPU-Spezifikationen hinaus</value>
   </data>
   <data name="SettingsPage_ThemeDark" xml:space="preserve">
-    <value>Dark</value>
+    <value>Dunkel</value>
   </data>
   <data name="SettingsPage_ThemeLight" xml:space="preserve">
-    <value>Light</value>
+    <value>Hell</value>
   </data>
   <data name="SettingsPage_ToastNotification" xml:space="preserve">
-    <value>Toast notification</value>
+    <value>Toast_Benachrichtigung</value>
   </data>
   <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
-    <value>Get notifications from the application in the Windows action center</value>
+    <value>Benachrichtigungen von der Anwendung im Windows-Aktionscenter abrufen</value>
   </data>
   <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
-    <value>Updates available</value>
+    <value>Aktualisierung verfügbar</value>
   </data>
   <data name="SettingsPage_UpdateCheck" xml:space="preserve">
-    <value>Checking for updates...</value>
+    <value>Prüfung auf Aktualisierungen...</value>
   </data>
   <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
-    <value>We couldn't download the update file.</value>
+    <value>Wir konnten die Aktualisierungsdatei nicht herunterladen.</value>
   </data>
   <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
-    <value>We couldn't reach github.</value>
+    <value>Wir konnten Github nicht erreichen.</value>
   </data>
   <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
-    <value>We couldn't locate the update file.</value>
+    <value>Wir konnten die Aktualisierungsdatei nicht finden.</value>
   </data>
   <data name="SettingsPage_UpdateWarning" xml:space="preserve">
-    <value>Oups. There was an issue.</value>
+    <value>Oups. Es gab ein Problem.</value>
   </data>
   <data name="SettingsPage_UpToDate" xml:space="preserve">
-    <value>You're up to date</value>
+    <value>Sie sind up to date</value>
   </data>
   <data name="ToastNewControllerEx" xml:space="preserve">
-    <value>Controller is now cloaked and inputs forwarded to virtual controller</value>
+    <value>Die Steuerung ist jetzt getarnt und die Eingaben werden an die virtuelle Steuerung weitergeleitet</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>User</value>
+    <value>Nutzer</value>
   </data>
   <data name="WarningElevated" xml:space="preserve">
-    <value>Run this tool as Administrator to unlock these settings</value>
+    <value>Führen Sie dieses Tool als Administrator aus, um diese Einstellungen freizugeben.</value>
   </data>
   <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1101,22 +1101,22 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
   <data name="ControllerPage_SteamDeckMuteController" xml:space="preserve">
-    <value>Mute virtual controller</value>
+    <value>Virtuellen Controller stummschalten</value>
   </data>
   <data name="ControllerPage_SteamDeckMuteControllerDesc" xml:space="preserve">
-    <value>Mute virtual controller on steam related applications</value>
+    <value>Stummschaltung des virtuellen Controllers bei Steam-bezogenen Anwendungen</value>
   </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
-    <value>Controller settings</value>
+    <value>Controller-Einstellungen</value>
   </data>
   <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
-    <value>Change the virtual controller settings</value>
+    <value>Ändern Sie die Einstellungen der virtuellen Steuerung</value>
   </data>
   <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
     <value>Motion anti-deadzone</value>
   </data>
   <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
-    <value>Compensate for in game deadzone, improve registration of small movements</value>
+    <value>Kompensierung der Deadzone im Spiel, verbesserte Registrierung kleiner Bewegungen</value>
   </data>
   <data name="chord_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\controller_base\chord_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1125,36 +1125,36 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
-    <value>Improve the stick circularity</value>
+    <value>Verbessern Sie die Zirkularität des Sticks</value>
   </data>
   <data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
-    <value>Circularity stick left</value>
+    <value>Zirkularität linker Stick</value>
   </data>
   <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
-    <value>Circularity stick right</value>
+    <value>Zirkularität rechter Stick</value>
   </data>
   <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
-    <value>Joystick deadzone % left</value>
+    <value>Joystick Deadzone % links</value>
   </data>
   <data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
-    <value>Adjust the inner and outer deadzone percentage of the left joystick</value>
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des linken Joysticks</value>
   </data>
   <data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
-    <value>Joystick deadzone % right</value>
+    <value>Joystick Deadzone % rechts</value>
   </data>
   <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
-    <value>Adjust the inner and outer deadzone percentage of the right joystick</value>
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des rechten Joysticks</value>
   </data>
   <data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
-    <value>Left trigger deadzone %</value>
+    <value>Linker Trigger Deadzone %</value>
   </data>
   <data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
-    <value>Adjust the inner and outer deadzone percentage of the left trigger</value>
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des linken Joysticks</value>
   </data>
   <data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
-    <value>Right trigger deadzone %</value>
+    <value>Rechter Trigger Deadzone %</value>
   </data>
   <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
-    <value>Adjust the inner and outer deadzone percentage of the right trigger</value>
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des rechten Joysticks</value>
   </data>
 </root>
