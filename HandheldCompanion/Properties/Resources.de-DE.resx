@@ -1,0 +1,1160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_About" xml:space="preserve">
+    <value>Über</value>
+  </data>
+  <data name="AboutPage_AboutDescription" xml:space="preserve">
+    <value>Eine Kombination aus einem Windows-Dienst und einer für das Touch-Overlay optimierten GUI, um Ihr Handheld-Gaming-Computer-Erlebnis zu verbessern. Zu den Funktionen gehören: Bewegungssteuerung (Gyrometer), virtuelle Controller-Simulation, Quick-Tools-Overlay, virtuelle Touchpads, 3D-Controller-Modell, anwendungsbasiertes Profileinstellungssystem. Handheld Companion basiert auf dem ViGEmBus-Treiber und den ViGEmClient-Bibliotheken sowie dem HidHide-Filtertreiber für den Kernel-Modus. Die Algorithmen zur Bewegungssteuerung basieren auf der Arbeit von Jibbsmart und den verfügbaren Informationen im GyroWiki.</value>
+  </data>
+  <data name="AboutPage_Accelerometer" xml:space="preserve">
+    <value>Accelerometer</value>
+  </data>
+  <data name="AboutPage_Author" xml:space="preserve">
+    <value>Autor</value>
+  </data>
+  <data name="AboutPage_Contributors" xml:space="preserve">
+    <value>Mitwirkende</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="AboutPage_Donate" xml:space="preserve">
+    <value>Spenden</value>
+  </data>
+  <data name="AboutPage_Gyrometer" xml:space="preserve">
+    <value>Gyrometer</value>
+  </data>
+  <data name="AboutPage_Inclinometer" xml:space="preserve">
+    <value>Neigungssensor</value>
+  </data>
+  <data name="AboutPage_NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="AboutPage_RelatedLinks" xml:space="preserve">
+    <value>Weitere Links</value>
+  </data>
+  <data name="AboutPage_SensorExternal" xml:space="preserve">
+    <value>Extern</value>
+  </data>
+  <data name="AboutPage_SensorInternal" xml:space="preserve">
+    <value>Intern</value>
+  </data>
+  <data name="AboutPage_SensorName" xml:space="preserve">
+    <value>Sensor-Name</value>
+  </data>
+  <data name="AboutPage_SensorSpecification" xml:space="preserve">
+    <value>Sensor-Spezifikation</value>
+  </data>
+  <data name="AboutPage_Service" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>Source code</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="AboutPage_Wiki" xml:space="preserve">
+    <value>Wiki</value>
+  </data>
+  <data name="Administrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ControllerCompanion.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ControllerPage_CloakDevice" xml:space="preserve">
+    <value>Physikalische Steuerung verdecken</value>
+  </data>
+  <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
+    <value>Änderung der Sichtbarkeit des physischen Controllers für andere Anwendungen</value>
+  </data>
+  <data name="ControllerPage_Connect" xml:space="preserve">
+    <value>Verbunden</value>
+  </data>
+  <data name="ControllerPage_Controller" xml:space="preserve">
+    <value>Controller</value>
+  </data>
+  <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
+    <value>Controller cloaking</value>
+  </data>
+  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+    <value>Controller-Einstellungen</value>
+  </data>
+  <data name="ControllerPage_Disconnect" xml:space="preserve">
+    <value>Getrennt</value>
+  </data>
+  <data name="ControllerPage_InputDevices" xml:space="preserve">
+    <value>Eingabegeräte</value>
+  </data>
+  <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
+    <value>Aufdecken beim Schließen</value>
+  </data>
+  <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
+    <value>Wiederherstellung der Sichtbarkeit aller physischen Steuerungen für andere Anwendungen bei Beendigung des Dienstes</value>
+  </data>
+  <data name="ControllerPage_VibrationStrength" xml:space="preserve">
+    <value>Vibrations-Intensität</value>
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>Vibrationsstärke des Controllers ändern</value>
+  </data>
+  <data name="Default.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Default.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
+    <value>Thermal power limit (TDP) verringern</value>
+  </data>
+  <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
+    <value>Verringern Sie den TDP des Systems oder des aktuell verwendeten Profils um ein Watt</value>
+  </data>
+  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
+    <value>Drücken, um die Hotkey-Eingabe zu definieren</value>
+  </data>
+  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+    <value>Drücken, um die Hotkey-Ausgabe zu definieren</value>
+  </data>
+  <data name="InputsHotkey_increaseTDP" xml:space="preserve">
+    <value>Thermal power limit (TDP) erhöhen</value>
+  </data>
+  <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
+    <value>Erhöhen Sie den TDP des Systems oder des aktuell verwendeten Profils um ein Watt</value>
+  </data>
+  <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
+    <value>Display 3D controller</value>
+  </data>
+  <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
+    <value>Ändern des 3D-Hotkeys durch Drücken eines Hotkeys oder einer speziellen Taste</value>
+  </data>
+  <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
+    <value>Display virtual trackpads</value>
+  </data>
+  <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
+    <value>Hotkey durch Drücken eines Buttons oder einer speziellen Taste ändern</value>
+  </data>
+  <data name="InputsHotkey_quickTools" xml:space="preserve">
+    <value>Fenster für Schnellwerkzeuge aufrufen</value>
+  </data>
+  <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
+  </data>
+  <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
+    <value>Benutzerdefinierte Verknüpfung</value>
+  </data>
+  <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
+  </data>
+  <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
+    <value>Desktop anzeigen und ausblenden</value>
+  </data>
+  <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
+    <value>Drücke diese Tasten: Windows + D</value>
+  </data>
+  <data name="InputsHotkey_shortcutESC" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
+    <value>Drücke diese Tasten: Escape</value>
+  </data>
+  <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
+    <value>Zwischen Fenster und Vollbild wechseln</value>
+  </data>
+  <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
+    <value>Drücke diese Tasten: Alt + Enter</value>
+  </data>
+  <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
+    <value>Guide oder PS-Button</value>
+  </data>
+  <data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
+    <value>Xbox Guide oder Sony-PS-Button Eingabe simulieren</value>
+  </data>
+  <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
+    <value>Touchdisplay-Tastatur</value>
+  </data>
+  <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+    <value>Beenden der Anwendung erzwingen</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
+  </data>
+  <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
+    <value>Hauptfenster anzeigen und ausblenden</value>
+  </data>
+  <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
+    <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardButtons" xml:space="preserve">
+    <value>Lizard mode (Schaltflächen)</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardButtonsDesc" xml:space="preserve">
+    <value>Schaltflächen von oder nach lizard brain (Maus- und Tastaturemulation)</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardMouse" xml:space="preserve">
+    <value>Lizard mode (Maus)</value>
+  </data>
+  <data name="InputsHotkey_SteamDeckLizardMouseDesc" xml:space="preserve">
+    <value>Umschalten der Trackpads von oder auf lizard brain (Maus- und Tastaturemulation)</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
+    <value>Task-Manager öffnen</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
+    <value>Drücke diese Tasten: Ctrl + Shift + Esc</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
+    <value>Aufgabenansicht öffnen</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
+    <value>Drücke diese Tasten: Windows + Tab</value>
+  </data>
+  <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
+    <value>Toggle Suspender</value>
+  </data>
+  <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
+    <value>Unterbrechen oder Fortsetzen der Vordergrundanwendung</value>
+  </data>
+  <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MainWindow_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="MainWindow_navAbout" xml:space="preserve">
+    <value>Über</value>
+  </data>
+  <data name="MainWindow_navController" xml:space="preserve">
+    <value>Controller</value>
+  </data>
+  <data name="MainWindow_navOverlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="MainWindow_navProfiles" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="MainWindow_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="MainWindow_serviceDeploy" xml:space="preserve">
+    <value>Dienst bereitstellen</value>
+  </data>
+  <data name="MainWindow_ServiceManager" xml:space="preserve">
+    <value>Service-Manager</value>
+  </data>
+  <data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
+    <value>Oups. Beim Versuch, den Dienst zu starten, trat ein Problem auf.</value>
+  </data>
+  <data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
+    <value>Oups. Beim Versuch, den Dienst zu stoppen, trat ein Problem auf.</value>
+  </data>
+  <data name="MainWindow_serviceRemove" xml:space="preserve">
+    <value>Service entfernen</value>
+  </data>
+  <data name="MainWindow_serviceStart" xml:space="preserve">
+    <value>Service starten</value>
+  </data>
+  <data name="MainWindow_serviceStop" xml:space="preserve">
+    <value>Service stoppen</value>
+  </data>
+  <data name="MainWindow_Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
+    <value>8BitDo Lite 2</value>
+  </data>
+  <data name="OverlayPage_Alignment" xml:space="preserve">
+    <value>Ausrichtung</value>
+  </data>
+  <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
+    <value>Ausrichtung des 3D-Controller-Overlays ändern</value>
+  </data>
+  <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
+    <value>Trackpad-Overlay-Ausrichtung ändern</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
+    <value>Immer ganz oben</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
+    <value>Wenn umgeschaltet, bleibt das 3D-Controller-Overlay über anderen Fenstern.</value>
+  </data>
+  <data name="OverlayPage_BackButton" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="OverlayPage_CameraAngle" xml:space="preserve">
+    <value>Kamera-Ausrichtung</value>
+  </data>
+  <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
+    <value>Ändern Sie das Verhalten des 3D-Controller-Overlay-Modells für die Ausrichtung der Kamera</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+    <value>Stationary pitch</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+    <value>Ändern Sie den Winkel, in Grad</value>
+  </data>
+  <data name="OverlayPage_Color" xml:space="preserve">
+    <value>Hintergrundfarbe</value>
+  </data>
+  <data name="OverlayPage_ColorDesc" xml:space="preserve">
+    <value>Hintergrundfarbe des 3D-Controller-Overlays ändern</value>
+  </data>
+  <data name="OverlayPage_ControllerOptions" xml:space="preserve">
+    <value>Controller-Optionen</value>
+  </data>
+  <data name="OverlayPage_DualSenseController" xml:space="preserve">
+    <value>Playstation DualSense</value>
+  </data>
+  <data name="OverlayPage_EmulatedController" xml:space="preserve">
+    <value>Emulierter Controller</value>
+  </data>
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
+    <value>Kamera-Ausrichtung</value>
+  </data>
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+    <value>3D-Modell dreht sich langsam in Richtung Kamera als Standardposition</value>
+  </data>
+  <data name="OverlayPage_Listening" xml:space="preserve">
+    <value>Warten...</value>
+  </data>
+  <data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
+    <value>MACHENIKE HG510</value>
+  </data>
+  <data name="OverlayPage_MainTrigger" xml:space="preserve">
+    <value>Hauptschalter</value>
+  </data>
+  <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
+    <value>3D-Controller-Overlay-Hauptschalter ändern</value>
+  </data>
+  <data name="OverlayPage_MotionActivated" xml:space="preserve">
+    <value>Bewegung</value>
+  </data>
+  <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
+    <value>Das Modell bewegt sich entsprechend den Bewegungen des Benutzers auf der Grundlage von Sensorinformationen</value>
+  </data>
+  <data name="OverlayPage_N64Controller" xml:space="preserve">
+    <value>N64</value>
+  </data>
+  <data name="OverlayPage_OEMController" xml:space="preserve">
+    <value>OEM Controller</value>
+  </data>
+  <data name="OverlayPage_Opacity" xml:space="preserve">
+    <value>Deckkraft</value>
+  </data>
+  <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
+    <value>Deckkraft der 3D-Controller-Überlagerung ändern</value>
+  </data>
+  <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
+    <value>Change trackpads overlay opacity</value>
+  </data>
+  <data name="OverlayPage_Overlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="OverlayPage_OverlayModel" xml:space="preserve">
+    <value>Overlay model</value>
+  </data>
+  <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
+    <value>Change 3D controller overlay model</value>
+  </data>
+  <data name="OverlayPage_OverlayPreview" xml:space="preserve">
+    <value>Overlay preview</value>
+  </data>
+  <data name="OverlayPage_RenderSettings" xml:space="preserve">
+    <value>Render settings</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
+    <value>Anti-Aliasing</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
+    <value>Ändern des Rendering-Anti-Aliasing-Status</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
+    <value>Ändern Sie die Rendereinstellungen Ihres stationären 3D-Overlay-Controller-Modells</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
+    <value>Aktualisierungsrate</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
+    <value>Ändern Sie die Render-Update-Rate, in Update pro Sekunde</value>
+  </data>
+  <data name="OverlayPage_Size" xml:space="preserve">
+    <value>Größe</value>
+  </data>
+  <data name="OverlayPage_SizeDesc" xml:space="preserve">
+    <value>Größe des 3D-Controller-Overlays änderne</value>
+  </data>
+  <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
+    <value>Trackpad-Overlay-Größe ändern</value>
+  </data>
+  <data name="OverlayPage_StartButton" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="OverlayPage_ToyController" xml:space="preserve">
+    <value>Fisher-Price Controller</value>
+  </data>
+  <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
+    <value>Optionen für Trackpads</value>
+  </data>
+  <data name="OverlayPage_XboxOneController" xml:space="preserve">
+    <value>Xbox One</value>
+  </data>
+  <data name="OverlayPage_ZDOPlusController" xml:space="preserve">
+    <value>ZD O+</value>
+  </data>
+  <data name="Overlay_Overlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Playnite.FullscreenApp.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="PowerControlPanel.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PowerControlPanel.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ProcessEx_processResume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="ProcessEx_processSuspend" xml:space="preserve">
+    <value>Suspend</value>
+  </data>
+  <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
+    <value>Zusätzliche Einstellungen</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSights" xml:space="preserve">
+    <value>Bewegungsmultiplikator für das Abwärtszielen</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+    <value>Taste zur Aktivierung</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+    <value>Ein zusätzlicher Multiplikator für die Bewegungsempfindlichkeit beim Anvisieren der Visierung oder des Zielfernrohrs durch die Verwendung der konfigurierten Aktivierungstaste</value>
+  </data>
+  <data name="ProfileSettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+    <value>Multiplikatorwert</value>
+  </data>
+  <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
+    <value>Kamera-Optionen</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponseCurve" xml:space="preserve">
+    <value>Benutzerdefinierte Reaktionskurve</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+    <value>Ausgabe an das Spiel gesendet</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponseIntensity" xml:space="preserve">
+    <value>Bewegungsintensität</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+    <value>Aggressiv</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+    <value>Voreingestellte Optionen</value>
+  </data>
+  <data name="ProfileSettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+    <value>Präzise</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
+    <value>Streifendauer</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
+    <value>Ändern Sie die Streifendauer, kalibrieren Sie auf eine 180-Grad-Drehung, in Millisekunden</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
+    <value>Flick stick (experimental)</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
+    <value>Richten Sie die Kamera in Richtung des (rechten) Joysticks, drehen Sie die Kamera rein in der horizontalen Ebene durch Drehen</value>
+  </data>
+  <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
+    <value>Aktiviere flick stick</value>
+  </data>
+  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
+    <value>Empfindlichkeit</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
+    <value>Ändern Sie die Bewegungsempfindlichkeit der horizontalen und vertikalen Achse</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityX" xml:space="preserve">
+    <value>Empfindlichkeit X</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityXDesc" xml:space="preserve">
+    <value>Ändern Sie die Bewegungsempfindlichkeit der horizontalen Achse</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityY" xml:space="preserve">
+    <value>Empfindlichkeit Y</value>
+  </data>
+  <data name="ProfileSettingsMode0_SensitivityYDesc" xml:space="preserve">
+    <value>Ändern Sie die Bewegungsempfindlichkeit der vertikalen Achse</value>
+  </data>
+  <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
+    <value>Stick-Empfindlichkeit</value>
+  </data>
+  <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
+    <value>Drehrate ändern</value>
+  </data>
+  <data name="ProfileSettingsMode1_AdditionalSettings" xml:space="preserve">
+    <value>Zusätzliche Einstellungen</value>
+  </data>
+  <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
+    <value>Deadzone</value>
+  </data>
+  <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
+    <value>Ändern Sie die Deadzone in Grad. Verbessert das Geradeauslaufen</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
+    <value>Joystick-Spiel Eingabe</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
+    <value>Joystick-Lenkung</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+    <value>Joystick-Lenkung-Optionen</value>
+  </data>
+  <data name="ProfileSettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+    <value>Joystick-Lenkung-Vorschau</value>
+  </data>
+  <data name="ProfileSettingsMode1_MaxSteeringAngle" xml:space="preserve">
+    <value>Maximaler Lenkwinkel</value>
+  </data>
+  <data name="ProfileSettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+    <value>Den maximalen Lenkwinkelwert in Grad ändern</value>
+  </data>
+  <data name="ProfileSettingsMode1_SteeringLinearity" xml:space="preserve">
+    <value>Linearität der Lenkung</value>
+  </data>
+  <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+    <value>Abbildung zwischen Eingabe und Lenkung. Niedrigere Werte sorgen für mehr Genauigkeit in der Nähe der Vollsperrung, aber weniger Genauigkeit in der Nähe der Mitte. Höhere Werte bieten mehr Genauigkeit in der Nähe der Mitte, aber weniger Genauigkeit in der Nähe der vollen Blockierung. 1.0 ist eine lineare Abbildung</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
+    <value>Beschleunigungsmesser-Multiplikator</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
+    <value>Ändern Sie den vom System gemeldeten Beschleunigungsmesserwert</value>
+  </data>
+  <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
+    <value>Zusätzliche Einstellungen</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
+    <value>Anti-Deadzone</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
+    <value>Ändern Sie die Anti-Deadzone im Spiel, in Prozent</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+    <value> %</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie dies löschen wollen?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
+    <value>Dieses Element wird sofort gelöscht. Sie können diese Aktion nicht rückgängig machen.</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie dies überschreiben wollen?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
+    <value>Dieses Element wird überschrieben. Sie können diese Aktion nicht rückgängig machen.</value>
+  </data>
+  <data name="ProfilesPage_BoostPower" xml:space="preserve">
+    <value>Boost power limit</value>
+  </data>
+  <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
+    <value>Ändere boost thermal power limit</value>
+  </data>
+  <data name="ProfilesPage_Cancel" xml:space="preserve">
+    <value>Abbruch</value>
+  </data>
+  <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
+    <value>Erstelle ein neues Profil</value>
+  </data>
+  <data name="ProfilesPage_Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
+    <value>Profil löschen</value>
+  </data>
+  <data name="ProfilesPage_EnableProfile" xml:space="preserve">
+    <value>Profil aktivieren</value>
+  </data>
+  <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
+    <value>Das Profil wird automatisch angewendet, wenn die zugehörige Anwendung erkannt wird.</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
+    <value>Globale Einstellungen</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
+    <value>Ändern Sie die globalen Profileinstellungen</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
+    <value>Gyrometer-Multiplikator</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
+    <value>Ändern Sie den vom System gemeldeten Gyrometerwert</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
+    <value>Gyro-Lenkachse</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
+    <value>Zur Steuerung der horizontalen Bewegung des Controllers können Sie entweder die Yaw- oder die Rollachse verwenden</value>
+  </data>
+  <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
+    <value>Horizontale Achse invertieren</value>
+  </data>
+  <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
+    <value>Vertikale Achse invertieren</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
+    <value>Einstellungen der Bewegungssteuerung</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
+    <value>Ändern Sie die globalen Bewegungssteuerungseinstellungen</value>
+  </data>
+  <data name="ProfilesPage_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
+    <value>Energie-Einstellungen</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
+    <value>Ändern Sie die Energieeinstellungen</value>
+  </data>
+  <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
+    <value>Profil-Details</value>
+  </data>
+  <data name="ProfilesPage_ProfileName" xml:space="preserve">
+    <value>Profilname</value>
+  </data>
+  <data name="ProfilesPage_ProfilePath" xml:space="preserve">
+    <value>Profilpfad</value>
+  </data>
+  <data name="ProfilesPage_Profiles" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
+    <value>Profilauswahl</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
+    <value>Wählen Sie das Profil, das Sie bearbeiten möchten</value>
+  </data>
+  <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
+    <value>Profileinstellungen</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
+    <value>Profil aktualisieren</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
+    <value>wurden aktualisiert.</value>
+  </data>
+  <data name="ProfilesPage_Roll" xml:space="preserve">
+    <value>Roll</value>
+  </data>
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="ProfilesPage_StyleofInput" xml:space="preserve">
+    <value>Art der Eingabe</value>
+  </data>
+  <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
+    <value>Die physikalischen Controllereingaben können so programmiert werden, dass sie sich wie verschiedene Gerätetypen verhalten</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
+    <value>Ausgabegerät</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
+    <value>Wählen Sie das Gerät, das die Bewegungsbefehle empfangen soll</value>
+  </data>
+  <data name="ProfilesPage_SustainedPower" xml:space="preserve">
+    <value>Sustained power limit</value>
+  </data>
+  <data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
+    <value>Change sustained thermal power limit</value>
+  </data>
+  <data name="ProfilesPage_TDPOverride" xml:space="preserve">
+    <value>Thermal Power (TDP) überschreiben</value>
+  </data>
+  <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
+    <value>Überschreiben Sie das thermal power limit des Prozessors</value>
+  </data>
+  <data name="ProfilesPage_UMCEnable" xml:space="preserve">
+    <value>Aktivieren der universellen Bewegungssteuerung/value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
+    <value>Deaktiviert, einschalten mit Taste(n)</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
+    <value>Aktiviert, ausschalten mit Taste(n)</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
+    <value>Motion activation</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
+    <value>Wenn die Bewegungseingabe deaktiviert ist, verwenden Sie die ausgewählte(n) Taste(n), um die Bewegung zu aktivieren, 
+Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste(n), um die Bewegung zu deaktivieren.</value>
+  </data>
+  <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
+    <value>Wählen Sie das Gerät, das die Bewegungsbefehle empfangen soll</value>
+  </data>
+  <data name="ProfilesPage_UMCSettings" xml:space="preserve">
+    <value>Universal motion control settings</value>
+  </data>
+  <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
+    <value>Übersetzen von Gerätebewegungen in Controllereingaben</value>
+  </data>
+  <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
+    <value>Profil aktualisieren</value>
+  </data>
+  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+    <value>Der Anwendung den Zugriff auf den physischen Controller des Geräts ermöglichen</value>
+  </data>
+  <data name="ProfilesPage_Wrapper" xml:space="preserve">
+    <value>Übersetzt DirectInput-Calls in XInput-Calls</value>
+  </data>
+  <data name="ProfilesPage_Yaw" xml:space="preserve">
+    <value>Yaw</value>
+  </data>
+  <data name="ProfilesPage_Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
+    <value>Properties.Resources.ControllerPage_Disconnect</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
+    <value>Manuelle GPU-Takteinstellungen</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
+    <value>Setzt die GPU auf einen festen Takt</value>
+  </data>
+  <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
+    <value> MHz</value>
+  </data>
+  <data name="QuickPerformancePage_PowerMode" xml:space="preserve">
+    <value>Leistungsmodus</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
+    <value>Ausgeglichen</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
+    <value>Optimieren Sie Ihr Gerät auf der Grundlage von Stromverbrauch und Leistung</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
+    <value>Effizienz</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
+    <value>Leistung</value>
+  </data>
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+    <value>Boost</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
+    <value>Thermal Power (TDP) Limit</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
+    <value>Begrenze Prozessorleistung für weniger Gesamtleistung</value>
+  </data>
+  <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
+    <value>Thermal Power Limit wird von einem Profil überschrieben</value>
+  </data>
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+    <value>Sustained</value>
+  </data>
+  <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
+    <value> W</value>
+  </data>
+  <data name="QuickProfilesPage_Create" xml:space="preserve">
+    <value>Profil erstellen</value>
+  </data>
+  <data name="QuickProfilesPage_Waiting" xml:space="preserve">
+    <value>Warten auf einen Prozess im Vordergrund...</value>
+  </data>
+  <data name="ServiceDescription" xml:space="preserve">
+    <value>Bietet Gyroskop- und Beschleunigungssensor-Unterstützung für Windows-Handheld-Gamingcomputer über einen virtuellen Controller. Wenn der Dienst aktiviert ist, wird der eingebettete Controller für Anwendungen außerhalb der Whitelist getarnt. Wenn der Dienst deaktiviert ist, wird der eingebettete Controller enttarnt und der virtuelle Controller deaktiviert.</value>
+  </data>
+  <data name="ServiceName" xml:space="preserve">
+    <value>Controller-Service</value>
+  </data>
+  <data name="SettingsPage_AppLanguage" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
+    <value>Die Anwendungssprache</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
+    <value>Neustart erforderlich</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
+    <value>Damit die Änderungen wirksam werden, starten Sie bitte die Anwendung neu</value>
+  </data>
+  <data name="SettingsPage_AppTheme" xml:space="preserve">
+    <value>Anwendungs-Theme</value>
+  </data>
+  <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
+    <value>Das Anwednungs-Theme, light oder dark mode</value>
+  </data>
+  <data name="SettingsPage_AutoStartApp" xml:space="preserve">
+    <value>Autostart-Anwendung</value>
+  </data>
+  <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
+    <value>Die Anwendung wird automatisch gestartet, wenn ich mich bei Windows anmelde</value>
+  </data>
+  <data name="SettingsPage_Backdrop" xml:space="preserve">
+    <value>Acrylhintergrund verwenden</value>
+  </data>
+  <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
+    <value>Acryl</value>
+  </data>
+  <data name="SettingsPage_BackdropDesc" xml:space="preserve">
+    <value>Für die Anwendung wird ein Acrylhintergrund verwendet</value>
+  </data>
+  <data name="SettingsPage_BackdropMica" xml:space="preserve">
+    <value>Glimmer</value>
+  </data>
+  <data name="SettingsPage_BackdropNone" xml:space="preserve">
+    <value>Kein</value>
+  </data>
+  <data name="SettingsPage_BackdropTabbed" xml:space="preserve">
+    <value>Tabbed</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
+    <value>Nach Aktualisierungen suchen</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
+    <value>Minimiert schließen</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
+    <value>Die Anwendung wird minimiert und nicht geschlossen</value>
+  </data>
+  <data name="SettingsPage_Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
+    <value>Downloading - </value>
+  </data>
+  <data name="SettingsPage_EcoQoS" xml:space="preserve">
+    <value>EcoQoS</value>
+  </data>
+  <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
+    <value>Inaktive oder im Hintergrund ablaufende Prozesse und Anwendungen drosseln, um die Energieeffizienz zu verbessern</value>
+  </data>
+  <data name="SettingsPage_GeneralOptions" xml:space="preserve">
+    <value>Allgemeine Optionen</value>
+  </data>
+  <data name="SettingsPage_HaltWithCompanion" xml:space="preserve">
+    <value>Stoppen mit Companion</value>
+  </data>
+  <data name="SettingsPage_HaltWithCompanionDesc" xml:space="preserve">
+    <value>Automatisches Ausschalten des Dienstes, wenn Companion geschlossen wird</value>
+  </data>
+  <data name="SettingsPage_InstallNow" xml:space="preserve">
+    <value>Jetzt installieren</value>
+  </data>
+  <data name="SettingsPage_LastChecked" xml:space="preserve">
+    <value>Zuletzt geprüft: </value>
+  </data>
+  <data name="SettingsPage_NotificationOptions" xml:space="preserve">
+    <value>Optionen für Benachrichtigungen</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
+    <value>Anwendung im Hintergrund öffnen</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
+    <value>Die Anwendung wird minimiert gestartet und erscheint in der Taskleiste</value>
+  </data>
+  <data name="SettingsPage_SensorExternal" xml:space="preserve">
+    <value>Extern</value>
+  </data>
+  <data name="SettingsPage_SensorInternal" xml:space="preserve">
+    <value>Intern</value>
+  </data>
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
+    <value>Sensor-Optionen</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+    <value>Externer Sensor Ausrichtung</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+    <value>Wählen Sie aus, auf welcher Seite des Geräts der Sensor montiert wurde</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>Externer Sensor verkehrt herum</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+    <value>Der Sensor wurde verkehrt herum montiert, möglich mit USB-C-Konvertern</value>
+  </data>
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
+    <value>Sensorauswahl</value>
+  </data>
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+    <value>Wählen Sie den gewünschten Sensor für die Bewegungseingabe aus.</value>
+  </data>
+  <data name="SettingsPage_ServiceOptions" xml:space="preserve">
+    <value>Service-Optionen</value>
+  </data>
+  <data name="SettingsPage_Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="SettingsPage_StartupType" xml:space="preserve">
+    <value>Starttyp</value>
+  </data>
+  <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
+    <value>Wird vom Dienstmanager verwendet, um den Starttyp des Dienstes zu definieren</value>
+  </data>
+  <data name="SettingsPage_StartWithCompanion" xml:space="preserve">
+    <value>Starten mit Companion</value>
+  </data>
+  <data name="SettingsPage_StartWithCompanionDesc" xml:space="preserve">
+    <value>Automatisches Einschalten des Dienstes beim Start von Companion</value>
+  </data>
+  <data name="SettingsPage_TDPMax" xml:space="preserve">
+    <value>Maximale Leistung</value>
+  </data>
+  <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
+    <value>Die maximale Leistung in Watt, die dem Prozessor zugeführt wird</value>
+  </data>
+  <data name="SettingsPage_TDPMin" xml:space="preserve">
+    <value>Minimale Leistung</value>
+  </data>
+  <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
+    <value>Die Mindestleistung in Watt, die dem Prozessor zugeführt wird</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
+    <value>Configurable Power (cTDP) konfigurieren</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
+    <value>Ermöglicht die Änderung der minimalen und maximalen Leistungswerte (TDP) über die CPU-Spezifikationen hinaus</value>
+  </data>
+  <data name="SettingsPage_ThemeDark" xml:space="preserve">
+    <value>Dunkel</value>
+  </data>
+  <data name="SettingsPage_ThemeLight" xml:space="preserve">
+    <value>Hell</value>
+  </data>
+  <data name="SettingsPage_ToastNotification" xml:space="preserve">
+    <value>Toast_Benachrichtigung</value>
+  </data>
+  <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
+    <value>Benachrichtigungen von der Anwendung im Windows-Aktionscenter abrufen</value>
+  </data>
+  <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
+    <value>Aktualisierung verfügbar</value>
+  </data>
+  <data name="SettingsPage_UpdateCheck" xml:space="preserve">
+    <value>Prüfung auf Aktualisierungen...</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
+    <value>Wir konnten die Aktualisierungsdatei nicht herunterladen.</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
+    <value>Wir konnten Github nicht erreichen.</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
+    <value>Wir konnten die Aktualisierungsdatei nicht finden.</value>
+  </data>
+  <data name="SettingsPage_UpdateWarning" xml:space="preserve">
+    <value>Oups. Es gab ein Problem.</value>
+  </data>
+  <data name="SettingsPage_UpToDate" xml:space="preserve">
+    <value>Sie sind up to date</value>
+  </data>
+  <data name="ToastNewControllerEx" xml:space="preserve">
+    <value>Die Steuerung ist jetzt getarnt und die Eingaben werden an die virtuelle Steuerung weitergeleitet</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Nutzer</value>
+  </data>
+  <data name="WarningElevated" xml:space="preserve">
+    <value>Führen Sie dieses Tool als Administrator aus, um diese Einstellungen freizugeben.</value>
+  </data>
+  <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xinput1_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\xinput1_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="ControllerPage_SteamDeckMuteController" xml:space="preserve">
+    <value>Virtuellen Controller stummschalten</value>
+  </data>
+  <data name="ControllerPage_SteamDeckMuteControllerDesc" xml:space="preserve">
+    <value>Stummschaltung des virtuellen Controllers bei Steam-bezogenen Anwendungen</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
+    <value>Controller-Einstellungen</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
+    <value>Ändern Sie die Einstellungen der virtuellen Steuerung</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
+    <value>Motion anti-deadzone</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
+    <value>Kompensierung der Deadzone im Spiel, verbesserte Registrierung kleiner Bewegungen</value>
+  </data>
+  <data name="chord_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\controller_base\chord_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="empty_neptune" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\controller_base\empty_neptune.vdf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
+    <value>Verbessern Sie die Zirkularität des Sticks</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
+    <value>Zirkularität linker Stick</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
+    <value>Zirkularität rechter Stick</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
+    <value>Joystick Deadzone % links</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des linken Joysticks</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
+    <value>Joystick Deadzone % rechts</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des rechten Joysticks</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
+    <value>Linker Trigger Deadzone %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des linken Joysticks</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
+    <value>Rechter Trigger Deadzone %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
+    <value>Einstellen der inneren und äußeren Deadzone (Prozent) des rechten Joysticks</value>
+  </data>
+</root>
