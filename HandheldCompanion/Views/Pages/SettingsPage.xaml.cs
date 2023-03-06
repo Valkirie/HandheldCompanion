@@ -52,7 +52,7 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
             cB_Language.Items.Add(new CultureInfo("de-DE"));
-            
+
             // call function
             UpdateDevice();
 
