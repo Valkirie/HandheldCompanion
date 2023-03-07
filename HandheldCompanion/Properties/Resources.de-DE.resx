@@ -803,7 +803,7 @@
     <value>Überschreiben Sie das thermal power limit des Prozessors</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
-    <value>Aktivieren der universellen Bewegungssteuerung/value>
+    <value>Aktivieren der universellen Bewegungssteuerung</value>
   </data>
   <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
     <value>Deaktiviert, einschalten mit Taste(n)</value>
