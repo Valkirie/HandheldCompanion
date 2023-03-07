@@ -63,7 +63,7 @@ namespace ControllerCommon
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
-        public Layout Layout { get; set; } = new("Profile");
+        public Layout Layout { get; set; }
 
         [JsonIgnore]
         public bool Running { get; set; }
@@ -140,6 +140,7 @@ namespace ControllerCommon
             // enable the below variables when profile is created
             this.Enabled = true;
             this.MotionEnabled = true;
+            this.Layout = new("Profile");
         }
 
         public Profile(Profile profile)

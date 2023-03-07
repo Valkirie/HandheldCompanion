@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Actions;
+using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,10 @@ namespace ControllerCommon
     public class Layout
     {
         public string Name { get; set; } = string.Empty;
+        public bool Enabled { get; set; } = false;
 
-        public Dictionary<ButtonFlags, IActions> ButtonLayout { get; set; }
-        public Dictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; }
+        public Dictionary<ButtonFlags, IActions> ButtonLayout { get; set; } = new();
+        public Dictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
 
         #region events
         public event UpdatedEventHandler Updated;
@@ -21,13 +23,27 @@ namespace ControllerCommon
 
         public Layout()
         {
-            this.ButtonLayout = new();
-            this.AxisLayout = new();
         }
 
         public Layout(string name) : this()
         {
             this.Name = name;
+
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
+            {
+                if (IController.ButtonBlackList.Contains(button))
+                    continue;
+
+                ButtonLayout.Add(button, new ButtonActions() { Button = button });
+            }
+
+            foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
+            {
+                if (IController.AxisBlackList.Contains(axis))
+                    continue;
+
+                AxisLayout.Add(axis, new AxisActions() { Axis = axis });
+            }
         }
 
         public void UpdateLayout(ButtonFlags button, IActions action)

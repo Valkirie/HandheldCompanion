@@ -115,8 +115,6 @@ namespace HandheldCompanion.Managers
             m_GlobalHook = Hook.GlobalEvents();
 
             HotkeysManager.HotkeyCreated += TriggerCreated;
-
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
         private static void InputsChordHold_Elapsed()

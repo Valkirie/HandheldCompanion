@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace HandheldCompanion.Actions
+namespace ControllerCommon.Actions
 {
     [Serializable]
     public class AxisActions : IActions

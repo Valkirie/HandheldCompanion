@@ -35,24 +35,19 @@ namespace ControllerCommon.Controllers
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
-        protected List<ButtonFlags> ButtonBlackList = new()
+        public static List<ButtonFlags> ButtonBlackList = new()
         {
-            ButtonFlags.L2, ButtonFlags.R2,
-            ButtonFlags.L3, ButtonFlags.R3,
-            ButtonFlags.L4, ButtonFlags.R4,
-            ButtonFlags.L5, ButtonFlags.R5,
-
+            ButtonFlags.None,
+            ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5,
             ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
             ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
-
-            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch,
-            ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
-            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch,
-            ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
+            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
+            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
         };
 
-        protected List<AxisLayoutFlags> AxisBlackList = new()
+        public static List<AxisLayoutFlags> AxisBlackList = new()
         {
+            AxisLayoutFlags.None,
             AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad
         };
 
@@ -61,9 +56,7 @@ namespace ControllerCommon.Controllers
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
-            ButtonFlags.L1, ButtonFlags.R1,
-            ButtonFlags.L2, ButtonFlags.R2,
-            ButtonFlags.L3, ButtonFlags.R3,
+            ButtonFlags.L1, ButtonFlags.R1, ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
             ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
             ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
@@ -116,8 +109,6 @@ namespace ControllerCommon.Controllers
 
             // attribute controller to tag
             ui_border.Tag = this;
-
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
         }
 
         public virtual void UpdateInputs()

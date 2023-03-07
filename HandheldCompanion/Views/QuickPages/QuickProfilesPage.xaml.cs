@@ -4,12 +4,14 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Layouts;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages
@@ -358,6 +360,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             // create profile
             currentProfile = new Profile(currentProcess.Path);
+
+            // set default value(s)
             currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
             // if an update is pending, execute it and stop timer

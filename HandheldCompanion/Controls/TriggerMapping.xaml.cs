@@ -90,7 +90,8 @@ namespace HandheldCompanion.Controls
 
             if (type == ActionType.None)
             {
-                Deleted?.Invoke(Axis);
+                if (this.Actions is not null)
+                    Deleted?.Invoke(Axis);
                 return;
             }
             

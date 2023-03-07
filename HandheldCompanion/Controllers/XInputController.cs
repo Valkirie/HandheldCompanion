@@ -174,24 +174,6 @@ namespace HandheldCompanion.Controllers
             ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-            // TEMP
-            AxisSupport.Add(AxisLayoutFlags.LeftPad);
-            AxisSupport.Add(AxisLayoutFlags.RightPad);
-
-            ButtonSupport.Add(ButtonFlags.LeftPadClick);
-            ButtonSupport.Add(ButtonFlags.LeftPadTouch);
-            ButtonSupport.Add(ButtonFlags.LeftPadClickUp);
-            ButtonSupport.Add(ButtonFlags.LeftPadClickDown);
-            ButtonSupport.Add(ButtonFlags.LeftPadClickLeft);
-            ButtonSupport.Add(ButtonFlags.LeftPadClickRight);
-
-            ButtonSupport.Add(ButtonFlags.RightPadClick);
-            ButtonSupport.Add(ButtonFlags.RightPadTouch);
-            ButtonSupport.Add(ButtonFlags.RightPadClickUp);
-            ButtonSupport.Add(ButtonFlags.RightPadClickDown);
-            ButtonSupport.Add(ButtonFlags.RightPadClickLeft);
-            ButtonSupport.Add(ButtonFlags.RightPadClickRight);
-
             DrawControls();
             RefreshControls();
         }

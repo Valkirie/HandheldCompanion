@@ -40,7 +40,7 @@ namespace HandheldCompanion.Managers
         public delegate void DiscardedEventHandler(Profile profile, bool isCurrent);
         #endregion
 
-        private static Profile currentProfile = new();
+        private static Profile currentProfile;
 
         public static string InstallPath;
         private static bool IsInitialized;
@@ -83,7 +83,8 @@ namespace HandheldCompanion.Managers
                     Name = DefaultName,
                     Default = true,
                     Enabled = true,
-                };
+                    Layout = new Layout("Profile")
+            };
 
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
             }
@@ -272,8 +273,11 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
+            // default specific
             if (profile.Default)
+            {
                 currentProfile = profile;
+            }
 
             UpdateOrCreateProfile(profile, ProfileUpdateSource.Serialiazer);
         }

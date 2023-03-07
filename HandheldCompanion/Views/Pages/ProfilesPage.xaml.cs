@@ -5,6 +5,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Layouts;
 using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using ModernWpf.Controls;

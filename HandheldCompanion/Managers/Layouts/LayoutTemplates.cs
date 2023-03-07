@@ -11,7 +11,7 @@ using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Managers.Layouts
 {
-    public class LayoutTemplates
+    public struct LayoutTemplates
     {
         public static Layout DesktopLayout = new Layout("Desktop")
         {

@@ -32,7 +32,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private string preNavItemTag;
 
-        private Layout currentLayout = new();
+        private Layout currentLayout;
 
         public LayoutPage()
         {

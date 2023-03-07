@@ -45,7 +45,7 @@ namespace HandheldCompanion.Managers
 
             desktopLayout.Updated += DesktopLayout_Updated;
 
-            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProfileManager.Applied += ProfileManager_Applied;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
@@ -76,6 +76,15 @@ namespace HandheldCompanion.Managers
             // todo: support multiple layouts when non-gaming ?
             desktopLayout = layout;
             desktopLayout.Updated += DesktopLayout_Updated;
+        }
+
+        private static void ProfileManager_Applied(Profile profile)
+        {
+            profileLayout = profile.Layout;
+
+            // only update current layout if we're not into desktop layout mode
+            if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
+                currentLayout = profile.Layout;
         }
 
         private static void DesktopLayout_Updated(Layout layout)
@@ -113,16 +122,6 @@ namespace HandheldCompanion.Managers
                     }
                     break;
             }
-        }
-
-        private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
-        {
-            var profile = ProfileManager.GetProfileFromExec(processEx.Executable);
-            profileLayout = profile.Layout;
-
-            // only update current layout if we're not into desktop layout mode
-            if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
-                currentLayout = profile.Layout;
         }
 
         public static ControllerState MapController(ControllerState controllerState)
