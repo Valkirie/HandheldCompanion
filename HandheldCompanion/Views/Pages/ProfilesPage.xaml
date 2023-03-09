@@ -40,7 +40,7 @@
                             </DockPanel>
 
                             <ui:SimpleStackPanel Grid.Column="1" Margin="12,0,0,0" Spacing="6">
-                                <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="0"/>
+                                <ComboBox SelectionChanged="cB_Profiles_SelectionChanged" Name="cB_Profiles" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                                 <!-- Create new profile -->
                                 <Button Click="b_CreateProfile_Click" Style="{DynamicResource AccentButtonStyle}">
                                     <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="12">

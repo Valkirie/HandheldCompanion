@@ -8,28 +8,39 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers.Layouts;
 using LiveCharts.Wpf;
+using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Documents;
 using static HandheldCompanion.Simulators.MouseSimulator;
+using Layout = ControllerCommon.Layout;
 using Vector2 = System.Numerics.Vector2;
 
 namespace HandheldCompanion.Managers
 {
     static class LayoutManager
     {
-        public static Layout desktopLayout = LayoutTemplates.DesktopLayout;
-        public static Layout profileLayout = new();
+        public static LayoutTemplate desktopLayout = LayoutTemplate.DesktopLayout;
+        public static LayoutTemplate profileLayout = LayoutTemplate.DefaultLayout;
+
         private static Layout currentLayout;
 
         private static ControllerState outputState = new();
-        private static ButtonState prevButtonState = new();
-        private static AxisState prevAxisState = new();
+        // private static ButtonState prevButtonState = new();
+        // private static AxisState prevAxisState = new();
+
+        private static Dictionary<string, LayoutTemplate> LayoutTemplates = new()
+        {
+            { "Desktop", LayoutTemplate.DesktopLayout }
+        };
 
         public static string InstallPath;
         private static bool IsInitialized;
+
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
 
         static LayoutManager()
         {
@@ -38,68 +49,102 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(InstallPath))
                 Directory.CreateDirectory(InstallPath);
 
-            // process existing profiles
-            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
-            foreach (string fileName in fileEntries)
-                ProcessLayout(fileName);
-
-            desktopLayout.Updated += DesktopLayout_Updated;
+            if (!LayoutTemplateExist(desktopLayout))
+                SerializeLayoutTemplate(desktopLayout);
 
             ProfileManager.Applied += ProfileManager_Applied;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
-        private static void ProcessLayout(string fileName)
+        public static void Start()
         {
-            Layout layout = null;
+            // process existing layouts
+            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
+            foreach (string fileName in fileEntries)
+                ProcessLayoutTemplate(fileName);
+
+            IsInitialized = true;
+            Initialized?.Invoke();
+
+            LogManager.LogInformation("{0} has started", "LayoutManager");
+        }
+
+        public static void Stop()
+        {
+            if (!IsInitialized)
+                return;
+
+            IsInitialized = false;
+
+            LogManager.LogInformation("{0} has stopped", "LayoutManager");
+        }
+
+        private static bool LayoutTemplateExist(LayoutTemplate layoutTemplate)
+        {
+            string fileName = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
+            return File.Exists(fileName);
+        }
+
+        private static void ProcessLayoutTemplate(string fileName)
+        {
+            LayoutTemplate layoutTemplate = null;
             try
             {
                 string outputraw = File.ReadAllText(fileName);
-                layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
+                layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
             }
             catch (Exception ex)
             {
-                LogManager.LogError("Could not parse layout {0}. {1}", fileName, ex.Message);
+                LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
             }
 
             // failed to parse
-            if (layout is null || layout.ButtonLayout is null || layout.AxisLayout is null)
+            if (layoutTemplate is null || layoutTemplate.Layout is null)
             {
-                LogManager.LogError("Could not parse layout {0}", fileName);
+                LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
                 return;
             }
 
-            // update current layout
-            // todo: support multiple layouts when non-gaming ?
-            desktopLayout = layout;
-            desktopLayout.Updated += DesktopLayout_Updated;
+            // create/update templates
+            LayoutTemplates[layoutTemplate.Name] = layoutTemplate;
+
+            // handle specific case(s)
+            switch(layoutTemplate.Name)
+            {
+                case "Desktop":
+                    desktopLayout = layoutTemplate;
+                    break;
+            }
+
+            // hook event(s)
+            layoutTemplate.Updated += LayoutTemplate_Updated;
+        }
+
+        private static void LayoutTemplate_Updated(LayoutTemplate layoutTemplate)
+        {
+            SerializeLayoutTemplate(layoutTemplate);
         }
 
         private static void ProfileManager_Applied(Profile profile)
         {
-            profileLayout = profile.Layout;
+            profileLayout.Layout = profile.Layout;
 
             // only update current layout if we're not into desktop layout mode
             if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
                 currentLayout = profile.Layout;
         }
 
-        private static void DesktopLayout_Updated(Layout layout)
+        private static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
         {
-            SerializeLayout(layout);
-        }
-
-        private static void SerializeLayout(Layout layout)
-        {
-            string jsonString = JsonConvert.SerializeObject(layout, Formatting.Indented, new JsonSerializerSettings
+            string jsonString = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            string settingsPath = Path.Combine(InstallPath, $"{layout.Name}.json");
+            string settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
             File.WriteAllText(settingsPath, jsonString);
         }
 
@@ -113,10 +158,10 @@ namespace HandheldCompanion.Managers
                         switch (toggle)
                         {
                             case true:
-                                currentLayout = desktopLayout;
+                                currentLayout = desktopLayout.Layout;
                                 break;
                             case false:
-                                currentLayout = profileLayout;
+                                currentLayout = profileLayout.Layout;
                                 break;
                         }
                     }

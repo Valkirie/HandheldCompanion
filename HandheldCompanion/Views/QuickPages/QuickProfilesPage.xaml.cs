@@ -201,7 +201,7 @@ namespace HandheldCompanion.Views.QuickPages
                 }
 
                 // update current profile
-                currentProfile = profile;
+                currentProfile = profile.Clone() as Profile;
 
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>

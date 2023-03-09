@@ -38,7 +38,7 @@
                         
                         <ui:SimpleStackPanel Spacing="18" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
                             <ComboBox Name="cB_ServiceSwitch" Width="Auto" SelectionChanged="cB_ServiceSwitch_SelectionChanged"/>
-                            <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged" BorderThickness="0"/>
+                            <ComboBox Name="cB_HidMode" Width="Auto" SelectionChanged="cB_HidMode_SelectionChanged"/>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Border>

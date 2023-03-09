@@ -10,7 +10,8 @@
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="{x:Static resx:Resources.ProfilesPage_ControllerLayout}"
-      Loaded="Page_Loaded">
+      Loaded="Page_Loaded"
+      d:Background="White">
 
     <ui:NavigationView
         Name="navView" PaneDisplayMode="Left"
@@ -61,12 +62,44 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
-
+        
         <!-- Padding is set to NavView OpenPaneLength-->
-        <ui:Frame
-            Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-            Name="ContentFrame"
-            Padding="0,0,150,0"
-            HorizontalAlignment="Left"/>
+        <Grid Name="MainGrid" Margin="20">
+            <StackPanel>
+                <!-- Profile picker -->
+                <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
+                    
+                    <TextBlock Text="Layout picker" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                    <ComboBox x:Name="combox1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="combox1_SizeChanged">
+
+                        <!-- TEMPLATES -->
+                        <ComboBoxItem IsEnabled="false">TEMPLATES</ComboBoxItem>
+                        <ComboBoxItem>
+                            <ui:SimpleStackPanel>
+                                <TextBlock Text="Gamepad" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock TextWrapping="Wrap" Text="This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc."/>
+                            </ui:SimpleStackPanel>
+                        </ComboBoxItem>
+
+                        <ComboBoxItem IsEnabled="false">COMMUNITY</ComboBoxItem>
+                    </ComboBox>
+
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                        <Button Style="{DynamicResource AccentButtonStyle}">
+                            Apply layout
+                        </Button>
+                        <Button Style="{DynamicResource AccentButtonStyle}">
+                            <ui:SymbolIcon Symbol="Setting"/>
+                        </Button>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+                
+                <TextBlock Text="Current Layout" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                <ui:Frame
+                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                Name="ContentFrame"
+                HorizontalAlignment="Left"/>
+            </StackPanel>
+        </Grid>
     </ui:NavigationView>
 </Page>

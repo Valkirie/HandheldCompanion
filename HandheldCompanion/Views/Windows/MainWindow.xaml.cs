@@ -172,13 +172,14 @@ namespace HandheldCompanion.Views
 
             PlatformManager.Start();
             ProfileManager.Start();
+            LayoutManager.Start();
             ProcessManager.Start();
 
             PowerManager.SystemStatusChanged += OnSystemStatusChanged;
             PowerManager.Start();
 
             DesktopManager.Start();
-            HWiNFOManager.Start();
+            // HWiNFOManager.Start();
 
             // start managers asynchroneously
             foreach (Manager manager in _managers)
@@ -606,6 +607,7 @@ namespace HandheldCompanion.Views
             DeviceManager.Stop();
             PlatformManager.Stop();
             ProfileManager.Stop();
+            LayoutManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();
             PowerManager.Stop();

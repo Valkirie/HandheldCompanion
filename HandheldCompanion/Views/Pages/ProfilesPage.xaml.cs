@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -331,8 +332,8 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update current profile
-            // todo: use Clone() !
-            currentProfile = (Profile)cB_Profiles.SelectedItem;
+            Profile profile = (Profile)cB_Profiles.SelectedItem;
+            currentProfile = profile.Clone() as Profile;
 
             // todo: find a way to avoid a useless circle of drawing when profile was update from ProfilesPage
             DrawProfile();
@@ -618,7 +619,10 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             // update layout page with current layout
-            MainWindow.layoutPage.UpdateLayout(currentProfile.Layout);
+            LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A");
+            layoutTemplate.Layout = currentProfile.Layout.Clone() as Layout;
+
+            MainWindow.layoutPage.UpdateLayout(layoutTemplate);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
     }

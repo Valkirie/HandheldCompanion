@@ -8,9 +8,8 @@ using System.Windows.Input;
 namespace ControllerCommon
 {
     [Serializable]
-    public class Layout
+    public class Layout : ICloneable
     {
-        public string Name { get; set; } = string.Empty;
         public bool Enabled { get; set; } = false;
 
         public Dictionary<ButtonFlags, IActions> ButtonLayout { get; set; } = new();
@@ -21,14 +20,10 @@ namespace ControllerCommon
         public delegate void UpdatedEventHandler(Layout layout);
         #endregion
 
-        public Layout()
-        {
-        }
+        public Layout() { }
 
         public Layout(string name) : this()
         {
-            this.Name = name;
-
             foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 if (IController.ButtonBlackList.Contains(button))
@@ -68,6 +63,11 @@ namespace ControllerCommon
         {
             this.AxisLayout.Remove(axis);
             Updated?.Invoke(this);
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }

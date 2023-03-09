@@ -2,7 +2,9 @@ using ControllerCommon.Actions;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Managers.Layouts;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
+using Microsoft.Win32.TaskScheduler;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -67,20 +69,20 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
             foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values.Union(dpadPage.Mapping.Values).Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values).Union(trackpadsPage.MappingButtons.Values))
             {
-                buttonMapping.Updated += ButtonMapping_Updated;
-                buttonMapping.Deleted += ButtonMapping_Deleted;
+                buttonMapping.Updated += (sender, action) => ButtonMapping_Updated((ButtonFlags)sender, action);
+                buttonMapping.Deleted += (sender) => ButtonMapping_Deleted((ButtonFlags)sender);
             }
 
             foreach (TriggerMapping AxisMapping in triggersPage.MappingAxis.Values)
             {
-                AxisMapping.Updated += AxisMapping_Updated;
-                AxisMapping.Deleted += AxisMapping_Deleted;
+                AxisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
+                AxisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
             }
 
             foreach (AxisMapping axisMapping in joysticksPage.MappingAxis.Values.Union(trackpadsPage.MappingAxis.Values))
             {
-                axisMapping.Updated += AxisMapping_Updated;
-                axisMapping.Deleted += AxisMapping_Deleted;
+                axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
+                axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
             }
         }
 
@@ -117,11 +119,10 @@ namespace HandheldCompanion.Views.Pages.Profiles
             ((Expander)sender).BringIntoView();
         }
 
-        public void UpdateLayout(Layout layout)
+        public void UpdateLayout(LayoutTemplate layoutTemplate)
         {
             // update current layout
-            currentLayout = layout;
-            currentLayout.Updated += CurrentLayout_Updated;
+            currentLayout = layoutTemplate.Layout;
 
             // cascade update to (sub)pages
             buttonsPage.Refresh(currentLayout.ButtonLayout);
@@ -129,11 +130,6 @@ namespace HandheldCompanion.Views.Pages.Profiles
             joysticksPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
             triggersPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
             trackpadsPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
-        }
-
-        private void CurrentLayout_Updated(Layout layout)
-        {
-            // do something
         }
 
         #region UI
@@ -209,5 +205,15 @@ namespace HandheldCompanion.Views.Pages.Profiles
             }
         }
         #endregion
+
+        private void combox1_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            foreach (ComboBoxItem item in comboBox.Items)
+            {
+                item.Width = comboBox.ActualWidth - 30;
+                item.InvalidateVisual();
+            }
+        }
     }
 }

@@ -1,3 +1,4 @@
+using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using Newtonsoft.Json;
@@ -109,7 +110,6 @@ namespace ControllerCommon
 
         [JsonIgnore]
         public ProfileErrorCode ErrorCode;
-        private Profile profile;
 
         public Profile()
         {
@@ -143,19 +143,6 @@ namespace ControllerCommon
             this.Layout = new("Profile");
         }
 
-        public Profile(Profile profile)
-        {
-            // todo: complete this !!!!!
-            this.Name = profile.Name;
-            this.Path = profile.Path;
-            this.Executable = profile.Executable;
-            this.ExecutablePath = profile.ExecutablePath;
-            this.Enabled = profile.Enabled;
-            this.Running = profile.Running;
-            this.Whitelisted = profile.Whitelisted;
-            this.Default = profile.Default;
-        }
-
         public float GetSensitivityX()
         {
             return MotionSensivityX * 1000.0f;
@@ -186,7 +173,12 @@ namespace ControllerCommon
 
         public object Clone()
         {
-            return new Profile(this);
+            Profile profile = (Profile)MemberwiseClone();
+            profile.Layout = this.Layout.Clone() as Layout;
+            profile.MotionTrigger = this.MotionTrigger.Clone() as ButtonState;
+            profile.AimingSightsTrigger = this.AimingSightsTrigger.Clone() as ButtonState;
+
+            return profile;
         }
     }
 }

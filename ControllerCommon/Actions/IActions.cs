@@ -16,7 +16,7 @@ namespace ControllerCommon.Actions
     }
 
     [Serializable]
-    public abstract class IActions
+    public abstract class IActions : ICloneable
     {
         public ActionType ActionType { get; set; } = ActionType.None;
 
@@ -49,6 +49,11 @@ namespace ControllerCommon.Actions
 
         public virtual void Execute(AxisFlags axis, short value)
         {
+        }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
 }

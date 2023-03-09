@@ -16,19 +16,8 @@ namespace HandheldCompanion.Controls
     /// <summary>
     /// Interaction logic for TriggerMapping.xaml
     /// </summary>
-    public partial class TriggerMapping : UserControl
+    public partial class TriggerMapping : IMapping
     {
-        private AxisLayoutFlags Axis;
-        private IActions Actions;
-        private object updateLock = new();
-
-        #region events
-        public event DeletedEventHandler Deleted;
-        public delegate void DeletedEventHandler(AxisLayoutFlags axis);
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(AxisLayoutFlags axis, IActions action);
-        #endregion
-
         public TriggerMapping()
         {
             InitializeComponent();
@@ -36,7 +25,9 @@ namespace HandheldCompanion.Controls
 
         public TriggerMapping(AxisLayoutFlags axis) : this()
         {
-            this.Axis = axis;
+            this.Value = axis;
+            this.prevValue = axis;
+
             this.Icon.Glyph = axis.ToString();
         }
 
@@ -59,7 +50,7 @@ namespace HandheldCompanion.Controls
         internal void SetIActions(IActions actions)
         {
             // update mapping IActions
-            this.Actions = actions;
+            base.SetIActions(actions);
 
             // update UI
             this.ActionComboBox.SelectedIndex = (int)actions.ActionType;
@@ -91,7 +82,7 @@ namespace HandheldCompanion.Controls
             if (type == ActionType.None)
             {
                 if (this.Actions is not null)
-                    Deleted?.Invoke(Axis);
+                    base.Delete();
                 return;
             }
             
@@ -115,8 +106,7 @@ namespace HandheldCompanion.Controls
                 }
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -142,8 +132,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Update()

@@ -22,19 +22,8 @@ namespace HandheldCompanion.Controls
     /// <summary>
     /// Interaction logic for ButtonMapping.xaml
     /// </summary>
-    public partial class ButtonMapping : UserControl
+    public partial class ButtonMapping : IMapping
     {
-        private ButtonFlags Button;
-        private IActions Actions;
-        private object updateLock = new();
-
-        #region events
-        public event DeletedEventHandler Deleted;
-        public delegate void DeletedEventHandler(ButtonFlags button);
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(ButtonFlags button, IActions action);
-        #endregion
-
         public ButtonMapping()
         {
             InitializeComponent();
@@ -42,26 +31,10 @@ namespace HandheldCompanion.Controls
 
         public ButtonMapping(ButtonFlags button) : this()
         {
-            this.Button = button;
+            this.Value = button;
+            this.prevValue = button;
 
-            switch (button)
-            {
-                default:
-                    this.Icon.Glyph = button.ToString();
-                    break;
-                case ButtonFlags.OEM1:
-                case ButtonFlags.OEM2:
-                case ButtonFlags.OEM3:
-                case ButtonFlags.OEM4:
-                case ButtonFlags.OEM5:
-                case ButtonFlags.OEM6:
-                case ButtonFlags.OEM7:
-                case ButtonFlags.OEM8:
-                case ButtonFlags.OEM9:
-                case ButtonFlags.OEM10:
-                    break;
-            }
-
+            this.Icon.Glyph = button.ToString();
             this.Name.Text = MainWindow.CurrentDevice.GetButtonName(button);
         }
 
@@ -84,7 +57,7 @@ namespace HandheldCompanion.Controls
         internal void SetIActions(IActions actions)
         {
             // update mapping IActions
-            this.Actions = actions;
+            base.SetIActions(actions);
 
             // update UI
             this.ActionComboBox.SelectedIndex = (int)actions.ActionType;
@@ -116,7 +89,7 @@ namespace HandheldCompanion.Controls
             if (type == ActionType.None)
             {
                 if (this.Actions is not null)
-                    Deleted?.Invoke(Button);
+                    base.Delete();
                 return;
             }
             
@@ -193,8 +166,7 @@ namespace HandheldCompanion.Controls
                 Toggle_Toggle.IsOn = ((MouseActions)this.Actions).Toggle;
             }
 
-            // update button mapping
-            Updated?.Invoke(Button, Actions);
+            base.Update();
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -234,8 +206,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update button mapping
-            Updated?.Invoke(Button, Actions);
+            base.Update();
         }
 
         private void Update()
@@ -274,8 +245,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update button mapping
-            Updated?.Invoke(Button, Actions);
+            base.Update();
         }
 
         private void Turbo_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -296,8 +266,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update button mapping
-            Updated?.Invoke(Button, Actions);
+            base.Update();
         }
 
         private void Toggle_Toggle_Toggled(object sender, RoutedEventArgs e)
@@ -318,8 +287,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update button mapping
-            Updated?.Invoke(Button, Actions);
+            base.Update();
         }
         #endregion
     }

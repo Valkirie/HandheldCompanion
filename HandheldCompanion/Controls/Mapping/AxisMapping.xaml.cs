@@ -4,6 +4,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
@@ -17,19 +18,8 @@ namespace HandheldCompanion.Controls
     /// <summary>
     /// Interaction logic for AxisMapping.xaml
     /// </summary>
-    public partial class AxisMapping : UserControl
+    public partial class AxisMapping : IMapping
     {
-        private AxisLayoutFlags Axis;
-        private IActions Actions;
-        private object updateLock = new();
-
-        #region events
-        public event DeletedEventHandler Deleted;
-        public delegate void DeletedEventHandler(AxisLayoutFlags axis);
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(AxisLayoutFlags axis, IActions action);
-        #endregion
-
         public AxisMapping()
         {
             InitializeComponent();
@@ -37,7 +27,9 @@ namespace HandheldCompanion.Controls
 
         public AxisMapping(AxisLayoutFlags axis) : this()
         {
-            this.Axis = axis;
+            this.Value = axis;
+            this.prevValue = axis;
+
             this.Icon.Glyph = axis.ToString();
         }
 
@@ -60,7 +52,7 @@ namespace HandheldCompanion.Controls
         internal void SetIActions(IActions actions)
         {
             // update mapping IActions
-            this.Actions = actions;
+            base.SetIActions(actions);
 
             // update UI
             this.ActionComboBox.SelectedIndex = (int)actions.ActionType;
@@ -92,7 +84,7 @@ namespace HandheldCompanion.Controls
             if (type == ActionType.None)
             {
                 if (this.Actions is not null)
-                    Deleted?.Invoke(Axis);
+                    base.Delete();
                 return;
             }
             
@@ -151,8 +143,7 @@ namespace HandheldCompanion.Controls
                 Axis2MouseImprovePrecision.IsOn = ((MouseActions)this.Actions).EnhancePrecision;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -185,8 +176,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Update()
@@ -218,8 +208,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Axis_InnerDeadzone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -234,8 +223,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Axis_OuterDeadzone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -250,8 +238,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Axis_AntiDeadZone_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -266,8 +253,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Axis2AxisImproveCircularity_Toggled(object sender, RoutedEventArgs e)
@@ -282,8 +268,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Axis2MousePointerSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -298,8 +283,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
 
         private void Axis2MouseImprovePrecision_Toggled(object sender, RoutedEventArgs e)
@@ -314,8 +298,7 @@ namespace HandheldCompanion.Controls
                     break;
             }
 
-            // update axis mapping
-            Updated?.Invoke(Axis, Actions);
+            base.Update();
         }
     }
 }
