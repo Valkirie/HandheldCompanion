@@ -84,7 +84,7 @@ namespace HandheldCompanion.Managers
                     Default = true,
                     Enabled = true,
                     Layout = new Layout("Profile")
-            };
+                };
 
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
             }

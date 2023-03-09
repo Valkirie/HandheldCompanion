@@ -15,6 +15,9 @@ namespace HandheldCompanion.Managers.Layouts
         public string Author { get; set; } = string.Empty;
         public string Executable { get; set; } = string.Empty;
 
+        public bool IsTemplate { get; set; } = false;
+        public bool IsCommunity { get; set; } = false;
+
         public Layout Layout = new();
 
         #region events
@@ -27,14 +30,17 @@ namespace HandheldCompanion.Managers.Layouts
             this.Layout.Updated += Layout_Updated;
         }
 
-        public LayoutTemplate(string name, string description, string author) : this()
+        public LayoutTemplate(string name, string description, string author, bool isTemplate, bool isCommunity) : this()
         {
             this.Name = name;
             this.Description = description;
             this.Author = author;
+
+            this.IsTemplate = isTemplate;
+            this.IsCommunity = isCommunity;
         }
 
-        public LayoutTemplate(string name, string description, string author, Dictionary<AxisLayoutFlags, IActions> axisLayout, Dictionary<ButtonFlags, IActions> buttonLayout) : this(name, description, author)
+        public LayoutTemplate(string name, string description, string author, bool isTemplate, bool isCommunity, Dictionary<AxisLayoutFlags, IActions> axisLayout, Dictionary<ButtonFlags, IActions> buttonLayout) : this(name, description, author, isTemplate, isCommunity)
         {
             this.Layout.AxisLayout = axisLayout;
             this.Layout.ButtonLayout = buttonLayout;
@@ -45,7 +51,7 @@ namespace HandheldCompanion.Managers.Layouts
             Updated?.Invoke(this);
         }
 
-        public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "BenjaminLSR",
+        public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true, false, 
             new()
             {
                 { AxisLayoutFlags.LeftThumb, new MouseActions() { MouseType = MouseActionsType.Scroll } },
@@ -75,9 +81,14 @@ namespace HandheldCompanion.Managers.Layouts
                 { ButtonFlags.B4, new KeyboardActions() { Key = VirtualKeyCode.NEXT } },
             });
 
-        public static LayoutTemplate DefaultLayout = new LayoutTemplate("Gamepad", "The template works best for games that are designed with a gamepad in mind.", "BenjaminLSR")
+        public static LayoutTemplate DefaultLayout = new LayoutTemplate("Gamepad", "The template works best for games that are designed with a gamepad in mind.", "HandheldCompanion", true, false)
         {
             Layout = new("Default")
+        };
+
+        public static LayoutTemplate NintendoLayout = new LayoutTemplate("Nintendo Gamepad", "The template works best for games that are designed with a Nintendo gamepad in mind.", "HandheldCompanion", true, false)
+        {
+            Layout = new("Nintendo")
         };
     }
 }

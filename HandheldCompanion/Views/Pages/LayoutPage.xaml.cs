@@ -2,6 +2,7 @@ using ControllerCommon.Actions;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Layouts;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
 using Microsoft.Win32.TaskScheduler;
@@ -34,7 +35,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private string preNavItemTag;
 
-        private Layout currentLayout;
+        private Layout currentLayout = new();
 
         public LayoutPage()
         {
@@ -46,7 +47,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             this.Tag = Tag;
 
             // manage layout pages visibility
-            navTrackpads.Visibility = Visibility.Visible; // MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads) ? Visibility.Visible : Visibility.Collapsed;
+            navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads) ? Visibility.Visible : Visibility.Collapsed;
             navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) || MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) || MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor) ? Visibility.Visible : Visibility.Collapsed;
 
             // create controller related pages
@@ -83,6 +84,19 @@ namespace HandheldCompanion.Views.Pages.Profiles
             {
                 axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
                 axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+            }
+
+            LayoutManager.Initialized += LayoutManager_Initialized;
+        }
+
+        private void LayoutManager_Initialized()
+        {
+            int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
+
+            foreach(LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
+            {
+                idx++;
+                cB_Layouts.Items.Insert(idx, layoutTemplate.Name);
             }
         }
 
@@ -124,6 +138,11 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // update current layout
             currentLayout = layoutTemplate.Layout;
 
+            RefreshLayout();
+        }
+
+        private void RefreshLayout()
+        {
             // cascade update to (sub)pages
             buttonsPage.Refresh(currentLayout.ButtonLayout);
             dpadPage.Refresh(currentLayout.ButtonLayout);
@@ -206,14 +225,37 @@ namespace HandheldCompanion.Views.Pages.Profiles
         }
         #endregion
 
-        private void combox1_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void cB_Layouts_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            foreach (ComboBoxItem item in comboBox.Items)
+            foreach (object item in comboBox.Items)
             {
-                item.Width = comboBox.ActualWidth - 30;
-                item.InvalidateVisual();
+                if (item.GetType() != typeof(ComboBoxItem))
+                    continue;
+
+                ComboBoxItem comboBoxItem = (ComboBoxItem)item;
+                comboBoxItem.Width = comboBox.ActualWidth - 30;
+                comboBoxItem.InvalidateVisual();
             }
+        }
+
+        private void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)
+        {
+            if (cB_Layouts.SelectedItem is null)
+                return;
+
+            // TEMPORARY
+            string temp = cB_Layouts.SelectedItem.ToString();
+            LayoutTemplate layoutTemplate = LayoutManager.LayoutTemplates[temp];
+            currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
+            currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
+
+            RefreshLayout();
+        }
+
+        private void ButtonLayoutSettings_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

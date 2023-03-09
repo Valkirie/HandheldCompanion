@@ -51,6 +51,7 @@ namespace ControllerCommon.Actions
         {
         }
 
+        // Improve me !
         public object Clone()
         {
             return MemberwiseClone();

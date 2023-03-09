@@ -56,7 +56,8 @@ namespace HandheldCompanion.Controls
 
         internal void SetIActions(IActions actions)
         {
-            // update mapping IActions
+            // reset and update mapping IActions
+            Reset();
             base.SetIActions(actions);
 
             // update UI

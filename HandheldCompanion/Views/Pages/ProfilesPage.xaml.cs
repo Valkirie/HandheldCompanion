@@ -619,8 +619,8 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             // update layout page with current layout
-            LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A");
-            layoutTemplate.Layout = currentProfile.Layout.Clone() as Layout;
+            LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
+            layoutTemplate.Layout = currentProfile.Layout;
 
             MainWindow.layoutPage.UpdateLayout(layoutTemplate);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);

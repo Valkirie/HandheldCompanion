@@ -39,6 +39,18 @@ namespace ControllerCommon
 
                 AxisLayout.Add(axis, new AxisActions() { Axis = axis });
             }
+
+            switch(name)
+            {
+                case "Nintendo":
+                    {
+                        ButtonLayout[ButtonFlags.B1] = new ButtonActions() { Button = ButtonFlags.B2 };
+                        ButtonLayout[ButtonFlags.B2] = new ButtonActions() { Button = ButtonFlags.B1 };
+                        ButtonLayout[ButtonFlags.B3] = new ButtonActions() { Button = ButtonFlags.B4 };
+                        ButtonLayout[ButtonFlags.B4] = new ButtonActions() { Button = ButtonFlags.B3 };
+                    }
+                    break;
+            }
         }
 
         public void UpdateLayout(ButtonFlags button, IActions action)
@@ -65,6 +77,7 @@ namespace ControllerCommon
             Updated?.Invoke(this);
         }
 
+        // Improve me !
         public object Clone()
         {
             return MemberwiseClone();

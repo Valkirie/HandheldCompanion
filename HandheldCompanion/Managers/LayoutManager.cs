@@ -22,7 +22,6 @@ namespace HandheldCompanion.Managers
 {
     static class LayoutManager
     {
-        public static LayoutTemplate desktopLayout = LayoutTemplate.DesktopLayout;
         public static LayoutTemplate profileLayout = LayoutTemplate.DefaultLayout;
 
         private static Layout currentLayout;
@@ -31,16 +30,22 @@ namespace HandheldCompanion.Managers
         // private static ButtonState prevButtonState = new();
         // private static AxisState prevAxisState = new();
 
-        private static Dictionary<string, LayoutTemplate> LayoutTemplates = new()
+        public static Dictionary<string, LayoutTemplate> LayoutTemplates = new()
         {
-            { "Desktop", LayoutTemplate.DesktopLayout }
+            { LayoutTemplate.DefaultLayout.Name, LayoutTemplate.DefaultLayout },
+            { LayoutTemplate.DesktopLayout.Name, LayoutTemplate.DesktopLayout },
+            { LayoutTemplate.NintendoLayout.Name, LayoutTemplate.NintendoLayout },
         };
 
         public static string InstallPath;
         private static bool IsInitialized;
 
+        #region events
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
+        public static event UpdatedEventHandler Updated;
+        public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
+        #endregion
 
         static LayoutManager()
         {
@@ -49,8 +54,12 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(InstallPath))
                 Directory.CreateDirectory(InstallPath);
 
-            if (!LayoutTemplateExist(desktopLayout))
-                SerializeLayoutTemplate(desktopLayout);
+            // generate templates
+            foreach (LayoutTemplate layoutTemplate in LayoutTemplates.Values)
+            {
+                if (!LayoutTemplateExist(layoutTemplate))
+                    SerializeLayoutTemplate(layoutTemplate);
+            }
 
             ProfileManager.Applied += ProfileManager_Applied;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -111,14 +120,6 @@ namespace HandheldCompanion.Managers
             // create/update templates
             LayoutTemplates[layoutTemplate.Name] = layoutTemplate;
 
-            // handle specific case(s)
-            switch(layoutTemplate.Name)
-            {
-                case "Desktop":
-                    desktopLayout = layoutTemplate;
-                    break;
-            }
-
             // hook event(s)
             layoutTemplate.Updated += LayoutTemplate_Updated;
         }
@@ -158,7 +159,7 @@ namespace HandheldCompanion.Managers
                         switch (toggle)
                         {
                             case true:
-                                currentLayout = desktopLayout.Layout;
+                                currentLayout = LayoutTemplates["Desktop"].Layout;
                                 break;
                             case false:
                                 currentLayout = profileLayout.Layout;

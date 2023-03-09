@@ -70,25 +70,27 @@
                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
                     
                     <TextBlock Text="Layout picker" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                    <ComboBox x:Name="combox1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="combox1_SizeChanged">
+                    <ComboBox Name="cB_Layouts" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="cB_Layouts_SizeChanged">
 
                         <!-- TEMPLATES -->
-                        <ComboBoxItem IsEnabled="false">TEMPLATES</ComboBoxItem>
+                        <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>
+                        <ComboBoxItem Name="cB_LayoutsSplitterCommunity" IsEnabled="false">COMMUNITY</ComboBoxItem>
+                        
+                        <!--                        
                         <ComboBoxItem>
                             <ui:SimpleStackPanel>
                                 <TextBlock Text="Gamepad" Style="{StaticResource BaseTextBlockStyle}"/>
                                 <TextBlock TextWrapping="Wrap" Text="This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc."/>
                             </ui:SimpleStackPanel>
-                        </ComboBoxItem>
-
-                        <ComboBoxItem IsEnabled="false">COMMUNITY</ComboBoxItem>
+                        </ComboBoxItem>                        
+                        -->
                     </ComboBox>
 
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
-                        <Button Style="{DynamicResource AccentButtonStyle}">
+                        <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click">
                             Apply layout
                         </Button>
-                        <Button Style="{DynamicResource AccentButtonStyle}">
+                        <Button Name="ButtonLayoutSettings" Click="ButtonLayoutSettings_Click">
                             <ui:SymbolIcon Symbol="Setting"/>
                         </Button>
                     </ui:SimpleStackPanel>
