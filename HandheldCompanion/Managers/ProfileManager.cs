@@ -359,7 +359,7 @@ namespace HandheldCompanion.Managers
             profile.Running = hasprocesses;
 
             // check if this is current profile
-            bool isCurrent = profile.Executable == currentProfile.Executable;
+            bool isCurrent = currentProfile is null ? false : profile.Executable == currentProfile.Executable;
 
             // refresh error code
             profile.ErrorCode = SanitizeProfile(profile);
@@ -372,7 +372,7 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
-                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
+                PipeClient.SendMessage(new PipeClientProfile { profile = profile });
 
             if (profile.ErrorCode != ProfileErrorCode.None && !profile.Default)
             {
