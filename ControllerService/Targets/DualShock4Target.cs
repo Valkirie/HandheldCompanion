@@ -219,6 +219,10 @@ namespace ControllerService.Targets
             {
                 LogManager.LogCritical(ex.Message);
             }
+            catch (VigemInvalidTargetException ex)
+            {
+                LogManager.LogCritical(ex.Message);
+            }
 
             base.SubmitReport();
         }
