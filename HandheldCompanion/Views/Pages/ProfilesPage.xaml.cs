@@ -278,11 +278,13 @@ namespace HandheldCompanion.Views.Pages
 
                     if (ProfileManager.Contains(profile))
                     {
-                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.Name}\"?",
-                                                                            $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}",
-                                                                            ContentDialogButton.Primary,
-                                                                            $"{Properties.Resources.ProfilesPage_Cancel}",
-                                                                            $"{Properties.Resources.ProfilesPage_Yes}");
+                        Task<ContentDialogResult> result = Dialog.ShowAsync(
+                            String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
+                            String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
+                            ContentDialogButton.Primary,
+                            $"{Properties.Resources.ProfilesPage_Cancel}",
+                            $"{Properties.Resources.ProfilesPage_Yes}");
+
                         await result; // sync call
 
                         switch (result.Result)
@@ -621,6 +623,7 @@ namespace HandheldCompanion.Views.Pages
             // update layout page with current layout
             LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
             layoutTemplate.Layout = currentProfile.Layout;
+            layoutTemplate.Executable = currentProfile.Executable;
 
             MainWindow.layoutPage.UpdateLayout(layoutTemplate);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);

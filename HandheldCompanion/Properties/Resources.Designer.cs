@@ -1441,7 +1441,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Are you sure you want to overwrite?.
+        ///   Recherche une chaîne localisée semblable à Are you sure you want to overwrite this profile?.
         /// </summary>
         public static string ProfilesPage_AreYouSureOverwrite1 {
             get {
@@ -1450,7 +1450,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à This item will be overwriten. You can&apos;t undo this action..
+        ///   Recherche une chaîne localisée semblable à {0} will be overwriten. You can&apos;t undo this action..
         /// </summary>
         public static string ProfilesPage_AreYouSureOverwrite2 {
             get {

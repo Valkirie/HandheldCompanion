@@ -1,3 +1,4 @@
+using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
@@ -10,6 +11,7 @@ using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -239,7 +241,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
             }
         }
 
-        private void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)
+        private async void ButtonApplyLayout_Click(object sender, RoutedEventArgs e)
         {
             if (cB_Layouts.SelectedItem is null)
                 return;
@@ -247,10 +249,28 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // TEMPORARY
             string temp = cB_Layouts.SelectedItem.ToString();
             LayoutTemplate layoutTemplate = LayoutManager.LayoutTemplates[temp];
-            currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
-            currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
 
-            RefreshLayout();
+            Task<ContentDialogResult> result = Dialog.ShowAsync(
+                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, layoutTemplate.Name),
+                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, layoutTemplate.Name),
+                ContentDialogButton.Primary,
+                $"{Properties.Resources.ProfilesPage_Cancel}",
+                $"{Properties.Resources.ProfilesPage_Yes}");
+
+            await result; // sync call
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    {
+                        // update layout
+                        currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
+                        currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
+
+                        RefreshLayout();
+                    }
+                    break;
+            }
         }
 
         private void ButtonLayoutSettings_Click(object sender, RoutedEventArgs e)

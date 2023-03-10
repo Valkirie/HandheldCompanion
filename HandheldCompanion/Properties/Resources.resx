@@ -659,10 +659,10 @@
     <value>This item will be deleted immediatly. You can't undo this action.</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
-    <value>Are you sure you want to overwrite?</value>
+    <value>Are you sure you want to overwrite this profile?</value>
   </data>
   <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
-    <value>This item will be overwriten. You can't undo this action.</value>
+    <value>{0} will be overwriten. You can't undo this action.</value>
   </data>
   <data name="ProfilesPage_BoostPower" xml:space="preserve">
     <value>Boost power limit</value>
