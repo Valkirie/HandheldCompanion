@@ -221,9 +221,9 @@ namespace HandheldCompanion.Views.Windows
                         this.Show();
                         break;
                 }
-            });
 
-            PipeClient.SendMessage(new PipeOverlay((int)Visibility));
+                PipeClient.SendMessage(new PipeOverlay((int)Visibility));
+            });
         }
 
         #region ModelVisual3D

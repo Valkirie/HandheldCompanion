@@ -743,9 +743,6 @@ namespace HandheldCompanion.Views
             {
                 case PowerManager.SystemStatus.SystemReady:
                     {
-                        // resume delay (arbitrary)
-                        await Task.Delay(2000);
-
                         // restore inputs manager
                         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                         InputsManager.Start();

@@ -551,9 +551,6 @@ namespace ControllerService
                         if (vTarget is not null)
                             return;
 
-                        // resume delay (arbitrary)
-                        await Task.Delay(4000);
-
                         // (re)initialize sensors
                         IMU.RefreshSensors();
 
