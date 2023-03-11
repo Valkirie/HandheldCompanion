@@ -57,7 +57,7 @@ namespace ControllerCommon.Actions
             if (ImproveCircularity)
                 layout.vector = InputUtils.ImproveCircularity(layout.vector);
 
-            this.Vector = layout.vector * (AxisInverted ? -1 : 1);
+            this.Vector = layout.vector * (AxisInverted ? -1.0f : 1.0f);
         }
 
         public Vector2 GetValue()
