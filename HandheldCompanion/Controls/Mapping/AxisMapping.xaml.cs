@@ -139,7 +139,7 @@ namespace HandheldCompanion.Controls
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
                 Axis2MouseImprovePrecision.IsOn = ((MouseActions)this.Actions).EnhancePrecision;
-                Axis2AxisInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
+                Axis2MouseInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
             }
 
             base.Update();
@@ -307,8 +307,8 @@ namespace HandheldCompanion.Controls
 
             switch (this.Actions.ActionType)
             {
-                case ActionType.Joystick:
-                    ((MouseActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).AxisInverted = Axis2MouseInvertAxis.IsOn;
                     break;
             }
 

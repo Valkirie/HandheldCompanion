@@ -48,6 +48,12 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(InstallPath))
                 Directory.CreateDirectory(InstallPath);
 
+            ProfileManager.Applied += ProfileManager_Applied;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        public static void Start()
+        {
             // generate templates
             foreach (LayoutTemplate layoutTemplate in LayoutTemplates.Values)
             {
@@ -55,12 +61,6 @@ namespace HandheldCompanion.Managers
                     SerializeLayoutTemplate(layoutTemplate);
             }
 
-            ProfileManager.Applied += ProfileManager_Applied;
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        }
-
-        public static void Start()
-        {
             // process existing layouts
             string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
@@ -90,7 +90,11 @@ namespace HandheldCompanion.Managers
 
         private static void ProcessLayoutTemplate(string fileName)
         {
-            LayoutTemplate layoutTemplate = null;
+            string layoutName = Path.GetFileNameWithoutExtension(fileName);
+
+            // initialize value
+            LayoutTemplate layoutTemplate = LayoutTemplates.ContainsKey(layoutName) ? LayoutTemplates[layoutName] : null;
+
             try
             {
                 string outputraw = File.ReadAllText(fileName);

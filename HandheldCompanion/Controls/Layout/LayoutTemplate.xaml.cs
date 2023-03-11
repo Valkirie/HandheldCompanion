@@ -3,6 +3,7 @@ using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
@@ -11,8 +12,11 @@ namespace HandheldCompanion.Controls
     /// <summary>
     /// Logique d'interaction pour LayoutTemplate.xaml
     /// </summary>
+    /// 
+    [JsonObject(MemberSerialization.OptIn)]
     public partial class LayoutTemplate : UserControl
     {
+        [JsonProperty]
         public string Author
         {
             get
@@ -26,6 +30,7 @@ namespace HandheldCompanion.Controls
             }
         }
 
+        [JsonProperty]
         public string Name
         {
             get
@@ -39,6 +44,7 @@ namespace HandheldCompanion.Controls
             }
         }
 
+        [JsonProperty]
         public string Description
         {
             get
@@ -52,11 +58,15 @@ namespace HandheldCompanion.Controls
             }
         }
 
+        [JsonProperty]
         public string Executable { get; set; } = string.Empty;
 
+        [JsonProperty]
         public bool IsTemplate { get; set; } = false;
+        [JsonProperty]
         public bool IsCommunity { get; set; } = false;
 
+        [JsonProperty]
         public Layout Layout = new();
 
         #region events

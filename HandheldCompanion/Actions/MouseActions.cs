@@ -37,11 +37,11 @@ namespace HandheldCompanion.Actions
 
         private bool IsCursorDown { get; set; }
         private bool IsCursorUp { get; set; }
+        private int scrollAmountInClicks { get; set; } = 1;
 
         // settings
         public bool EnhancePrecision { get; set; } = false;
         public float Sensivity { get; set; } = 10.0f;
-        public int scrollAmountInClicks { get; set; } = 1;
         public bool AxisInverted { get; set; } = false;
 
         public MouseActions()
@@ -164,8 +164,8 @@ namespace HandheldCompanion.Actions
                         }
                         else
                         {
-                            MouseSimulator.HorizontalScroll((int)(Sensivity * Vector.X));
-                            MouseSimulator.VerticalScroll((int)(Sensivity * Vector.Y));
+                            MouseSimulator.HorizontalScroll((int)(Sensivity * -Vector.X));
+                            MouseSimulator.VerticalScroll((int)(Sensivity * -Vector.Y));
                         }
                     }
                     break;
