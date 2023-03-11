@@ -50,6 +50,7 @@ namespace HandheldCompanion.Actions
         public bool EnhancePrecision { get; set; } = false;
         public float Sensivity { get; set; } = 10.0f;
         public int scrollAmountInClicks { get; set; } = 1;
+        public bool AxisInverted { get; set; } = false;
 
         public MouseActions()
         {
@@ -163,6 +164,7 @@ namespace HandheldCompanion.Actions
 
                         // apply sensivity
                         Vector = (layout.vector / short.MaxValue) * Sensivity * ((float)ControllerState.AxisDeadzones[layout.flags] / short.MaxValue);
+                        Vector *= (AxisInverted ? -1.0f : 1.0f);
 
                         if (MouseType == MouseActionsType.Move)
                         {

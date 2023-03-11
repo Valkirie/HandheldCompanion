@@ -140,6 +140,15 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // update current layout
             currentLayout = layoutTemplate.Layout;
 
+            if (layoutTemplate.IsTemplate)
+            {
+                LayoutPickerPanel.IsEnabled = false;
+            }
+            else if (layoutTemplate.IsCommunity)
+            {
+                LayoutPickerPanel.IsEnabled = true;
+            }
+
             RefreshLayout();
         }
 

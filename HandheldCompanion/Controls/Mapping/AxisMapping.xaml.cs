@@ -142,6 +142,7 @@ namespace HandheldCompanion.Controls
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
                 Axis2MouseImprovePrecision.IsOn = ((MouseActions)this.Actions).EnhancePrecision;
+                Axis2AxisInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
             }
 
             base.Update();
@@ -197,7 +198,7 @@ namespace HandheldCompanion.Controls
             }
         }
 
-        private void Axis_Invert_Toggled(object sender, RoutedEventArgs e)
+        private void Axis2AxisInvertAxis_Toggled(object sender, RoutedEventArgs e)
         {
             if (this.Actions is null)
                 return;
@@ -296,6 +297,21 @@ namespace HandheldCompanion.Controls
             {
                 case ActionType.Mouse:
                     ((MouseActions)this.Actions).EnhancePrecision = Axis2MouseImprovePrecision.IsOn;
+                    break;
+            }
+
+            base.Update();
+        }
+
+        private void Axis2MouseInvertAxis_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Joystick:
+                    ((MouseActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
                     break;
             }
 

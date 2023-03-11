@@ -71,7 +71,7 @@
 
                                 <TextBlock Text="Invert axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
 
-                                <ui:ToggleSwitch Name="Axis2AxisInvertAxis" Grid.Column="1" Toggled="Axis_Invert_Toggled"/>
+                                <ui:ToggleSwitch Name="Axis2AxisInvertAxis" Grid.Column="1" Toggled="Axis2AxisInvertAxis_Toggled"/>
                             </Grid>
 
                             <!-- Separator -->
@@ -147,16 +147,33 @@
 
                             <!-- Separator -->
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
-                            
+
+
+
+                            <!-- Invert Axis -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Invert axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2MouseInvertAxis" Grid.Column="1" Toggled="Axis2MouseInvertAxis_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
                             <!-- Sensivity -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
-                                        <TextBlock Text="Mouse pointer speed" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Sensivity" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                         <TextBox Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
-
-                                    <Slider Name="Axis2MousePointerSpeed" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis2MousePointerSpeed_ValueChanged"/>
+                                    
+                                    <Slider Name="Axis2MousePointerSpeed" Minimum="5" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis2MousePointerSpeed_ValueChanged"/>
                                 </ui:SimpleStackPanel>
                             </Grid>
 
