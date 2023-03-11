@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Windows;
 
 namespace ControllerCommon.Inputs
 {

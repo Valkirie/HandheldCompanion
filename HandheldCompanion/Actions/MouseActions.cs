@@ -1,19 +1,11 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Simulators;
-using LiveCharts.Wpf;
-using PrecisionTiming;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Windows.Documents;
-using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Actions
 {
@@ -151,7 +143,7 @@ namespace HandheldCompanion.Actions
 
             layout.vector.Y *= -1;
 
-            switch(layout.flags)
+            switch (layout.flags)
             {
                 // MoveBy
                 // ScrollBy

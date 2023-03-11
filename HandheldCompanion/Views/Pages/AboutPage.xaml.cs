@@ -3,7 +3,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using static ControllerCommon.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages

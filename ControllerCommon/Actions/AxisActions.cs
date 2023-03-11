@@ -1,8 +1,6 @@
-﻿using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
+﻿using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace ControllerCommon.Actions

@@ -1,7 +1,5 @@
 ﻿using GregsStack.InputSimulatorStandard;
 using HandheldCompanion.Actions;
-using System;
-using System.ComponentModel;
 using System.Drawing;
 
 namespace HandheldCompanion.Simulators

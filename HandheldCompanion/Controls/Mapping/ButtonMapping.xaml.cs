@@ -1,21 +1,17 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using GregsStack.InputSimulatorStandard;
+using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
-using LiveCharts.Wpf;
 using ModernWpf.Controls;
 using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using static HandheldCompanion.Simulators.MouseSimulator;
-using static HandheldCompanion.Simulators.KeyboardSimulator;
 using KeyboardSimulator = HandheldCompanion.Simulators.KeyboardSimulator;
-using ControllerCommon.Utils;
 
 namespace HandheldCompanion.Controls
 {
@@ -93,7 +89,7 @@ namespace HandheldCompanion.Controls
                     base.Delete();
                 return;
             }
-            
+
             if (type == ActionType.Button)
             {
                 if (this.Actions is null || this.Actions is not ButtonActions)
@@ -146,7 +142,7 @@ namespace HandheldCompanion.Controls
                 foreach (MouseActionsType mouseType in Enum.GetValues(typeof(MouseActionsType)))
                 {
                     // skip specific scenarios
-                    switch(mouseType)
+                    switch (mouseType)
                     {
                         case MouseActionsType.Move:
                         case MouseActionsType.Scroll:

@@ -1,15 +1,11 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using System;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using static HandheldCompanion.Simulators.MouseSimulator;
 
 namespace HandheldCompanion.Controls
 {
@@ -86,7 +82,7 @@ namespace HandheldCompanion.Controls
                     base.Delete();
                 return;
             }
-            
+
             if (type == ActionType.Trigger)
             {
                 if (this.Actions is null || this.Actions is not TriggerActions)

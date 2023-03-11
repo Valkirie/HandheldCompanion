@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Windows.Controls;
-using ControllerCommon;
+﻿using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
-using HandheldCompanion.Managers;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Controls
 {

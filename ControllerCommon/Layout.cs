@@ -3,7 +3,6 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 
 namespace ControllerCommon
 {
@@ -40,7 +39,7 @@ namespace ControllerCommon
                 AxisLayout.Add(axis, new AxisActions() { Axis = axis });
             }
 
-            switch(name)
+            switch (name)
             {
                 case "Nintendo":
                     {

@@ -10,7 +10,6 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages

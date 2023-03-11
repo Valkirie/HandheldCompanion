@@ -3,20 +3,13 @@ using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
-using ControllerCommon.Utils;
-using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
-using LiveCharts.Wpf;
-using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Documents;
-using static HandheldCompanion.Simulators.MouseSimulator;
 using Layout = ControllerCommon.Layout;
-using Vector2 = System.Numerics.Vector2;
 
 namespace HandheldCompanion.Managers
 {
@@ -196,7 +189,7 @@ namespace HandheldCompanion.Managers
                 outputState.AxisState[InAxisX] = 0;
                 outputState.AxisState[InAxisY] = 0;
             }
-            
+
             foreach (var buttonState in controllerState.ButtonState.State)
             {
                 ButtonFlags button = buttonState.Key;

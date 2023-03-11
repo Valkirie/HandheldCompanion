@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace HandheldCompanion.Controllers
 {
@@ -181,7 +180,7 @@ namespace HandheldCompanion.Controllers
                 if (Inputs.AxisState[AxisFlags.LeftPadY] >= TrackPadInner)
                     Inputs.ButtonState[ButtonFlags.LeftPadClickUp] = true;
                 else if (Inputs.AxisState[AxisFlags.LeftPadY] <= -TrackPadInner)
-                        Inputs.ButtonState[ButtonFlags.LeftPadClickDown] = true;
+                    Inputs.ButtonState[ButtonFlags.LeftPadClickDown] = true;
 
                 if (Inputs.AxisState[AxisFlags.LeftPadX] >= TrackPadInner)
                     Inputs.ButtonState[ButtonFlags.LeftPadClickRight] = true;

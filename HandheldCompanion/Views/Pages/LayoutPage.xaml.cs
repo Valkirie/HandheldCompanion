@@ -1,11 +1,9 @@
-using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
-using Microsoft.Win32.TaskScheduler;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
@@ -94,7 +92,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
         {
             int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
 
-            foreach(LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
+            foreach (LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
             {
                 idx++;
                 cB_Layouts.Items.Insert(idx, layoutTemplate);

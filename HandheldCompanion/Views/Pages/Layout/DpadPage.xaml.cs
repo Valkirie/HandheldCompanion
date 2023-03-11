@@ -75,7 +75,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
             {
                 ButtonFlags button = pair.Key;
                 ButtonMapping mapping = pair.Value;
-                
+
                 if (buttonMapping.ContainsKey(button))
                 {
                     IActions actions = buttonMapping[button];

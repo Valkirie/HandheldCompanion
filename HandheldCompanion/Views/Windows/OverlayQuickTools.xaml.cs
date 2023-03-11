@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
 using System;
