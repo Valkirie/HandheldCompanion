@@ -13,6 +13,7 @@ namespace HandheldCompanion.Simulators
         static MouseSimulator()
         {
             InputSimulator = new InputSimulator();
+            InputSimulator.Mouse.MouseWheelClickSize = 6;
         }
 
         public static void MouseDown(MouseActionsType type, int scrollAmountInClicks = 0)
@@ -29,11 +30,9 @@ namespace HandheldCompanion.Simulators
                     InputSimulator.Mouse.MiddleButtonDown();
                     break;
                 case MouseActionsType.ScrollUp:
-                    InputSimulator.Mouse.MouseWheelClickSize = 100;
                     InputSimulator.Mouse.VerticalScroll(scrollAmountInClicks);
                     break;
                 case MouseActionsType.ScrollDown:
-                    InputSimulator.Mouse.MouseWheelClickSize = 100;
                     InputSimulator.Mouse.VerticalScroll(-scrollAmountInClicks);
                     break;
             }
@@ -67,13 +66,11 @@ namespace HandheldCompanion.Simulators
 
         public static void HorizontalScroll(int x)
         {
-            InputSimulator.Mouse.MouseWheelClickSize = 1;
             InputSimulator.Mouse.HorizontalScroll(x);
         }
 
         public static void VerticalScroll(int y)
         {
-            InputSimulator.Mouse.MouseWheelClickSize = 1;
             InputSimulator.Mouse.VerticalScroll(y);
         }
 
