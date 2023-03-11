@@ -6,7 +6,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
-using HandheldCompanion.Managers.Layouts;
+using HandheldCompanion.Controls;
 using LiveCharts.Wpf;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
@@ -33,8 +33,9 @@ namespace HandheldCompanion.Managers
         public static Dictionary<string, LayoutTemplate> LayoutTemplates = new()
         {
             { LayoutTemplate.DefaultLayout.Name, LayoutTemplate.DefaultLayout },
-            { LayoutTemplate.DesktopLayout.Name, LayoutTemplate.DesktopLayout },
             { LayoutTemplate.NintendoLayout.Name, LayoutTemplate.NintendoLayout },
+
+            { LayoutTemplate.DesktopLayout.Name, LayoutTemplate.DesktopLayout },
         };
 
         public static string InstallPath;

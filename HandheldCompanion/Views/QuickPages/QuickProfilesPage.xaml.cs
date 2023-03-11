@@ -4,7 +4,6 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Layouts;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;

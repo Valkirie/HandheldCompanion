@@ -5,7 +5,6 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Layouts;
 using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using ModernWpf.Controls;
@@ -15,7 +14,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages

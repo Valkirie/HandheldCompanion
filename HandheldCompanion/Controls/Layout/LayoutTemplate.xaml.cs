@@ -1,18 +1,58 @@
-﻿using ControllerCommon;
+﻿using System.Collections.Generic;
+using System.Windows.Controls;
+using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
-using LiveCharts.Wpf;
-using System.Collections.Generic;
+using HandheldCompanion.Managers;
 
-namespace HandheldCompanion.Managers.Layouts
+namespace HandheldCompanion.Controls
 {
-    public class LayoutTemplate
+    /// <summary>
+    /// Logique d'interaction pour LayoutTemplate.xaml
+    /// </summary>
+    public partial class LayoutTemplate : UserControl
     {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Author { get; set; } = string.Empty;
+        public string Author
+        {
+            get
+            {
+                return _Author.Text;
+            }
+
+            set
+            {
+                _Author.Text = value;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _Name.Text;
+            }
+
+            set
+            {
+                _Name.Text = value;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return _Description.Text;
+            }
+
+            set
+            {
+                _Description.Text = value;
+            }
+        }
+
         public string Executable { get; set; } = string.Empty;
 
         public bool IsTemplate { get; set; } = false;
@@ -27,6 +67,7 @@ namespace HandheldCompanion.Managers.Layouts
 
         public LayoutTemplate()
         {
+            InitializeComponent();
             this.Layout.Updated += Layout_Updated;
         }
 
@@ -51,7 +92,7 @@ namespace HandheldCompanion.Managers.Layouts
             Updated?.Invoke(this);
         }
 
-        public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true, false, 
+        public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true, false,
             new()
             {
                 { AxisLayoutFlags.LeftThumb, new MouseActions() { MouseType = MouseActionsType.Scroll } },
@@ -81,12 +122,12 @@ namespace HandheldCompanion.Managers.Layouts
                 { ButtonFlags.B4, new KeyboardActions() { Key = VirtualKeyCode.NEXT } },
             });
 
-        public static LayoutTemplate DefaultLayout = new LayoutTemplate("Gamepad", "The template works best for games that are designed with a gamepad in mind.", "HandheldCompanion", true, false)
+        public static LayoutTemplate DefaultLayout = new LayoutTemplate("Gamepad", "The template works best for games that are designed with a gamepad in mind", "HandheldCompanion", true, false)
         {
             Layout = new("Default")
         };
 
-        public static LayoutTemplate NintendoLayout = new LayoutTemplate("Nintendo Gamepad", "The template works best for games that are designed with a Nintendo gamepad in mind.", "HandheldCompanion", true, false)
+        public static LayoutTemplate NintendoLayout = new LayoutTemplate("Nintendo Gamepad", "The template works best for games that are designed with a Nintendo gamepad in mind", "HandheldCompanion", true, false)
         {
             Layout = new("Nintendo")
         };

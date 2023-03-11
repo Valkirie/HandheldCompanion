@@ -4,7 +4,6 @@ using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Layouts;
 using HandheldCompanion.Views.Pages.Profiles.Controller;
 using Microsoft.Win32.TaskScheduler;
 using ModernWpf.Controls;
@@ -98,8 +97,10 @@ namespace HandheldCompanion.Views.Pages.Profiles
             foreach(LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
             {
                 idx++;
-                cB_Layouts.Items.Insert(idx, layoutTemplate.Name);
+                cB_Layouts.Items.Insert(idx, layoutTemplate);
             }
+
+            // todo: implement community layout support
         }
 
         private void ButtonMapping_Deleted(ButtonFlags button)
@@ -140,14 +141,8 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // update current layout
             currentLayout = layoutTemplate.Layout;
 
-            if (layoutTemplate.IsTemplate)
-            {
-                LayoutPickerPanel.IsEnabled = false;
-            }
-            else if (layoutTemplate.IsCommunity)
-            {
-                LayoutPickerPanel.IsEnabled = true;
-            }
+            // manage visibility
+            LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
 
             RefreshLayout();
         }

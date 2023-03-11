@@ -67,7 +67,7 @@
         <Grid Name="MainGrid" Margin="20">
             <StackPanel>
                 <!-- Profile picker -->
-                <ui:SimpleStackPanel Name="LayoutPickerPanel" Spacing="12">
+                <ui:SimpleStackPanel Name="LayoutPickerPanel" Spacing="12" d:Visibility="Visible" Visibility="Collapsed">
                     
                     <TextBlock Text="Layout picker" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
                     <ComboBox Name="cB_Layouts" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="cB_Layouts_SizeChanged">
@@ -90,7 +90,9 @@
                         <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click">
                             Apply layout
                         </Button>
-                        <Button Name="ButtonLayoutSettings" Click="ButtonLayoutSettings_Click">
+                        
+                        <!-- Implement me -->
+                        <Button Name="ButtonLayoutSettings" Click="ButtonLayoutSettings_Click" IsEnabled="False">
                             <ui:SymbolIcon Symbol="Setting"/>
                         </Button>
                     </ui:SimpleStackPanel>
