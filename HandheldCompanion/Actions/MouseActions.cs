@@ -164,7 +164,7 @@ namespace HandheldCompanion.Actions
                         }
                         else
                         {
-                            MouseSimulator.HorizontalScroll((int)(Sensivity * -Vector.X));
+                            // MouseSimulator.HorizontalScroll((int)(Sensivity * -Vector.X));
                             MouseSimulator.VerticalScroll((int)(Sensivity * -Vector.Y));
                         }
                     }
