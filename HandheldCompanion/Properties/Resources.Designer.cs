@@ -1972,7 +1972,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enable universal motion controler.
+        ///   Recherche une chaîne localisée semblable à Enable universal motion controller.
         /// </summary>
         public static string ProfilesPage_UMCEnable {
             get {

@@ -788,7 +788,7 @@
     <value>Override the processor thermal power limit</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
-    <value>Enable universal motion controler</value>
+    <value>Enable universal motion controller</value>
   </data>
   <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
     <value>Disabled, turn on with button(s)</value>
