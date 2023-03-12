@@ -63,7 +63,7 @@ namespace ControllerCommon
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
-        public Layout Layout { get; set; }
+        public Layout Layout { get; set; } = new();
 
         [JsonIgnore]
         public bool Running { get; set; }
