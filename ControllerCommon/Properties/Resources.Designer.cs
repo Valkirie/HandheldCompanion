@@ -72,6 +72,114 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à AYA.
         /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à =.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à =.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à =.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM1 {
             get {
                 return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM1", resourceCulture);
