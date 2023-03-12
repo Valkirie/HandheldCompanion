@@ -88,6 +88,11 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonFlags button = mapping.Key;
                 ButtonMapping buttonMapping = mapping.Value;
 
+                // update icon
+                FontIcon newIcon = Controller.GetFontIcon(button);
+                string newLabel = Controller.GetButtonName(button);
+                buttonMapping.UpdateIcon(newIcon, newLabel);
+
                 // specific buttons are handled elsewhere
                 if (OEM.Contains(button))
                     continue;
@@ -97,11 +102,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     buttonMapping.Visibility = Visibility.Collapsed;
                 else
                     buttonMapping.Visibility = Visibility.Visible;
-
-                // update icon
-                FontIcon newIcon = Controller.GetFontIcon(button);
-                string newLabel = Controller.GetButtonName(button);
-                buttonMapping.UpdateIcon(newIcon, newLabel);
             }
 
             // manage layout pages visibility

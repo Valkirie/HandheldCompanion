@@ -42,6 +42,7 @@ namespace ControllerCommon.Controllers
             ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
             ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
             ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
+            ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10,
         };
 
         public static List<AxisLayoutFlags> VirtualAxis = new()
@@ -333,6 +334,26 @@ namespace ControllerCommon.Controllers
                     return "\u21BD";
                 case ButtonFlags.RightThumbRight:
                     return "\u21C1";
+                case ButtonFlags.OEM1:
+                    return "\u2780";
+                case ButtonFlags.OEM2:
+                    return "\u2781";
+                case ButtonFlags.OEM3:
+                    return "\u2782";
+                case ButtonFlags.OEM4:
+                    return "\u2783";
+                case ButtonFlags.OEM5:
+                    return "\u2784";
+                case ButtonFlags.OEM6:
+                    return "\u2785";
+                case ButtonFlags.OEM7:
+                    return "\u2786";
+                case ButtonFlags.OEM8:
+                    return "\u2787";
+                case ButtonFlags.OEM9:
+                    return "\u2788";
+                case ButtonFlags.OEM10:
+                    return "\u2789";
             }
             return "\u2753";
         }
