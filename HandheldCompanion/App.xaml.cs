@@ -86,9 +86,31 @@ namespace HandheldCompanion
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+            // handle exceptions nicely
+            AppDomain currentDomain = default(AppDomain);
+            currentDomain = AppDomain.CurrentDomain;
+            // Handler for unhandled exceptions.
+            currentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            // Handler for exceptions in threads behind forms.
+            System.Windows.Forms.Application.ThreadException += Application_ThreadException;
+
             MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
             MainWindow.Show();
             MainWindow.Activate();
+        }
+
+        private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            Exception ex = default(Exception);
+            ex = (Exception)e.Exception;
+            LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = default(Exception);
+            ex = (Exception)e.ExceptionObject;
+            LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
         }
     }
 }
