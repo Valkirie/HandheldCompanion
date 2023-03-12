@@ -55,7 +55,7 @@ namespace HandheldCompanion.Managers
             DeviceManager.HidDeviceArrived += HidDeviceArrived;
             DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-            DeviceManager.Initialized += SystemManager_Initialized;
+            DeviceManager.Initialized += DeviceManager_Initialized;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -157,7 +157,7 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        private static void SystemManager_Initialized()
+        private static void DeviceManager_Initialized()
         {
             // search for last known controller and connect
             string path = SettingsManager.GetString("HIDInstancePath");
@@ -289,6 +289,10 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
+
+                // automatically connect DInput controller if only available
+                if (GetControllerCount() == 1 && DeviceManager.IsInitialized)
+                    SetTargetController(path);
             });
         }
 
@@ -356,6 +360,10 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
+
+                // automatically connect XInput controller if only available
+                if (GetControllerCount() == 1 && DeviceManager.IsInitialized)
+                    SetTargetController(path);
             });
         }
 
@@ -443,6 +451,16 @@ namespace HandheldCompanion.Managers
         public static IController GetTargetController()
         {
             return targetController is not null ? targetController : defaultController;
+        }
+
+        public static bool HasController()
+        {
+            return Controllers.Count != 0;
+        }
+
+        public static int GetControllerCount()
+        {
+            return Controllers.Count;
         }
 
         private static void UpdateInputs(ControllerState controllerState)
