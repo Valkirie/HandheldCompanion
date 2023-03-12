@@ -39,19 +39,19 @@ namespace ControllerCommon.Devices
             OEMChords.Add(new DeviceChord("Menu",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
-                true
+                true, ButtonFlags.OEM1
                 ));
 
             OEMChords.Add(new DeviceChord("Bottom button left",
                 new List<KeyCode>() { KeyCode.D9 },
                 new List<KeyCode>() { KeyCode.D9 },
-                false, ButtonFlags.OEM1
+                false, ButtonFlags.OEM2
                 ));
 
             OEMChords.Add(new DeviceChord("Bottom button right",
                 new List<KeyCode>() { KeyCode.D0 },
                 new List<KeyCode>() { KeyCode.D0 },
-                false, ButtonFlags.OEM2
+                false, ButtonFlags.OEM3
                 ));
         }
     }
