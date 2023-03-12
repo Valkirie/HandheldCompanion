@@ -315,9 +315,9 @@ namespace ControllerCommon.Controllers
                 case ButtonFlags.DPadRight:
                     return "\u21A0"; // Button Y
                 case ButtonFlags.LeftThumb:
-                    return "\u21CB";
+                    return "\u21BA";
                 case ButtonFlags.RightThumb:
-                    return "\u21CC";
+                    return "\u21BB";
                 case ButtonFlags.LeftThumbUp:
                     return "\u21BE";
                 case ButtonFlags.LeftThumbDown:
@@ -379,9 +379,9 @@ namespace ControllerCommon.Controllers
             switch (axis)
             {
                 case AxisLayoutFlags.LeftThumb:
-                    return "\u21BA";
+                    return "\u21CB";
                 case AxisLayoutFlags.RightThumb:
-                    return "\u21BB";
+                    return "\u21CC";
             }
             return "\u2753";
         }
