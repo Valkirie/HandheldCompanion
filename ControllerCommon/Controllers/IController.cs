@@ -34,7 +34,7 @@ namespace ControllerCommon.Controllers
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
-        public static List<ButtonFlags> ButtonBlackList = new()
+        public static List<ButtonFlags> VirtualButtons = new()
         {
             ButtonFlags.None,
             ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5,
@@ -44,13 +44,13 @@ namespace ControllerCommon.Controllers
             ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
         };
 
-        public static List<AxisLayoutFlags> AxisBlackList = new()
+        public static List<AxisLayoutFlags> VirtualAxis = new()
         {
             AxisLayoutFlags.None,
             AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad
         };
 
-        protected List<ButtonFlags> ButtonSupport = new()
+        protected List<ButtonFlags> SupportedButtons = new()
         {
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
@@ -61,13 +61,14 @@ namespace ControllerCommon.Controllers
             ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
         };
 
-        protected List<AxisLayoutFlags> AxisSupport = new()
+        protected List<AxisLayoutFlags> SupportedAxis = new()
         {
             AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
 
-        protected Dictionary<ButtonFlags, Brush> ButtonBrush = new();
+        protected Dictionary<ButtonFlags, Brush> ColoredButtons = new();
+        protected Dictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
 
         protected const short UPDATE_INTERVAL = 10;
 
@@ -402,8 +403,8 @@ namespace ControllerCommon.Controllers
 
         public Brush GetGlyphColor(ButtonFlags button)
         {
-            if (ButtonBrush.ContainsKey(button))
-                return ButtonBrush[button];
+            if (ColoredButtons.ContainsKey(button))
+                return ColoredButtons[button];
 
             return null;
         }
@@ -439,22 +440,22 @@ namespace ControllerCommon.Controllers
 
         public bool IsButtonBlacklisted(ButtonFlags button)
         {
-            return ButtonBlackList.Contains(button);
+            return VirtualButtons.Contains(button);
         }
 
         public bool IsAxisBlacklisted(AxisLayoutFlags axis)
         {
-            return AxisBlackList.Contains(axis);
+            return VirtualAxis.Contains(axis);
         }
 
         public bool IsButtonSupported(ButtonFlags button)
         {
-            return ButtonSupport.Contains(button);
+            return SupportedButtons.Contains(button);
         }
 
         public bool IsAxisSupported(AxisLayoutFlags axis)
         {
-            return AxisSupport.Contains(axis);
+            return SupportedAxis.Contains(axis);
         }
 
         public bool IsAxisTrigger(AxisLayoutFlags axis)

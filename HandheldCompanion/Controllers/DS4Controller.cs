@@ -17,14 +17,14 @@ namespace HandheldCompanion.Controllers
             InputsTimer.Tick += (sender, e) => UpdateInputs();
 
             // UI
-            ButtonBrush.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
-            ButtonBrush.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
-            ButtonBrush.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
-            ButtonBrush.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
+            ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
+            ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
+            ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
+            ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
 
             // Specific buttons
-            ButtonSupport.Add(ButtonFlags.LeftPadClick);
-            ButtonSupport.Add(ButtonFlags.RightPadClick);
+            SupportedButtons.Add(ButtonFlags.LeftPadClick);
+            SupportedButtons.Add(ButtonFlags.RightPadClick);
         }
 
         public override string ToString()

@@ -25,18 +25,18 @@ namespace ControllerCommon
         {
             foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
-                if (IController.ButtonBlackList.Contains(button))
+                if (IController.VirtualButtons.Contains(button))
                     continue;
 
-                ButtonLayout.Add(button, new ButtonActions() { Button = button });
+                ButtonLayout[button] = new ButtonActions() { Button = button };
             }
 
             foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
             {
-                if (IController.AxisBlackList.Contains(axis))
+                if (IController.VirtualAxis.Contains(axis))
                     continue;
 
-                AxisLayout.Add(axis, new AxisActions() { Axis = axis });
+                AxisLayout[axis] = new AxisActions() { Axis = axis };
             }
 
             switch (name)

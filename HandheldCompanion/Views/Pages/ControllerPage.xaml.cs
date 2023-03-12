@@ -177,30 +177,6 @@ namespace HandheldCompanion.Views.Pages
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                /*
-                // Search for an existing controller, update it
-                string path = Controller.GetInstancePath();
-                int idx = InputDevices.Children.Count;
-                bool isPlugged = false;
-
-                foreach (Border border in InputDevices.Children)
-                {
-                    // pull controller from panel
-                    IController ctrl = (IController)border.Tag;
-                    if (ctrl is null)
-                        continue;
-
-                    if (ctrl.GetInstancePath() == path)
-                    {
-                        idx = InputDevices.Children.IndexOf(border);
-                        isPlugged = ctrl.IsPlugged();
-
-                        InputDevices.Children.Remove(border);
-                        break;
-                    }
-                }
-                */
-
                 // Add new controller to list if no existing controller was found
                 FrameworkElement control = Controller.GetControl();
                 InputDevices.Children.Add(control);

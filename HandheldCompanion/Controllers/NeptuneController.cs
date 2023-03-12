@@ -67,21 +67,21 @@ namespace HandheldCompanion.Controllers
             RefreshControls();
 
             // Specific buttons
-            ButtonSupport.Add(ButtonFlags.L4);
-            ButtonSupport.Add(ButtonFlags.R4);
-            ButtonSupport.Add(ButtonFlags.L5);
-            ButtonSupport.Add(ButtonFlags.R5);
+            SupportedButtons.Add(ButtonFlags.L4);
+            SupportedButtons.Add(ButtonFlags.R4);
+            SupportedButtons.Add(ButtonFlags.L5);
+            SupportedButtons.Add(ButtonFlags.R5);
 
-            AxisSupport.Add(AxisLayoutFlags.LeftPad);
-            AxisSupport.Add(AxisLayoutFlags.RightPad);
+            SupportedAxis.Add(AxisLayoutFlags.LeftPad);
+            SupportedAxis.Add(AxisLayoutFlags.RightPad);
 
-            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            ButtonSupport.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+            SupportedButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+            SupportedButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
 
             // Specific buttons that shouldn't be mappable
-            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
-            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            ButtonBlackList.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
+            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
         }
 
         public override string ToString()
