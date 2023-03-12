@@ -231,11 +231,17 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
             MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
             MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
+
+            // set boost slider minimum value to sustained current value
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Value;
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -245,10 +251,16 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
             MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
+
+            // set sustained slider maximum value to boost current value
+            TDPSustainedSlider.Maximum = TDPBoostSlider.Value;
 
             if (!SettingsManager.IsInitialized)
                 return;

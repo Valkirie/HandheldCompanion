@@ -568,12 +568,20 @@ namespace HandheldCompanion.Views.Pages
 
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            // do something
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
+            // set boost slider minimum value to sustained current value
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Value;
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            // do something
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
+            // set sustained slider maximum value to boost current value
+            TDPSustainedSlider.Maximum = TDPBoostSlider.Value;
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
