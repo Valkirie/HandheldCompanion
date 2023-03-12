@@ -124,7 +124,7 @@
     <value>AYA</value>
   </data>
   <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
-    <value>=</value>
+    <value>≈</value>
   </data>
   <data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
@@ -136,7 +136,7 @@
     <value>AYA</value>
   </data>
   <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
-    <value>=</value>
+    <value>≈</value>
   </data>
   <data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
@@ -148,7 +148,7 @@
     <value>AYA</value>
   </data>
   <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
-    <value>=</value>
+    <value>≈</value>
   </data>
   <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
@@ -160,7 +160,7 @@
     <value>AYA</value>
   </data>
   <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
-    <value>=</value>
+    <value>≈</value>
   </data>
   <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>

@@ -79,7 +79,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à =.
+        ///   Recherche une chaîne localisée semblable à ≈.
         /// </summary>
         public static string Enum_AYANEO2_ButtonFlags_OEM2 {
             get {
@@ -115,7 +115,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à =.
+        ///   Recherche une chaîne localisée semblable à ≈.
         /// </summary>
         public static string Enum_AYANEOAIR_ButtonFlags_OEM2 {
             get {
@@ -151,7 +151,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à =.
+        ///   Recherche une chaîne localisée semblable à ≈.
         /// </summary>
         public static string Enum_AYANEOAIRLite_ButtonFlags_OEM2 {
             get {
@@ -187,7 +187,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à =.
+        ///   Recherche une chaîne localisée semblable à ≈.
         /// </summary>
         public static string Enum_AYANEOAIRPro_ButtonFlags_OEM2 {
             get {
