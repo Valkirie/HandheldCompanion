@@ -49,6 +49,11 @@ namespace ControllerCommon
                         ButtonLayout[ButtonFlags.B4] = new ButtonActions() { Button = ButtonFlags.B3 };
                     }
                     break;
+                default:
+                    {
+                        ButtonLayout[ButtonFlags.OEM1] = new ButtonActions() { Button = ButtonFlags.Special };
+                    }
+                    break;
             }
         }
 
