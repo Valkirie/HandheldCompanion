@@ -70,24 +70,14 @@
                 <ui:SimpleStackPanel Name="LayoutPickerPanel" Spacing="12" d:Visibility="Visible" Visibility="Collapsed">
                     
                     <TextBlock Text="Layout picker" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                    <ComboBox Name="cB_Layouts" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="cB_Layouts_SizeChanged">
+                    <ComboBox Name="cB_Layouts" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="cB_Layouts_SizeChanged" SelectionChanged="cB_Layouts_SelectionChanged">
 
                         <!-- TEMPLATES -->
                         <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>
-                        <ComboBoxItem Name="cB_LayoutsSplitterCommunity" IsEnabled="false">COMMUNITY</ComboBoxItem>
-                        
-                        <!--                        
-                        <ComboBoxItem>
-                            <ui:SimpleStackPanel>
-                                <TextBlock Text="Gamepad" Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock TextWrapping="Wrap" Text="This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc."/>
-                            </ui:SimpleStackPanel>
-                        </ComboBoxItem>                        
-                        -->
                     </ComboBox>
 
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
-                        <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click">
+                        <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click" IsEnabled="False">
                             Apply layout
                         </Button>
                         

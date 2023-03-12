@@ -153,6 +153,9 @@ namespace HandheldCompanion.Views.Pages.Profiles
             joysticksPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
             triggersPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
             trackpadsPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+
+            // clear layout selection
+            cB_Layouts.SelectedIndex = -1;
         }
 
         #region UI
@@ -277,7 +280,12 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
         private void ButtonLayoutSettings_Click(object sender, RoutedEventArgs e)
         {
+            // implement me
+        }
 
+        private void cB_Layouts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ButtonApplyLayout.IsEnabled = cB_Layouts.SelectedIndex != -1;
         }
     }
 }
