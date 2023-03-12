@@ -49,6 +49,7 @@ namespace HandheldCompanion.Views.Pages
 
             cB_Language.Items.Add(new CultureInfo("en-US"));
             cB_Language.Items.Add(new CultureInfo("fr-FR"));
+            cB_Language.Items.Add(new CultureInfo("de-DE"));
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 

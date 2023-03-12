@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+    <value>Dieser Eingang funktioniert wie ein einfacher Joystick. Ideal für Laptops und Clamshell-Handhelds, automatischer Yaw-Roll-Wechsel je nachdem, wie das Gerät gehalten wird (90 oder 180 Grad geöffnet).</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+    <value>Button A</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+    <value>Immer an</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+    <value>Button B</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+    <value>DPad Runter</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+    <value>DPad Links</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+    <value>DPad Rechts</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+    <value>DPad Hoch</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+    <value>Linke Schultertaste</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+    <value>Linker Thumbstick</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+    <value>Linke Triggertaste</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+    <value>Rechte Schultertaste</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+    <value>Rechter Thumbstick</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+    <value>Rechte Triggertaste</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+    <value>Button X</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+    <value>Button Y</value>
+  </data>
+  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+    <value>Emulierter DualShock 4 Controller</value>
+  </data>
+  <data name="Enum.HIDmode.NoController" xml:space="preserve">
+    <value>Kein emulierter Controller</value>
+  </data>
+  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+    <value>Emulierter XBOX 360 Controller</value>
+  </data>
+  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
+    <value>Verbunden</value>
+  </data>
+  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+    <value>Getrennt</value>
+  </data>
+  <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
+    <value>Auto Roll-Yaw -Tausch</value>
+  </data>
+  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+    <value>Joystick-Kamera</value>
+  </data>
+  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
+    <value>Joystick-Lenkung</value>
+  </data>
+  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
+    <value>Player space</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+    <value>Oberfläche</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+    <value>Schnellzugriff</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Enum.Output.LeftStick" xml:space="preserve">
+    <value>Linker Joystick</value>
+  </data>
+  <data name="Enum.Output.RightStick" xml:space="preserve">
+    <value>Rechter Joystick</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
+    <value>Dies ist Ihr Standard-Controller-Profil. Dieses Profil wird für alle Ihre Anwendungen verwendet, die kein spezifisches Profil haben. Einige Optionen, die eine ausführbare Datei erfordern, sind möglicherweise deaktiviert.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+    <value>Oops. Es scheint, dass dieses Profil ausgeführt wird. Einige Optionen, die eine ausführbare Datei erfordern, sind möglicherweise deaktiviert.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+    <value>Oops. Es scheint, dass dieses Profil keine ausführbare Datei hat. Wie ist das überhaupt möglich?</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+    <value>Oops. Es scheint, dass dieses Profil keinen Pfad zu der Anwendung enthält. Einige Optionen, die eine ausführbare Datei erfordern, sind möglicherweise deaktiviert.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+    <value>Oops. Es scheint, dass Sie nicht über die erforderliche Berechtigungsstufe verfügen, um den Inhalt dieser Anwendung zu ändern. Vergewissern Sie sich, dass Sie das Programm im Administratormodus gestartet haben.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+    <value>Hier gibt es nichts zu sehen.</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+    <value>Eco</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+    <value>Hoch</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
+    <value>Automatisch</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
+    <value>Manuell</value>
+  </data>
+  <data name="JoystickCameraDesc" xml:space="preserve">
+    <value>Dieser Eingang funktioniert wie ein einfacher Joystick. Er ist für traditionelle Joystick-Anwendungen gedacht</value>
+  </data>
+  <data name="JoystickSteeringDesc" xml:space="preserve">
+    <value>Dieser Eingang funktioniert wie ein Joystick, der für die Steuerung eines Lenkrads oder eines Rennspiels optimiert ist.</value>
+  </data>
+  <data name="PlayerSpaceDesc" xml:space="preserve">
+    <value>Diese Eingabe funktioniert wie ein Joystick, der für die Steuerung einer First- oder Third-Person-Kamera optimiert ist.</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+</root>

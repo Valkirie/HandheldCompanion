@@ -77,6 +77,7 @@ namespace HandheldCompanion
                 case "en-US":
                 case "zh-CN":
                 case "zh-Hant":
+                case "de-DE":
                     culture = new CultureInfo(CurrentCulture);
                     break;
             }
