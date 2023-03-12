@@ -324,92 +324,92 @@
   <data name="Overlay_Overlay" xml:space="preserve">
     <value>Overlay</value>
   </data>
-  <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
+  <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>Paramètres supplémentaires</value>
   </data>
-  <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
+  <data name="SettingsMode0_CameraOptions" xml:space="preserve">
     <value>Options de la caméra</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponseCurve" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseCurve" xml:space="preserve">
     <value>Courbe de réponse personnalisée</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
     <value>Commande envoyée au jeu</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponseIntensity" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseIntensity" xml:space="preserve">
     <value>Intensité du mouvement</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
     <value>Agressif</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
     <value>Défaut</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
     <value>Options de préréglage</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>Précis</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
+  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
     <value>Durée du mouvement</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
+  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
     <value>Modifier la durée du mouvement, calibrée à un virage de 180 degrés, en millisecondes</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
+  <data name="SettingsMode0_FlickStick" xml:space="preserve">
     <value>Flick stick (expérimental)</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
+  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
     <value>Pointer la caméra dans la direction du mouvement du joystick droit, faites pivoter la caméra purement dans le plan horizontal en tournant le joystick</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
+  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>Activer flick stick</value>
   </data>
-  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
+  <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>Sensibilité</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityDesc" xml:space="preserve">
     <value>Modifier la sensibilité au mouvement de l'axe horizontal et vertical</value>
   </data>
-  <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
+  <data name="SettingsMode0_StickSensitivtity" xml:space="preserve">
     <value>Sensibilité du joystick</value>
   </data>
-  <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
+  <data name="SettingsMode0_StickSensitivtityDesc" xml:space="preserve">
     <value>Modifier la vitesse de rotation</value>
   </data>
-  <data name="ProfileSettingsMode1_AdditionalSettings" xml:space="preserve">
+  <data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
     <value>Paramètres supplémentaires</value>
   </data>
-  <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
+  <data name="SettingsMode1_Deadzone" xml:space="preserve">
     <value>Zone morte</value>
   </data>
-  <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
+  <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
     <value>Modifier la zone morte de la direction, en degré. Améliore la rectitude de la direction</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
+  <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>Entrée de jeu par joystick</value>
     <comment>// not good</comment>
   </data>
-  <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteering" xml:space="preserve">
     <value>Direction par joystick</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteeringOptions" xml:space="preserve">
     <value>Options de direction par joystick</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteeringPreview" xml:space="preserve">
     <value>Aperçu de la direction par joystick</value>
   </data>
-  <data name="ProfileSettingsMode1_MaxSteeringAngle" xml:space="preserve">
+  <data name="SettingsMode1_MaxSteeringAngle" xml:space="preserve">
     <value>Angle de braquage maximal</value>
   </data>
-  <data name="ProfileSettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+  <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
     <value>Modifier la valeur maximale de l'angle de braquage, en degrés</value>
   </data>
-  <data name="ProfileSettingsMode1_SteeringLinearity" xml:space="preserve">
+  <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
     <value>Linéarité de la direction</value>
   </data>
-  <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+  <data name="SettingsMode1_SteeringLinearityDesc" xml:space="preserve">
     <value>Correspondance entre les commandes du joystick et la direction. Les valeurs les plus basses fournissent plus de précision près du braquage complet mais moins de précision près du centre. Des valeurs plus élevées fournissent plus de précision près du centre mais moins de précision près du braquage maximum</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
@@ -879,16 +879,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProcessEx_processSuspend" xml:space="preserve">
     <value>Suspend</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSights" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
     <value>Aiming down sights motion multiplier</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
     <value>Activation button</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsDesc" xml:space="preserve">
     <value>An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
     <value>Multiplier value</value>
   </data>
   <data name="ProfilesPage_BoostPower" xml:space="preserve">
@@ -1041,16 +1041,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
     <value>Model will move in accordance with user movements based on sensor information</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityX" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityX" xml:space="preserve">
     <value>Sensitivity X</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityXDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityXDesc" xml:space="preserve">
     <value>Change the motion sensitivity of the horizontal axis</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityY" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityY" xml:space="preserve">
     <value>Sensitivity Y</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityYDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
     <value>Change the motion sensitivity of the vertical axis</value>
   </data>
   <data name="ProfilesPage_SensitivityX" xml:space="preserve">

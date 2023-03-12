@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using HelixToolkit.Wpf;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace HandheldCompanion
         public Model3DGroup LeftMotor;
         public Model3DGroup RightMotor;
 
-        public Dictionary<ControllerButtonFlags, List<Model3DGroup>> ButtonMap = new();
+        public Dictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
         // Rotation Points
         public Vector3D JoystickRotationPointCenterLeftMillimeter;
@@ -60,7 +60,7 @@ namespace HandheldCompanion
             RightShoulderTrigger = modelImporter.Load($"models/{ModelName}/Shoulder-Right-Trigger.obj");
 
             // map model(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 string filename = $"models/{ModelName}/{button}.obj";
                 if (File.Exists(filename))
@@ -71,10 +71,10 @@ namespace HandheldCompanion
                     switch (button)
                     {
                         // specific case, being both a button and a trigger
-                        case ControllerButtonFlags.LeftThumb:
+                        case ButtonFlags.LeftThumb:
                             LeftThumb = model;
                             break;
-                        case ControllerButtonFlags.RightThumb:
+                        case ButtonFlags.RightThumb:
                             RightThumb = model;
                             break;
                     }

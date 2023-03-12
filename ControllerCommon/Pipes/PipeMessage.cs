@@ -125,14 +125,14 @@ namespace ControllerCommon
     [Serializable]
     public partial class PipeClientInputs : PipeMessage
     {
-        public ControllerInputs Inputs;
+        public ControllerState Inputs;
 
         public PipeClientInputs()
         {
             code = PipeCode.CLIENT_INPUT;
         }
 
-        public PipeClientInputs(ControllerInputs inputs) : this()
+        public PipeClientInputs(ControllerState inputs) : this()
         {
             Inputs = inputs;
         }

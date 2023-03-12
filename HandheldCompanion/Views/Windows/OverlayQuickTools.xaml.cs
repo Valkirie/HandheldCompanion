@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.Extensions;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
 using System;
@@ -7,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using System.Windows.Navigation;
-using System.Xml.Linq;
 using Windows.System.Power;
+using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
 using SystemPowerManager = Windows.System.Power.PowerManager;
@@ -54,13 +54,12 @@ namespace HandheldCompanion.Views.Windows
             Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("QuickToolsLeft"));
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
-
-            SourceInitialized += QuickTools_SourceInitialized;
         }
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
                 BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
@@ -113,19 +112,18 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
-        private void QuickTools_SourceInitialized(object? sender, EventArgs e)
-        {
-            this.HideMinimizeAndMaximizeButtons();
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // do something
+            var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+
+            if (hwndSource != null)
+                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
         }
 
         public void UpdateVisibility()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (Visibility)
                 {
@@ -138,12 +136,6 @@ namespace HandheldCompanion.Views.Windows
                         this.Activate();
                         break;
                 }
-
-                // force update
-                this.UpdateLayout();
-                this.InvalidateArrange();
-                this.InvalidateMeasure();
-                this.InvalidateVisual();
             });
         }
 

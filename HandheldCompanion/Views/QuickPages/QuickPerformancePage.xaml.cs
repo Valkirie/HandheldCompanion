@@ -35,8 +35,8 @@ namespace HandheldCompanion.Views.QuickPages
             DesktopManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
             DesktopManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
 
-            GPUSlider.Minimum = MainWindow.handheldDevice.GfxClock[0];
-            GPUSlider.Maximum = MainWindow.handheldDevice.GfxClock[1];
+            GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
+            GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
         }
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -54,13 +54,14 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void HotkeysManager_CommandExecuted(string listener)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (listener)
                 {
                     case "increaseTDP":
                         {
-                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDP_override)
+                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSustainedSlider.Value++;
@@ -69,7 +70,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDP_override)
+                            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSustainedSlider.Value--;
@@ -82,7 +83,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -160,12 +162,13 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdateControls()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (currentProfile is not null)
                 {
-                    TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDP_override;
-                    TDPWarning.Visibility = currentProfile.TDP_override ? Visibility.Visible : Visibility.Collapsed;
+                    TDPToggle.IsEnabled = TDPSustainedSlider.IsEnabled = TDPBoostSlider.IsEnabled = CanChangeTDP && !currentProfile.TDPOverrideEnabled;
+                    TDPWarning.Visibility = currentProfile.TDPOverrideEnabled ? Visibility.Visible : Visibility.Collapsed;
                 }
                 else
                 {
@@ -186,22 +189,59 @@ namespace HandheldCompanion.Views.QuickPages
             UpdateControls();
         }
 
+        private void PowerManager_LimitChanged(PowerType type, int limit)
+        {
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // do something
+                switch (type)
+                {
+                    case PowerType.Slow:
+                        {
+                            if (!TDPSustainedSlider.IsEnabled)
+                                return;
+
+                            if (TDPSustainedSlider.Minimum <= limit && TDPSustainedSlider.Maximum >= limit)
+                                TDPSustainedSlider.Value = limit;
+                        }
+                        break;
+                    case PowerType.Fast:
+                        {
+                            if (!TDPBoostSlider.IsEnabled)
+                                return;
+
+                            if (TDPBoostSlider.Minimum <= limit && TDPBoostSlider.Maximum >= limit)
+                                TDPBoostSlider.Value = limit;
+                        }
+                        break;
+                    case PowerType.Stapm:
+                    case PowerType.MsrSlow:
+                    case PowerType.MsrFast:
+                        // do nothing
+                        break;
+                }
+            });
+        }
+
+        private void PowerManager_ValueChanged(PowerType type, float value)
+        {
+            // do something
+        }
+
         private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
                 return;
 
-            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
             MainWindow.performanceManager.RequestTDP(PowerType.Slow, TDPSustainedSlider.Value);
             MainWindow.performanceManager.RequestTDP(PowerType.Stapm, TDPSustainedSlider.Value);
 
-            // Prevent sustained value being higher then boost
-            if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
-            {
-                TDPBoostSlider.Value = TDPSustainedSlider.Value;
-            }
+            // set boost slider minimum value to sustained current value
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Value;
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -211,19 +251,16 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
                 return;
 
-            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+            if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled"))
                 return;
 
             MainWindow.performanceManager.RequestTDP(PowerType.Fast, TDPBoostSlider.Value);
 
-            // Prevent boost value being lower then sustained
-            if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
-            {
-                TDPSustainedSlider.Value = TDPBoostSlider.Value;
-            }
+            // set sustained slider maximum value to boost current value
+            TDPSustainedSlider.Maximum = TDPBoostSlider.Value;
 
             if (!SettingsManager.IsInitialized)
                 return;
@@ -244,7 +281,7 @@ namespace HandheldCompanion.Views.QuickPages
             else
             {
                 // restore default TDP and halt watchdog
-                MainWindow.performanceManager.RequestTDP(MainWindow.handheldDevice.nTDP);
+                MainWindow.performanceManager.RequestTDP(MainWindow.CurrentDevice.nTDP);
 
                 MainWindow.performanceManager.StopTDPWatchdog();
             }
@@ -280,8 +317,8 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             int value = (int)PowerModeSlider.Value;
 
-            // update UI
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 foreach (TextBlock tb in PowerModeGrid.Children)
                     tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
@@ -300,6 +337,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ComboBoxResolution.SelectedItem is null)
+                return;
+
             ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
 
             ComboBoxFrequency.Items.Clear();
@@ -314,6 +354,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ComboBoxFrequency_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ComboBoxFrequency.SelectedItem is null)
+                return;
+
             SetResolution();
         }
 

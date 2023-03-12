@@ -53,7 +53,7 @@ namespace HandheldCompanion.Views.Pages
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
 
             // device specific settings
-            Type DeviceType = MainWindow.handheldDevice.GetType();
+            Type DeviceType = MainWindow.CurrentDevice.GetType();
             if (DeviceType == typeof(SteamDeck))
                 SteamDeckPanel.Visibility = Visibility.Visible;
         }
@@ -65,15 +65,19 @@ namespace HandheldCompanion.Views.Pages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
-                    case "HIDcloaked":
+                    case "HIDcloakonconnect":
                         Toggle_Cloaked.IsOn = Convert.ToBoolean(value);
                         break;
                     case "HIDuncloakonclose":
                         Toggle_Uncloak.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "HIDvibrateonconnect":
+                        Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                         break;
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
@@ -132,7 +136,8 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
                 ControllerGrid.IsEnabled = isConnected && !isLoading;
@@ -143,7 +148,8 @@ namespace HandheldCompanion.Views.Pages
         {
             LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // Search for an existing controller, remove it
                 foreach (Border border in InputDevices.Children)
@@ -168,32 +174,9 @@ namespace HandheldCompanion.Views.Pages
         {
             LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                /*
-                // Search for an existing controller, update it
-                string path = Controller.GetInstancePath();
-                int idx = InputDevices.Children.Count;
-                bool isPlugged = false;
-
-                foreach (Border border in InputDevices.Children)
-                {
-                    // pull controller from panel
-                    IController ctrl = (IController)border.Tag;
-                    if (ctrl is null)
-                        continue;
-
-                    if (ctrl.GetInstancePath() == path)
-                    {
-                        idx = InputDevices.Children.IndexOf(border);
-                        isPlugged = ctrl.IsPlugged();
-
-                        InputDevices.Children.Remove(border);
-                        break;
-                    }
-                }
-                */
-
                 // Add new controller to list if no existing controller was found
                 FrameworkElement control = Controller.GetControl();
                 InputDevices.Children.Add(control);
@@ -226,7 +209,8 @@ namespace HandheldCompanion.Views.Pages
         {
             bool hascontroller = InputDevices.Children.Count != 0;
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
                 NoDevices.Visibility = hascontroller ? Visibility.Collapsed : Visibility.Visible;
@@ -246,8 +230,8 @@ namespace HandheldCompanion.Views.Pages
             };
             uniformToFillBrush.Freeze();
 
-            // threaded call to update UI
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 cB_HidMode.SelectedIndex = (int)controllerMode;
                 cB_ServiceSwitch.SelectedIndex = (int)controllerStatus;
@@ -269,7 +253,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateSettings(Dictionary<string, string> args)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 foreach (KeyValuePair<string, string> pair in args)
                 {
@@ -325,8 +310,7 @@ namespace HandheldCompanion.Views.Pages
             if (!SettingsManager.IsInitialized)
                 return;
 
-            HidHide.SetCloaking(Toggle_Cloaked.IsOn);
-            SettingsManager.SetProperty("HIDcloaked", Toggle_Cloaked.IsOn);
+            SettingsManager.SetProperty("HIDcloakonconnect", Toggle_Cloaked.IsOn);
         }
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
@@ -373,6 +357,21 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
+        }
+
+        private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
+        }
+
+        private void Button_Layout_Click(object sender, RoutedEventArgs e)
+        {
+            // update layout page with current layout
+            MainWindow.layoutPage.UpdateLayout(LayoutManager.LayoutTemplates["Desktop"]);
+            MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
     }
 }

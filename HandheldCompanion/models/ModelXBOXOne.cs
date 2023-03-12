@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -136,7 +136,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(B4Button);
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -145,22 +145,20 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.Back:
-                            case ControllerButtonFlags.Start:
-                            case ControllerButtonFlags.LeftShoulder:
-                            case ControllerButtonFlags.RightShoulder:
+                            case ButtonFlags.Back:
+                            case ButtonFlags.Start:
                                 buttonMaterial = MaterialPlasticWhite;
                                 break;
-                            case ControllerButtonFlags.B1:
+                            case ButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case ControllerButtonFlags.B2:
+                            case ButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case ControllerButtonFlags.B3:
+                            case ButtonFlags.B3:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case ControllerButtonFlags.B4:
+                            case ButtonFlags.B4:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
                             default:
@@ -193,6 +191,7 @@ namespace HandheldCompanion.Models
                     || model3D.Equals(B3Interior) || model3D.Equals(B3Interior2)
                     || model3D.Equals(B4Interior) || model3D.Equals(B4Interior2)
                     || model3D.Equals(RightThumbRing) || model3D.Equals(LeftThumbRing)
+                    || model3D.Equals(LeftShoulderTrigger) || model3D.Equals(RightShoulderTrigger)
                     || model3D.Equals(ShareButtonSymbol) || model3D.Equals(StartSymbol) || model3D.Equals(BackSymbol))
                 {
                     ((GeometryModel3D)model3D.Children[0]).Material = MaterialPlasticBlack;

@@ -1,10 +1,10 @@
-﻿using ControllerCommon.Controllers;
+﻿using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEO2021Pro : Device
+    public class AYANEO2021Pro : IDevice
     {
         public AYANEO2021Pro() : base()
         {
@@ -16,7 +16,7 @@ namespace ControllerCommon.Devices
 
             // https://www.amd.com/fr/products/apu/amd-ryzen-7-4800u
             this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 10, 25 };
+            this.cTDP = new double[] { 3, 25 };
             this.GfxClock = new double[] { 100, 1750 };
 
             this.AngularVelocityAxisSwap = new()
@@ -33,26 +33,26 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("WIN key",
+            OEMChords.Add(new DeviceChord("WIN key",
                 new List<KeyCode>() { KeyCode.LWin },
                 new List<KeyCode>() { KeyCode.LWin },
-                false, ControllerButtonFlags.OEM1
+                false, ButtonFlags.OEM1
                 ));
 
             // Conflicts with OS
             //listeners.Add("TM key", new ChordClick(KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete));
 
-            listeners.Add(new DeviceChord("ESC key",
+            OEMChords.Add(new DeviceChord("ESC key",
                 new List<KeyCode>() { KeyCode.Escape },
                 new List<KeyCode>() { KeyCode.Escape },
-                false, ControllerButtonFlags.OEM2
+                false, ButtonFlags.OEM2
                 ));
 
             // Conflicts with Ayaspace when installed
-            listeners.Add(new DeviceChord("KB key",
+            OEMChords.Add(new DeviceChord("KB key",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
                 new List<KeyCode>() { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM3
+                false, ButtonFlags.OEM3
                 ));
         }
     }

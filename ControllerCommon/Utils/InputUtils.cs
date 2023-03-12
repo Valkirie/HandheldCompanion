@@ -1,5 +1,3 @@
-using ControllerCommon.Managers;
-using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +13,7 @@ namespace ControllerCommon.Utils
         public float maxOut;
     }
 
-    public enum Input
+    public enum MotionInput
     {
         PlayerSpace = 0,
         JoystickCamera = 1,
@@ -23,13 +21,13 @@ namespace ControllerCommon.Utils
         JoystickSteering = 3,
     }
 
-    public enum UMC_Motion_Default
+    public enum MotionMode
     {
         Off = 0,
         On = 1
     }
 
-    public enum Output
+    public enum MotionOutput
     {
         LeftStick = 0,
         RightStick = 1,
@@ -152,6 +150,17 @@ namespace ControllerCommon.Utils
             return StickInput * Multiplier * short.MaxValue;
         }
 
+        public static float ApplyAntiDeadzone(float ThumbValue, float DeadzonePercentage)
+        {
+            float StickInput = ThumbValue / short.MaxValue;
+
+            if (DeadzonePercentage.Equals(0.0f) || StickInput <= DeadzonePercentage)
+                return ThumbValue;
+
+            float Deadzone = DeadzonePercentage / 100 * Math.Sign(ThumbValue);
+            return (StickInput + Deadzone) * short.MaxValue;
+        }
+
         public static Vector2 ImproveCircularity(Vector2 ThumbValue)
         {
             // Convert short value input to -1 to 1
@@ -169,7 +178,7 @@ namespace ControllerCommon.Utils
         }
 
         // Triggers, inner and outer deadzone
-        public static float TriggerInnerOuterDeadzone(float TriggerInput, int InnerDeadzonePercentage, int OuterDeadzonePercentage)
+        public static float InnerOuterDeadzone(float TriggerInput, int InnerDeadzonePercentage, int OuterDeadzonePercentage, int MaxValue)
         {
             // Return if thumbstick or deadzone is not used
             if ((InnerDeadzonePercentage.Equals(0) && OuterDeadzonePercentage.Equals(0)) || TriggerInput.Equals(float.NaN) || TriggerInput.Equals(0.0f))
@@ -179,8 +188,8 @@ namespace ControllerCommon.Utils
             float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
             float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
 
-            // Convert 0 - 255 byte range value input to -1 to 1
-            float Trigger = TriggerInput / byte.MaxValue;
+            // Convert 0 - MaxValue range value input to -1 to 1
+            float Trigger = Math.Abs(TriggerInput / MaxValue);
 
             // Trigger is either:
             // - Within inner deadzone, return 0
@@ -192,14 +201,14 @@ namespace ControllerCommon.Utils
             }
             else if (Trigger >= 1 - OuterDeadZone)
             {
-                return byte.MaxValue;
+                return MaxValue * Math.Sign(TriggerInput);
             }
             else
             {
                 // Map to new range
-                // Convert back to 0 - 255 byte range
+                // Convert back to 0 - MaxValue range
                 // Cut off float remains
-                return (int)(MapRange(Trigger, InnerDeadZone, (1 - OuterDeadZone), 0, 1) * byte.MaxValue);
+                return (int)(MapRange(Trigger, InnerDeadZone, (1 - OuterDeadZone), 0, 1) * MaxValue * Math.Sign(TriggerInput));
             }
         }
 
@@ -251,7 +260,7 @@ namespace ControllerCommon.Utils
         private static int SensivityIdx = 2;
         public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, List<ProfileVector> Nodes)
         {
-            int NodeAmount = Profile.array_size;
+            int NodeAmount = Profile.SensivityArraySize;
 
             // Use absolute joystick position, range -1 to 1, re-apply direction later
             float JoystickPosAbs = (float)Math.Abs(AngularValue / MaxValue);

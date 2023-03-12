@@ -1,4 +1,5 @@
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
@@ -95,9 +96,9 @@ namespace ControllerService
         public PrecisionTimer UpdateTimer;
         private PrecisionTimer BatteryTimer;
 
-        private ControllerInputs Inputs = new();
+        private ControllerState Inputs = new();
 
-        public const int UpdateInterval = 5;
+        protected const short UPDATE_INTERVAL = 10;
 
         void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
         {
@@ -106,7 +107,6 @@ namespace ControllerService
 
         public string ip;
         public int port;
-        private Vector3 empty = new();
 
         public event StartedEventHandler Started;
         public delegate void StartedEventHandler(DSUServer server);
@@ -152,7 +152,7 @@ namespace ControllerService
 
             // initialize timers
             UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UpdateInterval);
+            UpdateTimer.SetInterval(UPDATE_INTERVAL);
             UpdateTimer.SetAutoResetMode(true);
         }
 
@@ -564,7 +564,7 @@ namespace ControllerService
             Stopped?.Invoke(this);
         }
 
-        public void UpdateInputs(ControllerInputs inputs)
+        public void UpdateInputs(ControllerState inputs)
         {
             Inputs = inputs;
         }
@@ -575,57 +575,56 @@ namespace ControllerService
             {
                 outputData[outIdx] = 0;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft)) outputData[outIdx] |= 0x80;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown)) outputData[outIdx] |= 0x40;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight)) outputData[outIdx] |= 0x20;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp)) outputData[outIdx] |= 0x10;
+                if (Inputs.ButtonState[ButtonFlags.DPadLeft]) outputData[outIdx] |= 0x80;
+                if (Inputs.ButtonState[ButtonFlags.DPadDown]) outputData[outIdx] |= 0x40;
+                if (Inputs.ButtonState[ButtonFlags.DPadRight]) outputData[outIdx] |= 0x20;
+                if (Inputs.ButtonState[ButtonFlags.DPadUp]) outputData[outIdx] |= 0x10;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Start)) outputData[outIdx] |= 0x08;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.RightThumb)) outputData[outIdx] |= 0x04;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftThumb)) outputData[outIdx] |= 0x02;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.Back)) outputData[outIdx] |= 0x01;
+                if (Inputs.ButtonState[ButtonFlags.Start]) outputData[outIdx] |= 0x08;
+                if (Inputs.ButtonState[ButtonFlags.RightThumb]) outputData[outIdx] |= 0x04;
+                if (Inputs.ButtonState[ButtonFlags.LeftThumb]) outputData[outIdx] |= 0x02;
+                if (Inputs.ButtonState[ButtonFlags.Back]) outputData[outIdx] |= 0x01;
 
                 outputData[++outIdx] = 0;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B1)) outputData[outIdx] |= 0x40;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B2)) outputData[outIdx] |= 0x20;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B3)) outputData[outIdx] |= 0x80;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.B4)) outputData[outIdx] |= 0x10;
+                if (Inputs.ButtonState[ButtonFlags.B1]) outputData[outIdx] |= 0x40;
+                if (Inputs.ButtonState[ButtonFlags.B2]) outputData[outIdx] |= 0x20;
+                if (Inputs.ButtonState[ButtonFlags.B3]) outputData[outIdx] |= 0x80;
+                if (Inputs.ButtonState[ButtonFlags.B4]) outputData[outIdx] |= 0x10;
 
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.RightShoulder)) outputData[outIdx] |= 0x08;
-                if (Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftShoulder)) outputData[outIdx] |= 0x04;
-                if (Inputs.RightTrigger == byte.MaxValue) outputData[outIdx] |= 0x02;
-                if (Inputs.LeftTrigger == byte.MaxValue) outputData[outIdx] |= 0x01;
+                if (Inputs.ButtonState[ButtonFlags.R1]) outputData[outIdx] |= 0x08;
+                if (Inputs.ButtonState[ButtonFlags.L1]) outputData[outIdx] |= 0x04;
+                if (Inputs.AxisState[AxisFlags.R2] == byte.MaxValue) outputData[outIdx] |= 0x02;
+                if (Inputs.AxisState[AxisFlags.L2] == byte.MaxValue) outputData[outIdx] |= 0x01;
 
-                outputData[++outIdx] = Convert.ToByte(Inputs.Buttons.HasFlag(ControllerButtonFlags.Special)); // (hidReport.PS) ? (byte)1 : 
-                outputData[++outIdx] = Convert.ToByte(DS4Touch.OutputClickButton); // (hidReport.TouchButton) ? (byte)1 : 
+                outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.Special]); // (hidReport.PS) ? (byte)1 : 
+                outputData[++outIdx] = Convert.ToByte(Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick]); // (hidReport.TouchButton) ? (byte)1 : 
 
                 //Left stick
-                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.LeftThumbX);
-                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.LeftThumbY);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.AxisState[AxisFlags.LeftThumbX]);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.AxisState[AxisFlags.LeftThumbY]);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
                 //Right stick
-                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.RightThumbX);
-                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.RightThumbY);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.AxisState[AxisFlags.RightThumbX]);
+                outputData[++outIdx] = InputUtils.NormalizeXboxInput(Inputs.AxisState[AxisFlags.RightThumbY]);
                 outputData[outIdx] = (byte)(byte.MaxValue - outputData[outIdx]); //invert Y by convention
 
-                //we don't have analog buttons on DS4 :(
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.DPadLeft] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.DPadDown] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.DPadRight] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.DPadUp] ? (byte)0xFF : (byte)0x00;
 
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.B1) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.B2) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.B3) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.B4) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.B1] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.B2] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.B3] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.B4] ? (byte)0xFF : (byte)0x00;
 
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.RightShoulder) ? (byte)0xFF : (byte)0x00;
-                outputData[++outIdx] = Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftShoulder) ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.R1] ? (byte)0xFF : (byte)0x00;
+                outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.L1] ? (byte)0xFF : (byte)0x00;
 
-                outputData[++outIdx] = (byte)Inputs.RightTrigger;
-                outputData[++outIdx] = (byte)Inputs.LeftTrigger;
+                outputData[++outIdx] = (byte)Inputs.AxisState[AxisFlags.L2];
+                outputData[++outIdx] = (byte)Inputs.AxisState[AxisFlags.R2];
 
                 outIdx++;
 
@@ -648,7 +647,7 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (IMU.Acceleration[XInputSensorFlags.Default] != empty)
+                if (IMU.Acceleration[XInputSensorFlags.Default] != Vector3.Zero)
                 {
                     // accelXG
                     Array.Copy(BitConverter.GetBytes(IMU.Acceleration[XInputSensorFlags.Default].X), 0, outputData, outIdx, 4);
@@ -667,7 +666,7 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (IMU.AngularVelocity[XInputSensorFlags.CenteredRatio] != empty)
+                if (IMU.AngularVelocity[XInputSensorFlags.CenteredRatio] != Vector3.Zero)
                 {
                     // angVelPitch
                     Array.Copy(BitConverter.GetBytes(IMU.AngularVelocity[XInputSensorFlags.CenteredRatio].X), 0, outputData, outIdx, 4);

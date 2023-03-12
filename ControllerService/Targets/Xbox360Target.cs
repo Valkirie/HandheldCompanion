@@ -1,5 +1,5 @@
 ﻿using ControllerCommon;
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Nefarius.ViGEm.Client.Exceptions;
@@ -77,35 +77,39 @@ namespace ControllerService.Targets
             virtualController.SetAxisValue(Xbox360Axis.RightThumbX, (short)RightThumb.X);
             virtualController.SetAxisValue(Xbox360Axis.RightThumbY, (short)RightThumb.Y);
 
-            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, (byte)LeftTrigger);
-            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, (byte)RightTrigger);
+            virtualController.SetSliderValue(Xbox360Slider.LeftTrigger, (byte)Inputs.AxisState[AxisFlags.L2]);
+            virtualController.SetSliderValue(Xbox360Slider.RightTrigger, (byte)Inputs.AxisState[AxisFlags.R2]);
 
-            virtualController.SetButtonState(Xbox360Button.A, Inputs.Buttons.HasFlag(ControllerButtonFlags.B1));
-            virtualController.SetButtonState(Xbox360Button.B, Inputs.Buttons.HasFlag(ControllerButtonFlags.B2));
-            virtualController.SetButtonState(Xbox360Button.X, Inputs.Buttons.HasFlag(ControllerButtonFlags.B3));
-            virtualController.SetButtonState(Xbox360Button.Y, Inputs.Buttons.HasFlag(ControllerButtonFlags.B4));
+            virtualController.SetButtonState(Xbox360Button.A, Inputs.ButtonState[ButtonFlags.B1]);
+            virtualController.SetButtonState(Xbox360Button.B, Inputs.ButtonState[ButtonFlags.B2]);
+            virtualController.SetButtonState(Xbox360Button.X, Inputs.ButtonState[ButtonFlags.B3]);
+            virtualController.SetButtonState(Xbox360Button.Y, Inputs.ButtonState[ButtonFlags.B4]);
 
-            virtualController.SetButtonState(Xbox360Button.Left, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadLeft));
-            virtualController.SetButtonState(Xbox360Button.Right, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadRight));
-            virtualController.SetButtonState(Xbox360Button.Down, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadDown));
-            virtualController.SetButtonState(Xbox360Button.Up, Inputs.Buttons.HasFlag(ControllerButtonFlags.DPadUp));
+            virtualController.SetButtonState(Xbox360Button.Up, Inputs.ButtonState[ButtonFlags.DPadUp]);
+            virtualController.SetButtonState(Xbox360Button.Down, Inputs.ButtonState[ButtonFlags.DPadDown]);
+            virtualController.SetButtonState(Xbox360Button.Left, Inputs.ButtonState[ButtonFlags.DPadLeft]);
+            virtualController.SetButtonState(Xbox360Button.Right, Inputs.ButtonState[ButtonFlags.DPadRight]);
 
-            virtualController.SetButtonState(Xbox360Button.Back, Inputs.Buttons.HasFlag(ControllerButtonFlags.Back));
-            virtualController.SetButtonState(Xbox360Button.Start, Inputs.Buttons.HasFlag(ControllerButtonFlags.Start));
+            virtualController.SetButtonState(Xbox360Button.Back, Inputs.ButtonState[ButtonFlags.Back]);
+            virtualController.SetButtonState(Xbox360Button.Start, Inputs.ButtonState[ButtonFlags.Start]);
 
-            virtualController.SetButtonState(Xbox360Button.LeftShoulder, Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftShoulder));
-            virtualController.SetButtonState(Xbox360Button.RightShoulder, Inputs.Buttons.HasFlag(ControllerButtonFlags.RightShoulder));
+            virtualController.SetButtonState(Xbox360Button.LeftShoulder, Inputs.ButtonState[ButtonFlags.L1]);
+            virtualController.SetButtonState(Xbox360Button.RightShoulder, Inputs.ButtonState[ButtonFlags.R1]);
 
-            virtualController.SetButtonState(Xbox360Button.LeftThumb, Inputs.Buttons.HasFlag(ControllerButtonFlags.LeftThumb));
-            virtualController.SetButtonState(Xbox360Button.RightThumb, Inputs.Buttons.HasFlag(ControllerButtonFlags.RightThumb));
+            virtualController.SetButtonState(Xbox360Button.LeftThumb, Inputs.ButtonState[ButtonFlags.LeftThumb]);
+            virtualController.SetButtonState(Xbox360Button.RightThumb, Inputs.ButtonState[ButtonFlags.RightThumb]);
 
-            virtualController.SetButtonState(Xbox360Button.Guide, Inputs.Buttons.HasFlag(ControllerButtonFlags.Special));
+            virtualController.SetButtonState(Xbox360Button.Guide, Inputs.ButtonState[ButtonFlags.Special]);
 
             try
             {
                 virtualController.SubmitReport();
             }
             catch (VigemBusNotFoundException ex)
+            {
+                LogManager.LogCritical(ex.Message);
+            }
+            catch (VigemInvalidTargetException ex)
             {
                 LogManager.LogCritical(ex.Message);
             }

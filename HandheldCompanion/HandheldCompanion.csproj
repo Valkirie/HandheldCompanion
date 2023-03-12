@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.14.2.0</Version>
+    <Version>0.15.0.1</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -33,6 +33,12 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Managers\HWiNFO\**" />
+    <EmbeddedResource Remove="Managers\HWiNFO\**" />
+    <None Remove="Managers\HWiNFO\**" />
+    <Page Remove="Managers\HWiNFO\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
@@ -59,6 +65,7 @@
     <None Remove="Resources\device_aya_next.png" />
     <None Remove="Resources\device_generic.png" />
     <None Remove="Resources\device_gpd3.png" />
+    <None Remove="Resources\device_gpd_win2.png" />
     <None Remove="Resources\device_gpd_winmax2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
@@ -100,6 +107,7 @@
     <Resource Include="Resources\controller_1_0.png" />
     <Resource Include="Resources\device_aya_next.png" />
     <Resource Include="Resources\device_gpd3.png" />
+    <Resource Include="Resources\device_gpd_win2.png" />
     <Resource Include="Resources\device_gpd_winmax2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />
@@ -114,7 +122,7 @@
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.23.0" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
     <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
@@ -130,6 +138,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\Mapping\TriggerMapping.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\Mapping\AxisMapping.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -227,7 +241,7 @@
     <None Update="models\8BitDoLite2\LED4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\LeftShoulder.obj">
+    <None Update="Models\8BitDoLite2\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\8BitDoLite2\LeftThumb.obj">
@@ -254,7 +268,7 @@
     <None Update="models\8BitDoLite2\Reset.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\8BitDoLite2\RightShoulder.obj">
+    <None Update="Models\8BitDoLite2\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\8BitDoLite2\RightThumb.obj">
@@ -368,13 +382,13 @@
     <None Update="Models\AYANEO 2021\RightThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\LeftShoulder.obj">
+    <None Update="Models\AYANEO 2021\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\Shoulder-Left-Trigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\RightShoulder.obj">
+    <None Update="Models\AYANEO 2021\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\Shoulder-Right-Trigger.obj">
@@ -416,7 +430,7 @@
     <None Update="Models\AYANEO 2021\Screen.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\LeftShoulder.obj">
+    <None Update="Models\AYANEO 2021\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\Shoulder-Left-Middle.obj">
@@ -425,7 +439,7 @@
     <None Update="Models\AYANEO 2021\LeftTrigger.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO 2021\RightShoulder.obj">
+    <None Update="Models\AYANEO 2021\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO 2021\Shoulder-Right-Middle.obj">
@@ -533,7 +547,7 @@
     <None Update="models\AYANEO Air\JoystickRightLED.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\LeftShoulder.obj">
+    <None Update="Models\AYANEO Air\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO Air\LeftThumb.obj">
@@ -563,7 +577,7 @@
     <None Update="models\AYANEO Air\PowerButton.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\AYANEO Air\RightShoulder.obj">
+    <None Update="Models\AYANEO Air\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\AYANEO Air\RightThumb.obj">
@@ -656,7 +670,7 @@
     <None Update="Models\AYANEO NEXT\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO NEXT\LeftShoulder.obj">
+    <None Update="Models\AYANEO NEXT\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO NEXT\LeftThumb.obj">
@@ -671,7 +685,7 @@
     <None Update="Models\AYANEO NEXT\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\AYANEO NEXT\RightShoulder.obj">
+    <None Update="Models\AYANEO NEXT\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\AYANEO NEXT\RightThumb.obj">
@@ -779,7 +793,7 @@
     <None Update="Models\DS4\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\DS4\LeftShoulder.obj">
+    <None Update="Models\DS4\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\DS4\LeftThumb.obj">
@@ -800,7 +814,7 @@
     <None Update="Models\DS4\Special.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\DS4\RightShoulder.obj">
+    <None Update="Models\DS4\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\DS4\RightThumb.obj">
@@ -938,7 +952,7 @@
     <None Update="models\DualSense\LED3.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\DualSense\LeftShoulder.obj">
+    <None Update="Models\DualSense\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\DualSense\LeftThumb.obj">
@@ -965,7 +979,7 @@
     <None Update="models\DualSense\PlaystationIcon.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\DualSense\RightShoulder.obj">
+    <None Update="Models\DualSense\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\DualSense\RightThumb.obj">
@@ -1088,7 +1102,7 @@
     <None Update="models\MachenikeHG510\LeftMotor.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\MachenikeHG510\LeftShoulder.obj">
+    <None Update="Models\MachenikeHG510\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\MachenikeHG510\LeftThumb.obj">
@@ -1121,7 +1135,7 @@
     <None Update="models\MachenikeHG510\RightMotor.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\MachenikeHG510\RightShoulder.obj">
+    <None Update="Models\MachenikeHG510\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\MachenikeHG510\RightThumb.obj">
@@ -1196,7 +1210,7 @@
     <None Update="models\N64\JoystickShield.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\LeftShoulder.obj">
+    <None Update="Models\N64\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\LeftThumb.obj">
@@ -1211,7 +1225,7 @@
     <None Update="models\N64\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\N64\RightShoulder.obj">
+    <None Update="Models\N64\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\RightThumb.obj">
@@ -1346,7 +1360,7 @@
     <None Update="Models\OneXPlayerMini\LeftBaseRing.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\OneXPlayerMini\LeftShoulder.obj">
+    <None Update="Models\OneXPlayerMini\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\OneXPlayerMini\LeftThumb.obj">
@@ -1370,7 +1384,7 @@
     <None Update="Models\OneXPlayerMini\RightBaseRing.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\OneXPlayerMini\RightShoulder.obj">
+    <None Update="Models\OneXPlayerMini\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\OneXPlayerMini\RightThumb.obj">
@@ -1472,7 +1486,7 @@
     <None Update="Models\SteamDeck\OEM8.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\LeftShoulder.obj">
+    <None Update="Models\SteamDeck\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\SteamDeck\LeftThumb.obj">
@@ -1511,7 +1525,7 @@
     <None Update="Models\SteamDeck\OEM9.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\RightShoulder.obj">
+    <None Update="Models\SteamDeck\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\SteamDeck\RightThumb.obj">
@@ -1604,7 +1618,7 @@
     <None Update="Models\ToyController\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\LeftShoulder.obj">
+    <None Update="Models\ToyController\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ToyController\LeftThumb.obj">
@@ -1622,7 +1636,7 @@
     <None Update="Models\ToyController\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ToyController\RightShoulder.obj">
+    <None Update="Models\ToyController\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ToyController\RightThumb.obj">
@@ -1721,7 +1735,7 @@
     <None Update="Models\XBOX360\LeftThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\LeftShoulder.obj">
+    <None Update="Models\XBOX360\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\MainBody-Charger.obj">
@@ -1742,7 +1756,7 @@
     <None Update="Models\XBOX360\RightThumb.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\XBOX360\RightShoulder.obj">
+    <None Update="Models\XBOX360\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\XBOX360\Shoulder-Left-Trigger.obj">
@@ -1835,7 +1849,7 @@
     <None Update="models\XBOXOne\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\LeftShoulder.obj">
+    <None Update="Models\XBOXOne\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\XBOXOne\LeftThumb.obj">
@@ -1865,7 +1879,7 @@
     <None Update="models\XBOXOne\MotorRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\XBOXOne\RightShoulder.obj">
+    <None Update="Models\XBOXOne\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\XBOXOne\RightThumb.obj">
@@ -2000,7 +2014,7 @@
     <None Update="Models\ZDOPlus\LeftK.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ZDOPlus\LeftShoulder.obj">
+    <None Update="Models\ZDOPlus\L1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ZDOPlus\LeftThumb.obj">
@@ -2048,7 +2062,7 @@
     <None Update="Models\ZDOPlus\RightK.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\ZDOPlus\RightShoulder.obj">
+    <None Update="Models\ZDOPlus\R1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ZDOPlus\RightThumb.obj">
@@ -2112,6 +2126,9 @@
     <None Update="libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\PromptFont.otf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Segoe Fluent Icons.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2169,10 +2186,6 @@
     <Page Update="Views\Windows\OverlayQuickTools.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Managers\HWiNFO\" />
   </ItemGroup>
 
 </Project>

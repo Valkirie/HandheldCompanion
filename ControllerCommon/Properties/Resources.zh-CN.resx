@@ -216,7 +216,7 @@
   <data name="Enum.Output.RightStick" xml:space="preserve">
     <value>右摇杆</value>
   </data>
-  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
     <value>这是默认的手柄配置。此配置将应用于没有特定配置的所有应用程序。一些需要指定程序的选项可能被禁用。</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">

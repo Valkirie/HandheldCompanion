@@ -40,9 +40,6 @@ namespace ControllerCommon.Managers
         private Timer MonitorTimer;
         private object updateLock = new();
 
-        public event ReadyEventHandler Ready;
-        public delegate void ReadyEventHandler();
-
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);
 
@@ -80,16 +77,12 @@ namespace ControllerCommon.Managers
         public override void Start()
         {
             MonitorTimer.Elapsed += MonitorHelper;
-
-            base.Start();
         }
 
         public override void Stop()
         {
             if (!IsInitialized)
                 return;
-
-            IsInitialized = false;
 
             MonitorTimer.Elapsed -= MonitorHelper;
             MonitorTimer = null;
@@ -153,23 +146,26 @@ namespace ControllerCommon.Managers
                     type = ServiceStartMode.Disabled;
                 }
 
-                if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
-                {
-                    Updated?.Invoke(status, (int)type);
-                    nextStatus = ServiceControllerStatus.None;
-                    LogManager.LogInformation("Controller Service status has changed to: {0}", status.ToString());
-                }
+                // exit lock before calling base function ?
+                Monitor.Exit(updateLock);
 
-                prevStatus = (int)status;
-                prevType = (int)type;
-
+                // initialize only once we've pulled service status
                 if (!IsInitialized)
                 {
-                    Ready?.Invoke();
-                    IsInitialized = true;
+                    base.Start();
                 }
+                else
+                {
+                    if (prevStatus != (int)status || prevType != (int)type || nextStatus != 0)
+                    {
+                        Updated?.Invoke(status, (int)type);
+                        nextStatus = ServiceControllerStatus.None;
+                        LogManager.LogInformation("Controller Service status has changed to: {0}", status.ToString());
+                    }
 
-                Monitor.Exit(updateLock);
+                    prevStatus = (int)status;
+                    prevType = (int)type;
+                }
             }
         }
 
@@ -224,8 +220,8 @@ namespace ControllerCommon.Managers
             if (status == ServiceControllerStatus.Running)
                 return;
 
-            while (!IsInitialized)
-                await Task.Delay(1000);
+            if (!IsInitialized)
+                return;
 
             while (status != ServiceControllerStatus.Running && status != ServiceControllerStatus.StartPending)
             {

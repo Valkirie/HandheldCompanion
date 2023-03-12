@@ -489,103 +489,103 @@
   <data name="ProcessEx_processSuspend" xml:space="preserve">
     <value>暫停</value>
   </data>
-  <data name="ProfileSettingsMode0_AdditionalSettings" xml:space="preserve">
+  <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>附加選項</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSights" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
     <value>ADS靈敏度</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
     <value>啟動按鍵</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsDesc" xml:space="preserve">
     <value>通過增加一個啟動鍵加入一個當瞄準按鍵被按下時的額外靈敏度</value>
   </data>
-  <data name="ProfileSettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
     <value>靈敏值</value>
   </data>
-  <data name="ProfileSettingsMode0_CameraOptions" xml:space="preserve">
+  <data name="SettingsMode0_CameraOptions" xml:space="preserve">
     <value>視角選項</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponseCurve" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseCurve" xml:space="preserve">
     <value>自定義曲線</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
     <value>輸出至遊戲</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponseIntensity" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseIntensity" xml:space="preserve">
     <value>移動強度</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
     <value>加速</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
     <value>默認</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
     <value>預設選項</value>
   </data>
-  <data name="ProfileSettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>高精度</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickDuration" xml:space="preserve">
+  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
     <value>指向時長</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickDurationDesc" xml:space="preserve">
+  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
     <value>修改指向時長，校準為180度轉彎，以毫秒為單位</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickStick" xml:space="preserve">
+  <data name="SettingsMode0_FlickStick" xml:space="preserve">
     <value>指向性搖桿（實驗性）</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickStickDesc" xml:space="preserve">
+  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
     <value>將視角指向（右）搖桿傾斜的方向，只對相機進行水平旋轉</value>
   </data>
-  <data name="ProfileSettingsMode0_FlickStickEnable" xml:space="preserve">
+  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>開啟指向性瞄準</value>
   </data>
-  <data name="ProfileSettingsMode0_Sensitivity" xml:space="preserve">
+  <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>靈明度</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityDesc" xml:space="preserve">
     <value>修改垂直軸和水平軸的體感靈敏度</value>
   </data>
-  <data name="ProfileSettingsMode0_StickSensitivtity" xml:space="preserve">
+  <data name="SettingsMode0_StickSensitivtity" xml:space="preserve">
     <value>搖桿靈敏度</value>
   </data>
-  <data name="ProfileSettingsMode0_StickSensitivtityDesc" xml:space="preserve">
+  <data name="SettingsMode0_StickSensitivtityDesc" xml:space="preserve">
     <value>修改旋轉率</value>
   </data>
-  <data name="ProfileSettingsMode1_AdditionalSettings" xml:space="preserve">
+  <data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
     <value>附加選項</value>
   </data>
-  <data name="ProfileSettingsMode1_Deadzone" xml:space="preserve">
+  <data name="SettingsMode1_Deadzone" xml:space="preserve">
     <value>死區</value>
   </data>
-  <data name="ProfileSettingsMode1_DeadzoneDesc" xml:space="preserve">
+  <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
     <value>改變轉向死區角度。提升直線</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickGameInput" xml:space="preserve">
+  <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>搖桿遊戲輸入</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickSteering" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteering" xml:space="preserve">
     <value>體感駕駛</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteeringOptions" xml:space="preserve">
     <value>體感駕駛選項</value>
   </data>
-  <data name="ProfileSettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteeringPreview" xml:space="preserve">
     <value>體感駕駛預覽</value>
   </data>
-  <data name="ProfileSettingsMode1_MaxSteeringAngle" xml:space="preserve">
+  <data name="SettingsMode1_MaxSteeringAngle" xml:space="preserve">
     <value>最大轉向角度</value>
   </data>
-  <data name="ProfileSettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+  <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
     <value>修改最大轉向角度</value>
   </data>
-  <data name="ProfileSettingsMode1_SteeringLinearity" xml:space="preserve">
+  <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
     <value>轉向線性度</value>
   </data>
-  <data name="ProfileSettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+  <data name="SettingsMode1_SteeringLinearityDesc" xml:space="preserve">
     <value>輸入和轉向之間的映射。較低的值在大小末端提供更高的精度，但在中心附近的精度較低。數值越高，在中心附近的精度越高，在兩端的精度越低。1.0是一個線性映射</value>
   </data>
   <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
@@ -1029,16 +1029,16 @@
   <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
     <value>Model will move in accordance with user movements based on sensor information</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityX" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityX" xml:space="preserve">
     <value>Sensitivity X</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityXDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityXDesc" xml:space="preserve">
     <value>Change the motion sensitivity of the horizontal axis</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityY" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityY" xml:space="preserve">
     <value>Sensitivity Y</value>
   </data>
-  <data name="ProfileSettingsMode0_SensitivityYDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
     <value>Change the motion sensitivity of the vertical axis</value>
   </data>
   <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">

@@ -2,13 +2,14 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Simulators;
 using ModernWpf.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using static HandheldCompanion.Managers.InputsHotkey;
@@ -50,10 +51,21 @@ namespace HandheldCompanion.Managers
             InputsManager.TriggerUpdated += TriggerUpdated;
             InputsManager.TriggerRaised += TriggerRaised;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        }
+
+        private static void ControllerManager_ControllerSelected(IController Controller)
+        {
+            foreach (Hotkey hotkey in Hotkeys.Values)
+                hotkey.ControllerSelected(Controller);
         }
 
         public static void Start()
         {
+            // process hotkeys types
+            foreach (InputsHotkeyType type in (InputsHotkeyType[])Enum.GetValues(typeof(InputsHotkeyType)))
+                HotkeyTypeCreated?.Invoke(type);
+
             // process hotkeys
             foreach (var pair in InputsHotkey.InputsHotkeys)
             {
@@ -70,54 +82,35 @@ namespace HandheldCompanion.Managers
 
                 // no hotkey found or failed parsing
                 if (hotkey is null)
-                    hotkey = new Hotkey(Id, inputsHotkey);
+                    hotkey = new Hotkey(Id);
 
                 // hotkey is outdated and using an unknown inputs hotkey
                 if (!InputsHotkeys.ContainsKey(hotkey.hotkeyId))
                     continue;
 
                 // pull inputs hotkey
-                hotkey.inputsHotkey = InputsHotkey.InputsHotkeys[hotkey.hotkeyId];
-                switch (hotkey.inputsHotkey.hotkeyType)
-                {
-                    case InputsHotkeyType.UI:
-                        hotkey.DrawControl(true);
-                        break;
-                    default:
-                        hotkey.DrawControl();
-                        break;
-                }
+                hotkey.SetInputsHotkey(InputsHotkeys[hotkey.hotkeyId]);
+                hotkey.Refresh();
 
                 if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
                     Hotkeys.Add(hotkey.hotkeyId, hotkey);
             }
 
-            // process hotkeys types
-            foreach (InputsHotkeyType type in (InputsHotkeyType[])Enum.GetValues(typeof(InputsHotkeyType)))
-                HotkeyTypeCreated?.Invoke(type);
-
             foreach (Hotkey hotkey in Hotkeys.Values)
             {
-                HotkeyCreated?.Invoke(hotkey);
+                hotkey.Listening += StartListening;
+                hotkey.Pinning += PinOrUnpinHotkey;
+                hotkey.Summoned += (hotkey) => InvokeTrigger(hotkey, false, true);
 
-                switch (hotkey.inputsHotkey.hotkeyType)
-                {
-                    case InputsHotkeyType.UI:
-                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.UI);
-                        break;
-                    default:
-                        hotkey.inputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Default);
-                        break;
-                }
-
-                hotkey.outputButton.Click += (sender, e) => StartListening(hotkey, ListenerType.Output);
-                hotkey.pinButton.Click += (sender, e) => PinOrUnpinHotkey(hotkey);
-
+                /*
                 hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
                 hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
+                */
 
                 hotkey.Updated += (hotkey) => SerializeHotkey(hotkey, true);
+
+                HotkeyCreated?.Invoke(hotkey);
             }
 
             IsInitialized = true;
@@ -142,19 +135,21 @@ namespace HandheldCompanion.Managers
             if (hotkey is null)
                 return;
 
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
+                    case "shortcutDesktopLayout":
                         {
                             bool toggle = Convert.ToBoolean(value);
                             hotkey.SetToggle(toggle);
                         }
                         break;
                 }
-            }));
+            });
         }
 
         private static void StartListening(Hotkey hotkey, ListenerType type)
@@ -180,13 +175,11 @@ namespace HandheldCompanion.Managers
                             return;
                         }
 
-                        hotkey.StartPinning();
+                        hotkey.Pinned();
                     }
                     break;
                 case true:
-                    {
-                        hotkey.StopPinning();
-                    }
+                    hotkey.Unpinned();
                     break;
             }
 
@@ -201,7 +194,8 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // we use @ as a special character to link two ore more listeners together
                 listener = listener.TrimEnd('@');
@@ -214,7 +208,7 @@ namespace HandheldCompanion.Managers
                     // overwrite current file
                     SerializeHotkey(hotkey, true);
                 }
-            }));
+            });
         }
 
         private static Hotkey ProcessHotkey(string fileName)
@@ -223,7 +217,7 @@ namespace HandheldCompanion.Managers
             try
             {
                 string outputraw = File.ReadAllText(fileName);
-                hotkey = JsonSerializer.Deserialize<Hotkey>(outputraw);
+                hotkey = JsonConvert.DeserializeObject<Hotkey>(outputraw);
             }
             catch (Exception ex)
             {
@@ -240,8 +234,7 @@ namespace HandheldCompanion.Managers
             string settingsPath = Path.Combine(InstallPath, $"{listener}.json");
             if (!File.Exists(settingsPath) || overwrite)
             {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string jsonString = JsonSerializer.Serialize(hotkey, options);
+                string jsonString = JsonConvert.SerializeObject(hotkey, Formatting.Indented);
                 File.WriteAllText(settingsPath, jsonString);
             }
 
@@ -258,13 +251,14 @@ namespace HandheldCompanion.Managers
 
             foreach (Hotkey hotkey in hotkeys)
             {
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     hotkey.Highlight();
-                }));
+                });
 
                 // These are special shortcut keys with no related events
-                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.UI)
+                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
                     return;
             }
 
@@ -284,13 +278,13 @@ namespace HandheldCompanion.Managers
                         }).Start();
                         break;
                     case "shortcutDesktop":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
                         if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
-                            InputsManager.KeyPress(VirtualKeyCode.ESCAPE);
+                            KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
@@ -311,15 +305,22 @@ namespace HandheldCompanion.Managers
                         }
                         break;
                     case "shortcutTaskview":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.TAB });
                         break;
                     case "shortcutTaskManager":
-                        InputsManager.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                         break;
-                    case "shortcutGuide":
-                        // temporary, move me to remapper !
-                        ControllerManager.buttonMaps.Clear();
-                        ControllerManager.buttonMaps[input.GamepadButtons] = ControllerButtonFlags.Special;
+                    case "shortcutActionCenter":
+                        {
+                            var uri = new Uri("ms-actioncenter");
+                            var success = Windows.System.Launcher.LaunchUriAsync(uri);
+                        }
+                        break;
+                    case "shortcutControlCenter":
+                        {
+                            var uri = new Uri("ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true");
+                            var success = Windows.System.Launcher.LaunchUriAsync(uri);
+                        }
                         break;
                     case "suspendResumeTask":
                         {
@@ -349,8 +350,16 @@ namespace HandheldCompanion.Managers
                         }
                         break;
 
+                    // temporary settings
+                    case "shortcutDesktopLayout":
+                        {
+                            bool prevValue = SettingsManager.GetBoolean(listener, true);
+                            SettingsManager.SetProperty(listener, !prevValue, false, true);
+                        }
+                        break;
+
                     default:
-                        InputsManager.KeyPress(input.OutputKeys);
+                        KeyboardSimulator.KeyPress(input.OutputKeys.ToArray());
                         break;
                 }
 
@@ -370,12 +379,7 @@ namespace HandheldCompanion.Managers
 
         internal static void ClearHotkey(Hotkey hotkey)
         {
-            switch (hotkey.inputsHotkey.Listener)
-            {
-                case "shortcutGuide":
-                    ControllerManager.buttonMaps.Remove(hotkey.inputsChord.GamepadButtons);
-                    break;
-            }
+            // do something
         }
     }
 }

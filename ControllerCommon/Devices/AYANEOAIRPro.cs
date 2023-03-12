@@ -1,11 +1,11 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEOAIRPro : Device
+    public class AYANEOAIRPro : IDevice
     {
         public AYANEOAIRPro() : base()
         {
@@ -17,7 +17,7 @@ namespace ControllerCommon.Devices
 
             // https://www.amd.com/en/products/apu/amd-ryzen-7-5825u
             this.nTDP = new double[] { 12, 12, 15 };
-            this.cTDP = new double[] { 8, 18 };
+            this.cTDP = new double[] { 3, 18 };
             this.GfxClock = new double[] { 100, 2000 };
 
             this.AngularVelocityAxisSwap = new()
@@ -35,28 +35,28 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Custom Key Top Right",
-                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
-                new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM3
-                ));
-
-            listeners.Add(new DeviceChord("Custom Key Top Left",
-                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM4
-                ));
-
-            listeners.Add(new DeviceChord("Custom Key Big",
+            OEMChords.Add(new DeviceChord("Custom Key Big",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
                 new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM1
+                false, ButtonFlags.OEM1
                 ));
 
-            listeners.Add(new DeviceChord("Custom Key Small",
+            OEMChords.Add(new DeviceChord("Custom Key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, ControllerButtonFlags.OEM2
+                false, ButtonFlags.OEM2
+                ));
+
+            OEMChords.Add(new DeviceChord("Custom Key Top Right",
+                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
+                new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM3
+                ));
+
+            OEMChords.Add(new DeviceChord("Custom Key Top Left",
+                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F11 },
+                new List<KeyCode>() { KeyCode.F11, KeyCode.LWin, KeyCode.RControlKey },
+                false, ButtonFlags.OEM4
                 ));
         }
     }

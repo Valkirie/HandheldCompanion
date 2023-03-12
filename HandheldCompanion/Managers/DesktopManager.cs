@@ -1,18 +1,15 @@
 ﻿using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
 using Microsoft.Win32;
-using NAudio;
 using NAudio.CoreAudioApi;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Management;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Media;
-using System.IO;
-using System.Management;
-using Microsoft.Extensions.FileSystemGlobbing;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace HandheldCompanion.Managers
 {
@@ -281,6 +278,9 @@ namespace HandheldCompanion.Managers
 
         public static bool SetResolution(int width, int height, int displayFrequency)
         {
+            if (!IsInitialized)
+                return false;
+
             bool ret = false;
             long RetVal = 0;
             DEVMODE dm = new DEVMODE();
@@ -300,6 +300,9 @@ namespace HandheldCompanion.Managers
 
         public static bool SetResolution(int width, int height, int displayFrequency, int bitsPerPel)
         {
+            if (!IsInitialized)
+                return false;
+
             bool ret = false;
             long RetVal = 0;
             DEVMODE dm = new DEVMODE();

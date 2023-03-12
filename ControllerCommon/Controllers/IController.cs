@@ -1,9 +1,14 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using ModernWpf.Controls;
 using PrecisionTiming;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ControllerCommon.Controllers
 {
@@ -13,28 +18,65 @@ namespace ControllerCommon.Controllers
         None = 0,
         Gyroscope = 1,
         Accelerometer = 2,
+        Trackpad = 3,
     }
 
     public abstract class IController
     {
         #region events
         public event InputsUpdatedEventHandler InputsUpdated;
-        public delegate void InputsUpdatedEventHandler(ControllerInputs Inputs);
+        public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
         public event MovementsUpdatedEventHandler MovementsUpdated;
         public delegate void MovementsUpdatedEventHandler(ControllerMovements Movements);
         #endregion
 
-        public ControllerInputs Inputs = new();
+        public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
-        protected const short UPDATE_INTERVAL = 5;
+        public static List<ButtonFlags> VirtualButtons = new()
+        {
+            ButtonFlags.None,
+            ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5,
+            ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
+            ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
+            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
+            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
+            ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10,
+        };
 
-        public ControllerButtonFlags InjectedButtons;
-        public ControllerButtonFlags prevInjectedButtons;
+        public static List<AxisLayoutFlags> VirtualAxis = new()
+        {
+            AxisLayoutFlags.None,
+            AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad
+        };
+
+        protected List<ButtonFlags> SupportedButtons = new()
+        {
+            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+            ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
+            ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
+            ButtonFlags.L1, ButtonFlags.R1, ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,
+            ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
+            ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
+            ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
+        };
+
+        protected List<AxisLayoutFlags> SupportedAxis = new()
+        {
+            AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
+            AxisLayoutFlags.L2, AxisLayoutFlags.R2,
+        };
+
+        protected Dictionary<ButtonFlags, Brush> ColoredButtons = new();
+        protected Dictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
+
+        protected const short UPDATE_INTERVAL = 10;
+
+        public ButtonState InjectedButtons = new();
+        public ButtonState prevInjectedButtons = new();
 
         public ControllerCapacities Capacities = ControllerCapacities.None;
-        public bool HideOnHook = true;
 
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
@@ -43,6 +85,10 @@ namespace ControllerCommon.Controllers
 
         protected PrecisionTimer MovementsTimer;
         protected PrecisionTimer InputsTimer;
+
+        // UI
+        protected FontFamily GlyphFontFamily = new("PromptFont");
+        protected FontFamily DefaultFontFamily = new("Segeo WP");
 
         protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
         protected Grid ui_grid = new Grid();
@@ -57,7 +103,6 @@ namespace ControllerCommon.Controllers
         {
             InputsTimer = new PrecisionTimer();
             InputsTimer.SetInterval(UPDATE_INTERVAL);
-            InputsTimer.SetAutoResetMode(true);
 
             MovementsTimer = new PrecisionTimer();
             MovementsTimer.SetInterval(UPDATE_INTERVAL);
@@ -71,7 +116,7 @@ namespace ControllerCommon.Controllers
         {
             // update states
             Inputs.Timestamp = Environment.TickCount;
-            prevInjectedButtons = InjectedButtons;
+            prevInjectedButtons = InjectedButtons.Clone() as ButtonState;
 
             InputsUpdated?.Invoke(Inputs);
         }
@@ -92,6 +137,11 @@ namespace ControllerCommon.Controllers
         public bool HasAccelerometer()
         {
             return Capacities.HasFlag(ControllerCapacities.Accelerometer);
+        }
+
+        public bool HasTrackpad()
+        {
+            return Capacities.HasFlag(ControllerCapacities.Trackpad);
         }
 
         public bool IsVirtual()
@@ -180,17 +230,15 @@ namespace ControllerCommon.Controllers
             return ui_button_hide;
         }
 
-        public void InjectButton(ControllerButtonFlags button, bool IsKeyDown, bool IsKeyUp)
+        public void InjectButton(ButtonState State, bool IsKeyDown, bool IsKeyUp)
         {
-            if (button == ControllerButtonFlags.None)
+            if (State.IsEmpty())
                 return;
 
-            if (IsKeyDown)
-                InjectedButtons |= button;
-            else if (IsKeyUp)
-                InjectedButtons &= ~button;
+            foreach (var button in State.Buttons)
+                InjectedButtons[button] = IsKeyDown;
 
-            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", button, IsKeyDown, IsKeyUp, ToString());
+            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
         }
 
         public virtual void SetVibrationStrength(double value)
@@ -216,7 +264,9 @@ namespace ControllerCommon.Controllers
 
         public virtual void Plug()
         {
-            InjectedButtons = ControllerButtonFlags.None;
+            InjectedButtons.Clear();
+
+            InputsTimer.SetAutoResetMode(true);
             InputsTimer.Start();
 
             RefreshControls();
@@ -250,6 +300,198 @@ namespace ControllerCommon.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
+        }
+
+        public virtual string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.DPadUp:
+                    return "\u219F"; // Button A
+                case ButtonFlags.DPadDown:
+                    return "\u21A1"; // Button B
+                case ButtonFlags.DPadLeft:
+                    return "\u219E"; // Button X
+                case ButtonFlags.DPadRight:
+                    return "\u21A0"; // Button Y
+                case ButtonFlags.LeftThumb:
+                    return "\u21BA";
+                case ButtonFlags.RightThumb:
+                    return "\u21BB";
+                case ButtonFlags.LeftThumbUp:
+                    return "\u21BE";
+                case ButtonFlags.LeftThumbDown:
+                    return "\u21C2";
+                case ButtonFlags.LeftThumbLeft:
+                    return "\u21BC";
+                case ButtonFlags.LeftThumbRight:
+                    return "\u21C0";
+                case ButtonFlags.RightThumbUp:
+                    return "\u21BF";
+                case ButtonFlags.RightThumbDown:
+                    return "\u21C3";
+                case ButtonFlags.RightThumbLeft:
+                    return "\u21BD";
+                case ButtonFlags.RightThumbRight:
+                    return "\u21C1";
+                case ButtonFlags.OEM1:
+                    return "\u2780";
+                case ButtonFlags.OEM2:
+                    return "\u2781";
+                case ButtonFlags.OEM3:
+                    return "\u2782";
+                case ButtonFlags.OEM4:
+                    return "\u2783";
+                case ButtonFlags.OEM5:
+                    return "\u2784";
+                case ButtonFlags.OEM6:
+                    return "\u2785";
+                case ButtonFlags.OEM7:
+                    return "\u2786";
+                case ButtonFlags.OEM8:
+                    return "\u2787";
+                case ButtonFlags.OEM9:
+                    return "\u2788";
+                case ButtonFlags.OEM10:
+                    return "\u2789";
+            }
+            return "\u2753";
+        }
+
+        public virtual string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.LeftThumbX:
+                    return "\u21C4";
+                case AxisFlags.LeftThumbY:
+                    return "\u21C5";
+                case AxisFlags.RightThumbX:
+                    return "\u21C6";
+                case AxisFlags.RightThumbY:
+                    return "\u21F5";
+            }
+            return "\u2753";
+        }
+
+        public virtual string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.LeftThumb:
+                    return "\u21CB";
+                case AxisLayoutFlags.RightThumb:
+                    return "\u21CC";
+            }
+            return "\u2753";
+        }
+
+        public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
+        {
+            FontIcon FontIcon = new FontIcon()
+            {
+                Glyph = GetGlyph(button),
+                FontSize = FontIconSize,
+                Foreground = GetGlyphColor(button)
+            };
+
+            if (FontIcon.Glyph is not null)
+            {
+                FontIcon.FontFamily = GlyphFontFamily;
+                FontIcon.FontSize = 28;
+            }
+
+            return FontIcon;
+        }
+
+        public FontIcon GetFontIcon(AxisLayoutFlags axis, int FontIconSize = 14)
+        {
+            FontIcon FontIcon = new FontIcon()
+            {
+                Glyph = GetGlyph(axis),
+                FontSize = FontIconSize,
+                Foreground = GetGlyphColor(axis)
+            };
+
+            if (FontIcon.Glyph is not null)
+            {
+                FontIcon.FontFamily = GlyphFontFamily;
+                FontIcon.FontSize = 28;
+            }
+
+            return FontIcon;
+        }
+
+        public Brush GetGlyphColor(ButtonFlags button)
+        {
+            if (ColoredButtons.ContainsKey(button))
+                return ColoredButtons[button];
+
+            return null;
+        }
+
+        public Brush GetGlyphColor(AxisLayoutFlags axis)
+        {
+            /* if (AxisBrush.ContainsKey(axis))
+                return AxisBrush[axis]; */
+
+            return null;
+        }
+
+        public IEnumerable<ButtonFlags> GetButtons()
+        {
+            IEnumerable<ButtonFlags> buttons = Enum.GetValues(typeof(ButtonFlags)).Cast<ButtonFlags>();
+
+            return buttons.Where(a => IsButtonSupported(a) && !IsButtonBlacklisted(a));
+        }
+
+        public IEnumerable<AxisLayoutFlags> GetAxis()
+        {
+            IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
+
+            return axis.Where(a => IsAxisSupported(a) && !IsAxisBlacklisted(a) && !IsAxisTrigger(a));
+        }
+
+        public IEnumerable<AxisLayoutFlags> GetTriggers()
+        {
+            IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
+
+            return axis.Where(a => IsAxisSupported(a) && !IsAxisBlacklisted(a) && IsAxisTrigger(a));
+        }
+
+        public bool IsButtonBlacklisted(ButtonFlags button)
+        {
+            return VirtualButtons.Contains(button);
+        }
+
+        public bool IsAxisBlacklisted(AxisLayoutFlags axis)
+        {
+            return VirtualAxis.Contains(axis);
+        }
+
+        public bool IsButtonSupported(ButtonFlags button)
+        {
+            return SupportedButtons.Contains(button);
+        }
+
+        public bool IsAxisSupported(AxisLayoutFlags axis)
+        {
+            return SupportedAxis.Contains(axis);
+        }
+
+        public bool IsAxisTrigger(AxisLayoutFlags axis)
+        {
+            return axis is AxisLayoutFlags.L2 || axis is AxisLayoutFlags.R2;
+        }
+
+        public string GetButtonName(ButtonFlags button)
+        {
+            return EnumUtils.GetDescriptionFromEnumValue(button, this.GetType().Name);
+        }
+
+        public string GetAxisName(AxisLayoutFlags axis)
+        {
+            return EnumUtils.GetDescriptionFromEnumValue(axis, this.GetType().Name);
         }
     }
 }

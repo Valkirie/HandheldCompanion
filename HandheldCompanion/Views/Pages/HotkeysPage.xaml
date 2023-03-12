@@ -7,6 +7,7 @@
       xmlns:local="clr-namespace:HandheldCompanion" 
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+      xmlns:controls="clr-namespace:HandheldCompanion.Controls"
       mc:Ignorable="d" 
       d:DesignHeight="1500" d:DesignWidth="1000"
       KeepAlive="True"
@@ -14,6 +15,6 @@
       Title="Hotkeys">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="24" Name="HotkeysPanel" />
+        <ui:SimpleStackPanel Spacing="24" Name="HotkeysPanel"/>
     </Grid>
 </Page>

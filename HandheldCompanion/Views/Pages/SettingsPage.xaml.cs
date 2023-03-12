@@ -1,7 +1,7 @@
 using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Windows;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -49,6 +49,7 @@ namespace HandheldCompanion.Views.Pages
 
             cB_Language.Items.Add(new CultureInfo("en-US"));
             cB_Language.Items.Add(new CultureInfo("fr-FR"));
+            cB_Language.Items.Add(new CultureInfo("de-DE"));
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
             cB_Language.Items.Add(new CultureInfo("de-DE"));
@@ -69,7 +70,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -135,11 +137,12 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateDevice(PnPDevice device = null)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                SensorInternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Windows];
-                SensorExternal.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.SerialUSBIMU];
-                SensorController.IsEnabled = MainWindow.handheldDevice.hasSensors[SensorFamily.Controller];
+                SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor);
+                SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor);
+                SensorController.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor);
             });
         }
 
@@ -208,7 +211,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (status)
                 {
@@ -225,8 +229,8 @@ namespace HandheldCompanion.Views.Pages
                             }
                             else
                             {
-                                LabelUpdate.Content = Properties.Resources.SettingsPage_UpToDate;
-                                LabelUpdateDate.Content = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
+                                LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
+                                LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked + MainWindow.updateManager.GetTime();
 
                                 LabelUpdateDate.Visibility = Visibility.Visible;
                                 GridUpdateSymbol.Visibility = Visibility.Visible;
@@ -238,7 +242,7 @@ namespace HandheldCompanion.Views.Pages
 
                     case UpdateStatus.Checking:
                         {
-                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateCheck;
+                            LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
 
                             GridUpdateSymbol.Visibility = Visibility.Collapsed;
                             LabelUpdateDate.Visibility = Visibility.Collapsed;
@@ -252,7 +256,7 @@ namespace HandheldCompanion.Views.Pages
                             ProgressBarUpdate.Visibility = Visibility.Collapsed;
 
                             Dictionary<string, UpdateFile> updateFiles = (Dictionary<string, UpdateFile>)value;
-                            LabelUpdate.Content = Properties.Resources.SettingsPage_UpdateAvailable;
+                            LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateAvailable;
 
                             foreach (UpdateFile update in updateFiles.Values)
                             {
@@ -509,8 +513,8 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update dependencies
-            SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
-            SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
+            Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
+            Grid_SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
             // inform service
             PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
@@ -568,7 +572,8 @@ namespace HandheldCompanion.Views.Pages
         #region serviceManager
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (status)
                 {

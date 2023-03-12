@@ -1,10 +1,8 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.Json.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ControllerCommon
 {
@@ -15,8 +13,8 @@ namespace ControllerCommon
         MissingExecutable = 1,
         MissingPath = 2,
         MissingPermission = 3,
-        IsDefault = 4,
-        IsRunning = 5
+        Default = 4,
+        Running = 5
     }
 
     [Flags]
@@ -43,104 +41,87 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class Profile
+    public class Profile : ICloneable
     {
         // move me to HandheldCompanion ?
-        public static Dictionary<Input, string> InputDescription = new()
+        public static Dictionary<MotionInput, string> InputDescription = new()
         {
-            { Input.JoystickCamera, Properties.Resources.JoystickCameraDesc },
-            { Input.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
-            { Input.PlayerSpace, Properties.Resources.PlayerSpaceDesc },
-            { Input.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
+            { MotionInput.JoystickCamera, Properties.Resources.JoystickCameraDesc },
+            { MotionInput.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
+            { MotionInput.PlayerSpace, Properties.Resources.PlayerSpaceDesc },
+            { MotionInput.AutoRollYawSwap, Properties.Resources.AutoRollYawSwapDesc }
         };
 
-        public string name { get; set; }
-        public string path { get; set; }
-        public string executable { get; set; }
-        public bool isEnabled { get; set; }
+        [JsonIgnore]
+        public const int SensivityArraySize = 49;             // x + 1 (hidden)
 
-        public bool whitelisted { get; set; }                   // if true, can see through the HidHide cloak
-        public bool use_wrapper { get; set; }                   // if true, deploy xinput1_3.dll
-        public float gyrometer { get; set; } = 1.0f;            // gyroscope multiplicator (remove me)
-        public float accelerometer { get; set; } = 1.0f;        // accelerometer multiplicator (remove me)
+        public string Name { get; set; } = string.Empty;
+        public string Path { get; set; } = string.Empty;
+        public string Executable { get; set; } = string.Empty;
+        [JsonIgnore]
+        public string ExecutablePath;
+        public bool Enabled { get; set; }
+        public bool Default { get; set; }
 
-        public int steering { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
-        public bool thumb_improve_circularity_left { get; set; } = true;
-        public bool thumb_improve_circularity_right { get; set; } = true;
-        public int thumb_deadzone_inner_left { get; set; } = 0;
-        public int thumb_deadzone_outer_left { get; set; } = 0;
-        public int thumb_deadzone_inner_right { get; set; } = 0;
-        public int thumb_deadzone_outer_right { get; set; } = 0;
+        public Layout Layout { get; set; } = new();
 
-        public float thumb_anti_deadzone_left { get; set; } = 0.0f;        // todo: typeme
-        public float thumb_anti_deadzone_right { get; set; } = 0.0f;        // todo: typeme
+        [JsonIgnore]
+        public bool Running { get; set; }
 
-        public int trigger_deadzone_inner_left { get; set; } = 0;
-        public int trigger_deadzone_outer_left { get; set; } = 0;
-        public int trigger_deadzone_inner_right { get; set; } = 0;
-        public int trigger_deadzone_outer_right { get; set; } = 0;
+        public bool Whitelisted { get; set; }                       // if true, can see through the HidHide cloak
+        public bool XInputPlus { get; set; }                        // if true, deploy xinput1_3.dll
 
-        public bool inverthorizontal { get; set; }              // if true, invert horizontal axis
-        public bool invertvertical { get; set; }                // if false, invert vertical axis
+        public float GyrometerMultiplier { get; set; } = 1.0f;      // gyroscope multiplicator (remove me)
+        public float AccelerometerMultiplier { get; set; } = 1.0f;  // accelerometer multiplicator (remove me)
 
-        public bool umc_enabled { get; set; }
+        public int SteeringAxis { get; set; } = 0;                  // 0 = Roll, 1 = Yaw
 
-        public Input umc_input { get; set; } = Input.JoystickCamera;
-        public Output umc_output { get; set; } = Output.RightStick;
+        public bool MotionEnabled { get; set; }
+        public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;
+        public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;
+        public MotionMode MotionMode { get; set; } = MotionMode.Off;
+        public float MotionAntiDeadzone { get; set; } = 0.0f;
+        public bool MotionInvertHorizontal { get; set; }            // if true, invert horizontal axis
+        public bool MotionInvertVertical { get; set; }              // if false, invert vertical axis
+        public float MotionSensivityX { get; set; } = 1.0f;
+        public float MotionSensivityY { get; set; } = 1.0f;
+        public List<ProfileVector> MotionSensivityArray { get; set; } = new();
 
-        public UMC_Motion_Default umc_motion_defaultoffon { get; set; } = UMC_Motion_Default.Off;
-
-        public float umc_anti_deadzone { get; set; } = 0.0f;
-
-        // aiming
-        public float aiming_sensitivity_x { get; set; } = 1.0f;
-        public float aiming_sensitivity_y { get; set; } = 1.0f;
-
-        public List<ProfileVector> aiming_array { get; set; } = new();
+        public ButtonState MotionTrigger { get; set; } = new();
 
         // steering
-        public float steering_max_angle { get; set; } = 30.0f;
-        public float steering_power { get; set; } = 1.0f;
-        public float steering_deadzone { get; set; } = 0.0f;
+        public float SteeringMaxAngle { get; set; } = 30.0f;
+        public float SteeringPower { get; set; } = 1.0f;
+        public float SteeringDeadzone { get; set; } = 0.0f;
 
         // Aiming down sights
-        public float aiming_down_sights_multiplier { get; set; } = 1.0f;
-        public ControllerButtonFlags aiming_down_sights_activation { get; set; }
+        public float AimingSightsMultiplier { get; set; } = 1.0f;
+        public ButtonState AimingSightsTrigger { get; set; } = new();
 
         // flickstick
-        public bool flickstick_enabled { get; set; }
-        public float flick_duration { get; set; } = 0.1f;
-        public float stick_sensivity { get; set; } = 3.0f;
+        public bool FlickstickEnabled { get; set; }
+        public float FlickstickDuration { get; set; } = 0.1f;
+        public float FlickstickSensivity { get; set; } = 3.0f;
 
         // power
-        public bool TDP_override { get; set; }
-        public double[] TDP_value { get; set; } = new double[3];
+        public bool TDPOverrideEnabled { get; set; }
+        public double[] TDPOverrideValues { get; set; } = new double[3];
 
-        public ControllerButtonFlags umc_trigger { get; set; }
-
-        // hidden settings
-        [JsonIgnore] public ProfileErrorCode error;
-        [JsonIgnore] public string fullpath { get; set; }
-        [JsonIgnore] public string filename { get; set; }
-        [JsonIgnore] public bool isDefault { get; set; }
-        [JsonIgnore] public bool isRunning { get; set; }
-        [JsonIgnore] public static int array_size = 49;             // x + 1 (hidden)
+        [JsonIgnore]
+        public ProfileErrorCode ErrorCode;
 
         public Profile()
         {
             // initialize aiming array
-            if (aiming_array.Count == 0)
+            if (MotionSensivityArray.Count == 0)
             {
-                for (int i = 0; i < array_size; i++)
+                for (int i = 0; i < SensivityArraySize; i++)
                 {
-                    double value = (double)i / (double)(array_size - 1);
+                    double value = (double)i / (double)(SensivityArraySize - 1);
                     ProfileVector vector = new ProfileVector(value, 0.5f);
-                    aiming_array.Add(vector);
+                    MotionSensivityArray.Add(vector);
                 }
             }
-
-            string filtered = Path.GetFileNameWithoutExtension(executable);
-            this.filename = $"{filtered}.json";
         }
 
         public Profile(string path) : this()
@@ -151,28 +132,52 @@ namespace ControllerCommon
             // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
             // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
 
-            this.executable = AppProperties["FileName"];
-            this.name = ProductName;
-            this.path = this.fullpath = path;
+            this.Executable = AppProperties["FileName"];
+            this.Name = ProductName;
+            this.Path = this.ExecutablePath = path;
 
             // enable the below variables when profile is created
-            this.isEnabled = true;
-            this.umc_enabled = true;
+            this.Enabled = true;
+            this.MotionEnabled = true;
+            this.Layout = new("Profile");
         }
 
         public float GetSensitivityX()
         {
-            return aiming_sensitivity_x * 1000.0f;
+            return MotionSensivityX * 1000.0f;
         }
 
         public float GetSensitivityY()
         {
-            return aiming_sensitivity_y * 1000.0f;
+            return MotionSensivityY * 1000.0f;
+        }
+
+        public string GetFileName()
+        {
+            string name = Name;
+            switch (Default)
+            {
+                case false:
+                    name = System.IO.Path.GetFileNameWithoutExtension(Executable);
+                    break;
+            }
+
+            return $"{name}.json";
         }
 
         public override string ToString()
         {
-            return name;
+            return Name;
+        }
+
+        public object Clone()
+        {
+            Profile profile = (Profile)MemberwiseClone();
+            profile.Layout = this.Layout.Clone() as Layout;
+            profile.MotionTrigger = this.MotionTrigger.Clone() as ButtonState;
+            profile.AimingSightsTrigger = this.AimingSightsTrigger.Clone() as ButtonState;
+
+            return profile;
         }
     }
 }

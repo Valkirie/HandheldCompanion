@@ -3,14 +3,11 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Views;
+using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Resources;
-using System.Text.Json;
 using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
@@ -22,6 +19,8 @@ namespace HandheldCompanion.Managers
             { false, 0xcd4906cc },
             { true, 0x1e9df650 },
         };
+
+        public const string DefaultName = "Default";
 
         public static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>(StringComparer.InvariantCultureIgnoreCase);
         public static FileSystemWatcher profileWatcher { get; set; }
@@ -41,7 +40,8 @@ namespace HandheldCompanion.Managers
         public delegate void DiscardedEventHandler(Profile profile, bool isCurrent);
         #endregion
 
-        public static Profile currentProfile = new();
+        private static Profile currentProfile;
+
         public static string InstallPath;
         private static bool IsInitialized;
 
@@ -59,21 +59,6 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            // initialize profile files
-            ResourceSet resourceSet = Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
-            foreach (DictionaryEntry entry in resourceSet)
-            {
-                string resourceKey = entry.Key.ToString();
-                if (!resourceKey.Contains(".json"))
-                    continue;
-
-                object resource = entry.Value;
-                string profile_path = Path.Combine(InstallPath, resourceKey);
-
-                if (!File.Exists(profile_path))
-                    File.WriteAllText(profile_path, (string)resource);
-            }
-
             // monitor profile file deletions
             profileWatcher = new FileSystemWatcher()
             {
@@ -89,6 +74,20 @@ namespace HandheldCompanion.Managers
             string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
+
+            // check for default profile
+            if (!HasDefault())
+            {
+                Profile defaultProfile = new()
+                {
+                    Name = DefaultName,
+                    Default = true,
+                    Enabled = true,
+                    Layout = new Layout("Profile")
+                };
+
+                UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
+            }
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -112,7 +111,7 @@ namespace HandheldCompanion.Managers
         public static bool Contains(Profile profile)
         {
             foreach (Profile pr in profiles.Values)
-                if (pr.executable == profile.executable)
+                if (pr.Executable == profile.Executable)
                     return true;
 
             return false;
@@ -125,7 +124,7 @@ namespace HandheldCompanion.Managers
             for (int i = 0; i < profiles.Count; i++)
             {
                 Profile pr = profiles.Values.ToList()[i];
-                if (pr.executable == profile.executable)
+                if (pr.Executable == profile.Executable)
                     return i;
             }
 
@@ -138,19 +137,19 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Name);
 
-                if (profile is null)
+                if (profile is null || profile.Default)
                     return;
 
-                if (profile.isRunning)
+                if (profile.Running)
                 {
-                    profile.isRunning = false;
+                    profile.Running = false;
 
                     // warn owner
-                    bool isCurrent = profile.executable == currentProfile.executable;
+                    bool isCurrent = profile.Executable == currentProfile.Executable;
 
                     // (re)set current profile
                     if (isCurrent)
-                        currentProfile = GetDefault();
+                        currentProfile = profile;
 
                     // raise event
                     Discarded?.Invoke(profile, isCurrent);
@@ -168,11 +167,11 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Name);
 
-                if (profile is null)
+                if (profile is null || profile.Default)
                     return;
 
-                profile.fullpath = processEx.Path;
-                profile.isRunning = true;
+                profile.ExecutablePath = processEx.Path;
+                profile.Running = true;
 
                 // update profile
                 UpdateOrCreateProfile(profile);
@@ -186,12 +185,6 @@ namespace HandheldCompanion.Managers
             {
                 var profile = GetProfileFromExec(proc.Name);
 
-                if (profile is null)
-                    profile = GetDefault();
-
-                if (!profile.isEnabled)
-                    return;
-
                 // skip if is current profile
                 if (currentProfile == profile)
                     return;
@@ -203,21 +196,21 @@ namespace HandheldCompanion.Managers
                 // update current profile
                 currentProfile = profile;
 
-                LogManager.LogInformation("Profile {0} applied", profile.name);
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
 
                 // inform service
                 PipeClient.SendMessage(new PipeClientProfile { profile = profile });
 
                 // do not update default profile path
-                if (profile.isDefault)
+                if (profile.Default)
                     return;
 
                 // send toast
                 // todo: localize me
-                MainWindow.toastManager.SendToast($"Profile {profile.name} applied");
+                MainWindow.toastManager.SendToast($"Profile {profile.Name} applied");
 
-                profile.isRunning = true;
-                profile.fullpath = proc.Path;
+                profile.Running = true;
+                profile.ExecutablePath = proc.Path;
                 UpdateOrCreateProfile(profile);
             }
             catch { }
@@ -234,7 +227,8 @@ namespace HandheldCompanion.Managers
 
             switch (ProfileName)
             {
-                case "Default":
+                // prevent default profile from being deleted
+                case DefaultName:
                     SerializeProfile(profile);
                     break;
                 default:
@@ -243,10 +237,15 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static bool HasDefault()
+        {
+            return profiles.ContainsKey(DefaultName);
+        }
+
         public static Profile GetDefault()
         {
-            if (profiles.ContainsKey("Default"))
-                return profiles["Default"];
+            if (HasDefault())
+                return profiles[DefaultName];
             return new();
         }
 
@@ -256,8 +255,11 @@ namespace HandheldCompanion.Managers
             try
             {
                 string outputraw = File.ReadAllText(fileName);
-                profile = JsonSerializer.Deserialize<Profile>(outputraw);
-                profile.fullpath = profile.path;
+                profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+                profile.ExecutablePath = profile.Path;
             }
             catch (Exception ex)
             {
@@ -265,17 +267,15 @@ namespace HandheldCompanion.Managers
             }
 
             // failed to parse
-            if (profile is null || profile.name is null || profile.path is null)
+            if (profile is null || profile.Name is null || profile.Path is null)
             {
                 LogManager.LogError("Could not parse profile {0}", fileName);
                 return;
             }
 
-            if (profile.name == "Default")
+            // default specific
+            if (profile.Default)
             {
-                profile.isDefault = true;
-
-                // set current profile
                 currentProfile = profile;
             }
 
@@ -284,17 +284,17 @@ namespace HandheldCompanion.Managers
 
         public static void DeleteProfile(Profile profile)
         {
-            string settingsPath = Path.Combine(InstallPath, profile.filename);
+            string settingsPath = Path.Combine(InstallPath, profile.GetFileName());
 
-            if (profiles.ContainsKey(profile.name))
+            if (profiles.ContainsKey(profile.Name))
             {
                 // Unregister application from HidHide
-                HidHide.UnregisterApplication(profile.fullpath);
+                HidHide.UnregisterApplication(profile.ExecutablePath);
 
-                profiles.Remove(profile.name);
+                profiles.Remove(profile.Name);
 
                 // warn owner
-                bool isCurrent = profile.executable == currentProfile.executable;
+                bool isCurrent = profile.Executable == currentProfile.Executable;
 
                 // (re)set current profile
                 if (isCurrent)
@@ -306,7 +306,7 @@ namespace HandheldCompanion.Managers
 
                 // send toast
                 // todo: localize me
-                MainWindow.toastManager.SendToast($"Profile {profile.name} deleted");
+                MainWindow.toastManager.SendToast($"Profile {profile.Name} deleted");
 
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
             }
@@ -316,24 +316,26 @@ namespace HandheldCompanion.Managers
 
         public static void SerializeProfile(Profile profile)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(profile, options);
+            string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
 
-            string settingsPath = Path.Combine(InstallPath, profile.filename);
+            string settingsPath = Path.Combine(InstallPath, profile.GetFileName());
             File.WriteAllText(settingsPath, jsonString);
         }
 
         private static ProfileErrorCode SanitizeProfile(Profile profile)
         {
-            string processpath = Path.GetDirectoryName(profile.fullpath);
+            string processpath = Path.GetDirectoryName(profile.ExecutablePath);
 
-            if (profile.isDefault)
-                return ProfileErrorCode.IsDefault;
+            if (profile.Default)
+                return ProfileErrorCode.Default;
             else
             {
                 if (!Directory.Exists(processpath))
                     return ProfileErrorCode.MissingPath;
-                else if (!File.Exists(profile.fullpath))
+                else if (!File.Exists(profile.ExecutablePath))
                     return ProfileErrorCode.MissingExecutable;
                 else if (!CommonUtils.IsDirectoryWritable(processpath))
                     return ProfileErrorCode.MissingPermission;
@@ -344,7 +346,7 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background)
         {
-            switch(source)
+            switch (source)
             {
                 // update current profile on creation
                 case ProfileUpdateSource.Creation:
@@ -353,28 +355,28 @@ namespace HandheldCompanion.Managers
             }
 
             // check if application is running
-            bool hasprocesses = ProcessManager.GetProcesses(profile.executable).Capacity > 0;
-            profile.isRunning = hasprocesses;
+            bool hasprocesses = ProcessManager.GetProcesses(profile.Executable).Capacity > 0;
+            profile.Running = hasprocesses;
 
             // check if this is current profile
-            bool isCurrent = profile.executable == currentProfile.executable;
+            bool isCurrent = currentProfile is null ? false : profile.Executable == currentProfile.Executable;
 
             // refresh error code
-            profile.error = SanitizeProfile(profile);
+            profile.ErrorCode = SanitizeProfile(profile);
 
             // update database
-            profiles[profile.name] = profile;
+            profiles[profile.Name] = profile;
 
             // raise event(s)
             Updated?.Invoke(profile, source, isCurrent);
 
             // inform service
             if (isCurrent)
-                PipeClient.SendMessage(new PipeClientProfile { profile = currentProfile });
+                PipeClient.SendMessage(new PipeClientProfile { profile = profile });
 
-            if (profile.error != ProfileErrorCode.None && !profile.isDefault)
+            if (profile.ErrorCode != ProfileErrorCode.None && !profile.Default)
             {
-                LogManager.LogError("Profile {0} returned error code {1}", profile.name, profile.error);
+                LogManager.LogError("Profile {0} returned error code {1}", profile.Name, profile.ErrorCode);
                 return;
             }
 
@@ -385,7 +387,7 @@ namespace HandheldCompanion.Managers
             SerializeProfile(profile);
 
             // do not update wrapper and cloaking from default profile
-            if (profile.isDefault)
+            if (profile.Default)
                 return;
 
             // update wrapper
@@ -397,18 +399,18 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateProfileCloaking(Profile profile)
         {
-            if (profile.error == ProfileErrorCode.MissingExecutable || profile.error == ProfileErrorCode.MissingPath)
+            if (profile.ErrorCode == ProfileErrorCode.MissingExecutable || profile.ErrorCode == ProfileErrorCode.MissingPath)
                 return;
 
-            if (profile.whitelisted)
+            if (profile.Whitelisted)
             {
                 // Register application on HidHide
-                HidHide.RegisterApplication(profile.fullpath);
+                HidHide.RegisterApplication(profile.ExecutablePath);
             }
             else
             {
                 // Unregister application from HidHide
-                HidHide.UnregisterApplication(profile.fullpath);
+                HidHide.UnregisterApplication(profile.ExecutablePath);
             }
         }
 
@@ -417,10 +419,10 @@ namespace HandheldCompanion.Managers
             // deploy xinput wrapper
             string XinputPlus = Properties.Resources.XInputPlus;
 
-            string[] fullpaths = new string[] { profile.fullpath };
+            string[] fullpaths = new string[] { profile.ExecutablePath };
 
             // for testing purposes, this should not happen!
-            if (profile.isDefault)
+            if (profile.Default)
             {
                 fullpaths = new string[]
                 {
@@ -439,7 +441,7 @@ namespace HandheldCompanion.Managers
                 BinaryType bt; GetBinaryType(fullpath, out bt);
                 bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
 
-                if (profile.use_wrapper)
+                if (profile.XInputPlus)
                     File.WriteAllText(inipath, XinputPlus);
                 else if (iniexist)
                     File.Delete(inipath);
@@ -470,10 +472,10 @@ namespace HandheldCompanion.Managers
                     data = x64 ? Properties.Resources.xinput1_x64 : Properties.Resources.xinput1_x86;
 
                     // do not try to write/erase files when profile is used
-                    if (profile.isRunning)
+                    if (profile.Running)
                         return;
 
-                    switch (profile.error)
+                    switch (profile.ErrorCode)
                     {
                         // do not try to write/erase files when access is denied
                         case ProfileErrorCode.MissingPermission:
@@ -481,7 +483,7 @@ namespace HandheldCompanion.Managers
                             return;
                     }
 
-                    if (profile.use_wrapper)
+                    if (profile.XInputPlus)
                     {
                         if (dllexist && is_x360ce)
                             continue; // skip to next file
@@ -511,12 +513,10 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public static Profile GetProfileFromExec(string processExec)
+        public static Profile GetProfileFromExec(string executable)
         {
-            foreach (Profile pr in profiles.Values)
-                if (pr.executable.Equals(processExec, StringComparison.InvariantCultureIgnoreCase))
-                    return pr;
-            return null;
+            var profile = profiles.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            return profile is not null ? profile : GetDefault();
         }
     }
 }

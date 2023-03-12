@@ -21,9 +21,6 @@ namespace HandheldCompanion.Controllers
             // Set BufferSize in order to use buffered data.
             joystick.Properties.BufferSize = 128;
 
-            // Acquire the joystick
-            joystick.Acquire();
-
             // ui
             DrawControls();
             RefreshControls();
@@ -51,12 +48,14 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
+            joystick.Acquire();
+
             base.Plug();
         }
 
         public override void Unplug()
         {
-            // Acquire the joystick
+            // Unacquire the joystick
             joystick.Unacquire();
 
             base.Unplug();

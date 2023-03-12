@@ -492,9 +492,11 @@ namespace ControllerCommon.Processor
                     return;
                 }
 
-                var error = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                var error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                var error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)clock);
+                var error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)clock);
 
-                base.SetGPUClock(clock, error);
+                base.SetGPUClock(clock, error1 + error2 + error3);
 
                 Monitor.Exit(base.IsBusy);
             }

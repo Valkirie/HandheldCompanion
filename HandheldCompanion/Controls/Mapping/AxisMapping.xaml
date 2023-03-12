@@ -1,0 +1,189 @@
+﻿<local:IMapping x:Class="HandheldCompanion.Controls.AxisMapping"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HandheldCompanion.Controls"
+             xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             Visibility="Collapsed"
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="800" d:Visibility="Visible">
+
+    <Expander
+        HorizontalAlignment="Stretch"
+        Padding="15,12,12,12">
+        <Expander.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                    <ColumnDefinition Width="160"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Name="Name" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                <DockPanel Grid.Column="2" HorizontalAlignment="Right">
+                    <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
+                        <ComboBoxItem Content="None" IsEnabled="True"/>
+                        <ComboBoxItem Content="Button" IsEnabled="False"/>
+                        <ComboBoxItem Content="Joystick" IsEnabled="True"/>
+                        <ComboBoxItem Content="Keyboard" IsEnabled="False"/>
+                        <ComboBoxItem Content="Mouse" IsEnabled="True"/>
+                        <ComboBoxItem Content="Trigger" IsEnabled="False"/>
+                    </ComboBox>
+
+                    <ComboBox Name="TargetComboBox" Width="140" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged" IsEnabled="False"/>
+                </DockPanel>
+            </Grid>
+        </Expander.Header>
+        <Expander.Content>
+            <StackPanel>
+                <!-- Axis 2 Axis -->
+                <Grid Name="Axis2Axis" d:Visibility="Visible"
+                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
+
+                    <ui:SimpleStackPanel Spacing="12">                        
+                        <ui:SimpleStackPanel Spacing="6">
+
+                            <!-- Improve circularity -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Improve circularity" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2AxisImproveCircularity" Grid.Column="1" Toggled="Axis2AxisImproveCircularity_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
+                            <!-- Invert Axis -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Invert axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2AxisInvertAxis" Grid.Column="1" Toggled="Axis2AxisInvertAxis_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
+                            <!-- Inner deadzone -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Inner deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2AxisInnerDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis2AxisInnerDeadzone" FlowDirection="LeftToRight" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            <!-- Inner deadzone -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Outer deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2AxisOuterDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis2AxisOuterDeadzone" FlowDirection="RightToLeft" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            <!-- Inner deadzone -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Anti deadzone (%)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2AxisAntiDeadzone, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+
+                                    <Slider Name="Axis2AxisAntiDeadzone" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
+                <!-- Axis 2 Mouse -->
+                <Grid Name="Axis2Mouse" d:Visibility="Visible"
+                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
+
+                    <ui:SimpleStackPanel Spacing="12">
+                        <ui:SimpleStackPanel Spacing="6">
+
+                            <!-- Implement me ! -->
+                            <Grid IsEnabled="False">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Enhance pointer precision" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2MouseImprovePrecision" Grid.Column="1" Toggled="Axis2MouseImprovePrecision_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+
+
+                            <!-- Invert Axis -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Invert axis" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                                <ui:ToggleSwitch Name="Axis2MouseInvertAxis" Grid.Column="1" Toggled="Axis2MouseInvertAxis_Toggled"/>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+                            <!-- Sensivity -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock Text="Sensivity" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                    </Grid>
+                                    
+                                    <Slider Name="Axis2MousePointerSpeed" Minimum="5" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" ValueChanged="Axis2MousePointerSpeed_ValueChanged"/>
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!-- Separator -->
+                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+            </StackPanel>
+        </Expander.Content>
+    </Expander>
+</local:IMapping>

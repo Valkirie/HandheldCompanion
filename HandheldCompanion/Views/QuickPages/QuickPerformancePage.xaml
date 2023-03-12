@@ -32,8 +32,8 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_TDPLimit}" FontSize="14"/>
-                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_TDPLimitDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_TDPLimit}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_TDPLimitDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
@@ -97,7 +97,7 @@
                             <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF136;" />
                             <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Height="40" Glyph="&#xF13C;" />
                         </Grid>
-                        <TextBlock Name="WarningContent" Margin="12,0,0,0" TextWrapping="Wrap" Grid.Column="1" Text="{x:Static resx:Resources.QuickPerformancePage_TDPOverWrittenWarning}" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                        <TextBlock Name="WarningContent" Margin="12,0,0,0" TextWrapping="Wrap" Grid.Column="1" Text="{x:Static resx:Resources.QuickPerformancePage_TDPOverWrittenWarning}" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                     </DockPanel>
                 </Grid>
             </Border>
@@ -121,8 +121,8 @@
                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                     <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                        <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" FontSize="14"/>
-                        <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                     </ui:SimpleStackPanel>
                 </DockPanel>
 
@@ -164,8 +164,8 @@
                         <ui:FontIcon FontFamily="Segoe UI Symbol" Glyph="&#xE2CB;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="Display resolution and refresh rate" FontSize="14"/>
-                            <TextBlock Text="Adjust main display resolution and refresh rate" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="Display resolution and refresh rate" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="Adjust main display resolution and refresh rate" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
@@ -208,8 +208,8 @@
                         <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEC48;" Height="40" HorizontalAlignment="Center"/>
 
                         <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" FontSize="14"/>
-                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>

@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="HandheldCompanion.Controls.HotkeyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+             xmlns:local="clr-namespace:HandheldCompanion.Controls"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             mc:Ignorable="d" 
+             d:DesignWidth="800">
+
+    <Border
+        Padding="15,12,12,12"
+        CornerRadius="{DynamicResource ControlCornerRadius}"
+        Background="{DynamicResource ExpanderContentBackground}">
+
+        <Grid Name="MainGrid" IsEnabled="False">
+            <Grid Name="EmbeddedGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                </Grid.ColumnDefinitions>                
+            </Grid>
+
+            <Grid Name="HotkeyGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <DockPanel Name="HotkeyPanel">
+                    <ui:FontIcon Name="HotkeyIcon" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+
+                    <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                        <TextBlock Name="HotkeyName" Text="Name" Style="{StaticResource BodyTextBlockStyle}" TextWrapping="Wrap"/>
+                        <TextBox Name="HotkeyCustomName" d:Visibility="Visible" Visibility="Collapsed" Margin="0,0,10,0" />
+                        <TextBlock Name="HotkeyDesc" Text="Desc" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+
+                <ui:SimpleStackPanel Name="HotkeyButtons" Grid.Column="1" Spacing="6" Orientation="Vertical" HorizontalAlignment="Stretch">
+                    <Button Name="HotkeyInput" Content="{x:Static resx:Resources.InputsHotkey_fallbackInput}" ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackInput}" Height="40" MinWidth="200" HorizontalAlignment="Stretch" Margin="0,0,10,0"/>
+                    <Button Name="HotkeyOutput" Content="{x:Static resx:Resources.InputsHotkey_fallbackOutput}" ToolTip="{x:Static resx:Resources.InputsHotkey_fallbackOutput}" Height="40" MinWidth="200" HorizontalAlignment="Stretch" Margin="0,0,10,0" d:Visibility="Visible" Visibility="Collapsed"/>
+                </ui:SimpleStackPanel>
+
+                <Button Name="HotkeyErase" Grid.Column="2" Height="40" HorizontalAlignment="Center" ToolTip="Erase hotkey" Style="{DynamicResource AccentButtonStyle}">
+                    <ui:FontIcon Glyph="&#xE75C;" FontSize="14"/>
+                </Button>
+                
+                <Button Name="HotkeyPin" Grid.Column="3" Height="40" HorizontalAlignment="Center">
+                    <ui:FontIcon Glyph="&#xE840;" FontSize="14"/>                
+                </Button>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

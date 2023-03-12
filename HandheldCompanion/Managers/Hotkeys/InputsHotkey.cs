@@ -16,7 +16,7 @@ namespace HandheldCompanion.Managers
             HC = 3,
             Device = 4,
             Custom = 5,
-            UI = 6,
+            Embedded = 6,
         }
 
         public static SortedDictionary<ushort, InputsHotkey> InputsHotkeys = new()
@@ -39,12 +39,14 @@ namespace HandheldCompanion.Managers
             { 24, new InputsHotkey(InputsHotkeyType.Windows,    "\uE7C4",   "shortcutTaskview",                 "Segoe MDL2 Assets",    20, false,  true) },
             { 25, new InputsHotkey(InputsHotkeyType.Windows,    "\uE71D",   "shortcutTaskManager",              "Segoe Fluent Icons",   20, false,  true) },
             { 26, new InputsHotkey(InputsHotkeyType.Windows,    "\uE8BB",   "shortcutKillApp",                  "Segoe Fluent Icons",   20, false,  true) },
+            { 27, new InputsHotkey(InputsHotkeyType.Windows,    "\uE7E7",   "shortcutControlCenter",            "Segoe Fluent Icons",   20, false,  true) },
 
             // Handheld Companion hotkeys
             { 30, new InputsHotkey(InputsHotkeyType.HC,         "\uE7C4",   "shortcutMainwindow",               "Segoe Fluent Icons",   20, false,  true) },
+            { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE961",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true) },
 
             // Device specific hotkeys
-            { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE2E8",   "shortcutGuide",                    "Segoe UI Symbol",      20, false,  true) },
+            // { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE2E8",   "shortcutGuide",                    "Segoe UI Symbol",      20, false,  true) },
             { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "SteamDeckLizardMouse",             "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
             { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "SteamDeckLizardButtons",           "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
 
@@ -61,9 +63,9 @@ namespace HandheldCompanion.Managers
             { 59, new InputsHotkey(InputsHotkeyType.Custom,     "\u2789",   "shortcutCustom9",                  "Segoe UI Symbol",      20, false,  true) },
 
             // Special, UI hotkeys
-            { 60, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesPage@",            "Segoe Fluent Icons",   20, true,   true) },
-            { 61, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesPage@@",           "Segoe Fluent Icons",   20, true,   true) },
-            { 62, new InputsHotkey(InputsHotkeyType.UI,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,   true) },
+            { 60, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesPage@",            "Segoe Fluent Icons",   20, true,   true) },
+            { 61, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesPage@@",           "Segoe Fluent Icons",   20, true,   true) },
+            { 62, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,   true) },
         };
 
         public string Glyph { get; set; }

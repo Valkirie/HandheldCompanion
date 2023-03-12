@@ -1,8 +1,11 @@
 using ControllerCommon;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
@@ -20,11 +23,11 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class ProfilesPage : Page
     {
-        private Profile currentProfile;
+        public static Profile currentProfile;
         private Hotkey ProfilesPageHotkey = new(60);
 
-        ProfileSettingsMode0 page0 = new ProfileSettingsMode0("ProfileSettingsMode0");
-        ProfileSettingsMode0 page1 = new ProfileSettingsMode0("ProfileSettingsMode1");
+        private SettingsMode0 page0 = new SettingsMode0("SettingsMode0");
+        private SettingsMode1 page1 = new SettingsMode1("SettingsMode1");
 
         public ProfilesPage()
         {
@@ -46,7 +49,7 @@ namespace HandheldCompanion.Views.Pages
             InputsManager.TriggerUpdated += TriggerUpdated;
 
             // draw input modes
-            foreach (Input mode in (Input[])Enum.GetValues(typeof(Input)))
+            foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -57,16 +60,16 @@ namespace HandheldCompanion.Views.Pages
                 switch (mode)
                 {
                     default:
-                    case Input.PlayerSpace:
+                    case MotionInput.PlayerSpace:
                         icon.Glyph = "\uF119";
                         break;
-                    case Input.JoystickCamera:
+                    case MotionInput.JoystickCamera:
                         icon.Glyph = "\uE714";
                         break;
-                    case Input.AutoRollYawSwap:
+                    case MotionInput.AutoRollYawSwap:
                         icon.Glyph = "\uE7F8";
                         break;
-                    case Input.JoystickSteering:
+                    case MotionInput.JoystickSteering:
                         icon.Glyph = "\uEC47";
                         break;
                 }
@@ -83,7 +86,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // draw output modes
-            foreach (Output mode in (Output[])Enum.GetValues(typeof(Output)))
+            foreach (MotionOutput mode in (MotionOutput[])Enum.GetValues(typeof(MotionOutput)))
             {
                 // create panel
                 SimpleStackPanel panel = new SimpleStackPanel() { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
@@ -94,10 +97,10 @@ namespace HandheldCompanion.Views.Pages
                 switch (mode)
                 {
                     default:
-                    case Output.RightStick:
+                    case MotionOutput.RightStick:
                         icon.Glyph = "\uF109";
                         break;
-                    case Output.LeftStick:
+                    case MotionOutput.LeftStick:
                         icon.Glyph = "\uF108";
                         break;
                 }
@@ -116,7 +119,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {
@@ -146,12 +150,13 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    if (pr.executable == profile.executable)
+                    if (pr.Executable == profile.Executable)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -167,7 +172,7 @@ namespace HandheldCompanion.Views.Pages
                 cB_Profiles.SelectedItem = profile;
             });
 
-            switch(source)
+            switch (source)
             {
                 case ProfileUpdateSource.Background:
                 case ProfileUpdateSource.Creation:
@@ -176,17 +181,18 @@ namespace HandheldCompanion.Views.Pages
             }
 
             _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             $"{currentProfile.Name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         public void ProfileDeleted(Profile profile)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
-                    if (pr.executable == profile.executable)
+                    if (pr.Executable == profile.Executable)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -197,7 +203,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void ProfileManagerLoaded()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 cB_Profiles.SelectedItem = ProfileManager.GetDefault();
             });
@@ -263,17 +270,19 @@ namespace HandheldCompanion.Views.Pages
                     Profile profile = new Profile(path);
 
                     // set default value(s)
-                    profile.TDP_value = MainWindow.handheldDevice.nTDP;
+                    profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                     bool exists = false;
 
                     if (ProfileManager.Contains(profile))
                     {
-                        Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureOverwrite1} \"{profile.name}\"?",
-                                                                            $"{Properties.Resources.ProfilesPage_AreYouSureOverwrite2}",
-                                                                            ContentDialogButton.Primary,
-                                                                            $"{Properties.Resources.ProfilesPage_Cancel}",
-                                                                            $"{Properties.Resources.ProfilesPage_Yes}");
+                        Task<ContentDialogResult> result = Dialog.ShowAsync(
+                            String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
+                            String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
+                            ContentDialogButton.Primary,
+                            $"{Properties.Resources.ProfilesPage_Cancel}",
+                            $"{Properties.Resources.ProfilesPage_Yes}");
+
                         await result; // sync call
 
                         switch (result.Result)
@@ -302,17 +311,16 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            switch ((Input)cB_Input.SelectedIndex)
+            switch ((MotionInput)cB_Input.SelectedIndex)
             {
                 default:
-                case Input.JoystickCamera:
-                case Input.PlayerSpace:
-                    page0.Update(currentProfile);
+                case MotionInput.JoystickCamera:
+                case MotionInput.PlayerSpace:
+                    page0.SetProfile();
                     MainWindow.NavView_Navigate(page0);
-                    page1.Update(currentProfile);
                     break;
-                case Input.JoystickSteering:
-                    page1.Update(currentProfile);
+                case MotionInput.JoystickSteering:
+                    page1.SetProfile();
                     MainWindow.NavView_Navigate(page1);
                     break;
             }
@@ -324,7 +332,8 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // update current profile
-            currentProfile = (Profile)cB_Profiles.SelectedItem;
+            Profile profile = (Profile)cB_Profiles.SelectedItem;
+            currentProfile = profile.Clone() as Profile;
 
             // todo: find a way to avoid a useless circle of drawing when profile was update from ProfilesPage
             DrawProfile();
@@ -335,63 +344,46 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            Dispatcher.BeginInvoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // enable all expanders
                 ProfileDetails.IsEnabled = true;
-                ControllerSettings.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled = !currentProfile.isDefault && !currentProfile.isRunning;
+                b_DeleteProfile.IsEnabled = !currentProfile.Default && !currentProfile.Running;
                 // prevent user from renaming default profile
-                tB_ProfileName.IsEnabled = !currentProfile.isDefault;
+                tB_ProfileName.IsEnabled = !currentProfile.Default;
                 // prevent user from setting power settings on default profile
-                PowerSettings.IsEnabled = !currentProfile.isDefault;
+                PowerSettings.IsEnabled = !currentProfile.Default;
                 // disable global settings on default profile
-                GlobalSettings.IsEnabled = !currentProfile.isDefault;
+                GlobalSettings.IsEnabled = !currentProfile.Default;
 
                 // Profile info
-                tB_ProfileName.Text = currentProfile.name;
-                tB_ProfilePath.Text = currentProfile.fullpath;
-                Toggle_EnableProfile.IsOn = currentProfile.isEnabled;
+                tB_ProfileName.Text = currentProfile.Name;
+                tB_ProfilePath.Text = currentProfile.ExecutablePath;
+                Toggle_EnableProfile.IsOn = currentProfile.Enabled;
 
                 // Global settings
-                cB_Whitelist.IsChecked = currentProfile.whitelisted;
-                cB_Wrapper.IsChecked = currentProfile.use_wrapper;
-
-                // Controller settings
-                Toggle_ThumbImproveCircularityLeft.IsOn = currentProfile.thumb_improve_circularity_left;
-                NumberBox_JoystickInnerDeadZoneLeft.Value = currentProfile.thumb_deadzone_inner_left;
-                NumberBox_JoystickOuterDeadZoneLeft.Value = currentProfile.thumb_deadzone_outer_left;
-
-                Toggle_ThumbImproveCircularityRight.IsOn = currentProfile.thumb_improve_circularity_right;
-                NumberBox_JoystickInnerDeadZoneRight.Value = currentProfile.thumb_deadzone_inner_right;
-                NumberBox_JoystickOuterDeadZoneRight.Value = currentProfile.thumb_deadzone_outer_right;
-
-                tb_ProfileAntiDeadzoneLeft.Value = currentProfile.thumb_anti_deadzone_left;
-                tb_ProfileAntiDeadzoneRight.Value = currentProfile.thumb_anti_deadzone_right;
-
-                NumberBox_TriggerInnerDeadZoneLeft.Value = currentProfile.trigger_deadzone_inner_left;
-                NumberBox_TriggerOuterDeadZoneLeft.Value = currentProfile.trigger_deadzone_outer_left;
-                NumberBox_TriggerInnerDeadZoneRight.Value = currentProfile.trigger_deadzone_inner_right;
-                NumberBox_TriggerOuterDeadZoneRight.Value = currentProfile.trigger_deadzone_outer_right;
+                cB_Whitelist.IsChecked = currentProfile.Whitelisted;
+                cB_Wrapper.IsChecked = currentProfile.XInputPlus;
 
                 // Motion control settings
-                tb_ProfileGyroValue.Value = currentProfile.gyrometer;
-                tb_ProfileAcceleroValue.Value = currentProfile.accelerometer;
+                tb_ProfileGyroValue.Value = currentProfile.GyrometerMultiplier;
+                tb_ProfileAcceleroValue.Value = currentProfile.AccelerometerMultiplier;
 
-                cB_GyroSteering.SelectedIndex = currentProfile.steering;
-                cB_InvertHorizontal.IsChecked = currentProfile.inverthorizontal;
-                cB_InvertVertical.IsChecked = currentProfile.invertvertical;
+                cB_GyroSteering.SelectedIndex = currentProfile.SteeringAxis;
+                cB_InvertHorizontal.IsChecked = currentProfile.MotionInvertHorizontal;
+                cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
 
                 // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = currentProfile.TDP_value is not null ? currentProfile.TDP_value : MainWindow.handheldDevice.nTDP;
+                double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
                 TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
                 TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
 
-                TDPToggle.IsOn = currentProfile.TDP_override;
+                TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
 
                 // define slider(s) min and max values based on device specifications
                 var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
@@ -401,20 +393,20 @@ namespace HandheldCompanion.Views.Pages
                 TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
 
                 // UMC settings
-                Toggle_UniversalMotion.IsOn = currentProfile.umc_enabled;
-                cB_Input.SelectedIndex = (int)currentProfile.umc_input;
-                cB_Output.SelectedIndex = (int)currentProfile.umc_output;
-                tb_ProfileUMCAntiDeadzone.Value = currentProfile.umc_anti_deadzone;
-                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.umc_motion_defaultoffon;
+                Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
+                cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
+                cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
+                tb_ProfileUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
+                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
 
                 // todo: improve me ?
-                ProfilesPageHotkey.inputsChord.GamepadButtons = currentProfile.umc_trigger;
-                ProfilesPageHotkey.Refresh();
+                ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
+                ProfilesPageHotkey.DrawInput();
 
                 // display warnings
-                ProfileErrorCode currentError = currentProfile.error;
-                if (currentProfile.isRunning)
-                    currentError = ProfileErrorCode.IsRunning;
+                ProfileErrorCode currentError = currentProfile.ErrorCode;
+                if (currentProfile.Running)
+                    currentError = ProfileErrorCode.Running;
 
                 switch (currentError)
                 {
@@ -425,11 +417,11 @@ namespace HandheldCompanion.Views.Pages
                         cB_Wrapper.IsEnabled = true;
                         break;
 
-                    case ProfileErrorCode.IsRunning:
+                    case ProfileErrorCode.Running:
                     case ProfileErrorCode.MissingExecutable:
                     case ProfileErrorCode.MissingPath:
                     case ProfileErrorCode.MissingPermission:
-                    case ProfileErrorCode.IsDefault:
+                    case ProfileErrorCode.Default:
                         WarningBorder.Visibility = Visibility.Visible;
                         WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
                         cB_Whitelist.IsEnabled = false;     // you can't whitelist an application without path
@@ -444,7 +436,7 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.name}\"?",
+            Task<ContentDialogResult> result = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.Name}\"?",
                                                                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                                                                 ContentDialogButton.Primary,
                                                                 $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -468,52 +460,34 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             // Profile
-            currentProfile.name = tB_ProfileName.Text;
-            currentProfile.fullpath = tB_ProfilePath.Text;
-            currentProfile.isEnabled = (bool)Toggle_EnableProfile.IsOn;
+            currentProfile.Name = tB_ProfileName.Text;
+            currentProfile.ExecutablePath = tB_ProfilePath.Text;
+            currentProfile.Enabled = (bool)Toggle_EnableProfile.IsOn;
 
             // Global settings
-            currentProfile.whitelisted = (bool)cB_Whitelist.IsChecked;
-            currentProfile.use_wrapper = (bool)cB_Wrapper.IsChecked;
-
-            // Controller settings
-            currentProfile.thumb_improve_circularity_left = (bool)Toggle_ThumbImproveCircularityLeft.IsOn;
-            currentProfile.thumb_deadzone_inner_left = (int)NumberBox_JoystickInnerDeadZoneLeft.Value;
-            currentProfile.thumb_deadzone_outer_left = (int)NumberBox_JoystickOuterDeadZoneLeft.Value;
-            
-            currentProfile.thumb_improve_circularity_right = (bool)Toggle_ThumbImproveCircularityRight.IsOn;
-            currentProfile.thumb_deadzone_inner_right = (int)NumberBox_JoystickInnerDeadZoneRight.Value;
-            currentProfile.thumb_deadzone_outer_right = (int)NumberBox_JoystickOuterDeadZoneRight.Value;
-
-            currentProfile.thumb_anti_deadzone_left = (float)tb_ProfileAntiDeadzoneLeft.Value;
-            currentProfile.thumb_anti_deadzone_right = (float)tb_ProfileAntiDeadzoneRight.Value;
-
-            currentProfile.trigger_deadzone_inner_left = (int)NumberBox_TriggerInnerDeadZoneLeft.Value;
-            currentProfile.trigger_deadzone_outer_left = (int)NumberBox_TriggerOuterDeadZoneLeft.Value;
-
-            currentProfile.trigger_deadzone_inner_right = (int)NumberBox_TriggerInnerDeadZoneRight.Value;
-            currentProfile.trigger_deadzone_outer_right = (int)NumberBox_TriggerOuterDeadZoneRight.Value;
+            currentProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
+            currentProfile.XInputPlus = (bool)cB_Wrapper.IsChecked;
 
             // Motion control settings
-            currentProfile.gyrometer = (float)tb_ProfileGyroValue.Value;
-            currentProfile.accelerometer = (float)tb_ProfileAcceleroValue.Value;
+            currentProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
+            currentProfile.AccelerometerMultiplier = (float)tb_ProfileAcceleroValue.Value;
 
-            currentProfile.steering = cB_GyroSteering.SelectedIndex;
-            currentProfile.invertvertical = (bool)cB_InvertVertical.IsChecked;
-            currentProfile.inverthorizontal = (bool)cB_InvertHorizontal.IsChecked;
+            currentProfile.SteeringAxis = cB_GyroSteering.SelectedIndex;
+            currentProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
+            currentProfile.MotionInvertHorizontal = (bool)cB_InvertHorizontal.IsChecked;
 
             // UMC settings
-            currentProfile.umc_enabled = (bool)Toggle_UniversalMotion.IsOn;
-            currentProfile.umc_input = (Input)cB_Input.SelectedIndex;
-            currentProfile.umc_output = (Output)cB_Output.SelectedIndex;
-            currentProfile.umc_anti_deadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
-            currentProfile.umc_motion_defaultoffon = (UMC_Motion_Default)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+            currentProfile.MotionEnabled = (bool)Toggle_UniversalMotion.IsOn;
+            currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
+            currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
+            currentProfile.MotionAntiDeadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
+            currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings
-            currentProfile.TDP_value[0] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[1] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDP_value[2] = (int)TDPBoostSlider.Value;
-            currentProfile.TDP_override = (bool)TDPToggle.IsOn;
+            currentProfile.TDPOverrideValues[0] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDPOverrideValues[1] = (int)TDPSustainedSlider.Value;
+            currentProfile.TDPOverrideValues[2] = (int)TDPBoostSlider.Value;
+            currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
 
             ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.ProfilesPage);
         }
@@ -549,7 +523,7 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.isDefault;
+            cB_Whitelist.IsEnabled = !(bool)Toggle_UniversalMotion.IsOn && !currentProfile.Default;
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -562,94 +536,24 @@ namespace HandheldCompanion.Views.Pages
             // do something
         }
 
-        private void Toggle_ThumbImproveCircularityLeft_Toggled(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
-
-        private void NumberBox_JoystickInnerDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickInnerDeadZoneLeft.Maximum = 100 - NumberBox_JoystickOuterDeadZoneLeft.Value - 1;
-        }
-
-        private void NumberBox_JoystickOuterDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickOuterDeadZoneLeft.Maximum = 100 - NumberBox_JoystickInnerDeadZoneLeft.Value - 1;
-        }
-        private void Toggle_ThumbImproveCircularityRight_Toggled(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
-        private void NumberBox_JoystickInnerDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickInnerDeadZoneRight.Maximum = 100 - NumberBox_JoystickOuterDeadZoneRight.Value - 1;
-        }
-
-        private void NumberBox_JoystickOuterDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_JoystickOuterDeadZoneRight.Maximum = 100 - NumberBox_JoystickInnerDeadZoneRight.Value - 1;
-        }
-        private void NumberBox_TriggerInnerDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerInnerDeadZoneLeft.Maximum = 100 - NumberBox_TriggerOuterDeadZoneLeft.Value - 1;
-        }
-
-        private void NumberBox_TriggerOuterDeadZoneLeft_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerOuterDeadZoneLeft.Maximum = 100 - NumberBox_TriggerInnerDeadZoneLeft.Value - 1;
-        }
-        private void NumberBox_TriggerInnerDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerInnerDeadZoneRight.Maximum = 100 - NumberBox_TriggerOuterDeadZoneRight.Value - 1;
-        }
-
-        private void NumberBox_TriggerOuterDeadZoneRight_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-        {
-            if (currentProfile is null)
-                return;
-
-            NumberBox_TriggerOuterDeadZoneRight.Maximum = 100 - NumberBox_TriggerInnerDeadZoneRight.Value - 1;
-        }
-
         private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cB_Input.SelectedIndex == -1)
                 return;
 
-            Input input = (Input)cB_Input.SelectedIndex;
+            MotionInput input = (MotionInput)cB_Input.SelectedIndex;
 
             // Check which input type is selected and automatically
             // set the most used output joystick accordingly.
             switch (input)
             {
-                case Input.PlayerSpace:
-                case Input.JoystickCamera:
-                case Input.AutoRollYawSwap:
-                    cB_Output.SelectedIndex = (int)Output.RightStick;
+                case MotionInput.PlayerSpace:
+                case MotionInput.JoystickCamera:
+                case MotionInput.AutoRollYawSwap:
+                    cB_Output.SelectedIndex = (int)MotionOutput.RightStick;
                     break;
-                case Input.JoystickSteering:
-                    cB_Output.SelectedIndex = (int)Output.LeftStick;
+                case MotionInput.JoystickSteering:
+                    cB_Output.SelectedIndex = (int)MotionOutput.LeftStick;
                     break;
             }
 
@@ -667,11 +571,8 @@ namespace HandheldCompanion.Views.Pages
             if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
                 return;
 
-            // Prevent sustained value being higher then boost
-            if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
-            {
-                TDPBoostSlider.Value = TDPSustainedSlider.Value;
-            }
+            // set boost slider minimum value to sustained current value
+            TDPBoostSlider.Minimum = TDPSustainedSlider.Value;
         }
 
         private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -679,11 +580,8 @@ namespace HandheldCompanion.Views.Pages
             if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
                 return;
 
-            // Prevent boost value being lower then sustained
-            if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
-            {
-                TDPSustainedSlider.Value = TDPBoostSlider.Value;
-            }
+            // set sustained slider maximum value to boost current value
+            TDPSustainedSlider.Maximum = TDPBoostSlider.Value;
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -697,7 +595,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 case "shortcutProfilesPage@":
                     {
-                        Border hotkeyBorder = hotkey.GetHotkey();
+                        HotkeyControl hotkeyBorder = hotkey.GetControl();
                         if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
                             return;
 
@@ -716,9 +614,25 @@ namespace HandheldCompanion.Views.Pages
             {
                 case "shortcutProfilesPage@":
                 case "shortcutProfilesPage@@":
-                    currentProfile.umc_trigger = inputs.GamepadButtons;
+                    currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
                     break;
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // update layout page with current layout
+            LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
+            layoutTemplate.Layout = currentProfile.Layout;
+            layoutTemplate.Executable = currentProfile.Executable;
+
+            MainWindow.layoutPage.UpdateLayout(layoutTemplate);
+            MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
     }
 }

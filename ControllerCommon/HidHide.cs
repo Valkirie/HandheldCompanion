@@ -28,7 +28,6 @@ namespace ControllerCommon
             if (!string.IsNullOrEmpty(InstallPath))
             {
                 InstallPath = Path.Combine(InstallPath, "x64", "HidHideCLI.exe");
-
                 if (File.Exists(InstallPath))
                 {
                     process = new Process

@@ -19,7 +19,7 @@ namespace HandheldCompanion.Managers
             if (Steam.IsInstalled)
             {
                 // overwrite controller files
-                foreach(var config in SteamPlatform.ControllerFiles)
+                foreach (var config in SteamPlatform.ControllerFiles)
                     Steam.OverwriteFile(config.Key, config.Value, true);
             }
 

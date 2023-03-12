@@ -3,6 +3,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
+using HandheldCompanion.Views.Pages.Profiles;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -15,12 +16,12 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -32,7 +33,7 @@ namespace HandheldCompanion.Views
     public partial class MainWindow : Window
     {
         // devices vars
-        public static Device handheldDevice;
+        public static IDevice CurrentDevice;
 
         // page vars
         private static Dictionary<string, Page> _pages = new();
@@ -44,6 +45,7 @@ namespace HandheldCompanion.Views
         public static AboutPage aboutPage;
         public static OverlayPage overlayPage;
         public static HotkeysPage hotkeysPage;
+        public static LayoutPage layoutPage;
 
         // overlay(s) vars
         public static OverlayModel overlayModel;
@@ -140,8 +142,8 @@ namespace HandheldCompanion.Views
             this.Title += $" ({fileVersionInfo.FileVersion})";
 
             // initialize device
-            handheldDevice = Device.GetDefault();
-            handheldDevice.PullSensors();
+            CurrentDevice = IDevice.GetDefault();
+            CurrentDevice.PullSensors();
 
             // initialize pipe client
             PipeClient.Initialize("ControllerService");
@@ -169,13 +171,14 @@ namespace HandheldCompanion.Views
 
             PlatformManager.Start();
             ProfileManager.Start();
+            LayoutManager.Start();
             ProcessManager.Start();
 
             PowerManager.SystemStatusChanged += OnSystemStatusChanged;
             PowerManager.Start();
 
             DesktopManager.Start();
-            HWiNFOManager.Start();
+            // HWiNFOManager.Start();
 
             // start managers asynchroneously
             foreach (Manager manager in _managers)
@@ -191,13 +194,11 @@ namespace HandheldCompanion.Views
             // update Position and Size
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
             Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("MainWindowWidth"));
-
             Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
-
-            // pull settings
             WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
+            navView.IsPaneOpen = SettingsManager.GetBoolean("navViewIsPaneOpen");
 
             // update FirstStart
             if (IsFirstStart)
@@ -219,7 +220,8 @@ namespace HandheldCompanion.Views
 
         public void SwapWindowState()
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (WindowState)
                 {
@@ -248,6 +250,7 @@ namespace HandheldCompanion.Views
             aboutPage = new AboutPage("about");
             overlayPage = new OverlayPage("overlay");
             hotkeysPage = new HotkeysPage("hotkeys");
+            layoutPage = new LayoutPage("layout");
 
             // store pages
             _pages.Add("ControllerPage", controllerPage);
@@ -256,6 +259,7 @@ namespace HandheldCompanion.Views
             _pages.Add("OverlayPage", overlayPage);
             _pages.Add("SettingsPage", settingsPage);
             _pages.Add("HotkeysPage", hotkeysPage);
+            _pages.Add("LayoutPage", layoutPage);
 
             // handle controllerPage events
             controllerPage.HIDchanged += (HID) =>
@@ -289,9 +293,11 @@ namespace HandheldCompanion.Views
             _managers.Add(performanceManager);
             _managers.Add(updateManager);
 
-            serviceManager.Updated += OnServiceUpdate;
-            serviceManager.Ready += () =>
+            serviceManager.Initialized += () =>
             {
+                // listen for service update once initialized
+                serviceManager.Updated += OnServiceUpdate;
+
                 if (SettingsManager.GetBoolean("StartServiceWithCompanion"))
                 {
                     if (!serviceManager.Exists())
@@ -310,9 +316,9 @@ namespace HandheldCompanion.Views
             };
         }
 
-        private void GenericDeviceUpdated(PnPDevice device)
+        private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
         {
-            handheldDevice.PullSensors();
+            CurrentDevice.PullSensors();
 
             aboutPage.UpdateDevice(device);
             settingsPage.UpdateDevice(device);
@@ -429,7 +435,8 @@ namespace HandheldCompanion.Views
 
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
 
                 switch ((ServiceStartMode)mode)
@@ -533,16 +540,16 @@ namespace HandheldCompanion.Views
                 {
                     case "ServiceStart":
                         _ = serviceManager.StartServiceAsync();
-                        break;
+                        return;
                     case "ServiceStop":
                         _ = serviceManager.StopServiceAsync();
-                        break;
+                        return;
                     case "ServiceInstall":
                         serviceManager.CreateService(CurrentPathService);
-                        break;
+                        return;
                     case "ServiceDelete":
                         serviceManager.DeleteService();
-                        break;
+                        return;
                     default:
                         preNavItemTag = navItemTag;
                         break;
@@ -599,6 +606,7 @@ namespace HandheldCompanion.Views
             DeviceManager.Stop();
             PlatformManager.Stop();
             ProfileManager.Stop();
+            LayoutManager.Stop();
             ProcessManager.Stop();
             EnergyManager.Stop();
             PowerManager.Stop();
@@ -609,6 +617,7 @@ namespace HandheldCompanion.Views
             settingsPage.Page_Closed();
             overlayPage.Page_Closed();
             hotkeysPage.Page_Closed();
+            layoutPage.Page_Closed();
 
             // force kill application
             Environment.Exit(0);
@@ -636,6 +645,8 @@ namespace HandheldCompanion.Views
 
             SettingsManager.SetProperty("MainWindowState", (int)WindowState);
             SettingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
+
+            SettingsManager.SetProperty("navViewIsPaneOpen", navView.IsPaneOpen);
 
             if (SettingsManager.GetBoolean("CloseMinimises") && !appClosing)
             {
@@ -731,9 +742,6 @@ namespace HandheldCompanion.Views
             {
                 case PowerManager.SystemStatus.SystemReady:
                     {
-                        // resume delay (arbitrary)
-                        await Task.Delay(2000);
-
                         // restore inputs manager
                         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                         InputsManager.Start();

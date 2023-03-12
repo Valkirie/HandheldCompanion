@@ -1,6 +1,6 @@
 ﻿namespace ControllerCommon.Devices
 {
-    public class DefaultDevice : Device
+    public class DefaultDevice : IDevice
     {
         public DefaultDevice() : base()
         {

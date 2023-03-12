@@ -1,11 +1,16 @@
 ﻿using ControllerCommon.Controllers;
-using ControllerCommon.Utils;
+using ControllerCommon.Devices;
+using ControllerCommon.Inputs;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Views;
 using ModernWpf.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
 using Application = System.Windows.Application;
 
@@ -13,287 +18,136 @@ namespace HandheldCompanion.Managers
 {
     public class Hotkey
     {
-        // not serialized
+        [JsonIgnore]
         public InputsHotkey inputsHotkey = new();
 
-        // serialized
-        public ushort hotkeyId { get; set; }
-        public InputsChord inputsChord { get; set; } = new();
-        public bool IsPinned { get; set; }
-        public string Name { get; set; }
+        public ushort hotkeyId;
+        public InputsChord inputsChord = new();
+        public bool IsPinned;
+        public string Name;
 
         // HotkeysPage UI
-        public Border mainBorder;
-        public Grid mainGrid = new();
-        public DockPanel mainPanel = new();
-        public FontIcon currentIcon;
-        public SimpleStackPanel contentPanel;
+        private HotkeyControl mainControl = new();
+        private HotkeyQuickControl quickControl = new();
+        private Storyboard storyboard = new Storyboard();
 
-        public TextBlock contentName;
-        public TextBox customName;
-        public TextBlock contentDesc;
+        public event ListeningEventHandler Listening;
+        public delegate void ListeningEventHandler(Hotkey hotkey, ListenerType type);
 
-        public SimpleStackPanel buttonPanel;
-        public Button inputButton;
-        public Button outputButton;
-        public Button eraseButton;
-        public Button pinButton;
+        public event PinningEventHandler Pinning;
+        public delegate void PinningEventHandler(Hotkey hotkey);
 
-        // QuickSettingsPage UI
-        public SimpleStackPanel quickPanel;
-        public Button quickButton;
-        public FontIcon quickIcon;
-        public TextBlock quickName;
+        public event SummonedEventHandler Summoned;
+        public delegate void SummonedEventHandler(Hotkey hotkey);
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Hotkey hotkey);
 
         public Hotkey()
         {
+            mainControl.HotkeyOutput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.Output);
+            mainControl.HotkeyPin.Click += (e, sender) => Pinning?.Invoke(this);
+            quickControl.QuickButton.Click += (e, sender) => Summoned?.Invoke(this);
+
+            // define animation
+            DoubleAnimation opacityAnimation = new DoubleAnimation()
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
+                AutoReverse = true,
+                RepeatBehavior = new RepeatBehavior(1)
+            };
+
+            storyboard.Children.Add(opacityAnimation);
+
+            Storyboard.SetTarget(opacityAnimation, mainControl.HotkeyInput);
+            Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
         }
 
-        public Hotkey(ushort id, InputsHotkey _inputsHotkey)
+        public Hotkey(ushort id) : this()
         {
             hotkeyId = id;
-
-            inputsHotkey = _inputsHotkey;
         }
 
-        public Hotkey(ushort id)
+        public void SetInputsHotkey(InputsHotkey inputsHotkey)
         {
-            hotkeyId = id;
+            this.inputsHotkey = inputsHotkey;
 
-            inputsHotkey = InputsHotkey.InputsHotkeys[id];
-        }
-
-        public void DrawControl(bool embedded = false)
-        {
-            if (mainBorder is not null)
-                return;
-
-            // create main border
-            mainBorder = new Border()
-            {
-                Padding = new Thickness(20, 12, 12, 12),
-                Visibility = Visibility.Visible,
-                Tag = hotkeyId
-            };
-
-            if (!embedded)
-                mainBorder.SetResourceReference(Control.BackgroundProperty, "ExpanderContentBackground");
-
-            // main grid content
-            // Define the Columns
-            if (!embedded)
-            {
-                ColumnDefinition colDef0 = new ColumnDefinition()
-                {
-                    Width = new GridLength(5, GridUnitType.Star),
-                    MinWidth = 200
-                };
-                mainGrid.ColumnDefinitions.Add(colDef0);
-            }
-
-            ColumnDefinition colDef1 = new ColumnDefinition()
-            {
-                Width = new GridLength(5, GridUnitType.Star),
-                MinWidth = 200
-            };
-            mainGrid.ColumnDefinitions.Add(colDef1);
-
-            ColumnDefinition colDef2 = new ColumnDefinition()
-            {
-                Width = new GridLength(50, GridUnitType.Pixel)
-            };
-            mainGrid.ColumnDefinitions.Add(colDef2);
-
-            if (!embedded)
-            {
-                ColumnDefinition colDef3 = new ColumnDefinition()
-                {
-                    Width = new GridLength(50, GridUnitType.Pixel)
-                };
-                mainGrid.ColumnDefinitions.Add(colDef3);
-            }
-
-            // main panel content
-            currentIcon = new FontIcon()
-            {
-                Height = 40,
-                FontFamily = inputsHotkey.fontFamily,
-                FontSize = inputsHotkey.fontSize,
-                Glyph = inputsHotkey.Glyph
-            };
-
-            // create content panel
-            contentPanel = new SimpleStackPanel()
-            {
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(12, 0, 0, 0)
-            };
-
-            contentName = new TextBlock()
-            {
-                TextWrapping = TextWrapping.Wrap,
-                FontSize = 14,
-            };
-
-            customName = new TextBox()
-            {
-                TextWrapping = TextWrapping.Wrap,
-                FontSize = 14,
-                Margin = new Thickness(0, 0, 12, 0)
-            };
-            customName.TextChanged += (sender, e) => customName_Changed();
-
-            contentDesc = new TextBlock()
-            {
-                Text = inputsHotkey.GetDescription(),
-                TextWrapping = TextWrapping.Wrap,
-                FontSize = 12
-            };
-            contentDesc.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-            buttonPanel = new SimpleStackPanel()
-            {
-                Spacing = 6,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            if (!embedded)
-                Grid.SetColumn(buttonPanel, 1);
-            else
-                Grid.SetColumn(buttonPanel, 0);
-
-            inputButton = new Button()
-            {
-                Tag = "Chord",
-                MinWidth = 200,
-                FontSize = 12,
-                Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-            };
-
-            // todo: add localized tooltip text
-            eraseButton = new Button()
-            {
-                Height = 30,
-                Content = new FontIcon() { Glyph = "\uE75C", FontSize = 14 },
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Center,
-                Style = Application.Current.FindResource("AccentButtonStyle") as Style
-            };
-            eraseButton.Click += (sender, e) => ClearButton_Click();
-            Grid.SetColumn(eraseButton, 2);
-
-            // todo: add localized tooltip text
-            pinButton = new Button()
-            {
-                Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            if (!embedded)
-                Grid.SetColumn(pinButton, 3);
-
-            // add elements to main panel
-            buttonPanel.Children.Add(inputButton);
-
-            outputButton = new Button()
-            {
-                Tag = "Combo",
-                MinWidth = 200,
-                FontSize = 12,
-                Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-            };
-
-            // add elements to content panel
             switch (inputsHotkey.hotkeyType)
             {
-                case InputsHotkey.InputsHotkeyType.Custom:
-                    buttonPanel.Children.Add(outputButton);
-                    contentPanel.Children.Add(customName);
+                case InputsHotkeyType.Embedded:
+                    mainControl.HotkeyPanel.Visibility = Visibility.Collapsed;
+                    mainControl.HotkeyPin.Visibility = Visibility.Collapsed;
+
+                    mainControl.HotkeyButtons.Children.Remove(mainControl.HotkeyInput);
+                    mainControl.EmbeddedGrid.Children.Add(mainControl.HotkeyInput);
+
+                    mainControl.HotkeyGrid.Children.Remove(mainControl.HotkeyErase);
+                    mainControl.EmbeddedGrid.Children.Add(mainControl.HotkeyErase);
+
+                    mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.UI);
+                    break;
+                case InputsHotkeyType.Custom:
+                    mainControl.HotkeyCustomName.Visibility = Visibility.Visible;
+                    mainControl.HotkeyOutput.Visibility = Visibility.Visible;
+                    mainControl.HotkeyName.Visibility = Visibility.Collapsed;
+                    mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.Default);
                     break;
                 default:
-                    contentPanel.Children.Add(contentName);
-                    contentPanel.Children.Add(contentDesc);
+                    mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.Default);
                     break;
             }
+        }
 
-            if (!embedded)
-            {
-                // add elements to main panel
-                mainPanel.Children.Add(currentIcon);
-                mainPanel.Children.Add(contentPanel);
+        public void Refresh()
+        {
+            // update name
+            if (string.IsNullOrEmpty(Name) || inputsHotkey.hotkeyType != InputsHotkeyType.Custom)
+                Name = inputsHotkey.GetName();
 
-                // add elements to grid
-                mainGrid.Children.Add(mainPanel);
-            }
-
-            mainGrid.Children.Add(buttonPanel);
-            mainGrid.Children.Add(eraseButton);
-
-            if (!embedded)
-                mainGrid.Children.Add(pinButton);
-
-            // add elements to border
-            mainBorder.Child = mainGrid;
-
-            // draw quick buttons
-            quickPanel = new SimpleStackPanel() { Spacing = 6 };
-
-            quickIcon = new FontIcon()
-            {
-                Height = 40,
-                FontFamily = inputsHotkey.fontFamily,
-                FontSize = inputsHotkey.fontSize,
-                Glyph = inputsHotkey.Glyph
-            };
-
-            quickButton = new Button()
-            {
-                Content = quickIcon,
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-
-            quickName = new TextBlock()
-            {
-                Text = inputsHotkey.GetName(),
-                TextAlignment = TextAlignment.Center,
-                TextWrapping = TextWrapping.Wrap,
-                FontSize = 12
-            };
-
-            // refresh name
-            if (!string.IsNullOrEmpty(Name))
-                quickName.Text = contentName.Text = customName.Text = Name;
-            else
-                quickName.Text = contentName.Text = customName.Text = inputsHotkey.GetName();
-
-            quickPanel.Children.Add(quickButton);
-            quickPanel.Children.Add(quickName);
+            mainControl.HotkeyCustomName.TextChanged += HotkeyCustomName_TextChanged;
+            mainControl.HotkeyErase.Click += HotkeyErase_Click;
 
             // update buttons name and states
-            Refresh();
+            DrawGlyph();
+            DrawName();
+            DrawInput();
+            DrawOutput();
+            DrawPin();
         }
 
-        private void customName_Changed()
+        private void DrawGlyph()
         {
-            this.Name = quickName.Text = customName.Text;
-
-            Updated?.Invoke(this);
+            // update glyphs
+            mainControl.HotkeyIcon.FontFamily = quickControl.QuickIcon.FontFamily = inputsHotkey.fontFamily;
+            mainControl.HotkeyIcon.FontSize = quickControl.QuickIcon.FontSize = inputsHotkey.fontSize;
+            mainControl.HotkeyIcon.Glyph = quickControl.QuickIcon.Glyph = inputsHotkey.Glyph;
         }
 
-        private void ClearButton_Click()
+        private void DrawName()
+        {
+            mainControl.HotkeyDesc.Text = inputsHotkey.GetDescription();
+            mainControl.HotkeyName.Text = quickControl.QuickName.Text = mainControl.HotkeyCustomName.Text = this.Name;
+        }
+
+        private void HotkeyErase_Click(object sender, RoutedEventArgs e)
         {
             // restore default name
-            customName.Text = inputsHotkey.GetName();
+            Name = inputsHotkey.GetName();
 
             HotkeysManager.ClearHotkey(this);
             InputsManager.ClearListening(this);
+
+            DrawName();
+            DrawOutput();
+        }
+
+        private void HotkeyCustomName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Name = mainControl.HotkeyName.Text = quickControl.QuickName.Text = mainControl.HotkeyCustomName.Text;
+
+            Updated?.Invoke(this);
         }
 
         public void StartListening(ListenerType type)
@@ -302,13 +156,15 @@ namespace HandheldCompanion.Managers
             switch (type)
             {
                 case ListenerType.Output:
-                    outputButton.Content = Properties.Resources.OverlayPage_Listening;
-                    outputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    mainControl.HotkeyOutput.Content = Properties.Resources.OverlayPage_Listening;
+                    mainControl.HotkeyOutput.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    DrawOutput();
                     break;
                 case ListenerType.UI:
                 case ListenerType.Default:
-                    inputButton.Content = Properties.Resources.OverlayPage_Listening;
-                    inputButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    mainControl.HotkeyInput.Content = Properties.Resources.OverlayPage_Listening;
+                    mainControl.HotkeyInput.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    DrawInput();
                     break;
             }
         }
@@ -321,111 +177,89 @@ namespace HandheldCompanion.Managers
             switch (type)
             {
                 case ListenerType.Output:
-                    outputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    mainControl.HotkeyInput.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    DrawOutput();
                     break;
                 case ListenerType.UI:
                 case ListenerType.Default:
-                    inputButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    mainControl.HotkeyInput.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    DrawInput();
                     break;
             }
-
-            Refresh();
         }
 
-        public void StartPinning()
+        public void Pinned()
         {
             IsPinned = true;
-
-            Refresh();
+            DrawPin();
         }
 
-        public void StopPinning()
+        public void Unpinned()
         {
             IsPinned = false;
-
-            Refresh();
+            DrawPin();
         }
 
-        public SimpleStackPanel GetButtonPanel()
+        public HotkeyControl GetControl()
         {
-            return buttonPanel;
+            return mainControl;
         }
 
-        public Border GetHotkey()
+        public HotkeyQuickControl GetPin()
         {
-            return mainBorder;
+            return quickControl;
         }
 
-        public SimpleStackPanel GetPin()
+        private bool HasInput()
         {
-            return quickPanel;
+            return inputsChord.State.Buttons.Any();
         }
 
-        public void Refresh()
+        private bool HasOutput()
         {
-            bool hasbuttons = (inputsChord.GamepadButtons != ControllerButtonFlags.None);
-            bool hascombo = inputsChord.OutputKeys.Count != 0;
+            return inputsChord.OutputKeys.Any();
+        }
 
-            string buttons = EnumUtils.GetDescriptionFromEnumValue(inputsChord.GamepadButtons);
-            string combo = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
-
-            if (outputButton is not null)
-            {
-                // comboContent content
-                SimpleStackPanel comboContent = new()
-                {
-                    Orientation = Orientation.Horizontal,
-                    Spacing = 6,
-                };
-
-                if (hascombo)
-                {
-                    comboContent.Children.Add(new TextBlock()
-                    {
-                        Text = combo
-                    });
-                }
-                else
-                {
-                    // set fallback content
-                    TextBlock fallback = new TextBlock()
-                    {
-                        Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput")
-                    };
-                    fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-                    comboContent.Children.Add(fallback);
-                }
-
-                // update button content
-                outputButton.Content = comboContent;
-            }
-
+        public void DrawInput()
+        {
             // mainButton content
-            SimpleStackPanel mainContent = new()
+            SimpleStackPanel inputContent = new()
             {
                 Orientation = Orientation.Horizontal,
-                Spacing = 6,
+                Spacing = 6
             };
 
-            if (hasbuttons)
+            mainControl.MainGrid.IsEnabled = true;
+            if (HasInput())
             {
-                mainContent.Children.Add(new TextBlock()
-                {
-                    Text = buttons
-                });
-            }
+                IController controller = ControllerManager.GetTargetController();
+                IDevice device = MainWindow.CurrentDevice;
 
-            // only display inputsChord type (click, hold) if inputs were captured
-            if (mainContent.Children.Count > 0)
-            {
+                foreach (ButtonFlags button in inputsChord.State.Buttons)
+                {
+                    if (controller is not null && controller.IsButtonSupported(button))
+                    {
+                        FontIcon fontIcon = controller.GetFontIcon(button);
+                        if (fontIcon.Foreground is null)
+                            fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                        inputContent.Children.Add(fontIcon);
+                    }
+                    else if (device is not null)
+                    {
+                        Label buttonLabel = new Label() { Content = device.GetButtonName(button) };
+                        inputContent.Children.Add(buttonLabel);
+                    }
+                }
+
                 TextBlock type = new TextBlock()
                 {
-                    Text = inputsChord.InputsType.ToString()
+                    Text = inputsChord.InputsType.ToString(),
+                    VerticalAlignment = VerticalAlignment.Center
                 };
                 type.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
 
-                mainContent.Children.Add(type);
+                inputContent.Children.Add(type);
             }
             else
             {
@@ -436,47 +270,58 @@ namespace HandheldCompanion.Managers
                 fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
 
                 // set fallback content
-                mainContent.Children.Add(fallback);
+                inputContent.Children.Add(fallback);
             }
 
             // update main button content
-            inputButton.Content = mainContent;
+            mainControl.HotkeyInput.Content = inputContent;
 
-            // update delete button status
-            eraseButton.IsEnabled = hasbuttons || hascombo;
+            DrawErase();
+        }
 
+        private void DrawOutput()
+        {
+            // update button content
+            switch (HasOutput())
+            {
+                case true:
+                    mainControl.HotkeyOutput.Content = string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
+                    mainControl.HotkeyOutput.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseHighBrush");
+                    break;
+                case false:
+                    mainControl.HotkeyOutput.Content = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
+                    mainControl.HotkeyOutput.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                    break;
+            }
+
+            DrawErase();
+        }
+
+        private void DrawPin()
+        {
             // update pin button
             switch (IsPinned)
             {
                 case true:
-                    pinButton.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
-                    pinButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    mainControl.HotkeyPin.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
+                    mainControl.HotkeyPin.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     break;
                 case false:
-                    pinButton.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
-                    pinButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    mainControl.HotkeyPin.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
+                    mainControl.HotkeyPin.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
         }
 
+        private void DrawErase()
+        {
+            // update delete button status
+            mainControl.HotkeyErase.IsEnabled = HasInput() || HasOutput();
+        }
+
         public void Highlight()
         {
-            DoubleAnimation opacityAnimation = new DoubleAnimation()
-            {
-                From = 1.0,
-                To = 0.0,
-                Duration = new Duration(TimeSpan.FromMilliseconds(100)),
-                AutoReverse = true,
-                RepeatBehavior = new RepeatBehavior(1)
-            };
-
-            Storyboard storyboard = new Storyboard();
-            storyboard.Children.Add(opacityAnimation);
-
-            Storyboard.SetTarget(opacityAnimation, inputButton);
-            Storyboard.SetTargetProperty(opacityAnimation, new PropertyPath("Opacity"));
-
-            storyboard.Begin(inputButton);
+            storyboard.Begin(mainControl.HotkeyInput);
         }
 
         public void SetToggle(bool toggle)
@@ -484,12 +329,18 @@ namespace HandheldCompanion.Managers
             switch (toggle)
             {
                 case true:
-                    quickButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    quickControl.QuickButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
                     break;
                 case false:
-                    quickButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    quickControl.QuickButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     break;
             }
+        }
+
+        public void ControllerSelected(IController controller)
+        {
+            // (re)draw inputs based on IController type
+            DrawInput();
         }
     }
 }

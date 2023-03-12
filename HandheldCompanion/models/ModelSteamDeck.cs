@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -82,7 +82,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(B4Symbol);
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -91,20 +91,20 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.B1:
-                            case ControllerButtonFlags.B2:
-                            case ControllerButtonFlags.B3:
-                            case ControllerButtonFlags.B4:
-                            case ControllerButtonFlags.DPadUp:
-                            case ControllerButtonFlags.DPadRight:
-                            case ControllerButtonFlags.DPadDown:
-                            case ControllerButtonFlags.DPadLeft:
-                            case ControllerButtonFlags.LeftThumb:
-                            case ControllerButtonFlags.RightThumb:
+                            case ButtonFlags.B1:
+                            case ButtonFlags.B2:
+                            case ButtonFlags.B3:
+                            case ButtonFlags.B4:
+                            case ButtonFlags.DPadUp:
+                            case ButtonFlags.DPadRight:
+                            case ButtonFlags.DPadDown:
+                            case ButtonFlags.DPadLeft:
+                            case ButtonFlags.LeftThumb:
+                            case ButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticBlack;
                                 break;
-                            case ControllerButtonFlags.OEM2:
-                            case ControllerButtonFlags.OEM3:
+                            case ButtonFlags.OEM2:
+                            case ButtonFlags.OEM3:
                                 buttonMaterial = MaterialPlasticWhite;
                                 break;
                             default:

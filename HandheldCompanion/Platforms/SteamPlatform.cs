@@ -1,8 +1,6 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
-using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 using System;
 using System.Collections.Generic;
@@ -41,7 +39,6 @@ namespace HandheldCompanion.Platforms
 
             // check if platform is installed
             InstallPath = RegistryUtils.GetString(@"SOFTWARE\Wow6432Node\Valve\Steam", "InstallPath");
-
             if (Path.Exists(InstallPath))
             {
                 // update paths

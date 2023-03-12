@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -139,7 +139,7 @@ namespace HandheldCompanion.Models
 
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -148,11 +148,11 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.LeftThumb:
-                            case ControllerButtonFlags.RightThumb:
-                            case ControllerButtonFlags.LeftShoulder:
-                            case ControllerButtonFlags.RightShoulder:
-                            case ControllerButtonFlags.Special:
+                            case ButtonFlags.LeftThumb:
+                            case ButtonFlags.RightThumb:
+                            case ButtonFlags.L2:
+                            case ButtonFlags.R2:
+                            case ButtonFlags.Special:
                                 buttonMaterial = MaterialPlasticBlack;
                                 break;
                             default:

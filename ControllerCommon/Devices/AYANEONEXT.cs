@@ -1,10 +1,10 @@
-﻿using ControllerCommon.Controllers;
+﻿using ControllerCommon.Inputs;
 using System.Collections.Generic;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class AYANEONEXT : Device
+    public class AYANEONEXT : IDevice
     {
         public AYANEONEXT() : base()
         {
@@ -34,16 +34,16 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            listeners.Add(new DeviceChord("Custom key BIG",
+            OEMChords.Add(new DeviceChord("Custom key BIG",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
                 new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
-                false, ControllerButtonFlags.OEM1
+                false, ButtonFlags.OEM1
                 ));
 
-            listeners.Add(new DeviceChord("Custom key Small",
+            OEMChords.Add(new DeviceChord("Custom key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, ControllerButtonFlags.OEM2
+                false, ButtonFlags.OEM2
                 ));
         }
     }

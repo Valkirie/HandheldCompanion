@@ -1,7 +1,9 @@
 ﻿using ControllerCommon;
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers
 {
@@ -13,6 +15,16 @@ namespace HandheldCompanion.Controllers
                 return;
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
+
+            // UI
+            ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
+            ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
+            ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
+            ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
+
+            // Specific buttons
+            SupportedButtons.Add(ButtonFlags.LeftPadClick);
+            SupportedButtons.Add(ButtonFlags.RightPadClick);
         }
 
         public override string ToString()
@@ -38,86 +50,78 @@ namespace HandheldCompanion.Controllers
             }
             catch { }
 
-            if (prevState.GetHashCode() == State.GetHashCode() && prevInjectedButtons == InjectedButtons)
+            /*
+            if (prevState.Buttons.Equals(State.Buttons) && prevState.PointOfViewControllers.Equals(State.PointOfViewControllers) && prevInjectedButtons.Equals(InjectedButtons))
                 return;
+            */
 
-            Inputs.Buttons = InjectedButtons;
+            Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
-            // todo: implement loop
-            if (State.Buttons[0])
-                Inputs.Buttons |= ControllerButtonFlags.B3;
-            if (State.Buttons[1])
-                Inputs.Buttons |= ControllerButtonFlags.B1;
-            if (State.Buttons[2])
-                Inputs.Buttons |= ControllerButtonFlags.B2;
-            if (State.Buttons[3])
-                Inputs.Buttons |= ControllerButtonFlags.B4;
+            Inputs.ButtonState[ButtonFlags.B1] = State.Buttons[1];
+            Inputs.ButtonState[ButtonFlags.B2] = State.Buttons[2];
+            Inputs.ButtonState[ButtonFlags.B3] = State.Buttons[0];
+            Inputs.ButtonState[ButtonFlags.B4] = State.Buttons[3];
 
-            if (State.Buttons[8])
-                Inputs.Buttons |= ControllerButtonFlags.Back;
-            if (State.Buttons[9])
-                Inputs.Buttons |= ControllerButtonFlags.Start;
+            Inputs.ButtonState[ButtonFlags.Back] = State.Buttons[8];
+            Inputs.ButtonState[ButtonFlags.Start] = State.Buttons[9];
 
-            if (State.Buttons[6])
-                Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-            if (State.Buttons[7])
-                Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
+            Inputs.ButtonState[ButtonFlags.L2] = State.Buttons[6];
+            Inputs.ButtonState[ButtonFlags.R2] = State.Buttons[7];
 
-            if (State.Buttons[10])
-                Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
-            if (State.Buttons[11])
-                Inputs.Buttons |= ControllerButtonFlags.RightThumb;
+            Inputs.ButtonState[ButtonFlags.LeftThumb] = State.Buttons[10];
+            Inputs.ButtonState[ButtonFlags.RightThumb] = State.Buttons[11];
 
-            if (State.Buttons[4])
-                Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
-            if (State.Buttons[5])
-                Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
+            Inputs.ButtonState[ButtonFlags.L1] = State.Buttons[4];
+            Inputs.ButtonState[ButtonFlags.R1] = State.Buttons[5];
 
-            if (State.Buttons[12])
-                Inputs.Buttons |= ControllerButtonFlags.Special;
-            if (State.Buttons[13])  // TouchpadClick
-                Inputs.Buttons |= ControllerButtonFlags.OEM1;
+            Inputs.ButtonState[ButtonFlags.Special] = State.Buttons[12];
+
+            Inputs.ButtonState[ButtonFlags.LeftPadClick] = State.Buttons[13];
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = State.Buttons[13];
 
             switch (State.PointOfViewControllers[0])
             {
                 case 0:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
+                    Inputs.ButtonState[ButtonFlags.DPadUp] = true;
                     break;
                 case 4500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+                    Inputs.ButtonState[ButtonFlags.DPadUp] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadRight] = true;
                     break;
                 case 9000:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+                    Inputs.ButtonState[ButtonFlags.DPadRight] = true;
                     break;
                 case 13500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadRight;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+                    Inputs.ButtonState[ButtonFlags.DPadDown] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadRight] = true;
                     break;
                 case 18000:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+                    Inputs.ButtonState[ButtonFlags.DPadDown] = true;
                     break;
                 case 22500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadDown;
+                    Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadDown] = true;
                     break;
                 case 27000:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
+                    Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
                     break;
                 case 31500:
-                    Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-                    Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
+                    Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
+                    Inputs.ButtonState[ButtonFlags.DPadUp] = true;
                     break;
             }
 
-            Inputs.RightTrigger = State.RotationY * byte.MaxValue / ushort.MaxValue;
-            Inputs.LeftTrigger = State.RotationX * byte.MaxValue / ushort.MaxValue;
+            Inputs.AxisState[AxisFlags.L2] = (short)(State.RotationX * byte.MaxValue / ushort.MaxValue);
+            Inputs.AxisState[AxisFlags.R2] = (short)(State.RotationY * byte.MaxValue / ushort.MaxValue);
 
-            Inputs.LeftThumbX = Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.LeftThumbY = Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.ButtonState[ButtonFlags.L3] = Inputs.AxisState[AxisFlags.L2] > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R3] = Inputs.AxisState[AxisFlags.R2] > Gamepad.TriggerThreshold * 8;
 
-            Inputs.RightThumbX = Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
-            Inputs.RightThumbY = Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.LeftThumbX] = (short)(Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue));
+            Inputs.AxisState[AxisFlags.LeftThumbY] = (short)(Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue));
+
+            Inputs.AxisState[AxisFlags.RightThumbX] = (short)(Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue));
+            Inputs.AxisState[AxisFlags.RightThumbY] = (short)(Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue));
 
             base.UpdateInputs();
         }
@@ -135,6 +139,68 @@ namespace HandheldCompanion.Controllers
         public override void Unplug()
         {
             base.Unplug();
+        }
+
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                    return "\u21E3"; // Cross
+                case ButtonFlags.B2:
+                    return "\u21E2"; // Circle
+                case ButtonFlags.B3:
+                    return "\u21E0"; // Square
+                case ButtonFlags.B4:
+                    return "\u21E1"; // Triangle
+                case ButtonFlags.L1:
+                    return "\u21B0";
+                case ButtonFlags.R1:
+                    return "\u21B1";
+                case ButtonFlags.Back:
+                    return "\u21E6";
+                case ButtonFlags.Start:
+                    return "\u21E8";
+                case ButtonFlags.L2:
+                case ButtonFlags.L3:
+                    return "\u21B2";
+                case ButtonFlags.R2:
+                case ButtonFlags.R3:
+                    return "\u21B3";
+                case ButtonFlags.Special:
+                    return "\uE000";
+                case ButtonFlags.LeftPadClick:
+                case ButtonFlags.RightPadClick:
+                    return "\u21E7";
+            }
+
+            return base.GetGlyph(button);
+        }
+
+        public override string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u21B2";
+                case AxisFlags.R2:
+                    return "\u21B3";
+            }
+
+            return base.GetGlyph(axis);
+        }
+
+        public override string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.L2:
+                    return "\u21B2";
+                case AxisLayoutFlags.R2:
+                    return "\u21B3";
+            }
+
+            return base.GetGlyph(axis);
         }
     }
 }

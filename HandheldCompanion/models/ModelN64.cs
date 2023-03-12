@@ -1,4 +1,4 @@
-using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -52,7 +52,7 @@ namespace HandheldCompanion.Models
             model3DGroup.Children.Add(JoystickShield);
 
             // specific button material(s)
-            foreach (ControllerButtonFlags button in Enum.GetValues(typeof(ControllerButtonFlags)))
+            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 Material buttonMaterial = null;
 
@@ -61,34 +61,34 @@ namespace HandheldCompanion.Models
                     {
                         switch (button)
                         {
-                            case ControllerButtonFlags.Start:
+                            case ButtonFlags.Start:
                                 buttonMaterial = MaterialPlasticRed;
                                 break;
-                            case ControllerButtonFlags.B3:
-                            case ControllerButtonFlags.B4:
-                            case ControllerButtonFlags.Back:
-                            case ControllerButtonFlags.RStickDown:
-                            case ControllerButtonFlags.RStickLeft:
-                            case ControllerButtonFlags.RStickRight:
-                            case ControllerButtonFlags.RStickUp:
+                            case ButtonFlags.B3:
+                            case ButtonFlags.B4:
+                            case ButtonFlags.Back:
+                            case ButtonFlags.RightThumbDown:
+                            case ButtonFlags.RightThumbLeft:
+                            case ButtonFlags.RightThumbRight:
+                            case ButtonFlags.RightThumbUp:
                                 buttonMaterial = MaterialPlasticYellow;
                                 break;
-                            case ControllerButtonFlags.B1:
+                            case ButtonFlags.B1:
                                 buttonMaterial = MaterialPlasticBlue;
                                 break;
-                            case ControllerButtonFlags.B2:
+                            case ButtonFlags.B2:
                                 buttonMaterial = MaterialPlasticGreen;
                                 break;
-                            case ControllerButtonFlags.DPadDown:
-                            case ControllerButtonFlags.DPadUp:
-                            case ControllerButtonFlags.DPadLeft:
-                            case ControllerButtonFlags.DPadRight:
-                            case ControllerButtonFlags.LeftShoulder:
-                            case ControllerButtonFlags.RightShoulder:
+                            case ButtonFlags.DPadDown:
+                            case ButtonFlags.DPadUp:
+                            case ButtonFlags.DPadLeft:
+                            case ButtonFlags.DPadRight:
+                            case ButtonFlags.L2:
+                            case ButtonFlags.R2:
                                 buttonMaterial = MaterialPlasticDarkGrey;
                                 break;
-                            case ControllerButtonFlags.LeftThumb:
-                            case ControllerButtonFlags.RightThumb:
+                            case ButtonFlags.LeftThumb:
+                            case ButtonFlags.RightThumb:
                                 buttonMaterial = MaterialPlasticGrey;
                                 break;
                             default:

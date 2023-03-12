@@ -33,8 +33,8 @@
                 </Grid>
 
                 <ui:SimpleStackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch" Spacing="6">
-                    <Label Name="LabelUpdate" Content="{x:Static resx:Resources.SettingsPage_UpToDate}" FontWeight="SemiBold" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></Label>
-                    <Label Name="LabelUpdateDate" Content="{x:Static resx:Resources.SettingsPage_LastChecked}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"></Label>
+                    <TextBlock Name="LabelUpdate" Text="{x:Static resx:Resources.SettingsPage_UpToDate}" Style="{StaticResource BaseTextBlockStyle}" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></TextBlock>
+                    <TextBlock Name="LabelUpdateDate" Text="{x:Static resx:Resources.SettingsPage_LastChecked}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"></TextBlock>
                     <ui:ProgressBar Name="ProgressBarUpdate" IsIndeterminate="True" Visibility="Collapsed" Margin="0,0,10,0"/>
                 </ui:SimpleStackPanel>
 
@@ -49,7 +49,7 @@
 
             <!-- General options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.SettingsPage_GeneralOptions}" FontWeight="SemiBold"></Label>
+                <TextBlock Text="{x:Static resx:Resources.SettingsPage_GeneralOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                 <!-- Auto-start application -->
                 <Border     
@@ -67,8 +67,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartAppDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartAppDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -92,8 +92,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -117,8 +117,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizesDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizesDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -142,8 +142,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppTheme}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppThemeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppTheme}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppThemeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -171,8 +171,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_Backdrop}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_Backdrop}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -201,8 +201,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF2B7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguageDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguageDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -213,7 +213,7 @@
 
             <!-- Notification options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.SettingsPage_NotificationOptions}" FontWeight="SemiBold"></Label>
+                <TextBlock Text="{x:Static resx:Resources.SettingsPage_NotificationOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                 <!-- Toast notification -->
                 <Border                      
@@ -231,8 +231,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotificationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotificationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -243,7 +243,7 @@
 
             <!-- Service options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.SettingsPage_ServiceOptions}" FontWeight="SemiBold"></Label>
+                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ServiceOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                 <!-- Toast notification -->
                 <Border                      
@@ -261,8 +261,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupType}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupType}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -286,8 +286,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -313,8 +313,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -325,7 +325,7 @@
 
             <!-- Sensor options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="{x:Static resx:Resources.SettingsPage_SensorOptions}" FontWeight="SemiBold"></Label>
+                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                 <!-- Sensor Selection -->
                 <Border                      
@@ -343,8 +343,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -401,26 +401,26 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
                         <Grid Grid.Column="1">
-                            <ui:SimpleStackPanel Name="Grid_SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right">
+                            <ui:SimpleStackPanel Name="Grid_SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right" IsEnabled="False">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click" IsEnabled="False"></Button>
+                                    <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
                                     <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
                                 </ui:SimpleStackPanel>
                             </ui:SimpleStackPanel>
@@ -445,8 +445,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE1CA;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -457,7 +457,7 @@
 
             <!-- Power options -->
             <ui:SimpleStackPanel Spacing="6">
-                <Label Content="Power options" FontWeight="SemiBold"></Label>
+                <TextBlock Text="Power options" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
 
                 <!-- EnergyStar -->
                 <Border                      
@@ -475,8 +475,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA95;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -500,8 +500,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -526,8 +526,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMin}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMin}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
@@ -552,8 +552,8 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMax}" FontSize="14"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMax}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 

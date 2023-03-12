@@ -1,16 +1,20 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers
 {
     public class XInputController : IController
     {
+        #region struct
         [StructLayout(LayoutKind.Explicit)]
         protected struct XInputGamepad
         {
@@ -108,6 +112,7 @@ namespace HandheldCompanion.Controllers
             None = 0,
             Xbox = 1024
         }
+        #endregion
 
         #region imports
         [DllImport("xinput1_4.dll", EntryPoint = "#108")]
@@ -127,10 +132,14 @@ namespace HandheldCompanion.Controllers
 
         private Controller Controller;
         private Gamepad Gamepad;
-        private Gamepad prevGamepad;
+
+        private GamepadButtonFlags prevButtons;
 
         private XInputStateSecret State;
         private XInputStateSecret prevState;
+
+        public XInputController()
+        { }
 
         public XInputController(Controller controller)
         {
@@ -159,7 +168,12 @@ namespace HandheldCompanion.Controllers
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
 
-            // ui
+            // UI
+            ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
+            ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
+            ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
+            ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
+
             DrawControls();
             RefreshControls();
         }
@@ -183,85 +197,63 @@ namespace HandheldCompanion.Controllers
             // update secret state
             XInputGetStateSecret13(UserIndex, out State);
 
-            if (prevGamepad.GetHashCode() == Gamepad.GetHashCode() && State.wButtons == prevState.wButtons && prevInjectedButtons == InjectedButtons)
+            /*
+            if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
                 return;
+            */
 
-            Inputs.Buttons = InjectedButtons;
+            Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
-                Inputs.Buttons |= ControllerButtonFlags.B1;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
-                Inputs.Buttons |= ControllerButtonFlags.B2;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.X))
-                Inputs.Buttons |= ControllerButtonFlags.B3;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y))
-                Inputs.Buttons |= ControllerButtonFlags.B4;
+            Inputs.ButtonState[ButtonFlags.B1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
+            Inputs.ButtonState[ButtonFlags.B2] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.B);
+            Inputs.ButtonState[ButtonFlags.B3] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.X);
+            Inputs.ButtonState[ButtonFlags.B4] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y);
 
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start))
-                Inputs.Buttons |= ControllerButtonFlags.Start;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back))
-                Inputs.Buttons |= ControllerButtonFlags.Back;
+            Inputs.ButtonState[ButtonFlags.Start] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
+            Inputs.ButtonState[ButtonFlags.Back] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
 
-            if (Gamepad.LeftTrigger > Gamepad.TriggerThreshold)
-                Inputs.Buttons |= ControllerButtonFlags.LeftTrigger;
-            if (Gamepad.RightTrigger > Gamepad.TriggerThreshold)
-                Inputs.Buttons |= ControllerButtonFlags.RightTrigger;
+            Inputs.ButtonState[ButtonFlags.L2] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
 
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb))
-                Inputs.Buttons |= ControllerButtonFlags.LeftThumb;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb))
-                Inputs.Buttons |= ControllerButtonFlags.RightThumb;
+            Inputs.ButtonState[ButtonFlags.L3] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R3] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
 
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder))
-                Inputs.Buttons |= ControllerButtonFlags.LeftShoulder;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder))
-                Inputs.Buttons |= ControllerButtonFlags.RightShoulder;
+            Inputs.ButtonState[ButtonFlags.LeftThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
+            Inputs.ButtonState[ButtonFlags.RightThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
 
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp))
-                Inputs.Buttons |= ControllerButtonFlags.DPadUp;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown))
-                Inputs.Buttons |= ControllerButtonFlags.DPadDown;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft))
-                Inputs.Buttons |= ControllerButtonFlags.DPadLeft;
-            if (Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight))
-                Inputs.Buttons |= ControllerButtonFlags.DPadRight;
+            Inputs.ButtonState[ButtonFlags.L1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
+            Inputs.ButtonState[ButtonFlags.R1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
+
+            Inputs.ButtonState[ButtonFlags.DPadUp] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp);
+            Inputs.ButtonState[ButtonFlags.DPadDown] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
+            Inputs.ButtonState[ButtonFlags.DPadLeft] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft);
+            Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
 
             // Left Stick
-            if (Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickLeft;
-            else if (Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickRight;
+            Inputs.ButtonState[ButtonFlags.LeftThumbLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftThumbUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
 
-            if (Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickDown;
-            else if (Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.LStickUp;
-
-            Inputs.LeftThumbX = Gamepad.LeftThumbX;
-            Inputs.LeftThumbY = Gamepad.LeftThumbY;
+            Inputs.AxisState[AxisFlags.LeftThumbX] = Gamepad.LeftThumbX;
+            Inputs.AxisState[AxisFlags.LeftThumbY] = Gamepad.LeftThumbY;
 
             // Right Stick
-            if (Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickLeft;
-            else if (Gamepad.RightThumbX > Gamepad.RightThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickRight;
+            Inputs.ButtonState[ButtonFlags.RightThumbLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightThumbUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
 
-            if (Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickDown;
-            else if (Gamepad.RightThumbY > Gamepad.RightThumbDeadZone)
-                Inputs.Buttons |= ControllerButtonFlags.RStickUp;
+            Inputs.AxisState[AxisFlags.RightThumbX] = Gamepad.RightThumbX;
+            Inputs.AxisState[AxisFlags.RightThumbY] = Gamepad.RightThumbY;
 
-            Inputs.RightThumbX = Gamepad.RightThumbX;
-            Inputs.RightThumbY = Gamepad.RightThumbY;
+            Inputs.ButtonState[ButtonFlags.Special] = State.wButtons.HasFlag(XInputStateButtons.Xbox);
 
-            if (State.wButtons.HasFlag(XInputStateButtons.Xbox))
-                Inputs.Buttons |= ControllerButtonFlags.Special;
-
-            Inputs.LeftTrigger = Gamepad.LeftTrigger;
-            Inputs.RightTrigger = Gamepad.RightTrigger;
+            Inputs.AxisState[AxisFlags.L2] = Gamepad.LeftTrigger;
+            Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
 
             // update states
-            prevGamepad = Gamepad;
+            prevButtons = Gamepad.Buttons;
             prevState = State;
 
             base.UpdateInputs();
@@ -292,7 +284,7 @@ namespace HandheldCompanion.Controllers
 
         public override void Rumble(int loop)
         {
-            new Thread(() =>
+            new Thread(async () =>
             {
                 for (int i = 0; i < loop * 2; i++)
                 {
@@ -301,7 +293,7 @@ namespace HandheldCompanion.Controllers
                     else
                         SetVibration(0, 0);
 
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
                 }
             }).Start();
 
@@ -331,6 +323,65 @@ namespace HandheldCompanion.Controllers
                     }
                     break;
             }
+        }
+
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                    return "\u21D3"; // Button A
+                case ButtonFlags.B2:
+                    return "\u21D2"; // Button B
+                case ButtonFlags.B3:
+                    return "\u21D0"; // Button X
+                case ButtonFlags.B4:
+                    return "\u21D1"; // Button Y
+                case ButtonFlags.L1:
+                    return "\u2198";
+                case ButtonFlags.R1:
+                    return "\u2199";
+                case ButtonFlags.Back:
+                    return "\u21FA";
+                case ButtonFlags.Start:
+                    return "\u21FB";
+                case ButtonFlags.L2:
+                case ButtonFlags.L3:
+                    return "\u2196";
+                case ButtonFlags.R2:
+                case ButtonFlags.R3:
+                    return "\u2197";
+                case ButtonFlags.Special:
+                    return "\uE001";
+            }
+
+            return base.GetGlyph(button);
+        }
+
+        public override string GetGlyph(AxisFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisFlags.L2:
+                    return "\u2196";
+                case AxisFlags.R2:
+                    return "\u2197";
+            }
+
+            return base.GetGlyph(axis);
+        }
+
+        public override string GetGlyph(AxisLayoutFlags axis)
+        {
+            switch (axis)
+            {
+                case AxisLayoutFlags.L2:
+                    return "\u2196";
+                case AxisLayoutFlags.R2:
+                    return "\u2197";
+            }
+
+            return base.GetGlyph(axis);
         }
     }
 }

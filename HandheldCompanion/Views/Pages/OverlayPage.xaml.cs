@@ -21,14 +21,15 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
 
             // initialize components
-            OEMControllerRadio.IsEnabled = MainWindow.handheldDevice.ProductSupported;
+            OEMControllerRadio.IsEnabled = MainWindow.CurrentDevice.ProductSupported;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (name)
                 {

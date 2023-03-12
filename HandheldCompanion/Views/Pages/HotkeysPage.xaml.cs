@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
@@ -37,19 +38,22 @@ namespace HandheldCompanion.Views.Pages
         private void HotkeysManager_HotkeyTypeCreated(InputsHotkey.InputsHotkeyType type)
         {
             // These are special shortcut keys with no related events
-            if (type == InputsHotkey.InputsHotkeyType.UI)
+            if (type == InputsHotkey.InputsHotkeyType.Embedded)
                 return;
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 SimpleStackPanel stackPanel = new()
                 {
                     Tag = type,
                     Spacing = 6
                 };
-                string text = EnumUtils.GetDescriptionFromEnumValue(type);
-                stackPanel.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeights.SemiBold });
 
+                TextBlock textBlock = new TextBlock() { Text = EnumUtils.GetDescriptionFromEnumValue(type) };
+                textBlock.SetResourceReference(Control.StyleProperty, "BaseTextBlockStyle");
+
+                stackPanel.Children.Add(textBlock);
                 HotkeysPanel.Children.Add(stackPanel);
             });
         }
@@ -57,23 +61,22 @@ namespace HandheldCompanion.Views.Pages
         private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
         {
             // These are special shortcut keys with no related events
-            if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.UI)
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkey.InputsHotkeyType.Embedded)
                 return;
 
             Type DeviceType = hotkey.inputsHotkey.DeviceType;
-            if (DeviceType is not null && DeviceType != MainWindow.handheldDevice.GetType())
+            if (DeviceType is not null && DeviceType != MainWindow.CurrentDevice.GetType())
                 return;
 
-            Dispatcher.Invoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Border hotkeyBorder = hotkey.GetHotkey();
-                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                    return;
+                HotkeyControl control = hotkey.GetControl();
 
                 ushort idx = (ushort)hotkey.inputsHotkey.hotkeyType;
-                SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];
 
-                stackPanel.Children.Add(hotkeyBorder);
+                SimpleStackPanel stackPanel = (SimpleStackPanel)HotkeysPanel.Children[idx];
+                stackPanel.Children.Add(control);
             });
         }
     }

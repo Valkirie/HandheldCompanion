@@ -171,11 +171,11 @@ namespace ControllerService
                 {
                     switch (ControllerService.CurrentTag)
                     {
-                        case "ProfileSettingsMode0":
+                        case "SettingsMode0":
                             PipeServer.SendMessage(new PipeSensor(AngularVelocity[XInputSensorFlags.Centered], SensorType.Girometer));
                             break;
 
-                        case "ProfileSettingsMode1":
+                        case "SettingsMode1":
                             PipeServer.SendMessage(new PipeSensor(IMU_Angle, SensorType.Inclinometer));
                             break;
                     }

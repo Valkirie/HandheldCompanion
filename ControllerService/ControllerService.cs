@@ -1,5 +1,4 @@
 using ControllerCommon;
-using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using ControllerCommon.Sensors;
@@ -18,7 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.Managers.PowerManager;
 using static ControllerCommon.Utils.DeviceUtils;
-using Device = ControllerCommon.Devices.Device;
+using IDevice = ControllerCommon.Devices.IDevice;
 
 namespace ControllerService
 {
@@ -31,7 +30,7 @@ namespace ControllerService
         private DSUServer DSUServer;
 
         // devices vars
-        public static Device handheldDevice;
+        public static IDevice handheldDevice;
 
         public static string CurrentPath, CurrentPathDep;
         public static string CurrentTag;
@@ -103,10 +102,10 @@ namespace ControllerService
             DeviceManager.UsbDeviceArrived += GenericDeviceArrived;
             DeviceManager.UsbDeviceRemoved += GenericDeviceRemoved;
             DeviceManager.Start();
-            GenericDeviceArrived(null);
+            GenericDeviceArrived(null, null);
 
             // initialize device
-            handheldDevice = Device.GetDefault();
+            handheldDevice = IDevice.GetDefault();
 
             // XInputController settings
             IMU.Initialize(SensorSelection);
@@ -118,7 +117,7 @@ namespace ControllerService
         }
 
         private SerialUSBIMU sensor;
-        private void GenericDeviceArrived(PnPDevice device)
+        private void GenericDeviceArrived(PnPDevice device, DeviceEventArgs obj)
         {
             switch (SensorSelection)
             {
@@ -136,7 +135,7 @@ namespace ControllerService
             }
         }
 
-        private void GenericDeviceRemoved(PnPDevice device)
+        private void GenericDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
         {
             switch (SensorSelection)
             {
@@ -303,10 +302,10 @@ namespace ControllerService
 
                         switch (navigation.Tag)
                         {
-                            case "ProfileSettingsMode0":
+                            case "SettingsMode0":
                                 // do something
                                 break;
-                            case "ProfileSettingsMode1":
+                            case "SettingsMode1":
                                 // do something
                                 break;
                             default:
@@ -375,7 +374,7 @@ namespace ControllerService
                 return;
 
             // restore default profile
-            if (profile is null || !profile.isEnabled)
+            if (profile is null)
                 profile = defaultProfile;
 
             // update current profile
@@ -383,10 +382,10 @@ namespace ControllerService
             ForegroundUpdated?.Invoke();
 
             // update default profile
-            if (profile.isDefault)
+            if (profile.Default)
                 defaultProfile = profile;
             else
-                LogManager.LogInformation("Profile {0} applied", profile.name);
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
         }
 
         internal void UpdateProcess(string executable, PlatformType platform)
@@ -551,9 +550,6 @@ namespace ControllerService
                         // check if service/system was suspended previously
                         if (vTarget is not null)
                             return;
-
-                        // resume delay (arbitrary)
-                        await Task.Delay(4000);
 
                         // (re)initialize sensors
                         IMU.RefreshSensors();
