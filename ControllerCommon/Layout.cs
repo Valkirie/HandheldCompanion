@@ -52,6 +52,11 @@ namespace ControllerCommon
                 default:
                     {
                         ButtonLayout[ButtonFlags.OEM1] = new ButtonActions() { Button = ButtonFlags.Special };
+
+                        ButtonLayout[ButtonFlags.LeftPadClickUp] = new ButtonActions() { Button = ButtonFlags.DPadUp };
+                        ButtonLayout[ButtonFlags.LeftPadClickDown] = new ButtonActions() { Button = ButtonFlags.DPadDown };
+                        ButtonLayout[ButtonFlags.LeftPadClickLeft] = new ButtonActions() { Button = ButtonFlags.DPadLeft };
+                        ButtonLayout[ButtonFlags.LeftPadClickRight] = new ButtonActions() { Button = ButtonFlags.DPadRight };
                     }
                     break;
             }
