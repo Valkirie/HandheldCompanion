@@ -1,4 +1,4 @@
-﻿; -- CodeDependencies.iss --
+; -- CodeDependencies.iss --
 ;
 ; This script shows how to download and install any dependency such as .NET,
 ; Visual C++ or SQL Server during your application's installation process.
@@ -241,7 +241,7 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.14.0.9'
+#define MyAppVersion '0.14.2.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright © BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -262,7 +262,7 @@ end;
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
-AppVerName={#MyAppSetupName} {#MyAppVersion}
+AppVerName={#MyAppSetupName}
 AppCopyright={#MyAppCopyright}
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
@@ -383,25 +383,76 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDum
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 
 [Code]
+#include "./UpdateUninstallWizard.iss"
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  resultCode:integer;
 begin
   if CurUninstallStep = usUninstall then
-  begin
-  
-    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then
-      if MsgBox('Do you want to delete all existing profiles?', mbConfirmation, MB_YESNO) = IDYES
-      then
+  begin     
+    if not(checkListBox.checked[keepAllCheck]) then
+    begin
+      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then  
         DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
-  
-    if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
-      if MsgBox('Do you want to delete all existing hotkeys?', mbConfirmation, MB_YESNO) = IDYES
-      then
+      if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
         DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
-		
-    if MsgBox('Do you want to delete all existing settings?', mbConfirmation, MB_YESNO) = IDYES
-    then
-	  DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
-	  DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+      DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+      DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+      exit;
+    end
+    else
+    begin
+      if not(checkListBox.checked[profilesCheck]) then
+      begin
+        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'))  then  
+          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\profiles'), True, True, True);
+      end;
+
+      if not(checkListBox.checked[hotkeysCheck]) then
+      begin
+        if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
+          DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
+      end;
+      
+      if not(checkListBox.checked[applicationSettingsCheck]) then
+      begin 
+        DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
+        DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
+      end; 
+    end;   
+                   
+    if not(keepHidhideCheckbox.Checked) then
+    begin 
+      if(ShellExec('', 'msiexec.exe', '/X{27AF679E-48DB-4B49-A689-1D6A3A52C472} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+      begin
+        log('Successfully executed Hidhide uninstaller');
+        if(resultCode = 0) then
+          log('Hidhide uninstaller finished successfully')
+        else
+          log('Hidhide uninstaller failed with exit code ' +intToStr(resultCode));
+      end
+      else
+      begin
+        log('Failed to execute Hidhide uninstaller');
+      end;
+    end; 
+           
+    if not(keepVigemCheckbox.Checked) then
+    begin 
+      if(ShellExec('', 'msiexec.exe', '/X{9C581C76-2D68-40F8-AA6F-94D3C5215C05} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then   
+      begin
+        log('Successfully executed Vigem uninstaller');
+        if(resultCode = 0) then
+          log('Vigem uninstaller finished successfully')
+        else
+          log('Vigem uninstaller failed with exit code ' +intToStr(resultCode));
+      end
+      else
+      begin
+        log('Failed to execute Vigem uninstaller');
+      end;
+    end;
   end;
 end;
 

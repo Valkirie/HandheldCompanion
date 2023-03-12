@@ -395,13 +395,13 @@ namespace HandheldCompanion.Managers
                 return;
 
             // read OS specific values
-            bool VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnabled");
+            bool VulnerableDriverBlocklistEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnabled");
 
             // higher interval on Intel CPUs to avoid CPU overload
             if (processor.GetType() == typeof(IntelProcessor))
             {
                 cpuWatchdog.Interval = INTERVAL_INTEL;
-                if (VulnerableDriverBlocklistEnable)
+                if (VulnerableDriverBlocklistEnabled)
                 {
                     cpuWatchdog.Stop();
                     processor.Stop();

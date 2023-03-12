@@ -1014,9 +1014,6 @@
   <data name="WarningElevated" xml:space="preserve">
     <value>以管理員身份運行此工具以解鎖這些設置</value>
   </data>
-  <data name="with motion input enabled, use selected button(s) to disable motion." xml:space="preserve">
-    <value />
-  </data>
   <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
     <value>Force application shutdown</value>
   </data>

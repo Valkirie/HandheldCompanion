@@ -360,6 +360,15 @@ namespace ControllerCommon.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Handheld Companion.
         /// </summary>
+        public static string Enum_InputsHotkeyType_Handheld {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Handheld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Handheld Companion.
+        /// </summary>
         public static string Enum_InputsHotkeyType_HC {
             get {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.HC", resourceCulture);

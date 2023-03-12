@@ -2,14 +2,17 @@
 [![discord](https://img.shields.io/discord/1054321983166365726?color=orange&label=Discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/znHuywFz5M)
 [![YouTube Channel](https://img.shields.io/youtube/channel/subscribers/UCFLra6QVYJYeaWp2mGaq3Og?style=flat-square&color=orange&label=YouTube%20Channel&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 [![Donations](https://img.shields.io/badge/PayPal-00457C?style=flat-square&color=orange&label=Donations&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/BenjaminLSR)
+[![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dhandheldcompanion%26type%3Dpatrons&style=flat-square&color=orange&label=Patreon&logoColor=white)](https://patreon.com/handheldcompanion)
 
-# Controller Service & Handheld Companion
+# Handheld Companion
 
 A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include:
-- Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor.
-- Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4)
-- Overlay, virtual touchpads and 3D controller model
-- Per application based profile settings system
+- Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor. Settings availible for racing, 1st and 3rd person gaming and emulator support.
+- Quicktools overlay, with easy access to various settings and informatio such as TDP, GPU, Screen Hz, Resolution, Brightness, Volume, Powermode control and battery level.
+- Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4).
+- Profile settings system, automatic detection of active game and applying of settings.
+- PS Remote Play support with DS4 controller, including motion and touchpad.
+- 3D Controller overlay for stream recordings.
 
 ## Use cases
 A few examples of the most common use cases are:
@@ -88,13 +91,14 @@ Display a 3D virtual controller, showcasing the motion of the device and all but
   - Machenike HG510 
   - 8BitDo Lite 2
   - Nintendo 64
+  - Dual Sense
 
 ![image](https://thumbs.gfycat.com/BlackandwhiteRareBorderterrier-size_restricted.gif)
 
 ## Contribute
 ### Bugs & Features
 Found a bug and want it fixed? Open a detailed issue on the [GitHub issue tracker](../../issues)!
-Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/CY6GFskwwg).
+Have an idea for a new feature? Let's have a chat about your request on [Discord](https://discord.gg/znHuywFz5M).
 
 ### Questions & Support
 Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Discord server](https://discord.gg/znHuywFz5M), where you're welcome to check out and engage in discussions!

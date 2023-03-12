@@ -391,6 +391,15 @@ namespace HandheldCompanion.Views.QuickPages
             if (!TDPToggle.IsOn)
                 return;
 
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
+            // Prevent sustained value being higher then boost
+            if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
+            {
+                TDPBoostSlider.Value = TDPSustainedSlider.Value;
+            }
+
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.TDPOverrideValues[0] = (int)TDPSustainedSlider.Value;
@@ -408,6 +417,15 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (!TDPToggle.IsOn)
                 return;
+
+            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+                return;
+
+            // Prevent boost value being lower then sustained
+            if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
+            {
+                TDPSustainedSlider.Value = TDPBoostSlider.Value;
+            }
 
             if (Monitor.TryEnter(updateLock))
             {

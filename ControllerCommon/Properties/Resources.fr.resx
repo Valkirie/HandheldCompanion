@@ -262,4 +262,7 @@
   <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
     <value>High</value>
   </data>
+  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
 </root>
