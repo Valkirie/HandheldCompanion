@@ -251,9 +251,10 @@ namespace HandheldCompanion.Views.Pages.Profiles
             if (cB_Layouts.SelectedItem is null)
                 return;
 
-            // TEMPORARY
-            string temp = cB_Layouts.SelectedItem.ToString();
-            LayoutTemplate layoutTemplate = LayoutManager.LayoutTemplates[temp];
+            if (cB_Layouts.SelectedItem.GetType() != typeof(LayoutTemplate))
+                return;
+
+            LayoutTemplate layoutTemplate = (LayoutTemplate)cB_Layouts.SelectedItem;
 
             Task<ContentDialogResult> result = Dialog.ShowAsync(
                 String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, layoutTemplate.Name),
