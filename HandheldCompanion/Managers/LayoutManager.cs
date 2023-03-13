@@ -27,6 +27,9 @@ namespace HandheldCompanion.Managers
         {
             { LayoutTemplate.DefaultLayout.Name, LayoutTemplate.DefaultLayout },
             { LayoutTemplate.NintendoLayout.Name, LayoutTemplate.NintendoLayout },
+            { LayoutTemplate.KeyboardLayout.Name, LayoutTemplate.KeyboardLayout },
+            { LayoutTemplate.GamepadMouseLayout.Name, LayoutTemplate.GamepadMouseLayout },
+            { LayoutTemplate.GamepadJoystickLayout.Name, LayoutTemplate.GamepadJoystickLayout },
 
             { LayoutTemplate.DesktopLayout.Name, LayoutTemplate.DesktopLayout },
         };
@@ -205,6 +208,10 @@ namespace HandheldCompanion.Managers
 
                 // pull action
                 IActions action = currentLayout.ButtonLayout[button];
+
+                if (action is null)
+                    continue;
+
                 switch (action.ActionType)
                 {
                     // button to button
@@ -250,6 +257,10 @@ namespace HandheldCompanion.Managers
 
                 // pull action
                 IActions action = axisLayout.Value;
+
+                if (action is null)
+                    continue;
+
                 switch (action.ActionType)
                 {
                     case ActionType.Joystick:

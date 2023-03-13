@@ -7,6 +7,7 @@ using HandheldCompanion.Views.Pages.Profiles.Controller;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -86,19 +87,59 @@ namespace HandheldCompanion.Views.Pages.Profiles
             }
 
             LayoutManager.Initialized += LayoutManager_Initialized;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
         private void LayoutManager_Initialized()
         {
+            // Get template separator index
             int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
 
             foreach (LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
             {
                 idx++;
-                cB_Layouts.Items.Insert(idx, layoutTemplate);
+                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
             }
 
-            // todo: implement community layout support
+            RefreshLayouts();
+        }
+
+        private void SettingsManager_SettingValueChanged(string? name, object value)
+        {
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                switch (name)
+                {
+                    case "LayoutFilterOnDevice":
+                        CheckBoxDeviceLayouts.IsChecked = Convert.ToBoolean(value);
+                        RefreshLayouts();
+                        break;
+                }
+            });
+        }
+
+        private void RefreshLayouts()
+        {
+            // Get filter settings
+            bool FilterOnDevice = SettingsManager.GetBoolean("LayoutFilterOnDevice");
+
+            foreach (LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
+            {
+                // get parent
+                ComboBoxItem parent = layoutTemplate.Parent as ComboBoxItem;
+
+                if (layoutTemplate.DeviceType is not null && FilterOnDevice)
+                {
+                    if (layoutTemplate.DeviceType != MainWindow.CurrentDevice.GetType())
+                    {
+                        parent.Visibility = Visibility.Collapsed;
+                        continue;
+                    }
+                }
+
+                parent.Visibility = Visibility.Visible;
+            }
         }
 
         private void ButtonMapping_Deleted(ButtonFlags button)
@@ -240,9 +281,9 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 if (item.GetType() != typeof(ComboBoxItem))
                     continue;
 
-                ComboBoxItem comboBoxItem = (ComboBoxItem)item;
-                comboBoxItem.Width = comboBox.ActualWidth - 30;
-                comboBoxItem.InvalidateVisual();
+                ComboBoxItem layoutTemplate = (ComboBoxItem)item;
+                layoutTemplate.Width = comboBox.ActualWidth - 30;
+                layoutTemplate.InvalidateVisual();
             }
         }
 
@@ -251,10 +292,17 @@ namespace HandheldCompanion.Views.Pages.Profiles
             if (cB_Layouts.SelectedItem is null)
                 return;
 
-            if (cB_Layouts.SelectedItem.GetType() != typeof(LayoutTemplate))
+            if (cB_Layouts.SelectedItem.GetType() != typeof(ComboBoxItem))
                 return;
 
-            LayoutTemplate layoutTemplate = (LayoutTemplate)cB_Layouts.SelectedItem;
+            // get parent
+            ComboBoxItem parent = cB_Layouts.SelectedItem as ComboBoxItem;
+
+            if (parent.Content.GetType() != typeof(LayoutTemplate))
+                return;
+
+            // get template
+            LayoutTemplate layoutTemplate = (LayoutTemplate)parent.Content;
 
             Task<ContentDialogResult> result = Dialog.ShowAsync(
                 String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, layoutTemplate.Name),
@@ -287,6 +335,14 @@ namespace HandheldCompanion.Views.Pages.Profiles
         private void cB_Layouts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ButtonApplyLayout.IsEnabled = cB_Layouts.SelectedIndex != -1;
+        }
+
+        private void CheckBoxDeviceLayouts_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            SettingsManager.SetProperty("LayoutFilterOnDevice", CheckBoxDeviceLayouts.IsChecked);
         }
     }
 }

@@ -17,29 +17,21 @@
 
             <!-- Warning -->
             <Border
-                Name="WarningBorder"
-                Background="#F09D6500"
-                Padding="12,12,12,12"
-                Visibility="Collapsed"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                        Name="WarningBorder"
+                        Visibility="Collapsed" d:Visibility="Visible"
+                        Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <Grid>
-                    <ui:SimpleStackPanel HorizontalAlignment="Stretch" Spacing="12" Grid.Column="0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.5*" MinWidth="80"></ColumnDefinition>
-                                <ColumnDefinition Width="9.5*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Grid>
-                                <ui:FontIcon Foreground="#F0F1DE0E" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
-                                <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
-                            </Grid>
-                            <TextBlock Name="WarningContent" TextWrapping="Wrap" Foreground="White" Grid.Column="1" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                        </Grid>
+                <DockPanel>
+                    <Grid>
+                        <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
+                        <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
+                    </Grid>
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Name="WarningContent" TextWrapping="Wrap"  Style="{StaticResource BodyTextBlockStyle}"/>
                     </ui:SimpleStackPanel>
-                </Grid>
+                </DockPanel>
             </Border>
 
             <!-- Device details -->

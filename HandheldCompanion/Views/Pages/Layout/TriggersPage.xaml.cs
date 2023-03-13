@@ -1,6 +1,7 @@
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
@@ -123,6 +124,10 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 if (buttonMapping.ContainsKey(button))
                 {
                     IActions actions = buttonMapping[button];
+
+                    if (actions is null)
+                        actions = new EmptyActions();
+
                     mapping.SetIActions(actions);
                     continue;
                 }
@@ -138,6 +143,10 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 if (axisMapping.ContainsKey(axis))
                 {
                     IActions actions = axisMapping[axis];
+
+                    if (actions is null)
+                        actions = new EmptyActions();
+
                     mapping.SetIActions(actions);
                     continue;
                 }

@@ -23,6 +23,7 @@ namespace ControllerCommon
 
         public Layout(string name) : this()
         {
+            // generic button mapping
             foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
                 if (IController.VirtualButtons.Contains(button))
@@ -31,34 +32,19 @@ namespace ControllerCommon
                 ButtonLayout[button] = new ButtonActions() { Button = button };
             }
 
+            ButtonLayout[ButtonFlags.OEM1] = new ButtonActions() { Button = ButtonFlags.Special };
+            ButtonLayout[ButtonFlags.LeftPadClickUp] = new ButtonActions() { Button = ButtonFlags.DPadUp };
+            ButtonLayout[ButtonFlags.LeftPadClickDown] = new ButtonActions() { Button = ButtonFlags.DPadDown };
+            ButtonLayout[ButtonFlags.LeftPadClickLeft] = new ButtonActions() { Button = ButtonFlags.DPadLeft };
+            ButtonLayout[ButtonFlags.LeftPadClickRight] = new ButtonActions() { Button = ButtonFlags.DPadRight };
+
+            // generic axis mapping
             foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
             {
                 if (IController.VirtualAxis.Contains(axis))
                     continue;
 
                 AxisLayout[axis] = new AxisActions() { Axis = axis };
-            }
-
-            switch (name)
-            {
-                case "Nintendo":
-                    {
-                        ButtonLayout[ButtonFlags.B1] = new ButtonActions() { Button = ButtonFlags.B2 };
-                        ButtonLayout[ButtonFlags.B2] = new ButtonActions() { Button = ButtonFlags.B1 };
-                        ButtonLayout[ButtonFlags.B3] = new ButtonActions() { Button = ButtonFlags.B4 };
-                        ButtonLayout[ButtonFlags.B4] = new ButtonActions() { Button = ButtonFlags.B3 };
-                    }
-                    break;
-                default:
-                    {
-                        ButtonLayout[ButtonFlags.OEM1] = new ButtonActions() { Button = ButtonFlags.Special };
-
-                        ButtonLayout[ButtonFlags.LeftPadClickUp] = new ButtonActions() { Button = ButtonFlags.DPadUp };
-                        ButtonLayout[ButtonFlags.LeftPadClickDown] = new ButtonActions() { Button = ButtonFlags.DPadDown };
-                        ButtonLayout[ButtonFlags.LeftPadClickLeft] = new ButtonActions() { Button = ButtonFlags.DPadLeft };
-                        ButtonLayout[ButtonFlags.LeftPadClickRight] = new ButtonActions() { Button = ButtonFlags.DPadRight };
-                    }
-                    break;
             }
         }
 

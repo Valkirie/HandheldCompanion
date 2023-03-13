@@ -65,27 +65,38 @@
         
         <!-- Padding is set to NavView OpenPaneLength-->
         <Grid Name="MainGrid" Margin="20">
-            <StackPanel>
+            <ui:SimpleStackPanel Spacing="10">
                 <!-- Profile picker -->
                 <ui:SimpleStackPanel Name="LayoutPickerPanel" Spacing="12" d:Visibility="Visible" Visibility="Collapsed">
                     
                     <TextBlock Text="Layout picker" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                    <ComboBox Name="cB_Layouts" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalAlignment="Center" SizeChanged="cB_Layouts_SizeChanged" SelectionChanged="cB_Layouts_SelectionChanged">
+                    <ComboBox Name="cB_Layouts"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Left"
+                              VerticalAlignment="Center"
+                              SizeChanged="cB_Layouts_SizeChanged"
+                              SelectionChanged="cB_Layouts_SelectionChanged">
 
                         <!-- TEMPLATES -->
-                        <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>
+                        <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>                        
+                        <!-- COMMUNITY -->
+                        <ComboBoxItem Name="cB_LayoutsSplitterCommunity" IsEnabled="false">COMMUNITY</ComboBoxItem>
                     </ComboBox>
 
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
-                        <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click" IsEnabled="False">
-                            Apply layout
-                        </Button>
-                        
-                        <!-- Implement me -->
-                        <Button Name="ButtonLayoutSettings" Click="ButtonLayoutSettings_Click" IsEnabled="False">
-                            <ui:SymbolIcon Symbol="Setting"/>
-                        </Button>
-                    </ui:SimpleStackPanel>
+                    <Grid>
+                        <CheckBox Name="CheckBoxDeviceLayouts" IsChecked="True" Checked="CheckBoxDeviceLayouts_Checked" Unchecked="CheckBoxDeviceLayouts_Checked">Show device layouts only</CheckBox>
+
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                            <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click" IsEnabled="False">
+                                Apply layout
+                            </Button>
+
+                            <!-- Implement me -->
+                            <Button Name="ButtonLayoutSettings" Click="ButtonLayoutSettings_Click" IsEnabled="False">
+                                <ui:SymbolIcon Symbol="Setting"/>
+                            </Button>
+                        </ui:SimpleStackPanel>
+                    </Grid>
                 </ui:SimpleStackPanel>
                 
                 <TextBlock Text="Current Layout" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
@@ -93,7 +104,7 @@
                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
                 Name="ContentFrame"
                 HorizontalAlignment="Left"/>
-            </StackPanel>
+            </ui:SimpleStackPanel>
         </Grid>
     </ui:NavigationView>
 </Page>

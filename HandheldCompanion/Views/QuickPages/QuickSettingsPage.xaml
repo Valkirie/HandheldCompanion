@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:HandheldCompanion.Views"
-      xmlns:ext="clr-namespace:HandheldCompanion.Extensions"
       xmlns:ui="http://schemas.modernwpf.com/2019"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"

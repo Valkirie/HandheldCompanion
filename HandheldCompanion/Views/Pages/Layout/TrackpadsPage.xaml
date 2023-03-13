@@ -10,7 +10,6 @@
       xmlns:controls="clr-namespace:HandheldCompanion.Controls"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Margin="20"
       Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
       Loaded="Page_Loaded">
 

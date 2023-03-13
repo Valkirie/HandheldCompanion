@@ -55,7 +55,7 @@
                     <!-- Warning -->
                     <Border
                         Name="WarningBorder"
-                        Visibility="Collapsed"
+                        Visibility="Collapsed" d:Visibility="Visible"
                         Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
                         Padding="15,12,12,12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
