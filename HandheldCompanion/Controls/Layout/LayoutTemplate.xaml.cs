@@ -6,7 +6,6 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace HandheldCompanion.Controls
@@ -99,7 +98,7 @@ namespace HandheldCompanion.Controls
 
             this.Layout = new("Default");
 
-            switch(this.Name)
+            switch (this.Name)
             {
                 case "Desktop":
                     {
