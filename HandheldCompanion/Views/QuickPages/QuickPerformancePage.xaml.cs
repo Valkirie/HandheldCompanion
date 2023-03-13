@@ -64,8 +64,8 @@ namespace HandheldCompanion.Views.QuickPages
                             if (!SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled") || currentProfile.TDPOverrideEnabled)
                                 return;
 
-                            TDPSustainedSlider.Value++;
                             TDPBoostSlider.Value++;
+                            TDPSustainedSlider.Value++;
                         }
                         break;
                     case "decreaseTDP":

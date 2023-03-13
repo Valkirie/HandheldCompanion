@@ -133,8 +133,8 @@ namespace HandheldCompanion.Views.QuickPages
                             if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
                                 return;
 
-                            TDPSustainedSlider.Value++;
                             TDPBoostSlider.Value++;
+                            TDPSustainedSlider.Value++;
                         }
                         break;
                     case "decreaseTDP":
