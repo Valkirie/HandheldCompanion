@@ -252,7 +252,7 @@ namespace HandheldCompanion.Managers
             foreach (Hotkey hotkey in hotkeys)
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     hotkey.Highlight();
                 });

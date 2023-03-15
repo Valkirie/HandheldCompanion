@@ -436,7 +436,7 @@ namespace HandheldCompanion.Views
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
 
                 switch ((ServiceStartMode)mode)

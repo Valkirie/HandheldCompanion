@@ -9,20 +9,17 @@ using System.Collections.Generic;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 
-namespace HandheldCompanion.Views.Pages.Profiles.Controller
+namespace HandheldCompanion.Views.Pages
 {
     /// <summary>
     /// Interaction logic for TriggersPage.xaml
     /// </summary>
-    public partial class TriggersPage : Page
+    public partial class TriggersPage : ILayoutPage
     {
         public static List<ButtonFlags> LeftTrigger = new() { ButtonFlags.L2, ButtonFlags.L3 };
         public static List<AxisLayoutFlags> LeftTriggerAxis = new() { AxisLayoutFlags.L2 };
         public static List<ButtonFlags> RightTrigger = new() { ButtonFlags.R2, ButtonFlags.R3 };
         public static List<AxisLayoutFlags> RightTriggerAxis = new() { AxisLayoutFlags.R2 };
-
-        public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisLayoutFlags, TriggerMapping> MappingAxis = new();
 
         public TriggersPage()
         {
@@ -44,7 +41,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 TriggerMapping axisMapping = new TriggerMapping(axis);
                 LeftTriggerPanel.Children.Add(axisMapping);
 
-                MappingAxis.Add(axis, axisMapping);
+                MappingTriggers.Add(axis, axisMapping);
             }
 
             foreach (ButtonFlags button in RightTrigger)
@@ -60,7 +57,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 TriggerMapping axisMapping = new TriggerMapping(axis);
                 RightTriggerPanel.Children.Add(axisMapping);
 
-                MappingAxis.Add(axis, axisMapping);
+                MappingTriggers.Add(axis, axisMapping);
             }
         }
 
@@ -92,7 +89,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 }
             }
 
-            foreach (var mapping in MappingAxis)
+            foreach (var mapping in MappingTriggers)
             {
                 AxisLayoutFlags flags = mapping.Key;
                 AxisLayout layout = AxisLayout.Layouts[flags];
@@ -111,47 +108,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     string newLabel = Controller.GetAxisName(flags);
                     axisMapping.UpdateIcon(newIcon, newLabel);
                 }
-            }
-        }
-
-        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
-        {
-            foreach (var pair in MappingButtons)
-            {
-                ButtonFlags button = pair.Key;
-                ButtonMapping mapping = pair.Value;
-
-                if (buttonMapping.ContainsKey(button))
-                {
-                    IActions actions = buttonMapping[button];
-
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
-            }
-
-            foreach (var pair in MappingAxis)
-            {
-                AxisLayoutFlags axis = pair.Key;
-                TriggerMapping mapping = pair.Value;
-
-                if (axisMapping.ContainsKey(axis))
-                {
-                    IActions actions = axisMapping[axis];
-
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
             }
         }
 

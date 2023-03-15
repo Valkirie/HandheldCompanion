@@ -9,16 +9,14 @@ using System.Collections.Generic;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 
-namespace HandheldCompanion.Views.Pages.Profiles.Controller
+namespace HandheldCompanion.Views.Pages
 {
     /// <summary>
     /// Interaction logic for DpadPage.xaml
     /// </summary>
-    public partial class DpadPage : Page
+    public partial class DpadPage : ILayoutPage
     {
         public static List<ButtonFlags> DPAD = new() { ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight };
-
-        public Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
 
         public DpadPage()
         {
@@ -32,7 +30,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 DpadStackPanel.Children.Add(buttonMapping);
 
-                Mapping.Add(button, buttonMapping);
+                MappingButtons.Add(button, buttonMapping);
             }
         }
 
@@ -44,7 +42,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // controller based
-            foreach (var mapping in Mapping)
+            foreach (var mapping in MappingButtons)
             {
                 ButtonFlags button = mapping.Key;
                 ButtonMapping buttonMapping = mapping.Value;
@@ -68,28 +66,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
         public void Page_Closed()
         {
-        }
-
-        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping)
-        {
-            foreach (var pair in Mapping)
-            {
-                ButtonFlags button = pair.Key;
-                ButtonMapping mapping = pair.Value;
-
-                if (buttonMapping.ContainsKey(button))
-                {
-                    IActions actions = buttonMapping[button];
-
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
-            }
         }
     }
 }

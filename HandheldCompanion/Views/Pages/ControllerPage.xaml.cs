@@ -149,7 +149,7 @@ namespace HandheldCompanion.Views.Pages
             LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Search for an existing controller, remove it
                 foreach (Border border in InputDevices.Children)
@@ -175,7 +175,7 @@ namespace HandheldCompanion.Views.Pages
             LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Add new controller to list if no existing controller was found
                 FrameworkElement control = Controller.GetControl();

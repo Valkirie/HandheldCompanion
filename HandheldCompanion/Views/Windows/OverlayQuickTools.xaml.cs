@@ -59,7 +59,7 @@ namespace HandheldCompanion.Views.Windows
         private void PowerManager_PowerStatusChanged(PowerStatus status)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
                 BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";

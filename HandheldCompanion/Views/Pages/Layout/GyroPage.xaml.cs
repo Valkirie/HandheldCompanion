@@ -1,12 +1,12 @@
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 
-namespace HandheldCompanion.Views.Pages.Profiles.Controller
+namespace HandheldCompanion.Views.Pages
 {
     /// <summary>
     /// Interaction logic for GyroPage.xaml
     /// </summary>
-    public partial class GyroPage : Page
+    public partial class GyroPage : ILayoutPage
     {
         public GyroPage()
         {

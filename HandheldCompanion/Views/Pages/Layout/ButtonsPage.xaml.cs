@@ -9,22 +9,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Page = System.Windows.Controls.Page;
 
-namespace HandheldCompanion.Views.Pages.Profiles.Controller
+namespace HandheldCompanion.Views.Pages
 {
     /// <summary>
     /// Interaction logic for ButtonsPage.xaml
     /// </summary>
-    public partial class ButtonsPage : Page
+    public partial class ButtonsPage : ILayoutPage
     {
         public static List<ButtonFlags> ABXY = new() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4, ButtonFlags.B5, ButtonFlags.B6, ButtonFlags.B7, ButtonFlags.B8 };
         public static List<ButtonFlags> BUMPERS = new() { ButtonFlags.L1, ButtonFlags.R1 };
         public static List<ButtonFlags> MENU = new() { ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special };
         public static List<ButtonFlags> BACKGRIPS = new() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 };
         public static List<ButtonFlags> OEM = new() { ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10 };
-
-        public Dictionary<ButtonFlags, ButtonMapping> Mapping = new();
 
         public ButtonsPage()
         {
@@ -38,7 +35,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 ButtonsStackPanel.Children.Add(buttonMapping);
 
-                Mapping.Add(button, buttonMapping);
+                MappingButtons.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in BUMPERS)
@@ -46,7 +43,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 BumpersStackPanel.Children.Add(buttonMapping);
 
-                Mapping.Add(button, buttonMapping);
+                MappingButtons.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in MENU)
@@ -54,7 +51,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 MenuStackPanel.Children.Add(buttonMapping);
 
-                Mapping.Add(button, buttonMapping);
+                MappingButtons.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in BACKGRIPS)
@@ -62,7 +59,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 ButtonMapping buttonMapping = new ButtonMapping(button);
                 BACKGRIPSStackPanel.Children.Add(buttonMapping);
 
-                Mapping.Add(button, buttonMapping);
+                MappingButtons.Add(button, buttonMapping);
             }
 
             foreach (ButtonFlags button in OEM)
@@ -74,7 +71,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                 buttonMapping.Visibility = Visibility.Visible;
                 OEMStackPanel.Children.Add(buttonMapping);
 
-                Mapping.Add(button, buttonMapping);
+                MappingButtons.Add(button, buttonMapping);
             }
 
             // manage layout pages visibility
@@ -84,7 +81,7 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             // controller based
-            foreach (var mapping in Mapping)
+            foreach (var mapping in MappingButtons)
             {
                 ButtonFlags button = mapping.Key;
                 ButtonMapping buttonMapping = mapping.Value;
@@ -121,28 +118,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
 
         public void Page_Closed()
         {
-        }
-
-        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping)
-        {
-            foreach (var pair in Mapping)
-            {
-                ButtonFlags button = pair.Key;
-                ButtonMapping mapping = pair.Value;
-
-                if (buttonMapping.ContainsKey(button))
-                {
-                    IActions actions = buttonMapping[button];
-
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
-            }
         }
     }
 }

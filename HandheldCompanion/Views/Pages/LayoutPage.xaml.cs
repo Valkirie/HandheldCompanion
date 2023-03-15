@@ -4,11 +4,11 @@ using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Pages.Profiles.Controller;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
-namespace HandheldCompanion.Views.Pages.Profiles
+namespace HandheldCompanion.Views.Pages
 {
     /// <summary>
     /// Interaction logic for ControllerSettings.xaml
@@ -31,7 +31,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
         private TrackpadsPage trackpadsPage = new();
         private GyroPage gyroPage = new();
 
-        private Dictionary<string, Page> _pages;
+        private Dictionary<string, ILayoutPage> _pages;
 
         private string preNavItemTag;
 
@@ -68,13 +68,13 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 { "GyroPage", gyroPage },
             };
 
-            foreach (ButtonMapping buttonMapping in buttonsPage.Mapping.Values.Union(dpadPage.Mapping.Values).Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values).Union(trackpadsPage.MappingButtons.Values))
+            foreach (ButtonMapping buttonMapping in buttonsPage.MappingButtons.Values.Union(dpadPage.MappingButtons.Values).Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values).Union(trackpadsPage.MappingButtons.Values))
             {
                 buttonMapping.Updated += (sender, action) => ButtonMapping_Updated((ButtonFlags)sender, action);
                 buttonMapping.Deleted += (sender) => ButtonMapping_Deleted((ButtonFlags)sender);
             }
 
-            foreach (TriggerMapping AxisMapping in triggersPage.MappingAxis.Values)
+            foreach (TriggerMapping AxisMapping in triggersPage.MappingTriggers.Values)
             {
                 AxisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
                 AxisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
@@ -138,6 +138,8 @@ namespace HandheldCompanion.Views.Pages.Profiles
             {
                 // get parent
                 ComboBoxItem parent = layoutTemplate.Parent as ComboBoxItem;
+                if (parent is null)
+                    continue;
 
                 if (layoutTemplate.ControllerType is not null && FilterOnDevice)
                 {
@@ -193,17 +195,16 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // manage visibility
             LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
 
-            Refresh();
+            RefreshAsync();
         }
 
-        private void Refresh()
+        private async Task RefreshAsync()
         {
             // cascade update to (sub)pages
-            buttonsPage.Refresh(currentLayout.ButtonLayout);
-            dpadPage.Refresh(currentLayout.ButtonLayout);
-            joysticksPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
-            triggersPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
-            trackpadsPage.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+            Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = 8 }, page =>
+            {
+                page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+            });
 
             // clear layout selection
             cB_Layouts.SelectedIndex = -1;
@@ -331,7 +332,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                         currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
                         currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
 
-                        Refresh();
+                        RefreshAsync();
                     }
                     break;
             }

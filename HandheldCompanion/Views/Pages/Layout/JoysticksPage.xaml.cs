@@ -9,20 +9,17 @@ using System.Collections.Generic;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 
-namespace HandheldCompanion.Views.Pages.Profiles.Controller
+namespace HandheldCompanion.Views.Pages
 {
     /// <summary>
     /// Interaction logic for JoysticksPage.xaml
     /// </summary>
-    public partial class JoysticksPage : Page
+    public partial class JoysticksPage : ILayoutPage
     {
         public static List<ButtonFlags> LeftThumbButtons = new() { ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight };
         public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftThumb };
         public static List<ButtonFlags> RightThumbButtons = new() { ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight };
         public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightThumb };
-
-        public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
 
         public JoysticksPage()
         {
@@ -111,47 +108,6 @@ namespace HandheldCompanion.Views.Pages.Profiles.Controller
                     string newLabel = Controller.GetAxisName(flags);
                     axisMapping.UpdateIcon(newIcon, newLabel);
                 }
-            }
-        }
-
-        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
-        {
-            foreach (var pair in MappingButtons)
-            {
-                ButtonFlags button = pair.Key;
-                ButtonMapping mapping = pair.Value;
-
-                if (buttonMapping.ContainsKey(button))
-                {
-                    IActions actions = buttonMapping[button];
-
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
-            }
-
-            foreach (var pair in MappingAxis)
-            {
-                AxisLayoutFlags axis = pair.Key;
-                AxisMapping mapping = pair.Value;
-
-                if (axisMapping.ContainsKey(axis))
-                {
-                    IActions actions = axisMapping[axis];
-
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
             }
         }
 
