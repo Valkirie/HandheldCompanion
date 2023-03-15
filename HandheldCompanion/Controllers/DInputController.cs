@@ -15,7 +15,7 @@ namespace HandheldCompanion.Controllers
             this.joystick = joystick;
             UserIndex = joystick.Properties.JoystickId;
 
-            if (Details is null)
+            if (details is null)
                 return;
 
             Details = details;

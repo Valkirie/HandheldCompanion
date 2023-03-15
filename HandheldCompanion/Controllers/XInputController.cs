@@ -159,14 +159,12 @@ namespace HandheldCompanion.Controllers
 
                 var devices = DeviceManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
                 Details = devices.FirstOrDefault();
-
-                if (Details is null)
-                    return;
-
-                Details.isHooked = true;
             }
-            else
+
+            if (Details is null)
                 return;
+
+            Details.isHooked = true;
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
 

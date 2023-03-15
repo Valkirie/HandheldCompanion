@@ -29,7 +29,7 @@ namespace HandheldCompanion.Controllers
 
         public NeptuneController(PnPDetails details)
         {
-            if (Details is null)
+            if (details is null)
                 return;
 
             Details = details;
