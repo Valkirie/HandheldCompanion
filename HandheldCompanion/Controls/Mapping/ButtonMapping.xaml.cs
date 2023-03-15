@@ -31,7 +31,6 @@ namespace HandheldCompanion.Controls
             this.prevValue = button;
 
             this.Icon.Glyph = button.ToString();
-            this.Name.Text = MainWindow.CurrentDevice.GetButtonName(button);
         }
 
         public void UpdateIcon(FontIcon newIcon, string newLabel)

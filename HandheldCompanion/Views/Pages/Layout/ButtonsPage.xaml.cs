@@ -91,7 +91,10 @@ namespace HandheldCompanion.Views.Pages
 
                 // specific buttons are handled elsewhere
                 if (OEM.Contains(button))
+                {
+                    buttonMapping.Name.Text = MainWindow.CurrentDevice.GetButtonName(button);
                     continue;
+                }
 
                 // update mapping visibility
                 if (!Controller.IsButtonSupported(button))
