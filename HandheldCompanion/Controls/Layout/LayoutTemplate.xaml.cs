@@ -4,6 +4,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
 using Newtonsoft.Json;
 using System;
 using System.Windows.Controls;
@@ -71,7 +72,7 @@ namespace HandheldCompanion.Controls
         public Layout Layout { get; set; } = new();
 
         [JsonProperty]
-        public Type DeviceType { get; set; }
+        public Type ControllerType { get; set; }
 
         #region events
         public event UpdatedEventHandler Updated;
@@ -94,7 +95,7 @@ namespace HandheldCompanion.Controls
             this.IsTemplate = isTemplate;
             this.IsCommunity = isCommunity;
 
-            this.DeviceType = deviceType;
+            this.ControllerType = deviceType;
 
             this.Layout = new("Default");
 
@@ -219,7 +220,7 @@ namespace HandheldCompanion.Controls
         public static LayoutTemplate DefaultLayout = new LayoutTemplate("Gamepad (XBOX)", "This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc.", "HandheldCompanion", true, false);
         public static LayoutTemplate NintendoLayout = new LayoutTemplate("Gamepad (Nintendo)", "This template is for games that already have built-in gamepad support. Intended for games that are designed with a Nintendo gamepad in mind.", "HandheldCompanion", true, false);
         public static LayoutTemplate KeyboardLayout = new LayoutTemplate("Keyboard (WASD) and Mouse", "This template works great for the games that were designed with a keyboard and mouse in mind, without gamepad support. The controller will drive the game's keyboard based events with buttons, but will make assumptions about which buttons move you around (WASD for movement, space for jump, etc.). The right pad will emulate the movement of a mouse.", "HandheldCompanion", true, false);
-        public static LayoutTemplate GamepadMouseLayout = new LayoutTemplate("Gamepad with Mouse Trackpad", "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.", "HandheldCompanion", true, false, typeof(SteamDeck));
-        public static LayoutTemplate GamepadJoystickLayout = new LayoutTemplate("Gamepad with Joystick Trackpad", "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.", "HandheldCompanion", true, false, typeof(SteamDeck));
+        public static LayoutTemplate GamepadMouseLayout = new LayoutTemplate("Gamepad with Mouse Trackpad", "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.", "HandheldCompanion", true, false, typeof(NeptuneController));
+        public static LayoutTemplate GamepadJoystickLayout = new LayoutTemplate("Gamepad with Joystick Trackpad", "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.", "HandheldCompanion", true, false, typeof(NeptuneController));
     }
 }
