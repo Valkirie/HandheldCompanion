@@ -220,7 +220,7 @@ namespace HandheldCompanion.Views
         public void SwapWindowState()
         {
             // UI thread
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 switch (WindowState)
                 {
@@ -435,7 +435,7 @@ namespace HandheldCompanion.Views
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             // UI thread
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
 
                 switch ((ServiceStartMode)mode)

@@ -191,7 +191,7 @@ namespace HandheldCompanion.Managers
             int ProductId = details.attributes.ProductID;
 
             // UI thread
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // initialize controller vars
                 Joystick joystick = null;
@@ -337,7 +337,7 @@ namespace HandheldCompanion.Managers
             }
 
             // UI thread
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 XInputController controller = new(_controller);
 
