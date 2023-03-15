@@ -1,4 +1,5 @@
 using ControllerCommon.Actions;
+using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
@@ -86,7 +87,14 @@ namespace HandheldCompanion.Views.Pages.Profiles
             }
 
             LayoutManager.Initialized += LayoutManager_Initialized;
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private void ControllerManager_ControllerSelected(IController Controller)
+        {
+            RefreshLayoutList();
         }
 
         private void LayoutManager_Initialized()
@@ -100,7 +108,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
             }
 
-            RefreshLayouts();
+            RefreshLayoutList();
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
@@ -112,25 +120,28 @@ namespace HandheldCompanion.Views.Pages.Profiles
                 {
                     case "LayoutFilterOnDevice":
                         CheckBoxDeviceLayouts.IsChecked = Convert.ToBoolean(value);
-                        RefreshLayouts();
+                        RefreshLayoutList();
                         break;
                 }
             });
         }
 
-        private void RefreshLayouts()
+        private void RefreshLayoutList()
         {
             // Get filter settings
             bool FilterOnDevice = SettingsManager.GetBoolean("LayoutFilterOnDevice");
+
+            // Get current controller
+            IController controller = ControllerManager.GetTargetController();
 
             foreach (LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
             {
                 // get parent
                 ComboBoxItem parent = layoutTemplate.Parent as ComboBoxItem;
 
-                if (layoutTemplate.DeviceType is not null && FilterOnDevice)
+                if (layoutTemplate.ControllerType is not null && FilterOnDevice)
                 {
-                    if (layoutTemplate.DeviceType != MainWindow.CurrentDevice.GetType())
+                    if (layoutTemplate.ControllerType != controller.GetType())
                     {
                         parent.Visibility = Visibility.Collapsed;
                         continue;
@@ -182,10 +193,10 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // manage visibility
             LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
 
-            RefreshLayout();
+            Refresh();
         }
 
-        private void RefreshLayout()
+        private void Refresh()
         {
             // cascade update to (sub)pages
             buttonsPage.Refresh(currentLayout.ButtonLayout);
@@ -320,7 +331,7 @@ namespace HandheldCompanion.Views.Pages.Profiles
                         currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
                         currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
 
-                        RefreshLayout();
+                        Refresh();
                     }
                     break;
             }
