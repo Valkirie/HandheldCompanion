@@ -15,6 +15,9 @@ namespace HandheldCompanion.Controllers
             this.joystick = joystick;
             UserIndex = joystick.Properties.JoystickId;
 
+            if (Details is null)
+                return;
+
             Details = details;
             Details.isHooked = true;
 
@@ -28,8 +31,9 @@ namespace HandheldCompanion.Controllers
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(Details.Name))
-                return Details.Name;
+            string baseName = base.ToString();
+            if (!string.IsNullOrEmpty(baseName))
+                return baseName;
             return joystick.Information.ProductName;
         }
 

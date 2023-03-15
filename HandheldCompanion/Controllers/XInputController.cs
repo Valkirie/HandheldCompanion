@@ -165,6 +165,8 @@ namespace HandheldCompanion.Controllers
 
                 Details.isHooked = true;
             }
+            else
+                return;
 
             InputsTimer.Tick += (sender, e) => UpdateInputs();
 
@@ -180,8 +182,9 @@ namespace HandheldCompanion.Controllers
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(Details.Name))
-                return Details.Name;
+            string baseName = base.ToString();
+            if (!string.IsNullOrEmpty(baseName))
+                return baseName;
             return $"XInput Controller {UserIndex}";
         }
 

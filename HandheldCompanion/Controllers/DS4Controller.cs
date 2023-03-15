@@ -29,8 +29,9 @@ namespace HandheldCompanion.Controllers
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(Details.Name))
-                return Details.Name;
+            string baseName = base.ToString();
+            if (!string.IsNullOrEmpty(baseName))
+                return baseName;
             return joystick.Information.ProductName;
         }
 

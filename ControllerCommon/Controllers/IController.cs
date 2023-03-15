@@ -146,12 +146,16 @@ namespace ControllerCommon.Controllers
 
         public bool IsVirtual()
         {
-            return Details.isVirtual;
+            if (Details is not null)
+                return Details.isVirtual;
+            return true;
         }
 
         public bool IsGaming()
         {
-            return Details.isGaming;
+            if (Details is not null)
+                return Details.isGaming;
+            return false;
         }
 
         public int GetUserIndex()
@@ -161,17 +165,23 @@ namespace ControllerCommon.Controllers
 
         public string GetInstancePath()
         {
-            return Details.deviceInstanceId;
+            if (Details is not null)
+                return Details.deviceInstanceId;
+            return string.Empty;
         }
 
         public string GetContainerInstancePath()
         {
-            return Details.baseContainerDeviceInstanceId;
+            if (Details is not null)
+                return Details.baseContainerDeviceInstanceId;
+            return string.Empty;
         }
 
         public override string ToString()
         {
-            return Details.Name;
+            if (Details is not null)
+                return Details.Name;
+            return string.Empty;
         }
 
         protected void DrawControls()

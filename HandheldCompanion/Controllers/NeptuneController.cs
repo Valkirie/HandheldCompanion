@@ -29,10 +29,10 @@ namespace HandheldCompanion.Controllers
 
         public NeptuneController(PnPDetails details)
         {
-            Details = details;
             if (Details is null)
                 return;
 
+            Details = details;
             Details.isHooked = true;
 
             Capacities |= ControllerCapacities.Gyroscope;
@@ -86,8 +86,9 @@ namespace HandheldCompanion.Controllers
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(Details.Name))
-                return Details.Name;
+            string baseName = base.ToString();
+            if (!string.IsNullOrEmpty(baseName))
+                return baseName;
             return "Steam Controller Neptune";
         }
 
