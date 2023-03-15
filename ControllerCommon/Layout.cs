@@ -3,6 +3,7 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace ControllerCommon
 {
@@ -44,7 +45,16 @@ namespace ControllerCommon
                 if (IController.VirtualAxis.Contains(axis))
                     continue;
 
-                AxisLayout[axis] = new AxisActions() { Axis = axis };
+                switch(axis)
+                {
+                    case AxisLayoutFlags.L2:
+                    case AxisLayoutFlags.R2:
+                        AxisLayout[axis] = new TriggerActions() { Axis = axis };
+                        break;
+                    default:
+                        AxisLayout[axis] = new AxisActions() { Axis = axis };
+                        break;
+                }
             }
         }
 

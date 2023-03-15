@@ -2,7 +2,7 @@
 using ControllerCommon.Inputs;
 using System;
 
-namespace HandheldCompanion.Actions
+namespace ControllerCommon.Actions
 {
     [Serializable]
     public class TriggerActions : IActions
