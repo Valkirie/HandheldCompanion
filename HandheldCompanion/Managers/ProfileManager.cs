@@ -185,13 +185,15 @@ namespace HandheldCompanion.Managers
             {
                 var profile = GetProfileFromExec(proc.Name);
 
+                // raise event
+                Applied?.Invoke(profile);
+
                 // skip if is current profile
                 if (currentProfile == profile)
                     return;
 
                 // raise event
                 Discarded?.Invoke(currentProfile, true);
-                Applied?.Invoke(profile);
 
                 // update current profile
                 currentProfile = profile;
