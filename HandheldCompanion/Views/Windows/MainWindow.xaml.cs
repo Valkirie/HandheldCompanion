@@ -3,7 +3,6 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
-using HandheldCompanion.Views.Pages.Profiles;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;

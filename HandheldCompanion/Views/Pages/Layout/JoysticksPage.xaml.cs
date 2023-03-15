@@ -1,13 +1,10 @@
-using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System.Collections.Generic;
 using System.Windows;
-using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {

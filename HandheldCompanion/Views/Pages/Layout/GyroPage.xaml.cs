@@ -1,5 +1,4 @@
 using System.Windows;
-using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {
