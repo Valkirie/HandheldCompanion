@@ -8,10 +8,21 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" 
              d:DesignHeight="80" d:DesignWidth="800" d:Background="White">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
-    <StackPanel HorizontalAlignment="Stretch">
-        <TextBlock Name="_Author" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}">HandheldCompanion</TextBlock>
-        <TextBlock Name="_Name" Style="{StaticResource BaseTextBlockStyle}">Gamepad</TextBlock>
-        <TextBlock Name="_Description" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap">The template works best for games that are designed with a gamepad in mind.</TextBlock>
-    </StackPanel>
+        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <StackPanel Grid.Column="1">
+            <Grid>
+                <TextBlock Name="_Author" HorizontalAlignment="Right">HandheldCompanion</TextBlock>
+                <TextBlock Name="_Name" Style="{StaticResource BaseTextBlockStyle}" HorizontalAlignment="Left">Gamepad</TextBlock>
+            </Grid>
+            <TextBlock Name="_Description" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap">The template works best for games that are designed with a gamepad in mind.</TextBlock>
+        </StackPanel>
+    </Grid>
 </UserControl>
