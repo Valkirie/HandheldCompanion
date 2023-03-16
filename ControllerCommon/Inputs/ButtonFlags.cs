@@ -64,22 +64,22 @@ namespace ControllerCommon.Inputs
         OEM6 = 35, OEM7 = 36, OEM8 = 37, OEM9 = 38, OEM10 = 39,
 
         // Steam Deck
-        [Description("Touch")]
+        [Description("Left Pad Touch")]
         LeftPadTouch = 40,
-        [Description("Touch")]
+        [Description("Left Pad Touch")]
         RightPadTouch = 41,
 
-        [Description("Click")]
+        [Description("Left Pad Click")]
         LeftPadClick = 42,
-        [Description("Click")]
+        [Description("Left Pad Click")]
         RightPadClick = 43,
 
         L4 = 46, R4 = 47,
         L5 = 48, R5 = 49,
 
-        [Description("Touch")]
+        [Description("Left Thumb Touch")]
         LeftThumbTouch = 50,
-        [Description("Touch")]
+        [Description("Left Thumb Touch")]
         RightThumbTouch = 51,
 
         [Description("Up")]

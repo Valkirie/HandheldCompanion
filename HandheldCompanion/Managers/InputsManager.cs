@@ -474,13 +474,39 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateReport(ButtonState buttonState)
         {
-            // short-press or half-press inputs shouldn't be used as hotkeys
-            buttonState.State[ButtonFlags.L3] = false;
-            buttonState.State[ButtonFlags.R3] = false;
-            buttonState.State[ButtonFlags.LeftThumbTouch] = false;
-            buttonState.State[ButtonFlags.RightThumbTouch] = false;
-            buttonState.State[ButtonFlags.LeftPadTouch] = false;
-            buttonState.State[ButtonFlags.RightPadTouch] = false;
+            // half-press should be removed if full-press is also present
+            if (currentChord.State[ButtonFlags.L2] || buttonState.State[ButtonFlags.L2])
+            {
+                currentChord.State[ButtonFlags.L3] = false;
+                buttonState.State[ButtonFlags.L3] = false;
+            }
+            if (currentChord.State[ButtonFlags.R2] || buttonState.State[ButtonFlags.R2])
+            {
+                currentChord.State[ButtonFlags.R3] = false;
+                buttonState.State[ButtonFlags.R3] = false;
+            }
+
+            if (currentChord.State[ButtonFlags.LeftThumb] || buttonState.State[ButtonFlags.LeftThumb])
+            {
+                currentChord.State[ButtonFlags.LeftThumbTouch] = false;
+                buttonState.State[ButtonFlags.LeftThumbTouch] = false;
+            }
+            if (currentChord.State[ButtonFlags.RightThumb] || buttonState.State[ButtonFlags.RightThumb])
+            {
+                currentChord.State[ButtonFlags.RightThumbTouch] = false;
+                buttonState.State[ButtonFlags.RightThumbTouch] = false;
+            }
+
+            if (currentChord.State[ButtonFlags.LeftPadClick] || buttonState.State[ButtonFlags.LeftPadClick])
+            {
+                currentChord.State[ButtonFlags.LeftPadTouch] = false;
+                buttonState.State[ButtonFlags.LeftPadTouch] = false;
+            }
+            if (currentChord.State[ButtonFlags.RightPadClick] || buttonState.State[ButtonFlags.RightPadClick])
+            {
+                currentChord.State[ButtonFlags.RightPadTouch] = false;
+                buttonState.State[ButtonFlags.RightPadTouch] = false;
+            }
 
             if (prevState.Equals(buttonState))
                 return;
