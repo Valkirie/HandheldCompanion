@@ -235,13 +235,14 @@ namespace HandheldCompanion.Managers
                 switch (VendorId)
                 {
                     // SONY
-                    case 1356:
+                    case 0x054C:
                         {
                             switch (ProductId)
                             {
-                                // DualShock4
-                                case 1476:
-                                case 2508:
+                                case 0x0268:    // DualShock 3
+                                case 0x05C4:    // DualShock 4
+                                case 0x09CC:    // DualShock 4 (2nd Gen)
+                                case 0x0CE6:    // DualSense
                                     controller = new DS4Controller(joystick, details);
                                     break;
                             }
