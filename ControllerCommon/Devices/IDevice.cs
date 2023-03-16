@@ -18,8 +18,8 @@ namespace ControllerCommon.Devices
         None = 0,
         InternalSensor = 1,
         ExternalSensor = 2,
-        ControllerSensor = 3,
-        Trackpads = 4,
+        ControllerSensor = 4,
+        Trackpads = 8,
     }
 
     public abstract class IDevice
