@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ToastOnTargetConnected" xml:space="preserve">
-    <value>Virtual controller is now connected</value>
+    <value>is now connected</value>
   </data>
   <data name="ToastOnTargetDisconnected" xml:space="preserve">
-    <value>Virtual controller is now disconnected</value>
+    <value>is now disconnected</value>
   </data>
 </root>

@@ -209,7 +209,7 @@ namespace HandheldCompanion.Managers
 
                 // send toast
                 // todo: localize me
-                MainWindow.toastManager.SendToast($"Profile {profile.Name} applied");
+                ToastManager.SendToast($"Profile {profile.Name} applied");
 
                 profile.Running = true;
                 profile.ExecutablePath = proc.Path;
@@ -308,7 +308,7 @@ namespace HandheldCompanion.Managers
 
                 // send toast
                 // todo: localize me
-                MainWindow.toastManager.SendToast($"Profile {profile.Name} deleted");
+                ToastManager.SendToast($"Profile {profile.Name} deleted");
 
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
             }

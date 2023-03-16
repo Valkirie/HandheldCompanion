@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Controllers;
+﻿using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
@@ -353,8 +354,10 @@ namespace HandheldCompanion.Managers
                     // temporary settings
                     case "shortcutDesktopLayout":
                         {
-                            bool prevValue = SettingsManager.GetBoolean(listener, true);
-                            SettingsManager.SetProperty(listener, !prevValue, false, true);
+                            bool value = !SettingsManager.GetBoolean(listener, true);
+                            SettingsManager.SetProperty(listener, value, false, true);
+
+                            ToastManager.SendToast("Desktop Layout", $"is now {(value ? "enabled" : "disabled")}");
                         }
                         break;
 

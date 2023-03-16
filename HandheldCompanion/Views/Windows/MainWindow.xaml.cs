@@ -53,7 +53,6 @@ namespace HandheldCompanion.Views
 
         // manager(s) vars
         private static List<Manager> _managers = new();
-        public static ToastManager toastManager;
         public static ServiceManager serviceManager;
         public static TaskManager taskManager;
         public static PerformanceManager performanceManager;
@@ -209,7 +208,7 @@ namespace HandheldCompanion.Views
             switch (name)
             {
                 case "ToastEnable":
-                    toastManager.Enabled = Convert.ToBoolean(value);
+                    ToastManager.IsEnabled = Convert.ToBoolean(value);
                     break;
             }
 
@@ -278,15 +277,12 @@ namespace HandheldCompanion.Views
         private void loadManagers()
         {
             // initialize managers
-            toastManager = new ToastManager("HandheldCompanion");
-
             serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName, Properties.Resources.ServiceDescription);
             taskManager = new TaskManager("HandheldCompanion", CurrentExe);
             performanceManager = new();
             updateManager = new();
 
             // store managers
-            _managers.Add(toastManager);
             _managers.Add(serviceManager);
             _managers.Add(taskManager);
             _managers.Add(performanceManager);
@@ -412,7 +408,7 @@ namespace HandheldCompanion.Views
             {
                 case PipeCode.SERVER_TOAST:
                     PipeServerToast toast = (PipeServerToast)message;
-                    toastManager.SendToast(toast.title, toast.content, toast.image);
+                    ToastManager.SendToast(toast.title, toast.content, toast.image);
                     break;
 
                 case PipeCode.SERVER_SETTINGS:
@@ -588,7 +584,6 @@ namespace HandheldCompanion.Views
         {
             serviceManager.Stop();
             performanceManager.Stop();
-            toastManager.Stop();
 
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
@@ -609,6 +604,7 @@ namespace HandheldCompanion.Views
             ProcessManager.Stop();
             EnergyManager.Stop();
             PowerManager.Stop();
+            ToastManager.Stop();
 
             // closing page(s)
             controllerPage.Page_Closed();
@@ -670,7 +666,7 @@ namespace HandheldCompanion.Views
                 case WindowState.Minimized:
                     notifyIcon.Visible = true;
                     ShowInTaskbar = false;
-                    toastManager.SendToast(Title, "The application is running in the background");
+                    ToastManager.SendToast(Title, "is running in the background");
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:

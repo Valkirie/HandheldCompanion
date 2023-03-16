@@ -1,85 +1,97 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Managers
 {
-    public class ToastManager : Manager
+    public static class ToastManager
     {
         private const int m_Interval = 5000;
+        private const string m_Group = "HandheldCompanion";
 
-        private Dictionary<string, Timer> m_Threads = new();
+        private static ConcurrentDictionary<string, Timer> m_Threads = new();
 
-        private string m_Group;
-        public bool Enabled;
+        public static bool IsEnabled;
+        private static bool IsInitialized;
 
-        public ToastManager()
+        static ToastManager()
         { }
 
-        public ToastManager(string group)
+        public static void SendToast(string title, string content = "", string img = "Toast")
         {
-            m_Group = group;
-        }
-
-        public void SendToast(string title, string content = "", string img = "Toast")
-        {
-            if (!Enabled)
+            if (!IsEnabled)
                 return;
 
             string url = $"file:///{AppDomain.CurrentDomain.BaseDirectory}Resources\\{img}.png";
             var uri = new Uri(url);
 
             // capricious ToastContentBuilder...
-            try
+            var ToastThread = new Thread(() =>
             {
-                new Thread(() =>
+                try
                 {
                     var toast = new ToastContentBuilder()
                     .AddText(title)
                     .AddText(content)
+                    .AddAudio(new ToastAudio() { Src = new Uri("ms-winsoundevent:Notification.Default") })
                     .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
                     .SetToastScenario(ToastScenario.Default);
 
-                    if (toast is not null)
+                    if (toast is null)
+                        return;
+
+                    toast.Show(toast =>
                     {
-                        toast.Show(toast =>
-                        {
-                            toast.Tag = title;
-                            toast.Group = m_Group;
-                        });
+                        toast.Tag = title;
+                        toast.Group = m_Group;
+                    });
 
-                        Timer timer = new Timer(m_Interval)
-                        {
-                            Enabled = true,
-                            AutoReset = false
-                        };
+                    Timer timer = new Timer(m_Interval)
+                    {
+                        Enabled = true,
+                        AutoReset = false
+                    };
 
-                        timer.Elapsed += (s, e) => { ToastNotificationManagerCompat.History.Remove(title, m_Group); };
-                    }
-                }).Start();
-            }
-            catch { }
+                    timer.Elapsed += (s, e) =>
+                    {
+                        ToastNotificationManagerCompat.History.Remove(title, m_Group);
+                        m_Threads.TryRemove(title, out _);
+                    };
+
+                    // add timer to bag
+                    m_Threads.TryAdd(title, timer);
+                }
+                catch (Exception) { }
+            });
+
+            ToastThread.Start();
         }
 
-        public override void Start()
+        public static void Start()
         {
-            base.Start();
+            IsInitialized = true;
+
+            LogManager.LogInformation("{0} has started", "ToastManager");
         }
 
-        public override void Stop()
+        public static void Stop()
         {
             if (!IsInitialized)
                 return;
 
-            foreach (KeyValuePair<string, Timer> pair in m_Threads)
+            IsInitialized = false;
+
+            foreach (Timer timer in m_Threads.Values)
             {
-                m_Threads[pair.Key].Stop();
-                m_Threads[pair.Key] = null;
+                // force tick
+                timer.Interval = 1;
             }
 
-            base.Stop();
+            LogManager.LogInformation("{0} has stopped", "ToastManager");
         }
     }
 }
