@@ -279,6 +279,9 @@ namespace HandheldCompanion.Controllers
         {
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
 
+            // start movements timer
+            MovementsTimer.Start();
+
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
         }
@@ -299,6 +302,9 @@ namespace HandheldCompanion.Controllers
             {
                 return;
             }
+            
+            // stop movements timer
+            MovementsTimer.Stop();
 
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
