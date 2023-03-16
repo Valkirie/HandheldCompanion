@@ -50,9 +50,6 @@ namespace HandheldCompanion.Controllers
                 return;
             }
 
-            InputsTimer.Tick += (sender, e) => UpdateInputs();
-            MovementsTimer.Tick += (sender, e) => UpdateMovements();
-
             bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
             SetLizardMouse(LizardMouse);
 
@@ -277,6 +274,9 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
+            MovementsTimer.Tick += (sender, e) => UpdateMovements();
+
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
 
             // start movements timer

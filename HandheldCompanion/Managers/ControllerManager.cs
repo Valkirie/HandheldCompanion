@@ -203,24 +203,32 @@ namespace HandheldCompanion.Managers
                     try
                     {
                         // Instantiate the joystick
-                        joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                        string SymLink = DeviceManager.PathToInstanceId(joystick.Properties.InterfacePath, obj.InterfaceGuid.ToString());
+                        var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                        string SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath, obj.InterfaceGuid.ToString());
 
                         // IG_ means it is an XInput controller and therefore is handled elsewhere
-                        if (joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
+                        if (lookup_joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
                             continue;
 
                         if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            joystick = lookup_joystick;
                             break;
+                        }
                     }
                     catch { }
                 }
 
-                // unsupported controller
                 if (joystick is not null)
                 {
+                    // supported controller
                     VendorId = joystick.Properties.VendorId;
                     ProductId = joystick.Properties.ProductId;
+                }
+                else
+                {
+                    // unsupported controller
+                    LogManager.LogError("Couldn't find matching DInput controller: VID:{0} and PID:{1}", details.GetVendorID(), details.GetProductID());
                 }
 
                 // search for a supported controller

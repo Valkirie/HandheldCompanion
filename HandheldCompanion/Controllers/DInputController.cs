@@ -12,6 +12,9 @@ namespace HandheldCompanion.Controllers
 
         public DInputController(Joystick joystick, PnPDetails details)
         {
+            if (joystick is null)
+                return;
+
             this.joystick = joystick;
             UserIndex = joystick.Properties.JoystickId;
 
@@ -34,7 +37,10 @@ namespace HandheldCompanion.Controllers
             string baseName = base.ToString();
             if (!string.IsNullOrEmpty(baseName))
                 return baseName;
-            return joystick.Information.ProductName;
+            else if (joystick is null)
+                return string.Empty;
+            else
+                return joystick.Information.ProductName;
         }
 
         public override void UpdateInputs()

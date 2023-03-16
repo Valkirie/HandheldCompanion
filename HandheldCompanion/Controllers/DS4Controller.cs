@@ -11,11 +11,6 @@ namespace HandheldCompanion.Controllers
     {
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
-            if (!IsConnected())
-                return;
-
-            InputsTimer.Tick += (sender, e) => UpdateInputs();
-
             // UI
             ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
             ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
@@ -25,14 +20,6 @@ namespace HandheldCompanion.Controllers
             // Specific buttons
             SupportedButtons.Add(ButtonFlags.LeftPadClick);
             SupportedButtons.Add(ButtonFlags.RightPadClick);
-        }
-
-        public override string ToString()
-        {
-            string baseName = base.ToString();
-            if (!string.IsNullOrEmpty(baseName))
-                return baseName;
-            return joystick.Information.ProductName;
         }
 
         public override void UpdateInputs()
@@ -129,11 +116,12 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsConnected()
         {
-            return (bool)(!joystick?.IsDisposed);
+            return joystick is null ? false : joystick.IsDisposed;
         }
 
         public override void Plug()
         {
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
             base.Plug();
         }
 

@@ -103,6 +103,7 @@ namespace ControllerCommon.Controllers
         {
             InputsTimer = new PrecisionTimer();
             InputsTimer.SetInterval(UPDATE_INTERVAL);
+            InputsTimer.SetAutoResetMode(true);
 
             MovementsTimer = new PrecisionTimer();
             MovementsTimer.SetInterval(UPDATE_INTERVAL);
@@ -276,7 +277,6 @@ namespace ControllerCommon.Controllers
         {
             InjectedButtons.Clear();
 
-            InputsTimer.SetAutoResetMode(true);
             InputsTimer.Start();
 
             RefreshControls();

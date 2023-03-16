@@ -166,8 +166,6 @@ namespace HandheldCompanion.Controllers
 
             Details.isHooked = true;
 
-            InputsTimer.Tick += (sender, e) => UpdateInputs();
-
             // UI
             ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
             ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
@@ -303,6 +301,8 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
+            InputsTimer.Tick += (sender, e) => UpdateInputs();
+
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
         }
