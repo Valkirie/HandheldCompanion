@@ -136,14 +136,14 @@ namespace ControllerService
 
             if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
             {
-                LeftPadTouch.X = (short)(Inputs.AxisState[AxisFlags.LeftPadX] * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
-                LeftPadTouch.Y = (short)(Inputs.AxisState[AxisFlags.LeftPadY] * TOUCHPAD_HEIGHT / ushort.MaxValue);
+                LeftPadTouch.X = (short)((Inputs.AxisState[AxisFlags.LeftPadX] + short.MaxValue) * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f);
+                LeftPadTouch.Y = (short)((-Inputs.AxisState[AxisFlags.LeftPadY] + short.MaxValue) * TOUCHPAD_HEIGHT / ushort.MaxValue);
             }
 
             if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
             {
-                RightPadTouch.X = (short)((Inputs.AxisState[AxisFlags.RightPadX] * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
-                RightPadTouch.Y = (short)(Inputs.AxisState[AxisFlags.RightPadY] * TOUCHPAD_HEIGHT / ushort.MaxValue);
+                RightPadTouch.X = (short)(((Inputs.AxisState[AxisFlags.RightPadX] + short.MaxValue) * TOUCHPAD_WIDTH / ushort.MaxValue / 2.0f) + (0.5f * TOUCHPAD_WIDTH));
+                RightPadTouch.Y = (short)((-Inputs.AxisState[AxisFlags.RightPadY] + short.MaxValue) * TOUCHPAD_HEIGHT / ushort.MaxValue);
             }
 
             if (prevLeftPadClick != Inputs.ButtonState[ButtonFlags.LeftPadClick] || prevRightPadClick != Inputs.ButtonState[ButtonFlags.RightPadClick])
