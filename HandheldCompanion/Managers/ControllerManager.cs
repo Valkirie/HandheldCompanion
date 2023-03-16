@@ -297,6 +297,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
+                ToastManager.SendToast(controller.ToString(), "detected");
 
                 // automatically connect DInput controller if only available
                 if (GetControllerCount() == 1 && DeviceManager.IsInitialized)
@@ -368,6 +369,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event
                 ControllerPlugged?.Invoke(controller);
+                ToastManager.SendToast(controller.ToString(), "detected");
 
                 // automatically connect XInput controller if only available
                 if (GetControllerCount() == 1 && DeviceManager.IsInitialized)

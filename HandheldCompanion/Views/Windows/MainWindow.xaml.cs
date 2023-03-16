@@ -159,6 +159,9 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start static managers in sequence
+            ToastManager.Start();
+            ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
+
             ControllerManager.Start();
             EnergyManager.Start();
             HotkeysManager.Start();

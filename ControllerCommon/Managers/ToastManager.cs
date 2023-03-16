@@ -18,8 +18,7 @@ namespace ControllerCommon.Managers
         public static bool IsEnabled;
         private static bool IsInitialized;
 
-        static ToastManager()
-        { }
+        static ToastManager() { }
 
         public static void SendToast(string title, string content = "", string img = "Toast")
         {
@@ -86,10 +85,7 @@ namespace ControllerCommon.Managers
             IsInitialized = false;
 
             foreach (Timer timer in m_Threads.Values)
-            {
-                // force tick
-                timer.Interval = 1;
-            }
+                timer.Stop();
 
             LogManager.LogInformation("{0} has stopped", "ToastManager");
         }
