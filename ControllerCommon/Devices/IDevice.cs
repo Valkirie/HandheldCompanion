@@ -146,10 +146,12 @@ namespace ControllerCommon.Devices
                     break;
 
                 case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
+                case "ONE-NETBOOK":
                     {
                         switch (ProductName)
                         {
                             case "ONE XPLAYER":
+                            case "ONEXPLAYER Mini Pro":
                                 {
                                     switch (Version)
                                     {
@@ -159,6 +161,9 @@ namespace ControllerCommon.Devices
                                             break;
                                         case "1002-C":
                                             device = new OneXPlayerMiniIntel();
+                                            break;
+                                        case "V03":
+                                            device = new OneXPlayerMiniPro();
                                             break;
                                     }
                                     break;
