@@ -36,7 +36,7 @@ namespace ControllerCommon.Managers
                     var toast = new ToastContentBuilder()
                     .AddText(title)
                     .AddText(content)
-                    .AddAudio(new ToastAudio() { Src = new Uri("ms-winsoundevent:Notification.Default") })
+                    .AddAudio(new ToastAudio() { Silent = true, Src = new Uri("ms-winsoundevent:Notification.Default") })
                     .AddAppLogoOverride(uri, ToastGenericAppLogoCrop.Circle)
                     .SetToastScenario(ToastScenario.Default);
 
