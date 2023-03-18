@@ -1,5 +1,5 @@
 ﻿using ControllerCommon.Inputs;
-using PrecisionTiming;
+using ControllerCommon.Managers;
 using System;
 
 namespace ControllerCommon.Actions
@@ -23,17 +23,20 @@ namespace ControllerCommon.Actions
         protected object Value;
         protected object prevValue;
 
+        protected int Period;
+
         public bool Turbo { get; set; }
         public byte TurboDelay { get; set; } = 90;
-        protected short TurboIdx;
+        protected int TurboIdx;
         protected bool IsTurboed;
 
         public bool Toggle { get; set; }
         protected bool IsToggled;
 
-        // move me
-        protected const short UPDATE_INTERVAL = 10;
-        protected PrecisionTimer UpdateTimer;
+        public IActions()
+        {
+            Period = TimerManager.GetPeriod();
+        }
 
         public virtual void Execute(ButtonFlags button, bool value)
         {

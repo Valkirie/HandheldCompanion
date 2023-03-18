@@ -76,7 +76,7 @@ namespace HandheldCompanion.Actions
                     if (TurboIdx % TurboDelay == 0)
                         IsTurboed = !IsTurboed;
 
-                    TurboIdx += UPDATE_INTERVAL;
+                    TurboIdx += Period;
                 }
                 else
                 {

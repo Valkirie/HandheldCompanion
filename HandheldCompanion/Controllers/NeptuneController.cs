@@ -90,7 +90,7 @@ namespace HandheldCompanion.Controllers
             return "Steam Controller Neptune";
         }
 
-        public override void UpdateInputs()
+        public override void UpdateInputs(long ticks)
         {
             if (input is null)
                 return;
@@ -216,10 +216,10 @@ namespace HandheldCompanion.Controllers
             // update states
             prevState = input.State;
 
-            base.UpdateInputs();
+            base.UpdateInputs(ticks);
         }
 
-        public override void UpdateMovements()
+        public override void UpdateMovements(long ticks)
         {
             if (input is null)
                 return;
@@ -232,7 +232,7 @@ namespace HandheldCompanion.Controllers
             Movements.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
             Movements.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
 
-            base.UpdateMovements();
+            base.UpdateMovements(ticks);
         }
 
         public override bool IsConnected()
@@ -275,13 +275,10 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
-            InputsTimer.Tick += (sender, e) => UpdateInputs();
-            MovementsTimer.Tick += (sender, e) => UpdateMovements();
+            TimerManager.Tick += UpdateInputs;
+            TimerManager.Tick += UpdateMovements;
 
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
-
-            // start movements timer
-            MovementsTimer.Start();
 
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
@@ -303,9 +300,9 @@ namespace HandheldCompanion.Controllers
             {
                 return;
             }
-            
-            // stop movements timer
-            MovementsTimer.Stop();
+
+            TimerManager.Tick -= UpdateInputs;
+            TimerManager.Tick -= UpdateMovements;
 
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();

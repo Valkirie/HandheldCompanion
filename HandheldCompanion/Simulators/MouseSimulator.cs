@@ -73,7 +73,7 @@ namespace HandheldCompanion.Simulators
             {
                 InputSimulator.Mouse.MoveMouseBy(x, y);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // Some simulated input commands were not sent successfully.
             }

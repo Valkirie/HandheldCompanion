@@ -504,6 +504,9 @@ namespace ControllerService
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // start master timer
+            TimerManager.Start();
+
             // start listening to controller
             IMU.Start();
 
@@ -526,6 +529,9 @@ namespace ControllerService
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            // stop master timer
+            TimerManager.Start();
+
             // stop listening from controller
             IMU.Stop();
 

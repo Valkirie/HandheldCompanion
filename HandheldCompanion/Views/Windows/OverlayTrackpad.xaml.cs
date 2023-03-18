@@ -1,4 +1,3 @@
-using ControllerCommon;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Views.Classes;
 using System.Windows;

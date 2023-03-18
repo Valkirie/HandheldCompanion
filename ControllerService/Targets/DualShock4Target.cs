@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Inputs;
+﻿using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
@@ -45,8 +44,6 @@ namespace ControllerService.Targets
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
 
-            UpdateTimer.Tick += (sender, e) => UpdateReport();
-
             LogManager.LogInformation("{0} initialized, {1}", ToString(), virtualController);
         }
 
@@ -58,7 +55,7 @@ namespace ControllerService.Targets
             try
             {
                 virtualController.Connect();
-                UpdateTimer.Start();
+                TimerManager.Tick += UpdateReport;
 
                 base.Connect();
             }
@@ -73,7 +70,7 @@ namespace ControllerService.Targets
             try
             {
                 virtualController.Disconnect();
-                UpdateTimer.Stop();
+                TimerManager.Tick -= UpdateReport;
 
                 base.Disconnect();
             }
@@ -86,12 +83,12 @@ namespace ControllerService.Targets
             PipeServer.SendMessage(new PipeClientVibration() { LargeMotor = e.LargeMotor, SmallMotor = e.SmallMotor });
         }
 
-        public override unsafe void UpdateReport()
+        public override unsafe void UpdateReport(long ticks)
         {
             if (!IsConnected)
                 return;
 
-            base.UpdateReport();
+            base.UpdateReport(ticks);
 
             // reset vars
             byte[] rawOutReportEx = new byte[63];
@@ -208,7 +205,7 @@ namespace ControllerService.Targets
 
             outDS4Report.bBatteryLvlSpecial = 11;
 
-            outDS4Report.wTimestamp = (ushort)(IMU.CurrentMicroseconds);
+            outDS4Report.wTimestamp = (ushort)(TimerManager.GetTickCount());
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 

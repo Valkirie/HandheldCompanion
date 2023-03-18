@@ -21,7 +21,7 @@ namespace ControllerService.Sensors
         {
             this.sensorFamily = sensorFamily;
             this.updateInterval = updateInterval;
-            base.centerTimer.SetInterval(updateInterval * 6);
+            base.centerTimer.Interval = updateInterval * 6;
 
             UpdateSensor();
         }
@@ -116,6 +116,9 @@ namespace ControllerService.Sensors
 
         private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
         {
+            this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, IMU.DeltaSeconds);
+            this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, IMU.DeltaSeconds);
+            this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, IMU.DeltaSeconds);
             this.reading.X = this.reading_fixed.X = (float)AngularVelocityDeg.X;
             this.reading.Y = this.reading_fixed.Y = (float)AngularVelocityDeg.Y;
             this.reading.Z = this.reading_fixed.Z = (float)AngularVelocityDeg.Z;

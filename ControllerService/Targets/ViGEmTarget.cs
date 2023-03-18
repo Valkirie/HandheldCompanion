@@ -5,7 +5,6 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client;
-using PrecisionTiming;
 using System;
 using System.Numerics;
 
@@ -15,8 +14,6 @@ namespace ControllerService.Targets
     {
         public FlickStick flickStick;
         protected ControllerState Inputs = new();
-        protected PrecisionTimer UpdateTimer;
-        protected const short UPDATE_INTERVAL = 10;
 
         public HIDmode HID = HIDmode.NoController;
 
@@ -38,10 +35,6 @@ namespace ControllerService.Targets
         {
             // initialize flick stick
             flickStick = new FlickStick();
-
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UPDATE_INTERVAL);
-            UpdateTimer.SetAutoResetMode(true);
 
             ControllerService.ForegroundUpdated += ForegroundUpdated;
         }
@@ -72,8 +65,6 @@ namespace ControllerService.Targets
 
         public virtual void Disconnect()
         {
-            this.UpdateTimer.Stop();
-
             IsConnected = false;
             Disconnected?.Invoke(this);
             LogManager.LogInformation("{0} disconnected", ToString());
@@ -84,7 +75,7 @@ namespace ControllerService.Targets
             Inputs = inputs;
         }
 
-        public virtual unsafe void UpdateReport()
+        public virtual unsafe void UpdateReport(long ticks)
         {
             // get sticks values
             LeftThumb = new Vector2(Inputs.AxisState[AxisFlags.LeftThumbX], Inputs.AxisState[AxisFlags.LeftThumbY]);
@@ -211,7 +202,6 @@ namespace ControllerService.Targets
         public virtual void Dispose()
         {
             this.Disconnect();
-            this.UpdateTimer = null;
             GC.SuppressFinalize(this);
         }
     }

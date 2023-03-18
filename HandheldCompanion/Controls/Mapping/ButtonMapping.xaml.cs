@@ -5,7 +5,6 @@ using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using System;
 using System.Threading;

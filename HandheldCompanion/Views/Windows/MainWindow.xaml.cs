@@ -159,6 +159,8 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start static managers in sequence
+            TimerManager.Start();
+
             ToastManager.Start();
             ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
@@ -740,6 +742,9 @@ namespace HandheldCompanion.Views
             {
                 case PowerManager.SystemStatus.SystemReady:
                     {
+                        // start timer manager
+                        TimerManager.Start();
+
                         // clear pipes
                         PipeServer.ClearQueue();
 
@@ -750,7 +755,10 @@ namespace HandheldCompanion.Views
                     break;
                 case PowerManager.SystemStatus.SystemPending:
                     {
-                        //pause inputs manager
+                        // stop timer manager
+                        TimerManager.Stop();
+
+                        // pause inputs manager
                         InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
                         InputsManager.Stop();
                     }

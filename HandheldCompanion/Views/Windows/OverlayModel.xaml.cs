@@ -1,4 +1,3 @@
-using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Pipes;
@@ -6,12 +5,12 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;
 using HandheldCompanion.Views.Classes;
-using PrecisionTiming;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.Windows
 {
@@ -20,10 +19,9 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class OverlayModel : OverlayWindow
     {
-        private PrecisionTimer UpdateTimer;
+        private Timer UpdateTimer;
 
         private ControllerState Inputs = new();
-        private ButtonState prevState = new();
 
         private IModel CurrentModel;
         private OverlayModelMode Modelmode;
@@ -58,9 +56,9 @@ namespace HandheldCompanion.Views.Windows
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             // initialize timers
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetAutoResetMode(true);
-            UpdateTimer.Tick += DrawModel;
+            UpdateTimer = new Timer(33);
+            UpdateTimer.AutoReset = true;
+            UpdateTimer.Elapsed += DrawModel;
 
             UpdateModel();
         }
@@ -86,15 +84,13 @@ namespace HandheldCompanion.Views.Windows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            UpdateTimer.Tick -= DrawModel;
+            UpdateTimer.Elapsed -= DrawModel;
             UpdateTimer.Stop();
         }
 
         public void UpdateInterval(double interval)
         {
-            UpdateTimer.Stop();
-            UpdateTimer.SetInterval((int)interval);
-            UpdateTimer.Start();
+            UpdateTimer.Interval = interval;
         }
 
         public void UpdateHIDMode(HIDmode HIDmode)
@@ -215,10 +211,12 @@ namespace HandheldCompanion.Views.Windows
                 switch (Visibility)
                 {
                     case Visibility.Visible:
+                        UpdateTimer.Stop();
                         this.Hide();
                         break;
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
+                        UpdateTimer.Start();
                         this.Show();
                         break;
                 }
@@ -271,34 +269,29 @@ namespace HandheldCompanion.Views.Windows
             if (Visibility != Visibility.Visible)
                 return;
 
-            if (!prevState.Equals(Inputs.ButtonState))
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                GeometryModel3D model = null;
+                foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
                 {
-                    GeometryModel3D model = null;
-                    foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
+                    if (!CurrentModel.ButtonMap.ContainsKey(button))
+                        continue;
+
+                    foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
                     {
-                        if (!CurrentModel.ButtonMap.ContainsKey(button))
+                        model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+
+                        if (model.Material.GetType() != typeof(DiffuseMaterial))
                             continue;
 
-                        foreach (Model3DGroup modelgroup in CurrentModel.ButtonMap[button])
-                        {
-                            model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
-
-                            if (model.Material.GetType() != typeof(DiffuseMaterial))
-                                continue;
-
-                            if (Inputs.ButtonState[button])
-                                model.Material = model.BackMaterial = CurrentModel.HighlightMaterials[modelgroup];
-                            else
-                                model.Material = model.BackMaterial = CurrentModel.DefaultMaterials[modelgroup];
-                        }
+                        if (Inputs.ButtonState[button])
+                            model.Material = model.BackMaterial = CurrentModel.HighlightMaterials[modelgroup];
+                        else
+                            model.Material = model.BackMaterial = CurrentModel.DefaultMaterials[modelgroup];
                     }
-                });
-
-                prevState = Inputs.ButtonState as ButtonState;
-            }
+                }
+            });
 
             // update model
             UpdateModelVisual3D();

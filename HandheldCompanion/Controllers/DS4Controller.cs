@@ -1,5 +1,6 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -22,7 +23,7 @@ namespace HandheldCompanion.Controllers
             SupportedButtons.Add(ButtonFlags.RightPadClick);
         }
 
-        public override void UpdateInputs()
+        public override void UpdateInputs(long ticks)
         {
             // skip if controller isn't connected
             if (!IsConnected())
@@ -111,7 +112,7 @@ namespace HandheldCompanion.Controllers
             Inputs.AxisState[AxisFlags.RightThumbX] = (short)(Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue));
             Inputs.AxisState[AxisFlags.RightThumbY] = (short)(Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue));
 
-            base.UpdateInputs();
+            base.UpdateInputs(ticks);
         }
 
         public override bool IsConnected()
@@ -121,12 +122,13 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
-            InputsTimer.Tick += (sender, e) => UpdateInputs();
+            TimerManager.Tick += UpdateInputs;
             base.Plug();
         }
 
         public override void Unplug()
         {
+            TimerManager.Tick -= UpdateInputs;
             base.Unplug();
         }
 

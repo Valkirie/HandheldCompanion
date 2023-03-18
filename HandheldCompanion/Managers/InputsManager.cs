@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using WindowsInput.Events;
 using ButtonState = ControllerCommon.Inputs.ButtonState;
 using KeyboardSimulator = HandheldCompanion.Simulators.KeyboardSimulator;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
@@ -36,13 +37,13 @@ namespace HandheldCompanion.Managers
         private static InputsChord prevChord = new();
         private static string SpecialKey;
 
-        private static PrecisionTimer InputsChordHoldTimer;
-        private static PrecisionTimer InputsChordInputTimer;
+        private static Timer InputsChordHoldTimer;
+        private static Timer InputsChordInputTimer;
 
         private static Dictionary<KeyValuePair<KeyCode, bool>, int> prevKeys = new();
 
         // Global variables
-        private static PrecisionTimer ListenerTimer;
+        private static Timer ListenerTimer;
 
         private const short TIME_FLUSH = 5;             // default interval between buffer flush
         private const short TIME_SPAM = 50;             // default interval between two allowed inputs
@@ -96,20 +97,17 @@ namespace HandheldCompanion.Managers
             GamepadResetTimer.SetAutoResetMode(false);
             GamepadResetTimer.Tick += (sender, e) => ReleaseGamepadBuffer();
 
-            ListenerTimer = new PrecisionTimer();
-            ListenerTimer.SetInterval(TIME_EXPIRED);
-            ListenerTimer.SetAutoResetMode(false);
-            ListenerTimer.Tick += (sender, e) => ListenerExpired();
+            ListenerTimer = new Timer(TIME_EXPIRED);
+            ListenerTimer.AutoReset = false;
+            ListenerTimer.Elapsed += (sender, e) => ListenerExpired();
 
-            InputsChordHoldTimer = new PrecisionTimer();
-            InputsChordHoldTimer.SetInterval(TIME_LONG);
-            InputsChordHoldTimer.SetAutoResetMode(false);
-            InputsChordHoldTimer.Tick += (sender, e) => InputsChordHold_Elapsed();
+            InputsChordHoldTimer = new Timer(TIME_LONG);
+            InputsChordHoldTimer.AutoReset = false;
+            InputsChordHoldTimer.Elapsed += (sender, e) => InputsChordHold_Elapsed();
 
-            InputsChordInputTimer = new PrecisionTimer();
-            InputsChordInputTimer.SetInterval(TIME_NEXT);
-            InputsChordInputTimer.SetAutoResetMode(false);
-            InputsChordInputTimer.Tick += (sender, e) => InputsChordInput_Elapsed();
+            InputsChordInputTimer = new Timer(TIME_NEXT);
+            InputsChordInputTimer.AutoReset = false;
+            InputsChordInputTimer.Elapsed += (sender, e) => InputsChordInput_Elapsed();
 
             m_GlobalHook = Hook.GlobalEvents();
 
@@ -251,6 +249,7 @@ namespace HandheldCompanion.Managers
 
             return mods;
         }
+
         private static void SetInterval(PrecisionTimer timer, short interval)
         {
             if (timer.GetPeriod() == interval)

@@ -1,8 +1,8 @@
 ﻿using ControllerCommon.Managers;
-using PrecisionTiming;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using System.Timers;
 
 namespace HandheldCompanion.Managers
 {
@@ -90,8 +90,8 @@ namespace HandheldCompanion.Managers
         private const short INTERVAL_UPDATE = 1000;                 // interval between two SharedMemory update
         private const short INTERVAL_SHAREDMEMORY = 3000;           // interval between two SharedMemory access check
 
-        private static PrecisionTimer UpdateTimer;
-        private static PrecisionTimer SharedMemoryTimer;
+        private static Timer UpdateTimer;
+        private static Timer SharedMemoryTimer;
 
         private static MemoryMappedFile MemoryMapped;
         private static MemoryMappedViewAccessor MemoryAccessor;
@@ -106,14 +106,12 @@ namespace HandheldCompanion.Managers
         {
             HWiNFOMemory = new SharedMemory();
 
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(INTERVAL_UPDATE);
-            UpdateTimer.SetAutoResetMode(true);
+            UpdateTimer = new Timer(INTERVAL_UPDATE);
+            UpdateTimer.AutoReset = true;
 
-            SharedMemoryTimer = new PrecisionTimer();
-            SharedMemoryTimer.SetInterval(INTERVAL_SHAREDMEMORY);
-            SharedMemoryTimer.SetAutoResetMode(true);
-            SharedMemoryTimer.Tick += (e, sender) => SharedMemoryTicked();
+            SharedMemoryTimer = new Timer(INTERVAL_SHAREDMEMORY);
+            SharedMemoryTimer.AutoReset = true;
+            SharedMemoryTimer.Elapsed += (e, sender) => SharedMemoryTicked();
         }
 
         private static void SharedMemoryTicked()

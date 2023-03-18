@@ -4,7 +4,6 @@ using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Force.Crc32;
-using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -93,9 +92,6 @@ namespace ControllerService
 
         private GetPadDetail portInfoGet;
 
-        public PrecisionTimer UpdateTimer;
-        private PrecisionTimer BatteryTimer;
-
         private ControllerState Inputs = new();
 
         protected const short UPDATE_INTERVAL = 10;
@@ -145,41 +141,11 @@ namespace ControllerService
                 args.Completed += SocketEvent_Completed;
                 argsList[num] = args;
             }
-
-            BatteryTimer = new PrecisionTimer();
-            BatteryTimer.SetInterval(1000);
-            BatteryTimer.SetAutoResetMode(true);
-
-            // initialize timers
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UPDATE_INTERVAL);
-            UpdateTimer.SetAutoResetMode(true);
         }
 
         public override string ToString()
         {
             return this.GetType().Name;
-        }
-
-        private void UpdateBattery(object sender, EventArgs e)
-        {
-            if (!running)
-                return;
-
-            BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
-
-            if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
-                padMeta.BatteryStatus = DsBattery.Charging;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
-                padMeta.BatteryStatus = DsBattery.None;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
-                padMeta.BatteryStatus = DsBattery.High;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
-                padMeta.BatteryStatus = DsBattery.Low;
-            else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
-                padMeta.BatteryStatus = DsBattery.Dying;
-            else
-                padMeta.BatteryStatus = DsBattery.Medium;
         }
 
         private void SocketEvent_Completed(object sender, SocketAsyncEventArgs e)
@@ -530,13 +496,10 @@ namespace ControllerService
             new Random().NextBytes(randomBuf);
             serverId = BitConverter.ToUInt32(randomBuf, 0);
 
-            UpdateTimer.Tick += SubmitReport;
-            BatteryTimer.Tick += UpdateBattery;
+            TimerManager.Tick += Tick;
 
             running = true;
 
-            UpdateTimer.Start();
-            BatteryTimer.Start();
             StartReceive();
 
             LogManager.LogInformation("{0} has started. Listening to ip: {1} port: {2}", this.ToString(), ip, port);
@@ -554,11 +517,7 @@ namespace ControllerService
             }
             running = false;
 
-            UpdateTimer.Tick -= SubmitReport;
-            BatteryTimer.Tick -= UpdateBattery;
-
-            UpdateTimer.Stop();
-            BatteryTimer.Stop();
+            TimerManager.Tick -= Tick;
 
             LogManager.LogInformation("{0} has stopped", this.ToString());
             Stopped?.Invoke(this);
@@ -642,7 +601,7 @@ namespace ControllerService
                 }
 
                 //motion timestamp
-                Array.Copy(BitConverter.GetBytes((ulong)IMU.CurrentMicroseconds), 0, outputData, outIdx, 8);
+                Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetTickCount()), 0, outputData, outIdx, 8);
 
                 outIdx += 8;
 
@@ -688,10 +647,29 @@ namespace ControllerService
             return true;
         }
 
-        public void SubmitReport(object sender, EventArgs e)
+        public void Tick(long ticks)
         {
             if (!running)
                 return;
+
+            // only update every one second
+            if (ticks % 1000 == 0)
+            {
+                BatteryChargeStatus ChargeStatus = SystemInformation.PowerStatus.BatteryChargeStatus;
+
+                if (ChargeStatus.HasFlag(BatteryChargeStatus.Charging))
+                    padMeta.BatteryStatus = DsBattery.Charging;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.NoSystemBattery))
+                    padMeta.BatteryStatus = DsBattery.None;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.High))
+                    padMeta.BatteryStatus = DsBattery.High;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.Low))
+                    padMeta.BatteryStatus = DsBattery.Low;
+                else if (ChargeStatus.HasFlag(BatteryChargeStatus.Critical))
+                    padMeta.BatteryStatus = DsBattery.Dying;
+                else
+                    padMeta.BatteryStatus = DsBattery.Medium;
+            }
 
             // update status
             padMeta.IsActive = true; // fixme ?

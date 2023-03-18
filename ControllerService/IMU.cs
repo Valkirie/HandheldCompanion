@@ -1,9 +1,9 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
-using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,9 +19,6 @@ namespace ControllerService
         public static Dictionary<XInputSensorFlags, Vector3> Acceleration = new();
         public static Dictionary<XInputSensorFlags, Vector3> AngularVelocity = new();
         public static Vector3 IMU_Angle = new();
-
-        public static PrecisionTimer UpdateTimer;
-        public const int UpdateInterval = 10;
 
         public static IMUGyrometer Gyrometer;
         public static IMUAccelerometer Accelerometer;
@@ -55,16 +52,13 @@ namespace ControllerService
 
             // initialize stopwatch
             stopwatch = new Stopwatch();
-
-            // initialize timers
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UpdateInterval);
-            UpdateTimer.SetAutoResetMode(true);
         }
 
         public static void SetSensorFamily(SensorFamily sensorFamily)
         {
             // initialize sensors
+            var UpdateInterval = TimerManager.GetPeriod();
+
             Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
             Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
             Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
@@ -74,8 +68,7 @@ namespace ControllerService
         {
             stopwatch.Start();
 
-            UpdateTimer.Tick += ComputeMovements;
-            UpdateTimer.Start();
+            TimerManager.Tick += Tick;
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -83,13 +76,12 @@ namespace ControllerService
 
         public static void Stop()
         {
+            TimerManager.Tick -= Tick;
+
             // halt sensors
             Gyrometer?.StopListening();
             Accelerometer?.StopListening();
             Inclinometer?.StopListening();
-
-            UpdateTimer.Tick -= ComputeMovements;
-            UpdateTimer.Stop();
 
             stopwatch.Stop();
 
@@ -118,7 +110,7 @@ namespace ControllerService
             Inclinometer.ReadingChanged(movements.GyroAccelX, movements.GyroAccelY, movements.GyroAccelZ);
         }
 
-        private static void ComputeMovements(object sender, EventArgs e)
+        private static void Tick(long ticks)
         {
             if (Monitor.TryEnter(updateLock))
             {

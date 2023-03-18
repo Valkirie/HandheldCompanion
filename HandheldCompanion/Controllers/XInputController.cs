@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Controllers;
+﻿using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
@@ -185,7 +184,7 @@ namespace HandheldCompanion.Controllers
             return $"XInput Controller {UserIndex}";
         }
 
-        public override void UpdateInputs()
+        public override void UpdateInputs(long ticks)
         {
             // skip if controller isn't connected
             if (!IsConnected())
@@ -256,7 +255,7 @@ namespace HandheldCompanion.Controllers
             prevButtons = Gamepad.Buttons;
             prevState = State;
 
-            base.UpdateInputs();
+            base.UpdateInputs(ticks);
         }
 
         public override bool IsConnected()
@@ -302,14 +301,14 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
-            InputsTimer.Tick += (sender, e) => UpdateInputs();
-
+            TimerManager.Tick += UpdateInputs;
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
         }
 
         public override void Unplug()
         {
+            TimerManager.Tick -= UpdateInputs;
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
         }

@@ -1,4 +1,3 @@
-using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;

@@ -5,12 +5,12 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using PrecisionTiming;
 using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.QuickPages
 {
@@ -24,7 +24,7 @@ namespace HandheldCompanion.Views.QuickPages
         private Hotkey ProfilesPageHotkey = new(61);
 
         private const int UpdateInterval = 500;
-        private PrecisionTimer UpdateTimer;
+        private Timer UpdateTimer;
 
         private object updateLock = new();
 
@@ -107,10 +107,9 @@ namespace HandheldCompanion.Views.QuickPages
                 cB_Output.Items.Add(panel);
             }
 
-            UpdateTimer = new PrecisionTimer();
-            UpdateTimer.SetInterval(UpdateInterval);
-            UpdateTimer.SetAutoResetMode(false);
-            UpdateTimer.Tick += (sender, e) => SubmitProfile();
+            UpdateTimer = new Timer(UpdateInterval);
+            UpdateTimer.AutoReset = false;
+            UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
         }
 
         public void SubmitProfile(ProfileUpdateSource source = ProfileUpdateSource.QuickProfilesPage)
@@ -192,7 +191,7 @@ namespace HandheldCompanion.Views.QuickPages
                 }
 
                 // if an update is pending, execute it and stop timer
-                if (UpdateTimer.IsRunning())
+                if (UpdateTimer.Enabled)
                 {
                     UpdateTimer.Stop();
                     SubmitProfile();
@@ -363,7 +362,7 @@ namespace HandheldCompanion.Views.QuickPages
             currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
             // if an update is pending, execute it and stop timer
-            if (UpdateTimer.IsRunning())
+            if (UpdateTimer.Enabled)
                 UpdateTimer.Stop();
 
             SubmitProfile(ProfileUpdateSource.Creation);

@@ -2,7 +2,6 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
-using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,8 +70,6 @@ namespace ControllerCommon.Controllers
         protected Dictionary<ButtonFlags, Brush> ColoredButtons = new();
         protected Dictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
 
-        protected const short UPDATE_INTERVAL = 10;
-
         public ButtonState InjectedButtons = new();
         public ButtonState prevInjectedButtons = new();
 
@@ -80,16 +77,15 @@ namespace ControllerCommon.Controllers
 
         protected int UserIndex;
         protected double VibrationStrength = 1.0d;
+        protected bool isPlugged;
 
         public PnPDetails Details;
-
-        protected PrecisionTimer MovementsTimer;
-        protected PrecisionTimer InputsTimer;
 
         // UI
         protected FontFamily GlyphFontFamily = new("PromptFont");
         protected FontFamily DefaultFontFamily = new("Segeo WP");
 
+        // todo: make this a custom control !
         protected Border ui_border = new Border() { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
         protected Grid ui_grid = new Grid();
         protected FontIcon ui_icon = new FontIcon() { Glyph = "\uE7FC", Height = 40, HorizontalAlignment = HorizontalAlignment.Center };
@@ -101,19 +97,11 @@ namespace ControllerCommon.Controllers
 
         protected IController()
         {
-            InputsTimer = new PrecisionTimer();
-            InputsTimer.SetInterval(UPDATE_INTERVAL);
-            InputsTimer.SetAutoResetMode(true);
-
-            MovementsTimer = new PrecisionTimer();
-            MovementsTimer.SetInterval(UPDATE_INTERVAL);
-            MovementsTimer.SetAutoResetMode(true);
-
             // attribute controller to tag
             ui_border.Tag = this;
         }
 
-        public virtual void UpdateInputs()
+        public virtual void UpdateInputs(long ticks)
         {
             // update states
             Inputs.Timestamp = Environment.TickCount;
@@ -122,10 +110,10 @@ namespace ControllerCommon.Controllers
             InputsUpdated?.Invoke(Inputs);
         }
 
-        public virtual void UpdateMovements()
+        public virtual void UpdateMovements(long ticks)
         {
             // update states
-            Movements.Timestamp = Environment.TickCount;
+            Movements.TickCount = ticks;
 
             MovementsUpdated?.Invoke(Movements);
         }
@@ -270,21 +258,27 @@ namespace ControllerCommon.Controllers
 
         public virtual bool IsPlugged()
         {
-            return InputsTimer.IsRunning();
+            return isPlugged;
         }
 
         public virtual void Plug()
         {
-            InjectedButtons.Clear();
+            if (isPlugged)
+                return;
 
-            InputsTimer.Start();
+            isPlugged = true;
+
+            InjectedButtons.Clear();
 
             RefreshControls();
         }
 
         public virtual void Unplug()
         {
-            InputsTimer.Stop();
+            if (!isPlugged)
+                return;
+
+            isPlugged = false;
 
             RefreshControls();
         }

@@ -1,5 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Controllers;
+﻿using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;

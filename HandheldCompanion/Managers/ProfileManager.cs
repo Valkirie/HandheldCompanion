@@ -3,7 +3,6 @@ using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using Force.Crc32;
-using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
