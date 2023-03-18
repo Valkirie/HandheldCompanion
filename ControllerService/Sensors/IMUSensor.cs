@@ -27,7 +27,7 @@ namespace ControllerService.Sensors
         Busy = 2
     }
 
-    public abstract class IMUSensor
+    public abstract class IMUSensor : IDisposable
     {
         protected Vector3 reading = new();
         protected Vector3 reading_fixed = new();
@@ -40,6 +40,8 @@ namespace ControllerService.Sensors
 
         public object sensor;
         public OneEuroFilter3D filter = new();
+
+        protected bool disposed;
 
         protected Dictionary<char, double> reading_axis = new Dictionary<char, double>()
         {
@@ -97,6 +99,27 @@ namespace ControllerService.Sensors
         public Vector3 GetCurrentReadingRaw(bool center = false, bool ratio = false)
         {
             return center ? this.reading_fixed : this.reading;
+        }
+
+        public virtual void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    StopListening();
+                }
+            }
+            //dispose unmanaged resources
+            disposed = true;
         }
     }
 }

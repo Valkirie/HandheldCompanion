@@ -108,7 +108,7 @@ namespace ControllerService
             handheldDevice = IDevice.GetDefault();
 
             // XInputController settings
-            IMU.Initialize(SensorSelection);
+            IMU.SetSensorFamily(SensorSelection);
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport);
@@ -152,11 +152,11 @@ namespace ControllerService
 
         private void SetControllerMode(HIDmode mode)
         {
+            // do not disconnect if similar to previous mode
             if (HIDmode == mode && vTarget is not null)
                 return;
 
             // disconnect current virtual controller
-            // todo: do not disconnect if similar to incoming mode
             if (vTarget is not null)
                 vTarget.Disconnect();
 
@@ -165,8 +165,10 @@ namespace ControllerService
                 default:
                 case HIDmode.NoController:
                     if (vTarget is not null)
+                    {
                         vTarget.Dispose();
-                    vTarget = null;
+                        vTarget = null;
+                    }
                     break;
                 case HIDmode.DualShock4Controller:
                     vTarget = new DualShock4Target();
@@ -176,16 +178,20 @@ namespace ControllerService
                     break;
             }
 
-            if (vTarget is not null)
+            // failed to initialize controller
+            if (vTarget is null)
             {
-                vTarget.Connected += OnTargetConnected;
-                vTarget.Disconnected += OnTargetDisconnected;
+                LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
+                return;
             }
+
+            vTarget.Connected += OnTargetConnected;
+            vTarget.Disconnected += OnTargetDisconnected;
 
             // update status
             SetControllerStatus(HIDstatus);
 
-            // update value
+            // update current HIDmode
             HIDmode = mode;
         }
 
@@ -205,7 +211,7 @@ namespace ControllerService
                     break;
             }
 
-            // update value
+            // update current HIDstatus
             HIDstatus = status;
         }
 
@@ -487,7 +493,10 @@ namespace ControllerService
                             return;
 
                         SensorSelection = value;
-                        IMU.Initialize(SensorSelection);
+
+                        IMU.Stop();
+                        IMU.SetSensorFamily(SensorSelection);
+                        IMU.Start();
                     }
                     break;
             }
@@ -552,16 +561,19 @@ namespace ControllerService
                             return;
 
                         // (re)initialize sensors
-                        IMU.RefreshSensors();
+                        IMU.Restart(true);
 
                         // (re)initialize ViGEm
                         vClient = new ViGEmClient();
 
+                        // update virtual controller
                         SetControllerMode(HIDmode);
                     }
                     break;
                 case SystemStatus.SystemPending:
                     {
+                        IMU.Stop();
+
                         vTarget.Dispose();
                         vTarget = null;
 

@@ -43,6 +43,9 @@ namespace ControllerService
 
         public static bool IsInitialized;
 
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
+
         static IMU()
         {
             // initialize sensorfusion and madgwick
@@ -58,17 +61,12 @@ namespace ControllerService
             UpdateTimer.SetAutoResetMode(true);
         }
 
-        public static void Initialize(SensorFamily sensorFamily)
+        public static void SetSensorFamily(SensorFamily sensorFamily)
         {
-            // halt sensors
-            StopListening();
-
             // initialize sensors
             Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
             Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
             Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
-
-            IsInitialized = true;
         }
 
         public static void Start()
@@ -77,34 +75,39 @@ namespace ControllerService
 
             UpdateTimer.Tick += ComputeMovements;
             UpdateTimer.Start();
+
+            IsInitialized = true;
+            Initialized?.Invoke();
         }
 
         public static void Stop()
         {
             // halt sensors
-            StopListening();
+            Gyrometer?.StopListening();
+            Accelerometer?.StopListening();
+            Inclinometer?.StopListening();
 
             UpdateTimer.Tick -= ComputeMovements;
             UpdateTimer.Stop();
 
             stopwatch.Stop();
+
+            IsInitialized = false;
         }
 
-        private static void StopListening()
+        public static void Restart(bool update)
         {
-            Gyrometer?.StopListening();
-            Accelerometer?.StopListening();
-            Inclinometer?.StopListening();
-        }
+            Stop();
 
-        public static void RefreshSensors()
-        {
-            // halt sensors
-            StopListening();
+            // force update sensors
+            if (update)
+            {
+                Gyrometer.UpdateSensor();
+                Accelerometer.UpdateSensor();
+                Inclinometer.UpdateSensor();
+            }
 
-            Gyrometer.UpdateSensor();
-            Accelerometer.UpdateSensor();
-            Inclinometer.UpdateSensor();
+            Start();
         }
 
         public static void UpdateMovements(ControllerMovements movements)
