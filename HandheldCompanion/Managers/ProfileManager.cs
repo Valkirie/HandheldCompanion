@@ -227,27 +227,25 @@ namespace HandheldCompanion.Managers
 
             Profile profile = profiles[ProfileName];
 
-            switch (ProfileName)
+            // you can't delete default profile !
+            if (profile.Default)
             {
-                // prevent default profile from being deleted
-                case DefaultName:
-                    SerializeProfile(profile);
-                    break;
-                default:
-                    DeleteProfile(profile);
-                    break;
+                SerializeProfile(profile);
+                return;
             }
+
+            DeleteProfile(profile);
         }
 
         private static bool HasDefault()
         {
-            return profiles.ContainsKey(DefaultName);
+            return profiles.Values.Where(a => a.Default).Count() != 0;
         }
 
         public static Profile GetDefault()
         {
             if (HasDefault())
-                return profiles[DefaultName];
+                return profiles.Values.Where(a => a.Default).FirstOrDefault();
             return new();
         }
 
