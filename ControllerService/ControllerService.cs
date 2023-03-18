@@ -530,7 +530,7 @@ namespace ControllerService
         public Task StopAsync(CancellationToken cancellationToken)
         {
             // stop master timer
-            TimerManager.Start();
+            TimerManager.Stop();
 
             // stop listening from controller
             IMU.Stop();
