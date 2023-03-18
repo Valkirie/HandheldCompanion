@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace ControllerCommon
+namespace ControllerCommon.Pipes
 {
     [Serializable]
     public abstract class PipeMessage

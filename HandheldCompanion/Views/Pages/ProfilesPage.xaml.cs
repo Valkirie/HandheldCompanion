@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
@@ -37,8 +38,6 @@ namespace HandheldCompanion.Views.Pages
         public ProfilesPage(string Tag) : this()
         {
             this.Tag = Tag;
-
-            PipeClient.ServerMessage += OnServerMessage;
 
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Updated += ProfileUpdated;
@@ -134,17 +133,12 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
-        private void OnServerMessage(PipeMessage e)
-        {
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
         }
 
         public void Page_Closed()
         {
-            PipeClient.ServerMessage -= OnServerMessage;
         }
 
         #region UI

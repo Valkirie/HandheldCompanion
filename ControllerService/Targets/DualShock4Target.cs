@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using Nefarius.ViGEm.Client.Exceptions;

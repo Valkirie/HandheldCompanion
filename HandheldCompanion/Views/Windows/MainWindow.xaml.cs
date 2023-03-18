@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
@@ -144,7 +145,6 @@ namespace HandheldCompanion.Views
             CurrentDevice.PullSensors();
 
             // initialize pipe client
-            PipeClient.Initialize("ControllerService");
             PipeClient.ServerMessage += OnServerMessage;
             PipeClient.Connected += OnClientConnected;
             PipeClient.Disconnected += OnClientDisconnected;
@@ -740,6 +740,9 @@ namespace HandheldCompanion.Views
             {
                 case PowerManager.SystemStatus.SystemReady:
                     {
+                        // clear pipes
+                        PipeServer.ClearQueue();
+
                         // restore inputs manager
                         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                         InputsManager.Start();

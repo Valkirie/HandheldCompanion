@@ -2,6 +2,7 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using SharpDX.XInput;
 using System;
 using System.Linq;

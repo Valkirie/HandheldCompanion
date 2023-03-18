@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;

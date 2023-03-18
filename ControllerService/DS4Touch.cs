@@ -1,6 +1,7 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ControllerCommon.Pipes;
 
 namespace ControllerService
 {

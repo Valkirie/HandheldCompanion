@@ -2,6 +2,7 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
 using SharpDX.XInput;

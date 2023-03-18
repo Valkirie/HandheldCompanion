@@ -1,6 +1,7 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Models;

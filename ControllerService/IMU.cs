@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using ControllerService.Sensors;
 using PrecisionTiming;

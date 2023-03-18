@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Pipes;
 using ControllerCommon.Platforms;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
@@ -93,7 +94,6 @@ namespace ControllerService
             }
 
             // initialize PipeServer
-            PipeServer.Initialize("ControllerService");
             PipeServer.Connected += OnClientConnected;
             PipeServer.Disconnected += OnClientDisconnected;
             PipeServer.ClientMessage += OnClientMessage;
@@ -559,6 +559,9 @@ namespace ControllerService
                         // check if service/system was suspended previously
                         if (vTarget is not null)
                             return;
+
+                        // clear pipes
+                        PipeServer.ClearQueue();
 
                         // (re)initialize sensors
                         IMU.Restart(true);

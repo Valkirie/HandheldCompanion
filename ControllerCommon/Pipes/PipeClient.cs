@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace ControllerCommon
+namespace ControllerCommon.Pipes
 {
     public static class PipeClient
     {
@@ -24,14 +24,15 @@ namespace ControllerCommon
         private static Timer m_timer;
 
         public static bool IsConnected;
+        private const string PipeName = "HandheldCompanion";
 
-        public static void Initialize(string pipeName)
+        static PipeClient()
         {
             // monitors processes and settings
             m_timer = new Timer(1000) { Enabled = false, AutoReset = true };
             m_timer.Elapsed += SendMessageQueue;
 
-            client = new NamedPipeClient<PipeMessage>(pipeName);
+            client = new NamedPipeClient<PipeMessage>(PipeName);
             client.AutoReconnect = true;
         }
 
@@ -111,6 +112,11 @@ namespace ControllerCommon
 
             m_queue.Clear();
             m_timer.Stop();
+        }
+
+        public static void ClearQueue()
+        {
+            m_queue.Clear();
         }
     }
 }
