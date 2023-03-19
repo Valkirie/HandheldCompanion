@@ -562,15 +562,18 @@ namespace ControllerService
             {
                 case SystemStatus.SystemReady:
                     {
-                        // check if service/system was suspended previously
-                        if (vTarget is not null)
-                            return;
+                        // start timer manager
+                        TimerManager.Start();
 
                         // clear pipes
                         PipeServer.ClearQueue();
 
                         // (re)initialize sensors
                         IMU.Restart(true);
+
+                        // check if service/system was suspended previously
+                        if (vTarget is not null)
+                            return;
 
                         // (re)initialize ViGEm
                         vClient = new ViGEmClient();
@@ -581,11 +584,17 @@ namespace ControllerService
                     break;
                 case SystemStatus.SystemPending:
                     {
+                        // stop timer manager
+                        TimerManager.Stop();
+
+                        // stop sensors
                         IMU.Stop();
 
+                        // dispose virtual controller
                         vTarget.Dispose();
                         vTarget = null;
 
+                        // dispose ViGEm
                         vClient.Dispose();
                         vClient = null;
                     }
