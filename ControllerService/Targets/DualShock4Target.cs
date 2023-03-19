@@ -205,7 +205,7 @@ namespace ControllerService.Targets
 
             outDS4Report.bBatteryLvlSpecial = 11;
 
-            outDS4Report.wTimestamp = (ushort)(TimerManager.GetTickCount());
+            outDS4Report.wTimestamp = (ushort)(TimerManager.GetElapsedSeconds());
 
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
 

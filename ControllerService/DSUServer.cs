@@ -601,7 +601,7 @@ namespace ControllerService
                 }
 
                 //motion timestamp
-                Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetTickCount()), 0, outputData, outIdx, 8);
+                Array.Copy(BitConverter.GetBytes((ulong)TimerManager.GetElapsedSeconds()), 0, outputData, outIdx, 8);
 
                 outIdx += 8;
 

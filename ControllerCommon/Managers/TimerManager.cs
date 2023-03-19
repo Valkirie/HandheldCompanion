@@ -1,13 +1,16 @@
 ﻿using PrecisionTiming;
 using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace ControllerCommon.Managers
 {
     public static class TimerManager
     {
         private static PrecisionTimer MasterTimer;
+        public static Stopwatch Stopwatch;
+
         private const int MasterInterval = 10;
-        private static long TickCount;
 
         public static event TickEventHandler Tick;
         public delegate void TickEventHandler(long ticks);
@@ -22,19 +25,21 @@ namespace ControllerCommon.Managers
             MasterTimer = new PrecisionTimer();
             MasterTimer.SetAutoResetMode(true);
             MasterTimer.SetResolution(0);
-            MasterTimer.SetPeriod(MasterInterval);
+            MasterTimer.SetPeriod(1);
             MasterTimer.Tick += MasterTimerTicked;
+
+            Stopwatch = new Stopwatch();
         }
 
         private static void MasterTimerTicked(object sender, EventArgs e)
         {
-            TickCount++;
-            Tick?.Invoke(TickCount);
+            if (Stopwatch.ElapsedTicks % MasterInterval == 0)
+                Tick?.Invoke(Stopwatch.ElapsedTicks);
         }
 
         public static int GetPeriod()
         {
-            return MasterTimer.GetPeriod();
+            return MasterInterval;
         }
 
         public static int GetResolution()
@@ -44,12 +49,27 @@ namespace ControllerCommon.Managers
 
         public static float GetPeriodMilliseconds()
         {
-            return (float)MasterTimer.GetPeriod() / 1000L;
+            return (float)MasterInterval / 1000L;
         }
 
         public static long GetTickCount()
         {
-            return TickCount;
+            return Stopwatch.ElapsedTicks;
+        }
+
+        public static long GetTimestamp()
+        {
+            return Stopwatch.GetTimestamp();
+        }
+
+        public static long GetElapsedSeconds()
+        {
+            return GetElapsedMilliseconds() * 1000L;
+        }
+
+        public static long GetElapsedMilliseconds()
+        {
+            return Stopwatch.ElapsedMilliseconds;
         }
 
         public static void Start()
@@ -58,11 +78,12 @@ namespace ControllerCommon.Managers
                 return;
 
             MasterTimer.Start();
+            Stopwatch.Start();
 
             IsInitialized = true;
             Initialized?.Invoke();
 
-            LogManager.LogInformation("{0} has started with Period set to {1} and Resolution set to {2}", "TimerManager", GetPeriod(), GetResolution());
+            LogManager.LogInformation("{0} has started with Period set to {1} and Resolution set to {2} on thread {3}", "TimerManager", GetPeriod(), GetResolution(), Thread.CurrentThread.ManagedThreadId);
         }
 
         public static void Stop()
@@ -73,6 +94,7 @@ namespace ControllerCommon.Managers
             IsInitialized = false;
 
             MasterTimer.Stop();
+            Stopwatch.Stop();
 
             LogManager.LogInformation("{0} has stopped", "TimerManager");
         }
