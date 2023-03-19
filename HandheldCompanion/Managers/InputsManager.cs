@@ -191,7 +191,7 @@ namespace HandheldCompanion.Managers
                 }
                 else
                 {
-                    DeviceChord chord = MainWindow.CurrentDevice.OEMChords.Where(a => a.state == currentChord.State).FirstOrDefault();
+                    DeviceChord chord = MainWindow.CurrentDevice.OEMChords.Where(a => a.state.Equals(currentChord.State)).FirstOrDefault();
                     if (chord is null)
                         return;
 
@@ -199,9 +199,14 @@ namespace HandheldCompanion.Managers
                     LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
 
                     if (IsKeyDown)
+                    {
                         KeyboardSimulator.KeyDown(chords.ToArray());
-                    // else if (IsKeyUp)
-                    KeyboardSimulator.KeyUp(chords.ToArray());
+
+                        // stop hold timer
+                        InputsChordHoldTimer.Stop();
+                    }
+                    else if (IsKeyUp)
+                        KeyboardSimulator.KeyUp(chords.ToArray());
                 }
             }
             else
