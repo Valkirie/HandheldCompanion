@@ -153,9 +153,11 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.Start:
                     return "\u21E8";
                 case ButtonFlags.L2:
+                    return "\u21DC";
                 case ButtonFlags.L3:
                     return "\u21B2";
                 case ButtonFlags.R2:
+                    return "\u21DD";
                 case ButtonFlags.R3:
                     return "\u21B3";
                 case ButtonFlags.Special:
