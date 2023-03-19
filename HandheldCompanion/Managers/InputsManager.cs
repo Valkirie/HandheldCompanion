@@ -27,7 +27,6 @@ namespace HandheldCompanion.Managers
 
         // Gamepad variables
         private static PrecisionTimer KeyboardResetTimer;
-        private static PrecisionTimer GamepadResetTimer;
 
         private static bool GamepadClearPending;
         private static ButtonState prevState = new();
@@ -88,14 +87,10 @@ namespace HandheldCompanion.Managers
         static InputsManager()
         {
             KeyboardResetTimer = new PrecisionTimer();
-            KeyboardResetTimer.SetInterval(TIME_FLUSH);
+            KeyboardResetTimer.SetPeriod(TIME_FLUSH);
+            KeyboardResetTimer.SetResolution(0);
             KeyboardResetTimer.SetAutoResetMode(false);
             KeyboardResetTimer.Tick += (sender, e) => ReleaseKeyboardBuffer();
-
-            GamepadResetTimer = new PrecisionTimer();
-            GamepadResetTimer.SetInterval(TIME_FLUSH);
-            GamepadResetTimer.SetAutoResetMode(false);
-            GamepadResetTimer.Tick += (sender, e) => ReleaseGamepadBuffer();
 
             ListenerTimer = new Timer(TIME_EXPIRED);
             ListenerTimer.AutoReset = false;
@@ -401,11 +396,6 @@ namespace HandheldCompanion.Managers
             return keys;
         }
 
-        private static void ReleaseGamepadBuffer()
-        {
-            // do something
-        }
-
         private static void ReleaseKeyboardBuffer()
         {
             if (BufferKeys.Count == 0)
@@ -515,7 +505,7 @@ namespace HandheldCompanion.Managers
             if (prevState.Equals(buttonState))
                 return;
 
-            GamepadResetTimer.Stop();
+            // GamepadResetTimer.Stop();
 
             bool IsKeyDown = false;
             bool IsKeyUp = false;
@@ -557,7 +547,7 @@ namespace HandheldCompanion.Managers
 
             prevState = buttonState.Clone() as ButtonState;
 
-            GamepadResetTimer.Start();
+            // GamepadResetTimer.Start();
         }
 
         public static void StartListening(Hotkey hotkey, ListenerType type)
