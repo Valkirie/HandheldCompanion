@@ -83,7 +83,7 @@ namespace ControllerCommon.Managers
             IsInitialized = true;
             Initialized?.Invoke();
 
-            LogManager.LogInformation("{0} has started with Period set to {1} and Resolution set to {2} on thread {3}", "TimerManager", GetPeriod(), GetResolution(), Thread.CurrentThread.ManagedThreadId);
+            LogManager.LogInformation("{0} has started with Period set to {1} and Resolution set to {2}", "TimerManager", GetPeriod(), GetResolution());
         }
 
         public static void Stop()
