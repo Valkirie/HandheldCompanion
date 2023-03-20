@@ -401,7 +401,37 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.R3:
                     return "\u21B3";
                 case ButtonFlags.Special:
-                    return "\uE001";
+                    return "\u21E4";
+                case ButtonFlags.OEM1:
+                    return "\u21E5";
+                case ButtonFlags.LeftThumbTouch:
+                    return "\u21DA";
+                case ButtonFlags.RightThumbTouch:
+                    return "\u21DB";
+                case ButtonFlags.LeftPadTouch:
+                    return "\u2268";
+                case ButtonFlags.RightPadTouch:
+                    return "\u2269";
+                case ButtonFlags.LeftPadClick:
+                    return "\u2266";
+                case ButtonFlags.RightPadClick:
+                    return "\u2267";
+                case ButtonFlags.LeftPadClickUp:
+                    return "\u2270";
+                case ButtonFlags.LeftPadClickDown:
+                    return "\u2274";
+                case ButtonFlags.LeftPadClickLeft:
+                    return "\u226E";
+                case ButtonFlags.LeftPadClickRight:
+                    return "\u2272";
+                case ButtonFlags.RightPadClickUp:
+                    return "\u2271";
+                case ButtonFlags.RightPadClickDown:
+                    return "\u2275";
+                case ButtonFlags.RightPadClickLeft:
+                    return "\u226F";
+                case ButtonFlags.RightPadClickRight:
+                    return "\u2273"; 
             }
 
             return base.GetGlyph(button);
@@ -428,6 +458,10 @@ namespace HandheldCompanion.Controllers
                     return "\u2196";
                 case AxisLayoutFlags.R2:
                     return "\u2197";
+                case AxisLayoutFlags.LeftPad:
+                    return "\u2264";
+                case AxisLayoutFlags.RightPad:
+                    return "\u2265";
             }
 
             return base.GetGlyph(axis);
