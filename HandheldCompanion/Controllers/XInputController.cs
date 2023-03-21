@@ -1,4 +1,4 @@
-﻿using ControllerCommon.Controllers;
+using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
@@ -347,9 +347,11 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.Start:
                     return "\u21FB";
                 case ButtonFlags.L2:
+                    return "\u21DC";
                 case ButtonFlags.L3:
                     return "\u2196";
                 case ButtonFlags.R2:
+                    return "\u21DD";
                 case ButtonFlags.R3:
                     return "\u2197";
                 case ButtonFlags.Special:

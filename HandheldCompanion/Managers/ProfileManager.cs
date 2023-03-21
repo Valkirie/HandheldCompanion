@@ -201,7 +201,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogInformation("Profile {0} applied", profile.Name);
 
                 // inform service
-                PipeClient.SendMessage(new PipeClientProfile { profile = profile });
+                PipeClient.SendMessage(new PipeClientProfile(profile));
 
                 // do not update default profile path
                 if (profile.Default)
@@ -372,7 +372,7 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
-                PipeClient.SendMessage(new PipeClientProfile { profile = profile });
+                PipeClient.SendMessage(new PipeClientProfile(profile));
 
             if (profile.ErrorCode != ProfileErrorCode.None && !profile.Default)
             {
