@@ -159,36 +159,38 @@ namespace ControllerService
 
                 IMU_Angle = Inclinometer.GetCurrentReading();
 
-                // update sensorFusion (todo: call only when needed ?)
-                sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity[XInputSensorFlags.Centered], Acceleration[XInputSensorFlags.Default]);
-
-                // async update client(s)
-                Task.Run(() =>
+                // update sensorFusion
+                switch (ControllerService.currentProfile.MotionInput)
                 {
-                    switch (ControllerService.CurrentTag)
-                    {
-                        case "SettingsMode0":
-                            PipeServer.SendMessage(new PipeSensor(AngularVelocity[XInputSensorFlags.Centered], SensorType.Girometer));
-                            break;
+                    case MotionInput.PlayerSpace:
+                    case MotionInput.AutoRollYawSwap:
+                        sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity[XInputSensorFlags.Centered], Acceleration[XInputSensorFlags.Default]);
+                        break;
+                }
 
-                        case "SettingsMode1":
-                            PipeServer.SendMessage(new PipeSensor(IMU_Angle, SensorType.Inclinometer));
-                            break;
-                    }
+                switch (ControllerService.CurrentTag)
+                {
+                    case "SettingsMode0":
+                        PipeServer.SendMessage(new PipeSensor(AngularVelocity[XInputSensorFlags.Centered], SensorType.Girometer));
+                        break;
 
-                    switch (ControllerService.CurrentOverlayStatus)
-                    {
-                        case 0: // Visible
-                            var AngularVelocityRad = new Vector3();
-                            AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].X);
-                            AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Y);
-                            AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Z);
-                            madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration[XInputSensorFlags.RawValue].X, Acceleration[XInputSensorFlags.RawValue].Y, Acceleration[XInputSensorFlags.RawValue].Z, DeltaSeconds);
+                    case "SettingsMode1":
+                        PipeServer.SendMessage(new PipeSensor(IMU_Angle, SensorType.Inclinometer));
+                        break;
+                }
 
-                            PipeServer.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
-                            break;
-                    }
-                });
+                switch (ControllerService.CurrentOverlayStatus)
+                {
+                    case 0: // Visible
+                        var AngularVelocityRad = new Vector3();
+                        AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].X);
+                        AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Y);
+                        AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Z);
+                        madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration[XInputSensorFlags.RawValue].X, Acceleration[XInputSensorFlags.RawValue].Y, Acceleration[XInputSensorFlags.RawValue].Z, DeltaSeconds);
+
+                        PipeServer.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));
+                        break;
+                }
 
                 Updated?.Invoke();
 
