@@ -164,6 +164,7 @@ namespace ControllerService
                 {
                     case MotionInput.PlayerSpace:
                     case MotionInput.AutoRollYawSwap:
+                    case MotionInput.JoystickSteering:
                         sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity[XInputSensorFlags.Centered], Acceleration[XInputSensorFlags.Default]);
                         break;
                 }
