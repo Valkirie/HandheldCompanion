@@ -1,5 +1,7 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon.Devices;
+using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Views;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using System;
@@ -10,10 +12,11 @@ using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static HandheldCompanion.OpenLibSys;
 
 namespace HandheldCompanion.Managers
 {
-    public static class DesktopManager
+    public static class SystemManager
     {
 
         #region imports
@@ -159,10 +162,13 @@ namespace HandheldCompanion.Managers
         private static ManagementScope Scope;
         private static bool BrightnessSupport;
 
+        private static OpenLibSys openLibSys;
+        private static bool FanControlSupport;
+
         private static Screen PrimaryScreen;
         public static bool IsInitialized;
 
-        static DesktopManager()
+        static SystemManager()
         {
             // get current volume value
             DevEnum = new MMDeviceEnumerator();
@@ -181,6 +187,36 @@ namespace HandheldCompanion.Managers
             // creating the watcher
             EventWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
             EventWatcher.EventArrived += new EventArrivedEventHandler(onWMIEvent);
+
+            if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl))
+            {
+                // initialize OpenLibSys
+                openLibSys = new OpenLibSys();
+
+                // Check support library sutatus
+                OlsStatus status = openLibSys.GetStatus();
+                switch (status)
+                {
+                    case (uint)OlsStatus.NO_ERROR:
+                        break;
+                    default:
+                        LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", status);
+                        break;
+                }
+
+                // Check WinRing0 status
+                OlsDllStatus dllstatus = (OlsDllStatus)openLibSys.GetDllStatus();
+                switch (dllstatus)
+                {
+                    case (uint)OlsDllStatus.OLS_DLL_NO_ERROR:
+                        break;
+                    default:
+                        LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", dllstatus);
+                        break;
+                }
+
+                FanControlSupport = true;
+            }
         }
 
         public static void Start()
@@ -197,7 +233,7 @@ namespace HandheldCompanion.Managers
             IsInitialized = true;
             Initialized?.Invoke();
 
-            LogManager.LogInformation("{0} has started", "DesktopManager");
+            LogManager.LogInformation("{0} has started", "SystemManager");
         }
 
         private static void onWMIEvent(object sender, EventArrivedEventArgs e)
@@ -273,7 +309,56 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            LogManager.LogInformation("{0} has stopped", "DesktopManager");
+            LogManager.LogInformation("{0} has stopped", "SystemManager");
+        }
+
+        public static void SetFanDuty(double percent)
+        {
+            FanDetails details = MainWindow.CurrentDevice.FanDetails;
+
+            if (details.AddressDuty == 0)
+                return;
+
+            byte data = Convert.ToByte(percent / details.ValueMax * details.ValueMin);
+            ECRamDirectWrite(details.AddressDuty, details, data);
+        }
+
+        public static void SetFanControl(bool enable)
+        {
+            FanDetails details = MainWindow.CurrentDevice.FanDetails;
+
+            if (details.AddressControl == 0)
+                return;
+
+            byte data = Convert.ToByte(enable);
+            ECRamDirectWrite(details.AddressControl, details, data);
+        }
+
+        public static void ECRamDirectWrite(ushort address, FanDetails details, byte data)
+        {
+            byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
+            byte addr_lower = ((byte)(address & byte.MaxValue));
+
+            try
+            {
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)17);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)16);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, data);
+            }
+            catch
+            {
+            }
         }
 
         public static bool SetResolution(int width, int height, int displayFrequency)

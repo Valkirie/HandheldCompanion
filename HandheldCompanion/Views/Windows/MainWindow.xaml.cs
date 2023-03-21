@@ -168,9 +168,9 @@ namespace HandheldCompanion.Views
             EnergyManager.Start();
             HotkeysManager.Start();
 
-            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
-            DeviceManager.Start();
+            ControllerCommon.Managers.DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            ControllerCommon.Managers.DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+            ControllerCommon.Managers.DeviceManager.Start();
 
             PlatformManager.Start();
             ProfileManager.Start();
@@ -180,7 +180,7 @@ namespace HandheldCompanion.Views
             PowerManager.SystemStatusChanged += OnSystemStatusChanged;
             PowerManager.Start();
 
-            DesktopManager.Start();
+            Managers.SystemManager.Start();
             // HWiNFOManager.Start();
 
             // start managers asynchroneously
@@ -602,7 +602,7 @@ namespace HandheldCompanion.Views
 
             ControllerManager.Stop();
             InputsManager.Stop();
-            DeviceManager.Stop();
+            ControllerCommon.Managers.DeviceManager.Stop();
             PlatformManager.Stop();
             ProfileManager.Stop();
             LayoutManager.Stop();

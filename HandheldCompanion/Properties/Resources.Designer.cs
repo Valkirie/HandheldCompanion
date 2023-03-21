@@ -523,6 +523,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Quiet mode.
+        /// </summary>
+        public static string InputsHotkey_quietModeToggle {
+            get {
+                return ResourceManager.GetString("InputsHotkey_quietModeToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Set the fan to a user-defined duty cycle.
+        /// </summary>
+        public static string InputsHotkey_quietModeToggleDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_quietModeToggleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Display Action center.
         /// </summary>
         public static string InputsHotkey_shortcutControlCenter {

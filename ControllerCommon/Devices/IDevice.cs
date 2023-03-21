@@ -20,6 +20,18 @@ namespace ControllerCommon.Devices
         ExternalSensor = 2,
         ControllerSensor = 4,
         Trackpads = 8,
+        FanControl = 16,
+    }
+
+    public struct FanDetails
+    {
+        public ushort AddressRegistry;
+        public ushort AddressData;
+        public ushort AddressControl;
+        public ushort AddressDuty;
+
+        public short ValueMin;
+        public short ValueMax;
     }
 
     public abstract class IDevice
@@ -36,6 +48,7 @@ namespace ControllerCommon.Devices
         public string ProductModel = "default";
 
         public DeviceCapacities Capacities = DeviceCapacities.None;
+        public FanDetails FanDetails;
 
         // device nominal TDP (slow, fast)
         public double[] nTDP = { 15, 15, 20 };
