@@ -52,7 +52,6 @@ namespace ControllerService
 
         // profile vars
         public static Profile currentProfile = new();
-        public static Profile defaultProfile = new();
         public static PlatformType currentPlatform;
 
         public static event UpdatedEventHandler ForegroundUpdated;
@@ -264,7 +263,7 @@ namespace ControllerService
                 case PipeCode.CLIENT_PROFILE:
                     {
                         PipeClientProfile profile = (PipeClientProfile)message;
-                        UpdateProfile(profile.profile);
+                        UpdateProfile(profile.GetProfile());
                     }
                     break;
 
@@ -379,19 +378,11 @@ namespace ControllerService
             if (profile == currentProfile)
                 return;
 
-            // restore default profile
-            if (profile is null)
-                profile = defaultProfile;
-
             // update current profile
             currentProfile = profile;
             ForegroundUpdated?.Invoke();
-
-            // update default profile
-            if (profile.Default)
-                defaultProfile = profile;
-            else
-                LogManager.LogInformation("Profile {0} applied", profile.Name);
+            
+            LogManager.LogInformation("Profile {0} applied", profile.Name);
         }
 
         internal void UpdateProcess(string executable, PlatformType platform)

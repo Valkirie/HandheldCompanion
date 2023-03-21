@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Controllers;
 using ControllerCommon.Platforms;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -56,13 +57,38 @@ namespace ControllerCommon.Pipes
     [Serializable]
     public partial class PipeClientProfile : PipeMessage
     {
-        public Profile profile;
+        // public Profile profile;
+        public string jsonString;
 
         public PipeClientProfile()
         {
             code = PipeCode.CLIENT_PROFILE;
         }
+
+        public PipeClientProfile(Profile profile) : this()
+        {
+            this.jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
+
+        public Profile GetProfile()
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+            }
+            catch(Exception)
+            {
+                return new Profile();
+            }
+        }
     }
+
     [Serializable]
     public partial class PipeClientProcess : PipeMessage
     {

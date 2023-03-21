@@ -43,7 +43,7 @@ namespace ControllerCommon
     [Serializable]
     public class Profile : ICloneable
     {
-        // move me to HandheldCompanion ?
+        // todo: move me out of here !
         public static Dictionary<MotionInput, string> InputDescription = new()
         {
             { MotionInput.JoystickCamera, Properties.Resources.JoystickCameraDesc },
