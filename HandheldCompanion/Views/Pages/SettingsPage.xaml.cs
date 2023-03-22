@@ -84,8 +84,28 @@ namespace HandheldCompanion.Views.Pages
                         cB_Backdrop_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
                     case "SensorSelection":
-                        cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
-                        cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        {
+                            int idx = Convert.ToInt32(value);
+
+                            // default value
+                            if (idx == -1)
+                            {
+                                if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor))
+                                    cB_SensorSelection.SelectedItem = SensorController;
+                                else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor))
+                                    cB_SensorSelection.SelectedItem = SensorInternal;
+                                else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor))
+                                    cB_SensorSelection.SelectedItem = SensorExternal;
+                                else
+                                    cB_SensorSelection.SelectedItem = SensorNone;
+                            }
+                            else
+                            {
+                                cB_SensorSelection.SelectedIndex = idx;
+                            }
+
+                            cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        }
                         break;
                     case "RunAtStartup":
                         Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
