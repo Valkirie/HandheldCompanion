@@ -218,8 +218,11 @@ namespace HandheldCompanion.Views
                     break;
             }
 
-            PipeClientSettings settings = new PipeClientSettings(name, value);
-            PipeClient.SendMessage(settings);
+            if (PipeClient.IsConnected)
+            {
+                PipeClientSettings settings = new PipeClientSettings(name, value);
+                PipeClient.SendMessage(settings);
+            }
         }
 
         public void SwapWindowState()
