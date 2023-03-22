@@ -159,7 +159,7 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start static managers in sequence
-            TimerManager.Start();
+            // managers that has to be stopped/started when session status changes shouldn't be put here
 
             ToastManager.Start();
             ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
