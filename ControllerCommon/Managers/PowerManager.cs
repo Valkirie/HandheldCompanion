@@ -16,7 +16,7 @@ namespace ControllerCommon.Managers
 
         #region events
         public static event SystemStatusChangedEventHandler SystemStatusChanged;
-        public delegate void SystemStatusChangedEventHandler(SystemStatus status);
+        public delegate void SystemStatusChangedEventHandler(SystemStatus status, SystemStatus prevStatus);
 
         public static event PowerStatusChangedEventHandler PowerStatusChanged;
         public delegate void PowerStatusChangedEventHandler(PowerStatus status);
@@ -28,8 +28,8 @@ namespace ControllerCommon.Managers
         private static bool IsPowerSuspended = false;
         private static bool IsSessionLocked = true;
 
-        private static SystemStatus currentSystemStatus = SystemStatus.None;
-        private static SystemStatus previousSystemStatus = SystemStatus.None;
+        private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
+        private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
 
         public static bool IsInitialized;
 
@@ -74,7 +74,7 @@ namespace ControllerCommon.Managers
 
         public enum SystemStatus
         {
-            None = 0,
+            SystemBooting = 0,
             SystemPending = 1,
             SystemReady = 2,
         }
@@ -184,7 +184,7 @@ namespace ControllerCommon.Managers
             if (previousSystemStatus != currentSystemStatus)
             {
                 LogManager.LogInformation("System status set to {0}", currentSystemStatus);
-                SystemStatusChanged?.Invoke(currentSystemStatus);
+                SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);
             }
 
             previousSystemStatus = currentSystemStatus;

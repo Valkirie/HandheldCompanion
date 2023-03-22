@@ -94,13 +94,16 @@ namespace ControllerService
 
             // force update sensors
             if (update)
-            {
-                Gyrometer.UpdateSensor();
-                Accelerometer.UpdateSensor();
-                Inclinometer.UpdateSensor();
-            }
+                Update();
 
             Start();
+        }
+
+        public static void Update()
+        {
+            Gyrometer.UpdateSensor();
+            Accelerometer.UpdateSensor();
+            Inclinometer.UpdateSensor();
         }
 
         public static void UpdateMovements(ControllerMovements movements)

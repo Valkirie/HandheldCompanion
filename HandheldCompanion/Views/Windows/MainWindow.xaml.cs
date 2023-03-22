@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using static ControllerCommon.Managers.PowerManager;
 using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
@@ -736,7 +737,7 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        private async void OnSystemStatusChanged(PowerManager.SystemStatus status)
+        private async void OnSystemStatusChanged(PowerManager.SystemStatus status, SystemStatus prevStatus)
         {
             switch (status)
             {

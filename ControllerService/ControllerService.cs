@@ -106,9 +106,6 @@ namespace ControllerService
             // initialize device
             handheldDevice = IDevice.GetDefault();
 
-            // XInputController settings
-            IMU.SetSensorFamily(SensorSelection);
-
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport);
             DSUServer.Started += OnDSUStarted;
@@ -498,9 +495,6 @@ namespace ControllerService
             // start master timer
             TimerManager.Start();
 
-            // start listening to controller
-            IMU.Start();
-
             // start DSUClient
             if (DSUEnabled)
                 DSUServer.Start();
@@ -545,7 +539,7 @@ namespace ControllerService
             return Task.CompletedTask;
         }
 
-        private async void OnSystemStatusChanged(SystemStatus status)
+        private async void OnSystemStatusChanged(SystemStatus status, SystemStatus prevStatus)
         {
             LogManager.LogInformation("System status set to {0}", status);
 
@@ -559,8 +553,17 @@ namespace ControllerService
                         // clear pipes
                         PipeServer.ClearQueue();
 
-                        // (re)initialize sensors
-                        IMU.Restart(true);
+                        switch(prevStatus)
+                        {
+                            // we're just starting
+                            case SystemStatus.SystemBooting:
+                                IMU.SetSensorFamily(SensorSelection);
+                                IMU.Start();
+                                break;
+                            default:
+                                IMU.Restart(true);
+                                break;
+                        }
 
                         // check if service/system was suspended previously
                         if (vTarget is not null)
