@@ -443,6 +443,7 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
+            m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
 
@@ -462,6 +463,12 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+            m_GlobalHook.Dispose();
+
+            KeyboardResetTimer.Stop();
+            ListenerTimer.Stop();
+            InputsChordInputTimer.Stop();
+            InputsChordHoldTimer.Stop();
 
             LogManager.LogInformation("{0} has stopped", "InputsManager");
         }
