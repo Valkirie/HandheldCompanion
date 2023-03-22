@@ -143,6 +143,7 @@ namespace HandheldCompanion.Managers
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
                     case "shortcutDesktopLayout":
+                    case "QuietModeEnabled":
                         {
                             bool toggle = Convert.ToBoolean(value);
                             hotkey.SetToggle(toggle);
@@ -341,12 +342,19 @@ namespace HandheldCompanion.Managers
                             fProcess.Process.Kill();
                         }
                         break;
-
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
                         {
                             bool SteamDeckLizardMode = SettingsManager.GetBoolean(listener);
                             SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
+                        }
+                        break;
+                    case "QuietModeEnabled":
+                        {
+                            bool value = !SettingsManager.GetBoolean(listener);
+                            SettingsManager.SetProperty(listener, value);
+                            
+                            ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
                         }
                         break;
 
@@ -356,7 +364,7 @@ namespace HandheldCompanion.Managers
                             bool value = !SettingsManager.GetBoolean(listener, true);
                             SettingsManager.SetProperty(listener, value, false, true);
 
-                            ToastManager.SendToast("Desktop Layout", $"is now {(value ? "enabled" : "disabled")}");
+                            ToastManager.SendToast("Desktop layout", $"is now {(value ? "enabled" : "disabled")}");
                         }
                         break;
 

@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Devices;
+﻿using ControllerCommon.Controllers;
+using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
@@ -201,7 +202,7 @@ namespace HandheldCompanion.Managers
                         break;
                     default:
                         LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", status);
-                        break;
+                        return;
                 }
 
                 // Check WinRing0 status
@@ -212,10 +213,39 @@ namespace HandheldCompanion.Managers
                         break;
                     default:
                         LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", dllstatus);
-                        break;
+                        return;
                 }
 
                 FanControlSupport = true;
+            }
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "QuietModeEnabled":
+                    {
+                        bool status = Convert.ToBoolean(value);
+                        double duty = SettingsManager.GetDouble("QuietModeDuty");
+
+                        SetFanDuty(duty);
+                        SetFanControl(status);
+                    }
+                    break;
+                case "QuietModeDuty":
+                    {
+                        bool status = Convert.ToBoolean(value);
+                        if (!status)
+                            return;
+
+                        double duty = SettingsManager.GetDouble("QuietModeDuty");
+
+                        SetFanDuty(duty);
+                    }
+                    break;
             }
         }
 
@@ -319,7 +349,9 @@ namespace HandheldCompanion.Managers
             if (details.AddressDuty == 0)
                 return;
 
-            byte data = Convert.ToByte(percent / details.ValueMax * details.ValueMin);
+            double duty = percent * (details.ValueMax - details.ValueMin) / 100 + details.ValueMin;
+            byte data = Convert.ToByte(duty);
+
             ECRamDirectWrite(details.AddressDuty, details, data);
         }
 

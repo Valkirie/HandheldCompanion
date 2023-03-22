@@ -50,13 +50,13 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            SystemManager.XUsbDeviceArrived += XUsbDeviceArrived;
-            SystemManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
+            DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
+            DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
 
-            SystemManager.HidDeviceArrived += HidDeviceArrived;
-            SystemManager.HidDeviceRemoved += HidDeviceRemoved;
+            DeviceManager.HidDeviceArrived += HidDeviceArrived;
+            DeviceManager.HidDeviceRemoved += HidDeviceRemoved;
 
-            SystemManager.Initialized += DeviceManager_Initialized;
+            DeviceManager.Initialized += DeviceManager_Initialized;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -89,11 +89,11 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            SystemManager.XUsbDeviceArrived -= XUsbDeviceArrived;
-            SystemManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+            DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+            DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
 
-            SystemManager.HidDeviceArrived -= HidDeviceArrived;
-            SystemManager.HidDeviceRemoved -= HidDeviceRemoved;
+            DeviceManager.HidDeviceArrived -= HidDeviceArrived;
+            DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
 
             SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
 
@@ -205,7 +205,7 @@ namespace HandheldCompanion.Managers
                     {
                         // Instantiate the joystick
                         var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                        string SymLink = SystemManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath, obj.InterfaceGuid.ToString());
+                        string SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath, obj.InterfaceGuid.ToString());
 
                         // IG_ means it is an XInput controller and therefore is handled elsewhere
                         if (lookup_joystick.Properties.InterfacePath.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))

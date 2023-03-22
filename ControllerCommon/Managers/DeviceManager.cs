@@ -86,7 +86,7 @@ namespace ControllerCommon.Managers
             IsInitialized = true;
             Initialized?.Invoke();
 
-            LogManager.LogInformation("{0} has started", "SystemManager");
+            LogManager.LogInformation("{0} has started", "DeviceManager");
         }
 
         public static void Stop()
@@ -108,7 +108,7 @@ namespace ControllerCommon.Managers
             HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
             HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
 
-            LogManager.LogInformation("{0} has stopped", "SystemManager");
+            LogManager.LogInformation("{0} has stopped", "DeviceManager");
         }
 
         private static void RefreshXInput()

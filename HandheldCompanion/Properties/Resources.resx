@@ -1163,10 +1163,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
     <value>Controller layout</value>
   </data>
-  <data name="InputsHotkey_quietModeToggle" xml:space="preserve">
+  <data name="InputsHotkey_QuietModeEnabled" xml:space="preserve">
     <value>Quiet mode</value>
   </data>
-  <data name="InputsHotkey_quietModeToggleDesc" xml:space="preserve">
-    <value>Set the fan to a user-defined duty cycle</value>
+  <data name="InputsHotkey_QuietModeEnabledDesc" xml:space="preserve">
+    <value>Set the fan duty cycle to user-defined value</value>
   </data>
 </root>
