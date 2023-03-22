@@ -186,22 +186,27 @@ namespace HandheldCompanion.Managers
                 }
                 else
                 {
+                    // get the associated keys
                     DeviceChord chord = MainWindow.CurrentDevice.OEMChords.Where(a => a.state.Equals(currentChord.State)).FirstOrDefault();
                     if (chord is null)
+                        return;
+
+                    // it could be the currentChord isn't mapped but a InputsChordType.Long is
+                    currentChord.InputsType = InputsChordType.Long;
+                    keys = GetTriggersFromChord(currentChord);
+                    if (keys.Count != 0)
                         return;
 
                     List<KeyCode> chords = chord.chords[IsKeyDown];
                     LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
 
                     if (IsKeyDown)
-                    {
                         KeyboardSimulator.KeyDown(chords.ToArray());
-
-                        // stop hold timer
-                        InputsChordHoldTimer.Stop();
-                    }
                     else if (IsKeyUp)
                         KeyboardSimulator.KeyUp(chords.ToArray());
+
+                    // stop hold timer
+                    InputsChordHoldTimer.Stop();
                 }
             }
             else
@@ -443,7 +448,6 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            m_GlobalHook = Hook.GlobalEvents();
             m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
 
@@ -463,12 +467,6 @@ namespace HandheldCompanion.Managers
             //It is recommened to dispose it
             m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
             m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
-            m_GlobalHook.Dispose();
-
-            KeyboardResetTimer.Stop();
-            ListenerTimer.Stop();
-            InputsChordInputTimer.Stop();
-            InputsChordHoldTimer.Stop();
 
             LogManager.LogInformation("{0} has stopped", "InputsManager");
         }
