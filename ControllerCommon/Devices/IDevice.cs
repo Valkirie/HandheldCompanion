@@ -11,6 +11,7 @@ using Windows.Devices.Sensors;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 using static HandheldCompanion.OpenLibSys;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ControllerCommon.Devices
 {
@@ -271,6 +272,8 @@ namespace ControllerCommon.Devices
 
         public virtual void Close()
         {
+            SetFanControl(false);
+
             openLibSys.Dispose();
             openLibSys = null;
         }
@@ -351,8 +354,9 @@ namespace ControllerCommon.Devices
                 openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
                 openLibSys.WriteIoPortByte(details.AddressData, data);
             }
-            catch
+            catch (Exception ex)
             {
+                LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
             }
         }
     }

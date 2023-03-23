@@ -125,6 +125,8 @@ namespace ControllerCommon.Devices
 
         public override void Close()
         {
+            SetFanControl(false);
+
             inpOut.Dispose();
             inpOut = null;
         }
