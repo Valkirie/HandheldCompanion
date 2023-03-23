@@ -143,6 +143,7 @@ namespace HandheldCompanion.Views
             // initialize device
             CurrentDevice = IDevice.GetDefault();
             CurrentDevice.PullSensors();
+            CurrentDevice.Open();
 
             // initialize pipe client
             PipeClient.ServerMessage += OnServerMessage;
@@ -587,6 +588,8 @@ namespace HandheldCompanion.Views
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            CurrentDevice.Close();
+
             serviceManager.Stop();
             performanceManager.Stop();
 
@@ -602,7 +605,7 @@ namespace HandheldCompanion.Views
 
             ControllerManager.Stop();
             InputsManager.Stop();
-            ControllerCommon.Managers.DeviceManager.Stop();
+            DeviceManager.Stop();
             PlatformManager.Stop();
             ProfileManager.Stop();
             LayoutManager.Stop();

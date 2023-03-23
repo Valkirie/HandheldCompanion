@@ -2,6 +2,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using HandheldCompanion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
+using static HandheldCompanion.OpenLibSys;
 
 namespace ControllerCommon.Devices
 {
@@ -48,7 +50,9 @@ namespace ControllerCommon.Devices
         public string ProductModel = "default";
 
         public DeviceCapacities Capacities = DeviceCapacities.None;
+
         public FanDetails FanDetails;
+        private static OpenLibSys openLibSys;
 
         // device nominal TDP (slow, fast)
         public double[] nTDP = { 15, 15, 20 };
@@ -210,6 +214,67 @@ namespace ControllerCommon.Devices
             return device;
         }
 
+        public virtual bool IsOpen
+        {
+            get { return openLibSys is not null; }
+        }
+
+        public virtual bool IsSupported
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public virtual bool Open()
+        {
+            if (openLibSys != null)
+                return true;
+
+            try
+            {
+                // initialize OpenLibSys
+                openLibSys = new OpenLibSys();
+
+                // Check support library sutatus
+                OlsStatus status = openLibSys.GetStatus();
+                switch (status)
+                {
+                    case (uint)OlsStatus.NO_ERROR:
+                        break;
+                    default:
+                        LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", status);
+                        return false;
+                }
+
+                // Check WinRing0 status
+                OlsDllStatus dllstatus = (OlsDllStatus)openLibSys.GetDllStatus();
+                switch (dllstatus)
+                {
+                    case (uint)OlsDllStatus.OLS_DLL_NO_ERROR:
+                        break;
+                    default:
+                        LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", dllstatus);
+                        return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", ex.Message);
+                Close();
+                return false;
+            }
+
+            return true;
+        }
+
+        public virtual void Close()
+        {
+            openLibSys.Dispose();
+            openLibSys = null;
+        }
+
         public void PullSensors()
         {
             var gyrometer = Gyrometer.GetDefault();
@@ -239,14 +304,56 @@ namespace ControllerCommon.Devices
                 Capacities &= ~DeviceCapacities.ExternalSensor;
         }
 
-        public IDevice()
-        {
-            // OEMChords.Add(new DeviceChord("temp", new List<KeyCode>() { KeyCode.F1 }, new List<KeyCode>() { KeyCode.F1 }, false, ButtonFlags.OEM1));
-        }
-
         public string GetButtonName(ButtonFlags button)
         {
             return EnumUtils.GetDescriptionFromEnumValue(button, this.GetType().Name);
+        }
+
+        public virtual void SetFanDuty(double percent)
+        {
+            if (FanDetails.AddressDuty == 0)
+                return;
+
+            double duty = percent * (FanDetails.ValueMax - FanDetails.ValueMin) / 100 + FanDetails.ValueMin;
+            byte data = Convert.ToByte(duty);
+
+            ECRamDirectWrite(FanDetails.AddressDuty, FanDetails, data);
+        }
+
+        public virtual void SetFanControl(bool enable)
+        {
+            if (FanDetails.AddressControl == 0)
+                return;
+
+            byte data = Convert.ToByte(enable);
+            ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
+        }
+
+        public static void ECRamDirectWrite(ushort address, FanDetails details, byte data)
+        {
+            byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
+            byte addr_lower = ((byte)(address & byte.MaxValue));
+
+            try
+            {
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)17);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)16);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, data);
+            }
+            catch
+            {
+            }
         }
     }
 }
