@@ -229,10 +229,13 @@ namespace HandheldCompanion.Managers
                 case "QuietModeEnabled":
                     {
                         bool status = Convert.ToBoolean(value);
-                        double duty = SettingsManager.GetDouble("QuietModeDuty");
-
-                        SetFanDuty(duty);
                         SetFanControl(status);
+
+                        if (!status)
+                            return;
+
+                        double duty = SettingsManager.GetDouble("QuietModeDuty");
+                        SetFanDuty(duty);
                     }
                     break;
                 case "QuietModeDuty":
@@ -242,7 +245,6 @@ namespace HandheldCompanion.Managers
                             return;
 
                         double duty = SettingsManager.GetDouble("QuietModeDuty");
-
                         SetFanDuty(duty);
                     }
                     break;

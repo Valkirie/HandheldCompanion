@@ -35,6 +35,19 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
+            // device specific capacities
+            this.Capacities = DeviceCapacities.FanControl;
+
+            this.FanDetails = new FanDetails()
+            {
+                AddressControl = 0x44A,
+                AddressDuty = 0x44B,
+                AddressRegistry = 0x4E,
+                AddressData = 0x4F,
+                ValueMin = 0,
+                ValueMax = 100
+            };
+
             OEMChords.Add(new DeviceChord("Custom Key Top Right",
                 new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F10 },
                 new List<KeyCode>() { KeyCode.F10, KeyCode.LWin, KeyCode.RControlKey },
