@@ -131,41 +131,44 @@ namespace ControllerCommon.Devices
 
         private void SetGain(ushort gain)
         {
-            if (!IsOpen)
+            if (!IsOpen || !IsSupported)
                 return;
 
             byte[] data = BitConverter.GetBytes(gain);
-            inpOut?.WriteMemory(GNLO_GNHI, data);
+            inpOut.WriteMemory(GNLO_GNHI, data);
         }
 
         private void SetRampRate(byte rampRate)
         {
-            if (!IsOpen)
+            if (!IsOpen || !IsSupported)
                 return;
 
             byte[] data = BitConverter.GetBytes((short)rampRate);
-            inpOut?.WriteMemory(FRPR, data);
+            inpOut.WriteMemory(FRPR, data);
         }
 
         public override void SetFanControl(bool enable)
         {
-            if (!IsOpen)
+            if (!IsOpen || !IsSupported)
                 return;
 
             SetGain(10);
             SetRampRate(enable ? (byte)10 : (byte)20);
 
-            inpOut?.DlPortWritePortUchar(IO6C, enable ? (byte)0xCC : (byte)0xCD);
+            inpOut.DlPortWritePortUchar(IO6C, enable ? (byte)0xCC : (byte)0xCD);
         }
 
         public override void SetFanDuty(double percent)
         {
-            double rpm = MAX_FAN_RPM * percent / 100.0d;
+            if (!IsOpen || !IsSupported)
+                return;
+
+            ushort rpm = (ushort)(MAX_FAN_RPM * percent / 100.0d);
             if (rpm > MAX_FAN_RPM)
                 rpm = MAX_FAN_RPM;
 
             byte[] data = BitConverter.GetBytes(rpm);
-            inpOut?.WriteMemory(FSLO_FSHI, data);
+            inpOut.WriteMemory(FSLO_FSHI, data);
         }
     }
 }
