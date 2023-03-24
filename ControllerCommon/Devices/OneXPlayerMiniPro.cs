@@ -47,6 +47,12 @@ namespace ControllerCommon.Devices
                 false, ButtonFlags.OEM2
                 ));
 
+            // dirty implementation from OneX...
+            OEMChords.Add(new DeviceChord("Function",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                new List<KeyCode>() { KeyCode.D, KeyCode.LWin },
+                false, ButtonFlags.OEM3
+                ));
             OEMChords.Add(new DeviceChord("Function",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
