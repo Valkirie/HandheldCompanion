@@ -770,6 +770,18 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuietModeToggled {
+            get {
+                return ((bool)(this["QuietModeToggled"]));
+            }
+            set {
+                this["QuietModeToggled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool QuietModeEnabled {
             get {
                 return ((bool)(this["QuietModeEnabled"]));

@@ -20,28 +20,71 @@ namespace HandheldCompanion.Managers
     {
         [JsonIgnore]
         public InputsHotkey inputsHotkey = new();
-
         public ushort hotkeyId;
         public InputsChord inputsChord = new();
-        public bool IsPinned;
+
         public string Name;
+
+        private bool _isPinned;
+        public bool IsPinned
+        {
+            get
+            {
+                return _isPinned;
+            }
+
+            set
+            {
+                // update pin button
+                switch (value)
+                {
+                    case true:
+                        mainControl.HotkeyPin.Content = new FontIcon() { Glyph = "\uE77A", FontSize = 14 };
+                        mainControl.HotkeyPin.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                        break;
+                    case false:
+                        mainControl.HotkeyPin.Content = new FontIcon() { Glyph = "\uE840", FontSize = 14 };
+                        mainControl.HotkeyPin.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                        break;
+                }
+
+                _isPinned = value;
+            }
+        }
+
+        private bool _isEnabled;
+        [JsonIgnore]
+        public bool IsEnabled
+        {
+            get
+            {
+                return _isEnabled;
+            }
+
+            set
+            {
+                mainControl.IsEnabled = value;
+                quickControl.IsEnabled = value;
+
+                _isEnabled = value;
+            }
+        }
 
         // HotkeysPage UI
         private HotkeyControl mainControl = new();
         private HotkeyQuickControl quickControl = new();
         private Storyboard storyboard = new Storyboard();
 
+        #region events
         public event ListeningEventHandler Listening;
         public delegate void ListeningEventHandler(Hotkey hotkey, ListenerType type);
-
         public event PinningEventHandler Pinning;
         public delegate void PinningEventHandler(Hotkey hotkey);
-
         public event SummonedEventHandler Summoned;
         public delegate void SummonedEventHandler(Hotkey hotkey);
-
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Hotkey hotkey);
+        #endregion
 
         public Hotkey()
         {
@@ -186,18 +229,6 @@ namespace HandheldCompanion.Managers
                     DrawInput();
                     break;
             }
-        }
-
-        public void Pinned()
-        {
-            IsPinned = true;
-            DrawPin();
-        }
-
-        public void Unpinned()
-        {
-            IsPinned = false;
-            DrawPin();
         }
 
         public HotkeyControl GetControl()

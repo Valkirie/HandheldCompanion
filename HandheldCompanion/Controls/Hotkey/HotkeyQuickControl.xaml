@@ -7,8 +7,8 @@
              xmlns:local="clr-namespace:HandheldCompanion.Controls"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              mc:Ignorable="d" d:DesignWidth="120">
-    
-    <ui:SimpleStackPanel Spacing="6">
+
+    <ui:SimpleStackPanel Name="MainPanel" Spacing="6">
         <Button Name="QuickButton" HorizontalAlignment="Stretch">
             <ui:FontIcon Name="QuickIcon" Height="40"/>
         </Button>

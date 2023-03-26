@@ -30,7 +30,6 @@ namespace HandheldCompanion.Managers
             { 11, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2795",   "increaseTDP",                      "Segoe UI Symbol",      20, false,  true) },
             { 12, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2796",   "decreaseTDP",                      "Segoe UI Symbol",      20, false,  true) },
             { 13, new InputsHotkey(InputsHotkeyType.Quicktools, "\uE769",   "suspendResumeTask",                "Segoe Fluent Icons",   20, false,  true) },
-            { 14, new InputsHotkey(InputsHotkeyType.Quicktools, "\uE708",   "QuietModeEnabled",                  "Segoe Fluent Icons",   20, false,  true) },
 
             // Microsoft Windows hotkeys
             { 20, new InputsHotkey(InputsHotkeyType.Windows,    "\uE765",   "shortcutKeyboard",                 "Segoe Fluent Icons",   20, false,  true) },
@@ -47,7 +46,7 @@ namespace HandheldCompanion.Managers
             { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE961",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true) },
 
             // Device specific hotkeys
-            // { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE2E8",   "shortcutGuide",                    "Segoe UI Symbol",      20, false,  true) },
+            { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE708",   "QuietModeToggled",                 "Segoe Fluent Icons",   20, false,  true,   null,               "QuietModeEnabled") },
             { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "SteamDeckLizardMouse",             "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
             { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "SteamDeckLizardButtons",           "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck)) },
 
@@ -64,9 +63,9 @@ namespace HandheldCompanion.Managers
             { 59, new InputsHotkey(InputsHotkeyType.Custom,     "\u2789",   "shortcutCustom9",                  "Segoe UI Symbol",      20, false,  true) },
 
             // Special, UI hotkeys
-            { 60, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesPage@",            "Segoe Fluent Icons",   20, true,   true) },
-            { 61, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesPage@@",           "Segoe Fluent Icons",   20, true,   true) },
-            { 62, new InputsHotkey(InputsHotkeyType.Embedded,         "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,   true) },
+            { 60, new InputsHotkey(InputsHotkeyType.Embedded,   "\uEDE3",   "shortcutProfilesPage@",            "Segoe Fluent Icons",   20, true,   true) },
+            { 61, new InputsHotkey(InputsHotkeyType.Embedded,   "\uEDE3",   "shortcutProfilesPage@@",           "Segoe Fluent Icons",   20, true,   true) },
+            { 62, new InputsHotkey(InputsHotkeyType.Embedded,   "\uEDE3",   "shortcutProfilesSettingsMode0",    "Segoe Fluent Icons",   20, true,   true) },
         };
 
         public string Glyph { get; set; }
@@ -78,8 +77,9 @@ namespace HandheldCompanion.Managers
         public bool OnKeyDown { get; set; }
         public bool OnKeyUp { get; set; }
         public Type DeviceType { get; set; }
+        public string Settings { get; set; }
 
-        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string fontFamily, double fontSize, bool onKeyDown, bool onKeyUp)
+        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string fontFamily, double fontSize, bool onKeyDown, bool onKeyUp, Type deviceType = null, string settings = "")
         {
             this.hotkeyType = hotkeyType;
             this.Glyph = glyph;
@@ -88,11 +88,9 @@ namespace HandheldCompanion.Managers
             this.fontSize = fontSize;
             this.OnKeyDown = onKeyDown;
             this.OnKeyUp = onKeyUp;
-        }
 
-        public InputsHotkey(InputsHotkeyType hotkeyType, string glyph, string listener, string fontFamily, double fontSize, bool onKeyDown, bool onKeyUp, Type deviceType) : this(hotkeyType, glyph, listener, fontFamily, fontSize, onKeyDown, onKeyUp)
-        {
             this.DeviceType = deviceType;
+            this.Settings = settings;
         }
 
         public InputsHotkey()

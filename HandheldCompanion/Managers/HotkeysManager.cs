@@ -101,13 +101,6 @@ namespace HandheldCompanion.Managers
                 hotkey.Listening += StartListening;
                 hotkey.Pinning += PinOrUnpinHotkey;
                 hotkey.Summoned += (hotkey) => InvokeTrigger(hotkey, false, true);
-
-                /*
-                hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
-                hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
-                hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
-                */
-
                 hotkey.Updated += (hotkey) => SerializeHotkey(hotkey, true);
 
                 HotkeyCreated?.Invoke(hotkey);
@@ -131,10 +124,6 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
-            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
-            if (hotkey is null)
-                return;
-
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -143,10 +132,25 @@ namespace HandheldCompanion.Managers
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
                     case "shortcutDesktopLayout":
-                    case "QuietModeEnabled":
+                    case "QuietModeToggled":
                         {
+                            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
+                            if (hotkey is not null)
+                                return;
+
                             bool toggle = Convert.ToBoolean(value);
                             hotkey.SetToggle(toggle);
+                        }
+                        break;
+
+                    case "QuietModeEnabled":
+                        {
+                            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)).FirstOrDefault();
+                            if (hotkey is not null)
+                                return;
+
+                            bool toggle = Convert.ToBoolean(value);
+                            hotkey.IsEnabled = toggle;
                         }
                         break;
                 }
@@ -176,11 +180,11 @@ namespace HandheldCompanion.Managers
                             return;
                         }
 
-                        hotkey.Pinned();
+                        hotkey.IsPinned = true;
                     }
                     break;
                 case true:
-                    hotkey.Unpinned();
+                    hotkey.IsPinned = false;
                     break;
             }
 
@@ -248,20 +252,26 @@ namespace HandheldCompanion.Managers
             // we use @ as a special character to link two ore more listeners together
             listener = listener.TrimEnd('@');
 
+            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener)).FirstOrDefault();
+            if (hotkey is null)
+                return;
+
+            // Hotkey is disabled
+            if (!hotkey.IsEnabled)
+                return;
+
+            // These are special shortcut keys with no related events
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
+                return;
+
             var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
 
-            foreach (Hotkey hotkey in hotkeys)
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
+                foreach (var htkey in hotkeys)
                     hotkey.Highlight();
-                });
-
-                // These are special shortcut keys with no related events
-                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
-                    return;
-            }
+            });
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
