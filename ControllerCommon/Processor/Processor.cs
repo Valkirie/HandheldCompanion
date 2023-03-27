@@ -89,7 +89,7 @@ namespace ControllerCommon.Processor
             foreach (ManagementObject managObj in managCollec)
                 return managObj.Properties[value].Value.ToString();
 
-            return "";
+            return string.Empty;
         }
 
         public Processor()

@@ -17,11 +17,11 @@ namespace ControllerCommon
                     {
                         return GetAvailability(int.Parse(queryObj["Availability"].ToString()));
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -58,11 +58,11 @@ namespace ControllerCommon
                     {
                         return ConvertToDateTime(queryObj["InstallDate"].ToString());
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -77,11 +77,11 @@ namespace ControllerCommon
                     {
                         return queryObj["Manufacturer"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -96,11 +96,11 @@ namespace ControllerCommon
                     {
                         return queryObj["Model"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -115,11 +115,11 @@ namespace ControllerCommon
                     {
                         return queryObj["PartNumber"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -134,11 +134,11 @@ namespace ControllerCommon
                     {
                         return queryObj["PNPDeviceID"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -153,11 +153,11 @@ namespace ControllerCommon
                     {
                         return queryObj["PrimaryBusType"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -172,11 +172,11 @@ namespace ControllerCommon
                     {
                         return queryObj["Product"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -235,11 +235,11 @@ namespace ControllerCommon
                     {
                         return queryObj["RevisionNumber"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -254,11 +254,11 @@ namespace ControllerCommon
                     {
                         return queryObj["SecondaryBusType"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -273,11 +273,11 @@ namespace ControllerCommon
                     {
                         return queryObj["SerialNumber"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -292,11 +292,11 @@ namespace ControllerCommon
                     {
                         return querObj["Status"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -311,11 +311,11 @@ namespace ControllerCommon
                     {
                         return queryObj["SystemName"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
@@ -330,11 +330,11 @@ namespace ControllerCommon
                     {
                         return queryObj["Version"].ToString();
                     }
-                    return "";
+                    return string.Empty;
                 }
                 catch
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }

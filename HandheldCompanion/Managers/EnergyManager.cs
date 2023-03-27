@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Managers;
+using HandheldCompanion.Controls;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,7 +16,7 @@ namespace HandheldCompanion.Managers
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
 
-        public enum QualityOfServiceLevel
+        public enum EfficiencyMode
         {
             /// <summary>
             /// Default system managed behavior. Let system manage all power throttling. <br/>
@@ -90,25 +91,28 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            RestoreDefaultEfficiency();
+            RestoreEfficiencyModes();
 
             LogManager.LogInformation("{0} has stopped", "EnergyManager");
         }
 
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
+            if (!IsEnabled)
+                return;
+
             // set efficiency mode to Eco on background(ed) process
             if (backgroundEx is not null && backgroundEx.Filter == ProcessEx.ProcessFilter.Allowed && !backgroundEx.IsSuspended())
-                ToggleEfficiencyMode(backgroundEx.Id, QualityOfServiceLevel.Eco);
+                ToggleEfficiencyMode(backgroundEx.GetProcessId(), EfficiencyMode.Eco);
 
             // set efficency mode to High on foreground(ed) process
             if (processEx is not null && processEx.Filter == ProcessEx.ProcessFilter.Allowed && !processEx.IsSuspended())
-                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
+                ToggleEfficiencyMode(processEx.GetProcessId(), EfficiencyMode.High);
         }
 
-        private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
+        private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
-            if (!startup)
+            if (!OnStartup || !IsEnabled)
                 return;
 
             // do not set process QoS to Eco if is already in foreground
@@ -116,7 +120,7 @@ namespace HandheldCompanion.Managers
             if (processEx == foregroundProcess)
                 return;
 
-            ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
+            ToggleEfficiencyMode(processEx.GetProcessId(), EfficiencyMode.Eco);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -130,25 +134,21 @@ namespace HandheldCompanion.Managers
                         if (!SettingsManager.IsInitialized)
                             return;
 
+                        // On EcoQoS disable:   restore default behavior
+                        // On EcoQoS enable:    apply QoS
                         if (!IsEnabled)
-                        {
-                            // On EcoQoS disable: restore default behavior
-                            RestoreDefaultEfficiency();
-                        }
+                            RestoreEfficiencyModes();
                         else
-                        {
-                            // On EcoQoS enable: apply QoS
-                            ToggleAllEfficiencyMode();
-                        }
+                            ToggleEfficiencyModes();
                     }
                     break;
             }
         }
 
-        public static void ToggleAllEfficiencyMode()
+        public static void ToggleEfficiencyModes()
         {
             ProcessEx foregroundProcess = ProcessManager.GetForegroundProcess();
-            ToggleEfficiencyMode(foregroundProcess.Id, QualityOfServiceLevel.High);
+            ToggleEfficiencyMode(foregroundProcess.GetProcessId(), EfficiencyMode.High);
 
             foreach (ProcessEx processEx in ProcessManager.GetProcesses())
             {
@@ -158,33 +158,30 @@ namespace HandheldCompanion.Managers
                 if (processEx.Filter != ProcessEx.ProcessFilter.Allowed || processEx.IsSuspended())
                     continue;
 
-                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.Eco);
+                ToggleEfficiencyMode(processEx.GetProcessId(), EfficiencyMode.Eco);
             }
         }
 
-        public static void RestoreDefaultEfficiency()
+        public static void RestoreEfficiencyModes()
         {
             foreach (ProcessEx processEx in ProcessManager.GetProcesses().Where(item => item.Filter == ProcessEx.ProcessFilter.Allowed && !item.IsSuspended()))
-                ToggleEfficiencyMode(processEx.Id, QualityOfServiceLevel.High);
+                ToggleEfficiencyMode(processEx.GetProcessId(), EfficiencyMode.High);
         }
 
-        public static void ToggleEfficiencyMode(int pId, QualityOfServiceLevel level, ProcessEx parent = null)
+        public static void ToggleEfficiencyMode(int pId, EfficiencyMode mode, ProcessEx parent = null)
         {
-            if (!IsEnabled)
-                return;
-
             bool result = false;
             IntPtr hProcess = OpenProcess((uint)(ProcessAccessFlags.QueryLimitedInformation | ProcessAccessFlags.SetInformation), false, (uint)pId);
 
-            switch (level)
+            switch (mode)
             {
-                case QualityOfServiceLevel.High:
+                case EfficiencyMode.High:
                     result = SwitchToHighQoS(hProcess);
                     break;
-                case QualityOfServiceLevel.Eco:
+                case EfficiencyMode.Eco:
                     result = SwitchToEcoQoS(hProcess);
                     break;
-                case QualityOfServiceLevel.Default:
+                case EfficiencyMode.Default:
                     result = SwitchToDefaultQoS(hProcess);
                     break;
             }
@@ -195,21 +192,27 @@ namespace HandheldCompanion.Managers
             }
             catch { }
 
-            // process failed or process is child
-            if (!result || parent is not null)
+            // couldn't apply efficiency mode
+            if (!result)
+                return;
+
+            // process is child
+            if (parent is not null)
                 return;
 
             ProcessEx processEx = ProcessManager.GetProcesses(pId);
             if (processEx is null)
                 return;
 
-            processEx.EcoQoS = level;
+            // update efficiency mode (visual)
+            processEx.SetEfficiencyMode(mode);
 
-            // apply Efficiency Mode to Children(s)
+            // apply efficiency mode to child processes
+            processEx.RefreshChildProcesses();
             foreach (int childId in processEx.Children)
-                ToggleEfficiencyMode(childId, level, parent);
+                ToggleEfficiencyMode(childId, mode, parent);
 
-            LogManager.LogDebug("Process {0} and {1} subprocess(es) have efficiency mode set to: {2}", processEx.Name, processEx.Children.Count, level);
+            LogManager.LogDebug("Process {0} and {1} subprocess(es) have efficiency mode set to: {2}", processEx.Title, processEx.Children.Count, mode);
         }
 
         public static bool GetProcessInfo(IntPtr handle, PROCESS_INFORMATION_CLASS piClass, out object processInfo)

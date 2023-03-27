@@ -2,6 +2,7 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Simulators;
 using ModernWpf.Controls;
 using Newtonsoft.Json;

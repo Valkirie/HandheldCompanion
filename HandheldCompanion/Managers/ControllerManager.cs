@@ -5,6 +5,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
