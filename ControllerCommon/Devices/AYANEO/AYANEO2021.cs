@@ -8,8 +8,6 @@ namespace ControllerCommon.Devices
     {
         public AYANEO2021() : base()
         {
-            this.ProductSupported = true;
-
             // device specific settings
             this.ProductIllustration = "device_aya_2021";
             this.ProductModel = "AYANEO2021";

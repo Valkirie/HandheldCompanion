@@ -9,8 +9,6 @@ namespace ControllerCommon.Devices
     {
         public AOKZOEA1() : base()
         {
-            this.ProductSupported = true;
-
             // device specific settings
             this.ProductIllustration = "device_aokzoe_a1";
             this.ProductModel = "AOKZOEA1";

@@ -45,8 +45,6 @@ namespace ControllerCommon.Devices
 
         public SteamDeck() : base()
         {
-            this.ProductSupported = true;
-
             // device specific settings
             this.ProductIllustration = "device_valve_jupiter";
             this.ProductModel = "SteamDeck";

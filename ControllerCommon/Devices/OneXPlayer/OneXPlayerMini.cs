@@ -5,20 +5,13 @@ using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class OneXPlayerMiniAMD : IDevice
+    public class OneXPlayerMini : IDevice
     {
-        public OneXPlayerMiniAMD() : base()
+        public OneXPlayerMini() : base()
         {
-            this.ProductSupported = true;
-
             // device specific settings
             this.ProductIllustration = "device_onexplayer_mini";
             this.ProductModel = "ONEXPLAYERMini";
-
-            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
-            this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 10, 25 };
-            this.GfxClock = new double[] { 100, 2000 };
 
             this.AngularVelocityAxisSwap = new()
             {
@@ -27,7 +20,6 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            this.AccelerationAxis = new Vector3(-1.0f, -1.0f, 1.0f);
             this.AccelerationAxisSwap = new()
             {
                 { 'X', 'X' },
@@ -70,6 +62,22 @@ namespace ControllerCommon.Devices
                 new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin },
                 false, ButtonFlags.OEM1
                 ));
+        }
+
+        public override bool Open()
+        {
+            bool success = base.Open();
+            if (!success)
+                return false;
+
+            // allow OneX button to pass key inputs
+            return ECRamDirectWrite(0xF1, 0x40);
+        }
+
+        public override void Close()
+        {
+            ECRamDirectWrite(0xF1, 0x00);
+            base.Close();
         }
     }
 }

@@ -42,7 +42,6 @@ namespace ControllerCommon.Devices
         protected USBDeviceInfo sensor = new USBDeviceInfo();
         public string InternalSensorName = string.Empty;
         public string ExternalSensorName = string.Empty;
-        public bool ProductSupported = false;
 
         public string ManufacturerName;
         public string ProductName;
@@ -332,7 +331,21 @@ namespace ControllerCommon.Devices
             ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
         }
 
-        public static void ECRamDirectWrite(ushort address, FanDetails details, byte data)
+        public static bool ECRamDirectWrite(ushort address, byte data)
+        {
+            try
+            {
+                openLibSys.WriteIoPortByte(address, data);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
+                return false;
+            }
+        }
+
+        public static bool ECRamDirectWrite(ushort address, FanDetails details, byte data)
         {
             byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
             byte addr_lower = ((byte)(address & byte.MaxValue));
@@ -353,10 +366,12 @@ namespace ControllerCommon.Devices
                 openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
                 openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
                 openLibSys.WriteIoPortByte(details.AddressData, data);
+                return true;
             }
             catch (Exception ex)
             {
                 LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
+                return false;
             }
         }
     }
