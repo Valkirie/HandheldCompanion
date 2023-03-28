@@ -165,7 +165,7 @@ namespace HandheldCompanion.Actions
                         else
                         {
                             // MouseSimulator.HorizontalScroll((int)(Sensivity * -Vector.X));
-                            MouseSimulator.VerticalScroll((int)(Sensivity * -Vector.Y));
+                            MouseSimulator.VerticalScroll((int)(Sensivity * 0.01 * -Vector.Y));
                         }
                     }
                     break;
@@ -207,7 +207,7 @@ namespace HandheldCompanion.Actions
                             else
                             {
                                 Vector2 travelVector = (prevVector - layout.vector) / (100.0f - Sensivity);
-                                int scrollY = (int)Math.Round(travelVector.Y);
+                                int scrollY = (int)Math.Round(travelVector.Y * 0.01);
 
                                 Debug.WriteLine($"t:{travelVector.Length()},x:{travelVector.X},y:{scrollY}");
 

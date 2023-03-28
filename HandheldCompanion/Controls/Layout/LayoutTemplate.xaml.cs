@@ -104,9 +104,9 @@ namespace HandheldCompanion.Controls
                     {
                         this.Layout.AxisLayout = new()
                         {
-                            { AxisLayoutFlags.LeftThumb, new MouseActions() { MouseType = MouseActionsType.Scroll } },
+                            { AxisLayoutFlags.LeftThumb, new MouseActions() { MouseType = MouseActionsType.Scroll, Sensivity = 25.0f } },
                             { AxisLayoutFlags.RightThumb, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 20.0f } },
-                            { AxisLayoutFlags.LeftPad, new MouseActions() { MouseType = MouseActionsType.Scroll } },
+                            { AxisLayoutFlags.LeftPad, new MouseActions() { MouseType = MouseActionsType.Scroll, Sensivity = 25.0f } },
                             { AxisLayoutFlags.RightPad, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 10.0f } },
                         };
 
@@ -166,8 +166,8 @@ namespace HandheldCompanion.Controls
                             { ButtonFlags.B3, new KeyboardActions() { Key = VirtualKeyCode.VK_R } },
                             { ButtonFlags.B4, new KeyboardActions() { Key = VirtualKeyCode.VK_F } },
 
-                            { ButtonFlags.L1, new MouseActions() { MouseType = MouseActionsType.ScrollDown } },
-                            { ButtonFlags.R1, new MouseActions() { MouseType = MouseActionsType.ScrollUp } },
+                            { ButtonFlags.L1, new MouseActions() { MouseType = MouseActionsType.ScrollDown, Sensivity = 25.0f } },
+                            { ButtonFlags.R1, new MouseActions() { MouseType = MouseActionsType.ScrollUp, Sensivity = 25.0f } },
 
                             { ButtonFlags.Back, new KeyboardActions() { Key = VirtualKeyCode.TAB } },
                             { ButtonFlags.Start, new KeyboardActions() { Key = VirtualKeyCode.ESCAPE } },
