@@ -4,6 +4,7 @@ using HandheldCompanion.Controls;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static ControllerCommon.WinAPI;
@@ -136,16 +137,19 @@ namespace HandheldCompanion.Managers
                 case "UseEnergyStar":
                     {
                         IsEnabled = Convert.ToBoolean(value);
-                        
-                        switch (IsEnabled)
+
+                        new Thread(() =>
                         {
-                            case true:
-                                ToggleEfficiencyModes();
-                                break;
-                            case false:
-                                RestoreEfficiencyModes();
-                                break;
-                        }
+                            switch (IsEnabled)
+                            {
+                                case true:
+                                    ToggleEfficiencyModes();
+                                    break;
+                                case false:
+                                    RestoreEfficiencyModes();
+                                    break;
+                            }
+                        }).Start();
                     }
                     break;
             }

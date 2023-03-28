@@ -58,10 +58,11 @@ namespace ControllerCommon.Inputs
     public enum AxisLayoutFlags : byte
     {
         None = 0,
-        LeftThumb,
-        RightThumb,
-        L2, R2,
-        LeftPad,
-        RightPad,
+        LeftThumb = 1,
+        RightThumb = 2,
+        L2 = 3,
+        R2 = 4,
+        LeftPad = 5,
+        RightPad = 6,
     }
 }

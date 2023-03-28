@@ -29,7 +29,7 @@ namespace HandheldCompanion.Managers
         /// </summary>
         public static Guid BestPerformance = new Guid("ded574b5-45a0-4f42-8737-46345c09c238");
 
-        public static List<Guid> PowerModes = new() { BetterBattery, BetterPerformance, BestPerformance };
+        public static Guid[] PowerModes = new Guid[3]{ BetterBattery, BetterPerformance, BestPerformance };
     }
 
     public class PerformanceManager : Manager

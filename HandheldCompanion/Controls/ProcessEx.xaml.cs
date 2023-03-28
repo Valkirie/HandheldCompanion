@@ -15,7 +15,7 @@ namespace HandheldCompanion.Controls
     /// <summary>
     /// Logique d'interaction pour ProcessEx.xaml
     /// </summary>
-    public partial class ProcessEx : UserControl
+    public partial class ProcessEx : UserControl, IDisposable
     {
         public enum ProcessFilter
         {
@@ -96,7 +96,9 @@ namespace HandheldCompanion.Controls
 
         public int GetProcessId()
         {
-            return Process.Id;
+            if (Process is not null)
+                return Process.Id;
+            return 0;
         }
 
         private static ProcessThread GetMainThread(Process process)
@@ -239,6 +241,8 @@ namespace HandheldCompanion.Controls
             Process.Dispose();
             MainThread.Dispose();
             Children.Dispose();
+
+            GC.SuppressFinalize(this); //now, the finalizer won't be called
         }
     }
 }

@@ -285,13 +285,6 @@ namespace HandheldCompanion.Managers
                 LogManager.LogDebug("Process halted: {0}", processEx.Title);
 
                 processEx.Dispose();
-                processEx = null;
-            }
-
-            if (foregroundProcess is not null && processId == foregroundProcess.GetProcessId())
-            {
-                foregroundProcess.Dispose();
-                foregroundProcess = null;
             }
         }
 
