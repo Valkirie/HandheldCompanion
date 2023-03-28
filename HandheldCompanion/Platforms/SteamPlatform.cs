@@ -4,6 +4,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Properties;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -156,9 +157,16 @@ namespace HandheldCompanion.Platforms
 
         public override bool IsRelated(Process proc)
         {
-            foreach (ProcessModule module in proc.Modules)
-                if (Modules.Contains(module.ModuleName))
-                    return true;
+            try
+            {
+                foreach (ProcessModule module in proc.Modules)
+                    if (Modules.Contains(module.ModuleName))
+                        return true;
+            }
+            catch (Win32Exception)
+            {
+                // access is denied
+            }
 
             return false;
         }
