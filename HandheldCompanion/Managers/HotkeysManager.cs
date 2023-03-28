@@ -136,7 +136,7 @@ namespace HandheldCompanion.Managers
                     case "QuietModeToggled":
                         {
                             var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
-                            if (hotkey is not null)
+                            if (hotkey is null)
                                 return;
 
                             bool toggle = Convert.ToBoolean(value);
@@ -147,7 +147,7 @@ namespace HandheldCompanion.Managers
                     case "QuietModeEnabled":
                         {
                             var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)).FirstOrDefault();
-                            if (hotkey is not null)
+                            if (hotkey is null)
                                 return;
 
                             bool toggle = Convert.ToBoolean(value);
