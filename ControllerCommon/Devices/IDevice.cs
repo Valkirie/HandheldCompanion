@@ -201,10 +201,12 @@ namespace ControllerCommon.Devices
                     break;
             }
 
+            LogManager.LogInformation("{0} from {1}", ProductName, ManufacturerName);
+
             if (device is null)
             {
                 device = new DefaultDevice();
-                LogManager.LogWarning("{0} from {1} is not yet supported. The behavior of the application will be unpredictable", ProductName, ManufacturerName);
+                LogManager.LogWarning("Device not yet supported. The behavior of the application will be unpredictable");
             }
 
             // get the actual handheld device

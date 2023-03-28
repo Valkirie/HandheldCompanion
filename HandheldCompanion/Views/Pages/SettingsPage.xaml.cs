@@ -131,6 +131,9 @@ namespace HandheldCompanion.Views.Pages
                         cB_StartupType.SelectedIndex = Convert.ToInt32(value);
                         cB_StartupType_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
+                    case "QuietModeEnabled":
+                        Toggle_FanControl.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -615,5 +618,35 @@ namespace HandheldCompanion.Views.Pages
             });
         }
         #endregion
+
+        private async void Toggle_FanControl_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.IsInitialized)
+                return;
+
+            if (Toggle_FanControl.IsOn)
+            {
+                // todo: localize me !
+                Task<ContentDialogResult> result = Dialog.ShowAsync(
+                    "Warning",
+                    "Altering fan duty cycle might cause instabilities and overheating. It might also trigger anti cheat systems and get you banned. Product warranties may not apply if you operate your device beyond its specifications. Use at your own risk.",
+                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
+
+                await result; // sync call
+
+                switch (result.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        break;
+                    default:
+                    case ContentDialogResult.None:
+                        // restore previous state
+                        Toggle_FanControl.IsOn = false;
+                        return;
+                }
+            }
+
+            SettingsManager.SetProperty("QuietModeEnabled", Toggle_FanControl.IsOn);
+        }
     }
 }

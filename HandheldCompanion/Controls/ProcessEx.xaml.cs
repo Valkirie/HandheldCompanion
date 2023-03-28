@@ -1,23 +1,13 @@
-﻿using ControllerCommon.Platforms;
-using ControllerCommon.Processor;
+﻿using ControllerCommon;
+using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static HandheldCompanion.Managers.EnergyManager;
 
 namespace HandheldCompanion.Controls
@@ -37,35 +27,39 @@ namespace HandheldCompanion.Controls
         public Process Process;
         public ProcessThread MainThread;
 
-        public List<int> Children = new();
+        public ConcurrentList<int> Children = new();
 
         public IntPtr MainWindowHandle;
         private EfficiencyMode EfficiencyMode;
 
         public string Path;
 
+        private string _Title;
         public string Title
         {
             get
             {
-                return TitleTextBlock.Text;
+                return _Title;
             }
 
             set
             {
+                _Title = value;
                 TitleTextBlock.Text = value;
             }
         }
 
+        public string _Executable;
         public string Executable
         {
             get
             {
-                return ExecutableTextBlock.Text;
+                return _Executable;
             }
 
             set
             {
+                _Executable = value;
                 ExecutableTextBlock.Text = value;
             }
         }
@@ -127,7 +121,10 @@ namespace HandheldCompanion.Controls
 
             // pull MainThread if we have none
             if (MainThread is null)
+            {
                 MainThread = GetMainThread(Process);
+                return; // prevents null mainthread from passing
+            }
 
             string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
 
@@ -138,6 +135,18 @@ namespace HandheldCompanion.Controls
                 if (!string.IsNullOrEmpty(MainWindowTitle))
                     Title = MainWindowTitle;
 
+                switch (EfficiencyMode)
+                {
+                    default:
+                    case EfficiencyMode.Default:
+                        QoSCheckBox.IsChecked = false;
+                        break;
+
+                    case EfficiencyMode.Eco:
+                        QoSCheckBox.IsChecked = true;
+                        break;
+                }
+
                 switch (MainThread.ThreadState)
                 {
                     case ThreadState.Wait:
@@ -145,7 +154,9 @@ namespace HandheldCompanion.Controls
                             // monitor if the process main thread was suspended or resumed
                             if (MainThread.WaitReason != prevThreadWaitReason)
                             {
-                                switch (MainThread.WaitReason)
+                                prevThreadWaitReason = MainThread.WaitReason;
+
+                                switch (prevThreadWaitReason)
                                 {
                                     case ThreadWaitReason.Suspended:
                                         SuspendToggle.IsOn = true;
@@ -156,8 +167,6 @@ namespace HandheldCompanion.Controls
                                         break;
                                 }
                             }
-
-                            prevThreadWaitReason = MainThread.WaitReason;
                         }
                         break;
 
@@ -191,12 +200,13 @@ namespace HandheldCompanion.Controls
             List<int> childs = ProcessUtils.GetChildIds(Process);
 
             // remove exited children
-            Children.RemoveAll(item => !childs.Contains(item));
+            foreach(int pid in childs)
+                Children.Remove(pid);
 
             // raise event on new children
-            foreach (int child in childs.Where(item => !Children.Contains(item)))
+            foreach (int pid in childs)
             {
-                Children.Add(child);
+                Children.Add(pid);
                 //ChildProcessCreated?.Invoke(this, child);
             }
         }
@@ -204,18 +214,6 @@ namespace HandheldCompanion.Controls
         public void SetEfficiencyMode(EfficiencyMode mode)
         {
             EfficiencyMode = mode;
-
-            switch(mode)
-            {
-                default:
-                case EfficiencyMode.Default:
-                    QoSCheckBox.IsChecked = false;
-                    break;
-
-                case EfficiencyMode.Eco:
-                    QoSCheckBox.IsChecked = true;
-                    break;
-            }
         }
 
         private void SuspendToggle_Toggled(object sender, RoutedEventArgs e)
@@ -223,12 +221,24 @@ namespace HandheldCompanion.Controls
             switch(SuspendToggle.IsOn)
             {
                 case true:
-                    ProcessManager.SuspendProcess(this);
+                    {
+                        if (prevThreadWaitReason == ThreadWaitReason.Suspended)
+                            return;
+
+                        ProcessManager.SuspendProcess(this);
+                    }
                     break;
                 case false:
                     ProcessManager.ResumeProcess(this);
                     break;
             }
+        }
+
+        public void Dispose()
+        {
+            Process.Dispose();
+            MainThread.Dispose();
+            Children.Dispose();
         }
     }
 }

@@ -50,7 +50,7 @@
                         <TextBlock Text="Efficiency mode will lower process priority and improve power efficiency" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                     </StackPanel>
 
-                    <CheckBox Name="QoSCheckBox" Grid.Column="1" IsEnabled="False" Margin="30,0,0,0"/>
+                    <CheckBox Name="QoSCheckBox" Grid.Column="1" IsHitTestVisible="False" Focusable="False" Margin="30,0,0,0"/>
                 </Grid>
             </ui:SimpleStackPanel>
         </Expander.Content>

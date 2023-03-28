@@ -166,22 +166,22 @@ namespace HandheldCompanion.Views
             ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
             ControllerManager.Start();
-            EnergyManager.Start();
             HotkeysManager.Start();
 
-            ControllerCommon.Managers.DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-            ControllerCommon.Managers.DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
-            ControllerCommon.Managers.DeviceManager.Start();
+            DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+            DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+            DeviceManager.Start();
 
             PlatformManager.Start();
             ProfileManager.Start();
             LayoutManager.Start();
             ProcessManager.Start();
+            EnergyManager.Start();
 
             PowerManager.SystemStatusChanged += OnSystemStatusChanged;
             PowerManager.Start();
 
-            Managers.SystemManager.Start();
+            SystemManager.Start();
             // HWiNFOManager.Start();
 
             // start managers asynchroneously

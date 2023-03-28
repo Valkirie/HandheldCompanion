@@ -18,6 +18,7 @@ using Windows.System.Diagnostics;
 using static ControllerCommon.WinAPI;
 using static HandheldCompanion.Controls.ProcessEx;
 using static HandheldCompanion.Managers.EnergyManager;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
@@ -138,9 +139,9 @@ namespace HandheldCompanion.Managers
             return foregroundProcess;
         }
 
-        public static ProcessEx GetSuspendedProcess()
+        public static ProcessEx GetLastSuspendedProcess()
         {
-            return Processes.Values.Where(item => item.IsSuspended()).FirstOrDefault();
+            return Processes.Values.Where(item => item.IsSuspended()).LastOrDefault();
         }
 
         public static List<ProcessEx> GetProcesses()
@@ -161,7 +162,7 @@ namespace HandheldCompanion.Managers
             return null;
         }
 
-        private static async void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
+        private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
         {
             try
             {
@@ -222,26 +223,27 @@ namespace HandheldCompanion.Managers
                 if (foregroundProcess is not null)
                     backgroundProcess = foregroundProcess;
 
-                if (Processes.ContainsKey(proc.Id))
+                // UI thread (ProcessEx is an UserControl)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     // pull process from running processes
-                    foregroundProcess = Processes[proc.Id];
-                }
-                else
-                {
-                    // create temporary process
-                    foregroundProcess = new ProcessEx(proc, path, exec, filter);
-                }
+                    // or create temporary process
+                    if (Processes.ContainsKey(proc.Id))
+                        foregroundProcess = Processes[proc.Id];
+                    else
+                        foregroundProcess = new ProcessEx(proc, path, exec, filter);
 
-                // update main window handle
-                foregroundProcess.MainWindowHandle = hWnd;
+                    // update main window handle
+                    foregroundProcess.MainWindowHandle = hWnd;
 
-                // inform service
-                PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
+                    // inform service
+                    PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
 
-                ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
+                    // raise event
+                    ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
 
-                LogManager.LogDebug("{0} executable {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Title);
+                    LogManager.LogDebug("{0} executable {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
+                });
             }
             catch
             {
@@ -282,9 +284,12 @@ namespace HandheldCompanion.Managers
 
                 Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
 
+                // raise event
                 ProcessStopped?.Invoke(processEx);
 
                 LogManager.LogDebug("Process halted: {0}", processEx.Title);
+
+                processEx.Dispose();
             }
 
             if (foregroundProcess is not null && processId == foregroundProcess.GetProcessId())
@@ -312,7 +317,7 @@ namespace HandheldCompanion.Managers
                     {
                         ProcessEx processEx = new ProcessEx(proc, path, exec, filter);
                         processEx.MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle;
-                        processEx.ChildProcessCreated += ChildProcessCreated;
+                        // processEx.ChildProcessCreated += ChildProcessCreated;
 
                         Processes.TryAdd(processEx.GetProcessId(), processEx);
 
@@ -331,13 +336,13 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void ChildProcessCreated(ProcessEx parent, int Id)
+        private static void ChildProcessCreated(ProcessEx parent, int pId)
         {
             EfficiencyMode mode = parent.GetEfficiencyMode();
             if (mode == EfficiencyMode.Default)
                 return;
 
-            ToggleEfficiencyMode(Id, mode, parent);
+            ToggleEfficiencyMode(pId, mode, parent);
         }
 
         private static ProcessFilter GetFilter(string exec, string path)
@@ -398,11 +403,13 @@ namespace HandheldCompanion.Managers
                 return;
 
             ProcessUtils.NtResumeProcess(processEx.Process.Handle);
-            foreach (int pId in processEx.Children)
+
+            processEx.RefreshChildProcesses();
+            Parallel.ForEach(processEx.Children, childId =>
             {
-                Process process = Process.GetProcessById(pId);
+                Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtResumeProcess(process.Handle);
-            }
+            });
 
             Task.Delay(500);
             ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Restored);
@@ -418,11 +425,13 @@ namespace HandheldCompanion.Managers
             Task.Delay(500);
 
             ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
-            foreach (int pId in processEx.Children)
+
+            processEx.RefreshChildProcesses();
+            Parallel.ForEach(processEx.Children, childId =>
             {
-                Process process = Process.GetProcessById(pId);
+                Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtSuspendProcess(process.Handle);
-            }
+            });
         }
     }
 }

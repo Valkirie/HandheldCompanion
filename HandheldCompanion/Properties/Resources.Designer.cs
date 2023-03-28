@@ -70,7 +70,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible inform [le reste de la chaîne a été tronqué]&quot;.
+        ///   Recherche une chaîne localisée semblable à A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible inform [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string AboutPage_AboutDescription {
             get {
@@ -2783,7 +2783,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à EcoQoS.
+        ///   Recherche une chaîne localisée semblable à Smart efficiency.
         /// </summary>
         public static string SettingsPage_EcoQoS {
             get {
@@ -2792,7 +2792,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Throttle inactive or background processes and applications to improve energy efficency.
+        ///   Recherche une chaîne localisée semblable à Smart efficiency mode reduces the priority of background processes and improves energy efficiency.
         /// </summary>
         public static string SettingsPage_EcoQoSDesc {
             get {
@@ -3044,7 +3044,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configurable Power (cTDP) override.
+        ///   Recherche une chaîne localisée semblable à Configurable power (cTDP) override.
         /// </summary>
         public static string SettingsPage_TDPRangeOverride {
             get {
@@ -3247,7 +3247,7 @@ namespace HandheldCompanion.Properties {
         ///DisableY=False
         ///[RightStick]
         ///DeadZone=0
-        ///Saturati [le reste de la chaîne a été tronqué]&quot;.
+        ///Saturati [le reste de la chaîne a été tronqué]&quot;;.
         /// </summary>
         public static string XInputPlus {
             get {

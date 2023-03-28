@@ -336,7 +336,7 @@ namespace HandheldCompanion.Managers
                         break;
                     case "suspendResumeTask":
                         {
-                            var sProcess = ProcessManager.GetSuspendedProcess();
+                            var sProcess = ProcessManager.GetLastSuspendedProcess();
 
                             if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
                                 break;

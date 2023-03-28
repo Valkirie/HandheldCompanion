@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
@@ -48,7 +49,8 @@ namespace ControllerCommon.Devices
 
             OEMChords.Add(new DeviceChord("Function + Volume Up",
                 new List<KeyCode>() { KeyCode.F1 },
-                new List<KeyCode>() { KeyCode.F1, KeyCode.F1 }
+                new List<KeyCode>() { KeyCode.F1, KeyCode.F1 },
+                false, ButtonFlags.OEM4
                 ));
 
             // dirty implementation from OneX...
@@ -71,11 +73,13 @@ namespace ControllerCommon.Devices
                 return false;
 
             // allow OneX button to pass key inputs
+            LogManager.LogInformation("Unlocked {0} OEM button", "");
             return ECRamDirectWrite(0xF1, 0x40);
         }
 
         public override void Close()
         {
+            LogManager.LogInformation("Locked {0} OEM button", "");
             ECRamDirectWrite(0xF1, 0x00);
             base.Close();
         }

@@ -577,12 +577,12 @@
                             <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE708;" Height="40" HorizontalAlignment="Center"/>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                                <TextBlock Text="Fan control override" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="Allows to modify the device main fan duty cycle" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_FanControl" Grid.Column="1" Toggled="Toggle_EnergyStar_Toggled"/>
+                        <ui:ToggleSwitch Name="Toggle_FanControl" Grid.Column="1" Toggled="Toggle_FanControl_Toggled"/>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
