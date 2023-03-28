@@ -223,27 +223,22 @@ namespace HandheldCompanion.Managers
                 if (foregroundProcess is not null)
                     backgroundProcess = foregroundProcess;
 
-                // UI thread (ProcessEx is an UserControl)
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    // pull process from running processes
-                    // or create temporary process
-                    if (Processes.ContainsKey(proc.Id))
-                        foregroundProcess = Processes[proc.Id];
-                    else
-                        foregroundProcess = new ProcessEx(proc, path, exec, filter);
+                while (!Processes.ContainsKey(proc.Id))
+                    await Task.Delay(250);
 
-                    // update main window handle
-                    foregroundProcess.MainWindowHandle = hWnd;
+                // pull process from running processes
+                foregroundProcess = Processes[proc.Id];
 
-                    // inform service
-                    PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
+                // update main window handle
+                foregroundProcess.MainWindowHandle = hWnd;
 
-                    // raise event
-                    ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
+                // inform service
+                PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
 
-                    LogManager.LogDebug("{0} executable {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
-                });
+                // raise event
+                ForegroundChanged?.Invoke(foregroundProcess, backgroundProcess);
+
+                LogManager.LogDebug("{0} executable {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
             }
             catch
             {
@@ -290,10 +285,14 @@ namespace HandheldCompanion.Managers
                 LogManager.LogDebug("Process halted: {0}", processEx.Title);
 
                 processEx.Dispose();
+                processEx = null;
             }
 
             if (foregroundProcess is not null && processId == foregroundProcess.GetProcessId())
+            {
+                foregroundProcess.Dispose();
                 foregroundProcess = null;
+            }
         }
 
         private static void ProcessCreated(Process proc, int NativeWindowHandle = 0, bool OnStartup = false)
