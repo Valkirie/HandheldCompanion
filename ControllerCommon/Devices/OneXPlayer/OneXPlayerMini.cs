@@ -28,6 +28,19 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
+            // device specific capacities
+            this.Capacities = DeviceCapacities.FanControl;
+
+            this.FanDetails = new FanDetails()
+            {
+                AddressControl = 0x44A,
+                AddressDuty = 0x44B,
+                AddressRegistry = 0x4E,
+                AddressData = 0x4F,
+                ValueMin = 0,
+                ValueMax = 184
+            };
+
             // unused
             OEMChords.Add(new DeviceChord("Fan",
                 new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
@@ -41,9 +54,15 @@ namespace ControllerCommon.Devices
                 false, ButtonFlags.OEM2
                 ));
 
+            // dirty implementation from OneX...
             OEMChords.Add(new DeviceChord("Function",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.D, KeyCode.LWin },
+                false, ButtonFlags.OEM3
+                ));
+            OEMChords.Add(new DeviceChord("Function",
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 false, ButtonFlags.OEM3
                 ));
 
