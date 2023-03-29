@@ -252,7 +252,7 @@ namespace HandheldCompanion.Managers
         {
             if (Monitor.TryEnter(updateLock))
             {
-                Parallel.ForEach(Processes.Values, proc =>
+                Parallel.ForEach(Processes.Values, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, proc =>
                 {
                     proc.Refresh();
                 });
@@ -397,7 +397,7 @@ namespace HandheldCompanion.Managers
             ProcessUtils.NtResumeProcess(processEx.Process.Handle);
 
             processEx.RefreshChildProcesses();
-            Parallel.ForEach(processEx.Children, childId =>
+            Parallel.ForEach(processEx.Children, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtResumeProcess(process.Handle);
@@ -419,7 +419,7 @@ namespace HandheldCompanion.Managers
             ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
 
             processEx.RefreshChildProcesses();
-            Parallel.ForEach(processEx.Children, childId =>
+            Parallel.ForEach(processEx.Children, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtSuspendProcess(process.Handle);

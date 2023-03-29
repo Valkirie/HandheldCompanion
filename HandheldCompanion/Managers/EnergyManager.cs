@@ -160,7 +160,7 @@ namespace HandheldCompanion.Managers
             ProcessEx foreground = ProcessManager.GetForegroundProcess();
             ToggleEfficiencyMode(foreground, EfficiencyMode.High);
 
-            Parallel.ForEach(ProcessManager.GetProcesses(), process =>
+            Parallel.ForEach(ProcessManager.GetProcesses(), new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, process =>
             {
                 if (process == foreground)
                     return;
@@ -174,7 +174,7 @@ namespace HandheldCompanion.Managers
 
         public static void RestoreEfficiencyModes()
         {
-            Parallel.ForEach(ProcessManager.GetProcesses(), process =>
+            Parallel.ForEach(ProcessManager.GetProcesses(), new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, process =>
             {
                 ToggleEfficiencyMode(process, EfficiencyMode.High);
             });

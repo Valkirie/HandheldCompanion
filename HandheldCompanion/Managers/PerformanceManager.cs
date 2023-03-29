@@ -53,6 +53,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private Processor processor;
+        public static int MaxDegreeOfParallelism = 4;
 
         // timers
         private Timer powerWatchdog;
@@ -120,6 +121,8 @@ namespace HandheldCompanion.Managers
             // request GPUclock
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
+
+            MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
         }
 
         private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
