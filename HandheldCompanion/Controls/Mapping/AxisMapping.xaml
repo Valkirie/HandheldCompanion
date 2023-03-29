@@ -165,11 +165,11 @@
                             <!-- Separator -->
                             <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
-                            <!-- Sensivity -->
+                            <!-- Sensitivity -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
-                                        <TextBlock Text="Sensivity" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Sensitivity" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                         <TextBox Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
                                     </Grid>
                                     
