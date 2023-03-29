@@ -136,7 +136,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromExec(processEx.Title);
+                Profile profile = GetProfileFromExec(processEx.Executable);
 
                 if (profile is null || profile.Default)
                     return;
@@ -166,7 +166,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromExec(processEx.Title);
+                Profile profile = GetProfileFromExec(processEx.Executable);
 
                 if (profile is null || profile.Default)
                     return;
@@ -184,7 +184,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                var profile = GetProfileFromExec(proc.Name);
+                var profile = GetProfileFromExec(proc.Executable);
 
                 // raise event
                 Applied?.Invoke(profile);

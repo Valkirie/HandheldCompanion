@@ -378,6 +378,9 @@ namespace HandheldCompanion.Views.Pages
 
                 TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
 
+                // Layout settings
+                Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
+
                 // define slider(s) min and max values based on device specifications
                 var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
                 TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
@@ -481,6 +484,9 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDPOverrideValues[1] = (int)TDPSustainedSlider.Value;
             currentProfile.TDPOverrideValues[2] = (int)TDPBoostSlider.Value;
             currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
+
+            // Layout settings
+            currentProfile.LayoutEnabled = (bool)Toggle_ControllerLayout.IsOn;
 
             ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.ProfilesPage);
         }
@@ -612,14 +618,10 @@ namespace HandheldCompanion.Views.Pages
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             // update layout page with current layout
+            // memory pointer
             LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
             layoutTemplate.Layout = currentProfile.Layout;
             layoutTemplate.Executable = currentProfile.Executable;

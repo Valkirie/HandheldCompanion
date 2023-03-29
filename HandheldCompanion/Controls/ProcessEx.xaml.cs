@@ -84,7 +84,7 @@ namespace HandheldCompanion.Controls
             this.Path = path;
 
             this.Executable = executable;
-            this.Title = executable;
+            this.Title = executable;    // temporary, will be overwritten by ProcessManager
 
             this.Filter = filter;
             this.Platform = PlatformManager.GetPlatform(Process);
