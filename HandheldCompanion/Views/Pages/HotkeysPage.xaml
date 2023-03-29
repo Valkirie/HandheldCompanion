@@ -1,20 +1,23 @@
-﻿<Page x:Class="HandheldCompanion.Views.Pages.HotkeysPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:local="clr-namespace:HandheldCompanion" 
-      xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      xmlns:controls="clr-namespace:HandheldCompanion.Controls"
-      mc:Ignorable="d" 
-      d:DesignHeight="1500" d:DesignWidth="1000"
-      KeepAlive="True"
-      Loaded="Page_Loaded"
-      Title="Hotkeys">
+﻿<Page
+    x:Class="HandheldCompanion.Views.Pages.HotkeysPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:HandheldCompanion.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Hotkeys"
+    d:Background="White"
+    d:DesignHeight="1500"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
-        <ui:SimpleStackPanel Spacing="24" Name="HotkeysPanel"/>
+        <ui:SimpleStackPanel Name="HotkeysPanel" Spacing="24" />
     </Grid>
 </Page>

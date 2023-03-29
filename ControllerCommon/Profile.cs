@@ -63,6 +63,19 @@ namespace ControllerCommon
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
+        private bool _LayoutEnabled;
+        public bool LayoutEnabled
+        {
+            get
+            {
+                return Enabled && _LayoutEnabled;
+            }
+
+            set
+            {
+                _LayoutEnabled = value;
+            }
+        }
         public Layout Layout { get; set; } = new();
 
         [JsonIgnore]

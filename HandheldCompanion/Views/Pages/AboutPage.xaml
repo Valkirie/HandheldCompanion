@@ -1,140 +1,202 @@
-﻿<Page x:Class="HandheldCompanion.Views.Pages.AboutPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:local="clr-namespace:HandheldCompanion"
-      xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      mc:Ignorable="d"
-      d:DesignHeight="1000" d:DesignWidth="1000"
-      KeepAlive="True"
-      Title="{x:Static resx:Resources.AboutPage_About}">
+﻿<Page
+    x:Class="HandheldCompanion.Views.Pages.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="{x:Static resx:Resources.AboutPage_About}"
+    d:Background="White"
+    d:DesignHeight="1000"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="6">
 
-            <!-- Warning -->
+            <!--  Warning  -->
             <Border
-                        Name="WarningBorder"
-                        Visibility="Collapsed" d:Visibility="Visible"
-                        Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                Name="WarningBorder"
+                Padding="15,12,12,12"
+                d:Visibility="Visible"
+                Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
+                CornerRadius="{DynamicResource ControlCornerRadius}"
+                Visibility="Collapsed">
 
                 <DockPanel>
                     <Grid>
-                        <ui:FontIcon Foreground="White" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF136;" />
-                        <ui:FontIcon Foreground="Black" FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
+                        <ui:FontIcon
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Foreground="White"
+                            Glyph="&#xF136;" />
+                        <ui:FontIcon
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Foreground="Black"
+                            Glyph="&#xF13C;" />
                     </Grid>
                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Name="WarningContent" TextWrapping="Wrap"  Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock
+                            Name="WarningContent"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            TextWrapping="Wrap" />
                     </ui:SimpleStackPanel>
                 </DockPanel>
             </Border>
 
-            <!-- Device details -->
-            <Border      
-                Name = "HandheldGrid"
-                Visibility="Collapsed"
+            <!--  Device details  -->
+            <Border
+                Name="HandheldGrid"
                 Padding="20,12,12,12"
+                Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
-                Background="{DynamicResource ExpanderContentBackground}">
+                Visibility="Collapsed">
 
                 <Grid>
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                        <Image Name="ImageDevice" Height="50" Width="120">
+                        <Image
+                            Name="ImageDevice"
+                            Width="120"
+                            Height="50">
                             <Image.Source>
-                                <BitmapImage UriSource="/Resources/device_generic.png"/>
+                                <BitmapImage UriSource="/Resources/device_generic.png" />
                             </Image.Source>
                         </Image>
-                        <ui:SimpleStackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <TextBlock Name="LabelManufacturer" Text="Manufacturer" Style="{StaticResource BaseTextBlockStyle}" FontSize="20"></TextBlock>
-                            <TextBlock Name="LabelProductName" Text="Product name" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" ></TextBlock>
-                            </ui:SimpleStackPanel>
+                        <ui:SimpleStackPanel VerticalAlignment="Center" Orientation="Vertical">
+                            <TextBlock
+                                Name="LabelManufacturer"
+                                FontSize="20"
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                Text="Manufacturer" />
+                            <TextBlock
+                                Name="LabelProductName"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Text="Product name" />
+                        </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
             </Border>
 
-            <!-- Sensor specifications -->
-            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsExpanded="True">
+            <!--  Sensor specifications  -->
+            <Expander
+                HorizontalAlignment="Stretch"
+                Expanded="Expander_Expanded"
+                IsExpanded="True">
                 <Expander.Header>
                     <DockPanel Margin="0,12,12,12">
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE950;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
 
                 <Expander.Content>
                     <Grid FlowDirection="LeftToRight">
-                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+                        <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="120"></ColumnDefinition>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorInternal}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_SensorExternal}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorInternal}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorExternal}" />
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="SensorInternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Name="SensorExternal" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    </ui:SimpleStackPanel>
+                                    <TextBlock
+                                        Name="SensorInternal"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.AboutPage_NotApplicable}" />
+                                    <TextBlock
+                                        Name="SensorExternal"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.AboutPage_NotApplicable}" />
+                                </ui:SimpleStackPanel>
                             </Grid>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </Expander.Content>
             </Expander>
 
-            <!-- Service -->
-            <Expander Expanded="Expander_Expanded" HorizontalAlignment="Stretch" IsExpanded="True">
+            <!--  Service  -->
+            <Expander
+                HorizontalAlignment="Stretch"
+                Expanded="Expander_Expanded"
+                IsExpanded="True">
                 <Expander.Header>
                     <DockPanel Margin="0,12,12,12">
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE74C;" Height="40" HorizontalAlignment="Center"/>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE74C;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Static resx:Resources.AboutPage_Service}" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Service}" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
 
                 <Expander.Content>
                     <Grid FlowDirection="LeftToRight">
-                        <ui:SimpleStackPanel Spacing="12" Margin="30,0,0,0">
+                        <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="120"></ColumnDefinition>
-                                    <ColumnDefinition Width="5*" MinWidth="200"></ColumnDefinition>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Version}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Author}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Contributors}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="{x:Static resx:Resources.AboutPage_Description}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Version}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Author}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Contributors}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Description}" />
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock Name="VersionValue" Text="{x:Static resx:Resources.AboutPage_NotApplicable}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="BenjaminLSR" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock Text="Nefarius, CasperH20, B-Core, Frank东, Toomy" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    <TextBlock TextWrapping="Wrap" Text="{x:Static resx:Resources.AboutPage_AboutDescription}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
+                                    <TextBlock
+                                        Name="VersionValue"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.AboutPage_NotApplicable}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="BenjaminLSR" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="Nefarius, CasperH20, B-Core, Frank东, Toomy" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.AboutPage_AboutDescription}"
+                                        TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </Grid>
 
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" BorderThickness="0 1 0 0" Margin="-46,0,-16,0" />
+                            <!--  Separator  -->
+                            <Separator
+                                Margin="-46,0,-16,0"
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0" />
 
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="{x:Static resx:Resources.AboutPage_RelatedLinks}"/>
+                                <TextBlock Text="{x:Static resx:Resources.AboutPage_RelatedLinks}" />
                                 <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion" RequestNavigate="Hyperlink_RequestNavigate">SourceCode</Hyperlink></TextBlock>
                                 <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
                                 <TextBlock><Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">Donate</Hyperlink></TextBlock>

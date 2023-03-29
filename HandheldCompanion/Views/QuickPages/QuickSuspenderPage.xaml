@@ -1,17 +1,22 @@
-﻿<Page x:Class="HandheldCompanion.Views.QuickPages.QuickSuspenderPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:HandheldCompanion.Views"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      KeepAlive="True"
-      mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="500"
-      Margin="0,0,0,12"
-      Title="Suspender">
+﻿<Page
+    x:Class="HandheldCompanion.Views.QuickPages.QuickSuspenderPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Suspender"
+    Margin="0,0,0,12"
+    d:Background="White"
+    d:DesignHeight="1200"
+    d:DesignWidth="500"
+    KeepAlive="True"
+    mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6" Margin="12,0,0,0">
-    </ui:SimpleStackPanel>
+    <ui:SimpleStackPanel
+        Name="CurrentProcesses"
+        Margin="12,0,0,0"
+        Spacing="6" />
 </Page>

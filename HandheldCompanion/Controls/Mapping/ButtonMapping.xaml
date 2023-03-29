@@ -1,79 +1,134 @@
-﻿<local:IMapping x:Class="HandheldCompanion.Controls.ButtonMapping"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HandheldCompanion.Controls"
-             xmlns:ui="http://schemas.modernwpf.com/2019"
-             Visibility="Collapsed"
-             mc:Ignorable="d" 
-             d:DesignHeight="1000" d:DesignWidth="800" d:Visibility="Visible">
+﻿<local:IMapping
+    x:Class="HandheldCompanion.Controls.ButtonMapping"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    d:Background="White"
+    d:DesignHeight="1000"
+    d:DesignWidth="800"
+    d:Visibility="Visible"
+    Visibility="Collapsed"
+    mc:Ignorable="d">
 
-    <Expander
-        HorizontalAlignment="Stretch"
-        Padding="15,12,12,12">
+    <Expander Padding="15,12,12,12" HorizontalAlignment="Stretch">
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40"></ColumnDefinition>
-                    <ColumnDefinition Width="160"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <ui:FontIcon Name="Icon" FontFamily="{DynamicResource PhoneFontFamilyNormal}" FontSize="14" Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Name="Name" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <ui:FontIcon
+                    Name="Icon"
+                    Width="40"
+                    Height="40"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontFamily="{DynamicResource PhoneFontFamilyNormal}"
+                    FontSize="14" />
+                <TextBlock
+                    Name="Name"
+                    Grid.Column="1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontSize="14" />
 
                 <DockPanel Grid.Column="2" HorizontalAlignment="Right">
-                    <ComboBox Name="ActionComboBox" Width="120" VerticalAlignment="Center" SelectionChanged="Action_SelectionChanged" SelectedIndex="0">
-                        <ComboBoxItem Content="None" IsEnabled="True"/>
-                        <ComboBoxItem Content="Button" IsEnabled="True"/>
-                        <ComboBoxItem Content="Axis" IsEnabled="False"/>
-                        <ComboBoxItem Content="Keyboard" IsEnabled="True"/>
-                        <ComboBoxItem Content="Mouse" IsEnabled="True"/>
-                        <ComboBoxItem Content="Trigger" IsEnabled="False"/>
+                    <ComboBox
+                        Name="ActionComboBox"
+                        Width="120"
+                        VerticalAlignment="Center"
+                        SelectedIndex="0"
+                        SelectionChanged="Action_SelectionChanged">
+                        <ComboBoxItem Content="None" IsEnabled="True" />
+                        <ComboBoxItem Content="Button" IsEnabled="True" />
+                        <ComboBoxItem Content="Axis" IsEnabled="False" />
+                        <ComboBoxItem Content="Keyboard" IsEnabled="True" />
+                        <ComboBoxItem Content="Mouse" IsEnabled="True" />
+                        <ComboBoxItem Content="Trigger" IsEnabled="False" />
                     </ComboBox>
 
-                    <ComboBox Name="TargetComboBox" Width="140" Margin="12,0,0,0" VerticalAlignment="Center" SelectionChanged="Target_SelectionChanged" IsEnabled="False"/>
+                    <ComboBox
+                        Name="TargetComboBox"
+                        Width="140"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        IsEnabled="False"
+                        SelectionChanged="Target_SelectionChanged" />
                 </DockPanel>
             </Grid>
         </Expander.Header>
         <Expander.Content>
             <StackPanel>
-                <!-- Button 2 Button/Keyboard/Mouse -->
-                <Grid Name="Button2Button" d:Visibility="Visible"
-                      Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+                <!--  Button 2 Button/Keyboard/Mouse  -->
+                <Grid
+                    Name="Button2Button"
+                    d:Visibility="Visible"
+                    Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
 
                     <ui:SimpleStackPanel Spacing="12">
                         <ui:SimpleStackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*" MinWidth="200" />
+                                    <ColumnDefinition Width="8*" MinWidth="120" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Hold to repeat" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Hold to repeat" />
 
-                                <ui:ToggleSwitch Name="Toggle_Turbo" Grid.Column="1" HorizontalAlignment="Right" Toggled="Toggle_Turbo_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
+                                <ui:ToggleSwitch
+                                    Name="Toggle_Turbo"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Toggle_Turbo_Toggled" />
                             </Grid>
 
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
 
-                            <!-- Repeat rate (hidden) -->
-                            <Grid d:Visibility="Visible"
-                                  Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <!--  Repeat rate (hidden)  -->
+                            <Grid d:Visibility="Visible" Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                 <ui:SimpleStackPanel Spacing="6">
 
                                     <Grid>
-                                        <TextBlock Text="Repeat rate (ms)" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                        <TextBox Text="{Binding Value, ElementName=Turbo_Slider, Mode=OneWay}" HorizontalAlignment="Right" HorizontalContentAlignment="Center" IsReadOnly="True"/>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Repeat rate (ms)" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, ElementName=Turbo_Slider, Mode=OneWay}" />
                                     </Grid>
 
-                                    <Slider Name="Turbo_Slider" Value="90" Minimum="10" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="Turbo_Slider_ValueChanged"/>
+                                    <Slider
+                                        Name="Turbo_Slider"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="100"
+                                        Minimum="10"
+                                        TickFrequency="5"
+                                        ValueChanged="Turbo_Slider_ValueChanged"
+                                        Value="90" />
 
-                                    <!-- Separator -->
-                                    <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                                    <!--  Separator  -->
+                                    <Separator
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0"
+                                        Opacity="0.25" />
 
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -82,17 +137,28 @@
                         <ui:SimpleStackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" MinWidth="200"></ColumnDefinition>
-                                    <ColumnDefinition Width="8*" MinWidth="120"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*" MinWidth="200" />
+                                    <ColumnDefinition Width="8*" MinWidth="120" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Press to toggle" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Press to toggle" />
 
-                                <ui:ToggleSwitch Name="Toggle_Toggle" Grid.Column="1" HorizontalAlignment="Right" Toggled="Toggle_Toggle_Toggled" OffContent="" OnContent="" Margin="0,0,-100,0"/>
+                                <ui:ToggleSwitch
+                                    Name="Toggle_Toggle"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Toggle_Toggle_Toggled" />
                             </Grid>
 
-                            <!-- Separator -->
-                            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
 
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>

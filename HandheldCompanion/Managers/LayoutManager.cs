@@ -132,11 +132,18 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile)
         {
-            profileLayout.Layout = profile.Layout;
+            Profile defaultP = ProfileManager.GetDefault();
+
+            if (profile.LayoutEnabled)
+                profileLayout.Layout = profile.Layout;
+            else if (defaultP.LayoutEnabled)
+                profileLayout.Layout = defaultP.Layout;
+            else
+                profileLayout.Layout = new Layout();
 
             // only update current layout if we're not into desktop layout mode
             if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
-                currentLayout = profile.Layout;
+                currentLayout = profileLayout.Layout;
         }
 
         private static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)

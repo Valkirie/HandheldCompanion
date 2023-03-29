@@ -84,7 +84,7 @@ namespace HandheldCompanion.Controls
             this.Path = path;
 
             this.Executable = executable;
-            this.Title = executable;
+            this.Title = executable;    // temporary, will be overwritten by ProcessManager
 
             this.Filter = filter;
             this.Platform = PlatformManager.GetPlatform(Process);
@@ -238,8 +238,10 @@ namespace HandheldCompanion.Controls
 
         public void Dispose()
         {
-            Process.Dispose();
-            MainThread.Dispose();
+            if (Process is not null)
+                Process.Dispose();
+            if (MainThread is not null)
+                MainThread.Dispose();
             Children.Dispose();
 
             GC.SuppressFinalize(this); //now, the finalizer won't be called

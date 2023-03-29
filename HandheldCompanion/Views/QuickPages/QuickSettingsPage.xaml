@@ -1,67 +1,112 @@
-﻿<Page x:Class="HandheldCompanion.Views.QuickPages.QuickSettingsPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:HandheldCompanion.Views"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      KeepAlive="True"
-      mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="500"
-      Margin="0,0,0,12"
-      Title="Settings">
+﻿<Page
+    x:Class="HandheldCompanion.Views.QuickPages.QuickSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Settings"
+    Margin="0,0,0,12"
+    d:Background="White"
+    d:DesignHeight="1200"
+    d:DesignWidth="500"
+    KeepAlive="True"
+    mc:Ignorable="d">
 
     <Grid Margin="12,0,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <!-- Shortcuts -->
-        <UniformGrid Columns="3" VerticalAlignment="Top" Name="QuickHotkeys">
+        <!--  Shortcuts  -->
+        <UniformGrid
+            Name="QuickHotkeys"
+            VerticalAlignment="Top"
+            Columns="3">
             <UniformGrid.Resources>
                 <Style TargetType="{x:Type ui:SimpleStackPanel}">
-                    <Setter Property="Margin" Value="6"/>
+                    <Setter Property="Margin" Value="6" />
                 </Style>
             </UniformGrid.Resources>
         </UniformGrid>
 
-        <ui:SimpleStackPanel VerticalAlignment="Top" Margin="0,28,0,0" Grid.Row="1">
-            <!-- Separator -->
-            <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
-            
-            <!-- Brightness -->
-            <Border
-                    Padding="15,6,15,6"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+        <ui:SimpleStackPanel
+            Grid.Row="1"
+            Margin="0,28,0,0"
+            VerticalAlignment="Top">
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
+
+            <!--  Brightness  -->
+            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE706;" Height="40" HorizontalAlignment="Center"/>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE706;" />
 
-                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <Slider Name="SliderBrightness" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-                            ValueChanged="SliderBrightness_ValueChanged"
-                            SmallChange="1" LargeChange="10" IsEnabled="False"/>
+                        <ui:SimpleStackPanel
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <Slider
+                                Name="SliderBrightness"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                AutoToolTipPrecision="0"
+                                IsEnabled="False"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="100"
+                                Minimum="0"
+                                SmallChange="1"
+                                TickFrequency="1"
+                                ValueChanged="SliderBrightness_ValueChanged" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
             </Border>
 
-            <!-- Sounds -->
-            <Border
-                    Padding="15,6,15,6"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+            <!--  Sounds  -->
+            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
-                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE767;" Height="40" HorizontalAlignment="Center"/>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE767;" />
 
-                        <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                            <Slider Name="SliderVolume" HorizontalAlignment="Stretch" VerticalAlignment="Center" AutoToolTipPlacement="TopLeft" Maximum="100" TickFrequency="1" Minimum="0" AutoToolTipPrecision="0" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
-							    ValueChanged="SliderVolume_ValueChanged"
-							    SmallChange="1" LargeChange="10"/>
+                        <ui:SimpleStackPanel
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <Slider
+                                Name="SliderVolume"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="100"
+                                Minimum="0"
+                                SmallChange="1"
+                                TickFrequency="1"
+                                ValueChanged="SliderVolume_ValueChanged" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Grid>
