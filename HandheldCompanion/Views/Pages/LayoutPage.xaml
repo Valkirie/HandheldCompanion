@@ -1,109 +1,154 @@
-<Page x:Class="HandheldCompanion.Views.Pages.LayoutPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
-      xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="{x:Static resx:Resources.ProfilesPage_ControllerLayout}"
-      Loaded="Page_Loaded"
-      d:Background="White">
+<Page
+    x:Class="HandheldCompanion.Views.Pages.LayoutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="{x:Static resx:Resources.ProfilesPage_ControllerLayout}"
+    d:Background="White"
+    d:DesignHeight="1000"
+    d:DesignWidth="1000"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
 
     <ui:NavigationView
-        Name="navView" PaneDisplayMode="Left"
+        Name="navView"
+        Margin="20"
+        IsBackButtonVisible="Collapsed"
+        IsPaneToggleButtonVisible="False"
+        IsSettingsVisible="False"
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"
         OpenPaneLength="150"
-        Margin="20"
-        IsPaneToggleButtonVisible="False"
-        IsBackButtonVisible="Collapsed"
+        PaneDisplayMode="Left"
         SelectionFollowsFocus="Enabled"
-        ShoulderNavigationEnabled="WhenSelectionFollowsFocus"
-        IsSettingsVisible="False">
+        ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
 
         <ui:NavigationView.MenuItems>
-            <ui:NavigationViewItem Name="navButtons" Content="Buttons" Tag="ButtonsPage">
+            <ui:NavigationViewItem
+                Name="navButtons"
+                Content="Buttons"
+                Tag="ButtonsPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navDpad" Content="Dpad" Tag="DpadPage">
+            <ui:NavigationViewItem
+                Name="navDpad"
+                Content="Dpad"
+                Tag="DpadPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navTriggers" Content="Triggers" Tag="TriggersPage">
+            <ui:NavigationViewItem
+                Name="navTriggers"
+                Content="Triggers"
+                Tag="TriggersPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navJoysticks" Content="Joysticks" Tag="JoysticksPage">
+            <ui:NavigationViewItem
+                Name="navJoysticks"
+                Content="Joysticks"
+                Tag="JoysticksPage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navTrackpads" Content="Trackpads" Tag="TrackpadsPage" Visibility="Collapsed">
+            <ui:NavigationViewItem
+                Name="navTrackpads"
+                Content="Trackpads"
+                Tag="TrackpadsPage"
+                Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <ui:NavigationViewItem Name="navGyro" Content="Gyro" Tag="GyroPage" Visibility="Collapsed" IsEnabled="False">
+            <ui:NavigationViewItem
+                Name="navGyro"
+                Content="Gyro"
+                IsEnabled="False"
+                Tag="GyroPage"
+                Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"></ui:FontIcon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
-        
-        <!-- Padding is set to NavView OpenPaneLength-->
+
+        <!--  Padding is set to NavView OpenPaneLength  -->
         <Grid Name="MainGrid" Margin="20">
             <ui:SimpleStackPanel Spacing="10">
-                <!-- Profile picker -->
-                <ui:SimpleStackPanel Name="LayoutPickerPanel" Spacing="12" d:Visibility="Visible" Visibility="Collapsed">
-                    
-                    <TextBlock Text="Layout picker" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-                    <ComboBox Name="cB_Layouts"
-                              HorizontalAlignment="Stretch"
-                              HorizontalContentAlignment="Left"
-                              VerticalAlignment="Center"
-                              SizeChanged="cB_Layouts_SizeChanged"
-                              SelectionChanged="cB_Layouts_SelectionChanged">
+                <!--  Profile picker  -->
+                <ui:SimpleStackPanel
+                    Name="LayoutPickerPanel"
+                    d:Visibility="Visible"
+                    Spacing="12"
+                    Visibility="Collapsed">
 
-                        <!-- TEMPLATES -->
-                        <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>                        
-                        <!-- COMMUNITY -->
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Layout picker" />
+                    <ComboBox
+                        Name="cB_Layouts"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Left"
+                        SelectionChanged="cB_Layouts_SelectionChanged"
+                        SizeChanged="cB_Layouts_SizeChanged">
+
+                        <!--  TEMPLATES  -->
+                        <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>
+                        <!--  COMMUNITY  -->
                         <ComboBoxItem Name="cB_LayoutsSplitterCommunity" IsEnabled="false">COMMUNITY</ComboBoxItem>
                     </ComboBox>
 
                     <Grid>
-                        <CheckBox Name="CheckBoxDeviceLayouts" IsChecked="True" Checked="CheckBoxDeviceLayouts_Checked" Unchecked="CheckBoxDeviceLayouts_Checked">Show device layouts only</CheckBox>
+                        <CheckBox
+                            Name="CheckBoxDeviceLayouts"
+                            Checked="CheckBoxDeviceLayouts_Checked"
+                            IsChecked="True"
+                            Unchecked="CheckBoxDeviceLayouts_Checked">
+                            Show device layouts only
+                        </CheckBox>
 
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
-                            <Button Name="ButtonApplyLayout" Style="{DynamicResource AccentButtonStyle}" Click="ButtonApplyLayout_Click" IsEnabled="False">
+                        <ui:SimpleStackPanel
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <Button
+                                Name="ButtonApplyLayout"
+                                Click="ButtonApplyLayout_Click"
+                                IsEnabled="False"
+                                Style="{DynamicResource AccentButtonStyle}">
                                 Apply layout
                             </Button>
 
-                            <!-- Implement me -->
-                            <Button Name="ButtonLayoutSettings" Click="ButtonLayoutSettings_Click" IsEnabled="False">
-                                <ui:SymbolIcon Symbol="Setting"/>
+                            <!--  Implement me  -->
+                            <Button
+                                Name="ButtonLayoutSettings"
+                                Click="ButtonLayoutSettings_Click"
+                                IsEnabled="False">
+                                <ui:SymbolIcon Symbol="Setting" />
                             </Button>
                         </ui:SimpleStackPanel>
                     </Grid>
                 </ui:SimpleStackPanel>
-                
-                <TextBlock Text="Current Layout" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Current Layout" />
                 <ui:Frame
-                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                Name="ContentFrame"
-                HorizontalAlignment="Left"/>
+                    Name="ContentFrame"
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                    HorizontalAlignment="Left" />
             </ui:SimpleStackPanel>
         </Grid>
     </ui:NavigationView>

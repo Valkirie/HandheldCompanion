@@ -1,36 +1,38 @@
-<local:ILayoutPage x:Class="HandheldCompanion.Views.Pages.TriggersPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
-      xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:controls="clr-namespace:HandheldCompanion.Controls"
-      mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
-      Loaded="Page_Loaded">
+<local:ILayoutPage
+    x:Class="HandheldCompanion.Views.Pages.TriggersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
+    xmlns:controls="clr-namespace:HandheldCompanion.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+    d:DesignHeight="1000"
+    d:DesignWidth="1000"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
 
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
 
-            <!-- LEFT TRIGGER BUTTONS -->
-            <TextBlock Text="LEFT TRIGGER BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="LeftTriggerButtonsPanel" />
+            <!--  LEFT TRIGGER BUTTONS  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="LEFT TRIGGER BUTTONS" />
+            <ui:SimpleStackPanel Name="LeftTriggerButtonsPanel" Spacing="6" />
 
-            <!-- LEFT TRIGGER -->
-            <TextBlock Text="LEFT TRIGGER" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="LeftTriggerPanel" />
+            <!--  LEFT TRIGGER  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="LEFT TRIGGER" />
+            <ui:SimpleStackPanel Name="LeftTriggerPanel" Spacing="6" />
 
-            <!-- RIGHT TRIGGER BUTTONS -->
-            <TextBlock Text="RIGHT TRIGGER BUTTONS" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="RightTriggerButtonsPanel" />
+            <!--  RIGHT TRIGGER BUTTONS  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="RIGHT TRIGGER BUTTONS" />
+            <ui:SimpleStackPanel Name="RightTriggerButtonsPanel" Spacing="6" />
 
-            <!-- RIGHT TRIGGER -->
-            <TextBlock Text="RIGHT TRIGGER" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-            <ui:SimpleStackPanel Spacing="6" Name="RightTriggerPanel" />
+            <!--  RIGHT TRIGGER  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="RIGHT TRIGGER" />
+            <ui:SimpleStackPanel Name="RightTriggerPanel" Spacing="6" />
 
         </ui:SimpleStackPanel>
     </Grid>

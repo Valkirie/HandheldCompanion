@@ -27,7 +27,7 @@ namespace HandheldCompanion.Managers
                 Padding = new Thickness(20, 12, 12, 12),
                 Tag = filename
             };
-            updateBorder.SetResourceReference(Control.BackgroundProperty, "ExpanderContentBackground");
+            updateBorder.SetResourceReference(Control.BackgroundProperty, "ExpanderHeaderBackground");
 
             // Create Grid
             updateGrid = new();

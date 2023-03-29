@@ -1,588 +1,908 @@
-﻿<Page x:Class="HandheldCompanion.Views.Pages.SettingsPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:ui="http://schemas.modernwpf.com/2019"
-      xmlns:local="clr-namespace:HandheldCompanion" 
-      xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
-      xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-      mc:Ignorable="d" 
-      d:DesignHeight="2000" d:DesignWidth="1000" d:Background="White"
-      KeepAlive="True"
-      Loaded="Page_Loaded"
-      Title="{x:Static resx:Resources.SettingsPage_Settings}">
+﻿<Page
+    x:Class="HandheldCompanion.Views.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HandheldCompanion"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="{x:Static resx:Resources.SettingsPage_Settings}"
+    d:Background="White"
+    d:DesignHeight="2000"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
 
-            <!-- Update manager -->
+            <!--  Update manager  -->
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" MinWidth="100"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="100" MinWidth="100" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    <ui:FontIcon FontSize="80" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}" Glyph="&#xECC5;" HorizontalAlignment="Center"/>
+                    <ui:FontIcon
+                        HorizontalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        FontSize="80"
+                        Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"
+                        Glyph="&#xECC5;" />
                     <Grid Name="GridUpdateSymbol" Visibility="Collapsed">
-                        <ui:FontIcon FontSize="30" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemAccentColorLight2Brush}" Glyph="&#xE91F;" Margin="50,50,0,0"/>
-                        <ui:FontIcon FontSize="20" FontFamily="{DynamicResource SymbolThemeFontFamily}" Foreground="White" Glyph="&#xE73E;" Margin="50,50,0,0"/>
+                        <ui:FontIcon
+                            Margin="50,50,0,0"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="30"
+                            Foreground="{DynamicResource SystemAccentColorLight2Brush}"
+                            Glyph="&#xE91F;" />
+                        <ui:FontIcon
+                            Margin="50,50,0,0"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="20"
+                            Foreground="White"
+                            Glyph="&#xE73E;" />
                     </Grid>
                 </Grid>
 
-                <ui:SimpleStackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch" Spacing="6">
-                    <TextBlock Name="LabelUpdate" Text="{x:Static resx:Resources.SettingsPage_UpToDate}" Style="{StaticResource BaseTextBlockStyle}" FontSize="20" Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"></TextBlock>
-                    <TextBlock Name="LabelUpdateDate" Text="{x:Static resx:Resources.SettingsPage_LastChecked}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"></TextBlock>
-                    <ui:ProgressBar Name="ProgressBarUpdate" IsIndeterminate="True" Visibility="Collapsed" Margin="0,0,10,0"/>
+                <ui:SimpleStackPanel
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical"
+                    Spacing="6">
+                    <TextBlock
+                        Name="LabelUpdate"
+                        FontSize="20"
+                        Foreground="{DynamicResource SystemControlBackgroundBaseHighBrush}"
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Text="{x:Static resx:Resources.SettingsPage_UpToDate}" />
+                    <TextBlock
+                        Name="LabelUpdateDate"
+                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        Text="{x:Static resx:Resources.SettingsPage_LastChecked}" />
+                    <ui:ProgressBar
+                        Name="ProgressBarUpdate"
+                        Margin="0,0,10,0"
+                        IsIndeterminate="True"
+                        Visibility="Collapsed" />
                 </ui:SimpleStackPanel>
 
-                <Button Grid.Column="2" Name="B_CheckUpdate" Content="{x:Static resx:Resources.SettingsPage_CheckForUpdates}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{DynamicResource AccentButtonStyle}" Click="B_CheckUpdate_Click"/>
+                <Button
+                    Name="B_CheckUpdate"
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Click="B_CheckUpdate_Click"
+                    Content="{x:Static resx:Resources.SettingsPage_CheckForUpdates}"
+                    Style="{DynamicResource AccentButtonStyle}" />
             </Grid>
 
-            <!-- Changelog -->
-            <TextBox Name="CurrentChangelog" Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
+            <!--  Changelog  -->
+            <TextBox
+                Name="CurrentChangelog"
+                IsReadOnly="True"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                Visibility="Collapsed" />
 
-            <!-- Update(s) -->
-            <ui:SimpleStackPanel Name="CurrentUpdates" Spacing="6"/>
+            <!--  Update(s)  -->
+            <ui:SimpleStackPanel Name="CurrentUpdates" Spacing="6" />
 
-            <!-- General options -->
+            <!--  General options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Text="{x:Static resx:Resources.SettingsPage_GeneralOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_GeneralOptions}" />
 
-                <!-- Auto-start application -->
-                <Border     
+                <!--  Auto-start application  -->
+                <Border
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}">
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xED35;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xED35;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AutoStartAppDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_AutoStartAppDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_AutoStart" Grid.Column="1" Toggled="Toggle_AutoStart_Toggled"/>
+                        <ui:ToggleSwitch
+                            Name="Toggle_AutoStart"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_AutoStart_Toggled" />
                     </Grid>
                 </Border>
 
-                <!-- Open application in background -->
-                <Border  
+                <!--  Open application in background  -->
+                <Border
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}">
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEE40;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xEE40;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_OpenAppBackgroundDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_Background" Grid.Column="1" Toggled="Toggle_Background_Toggled"/>
+                        <ui:ToggleSwitch
+                            Name="Toggle_Background"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_Background_Toggled" />
                     </Grid>
                 </Border>
 
-                <!-- Close minimizes -->
-                <Border  
+                <!--  Close minimizes  -->
+                <Border
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}">
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE921;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE921;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_CloseMinimizesDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_CloseMinimizesDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_CloseMinimizes" Grid.Column="1" Toggled="Toggle_CloseMinimizes_Toggled"/>
+                        <ui:ToggleSwitch
+                            Name="Toggle_CloseMinimizes"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_CloseMinimizes_Toggled" />
                     </Grid>
                 </Border>
 
-                <!-- Application theme -->
-                <Border  
+                <!--  Application theme  -->
+                <Border
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}">
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200" />
+                            <ColumnDefinition Width="4*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppTheme}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppThemeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AppTheme}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_AppThemeDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="cB_Theme" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Theme_SelectionChanged">
-                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeLight}"/>
-                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeDark}"/>
+                        <ui:RadioButtons
+                            Name="cB_Theme"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            MaxColumns="2"
+                            SelectionChanged="cB_Theme_SelectionChanged">
+                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeLight}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeDark}" />
                         </ui:RadioButtons>
                     </Grid>
                 </Border>
 
-                <!-- Application theme -->
-                <Border  
+                <!--  Application theme  -->
+                <Border
                     Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="Collapsed">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200" />
+                            <ColumnDefinition Width="4*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE790;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE790;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_Backdrop}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons Name="cB_Backdrop" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Backdrop_SelectionChanged">
-                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropNone}"/>
-                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropMica}"/>
-                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}"/>
-                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}"/>
+                        <ui:RadioButtons
+                            Name="cB_Backdrop"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            MaxColumns="2"
+                            SelectionChanged="cB_Backdrop_SelectionChanged">
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropNone}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropMica}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                         </ui:RadioButtons>
                     </Grid>
                 </Border>
 
-                <!-- Application language -->
-                <Border  
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF2B7;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_AppLanguageDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:RadioButtons Name="cB_Language" Grid.Column="1" MaxColumns="2" HorizontalAlignment="Right" SelectionChanged="cB_Language_SelectionChanged"/>
-                    </Grid>
-                </Border>
-            </ui:SimpleStackPanel>
-
-            <!-- Notification options -->
-            <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Text="{x:Static resx:Resources.SettingsPage_NotificationOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-
-                <!-- Toast notification -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE7E7;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ToastNotificationDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch Name="Toggle_Notification" Grid.Column="1" Toggled="Toggle_Notification_Toggled"/>
-                    </Grid>
-                </Border>
-            </ui:SimpleStackPanel>
-
-            <!-- Service options -->
-            <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Text="{x:Static resx:Resources.SettingsPage_ServiceOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-
-                <!-- Toast notification -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupType}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:RadioButtons Name="cB_StartupType" Grid.Column="1" MaxColumns="1" HorizontalAlignment="Right" SelectionChanged="cB_StartupType_SelectionChanged" />
-                    </Grid>
-                </Border>
-
-                <!-- Start with Companion -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEDB5;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_StartWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch Name="Toggle_ServiceStartup" Grid.Column="1" Toggled="Toggle_ServiceStartup_Toggled" IsEnabled="False" IsOn="True">
-
-                        </ui:ToggleSwitch>
-                    </Grid>
-                </Border>
-
-                <!-- Stop with Companion -->
-                <Border                      
-                            Padding="15,12,12,12"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE71A;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch Name="Toggle_ServiceShutdown" Grid.Column="1" Toggled="Toggle_ServiceShutdown_Toggled" IsEnabled="False" IsOn="True"/>
-                    </Grid>
-                </Border>
-            </ui:SimpleStackPanel>
-
-            <!-- Sensor options -->
-            <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorOptions}" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
-
-                <!-- Sensor Selection -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition Width="4*" MinWidth="120"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE950;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:RadioButtons Name="cB_SensorSelection" Grid.Column="1" HorizontalAlignment="Right" MaxColumns="1" SelectionChanged="cB_SensorSelection_SelectionChanged">
-                            <!-- None -->
-                            <RadioButton Name="SensorNone">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xE770;"/>
-                                    <Label Content="None"></Label>
-                                </ui:SimpleStackPanel>
-                            </RadioButton>
-                            
-                            <!-- Windows -->
-                            <RadioButton Name="SensorInternal" IsEnabled="False">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xE770;"/>
-                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"></Label>
-                                </ui:SimpleStackPanel>
-                            </RadioButton>
-
-                            <!-- SerialUSBIMU -->
-                            <RadioButton Name="SensorExternal" IsEnabled="False">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xECF1;"/>
-                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"></Label>
-                                </ui:SimpleStackPanel>
-                            </RadioButton>
-
-                            <!-- Controller -->
-                            <RadioButton Name="SensorController" IsEnabled="False">
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <ui:FontIcon Glyph="&#xE7FC;"/>
-                                    <Label Content="{x:Static resx:Resources.MainWindow_navController}"></Label>
-                                </ui:SimpleStackPanel>
-                            </RadioButton>
-                        </ui:RadioButtons>
-                    </Grid>
-                </Border>
-
-                <!-- Sensor Placement Direction -->
+                <!--  Application language  -->
                 <Border
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}"
-                    Name="SensorPlacementVisualisation">
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition Width="6*" MinWidth="200" />
+                            <ColumnDefinition Width="4*" MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE80A;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xF2B7;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_AppLanguageDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:RadioButtons
+                            Name="cB_Language"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            MaxColumns="2"
+                            SelectionChanged="cB_Language_SelectionChanged" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Notification options  -->
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_NotificationOptions}" />
+
+                <!--  Toast notification  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE7E7;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_ToastNotificationDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_Notification"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_Notification_Toggled" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Service options  -->
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ServiceOptions}" />
+
+                <!--  Toast notification  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*" MinWidth="200" />
+                            <ColumnDefinition Width="4*" MinWidth="120" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_StartupType}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:RadioButtons
+                            Name="cB_StartupType"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            MaxColumns="1"
+                            SelectionChanged="cB_StartupType_SelectionChanged" />
+                    </Grid>
+                </Border>
+
+                <!--  Start with Companion  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xEDB5;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_StartWithCompanionDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_ServiceStartup"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            IsEnabled="False"
+                            IsOn="True"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_ServiceStartup_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Stop with Companion  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE71A;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanionDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_ServiceShutdown"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            IsEnabled="False"
+                            IsOn="True"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_ServiceShutdown_Toggled" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Sensor options  -->
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorOptions}" />
+
+                <!--  Sensor Selection  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*" MinWidth="200" />
+                            <ColumnDefinition Width="4*" MinWidth="120" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE950;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_SensorSelectionDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:RadioButtons
+                            Name="cB_SensorSelection"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            MaxColumns="1"
+                            SelectionChanged="cB_SensorSelection_SelectionChanged">
+                            <!--  None  -->
+                            <RadioButton Name="SensorNone">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE770;" />
+                                    <Label Content="None" />
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+
+                            <!--  Windows  -->
+                            <RadioButton Name="SensorInternal" IsEnabled="False">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE770;" />
+                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorInternal}" />
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+
+                            <!--  SerialUSBIMU  -->
+                            <RadioButton Name="SensorExternal" IsEnabled="False">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xECF1;" />
+                                    <Label Content="{x:Static resx:Resources.SettingsPage_SensorExternal}" />
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+
+                            <!--  Controller  -->
+                            <RadioButton Name="SensorController" IsEnabled="False">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="&#xE7FC;" />
+                                    <Label Content="{x:Static resx:Resources.MainWindow_navController}" />
+                                </ui:SimpleStackPanel>
+                            </RadioButton>
+                        </ui:RadioButtons>
+                    </Grid>
+                </Border>
+
+                <!--  Sensor Placement Direction  -->
+                <Border
+                    Name="SensorPlacementVisualisation"
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE80A;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirectionDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
                         <Grid Grid.Column="1">
-                            <ui:SimpleStackPanel Name="Grid_SensorPlacementVisualisation" Spacing="6" HorizontalAlignment="Right" IsEnabled="False">
+                            <ui:SimpleStackPanel
+                                Name="Grid_SensorPlacementVisualisation"
+                                HorizontalAlignment="Right"
+                                IsEnabled="False"
+                                Spacing="6">
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="0" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
-                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Tag="99"
+                                        Visibility="Hidden" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="0" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Tag="99"
+                                        Visibility="Hidden" />
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button Tag="1" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
-                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="2" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="1" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Tag="99"
+                                        Visibility="Hidden" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="2" />
                                 </ui:SimpleStackPanel>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
-                                    <Button Tag="3" Width="50" Height="50" Click="SensorPlacement_Click"></Button>
-                                    <Button Tag="99" Width="50" Height="50" Visibility="Hidden"></Button>
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Tag="99"
+                                        Visibility="Hidden" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Click="SensorPlacement_Click"
+                                        Tag="3" />
+                                    <Button
+                                        Width="50"
+                                        Height="50"
+                                        Tag="99"
+                                        Visibility="Hidden" />
                                 </ui:SimpleStackPanel>
                             </ui:SimpleStackPanel>
                         </Grid>
                     </Grid>
                 </Border>
-                
-                <!-- Sensor Placement Mirror -->
+
+                <!--  Sensor Placement Mirror  -->
                 <Border
+                    Name="SensorPlacementUpsideDown"
                     Padding="15,12,12,12"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}"
-                    Name="SensorPlacementUpsideDown">
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE1CA;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE1CA;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDownDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_SensorPlacementUpsideDown" Grid.Column="1" Toggled="Toggle_SensorPlacementUpsideDown_Toggled" IsEnabled="False"/>
+                        <ui:ToggleSwitch
+                            Name="Toggle_SensorPlacementUpsideDown"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            IsEnabled="False"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_SensorPlacementUpsideDown_Toggled" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!-- Power options -->
+            <!--  Power options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Text="Power options" Style="{StaticResource BaseTextBlockStyle}"></TextBlock>
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Power options" />
 
-                <!-- EnergyStar -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xEA95;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch Name="Toggle_EnergyStar" Grid.Column="1" Toggled="Toggle_EnergyStar_Toggled"/>
-                    </Grid>
-                </Border>
-
-                <!-- Configurable TDP -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
-
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch Name="Toggle_cTDP" Grid.Column="1" Toggled="Toggle_cTDP_Toggled"/>
-                    </Grid>
-                </Border>
-
-                <!-- Configurable TDP down-->
+                <!--  EnergyStar  -->
                 <Border
                     Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xEA95;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_EnergyStar"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_EnergyStar_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Configurable TDP  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_cTDP"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_cTDP_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Configurable TDP down  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMin}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMin}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMin" Grid.Column="1" VerticalAlignment="Center" Minimum="3" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMin_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox
+                            Name="NumberBox_TDPMin"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Minimum="3"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="NumberBox_TDPMin_ValueChanged" />
                     </Grid>
                 </Border>
 
-                <!-- Configurable TDP up-->
+                <!--  Configurable TDP up  -->
                 <Border
                     Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Background="{DynamicResource ExpanderContentBackground}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="120"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="120" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE713;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMax}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMax}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Maximum="64" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
+                        <ui:NumberBox
+                            Name="NumberBox_TDPMax"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Maximum="64"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="NumberBox_TDPMax_ValueChanged" />
                     </Grid>
                 </Border>
 
-                <!-- FanControl -->
-                <Border                      
-                        Padding="15,12,12,12"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Background="{DynamicResource ExpanderContentBackground}">
+                <!--  FanControl  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
-                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE708;" Height="40" HorizontalAlignment="Center"/>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE708;" />
 
-                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="Fan control override" Style="{StaticResource BodyTextBlockStyle}"/>
-                                <TextBlock Text="Allows to modify the device main fan duty cycle" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Fan control override" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Allows to modify the device main fan duty cycle"
+                                    TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch Name="Toggle_FanControl" Grid.Column="1" Toggled="Toggle_FanControl_Toggled"/>
+                        <ui:ToggleSwitch
+                            Name="Toggle_FanControl"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_FanControl_Toggled" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
