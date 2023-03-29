@@ -238,8 +238,10 @@ namespace HandheldCompanion.Controls
 
         public void Dispose()
         {
-            Process.Dispose();
-            MainThread.Dispose();
+            if (Process is not null)
+                Process.Dispose();
+            if (MainThread is not null)
+                MainThread.Dispose();
             Children.Dispose();
 
             GC.SuppressFinalize(this); //now, the finalizer won't be called
