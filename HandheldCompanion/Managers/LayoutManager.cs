@@ -139,7 +139,7 @@ namespace HandheldCompanion.Managers
             else if (defaultP.LayoutEnabled)
                 profileLayout.Layout = defaultP.Layout;
             else
-                profileLayout.Layout = new Layout();
+                profileLayout.Layout = null;
 
             // only update current layout if we're not into desktop layout mode
             if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
