@@ -112,11 +112,11 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
+        private HwndSource hwndSource;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-
-            if (hwndSource != null)
+            hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+            if (hwndSource is not null)
                 hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
         }
 
@@ -133,10 +133,25 @@ namespace HandheldCompanion.Views.Windows
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
                         this.Show();
-                        this.Activate();
                         break;
                 }
             });
+        }
+
+        public void Hide()
+        {
+            if (hwndSource is not null)
+                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+
+            base.Hide();
+        }
+
+        public void Show()
+        {
+            if (hwndSource is not null)
+                hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+
+            base.Show();
         }
 
         #region navView
