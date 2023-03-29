@@ -942,10 +942,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Downloading - </value>
   </data>
   <data name="SettingsPage_EcoQoS" xml:space="preserve">
-    <value>EcoQoS</value>
+    <value>Smart efficiency</value>
   </data>
   <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
-    <value>Throttle inactive or background processes and applications to improve energy efficency</value>
+    <value>Smart efficiency mode reduces the priority of background processes and improves energy efficiency</value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>General options</value>
@@ -1029,7 +1029,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>The minimum power in watts supplied to the processor</value>
   </data>
   <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
-    <value>Configurable Power (cTDP) override</value>
+    <value>Configurable power (cTDP) override</value>
   </data>
   <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
     <value>Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications</value>
@@ -1162,5 +1162,11 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
     <value>Controller layout</value>
+  </data>
+  <data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
+    <value>Quiet mode</value>
+  </data>
+  <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
+    <value>Set the fan duty cycle to user-defined value</value>
   </data>
 </root>

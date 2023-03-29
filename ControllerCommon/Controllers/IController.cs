@@ -71,7 +71,6 @@ namespace ControllerCommon.Controllers
         protected Dictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
 
         public ButtonState InjectedButtons = new();
-        public ButtonState prevInjectedButtons = new();
 
         public ControllerCapacities Capacities = ControllerCapacities.None;
 
@@ -105,7 +104,6 @@ namespace ControllerCommon.Controllers
         {
             // update states
             Inputs.Timestamp = Environment.TickCount;
-            prevInjectedButtons = InjectedButtons.Clone() as ButtonState;
 
             InputsUpdated?.Invoke(Inputs);
         }

@@ -201,12 +201,14 @@ namespace HandheldCompanion.Managers
                     LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
 
                     if (IsKeyDown)
+                    {
                         KeyboardSimulator.KeyDown(chords.ToArray());
+
+                        // stop hold timer
+                        InputsChordHoldTimer.Stop();
+                    }
                     else if (IsKeyUp)
                         KeyboardSimulator.KeyUp(chords.ToArray());
-
-                    // stop hold timer
-                    InputsChordHoldTimer.Stop();
                 }
             }
             else

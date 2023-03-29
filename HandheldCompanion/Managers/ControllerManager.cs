@@ -5,6 +5,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
@@ -302,7 +303,7 @@ namespace HandheldCompanion.Managers
                 ToastManager.SendToast(controller.ToString(), "detected");
 
                 // automatically connect DInput controller if only available
-                if (GetControllerCount() == 1 && DeviceManager.IsInitialized)
+                if (GetControllerCount() == 1 && SystemManager.IsInitialized)
                     SetTargetController(path);
             });
         }
@@ -374,7 +375,7 @@ namespace HandheldCompanion.Managers
                 ToastManager.SendToast(controller.ToString(), "detected");
 
                 // automatically connect XInput controller if only available
-                if (GetControllerCount() == 1 && DeviceManager.IsInitialized)
+                if (GetControllerCount() == 1 && SystemManager.IsInitialized)
                     SetTargetController(path);
             });
         }

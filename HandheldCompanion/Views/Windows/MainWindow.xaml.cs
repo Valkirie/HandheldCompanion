@@ -144,6 +144,7 @@ namespace HandheldCompanion.Views
             // initialize device
             CurrentDevice = IDevice.GetDefault();
             CurrentDevice.PullSensors();
+            CurrentDevice.Open();
 
             // initialize pipe client
             PipeClient.ServerMessage += OnServerMessage;
@@ -166,7 +167,6 @@ namespace HandheldCompanion.Views
             ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
             ControllerManager.Start();
-            EnergyManager.Start();
             HotkeysManager.Start();
 
             DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
@@ -177,11 +177,12 @@ namespace HandheldCompanion.Views
             ProfileManager.Start();
             LayoutManager.Start();
             ProcessManager.Start();
+            EnergyManager.Start();
 
             PowerManager.SystemStatusChanged += OnSystemStatusChanged;
             PowerManager.Start();
 
-            DesktopManager.Start();
+            SystemManager.Start();
             // HWiNFOManager.Start();
 
             // start managers asynchroneously
@@ -591,6 +592,8 @@ namespace HandheldCompanion.Views
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            CurrentDevice.Close();
+
             serviceManager.Stop();
             performanceManager.Stop();
 

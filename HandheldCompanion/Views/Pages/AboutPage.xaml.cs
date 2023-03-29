@@ -1,3 +1,4 @@
+using ControllerCommon.Devices;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace HandheldCompanion.Views.Pages
                 SensorInternal.Text = MainWindow.CurrentDevice.Capacities.HasFlag(ControllerCommon.Devices.DeviceCapacities.InternalSensor) ? MainWindow.CurrentDevice.InternalSensorName : string.Empty;
                 SensorExternal.Text = MainWindow.CurrentDevice.Capacities.HasFlag(ControllerCommon.Devices.DeviceCapacities.ExternalSensor) ? MainWindow.CurrentDevice.ExternalSensorName : string.Empty;
 
-                if (!MainWindow.CurrentDevice.ProductSupported)
+                if (MainWindow.CurrentDevice.GetType() == typeof(DefaultDevice))
                 {
                     WarningBorder.Visibility = Visibility.Visible;
                     WarningContent.Text = "Oups, it appears your device is not supported yet. The software might not run as expected.";

@@ -8,7 +8,7 @@
       xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       mc:Ignorable="d" 
-      d:DesignHeight="2000" d:DesignWidth="1000"
+      d:DesignHeight="2000" d:DesignWidth="1000" d:Background="White"
       KeepAlive="True"
       Loaded="Page_Loaded"
       Title="{x:Static resx:Resources.SettingsPage_Settings}">
@@ -560,7 +560,33 @@
                         <ui:NumberBox Name="NumberBox_TDPMax" Grid.Column="1" VerticalAlignment="Center" Maximum="64" SpinButtonPlacementMode="Inline" ValueChanged="NumberBox_TDPMax_ValueChanged"></ui:NumberBox>
                     </Grid>
                 </Border>
+
+                <!-- FanControl -->
+                <Border                      
+                        Padding="15,12,12,12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Background="{DynamicResource ExpanderContentBackground}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="80"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE708;" Height="40" HorizontalAlignment="Center"/>
+
+                            <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                                <TextBlock Text="Fan control override" Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock Text="Allows to modify the device main fan duty cycle" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch Name="Toggle_FanControl" Grid.Column="1" Toggled="Toggle_FanControl_Toggled"/>
+                    </Grid>
+                </Border>
             </ui:SimpleStackPanel>
+
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

@@ -2,6 +2,7 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Simulators;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
@@ -101,13 +102,6 @@ namespace HandheldCompanion.Managers
                 hotkey.Listening += StartListening;
                 hotkey.Pinning += PinOrUnpinHotkey;
                 hotkey.Summoned += (hotkey) => InvokeTrigger(hotkey, false, true);
-
-                /*
-                hotkey.quickButton.PreviewTouchDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
-                hotkey.quickButton.PreviewMouseDown += (sender, e) => { InputsManager.InvokeTrigger(hotkey, true, false); };
-                hotkey.quickButton.PreviewMouseUp += (sender, e) => { InputsManager.InvokeTrigger(hotkey, false, true); };
-                */
-
                 hotkey.Updated += (hotkey) => SerializeHotkey(hotkey, true);
 
                 HotkeyCreated?.Invoke(hotkey);
@@ -131,10 +125,6 @@ namespace HandheldCompanion.Managers
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
-            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
-            if (hotkey is null)
-                return;
-
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -143,9 +133,25 @@ namespace HandheldCompanion.Managers
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
                     case "shortcutDesktopLayout":
+                    case "QuietModeToggled":
                         {
+                            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
+                            if (hotkey is null)
+                                return;
+
                             bool toggle = Convert.ToBoolean(value);
                             hotkey.SetToggle(toggle);
+                        }
+                        break;
+
+                    case "QuietModeEnabled":
+                        {
+                            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)).FirstOrDefault();
+                            if (hotkey is null)
+                                return;
+
+                            bool toggle = Convert.ToBoolean(value);
+                            hotkey.IsEnabled = toggle;
                         }
                         break;
                 }
@@ -175,11 +181,11 @@ namespace HandheldCompanion.Managers
                             return;
                         }
 
-                        hotkey.Pinned();
+                        hotkey.IsPinned = true;
                     }
                     break;
                 case true:
-                    hotkey.Unpinned();
+                    hotkey.IsPinned = false;
                     break;
             }
 
@@ -247,20 +253,26 @@ namespace HandheldCompanion.Managers
             // we use @ as a special character to link two ore more listeners together
             listener = listener.TrimEnd('@');
 
+            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener)).FirstOrDefault();
+            if (hotkey is null)
+                return;
+
+            // Hotkey is disabled
+            if (!hotkey.IsEnabled)
+                return;
+
+            // These are special shortcut keys with no related events
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
+                return;
+
             var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
 
-            foreach (Hotkey hotkey in hotkeys)
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
+                foreach (var htkey in hotkeys)
                     hotkey.Highlight();
-                });
-
-                // These are special shortcut keys with no related events
-                if (hotkey == hotkeys.Last() && hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
-                    return;
-            }
+            });
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
@@ -324,7 +336,7 @@ namespace HandheldCompanion.Managers
                         break;
                     case "suspendResumeTask":
                         {
-                            var sProcess = ProcessManager.GetSuspendedProcess();
+                            var sProcess = ProcessManager.GetLastSuspendedProcess();
 
                             if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
                                 break;
@@ -341,12 +353,19 @@ namespace HandheldCompanion.Managers
                             fProcess.Process.Kill();
                         }
                         break;
-
                     case "SteamDeckLizardMouse":
                     case "SteamDeckLizardButtons":
                         {
                             bool SteamDeckLizardMode = SettingsManager.GetBoolean(listener);
                             SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
+                        }
+                        break;
+                    case "QuietModeEnabled":
+                        {
+                            bool value = !SettingsManager.GetBoolean(listener);
+                            SettingsManager.SetProperty(listener, value);
+                            
+                            ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
                         }
                         break;
 
@@ -356,7 +375,7 @@ namespace HandheldCompanion.Managers
                             bool value = !SettingsManager.GetBoolean(listener, true);
                             SettingsManager.SetProperty(listener, value, false, true);
 
-                            ToastManager.SendToast("Desktop Layout", $"is now {(value ? "enabled" : "disabled")}");
+                            ToastManager.SendToast("Desktop layout", $"is now {(value ? "enabled" : "disabled")}");
                         }
                         break;
 
@@ -368,7 +387,7 @@ namespace HandheldCompanion.Managers
                 LogManager.LogDebug("Executed Hotkey: {0}", listener);
 
                 // play a tune to notify a command was executed
-                DesktopManager.PlayWindowsMedia("Windows Navigation Start.wav");
+                SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
 
                 // raise an event
                 CommandExecuted?.Invoke(listener);

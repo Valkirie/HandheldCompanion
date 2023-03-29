@@ -202,17 +202,15 @@ namespace ControllerCommon.Utils
 
                 foreach (ManagementObject item in searcher.Get())
                 {
-                    object id = item["ProcessID"];
-                    object path = item["ExecutablePath"];
+                    int id = Convert.ToInt32(item["ProcessID"]);
+                    string path = Convert.ToString(item["ExecutablePath"]);
 
-                    if (path is not null && id.ToString() == process.Id.ToString())
-                    {
-                        return path.ToString();
-                    }
+                    if (!string.IsNullOrEmpty(path) && id == process.Id)
+                        return path;
                 }
             }
 
-            return "";
+            return string.Empty;
         }
 
         public static List<Process> GetChildProcesses(Process process)

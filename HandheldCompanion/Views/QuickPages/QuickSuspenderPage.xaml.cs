@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,11 +23,10 @@ namespace HandheldCompanion.Views.QuickPages
             try
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    var element = processEx.GetControl();
-                    if (CurrentProcesses.Children.Contains(element))
-                        CurrentProcesses.Children.Remove(element);
+                    if (CurrentProcesses.Children.Contains(processEx))
+                        CurrentProcesses.Children.Remove(processEx);
                 });
             }
             catch
@@ -34,18 +34,15 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void ProcessStarted(ProcessEx processEx, bool startup)
+        private void ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
             try
             {
                 // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    processEx.DrawControl();
-                    var element = processEx.GetControl();
-
-                    if (!CurrentProcesses.Children.Contains(element))
-                        CurrentProcesses.Children.Add(element);
+                    if (!CurrentProcesses.Children.Contains(processEx))
+                        CurrentProcesses.Children.Add(processEx);
                 });
             }
             catch

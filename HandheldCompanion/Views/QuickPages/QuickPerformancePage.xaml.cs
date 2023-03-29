@@ -32,8 +32,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
-            DesktopManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
-            DesktopManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
+            SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
+            SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
 
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
@@ -49,7 +49,7 @@ namespace HandheldCompanion.Views.QuickPages
         private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
         {
             ComboBoxResolution.SelectedItem = resolution;
-            ComboBoxFrequency.SelectedItem = DesktopManager.GetScreenFrequency();
+            ComboBoxFrequency.SelectedItem = SystemManager.GetScreenFrequency();
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -96,6 +96,12 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "QuickToolsPerformanceGPUEnabled":
                         GPUToggle.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "QuietModeEnabled":
+                        QuietModeToggle.IsEnabled = Convert.ToBoolean(value);
+                        break;
+                    case "QuietModeToggled":
+                        QuietModeToggle.IsOn = Convert.ToBoolean(value);
                         break;
                     case "QuickToolsPerformanceTDPSustainedValue":
                         {
@@ -347,7 +353,7 @@ namespace HandheldCompanion.Views.QuickPages
                 ComboBoxFrequency.Items.Add(frequency);
 
             // pick current frequency, if available
-            ComboBoxFrequency.SelectedItem = DesktopManager.GetScreenFrequency();
+            ComboBoxFrequency.SelectedItem = SystemManager.GetScreenFrequency();
 
             SetResolution();
         }
@@ -372,7 +378,7 @@ namespace HandheldCompanion.Views.QuickPages
             ScreenFrequency frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
 
             // update current screen resolution
-            DesktopManager.SetResolution(resolution.width, resolution.height, frequency.frequency);
+            SystemManager.SetResolution(resolution.width, resolution.height, frequency.frequency);
         }
 
         private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

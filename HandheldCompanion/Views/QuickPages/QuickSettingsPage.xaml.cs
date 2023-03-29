@@ -21,28 +21,28 @@ namespace HandheldCompanion.Views.QuickPages
             HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
             HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
-            DesktopManager.VolumeNotification += DeviceManager_VolumeNotification;
-            DesktopManager.BrightnessNotification += DesktopManager_BrightnessNotification;
-            DesktopManager.Initialized += DesktopManager_Initialized;
+            SystemManager.VolumeNotification += SystemManager_VolumeNotification;
+            SystemManager.BrightnessNotification += SystemManager_BrightnessNotification;
+            SystemManager.Initialized += SystemManager_Initialized;
         }
 
-        private void DesktopManager_Initialized()
+        private void SystemManager_Initialized()
         {
             // get current system brightness
-            switch (DesktopManager.HasBrightnessSupport())
+            switch (SystemManager.HasBrightnessSupport())
             {
                 case true:
                     SliderBrightness.IsEnabled = true;
-                    SliderBrightness.Value = DesktopManager.GetBrightness();
+                    SliderBrightness.Value = SystemManager.GetBrightness();
                     break;
             }
 
             // get current system volume
-            switch (DesktopManager.HasVolumeSupport())
+            switch (SystemManager.HasVolumeSupport())
             {
                 case true:
                     SliderVolume.IsEnabled = true;
-                    SliderVolume.Value = DesktopManager.GetVolume();
+                    SliderVolume.Value = SystemManager.GetVolume();
                     break;
             }
         }
@@ -66,7 +66,7 @@ namespace HandheldCompanion.Views.QuickPages
                 QuickHotkeys.Children.Add(hotkey.GetPin());
         }
 
-        private void DesktopManager_BrightnessNotification(int brightness)
+        private void SystemManager_BrightnessNotification(int brightness)
         {
             if (Monitor.TryEnter(brightnessLock))
             {
@@ -80,7 +80,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void DeviceManager_VolumeNotification(float volume)
+        private void SystemManager_VolumeNotification(float volume)
         {
             if (Monitor.TryEnter(volumeLock))
             {
@@ -99,7 +99,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             if (Monitor.TryEnter(brightnessLock))
             {
-                DesktopManager.SetBrightness(SliderBrightness.Value);
+                SystemManager.SetBrightness(SliderBrightness.Value);
 
                 Monitor.Exit(brightnessLock);
             }
@@ -110,7 +110,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(volumeLock))
             {
                 // update volume
-                DesktopManager.SetVolume(SliderVolume.Value);
+                SystemManager.SetVolume(SliderVolume.Value);
 
                 Monitor.Exit(volumeLock);
             }

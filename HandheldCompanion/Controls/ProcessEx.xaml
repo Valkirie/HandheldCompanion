@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="HandheldCompanion.Controls.ProcessEx"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HandheldCompanion.Controls"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             d:Width="400"
+             mc:Ignorable="d">
+    
+    <Expander HorizontalAlignment="Stretch" Padding="20,12,12,12" d:IsExpanded="True">
+        <Expander.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Image Name="ProcessIcon" Grid.Column="0" Height="24" Width="24"/>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                    <TextBlock x:Name="ExecutableTextBlock" Style="{StaticResource BodyTextBlockStyle}"/>
+                    <TextBlock x:Name="TitleTextBlock" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
+                </StackPanel>
+            </Grid>
+        </Expander.Header>
+
+        <Expander.Content>
+            <ui:SimpleStackPanel Spacing="6">
+                <!-- Suspend -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Suspend process" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                    <ui:ToggleSwitch Name="SuspendToggle" Grid.Column="1" Toggled="SuspendToggle_Toggled"/>
+                </Grid>
+                
+                <!-- EcoQos -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Efficiency mode" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="Efficiency mode will lower process priority and improve power efficiency" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <CheckBox Name="QoSCheckBox" Grid.Column="1" IsHitTestVisible="False" Focusable="False" Margin="30,0,0,0"/>
+                </Grid>
+            </ui:SimpleStackPanel>
+        </Expander.Content>
+    </Expander>
+</UserControl>

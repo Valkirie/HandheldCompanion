@@ -523,6 +523,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Quiet mode.
+        /// </summary>
+        public static string InputsHotkey_QuietModeToggled {
+            get {
+                return ResourceManager.GetString("InputsHotkey_QuietModeToggled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Set the fan duty cycle to user-defined value.
+        /// </summary>
+        public static string InputsHotkey_QuietModeToggledDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_QuietModeToggledDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Display Action center.
         /// </summary>
         public static string InputsHotkey_shortcutControlCenter {
@@ -2765,7 +2783,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à EcoQoS.
+        ///   Recherche une chaîne localisée semblable à Smart efficiency.
         /// </summary>
         public static string SettingsPage_EcoQoS {
             get {
@@ -2774,7 +2792,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Throttle inactive or background processes and applications to improve energy efficency.
+        ///   Recherche une chaîne localisée semblable à Smart efficiency mode reduces the priority of background processes and improves energy efficiency.
         /// </summary>
         public static string SettingsPage_EcoQoSDesc {
             get {
@@ -3026,7 +3044,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Configurable Power (cTDP) override.
+        ///   Recherche une chaîne localisée semblable à Configurable power (cTDP) override.
         /// </summary>
         public static string SettingsPage_TDPRangeOverride {
             get {

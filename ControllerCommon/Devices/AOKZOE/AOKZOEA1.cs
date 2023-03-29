@@ -9,8 +9,6 @@ namespace ControllerCommon.Devices
     {
         public AOKZOEA1() : base()
         {
-            this.ProductSupported = true;
-
             // device specific settings
             this.ProductIllustration = "device_aokzoe_a1";
             this.ProductModel = "AOKZOEA1";
@@ -33,6 +31,19 @@ namespace ControllerCommon.Devices
                 { 'X', 'X' },
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
+            };
+
+            // device specific capacities
+            this.Capacities = DeviceCapacities.FanControl;
+
+            this.FanDetails = new FanDetails()
+            {
+                AddressControl = 0x44A,
+                AddressDuty = 0x44B,
+                AddressRegistry = 0x4E,
+                AddressData = 0x4F,
+                ValueMin = 0,
+                ValueMax = 184
             };
 
             // Home

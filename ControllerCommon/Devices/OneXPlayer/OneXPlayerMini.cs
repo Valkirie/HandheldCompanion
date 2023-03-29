@@ -1,24 +1,18 @@
 ﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
 {
-    public class OneXPlayerMiniAMD : IDevice
+    public class OneXPlayerMini : IDevice
     {
-        public OneXPlayerMiniAMD() : base()
+        public OneXPlayerMini() : base()
         {
-            this.ProductSupported = true;
-
             // device specific settings
             this.ProductIllustration = "device_onexplayer_mini";
             this.ProductModel = "ONEXPLAYERMini";
-
-            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
-            this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 10, 25 };
-            this.GfxClock = new double[] { 100, 2000 };
 
             this.AngularVelocityAxisSwap = new()
             {
@@ -27,12 +21,24 @@ namespace ControllerCommon.Devices
                 { 'Z', 'Y' },
             };
 
-            this.AccelerationAxis = new Vector3(-1.0f, -1.0f, 1.0f);
             this.AccelerationAxisSwap = new()
             {
                 { 'X', 'X' },
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
+            };
+
+            // device specific capacities
+            this.Capacities = DeviceCapacities.FanControl;
+
+            this.FanDetails = new FanDetails()
+            {
+                AddressControl = 0x44A,
+                AddressDuty = 0x44B,
+                AddressRegistry = 0x4E,
+                AddressData = 0x4F,
+                ValueMin = 0,
+                ValueMax = 184
             };
 
             // unused
@@ -62,7 +68,8 @@ namespace ControllerCommon.Devices
 
             OEMChords.Add(new DeviceChord("Function + Volume Up",
                 new List<KeyCode>() { KeyCode.F1 },
-                new List<KeyCode>() { KeyCode.F1, KeyCode.F1 }
+                new List<KeyCode>() { KeyCode.F1, KeyCode.F1 },
+                false, ButtonFlags.OEM4
                 ));
 
             // dirty implementation from OneX...
@@ -76,6 +83,24 @@ namespace ControllerCommon.Devices
                 new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin },
                 false, ButtonFlags.OEM1
                 ));
+        }
+
+        public override bool Open()
+        {
+            bool success = base.Open();
+            if (!success)
+                return false;
+
+            // allow OneX button to pass key inputs
+            LogManager.LogInformation("Unlocked {0} OEM button", "");
+            return ECRamDirectWrite(0xF1, 0x40);
+        }
+
+        public override void Close()
+        {
+            LogManager.LogInformation("Locked {0} OEM button", "");
+            ECRamDirectWrite(0xF1, 0x00);
+            base.Close();
         }
     }
 }

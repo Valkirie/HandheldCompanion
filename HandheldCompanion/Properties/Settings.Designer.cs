@@ -754,5 +754,41 @@ namespace HandheldCompanion.Properties {
                 this["LayoutFilterOnDevice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("40")]
+        public double QuietModeDuty {
+            get {
+                return ((double)(this["QuietModeDuty"]));
+            }
+            set {
+                this["QuietModeDuty"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuietModeToggled {
+            get {
+                return ((bool)(this["QuietModeToggled"]));
+            }
+            set {
+                this["QuietModeToggled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuietModeEnabled {
+            get {
+                return ((bool)(this["QuietModeEnabled"]));
+            }
+            set {
+                this["QuietModeEnabled"] = value;
+            }
+        }
     }
 }

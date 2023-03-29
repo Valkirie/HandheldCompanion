@@ -3,6 +3,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using Force.Crc32;
+using HandheldCompanion.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -135,7 +136,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromExec(processEx.Name);
+                Profile profile = GetProfileFromExec(processEx.Title);
 
                 if (profile is null || profile.Default)
                     return;
@@ -161,11 +162,11 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool startup)
+        private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
         {
             try
             {
-                Profile profile = GetProfileFromExec(processEx.Name);
+                Profile profile = GetProfileFromExec(processEx.Title);
 
                 if (profile is null || profile.Default)
                     return;

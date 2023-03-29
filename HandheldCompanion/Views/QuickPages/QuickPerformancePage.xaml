@@ -8,7 +8,7 @@
       xmlns:resx="clr-namespace:HandheldCompanion.Properties"
       KeepAlive="True"
       mc:Ignorable="d" 
-      d:DesignHeight="720" d:DesignWidth="500"
+      d:DesignHeight="720" d:DesignWidth="500" d:Background="White"
       Margin="0,0,0,12"
       Title="Performance">
 
@@ -190,7 +190,7 @@
         <!-- Separator -->
         <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
 
-        <!-- Power Mode -->
+        <!-- Power mode -->
         <ui:SimpleStackPanel Spacing="6">
             <!-- Header -->
             <Border
@@ -238,6 +238,33 @@
                 </DockPanel>
             </Border>
         </ui:SimpleStackPanel>
+
+        <!-- Separator -->
+        <Separator BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Opacity="0.25" BorderThickness="0 1 0 0" />
+
+        <!-- Fan mode -->
+        <Border                      
+                        Padding="15,6,15,6"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="0.2*" MinWidth="80"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <DockPanel>
+                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xE708;" Height="40" HorizontalAlignment="Center"/>
+
+                    <ui:SimpleStackPanel VerticalAlignment="Center" Margin="12,0,0,0">
+                        <TextBlock Text="{x:Static resx:Resources.InputsHotkey_QuietModeToggled}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="{x:Static resx:Resources.InputsHotkey_QuietModeToggledDesc}" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap"/>
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+
+                <ui:ToggleSwitch Name="QuietModeToggle" Grid.Column="1" IsEnabled="False" />
+            </Grid>
+        </Border>
 
     </ui:SimpleStackPanel>
 </Page>

@@ -1,5 +1,7 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon.Devices;
+using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Views;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using System;
@@ -13,7 +15,7 @@ using System.Windows.Forms;
 
 namespace HandheldCompanion.Managers
 {
-    public static class DesktopManager
+    public static class SystemManager
     {
 
         #region imports
@@ -159,10 +161,12 @@ namespace HandheldCompanion.Managers
         private static ManagementScope Scope;
         private static bool BrightnessSupport;
 
+        private static bool FanControlSupport;
+
         private static Screen PrimaryScreen;
         public static bool IsInitialized;
 
-        static DesktopManager()
+        static SystemManager()
         {
             // get current volume value
             try
@@ -188,6 +192,43 @@ namespace HandheldCompanion.Managers
             // creating the watcher
             EventWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
             EventWatcher.EventArrived += new EventArrivedEventHandler(onWMIEvent);
+
+            if (MainWindow.CurrentDevice.IsOpen && MainWindow.CurrentDevice.IsSupported)
+            {
+                if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl))
+                    FanControlSupport = true;
+            }
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "QuietModeEnabled":
+                    {
+                        bool status = Convert.ToBoolean(value);
+                        MainWindow.CurrentDevice.SetFanControl(status);
+
+                        if (!status)
+                            return;
+
+                        double duty = SettingsManager.GetDouble("QuietModeDuty");
+                        MainWindow.CurrentDevice.SetFanDuty(duty);
+                    }
+                    break;
+                case "QuietModeDuty":
+                    {
+                        bool status = SettingsManager.GetBoolean("QuietModeEnabled");
+                        if (!status)
+                            return;
+
+                        double duty = SettingsManager.GetDouble("QuietModeDuty");
+                        MainWindow.CurrentDevice.SetFanDuty(duty);
+                    }
+                    break;
+            }
         }
 
         public static void Start()
@@ -204,7 +245,7 @@ namespace HandheldCompanion.Managers
             IsInitialized = true;
             Initialized?.Invoke();
 
-            LogManager.LogInformation("{0} has started", "DesktopManager");
+            LogManager.LogInformation("{0} has started", "SystemManager");
         }
 
         private static void onWMIEvent(object sender, EventArrivedEventArgs e)
@@ -280,7 +321,7 @@ namespace HandheldCompanion.Managers
 
             IsInitialized = false;
 
-            LogManager.LogInformation("{0} has stopped", "DesktopManager");
+            LogManager.LogInformation("{0} has stopped", "SystemManager");
         }
 
         public static bool SetResolution(int width, int height, int displayFrequency)
