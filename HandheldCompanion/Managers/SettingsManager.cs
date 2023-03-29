@@ -84,9 +84,9 @@ namespace HandheldCompanion.Managers
             return Properties.Settings.Default.Properties.Cast<SettingsProperty>().Any(prop => prop.Name == name);
         }
 
-        public static Dictionary<string, object> GetProperties()
+        public static SortedDictionary<string, object> GetProperties()
         {
-            Dictionary<string, object> result = new Dictionary<string, object>();
+            SortedDictionary<string, object> result = new();
 
             foreach (SettingsProperty property in Properties.Settings.Default.Properties)
                 result.Add(property.Name, GetProperty(property.Name));

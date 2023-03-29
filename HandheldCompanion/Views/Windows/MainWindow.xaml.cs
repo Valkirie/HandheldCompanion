@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using static ControllerCommon.Managers.PowerManager;
 using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
@@ -160,7 +161,7 @@ namespace HandheldCompanion.Views
             loadPages();
 
             // start static managers in sequence
-            TimerManager.Start();
+            // managers that has to be stopped/started when session status changes shouldn't be put here
 
             ToastManager.Start();
             ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
@@ -218,8 +219,11 @@ namespace HandheldCompanion.Views
                     break;
             }
 
-            PipeClientSettings settings = new PipeClientSettings(name, value);
-            PipeClient.SendMessage(settings);
+            if (PipeClient.IsConnected)
+            {
+                PipeClientSettings settings = new PipeClientSettings(name, value);
+                PipeClient.SendMessage(settings);
+            }
         }
 
         public void SwapWindowState()
@@ -739,7 +743,7 @@ namespace HandheldCompanion.Views
         }
         #endregion
 
-        private async void OnSystemStatusChanged(PowerManager.SystemStatus status)
+        private async void OnSystemStatusChanged(PowerManager.SystemStatus status, SystemStatus prevStatus)
         {
             switch (status)
             {

@@ -84,8 +84,31 @@ namespace HandheldCompanion.Views.Pages
                         cB_Backdrop_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
                         break;
                     case "SensorSelection":
-                        cB_SensorSelection.SelectedIndex = Convert.ToInt32(value);
-                        cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        {
+                            int idx = Convert.ToInt32(value);
+
+                            // default value
+                            if (idx == -1)
+                            {
+                                if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor))
+                                    SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.Items.IndexOf(SensorController));
+                                else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor))
+                                    SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.Items.IndexOf(SensorInternal));
+                                else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor))
+                                    SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.Items.IndexOf(SensorExternal));
+                                else
+                                    SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.Items.IndexOf(SensorNone));
+
+                                return;
+                            }
+                            else
+                            {
+                                cB_SensorSelection.SelectedIndex = idx;
+                            }
+
+                            cB_SensorSelection.SelectedIndex = idx;
+                            cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        }
                         break;
                     case "RunAtStartup":
                         Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
@@ -519,14 +542,8 @@ namespace HandheldCompanion.Views.Pages
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
             Grid_SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
-            // inform service
-            PipeClientSettings settings = new PipeClientSettings("SensorSelection", cB_SensorSelection.SelectedIndex);
-            PipeClient.SendMessage(settings);
-
-            if (!SettingsManager.IsInitialized)
-                return;
-
-            SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
+            if (SettingsManager.IsInitialized)
+                SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
         private void SensorPlacement_Click(object sender, System.Windows.RoutedEventArgs? e)
@@ -535,14 +552,8 @@ namespace HandheldCompanion.Views.Pages
 
             UpdateUI_SensorPlacement(Tag);
 
-            // inform service
-            PipeClientSettings settings = new PipeClientSettings("SensorPlacement", Tag);
-            PipeClient.SendMessage(settings);
-
-            if (!SettingsManager.IsInitialized)
-                return;
-
-            SettingsManager.SetProperty("SensorPlacement", Tag);
+            if (SettingsManager.IsInitialized)
+                SettingsManager.SetProperty("SensorPlacement", Tag);
         }
 
         private void UpdateUI_SensorPlacement(int? SensorPlacement)
@@ -562,14 +573,8 @@ namespace HandheldCompanion.Views.Pages
         {
             bool isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 
-            // inform service
-            PipeClientSettings settings = new PipeClientSettings("SensorPlacementUpsideDown", isUpsideDown);
-            PipeClient.SendMessage(settings);
-
-            if (!SettingsManager.IsInitialized)
-                return;
-
-            SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
+            if (SettingsManager.IsInitialized)
+                SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
         }
 
         #region serviceManager

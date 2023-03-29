@@ -186,8 +186,15 @@ namespace HandheldCompanion.Managers
                 }
                 else
                 {
+                    // get the associated keys
                     DeviceChord chord = MainWindow.CurrentDevice.OEMChords.Where(a => a.state.Equals(currentChord.State)).FirstOrDefault();
                     if (chord is null)
+                        return;
+
+                    // it could be the currentChord isn't mapped but a InputsChordType.Long is
+                    currentChord.InputsType = InputsChordType.Long;
+                    keys = GetTriggersFromChord(currentChord);
+                    if (keys.Count != 0)
                         return;
 
                     List<KeyCode> chords = chord.chords[IsKeyDown];

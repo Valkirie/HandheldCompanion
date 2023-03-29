@@ -25,7 +25,7 @@ namespace ControllerCommon.Managers
             MasterTimer = new PrecisionTimer();
             MasterTimer.SetAutoResetMode(true);
             MasterTimer.SetResolution(0);
-            MasterTimer.SetPeriod(1);
+            MasterTimer.SetPeriod(MasterInterval);
             MasterTimer.Tick += MasterTimerTicked;
 
             Stopwatch = new Stopwatch();
@@ -33,8 +33,8 @@ namespace ControllerCommon.Managers
 
         private static void MasterTimerTicked(object sender, EventArgs e)
         {
-            if (Stopwatch.ElapsedTicks % MasterInterval == 0)
-                Tick?.Invoke(Stopwatch.ElapsedTicks);
+            // if (Stopwatch.ElapsedTicks % MasterInterval == 0)
+            Tick?.Invoke(Stopwatch.ElapsedTicks);
         }
 
         public static int GetPeriod()

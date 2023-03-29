@@ -169,13 +169,20 @@ namespace HandheldCompanion.Managers
         static SystemManager()
         {
             // get current volume value
-            DevEnum = new MMDeviceEnumerator();
-            multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-
-            if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
+            try
             {
-                VolumeSupport = true;
-                multimediaDevice.AudioEndpointVolume.OnVolumeNotification += (data) => VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
+                DevEnum = new MMDeviceEnumerator();
+                multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+                if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
+                {
+                    VolumeSupport = true;
+                    multimediaDevice.AudioEndpointVolume.OnVolumeNotification += (data) => VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
+                }
+            }
+            catch(Exception)
+            {
+                LogManager.LogError("No AudioEndpoint available");
             }
 
             // get current brightness value
