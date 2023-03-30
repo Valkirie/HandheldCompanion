@@ -9,8 +9,6 @@ namespace ControllerCommon
     [Serializable]
     public class Layout : ICloneable, IDisposable
     {
-        public bool Enabled { get; set; } = false;
-
         public Dictionary<ButtonFlags, IActions> ButtonLayout { get; set; } = new();
         public Dictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
 
@@ -84,7 +82,11 @@ namespace ControllerCommon
         // Improve me !
         public object Clone()
         {
-            return MemberwiseClone();
+            return new Layout()
+            {
+                AxisLayout = new(AxisLayout),
+                ButtonLayout = new(ButtonLayout),
+            };
         }
 
         public void Dispose()

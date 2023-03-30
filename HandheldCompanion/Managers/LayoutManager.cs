@@ -15,7 +15,7 @@ namespace HandheldCompanion.Managers
 {
     static class LayoutManager
     {
-        public static LayoutTemplate profileLayout = LayoutTemplate.DefaultLayout;
+        public static LayoutTemplate profileLayout = new();
         public static LayoutTemplate desktopLayout = LayoutTemplate.DesktopLayout;
 
         public static List<LayoutTemplate> Templates = new()
@@ -50,6 +50,7 @@ namespace HandheldCompanion.Managers
                 Directory.CreateDirectory(InstallPath);
 
             ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Updated += ProfileManager_Updated;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
@@ -134,12 +135,22 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile)
         {
+            UpdateCurrentLayout(profile);
+        }
+
+        private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
+        {
+            UpdateCurrentLayout(profile);
+        }
+
+        private static void UpdateCurrentLayout(Profile profile)
+        {
             Profile defaultP = ProfileManager.GetDefault();
 
             if (profile.LayoutEnabled)
-                profileLayout.Layout = profile.Layout;
+                profileLayout.Layout = profile.Layout.Clone() as Layout;
             else if (defaultP.LayoutEnabled)
-                profileLayout.Layout = defaultP.Layout;
+                profileLayout.Layout = defaultP.Layout.Clone() as Layout;
             else
                 profileLayout.Layout = null;
 
