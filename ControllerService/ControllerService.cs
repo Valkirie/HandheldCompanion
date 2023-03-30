@@ -542,6 +542,9 @@ namespace ControllerService
 
         private async void OnSystemStatusChanged(SystemStatus status, SystemStatus prevStatus)
         {
+            if (status == prevStatus)
+                return;
+            
             LogManager.LogInformation("System status set to {0}", status);
 
             switch (status)

@@ -742,6 +742,11 @@ namespace HandheldCompanion.Views
 
         private async void OnSystemStatusChanged(PowerManager.SystemStatus status, SystemStatus prevStatus)
         {
+            if (status == prevStatus)
+                return;
+
+            LogManager.LogInformation("System status set to {0}", status);
+
             switch (status)
             {
                 case PowerManager.SystemStatus.SystemReady:
