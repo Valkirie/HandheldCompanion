@@ -254,7 +254,7 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateSettings(Dictionary<string, string> args)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 foreach (KeyValuePair<string, string> pair in args)
                 {
