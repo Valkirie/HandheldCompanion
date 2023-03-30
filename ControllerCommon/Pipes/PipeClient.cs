@@ -87,7 +87,8 @@ namespace ControllerCommon.Pipes
 
         public static async void SendMessage(PipeMessage message)
         {
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 if (!IsConnected)
                 {
                     Type nodeType = message.GetType();

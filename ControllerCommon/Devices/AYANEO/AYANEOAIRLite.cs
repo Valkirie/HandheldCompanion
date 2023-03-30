@@ -1,8 +1,3 @@
-using ControllerCommon.Inputs;
-using System.Collections.Generic;
-using System.Numerics;
-using WindowsInput.Events;
-
 namespace ControllerCommon.Devices
 {
     public class AYANEOAIRLite : AYANEOAIR

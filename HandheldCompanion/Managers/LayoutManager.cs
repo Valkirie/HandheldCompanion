@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using WindowsInput.Native;
 using Layout = ControllerCommon.Layout;
 
 namespace HandheldCompanion.Managers
@@ -115,7 +114,7 @@ namespace HandheldCompanion.Managers
             }
 
             // create/update templates
-            switch(layoutTemplate.Name)
+            switch (layoutTemplate.Name)
             {
                 case "Desktop":
                     desktopLayout = layoutTemplate;

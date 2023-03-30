@@ -6,7 +6,6 @@ using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace HandheldCompanion.Controls

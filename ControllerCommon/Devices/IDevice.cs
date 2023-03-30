@@ -11,7 +11,6 @@ using Windows.Devices.Sensors;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 using static HandheldCompanion.OpenLibSys;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ControllerCommon.Devices
 {
@@ -261,7 +260,7 @@ namespace ControllerCommon.Devices
                         return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogManager.LogError("Couldn't initialize OpenLibSys. ErrorCode: {0}", ex.Message);
                 Close();

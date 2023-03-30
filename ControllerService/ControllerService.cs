@@ -378,7 +378,7 @@ namespace ControllerService
             // update current profile
             currentProfile = profile;
             ForegroundUpdated?.Invoke();
-            
+
             LogManager.LogInformation("Profile {0} applied", profile.Name);
         }
 
@@ -553,7 +553,7 @@ namespace ControllerService
                         // clear pipes
                         PipeServer.ClearQueue();
 
-                        switch(prevStatus)
+                        switch (prevStatus)
                         {
                             // we're just starting
                             case SystemStatus.SystemBooting:

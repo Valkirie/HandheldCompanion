@@ -1,7 +1,6 @@
 ﻿using PrecisionTiming;
 using System;
 using System.Diagnostics;
-using System.Threading;
 
 namespace ControllerCommon.Managers
 {

@@ -82,7 +82,7 @@ namespace ControllerCommon.Pipes
                     TypeNameHandling = TypeNameHandling.All
                 });
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return new Profile();
             }

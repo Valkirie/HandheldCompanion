@@ -1,7 +1,6 @@
 ﻿using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using System.Collections.Generic;
-using System.Numerics;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices

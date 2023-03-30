@@ -2,7 +2,6 @@
 using ControllerCommon.Managers;
 using System;
 using System.Linq;
-using System.Runtime.Intrinsics.Arm;
 
 namespace ControllerCommon.Devices
 {
@@ -36,7 +35,7 @@ namespace ControllerCommon.Devices
         public static readonly byte[] SupportedPDCS = {
             0x2B // 43
         };
-        
+
         private InpOut inpOut;
 
         public static ushort FirmwareVersion { get; private set; }

@@ -1,12 +1,9 @@
 ﻿using ControllerCommon.Managers;
-using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using static ControllerCommon.WinAPI;
 using static PInvoke.Kernel32;
 
@@ -232,7 +229,7 @@ namespace HandheldCompanion.Managers
 
             // apply efficiency mode to child processes
             processEx.RefreshChildProcesses();
-            foreach(int childId in processEx.Children)
+            foreach (int childId in processEx.Children)
                 ToggleEfficiencyMode(childId, mode, parent);
         }
 

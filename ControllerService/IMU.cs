@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
 using static ControllerCommon.Utils.DeviceUtils;
 
 namespace ControllerService

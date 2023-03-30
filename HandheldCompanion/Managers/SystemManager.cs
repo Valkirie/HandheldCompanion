@@ -180,7 +180,7 @@ namespace HandheldCompanion.Managers
                     multimediaDevice.AudioEndpointVolume.OnVolumeNotification += (data) => VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 LogManager.LogError("No AudioEndpoint available");
             }

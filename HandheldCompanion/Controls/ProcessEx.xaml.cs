@@ -202,7 +202,7 @@ namespace HandheldCompanion.Controls
             List<int> childs = ProcessUtils.GetChildIds(Process);
 
             // remove exited children
-            foreach(int pid in childs)
+            foreach (int pid in childs)
                 Children.Remove(pid);
 
             // raise event on new children
@@ -220,7 +220,7 @@ namespace HandheldCompanion.Controls
 
         private void SuspendToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            switch(SuspendToggle.IsOn)
+            switch (SuspendToggle.IsOn)
             {
                 case true:
                     {

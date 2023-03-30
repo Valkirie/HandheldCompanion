@@ -1,7 +1,4 @@
-﻿using ControllerCommon.Inputs;
-using System.Collections.Generic;
-using System.Numerics;
-using WindowsInput.Events;
+﻿using System.Numerics;
 
 namespace ControllerCommon.Devices
 {

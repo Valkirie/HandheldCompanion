@@ -431,7 +431,7 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.RightPadClickLeft:
                     return "\u226F";
                 case ButtonFlags.RightPadClickRight:
-                    return "\u2273"; 
+                    return "\u2273";
             }
 
             return base.GetGlyph(button);

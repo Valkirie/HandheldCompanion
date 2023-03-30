@@ -18,7 +18,6 @@ using Windows.System.Diagnostics;
 using static ControllerCommon.WinAPI;
 using static HandheldCompanion.Controls.ProcessEx;
 using static HandheldCompanion.Managers.EnergyManager;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers

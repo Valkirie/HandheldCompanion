@@ -160,7 +160,7 @@ namespace HandheldCompanion.Views.Pages
         {
             if (Monitor.IsEntered(updateLock))
                 return;
-            
+
             currentLayout.RemoveLayout(button);
         }
 
@@ -217,7 +217,7 @@ namespace HandheldCompanion.Views.Pages
             if (Monitor.TryEnter(updateLock))
             {
                 // cascade update to (sub)pages
-                foreach(ILayoutPage page in _pages.Values)
+                foreach (ILayoutPage page in _pages.Values)
                     page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
 
                 // clear layout selection
