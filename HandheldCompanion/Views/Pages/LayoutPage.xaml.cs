@@ -103,8 +103,15 @@ namespace HandheldCompanion.Views.Pages
         {
             // Get template separator index
             int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
+            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates.Where(a => a.IsTemplate))
+            {
+                idx++;
+                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
+            }
 
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates)
+            // Get community separator index
+            idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity);
+            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates.Where(a => a.IsCommunity))
             {
                 idx++;
                 cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
