@@ -163,11 +163,12 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateDevice(PnPDevice device = null)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor);
                 SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor);
                 SensorController.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor);
+                FanControlBorder.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl);
             });
         }
 
