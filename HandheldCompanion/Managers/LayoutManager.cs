@@ -145,12 +145,12 @@ namespace HandheldCompanion.Managers
 
         private static void UpdateCurrentLayout(Profile profile)
         {
-            Profile defaultP = ProfileManager.GetDefault();
+            Profile defaultProfile = ProfileManager.GetDefault();
 
-            if (profile.LayoutEnabled)
+            if (profile.LayoutEnabled && profile.Enabled)
                 profileLayout.Layout = profile.Layout.Clone() as Layout;
-            else if (defaultP.LayoutEnabled)
-                profileLayout.Layout = defaultP.Layout.Clone() as Layout;
+            else if (defaultProfile.LayoutEnabled && defaultProfile.Enabled)
+                profileLayout.Layout = defaultProfile.Layout.Clone() as Layout;
             else
                 profileLayout.Layout = null;
 
