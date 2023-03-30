@@ -107,10 +107,17 @@ namespace HandheldCompanion.Controls
             var startTime = DateTime.MaxValue;
             foreach (ProcessThread thread in process.Threads)
             {
-                if (thread.StartTime < startTime)
+                try
                 {
-                    startTime = thread.StartTime;
-                    mainThread = thread;
+                    if (thread.StartTime < startTime)
+                    {
+                        startTime = thread.StartTime;
+                        mainThread = thread;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    // thread has exited
                 }
             }
             return mainThread;
