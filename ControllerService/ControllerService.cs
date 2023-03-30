@@ -551,9 +551,6 @@ namespace ControllerService
                         // start timer manager
                         TimerManager.Start();
 
-                        // clear pipes
-                        PipeServer.ClearQueue();
-
                         switch (prevStatus)
                         {
                             // we're just starting
@@ -581,6 +578,9 @@ namespace ControllerService
                     {
                         // stop timer manager
                         TimerManager.Stop();
+
+                        // clear pipes
+                        PipeServer.ClearQueue();
 
                         // stop sensors
                         IMU.Stop();

@@ -749,9 +749,6 @@ namespace HandheldCompanion.Views
                         // start timer manager
                         TimerManager.Start();
 
-                        // clear pipes
-                        PipeServer.ClearQueue();
-
                         // restore inputs manager
                         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                         InputsManager.Start();
@@ -761,6 +758,9 @@ namespace HandheldCompanion.Views
                     {
                         // stop timer manager
                         TimerManager.Stop();
+
+                        // clear pipes
+                        PipeServer.ClearQueue();
 
                         // pause inputs manager
                         InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
