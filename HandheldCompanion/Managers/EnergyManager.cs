@@ -155,7 +155,8 @@ namespace HandheldCompanion.Managers
         public static void ToggleEfficiencyModes()
         {
             ProcessEx foreground = ProcessManager.GetForegroundProcess();
-            ToggleEfficiencyMode(foreground, EfficiencyMode.High);
+            if (foreground is not null)
+                ToggleEfficiencyMode(foreground, EfficiencyMode.High);
 
             Parallel.ForEach(ProcessManager.GetProcesses(), new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, process =>
             {
