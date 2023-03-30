@@ -117,6 +117,7 @@
 
                                     <Slider
                                         Name="Turbo_Slider"
+                                        IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="10"
