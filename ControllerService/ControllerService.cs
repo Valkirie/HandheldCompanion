@@ -177,7 +177,8 @@ namespace ControllerService
             // failed to initialize controller
             if (vTarget is null)
             {
-                LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
+                if (mode != HIDmode.NoController)
+                    LogManager.LogError("Failed to initialise virtual controller with HIDmode: {0}", mode);
                 return;
             }
 
