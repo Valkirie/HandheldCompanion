@@ -182,8 +182,7 @@ namespace HandheldCompanion.Managers
             if (target is null)
                 return;
 
-            if (SettingsManager.IsInitialized)
-                target.SetVibrationStrength(value);
+            target.SetVibrationStrength(value, SettingsManager.IsInitialized);
         }
 
         private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)

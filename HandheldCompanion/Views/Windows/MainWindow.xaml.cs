@@ -146,11 +146,6 @@ namespace HandheldCompanion.Views
             CurrentDevice.PullSensors();
             CurrentDevice.Open();
 
-            // initialize pipe client
-            PipeClient.ServerMessage += OnServerMessage;
-            PipeClient.Connected += OnClientConnected;
-            PipeClient.Disconnected += OnClientDisconnected;
-
             // load manager(s)
             loadManagers();
 
@@ -193,7 +188,9 @@ namespace HandheldCompanion.Views
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Start();
 
-            // open pipe
+            PipeClient.ServerMessage += OnServerMessage;
+            PipeClient.Connected += OnClientConnected;
+            PipeClient.Disconnected += OnClientDisconnected;
             PipeClient.Open();
 
             // update Position and Size

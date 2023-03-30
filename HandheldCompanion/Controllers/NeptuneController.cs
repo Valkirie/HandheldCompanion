@@ -308,10 +308,11 @@ namespace HandheldCompanion.Controllers
             base.Unplug();
         }
 
-        public override void SetVibrationStrength(double value)
+        public override void SetVibrationStrength(double value, bool rumble)
         {
-            base.SetVibrationStrength(value);
-            this.Rumble(1);
+            base.SetVibrationStrength(value, rumble);
+            if (rumble)
+                this.Rumble(1);
         }
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)

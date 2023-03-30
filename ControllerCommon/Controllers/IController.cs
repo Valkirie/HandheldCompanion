@@ -238,7 +238,7 @@ namespace ControllerCommon.Controllers
             LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
         }
 
-        public virtual void SetVibrationStrength(double value)
+        public virtual void SetVibrationStrength(double value, bool rumble)
         {
             VibrationStrength = value / 100;
         }
