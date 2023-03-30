@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace ControllerCommon
 {
     [Serializable]
-    public class Layout : ICloneable
+    public class Layout : ICloneable, IDisposable
     {
         public bool Enabled { get; set; } = false;
 
@@ -85,6 +85,12 @@ namespace ControllerCommon
         public object Clone()
         {
             return MemberwiseClone();
+        }
+
+        public void Dispose()
+        {
+            ButtonLayout.Clear();
+            AxisLayout.Clear();
         }
     }
 }

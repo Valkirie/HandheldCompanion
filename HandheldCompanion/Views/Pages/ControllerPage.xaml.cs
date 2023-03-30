@@ -370,7 +370,7 @@ namespace HandheldCompanion.Views.Pages
         private void Button_Layout_Click(object sender, RoutedEventArgs e)
         {
             // update layout page with current layout
-            MainWindow.layoutPage.UpdateLayout(LayoutManager.LayoutTemplates["Desktop"]);
+            MainWindow.layoutPage.UpdateLayout(LayoutManager.desktopLayout);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
     }

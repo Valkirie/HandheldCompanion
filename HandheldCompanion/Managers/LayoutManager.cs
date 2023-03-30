@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using WindowsInput.Native;
 using Layout = ControllerCommon.Layout;
 
 namespace HandheldCompanion.Managers
@@ -16,23 +17,21 @@ namespace HandheldCompanion.Managers
     static class LayoutManager
     {
         public static LayoutTemplate profileLayout = LayoutTemplate.DefaultLayout;
+        public static LayoutTemplate desktopLayout = LayoutTemplate.DesktopLayout;
+
+        public static List<LayoutTemplate> Templates = new()
+        {
+            LayoutTemplate.DefaultLayout,
+            LayoutTemplate.NintendoLayout,
+            LayoutTemplate.KeyboardLayout,
+            LayoutTemplate.GamepadMouseLayout,
+            LayoutTemplate.GamepadJoystickLayout,
+            LayoutTemplate.DesktopLayout,
+        };
 
         private static Layout currentLayout;
 
         private static ControllerState outputState = new();
-        // private static ButtonState prevButtonState = new();
-        // private static AxisState prevAxisState = new();
-
-        public static Dictionary<string, LayoutTemplate> LayoutTemplates = new()
-        {
-            { LayoutTemplate.DefaultLayout.Name, LayoutTemplate.DefaultLayout },
-            { LayoutTemplate.NintendoLayout.Name, LayoutTemplate.NintendoLayout },
-            { LayoutTemplate.KeyboardLayout.Name, LayoutTemplate.KeyboardLayout },
-            { LayoutTemplate.GamepadMouseLayout.Name, LayoutTemplate.GamepadMouseLayout },
-            { LayoutTemplate.GamepadJoystickLayout.Name, LayoutTemplate.GamepadJoystickLayout },
-
-            { LayoutTemplate.DesktopLayout.Name, LayoutTemplate.DesktopLayout },
-        };
 
         public static string InstallPath;
         private static bool IsInitialized;
@@ -57,12 +56,9 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            // generate templates
-            foreach (LayoutTemplate layoutTemplate in LayoutTemplates.Values)
-            {
-                if (!LayoutTemplateExist(layoutTemplate))
-                    SerializeLayoutTemplate(layoutTemplate);
-            }
+            // generate template(s)
+            if (!LayoutTemplateExist(desktopLayout))
+                SerializeLayoutTemplate(desktopLayout);
 
             // process existing layouts
             string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
@@ -96,7 +92,7 @@ namespace HandheldCompanion.Managers
             string layoutName = Path.GetFileNameWithoutExtension(fileName);
 
             // initialize value
-            LayoutTemplate layoutTemplate = LayoutTemplates.ContainsKey(layoutName) ? LayoutTemplates[layoutName] : null;
+            LayoutTemplate layoutTemplate = null;
 
             try
             {
@@ -119,10 +115,17 @@ namespace HandheldCompanion.Managers
             }
 
             // create/update templates
-            LayoutTemplates[layoutTemplate.Name] = layoutTemplate;
+            switch(layoutTemplate.Name)
+            {
+                case "Desktop":
+                    desktopLayout = layoutTemplate;
+                    desktopLayout.Updated += LayoutTemplate_Updated;
+                    break;
 
-            // hook event(s)
-            layoutTemplate.Updated += LayoutTemplate_Updated;
+                default:
+                    Templates.Add(layoutTemplate);
+                    break;
+            }
         }
 
         private static void LayoutTemplate_Updated(LayoutTemplate layoutTemplate)
@@ -167,7 +170,7 @@ namespace HandheldCompanion.Managers
                         switch (toggle)
                         {
                             case true:
-                                currentLayout = LayoutTemplates["Desktop"].Layout;
+                                currentLayout = desktopLayout.Layout;
                                 break;
                             case false:
                                 currentLayout = profileLayout.Layout;

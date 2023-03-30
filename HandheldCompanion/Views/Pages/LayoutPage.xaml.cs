@@ -8,6 +8,7 @@ using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,6 +36,8 @@ namespace HandheldCompanion.Views.Pages
         private string preNavItemTag;
 
         private Layout currentLayout = new();
+
+        protected object updateLock = new();
 
         public LayoutPage()
         {
@@ -101,7 +104,7 @@ namespace HandheldCompanion.Views.Pages
             // Get template separator index
             int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
 
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
+            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates)
             {
                 idx++;
                 cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
@@ -133,7 +136,7 @@ namespace HandheldCompanion.Views.Pages
             // Get current controller
             IController controller = ControllerManager.GetTargetController();
 
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.LayoutTemplates.Values)
+            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates)
             {
                 // get parent
                 ComboBoxItem parent = layoutTemplate.Parent as ComboBoxItem;
@@ -155,21 +158,33 @@ namespace HandheldCompanion.Views.Pages
 
         private void ButtonMapping_Deleted(ButtonFlags button)
         {
+            if (Monitor.IsEntered(updateLock))
+                return;
+            
             currentLayout.RemoveLayout(button);
         }
 
         private void ButtonMapping_Updated(ButtonFlags button, IActions action)
         {
+            if (Monitor.IsEntered(updateLock))
+                return;
+
             currentLayout.UpdateLayout(button, action);
         }
 
         private void AxisMapping_Deleted(AxisLayoutFlags axis)
         {
+            if (Monitor.IsEntered(updateLock))
+                return;
+
             currentLayout.RemoveLayout(axis);
         }
 
         private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
         {
+            if (Monitor.IsEntered(updateLock))
+                return;
+
             currentLayout.UpdateLayout(axis, action);
         }
 
@@ -194,19 +209,22 @@ namespace HandheldCompanion.Views.Pages
             // manage visibility
             LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
 
-            RefreshAsync();
+            UpdatePages();
         }
 
-        private async Task RefreshAsync()
+        private void UpdatePages()
         {
-            // cascade update to (sub)pages
-            Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = 8 }, page =>
+            if (Monitor.TryEnter(updateLock))
             {
-                page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
-            });
+                // cascade update to (sub)pages
+                foreach(ILayoutPage page in _pages.Values)
+                    page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
 
-            // clear layout selection
-            cB_Layouts.SelectedIndex = -1;
+                // clear layout selection
+                cB_Layouts.SelectedIndex = -1;
+
+                Monitor.Exit(updateLock);
+            }
         }
 
         #region UI
@@ -331,7 +349,7 @@ namespace HandheldCompanion.Views.Pages
                         currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
                         currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
 
-                        RefreshAsync();
+                        UpdatePages();
                     }
                     break;
             }
