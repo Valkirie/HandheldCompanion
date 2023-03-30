@@ -120,6 +120,7 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="10"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
                                         TickFrequency="5"
                                         ValueChanged="Turbo_Slider_ValueChanged"
                                         Value="90" />

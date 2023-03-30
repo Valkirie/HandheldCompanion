@@ -149,6 +149,7 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
                                         TickFrequency="5"
                                         ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -183,6 +184,7 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
                                         TickFrequency="5"
                                         ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -216,6 +218,7 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
                                         TickFrequency="5"
                                         ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -316,6 +319,7 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="5"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
                                         TickFrequency="1"
                                         ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
                                 </ui:SimpleStackPanel>
