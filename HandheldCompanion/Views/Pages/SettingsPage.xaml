@@ -870,6 +870,7 @@
 
                 <!--  FanControl  -->
                 <Border
+                    Name="FanControlBorder"
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
