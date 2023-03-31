@@ -48,7 +48,9 @@
                             TextWrapping="Wrap" />
                         <TextBox
                             Name="HotkeyCustomName"
+                            Width="200"
                             Margin="0,0,10,0"
+                            HorizontalAlignment="Left"
                             d:Visibility="Visible"
                             Visibility="Collapsed" />
                         <TextBlock

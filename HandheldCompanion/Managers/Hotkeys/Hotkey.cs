@@ -220,7 +220,7 @@ namespace HandheldCompanion.Managers
             switch (type)
             {
                 case ListenerType.Output:
-                    mainControl.HotkeyInput.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    mainControl.HotkeyOutput.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
                     DrawOutput();
                     break;
                 case ListenerType.UI:
