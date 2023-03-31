@@ -11,18 +11,24 @@ namespace HandheldCompanion.Views.Classes
 {
     public partial class TouchSlider : Slider
     {
+        protected override void OnTouchDown(TouchEventArgs e)
+        {
+            base.OnTouchDown(e);
+            return;
+        }
+
         protected override void OnTouchMove(TouchEventArgs e)
         {
             TouchPoint point = e.GetTouchPoint(this);
             double d = 1.0 / ActualWidth * point.Position.X;
-            int p = Convert.ToInt32(Maximum * d);
+            double p = Convert.ToInt32(Maximum * d);
 
             if (IsSnapToTickEnabled)
                 p = RoundToTick(p, TickFrequency);
 
             Value = p;
 
-            base.OnTouchMove(e);
+            e.Handled = true;
         }
 
         private static Thumb GetThumb(Slider slider)
@@ -31,9 +37,9 @@ namespace HandheldCompanion.Views.Classes
             return track == null ? null : track.Thumb;
         }
 
-        private static int RoundToTick(double value, double nearest)
+        private static double RoundToTick(double num, double multipleOf)
         {
-            return Convert.ToInt32(Math.Round(value / nearest) * nearest);
+            return Math.Floor((num + multipleOf / 2) / multipleOf) * multipleOf;
         }
     }
 }

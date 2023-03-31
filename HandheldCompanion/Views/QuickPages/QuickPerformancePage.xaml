@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.QuickPages.QuickPerformancePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -81,8 +82,8 @@
                             Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}"
                             TextAlignment="Center" />
                         <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <Slider
-                            Name="TDPSustainedSlider"
+                        <common:TouchSlider
+                            x:Name="TDPSustainedSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -94,6 +95,7 @@
                             Maximum="30"
                             Minimum="5"
                             SmallChange="1"
+                            Style="{DynamicResource DefaultSliderStyle}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ValueChanged="TDPSustainedSlider_ValueChanged" />
@@ -128,8 +130,8 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <Slider
-                            Name="TDPBoostSlider"
+                        <common:TouchSlider
+                            x:Name="TDPBoostSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
@@ -141,6 +143,7 @@
                             Maximum="30"
                             Minimum="5"
                             SmallChange="1"
+                            Style="{DynamicResource DefaultSliderStyle}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ValueChanged="TDPBoostSlider_ValueChanged" />
@@ -250,8 +253,8 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
-                <Slider
-                    Name="GPUSlider"
+                <common:TouchSlider
+                    x:Name="GPUSlider"
                     Margin="8,0,0,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
@@ -259,6 +262,7 @@
                     AutoToolTipPrecision="0"
                     IsMoveToPointEnabled="True"
                     IsSnapToTickEnabled="True"
+                    Style="{DynamicResource DefaultSliderStyle}"
                     TickFrequency="50"
                     TickPlacement="BottomRight"
                     ValueChanged="GPUSlider_ValueChanged" />
@@ -370,14 +374,15 @@
                         Margin="0,0,0,0"
                         VerticalAlignment="Center"
                         ScrollViewer.PanningMode="HorizontalOnly">
-                        <Slider
-                            Name="PowerModeSlider"
+                        <common:TouchSlider
+                            x:Name="PowerModeSlider"
                             VerticalAlignment="Center"
                             AutoToolTipPlacement="None"
                             IsMoveToPointEnabled="True"
                             IsSnapToTickEnabled="True"
                             Maximum="2"
                             Minimum="0"
+                            Style="{DynamicResource DefaultSliderStyle}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ValueChanged="PowerModeSlider_ValueChanged" />

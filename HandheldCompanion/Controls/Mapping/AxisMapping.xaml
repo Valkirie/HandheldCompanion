@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Controls.AxisMapping"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -142,14 +143,15 @@
                                             Text="{Binding Value, ElementName=Axis2AxisInnerDeadzone, Mode=OneWay}" />
                                     </Grid>
 
-                                    <Slider
-                                        Name="Axis2AxisInnerDeadzone"
+                                    <common:TouchSlider
+                                        x:Name="Axis2AxisInnerDeadzone"
                                         FlowDirection="LeftToRight"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="5"
                                         ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -177,14 +179,15 @@
                                             Text="{Binding Value, ElementName=Axis2AxisOuterDeadzone, Mode=OneWay}" />
                                     </Grid>
 
-                                    <Slider
-                                        Name="Axis2AxisOuterDeadzone"
+                                    <common:TouchSlider
+                                        x:Name="Axis2AxisOuterDeadzone"
                                         FlowDirection="RightToLeft"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="5"
                                         ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -212,13 +215,14 @@
                                             Text="{Binding Value, ElementName=Axis2AxisAntiDeadzone, Mode=OneWay}" />
                                     </Grid>
 
-                                    <Slider
-                                        Name="Axis2AxisAntiDeadzone"
+                                    <common:TouchSlider
+                                        x:Name="Axis2AxisAntiDeadzone"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="5"
                                         ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -313,13 +317,14 @@
                                             Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" />
                                     </Grid>
 
-                                    <Slider
-                                        Name="Axis2MousePointerSpeed"
+                                    <common:TouchSlider
+                                        x:Name="Axis2MousePointerSpeed"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="5"
                                         ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="1"
                                         ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
                                 </ui:SimpleStackPanel>

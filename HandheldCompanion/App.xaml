@@ -54,6 +54,7 @@
                 <ui:XamlControlsResources />
 
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/ToggleSwitch.xaml" />
+                <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/Slider.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 
