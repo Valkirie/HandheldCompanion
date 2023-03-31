@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Classes
 {
-    public class TouchScrollViewer : ScrollViewer
+    public partial class TouchScrollViewer : ScrollViewer
     {
         DependencyObject ancestor;
 
