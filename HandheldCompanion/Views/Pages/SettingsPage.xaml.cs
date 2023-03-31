@@ -156,6 +156,9 @@ namespace HandheldCompanion.Views.Pages
                     case "QuietModeEnabled":
                         Toggle_FanControl.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "QuietModeDuty":
+                        FanDutyCycle.Value = Convert.ToDouble(value);
+                        break;
                 }
             });
         }
@@ -652,6 +655,18 @@ namespace HandheldCompanion.Views.Pages
             }
 
             SettingsManager.SetProperty("QuietModeEnabled", Toggle_FanControl.IsOn);
+        }
+
+        private void FanDutyCycle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = FanDutyCycle.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("QuietModeDuty", value);
         }
     }
 }
