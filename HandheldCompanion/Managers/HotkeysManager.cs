@@ -360,7 +360,7 @@ namespace HandheldCompanion.Managers
                             SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
                         }
                         break;
-                    case "QuietModeEnabled":
+                    case "QuietModeToggled":
                         {
                             bool value = !SettingsManager.GetBoolean(listener);
                             SettingsManager.SetProperty(listener, value);
