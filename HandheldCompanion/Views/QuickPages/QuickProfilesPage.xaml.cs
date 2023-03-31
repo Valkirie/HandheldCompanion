@@ -123,7 +123,7 @@ namespace HandheldCompanion.Views.QuickPages
         private void HotkeysManager_CommandExecuted(string listener)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (listener)
                 {
@@ -151,17 +151,21 @@ namespace HandheldCompanion.Views.QuickPages
 
         public void SettingsManager_SettingValueChanged(string name, object value)
         {
-            switch (name)
+            // UI thread
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                case "ConfigurableTDPOverrideUp":
-                    TDPSustainedSlider.Maximum = Convert.ToInt32(value);
-                    TDPBoostSlider.Maximum = Convert.ToInt32(value);
-                    break;
-                case "ConfigurableTDPOverrideDown":
-                    TDPSustainedSlider.Minimum = Convert.ToInt32(value);
-                    TDPBoostSlider.Minimum = Convert.ToInt32(value);
-                    break;
-            }
+                switch (name)
+                {
+                    case "ConfigurableTDPOverrideUp":
+                        TDPSustainedSlider.Maximum = Convert.ToInt32(value);
+                        TDPBoostSlider.Maximum = Convert.ToInt32(value);
+                        break;
+                    case "ConfigurableTDPOverrideDown":
+                        TDPSustainedSlider.Minimum = Convert.ToInt32(value);
+                        TDPBoostSlider.Minimum = Convert.ToInt32(value);
+                        break;
+                }
+            });
         }
 
         private void ProfileDeleted(Profile profile)

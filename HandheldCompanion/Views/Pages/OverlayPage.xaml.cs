@@ -26,7 +26,7 @@ namespace HandheldCompanion.Views.Pages
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
                 {
@@ -178,7 +178,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayModel.Width = SliderControllerSize.Value;
             MainWindow.overlayModel.Height = SliderControllerSize.Value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerSize", SliderControllerSize.Value);
@@ -191,7 +191,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayTrackpad.Height = SliderTrackpadsSize.Value;
             MainWindow.overlayTrackpad.HorizontalAlignment = HorizontalAlignment.Stretch;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayTrackpadsSize", SliderTrackpadsSize.Value);
@@ -202,7 +202,7 @@ namespace HandheldCompanion.Views.Pages
             // update overlay
             MainWindow.overlayModel.UpdateOverlayMode((OverlayModelMode)OverlayModel.SelectedIndex);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayModel", OverlayModel.SelectedIndex);
@@ -213,7 +213,7 @@ namespace HandheldCompanion.Views.Pages
             int Tag = int.Parse((string)((Button)sender).Tag);
             UpdateUI_ControllerPosition(Tag);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerAlignment", Tag);
@@ -224,7 +224,7 @@ namespace HandheldCompanion.Views.Pages
             int Tag = int.Parse((string)((Button)sender).Tag);
             UpdateUI_TrackpadsPosition(Tag);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayTrackpadsAlignment", Tag);
@@ -235,7 +235,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayTrackpad.LeftTrackpad.Opacity = SliderTrackpadsOpacity.Value;
             MainWindow.overlayTrackpad.RightTrackpad.Opacity = SliderTrackpadsOpacity.Value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayTrackpadsOpacity", SliderTrackpadsOpacity.Value);
@@ -249,7 +249,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.MotionActivated = Toggle_MotionActivated.IsOn;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerMotion", Toggle_MotionActivated.IsOn);
@@ -259,7 +259,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.overlayModel.FaceCamera = Toggle_FaceCamera.IsOn;
             Slider_RestingPitch.IsEnabled = Toggle_FaceCamera.IsOn == true ? true : false;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayFaceCamera", Toggle_FaceCamera.IsOn);
@@ -268,7 +268,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.DesiredAngleDeg.X = -1 * Slider_RestingPitch.Value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerRestingPitch", Slider_RestingPitch.Value);
@@ -278,7 +278,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.ModelViewPort.SetValue(RenderOptions.EdgeModeProperty, Toggle_RenderAA.IsOn ? EdgeMode.Unspecified : EdgeMode.Aliased);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayRenderAntialiasing", Toggle_RenderAA.IsOn);
@@ -288,7 +288,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.UpdateInterval(1000.0d / Slider_Framerate.Value);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayRenderInterval", Slider_Framerate.Value);
@@ -298,7 +298,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.ModelViewPort.Opacity = SliderControllerOpacity.Value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerOpacity", SliderControllerOpacity.Value);
@@ -308,7 +308,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.Background = new SolidColorBrush(ColorPicker.SelectedColor);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerBackgroundColor", ColorPicker.SelectedColor);
@@ -318,7 +318,7 @@ namespace HandheldCompanion.Views.Pages
         {
             MainWindow.overlayModel.Topmost = Toggle_AlwaysOnTop.IsOn;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("OverlayControllerAlwaysOnTop", Toggle_AlwaysOnTop.IsOn);

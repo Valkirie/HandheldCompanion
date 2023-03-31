@@ -109,7 +109,7 @@ namespace HandheldCompanion.Managers
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
                 {

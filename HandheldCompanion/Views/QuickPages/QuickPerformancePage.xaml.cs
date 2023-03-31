@@ -55,7 +55,7 @@ namespace HandheldCompanion.Views.QuickPages
         private void HotkeysManager_CommandExecuted(string listener)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (listener)
                 {
@@ -84,7 +84,7 @@ namespace HandheldCompanion.Views.QuickPages
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
                 {
@@ -249,7 +249,7 @@ namespace HandheldCompanion.Views.QuickPages
             // set boost slider minimum value to sustained current value
             TDPBoostSlider.Minimum = TDPSustainedSlider.Value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceTDPSustainedValue", TDPSustainedSlider.Value);
@@ -268,7 +268,7 @@ namespace HandheldCompanion.Views.QuickPages
             // set sustained slider maximum value to boost current value
             TDPSustainedSlider.Maximum = TDPBoostSlider.Value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceTDPBoostValue", TDPBoostSlider.Value);
@@ -292,7 +292,7 @@ namespace HandheldCompanion.Views.QuickPages
                 MainWindow.performanceManager.StopTDPWatchdog();
             }
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceTDPEnabled", TDPToggle.IsOn);
@@ -312,7 +312,7 @@ namespace HandheldCompanion.Views.QuickPages
                 MainWindow.performanceManager.StopGPUWatchdog();
             }
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceGPUEnabled", GPUToggle.IsOn);
@@ -335,7 +335,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             MainWindow.performanceManager.RequestPowerMode((int)PowerModeSlider.Value);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPowerModeValue", value);
@@ -388,7 +388,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             MainWindow.performanceManager.RequestGPUClock(GPUSlider.Value);
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceGPUValue", GPUSlider.Value);

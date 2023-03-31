@@ -67,7 +67,7 @@ namespace HandheldCompanion.Views.Pages
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
                 {
@@ -138,7 +138,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
                 ControllerGrid.IsEnabled = isConnected && !isLoading;
@@ -150,7 +150,7 @@ namespace HandheldCompanion.Views.Pages
             LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Search for an existing controller, remove it
                 foreach (Border border in InputDevices.Children)
@@ -176,7 +176,7 @@ namespace HandheldCompanion.Views.Pages
             LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Add new controller to list if no existing controller was found
                 FrameworkElement control = Controller.GetControl();
@@ -211,7 +211,7 @@ namespace HandheldCompanion.Views.Pages
             bool hascontroller = InputDevices.Children.Count != 0;
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
                 NoDevices.Visibility = hascontroller ? Visibility.Collapsed : Visibility.Visible;
@@ -232,7 +232,7 @@ namespace HandheldCompanion.Views.Pages
             uniformToFillBrush.Freeze();
 
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 cB_HidMode.SelectedIndex = (int)controllerMode;
                 cB_ServiceSwitch.SelectedIndex = (int)controllerStatus;
@@ -308,7 +308,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("HIDcloakonconnect", Toggle_Cloaked.IsOn);
@@ -316,7 +316,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Uncloak_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("HIDuncloakonclose", Toggle_Uncloak.IsOn);
@@ -330,7 +330,7 @@ namespace HandheldCompanion.Views.Pages
 
             SliderStrength.Value = value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("HIDstrength", value);
@@ -338,7 +338,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_SDLizardButtons_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("SteamDeckLizardButtons", Toggle_SDLizardButtons.IsOn);
@@ -346,7 +346,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_SDLizardMouse_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("SteamDeckLizardMouse", Toggle_SDLizardMouse.IsOn);
@@ -354,7 +354,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_SDMuteController_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
@@ -362,7 +362,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);

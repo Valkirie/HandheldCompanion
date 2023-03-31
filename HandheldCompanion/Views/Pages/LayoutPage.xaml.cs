@@ -123,7 +123,7 @@ namespace HandheldCompanion.Views.Pages
         private void SettingsManager_SettingValueChanged(string? name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
                 {
@@ -374,7 +374,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void CheckBoxDeviceLayouts_Checked(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("LayoutFilterOnDevice", CheckBoxDeviceLayouts.IsChecked);

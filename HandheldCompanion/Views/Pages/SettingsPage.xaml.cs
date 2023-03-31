@@ -70,7 +70,7 @@ namespace HandheldCompanion.Views.Pages
         private void SettingsManager_SettingValueChanged(string? name, object value)
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
                 {
@@ -184,7 +184,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_AutoStart_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
@@ -192,7 +192,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Background_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
@@ -229,7 +229,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_CloseMinimizes_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
@@ -348,7 +348,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceShutdown_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
@@ -356,7 +356,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_ServiceStartup_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
@@ -369,7 +369,7 @@ namespace HandheldCompanion.Views.Pages
             if (culture is null)
                 return;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("CurrentCulture", culture.Name);
@@ -385,7 +385,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void Toggle_Notification_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("ToastEnable", Toggle_Notification.IsOn);
@@ -402,7 +402,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.GetCurrent().UpdateDefaultStyle();
             MainWindow.overlayquickTools.UpdateDefaultStyle();
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
@@ -437,7 +437,7 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
@@ -445,7 +445,7 @@ namespace HandheldCompanion.Views.Pages
 
         private async void Toggle_EnergyStar_Toggled(object? sender, RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             if (Toggle_EnergyStar.IsOn)
@@ -475,7 +475,7 @@ namespace HandheldCompanion.Views.Pages
 
         private async void Toggle_cTDP_Toggled(object? sender, RoutedEventArgs? e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             if (Toggle_cTDP.IsOn)
@@ -513,7 +513,7 @@ namespace HandheldCompanion.Views.Pages
 
             NumberBox_TDPMin.Maximum = value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
@@ -527,7 +527,7 @@ namespace HandheldCompanion.Views.Pages
 
             NumberBox_TDPMax.Minimum = value;
 
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
@@ -542,7 +542,7 @@ namespace HandheldCompanion.Views.Pages
             Toggle_SensorPlacementUpsideDown.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
             Grid_SensorPlacementVisualisation.IsEnabled = cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
-            if (SettingsManager.IsInitialized)
+            if (IsLoaded)
                 SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
         }
 
@@ -552,7 +552,7 @@ namespace HandheldCompanion.Views.Pages
 
             UpdateUI_SensorPlacement(Tag);
 
-            if (SettingsManager.IsInitialized)
+            if (IsLoaded)
                 SettingsManager.SetProperty("SensorPlacement", Tag);
         }
 
@@ -573,7 +573,7 @@ namespace HandheldCompanion.Views.Pages
         {
             bool isUpsideDown = Toggle_SensorPlacementUpsideDown.IsOn;
 
-            if (SettingsManager.IsInitialized)
+            if (IsLoaded)
                 SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
         }
 
@@ -626,7 +626,7 @@ namespace HandheldCompanion.Views.Pages
 
         private async void Toggle_FanControl_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.IsInitialized)
+            if (!IsLoaded)
                 return;
 
             if (Toggle_FanControl.IsOn)
