@@ -206,7 +206,7 @@ namespace HandheldCompanion.Managers
         {
             switch (name)
             {
-                case "QuietModeEnabled":
+                case "QuietModeToggled":
                     {
                         bool status = Convert.ToBoolean(value);
                         MainWindow.CurrentDevice.SetFanControl(status);
