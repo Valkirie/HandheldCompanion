@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Controls.ButtonMapping"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -115,13 +116,14 @@
                                             Text="{Binding Value, ElementName=Turbo_Slider, Mode=OneWay}" />
                                     </Grid>
 
-                                    <Slider
-                                        Name="Turbo_Slider"
+                                    <common:TouchSlider
+                                        x:Name="Turbo_Slider"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="10"
                                         ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="5"
                                         ValueChanged="Turbo_Slider_ValueChanged"
                                         Value="90" />

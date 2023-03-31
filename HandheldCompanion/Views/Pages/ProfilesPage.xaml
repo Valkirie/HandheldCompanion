@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -388,8 +389,8 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                                        <Slider
-                                            Name="TDPSustainedSlider"
+                                        <common:TouchSlider
+                                            x:Name="TDPSustainedSlider"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
                                             AutoToolTipPlacement="TopLeft"
@@ -400,6 +401,7 @@
                                             Maximum="30"
                                             Minimum="5"
                                             SmallChange="1"
+                                            Style="{DynamicResource DefaultSliderStyle}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ValueChanged="TDPSustainedSlider_ValueChanged" />
@@ -441,8 +443,8 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                                        <Slider
-                                            Name="TDPBoostSlider"
+                                        <common:TouchSlider
+                                            x:Name="TDPBoostSlider"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
                                             AutoToolTipPlacement="TopLeft"
@@ -453,6 +455,7 @@
                                             Maximum="30"
                                             Minimum="5"
                                             SmallChange="1"
+                                            Style="{DynamicResource DefaultSliderStyle}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ValueChanged="TDPBoostSlider_ValueChanged" />
@@ -515,8 +518,8 @@
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}"
                                                 TextAlignment="Right" />
-                                            <Slider
-                                                Name="tb_ProfileGyroValue"
+                                            <common:TouchSlider
+                                                x:Name="tb_ProfileGyroValue"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
                                                 AutoToolTipPlacement="TopLeft"
@@ -525,6 +528,7 @@
                                                 IsSnapToTickEnabled="True"
                                                 Maximum="3"
                                                 Minimum="0.1"
+                                                Style="{DynamicResource DefaultSliderStyle}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
                                                 Value="10" />
@@ -561,8 +565,8 @@
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}"
                                                 TextAlignment="Right" />
-                                            <Slider
-                                                Name="tb_ProfileAcceleroValue"
+                                            <common:TouchSlider
+                                                x:Name="tb_ProfileAcceleroValue"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
                                                 AutoToolTipPlacement="TopLeft"
@@ -572,6 +576,7 @@
                                                 LargeChange="1"
                                                 Maximum="3"
                                                 Minimum="0.1"
+                                                Style="{DynamicResource DefaultSliderStyle}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
                                                 Value="10" />
@@ -790,8 +795,8 @@
                                             Text="{Binding Value, ElementName=tb_ProfileUMCAntiDeadzone, Mode=OneWay}"
                                             TextAlignment="Right" />
                                         <TextBlock VerticalAlignment="Center" Text="%" />
-                                        <Slider
-                                            Name="tb_ProfileUMCAntiDeadzone"
+                                        <common:TouchSlider
+                                            x:Name="tb_ProfileUMCAntiDeadzone"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
                                             AutoToolTipPlacement="TopLeft"
@@ -800,6 +805,7 @@
                                             LargeChange="10"
                                             Maximum="40"
                                             SmallChange="1"
+                                            Style="{DynamicResource DefaultSliderStyle}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight" />
                                     </DockPanel>

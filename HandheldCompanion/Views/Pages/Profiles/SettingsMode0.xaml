@@ -2,6 +2,7 @@
     x:Class="HandheldCompanion.Views.Pages.Profiles.SettingsMode0"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -59,8 +60,8 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <Slider
-                                Name="SliderSensitivityX"
+                            <common:TouchSlider
+                                x:Name="SliderSensitivityX"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
                                 AutoToolTipPlacement="TopLeft"
@@ -71,6 +72,7 @@
                                 Maximum="3.0"
                                 Minimum="0.1"
                                 SmallChange="0.1"
+                                Style="{DynamicResource DefaultSliderStyle}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderSensitivityX_ValueChanged"
@@ -117,8 +119,8 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <Slider
-                                Name="SliderSensitivityY"
+                            <common:TouchSlider
+                                x:Name="SliderSensitivityY"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
                                 AutoToolTipPlacement="TopLeft"
@@ -129,6 +131,7 @@
                                 Maximum="3.0"
                                 Minimum="0.1"
                                 SmallChange="0.1"
+                                Style="{DynamicResource DefaultSliderStyle}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderSensitivityY_ValueChanged"
@@ -181,8 +184,8 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <Slider
-                                        Name="tb_ProfileAimingDownSightsMultiplier"
+                                    <common:TouchSlider
+                                        x:Name="tb_ProfileAimingDownSightsMultiplier"
                                         Margin="6,0,0,0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
@@ -193,6 +196,7 @@
                                         LargeChange="0.5"
                                         Maximum="3.0"
                                         Minimum="0.5"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="0.1"
                                         TickPlacement="BottomRight"
                                         ValueChanged="SliderAimingDownSightsMultiplier_ValueChanged"
@@ -301,8 +305,8 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <Slider
-                                        Name="tb_ProfileFlickDuration"
+                                    <common:TouchSlider
+                                        x:Name="tb_ProfileFlickDuration"
                                         Margin="6,0,0,0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
@@ -313,6 +317,7 @@
                                         LargeChange="10"
                                         Maximum="800"
                                         Minimum="100"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="10"
                                         TickPlacement="BottomRight"
                                         ValueChanged="SliderFlickDuration_ValueChanged"
@@ -350,8 +355,8 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <Slider
-                                        Name="tb_ProfileStickSensitivity"
+                                    <common:TouchSlider
+                                        x:Name="tb_ProfileStickSensitivity"
                                         Margin="6,0,0,0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
@@ -362,6 +367,7 @@
                                         LargeChange="0.1"
                                         Maximum="10"
                                         Minimum="0.1"
+                                        Style="{DynamicResource DefaultSliderStyle}"
                                         TickFrequency="0.1"
                                         TickPlacement="BottomRight"
                                         ValueChanged="SliderStickSensivity_ValueChanged"
