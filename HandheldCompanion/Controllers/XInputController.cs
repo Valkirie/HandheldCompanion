@@ -260,7 +260,9 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsConnected()
         {
-            return (bool)(Controller?.IsConnected);
+            if (Controller is not null)
+                return Controller.IsConnected;
+            return false;
         }
 
         public override void SetVibrationStrength(double value, bool rumble)
