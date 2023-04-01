@@ -251,6 +251,7 @@ namespace ControllerCommon.Managers
                 // get details
                 PnPDetails details = new PnPDetails()
                 {
+                    Path = path,
                     SymLink = PathToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
 
                     deviceInstanceId = children.InstanceId,

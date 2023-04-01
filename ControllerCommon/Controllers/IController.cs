@@ -2,12 +2,15 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
+using Nefarius.Utilities.DeviceManagement.Extensions;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Windows.Devices.Usb;
 
 namespace ControllerCommon.Controllers
 {
@@ -294,6 +297,7 @@ namespace ControllerCommon.Controllers
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
+            // CyclePort();
         }
 
         public void Unhide()
@@ -302,6 +306,22 @@ namespace ControllerCommon.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
+            // CyclePort();
+        }
+
+        private void CyclePort()
+        {
+            var pnpDevice = PnPDevice.GetDeviceByInstanceId(Details.baseContainerDeviceInstanceId);
+            if (pnpDevice is null)
+                return;
+
+            // is this a USB device
+            string enumerator = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+            if (!Equals(enumerator, "USB"))
+                return;
+            
+            var usbDevice = pnpDevice.ToUsbPnPDevice();
+            usbDevice.CyclePort();
         }
 
         public virtual string GetGlyph(ButtonFlags button)

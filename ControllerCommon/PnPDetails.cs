@@ -8,6 +8,7 @@ namespace ControllerCommon
     public class PnPDetails
     {
         public string Name;
+        public string Path;
         public string SymLink;
 
         public bool isVirtual;
