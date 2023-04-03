@@ -22,6 +22,7 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     Closing="Window_Closing"
     Loaded="Window_Loaded"
+    ShowActivated="True"
     ShowInTaskbar="False"
     Topmost="True"
     WindowStyle="ToolWindow"
@@ -36,15 +37,15 @@
         <ui:NavigationView
             Name="navView"
             BackRequested="navView_BackRequested"
-            IsBackEnabled="True"
-            IsPaneOpen="False"
+            IsBackButtonVisible="Collapsed"
+            IsBackEnabled="False"
             IsSettingsVisible="False"
             ItemInvoked="navView_ItemInvoked"
             Loaded="navView_Loaded"
             OpenPaneLength="160"
             PaneDisplayMode="Left"
             SelectionFollowsFocus="Enabled"
-            ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
+            ShoulderNavigationEnabled="Always">
 
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem
