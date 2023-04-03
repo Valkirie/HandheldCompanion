@@ -544,7 +544,7 @@ namespace ControllerService
         {
             if (status == prevStatus)
                 return;
-            
+
             LogManager.LogInformation("System status set to {0}", status);
 
             switch (status)

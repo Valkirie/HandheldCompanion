@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Windows.Devices.Usb;
 
 namespace ControllerCommon.Controllers
 {
@@ -319,7 +318,7 @@ namespace ControllerCommon.Controllers
             string enumerator = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
             if (!Equals(enumerator, "USB"))
                 return;
-            
+
             var usbDevice = pnpDevice.ToUsbPnPDevice();
             usbDevice.CyclePort();
         }

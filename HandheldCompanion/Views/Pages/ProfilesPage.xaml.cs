@@ -143,8 +143,8 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
@@ -180,8 +180,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void ProfileDeleted(Profile profile)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
@@ -196,8 +196,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void ProfileManagerLoaded()
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 cB_Profiles.SelectedItem = ProfileManager.GetDefault();
             });
@@ -337,8 +337,8 @@ namespace HandheldCompanion.Views.Pages
             if (currentProfile is null)
                 return;
 
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // enable all expanders
                 ProfileDetails.IsEnabled = true;

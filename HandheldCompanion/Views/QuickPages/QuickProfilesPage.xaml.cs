@@ -204,8 +204,8 @@ namespace HandheldCompanion.Views.QuickPages
                 // update current profile
                 currentProfile = profile.Clone() as Profile;
 
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     // manage visibility here too...
                     b_CreateProfile.Visibility = Visibility.Collapsed;
@@ -245,8 +245,8 @@ namespace HandheldCompanion.Views.QuickPages
             // update current process
             currentProcess = processEx;
 
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
 

@@ -7,10 +7,10 @@ using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Page = System.Windows.Controls.Page;
@@ -107,7 +107,7 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.serviceManager.Updated -= OnServiceUpdate;
         }
 
-        private async void OnServiceUpdate(ServiceControllerStatus status, int mode)
+        private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
             switch (status)
             {
@@ -125,12 +125,16 @@ namespace HandheldCompanion.Views.Pages
                     isConnected = false;
                     break;
                 case ServiceControllerStatus.Running:
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            while (!hasSettings)
+                                Thread.Sleep(250);
+                        });
 
-                    while (!hasSettings)
-                        await Task.Delay(500);
-
-                    isLoading = false;
-                    isConnected = true;
+                        isLoading = false;
+                        isConnected = true;
+                    }
                     break;
                 default:
                     isLoading = false;
@@ -254,8 +258,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateSettings(Dictionary<string, string> args)
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 foreach (KeyValuePair<string, string> pair in args)
                 {

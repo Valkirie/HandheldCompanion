@@ -137,8 +137,8 @@ namespace HandheldCompanion.Controls
 
             string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
 
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // refresh title
                 if (!string.IsNullOrEmpty(MainWindowTitle))
@@ -187,10 +187,10 @@ namespace HandheldCompanion.Controls
                         }
                         break;
                 }
-            });
 
-            // update previous state
-            prevThreadState = MainThread.ThreadState;
+                // update previous state
+                prevThreadState = MainThread.ThreadState;
+            });
         }
 
         public bool IsSuspended()

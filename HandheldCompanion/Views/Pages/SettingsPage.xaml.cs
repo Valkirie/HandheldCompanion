@@ -240,8 +240,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (status)
                 {
@@ -583,8 +583,8 @@ namespace HandheldCompanion.Views.Pages
         #region serviceManager
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (status)
                 {

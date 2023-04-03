@@ -21,6 +21,7 @@
     Icon="/Resources/icon.png"
     Loaded="Window_Loaded"
     StateChanged="Window_StateChanged"
+    WindowState="Minimized"
     mc:Ignorable="d">
 
     <ui:NavigationView

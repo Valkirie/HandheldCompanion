@@ -198,8 +198,6 @@ namespace HandheldCompanion.Views
             Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("MainWindowWidth"));
             Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
-            WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
-            prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
             navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
 
             // update FirstStart
@@ -250,6 +248,8 @@ namespace HandheldCompanion.Views
         {
             // initialize pages
             controllerPage = new ControllerPage("controller");
+            controllerPage.Loaded += ControllerPage_Loaded;
+
             profilesPage = new ProfilesPage("profiles");
             settingsPage = new SettingsPage("settings");
             aboutPage = new AboutPage("about");
@@ -387,6 +387,13 @@ namespace HandheldCompanion.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // do something
+        }
+
+        private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            // home page has loaded, display main window
+            WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
+            prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
         }
 
         public void UpdateSettings(Dictionary<string, string> args)

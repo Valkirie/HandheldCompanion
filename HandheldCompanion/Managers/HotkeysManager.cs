@@ -200,8 +200,8 @@ namespace HandheldCompanion.Managers
 
         private static void TriggerUpdated(string listener, InputsChord inputs, ListenerType type)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // we use @ as a special character to link two ore more listeners together
                 listener = listener.TrimEnd('@');
@@ -261,18 +261,18 @@ namespace HandheldCompanion.Managers
             if (!hotkey.IsEnabled)
                 return;
 
-            // These are special shortcut keys with no related events
-            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
-                return;
-
             var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
 
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 foreach (var htkey in hotkeys)
                     hotkey.Highlight();
             });
+
+            // These are special shortcut keys with no related events
+            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
+                return;
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 

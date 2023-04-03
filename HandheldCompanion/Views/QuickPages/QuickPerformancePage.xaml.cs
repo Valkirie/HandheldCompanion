@@ -168,8 +168,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void UpdateControls()
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 if (currentProfile is not null)
                 {
@@ -197,8 +197,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void PowerManager_LimitChanged(PowerType type, int limit)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // do something
                 switch (type)
@@ -323,8 +323,8 @@ namespace HandheldCompanion.Views.QuickPages
             // update settings
             int value = (int)PowerModeSlider.Value;
 
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 foreach (TextBlock tb in PowerModeGrid.Children)
                     tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");

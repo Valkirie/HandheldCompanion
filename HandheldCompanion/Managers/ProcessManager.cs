@@ -303,8 +303,8 @@ namespace HandheldCompanion.Managers
                     // get filter
                     ProcessFilter filter = GetFilter(exec, path);
 
-                    // UI thread (ProcessEx is an UserControl)
-                    Application.Current.Dispatcher.Invoke(() =>
+                    // UI thread (async)
+                    Application.Current.Dispatcher.BeginInvoke(() =>
                     {
                         ProcessEx processEx = new ProcessEx(proc, path, exec, filter);
                         processEx.MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle;
