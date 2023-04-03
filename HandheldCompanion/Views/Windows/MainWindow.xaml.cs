@@ -772,7 +772,7 @@ namespace HandheldCompanion.Views
                         TimerManager.Stop();
 
                         // clear pipes
-                        PipeServer.ClearQueue();
+                        PipeClient.ClearQueue();
 
                         // pause inputs manager
                         InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
