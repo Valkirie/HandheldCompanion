@@ -17,7 +17,7 @@ namespace HandheldCompanion.Views.Classes
         {
             TouchPoint point = e.GetTouchPoint(this);
             double d = 1.0 / ActualWidth * point.Position.X;
-            double p = Convert.ToInt32(Maximum * d);
+            double p = Maximum * d;
 
             if (IsSnapToTickEnabled)
                 p = RoundToTick(p, TickFrequency);
