@@ -66,7 +66,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
@@ -137,7 +137,7 @@ namespace HandheldCompanion.Views.Pages
                     break;
             }
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 navLoad.Visibility = isLoading ? Visibility.Visible : Visibility.Hidden;
@@ -149,7 +149,7 @@ namespace HandheldCompanion.Views.Pages
         {
             LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Search for an existing controller, remove it
@@ -175,7 +175,7 @@ namespace HandheldCompanion.Views.Pages
         {
             LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Add new controller to list if no existing controller was found
@@ -210,7 +210,7 @@ namespace HandheldCompanion.Views.Pages
         {
             bool hascontroller = InputDevices.Children.Count != 0;
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
@@ -231,7 +231,7 @@ namespace HandheldCompanion.Views.Pages
             };
             uniformToFillBrush.Freeze();
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 cB_HidMode.SelectedIndex = (int)controllerMode;
@@ -254,7 +254,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateSettings(Dictionary<string, string> args)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 foreach (KeyValuePair<string, string> pair in args)

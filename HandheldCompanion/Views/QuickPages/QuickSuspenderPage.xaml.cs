@@ -22,7 +22,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             try
             {
-                // UI thread
+                // UI thread (async)
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     if (CurrentProcesses.Children.Contains(processEx))
@@ -38,7 +38,7 @@ namespace HandheldCompanion.Views.QuickPages
         {
             try
             {
-                // UI thread
+                // UI thread (async)
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     if (!CurrentProcesses.Children.Contains(processEx))

@@ -69,7 +69,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
@@ -165,7 +165,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateDevice(PnPDevice device = null)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor);

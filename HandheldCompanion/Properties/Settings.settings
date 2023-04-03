@@ -179,8 +179,8 @@
     <Setting Name="HIDvibrateonconnect" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="navViewIsPaneOpen" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="QuickToolsIsPaneOpen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="LayoutFilterOnDevice" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -193,6 +193,9 @@
     </Setting>
     <Setting Name="QuietModeEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MainWindowIsPaneOpen" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

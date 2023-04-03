@@ -65,7 +65,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
@@ -269,7 +269,7 @@ namespace HandheldCompanion.Views.Windows
             if (Visibility != Visibility.Visible)
                 return;
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 GeometryModel3D model = null;
@@ -296,7 +296,7 @@ namespace HandheldCompanion.Views.Windows
             // update model
             UpdateModelVisual3D();
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 float GradientFactor; // Used for multiple models
@@ -535,7 +535,7 @@ namespace HandheldCompanion.Views.Windows
 
         private void UpdateModelVisual3D()
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 Transform3DGroup Transform3DGroupModel = new Transform3DGroup();

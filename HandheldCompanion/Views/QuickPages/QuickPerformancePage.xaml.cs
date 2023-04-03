@@ -54,7 +54,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void HotkeysManager_CommandExecuted(string listener)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (listener)
@@ -83,7 +83,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 switch (name)
