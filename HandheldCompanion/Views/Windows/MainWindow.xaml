@@ -31,8 +31,9 @@
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"
         OpenPaneLength="160"
+        PaneDisplayMode="Left"
         SelectionFollowsFocus="Enabled"
-        ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
+        ShoulderNavigationEnabled="Always">
 
         <ui:NavigationView.MenuItems>
             <!--  Game icon  -->

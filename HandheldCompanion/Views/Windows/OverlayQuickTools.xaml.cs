@@ -33,7 +33,6 @@ namespace HandheldCompanion.Views.Windows
         public OverlayQuickTools()
         {
             InitializeComponent();
-            ShowActivated = true;
 
             // create manager(s)
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -54,12 +53,13 @@ namespace HandheldCompanion.Views.Windows
             Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("QuickToolsLeft"));
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
+            navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
         }
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 int BatteryLifePercent = (int)Math.Truncate(status.BatteryLifePercent * 100.0f);
                 BatteryIndicatorPercentage.Text = $"{BatteryLifePercent}%";
@@ -268,6 +268,8 @@ namespace HandheldCompanion.Views.Windows
                     SettingsManager.SetProperty("QuickToolsHeight", Height);
                     break;
             }
+
+            SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
 
             e.Cancel = !isClosing;
             this.Visibility = Visibility.Collapsed;

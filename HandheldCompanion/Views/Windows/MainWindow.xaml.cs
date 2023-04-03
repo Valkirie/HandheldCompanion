@@ -200,7 +200,7 @@ namespace HandheldCompanion.Views
             Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
             WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
-            navView.IsPaneOpen = SettingsManager.GetBoolean("navViewIsPaneOpen");
+            navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
 
             // update FirstStart
             if (IsFirstStart)
@@ -437,7 +437,7 @@ namespace HandheldCompanion.Views
 
         private void OnServiceUpdate(ServiceControllerStatus status, int mode)
         {
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
 
@@ -650,7 +650,7 @@ namespace HandheldCompanion.Views
             SettingsManager.SetProperty("MainWindowState", (int)WindowState);
             SettingsManager.SetProperty("MainWindowPrevState", (int)prevWindowState);
 
-            SettingsManager.SetProperty("navViewIsPaneOpen", navView.IsPaneOpen);
+            SettingsManager.SetProperty("MainWindowIsPaneOpen", navView.IsPaneOpen);
 
             if (SettingsManager.GetBoolean("CloseMinimises") && !appClosing)
             {
