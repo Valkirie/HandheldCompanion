@@ -204,10 +204,6 @@ namespace HandheldCompanion.Managers
                 // inform service
                 PipeClient.SendMessage(new PipeClientProfile(profile));
 
-                // do not update default profile path
-                if (profile.Default)
-                    return;
-
                 // send toast
                 // todo: localize me
                 ToastManager.SendToast($"Profile {profile.Name} applied");
