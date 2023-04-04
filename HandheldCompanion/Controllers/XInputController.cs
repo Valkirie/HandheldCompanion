@@ -286,7 +286,7 @@ namespace HandheldCompanion.Controllers
 
         public override void Rumble(int loop)
         {
-            new Thread(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 for (int i = 0; i < loop * 2; i++)
                 {
@@ -295,9 +295,9 @@ namespace HandheldCompanion.Controllers
                     else
                         SetVibration(0, 0);
 
-                    await Task.Delay(100);
+                    await Task.Delay(125);
                 }
-            }).Start();
+            });
 
             base.Rumble(loop);
         }
