@@ -65,6 +65,7 @@ namespace HandheldCompanion.Views
 
         public static string CurrentExe, CurrentPath, CurrentPathService;
         private bool appClosing;
+        private bool IsReady;
 
         private static MainWindow CurrentWindow;
         public static FileVersionInfo fileVersionInfo;
@@ -391,9 +392,14 @@ namespace HandheldCompanion.Views
 
         private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
         {
+            if (IsReady)
+                return;
+
             // home page has loaded, display main window
             WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
             prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
+
+            IsReady = true;
         }
 
         public void UpdateSettings(Dictionary<string, string> args)
