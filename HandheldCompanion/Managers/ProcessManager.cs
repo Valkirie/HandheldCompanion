@@ -373,8 +373,15 @@ namespace HandheldCompanion.Managers
                 // handheld companion
                 case "handheldcompanion.exe":
                     {
-                        if (MainWindowTitle.Equals("QuickTools"))
-                            return ProcessFilter.Ignored;
+                        if (!string.IsNullOrEmpty(MainWindowTitle))
+                        {
+                            switch (MainWindowTitle)
+                            {
+                                case "QuickTools":
+                                    return ProcessFilter.Ignored;
+                            }
+                        }
+
                         return ProcessFilter.Restricted;
                     }
                     break;
