@@ -18,6 +18,9 @@ namespace HandheldCompanion.Actions
             this.ActionType = ActionType.Keyboard;
             this.IsKeyDown = false;
             this.IsKeyUp = true;
+
+            this.Value = false;
+            this.prevValue = false;
         }
 
         public KeyboardActions(VirtualKeyCode key) : this()
