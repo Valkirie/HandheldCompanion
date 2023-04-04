@@ -165,7 +165,9 @@ namespace HandheldCompanion.Platforms
             }
             catch (Win32Exception)
             {
-                // access is denied
+            }
+            catch (InvalidOperationException)
+            {
             }
 
             return false;
