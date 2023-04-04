@@ -191,8 +191,9 @@ namespace HandheldCompanion.Managers
             int VendorId = details.attributes.VendorID;
             int ProductId = details.attributes.ProductID;
 
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            // UI thread (synchronous)
+            // We need to wait for each controller to initialize and take (or not) its slot in the array
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // initialize controller vars
                 Joystick joystick = null;
@@ -347,8 +348,9 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            // UI thread (synchronous)
+            // We need to wait for each controller to initialize and take (or not) its slot in the array
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 XInputController controller = new(_controller);
 
@@ -473,6 +475,11 @@ namespace HandheldCompanion.Managers
         public static int GetControllerCount()
         {
             return Controllers.Count;
+        }
+
+        public static List<IController> GetControllers()
+        {
+            return Controllers.Values.ToList();
         }
 
         private static void UpdateInputs(ControllerState controllerState)

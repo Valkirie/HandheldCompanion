@@ -214,7 +214,7 @@ namespace ControllerCommon.Controllers
             ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
         }
 
-        public FrameworkElement GetControl()
+        public Border GetControl()
         {
             return ui_border;
         }
