@@ -205,6 +205,7 @@ namespace HandheldCompanion.Managers
             try
             {
                 Process proc = Process.GetProcessById((int)processInfo.ProcessId);
+                string MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
 
                 // process has exited on arrival
                 if (proc.HasExited)
@@ -214,7 +215,7 @@ namespace HandheldCompanion.Managers
                 string exec = Path.GetFileName(path);
 
                 // ignore if self or specific
-                ProcessFilter filter = GetFilter(exec, path);
+                ProcessFilter filter = GetFilter(exec, path, MainWindowTitle);
                 if (filter == ProcessFilter.Ignored)
                     return;
 
@@ -336,7 +337,7 @@ namespace HandheldCompanion.Managers
             ToggleEfficiencyMode(pId, mode, parent);
         }
 
-        private static ProcessFilter GetFilter(string exec, string path)
+        private static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "")
         {
             if (string.IsNullOrEmpty(path))
                 return ProcessFilter.Restricted;
@@ -368,12 +369,21 @@ namespace HandheldCompanion.Managers
                 // Other
                 case "bdagent.exe":             // Bitdefender Agent
                 case "monotificationux.exe":
-                    return ProcessFilter.Restricted;
 
                 // handheld companion
                 case "handheldcompanion.exe":
+                    {
+                        if (MainWindowTitle.Equals("QuickTools"))
+                            return ProcessFilter.Ignored;
+                        return ProcessFilter.Restricted;
+                    }
+                    break;
+
+                // controller service
                 case "controllerservice.exe":
                 case "controllerservice.dll":
+                    return ProcessFilter.Restricted;
+
                 case "radeonsoftware.exe":
                 case "applicationframehost.exe":
                 case "shellexperiencehost.exe":

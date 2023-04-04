@@ -447,7 +447,6 @@ namespace HandheldCompanion.Views
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-
                 switch ((ServiceStartMode)mode)
                 {
                     case ServiceStartMode.Disabled:
