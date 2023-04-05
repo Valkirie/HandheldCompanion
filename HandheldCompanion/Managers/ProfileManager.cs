@@ -38,7 +38,7 @@ namespace HandheldCompanion.Managers
         public delegate void AppliedEventHandler(Profile profile);
 
         public static event DiscardedEventHandler Discarded;
-        public delegate void DiscardedEventHandler(Profile profile, bool isCurrent);
+        public delegate void DiscardedEventHandler(Profile profile, bool isCurrent, bool isUpdate);
         #endregion
 
         private static Profile currentProfile;
@@ -90,6 +90,8 @@ namespace HandheldCompanion.Managers
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
             }
 
+
+
             IsInitialized = true;
             Initialized?.Invoke();
 
@@ -138,13 +140,12 @@ namespace HandheldCompanion.Managers
             {
                 Profile profile = GetProfileFromExec(processEx.Executable);
 
+                // do not discard default profile
                 if (profile is null || profile.Default)
                     return;
 
                 if (profile.Running)
                 {
-                    profile.Running = false;
-
                     // warn owner
                     bool isCurrent = profile.Executable == currentProfile.Executable;
 
@@ -153,7 +154,7 @@ namespace HandheldCompanion.Managers
                         currentProfile = profile;
 
                     // raise event
-                    Discarded?.Invoke(profile, isCurrent);
+                    Discarded?.Invoke(profile, isCurrent, false);
 
                     // update profile
                     UpdateOrCreateProfile(profile);
@@ -171,8 +172,8 @@ namespace HandheldCompanion.Managers
                 if (profile is null || profile.Default)
                     return;
 
-                profile.ExecutablePath = processEx.Path;
-                profile.Running = true;
+                // update profile executable path
+                profile.Path = processEx.Path;
 
                 // update profile
                 UpdateOrCreateProfile(profile);
@@ -194,7 +195,7 @@ namespace HandheldCompanion.Managers
                     return;
 
                 // raise event
-                Discarded?.Invoke(currentProfile, true);
+                Discarded?.Invoke(currentProfile, true, true);
 
                 // update current profile
                 currentProfile = profile;
@@ -208,8 +209,10 @@ namespace HandheldCompanion.Managers
                 // todo: localize me
                 ToastManager.SendToast($"Profile {profile.Name} applied");
 
-                profile.Running = true;
-                profile.ExecutablePath = proc.Path;
+                // update profile executable path
+                if (!profile.Default)
+                    profile.Path = proc.Path;
+
                 UpdateOrCreateProfile(profile);
             }
             catch { }
@@ -256,7 +259,6 @@ namespace HandheldCompanion.Managers
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
-                profile.ExecutablePath = profile.Path;
             }
             catch (Exception ex)
             {
@@ -273,7 +275,14 @@ namespace HandheldCompanion.Managers
             // default specific
             if (profile.Default)
             {
+                // update current profile
                 currentProfile = profile;
+
+                // raise event
+                Applied?.Invoke(profile);
+
+                // ping service
+                PipeClient.SendMessage(new PipeClientProfile(profile));
             }
 
             UpdateOrCreateProfile(profile, ProfileUpdateSource.Serialiazer);
@@ -286,7 +295,7 @@ namespace HandheldCompanion.Managers
             if (profiles.ContainsKey(profile.Name))
             {
                 // Unregister application from HidHide
-                HidHide.UnregisterApplication(profile.ExecutablePath);
+                HidHide.UnregisterApplication(profile.Path);
 
                 profiles.Remove(profile.Name);
 
@@ -299,7 +308,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
-                Discarded?.Invoke(profile, isCurrent);
+                Discarded?.Invoke(profile, isCurrent, false);
 
                 // send toast
                 // todo: localize me
@@ -324,7 +333,7 @@ namespace HandheldCompanion.Managers
 
         private static ProfileErrorCode SanitizeProfile(Profile profile)
         {
-            string processpath = Path.GetDirectoryName(profile.ExecutablePath);
+            string processpath = Path.GetDirectoryName(profile.Path);
 
             if (profile.Default)
                 return ProfileErrorCode.Default;
@@ -332,7 +341,7 @@ namespace HandheldCompanion.Managers
             {
                 if (!Directory.Exists(processpath))
                     return ProfileErrorCode.MissingPath;
-                else if (!File.Exists(profile.ExecutablePath))
+                else if (!File.Exists(profile.Path))
                     return ProfileErrorCode.MissingExecutable;
                 else if (!CommonUtils.IsDirectoryWritable(processpath))
                     return ProfileErrorCode.MissingPermission;
@@ -352,8 +361,7 @@ namespace HandheldCompanion.Managers
             }
 
             // check if application is running
-            bool hasprocesses = ProcessManager.GetProcesses(profile.Executable).Capacity > 0;
-            profile.Running = hasprocesses;
+            profile.Running = ProcessManager.GetProcesses(profile.Executable).Capacity > 0;
 
             // check if this is current profile
             bool isCurrent = currentProfile is null ? false : profile.Executable == currentProfile.Executable;
@@ -402,12 +410,12 @@ namespace HandheldCompanion.Managers
             if (profile.Whitelisted)
             {
                 // Register application on HidHide
-                HidHide.RegisterApplication(profile.ExecutablePath);
+                HidHide.RegisterApplication(profile.Path);
             }
             else
             {
                 // Unregister application from HidHide
-                HidHide.UnregisterApplication(profile.ExecutablePath);
+                HidHide.UnregisterApplication(profile.Path);
             }
         }
 
@@ -416,7 +424,7 @@ namespace HandheldCompanion.Managers
             // deploy xinput wrapper
             string XinputPlus = Properties.Resources.XInputPlus;
 
-            string[] fullpaths = new string[] { profile.ExecutablePath };
+            string[] fullpaths = new string[] { profile.Path };
 
             // for testing purposes, this should not happen!
             if (profile.Default)

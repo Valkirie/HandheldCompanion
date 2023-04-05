@@ -62,6 +62,7 @@ namespace ControllerCommon.Managers
                     // add timer to bag
                     m_Threads.TryAdd(title, timer);
                 }
+                catch (AccessViolationException) { }
                 catch (Exception) { }
             });
 

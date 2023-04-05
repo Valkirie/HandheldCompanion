@@ -57,9 +57,8 @@ namespace ControllerCommon
 
         public string Name { get; set; } = string.Empty;
         public string Path { get; set; } = string.Empty;
+
         public string Executable { get; set; } = string.Empty;
-        [JsonIgnore]
-        public string ExecutablePath;
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
@@ -135,7 +134,7 @@ namespace ControllerCommon
 
             this.Executable = AppProperties["FileName"];
             this.Name = ProductName;
-            this.Path = this.ExecutablePath = path;
+            this.Path = path;
 
             // enable the below variables when profile is created
             this.Enabled = true;
@@ -156,12 +155,9 @@ namespace ControllerCommon
         public string GetFileName()
         {
             string name = Name;
-            switch (Default)
-            {
-                case false:
-                    name = System.IO.Path.GetFileNameWithoutExtension(Executable);
-                    break;
-            }
+
+            if (!Default)
+                name = System.IO.Path.GetFileNameWithoutExtension(Executable);
 
             return $"{name}.json";
         }

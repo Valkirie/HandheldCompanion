@@ -149,7 +149,7 @@ namespace HandheldCompanion.Views.QuickPages
             UpdateControls();
         }
 
-        private void ProfileManager_Discarded(Profile profile, bool isCurrent)
+        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
         {
             if (!isCurrent)
                 return;

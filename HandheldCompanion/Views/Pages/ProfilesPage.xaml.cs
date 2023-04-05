@@ -356,7 +356,7 @@ namespace HandheldCompanion.Views.Pages
 
                 // Profile info
                 tB_ProfileName.Text = currentProfile.Name;
-                tB_ProfilePath.Text = currentProfile.ExecutablePath;
+                tB_ProfilePath.Text = currentProfile.Path;
                 Toggle_EnableProfile.IsOn = currentProfile.Enabled;
 
                 // Global settings
@@ -457,7 +457,7 @@ namespace HandheldCompanion.Views.Pages
 
             // Profile
             currentProfile.Name = tB_ProfileName.Text;
-            currentProfile.ExecutablePath = tB_ProfilePath.Text;
+            currentProfile.Path = tB_ProfilePath.Text;
             currentProfile.Enabled = (bool)Toggle_EnableProfile.IsOn;
 
             // Global settings

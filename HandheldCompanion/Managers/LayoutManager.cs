@@ -51,6 +51,8 @@ namespace HandheldCompanion.Managers
 
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Discarded += ProfileManager_Discarded;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         }
 
@@ -140,16 +142,25 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            UpdateCurrentLayout(profile);
+            // ignore profile update if not current or not running
+            if (isCurrent && profile.Running)
+                UpdateCurrentLayout(profile);
         }
 
-        private static void UpdateCurrentLayout(Profile profile)
+        private static void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
+        {
+            // ignore discard signal if part of a profile switch
+            if (!isUpdate)
+                UpdateCurrentLayout();
+        }
+
+        private static void UpdateCurrentLayout(Profile profile = null)
         {
             Profile defaultProfile = ProfileManager.GetDefault();
 
-            if (profile.LayoutEnabled && profile.Enabled)
+            if (profile is not null && profile.LayoutEnabled && profile.Enabled)
                 profileLayout.Layout = profile.Layout.Clone() as Layout;
-            else if (defaultProfile.LayoutEnabled && defaultProfile.Enabled)
+            else if (defaultProfile is not null && defaultProfile.LayoutEnabled && defaultProfile.Enabled)
                 profileLayout.Layout = defaultProfile.Layout.Clone() as Layout;
             else
                 profileLayout.Layout = null;
