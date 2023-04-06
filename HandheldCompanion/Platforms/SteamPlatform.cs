@@ -155,24 +155,6 @@ namespace HandheldCompanion.Platforms
             return controllers.Contains(id);
         }
 
-        public override bool IsRelated(Process proc)
-        {
-            try
-            {
-                foreach (ProcessModule module in proc.Modules)
-                    if (Modules.Contains(module.ModuleName))
-                        return true;
-            }
-            catch (Win32Exception)
-            {
-            }
-            catch (InvalidOperationException)
-            {
-            }
-
-            return false;
-        }
-
         public override bool IsRunning()
         {
             return Process is not null;

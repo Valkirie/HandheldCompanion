@@ -8,6 +8,7 @@ namespace HandheldCompanion.Managers
     public static class PlatformManager
     {
         private static SteamPlatform Steam;
+        private static GOGGalaxy GOGGalaxy;
 
         private static bool IsInitialized;
 
@@ -15,12 +16,18 @@ namespace HandheldCompanion.Managers
         {
             // initialize supported platforms
             Steam = new();
+            GOGGalaxy = new();
 
             if (Steam.IsInstalled)
             {
                 // overwrite controller files
                 foreach (var config in SteamPlatform.ControllerFiles)
                     Steam.OverwriteFile(config.Key, config.Value, true);
+            }
+
+            if (GOGGalaxy.IsInstalled)
+            {
+                // do something
             }
 
             IsInitialized = true;
@@ -37,6 +44,11 @@ namespace HandheldCompanion.Managers
                     Steam.ResetFile(config.Key);
             }
 
+            if (GOGGalaxy.IsInstalled)
+            {
+                // do something
+            }
+
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "PlatformManager");
@@ -50,6 +62,8 @@ namespace HandheldCompanion.Managers
             // is this process part of a specific platform
             if (Steam.IsRelated(proc))
                 return Steam.PlatformType;
+            if (GOGGalaxy.IsRelated(proc))
+                return GOGGalaxy.PlatformType;
             else
                 return PlatformType.Windows;
         }

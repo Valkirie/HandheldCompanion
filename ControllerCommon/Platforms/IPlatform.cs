@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Managers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -76,6 +77,19 @@ namespace ControllerCommon.Platforms
 
         public virtual bool IsRelated(Process proc)
         {
+            try
+            {
+                foreach (ProcessModule module in proc.Modules)
+                    if (Modules.Contains(module.ModuleName))
+                        return true;
+            }
+            catch (Win32Exception)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
             return false;
         }
 
