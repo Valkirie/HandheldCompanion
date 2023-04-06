@@ -187,28 +187,32 @@ namespace HandheldCompanion.Managers
                 else
                 {
                     // get the associated keys
-                    DeviceChord chord = MainWindow.CurrentDevice.OEMChords.Where(a => a.state.Equals(currentChord.State)).FirstOrDefault();
-                    if (chord is null)
-                        return;
-
-                    // it could be the currentChord isn't mapped but a InputsChordType.Long is
-                    currentChord.InputsType = InputsChordType.Long;
-                    keys = GetTriggersFromChord(currentChord);
-                    if (keys.Count != 0)
-                        return;
-
-                    List<KeyCode> chords = chord.chords[IsKeyDown];
-                    LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
-
-                    if (IsKeyDown)
+                    foreach (DeviceChord chord in MainWindow.CurrentDevice.OEMChords.Where(a => currentChord.State.Contains(a.state)))
                     {
-                        KeyboardSimulator.KeyDown(chords.ToArray());
+                        // it could be the currentChord isn't mapped but a InputsChordType.Long is
+                        currentChord.InputsType = InputsChordType.Long;
+                        keys = GetTriggersFromChord(currentChord);
+                        if (keys.Count != 0)
+                            return;
 
-                        // stop hold timer
-                        InputsChordHoldTimer.Stop();
+                        var layout = LayoutManager.GetCurrent();
+                        foreach (ButtonFlags button in chord.state.Buttons)
+                            if (layout.ButtonLayout.ContainsKey(button))
+                                return;
+
+                        List<KeyCode> chords = chord.chords[IsKeyDown];
+                        LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
+
+                        if (IsKeyDown)
+                        {
+                            KeyboardSimulator.KeyDown(chords.ToArray());
+
+                            // stop hold timer
+                            InputsChordHoldTimer.Stop();
+                        }
+                        else if (IsKeyUp)
+                            KeyboardSimulator.KeyUp(chords.ToArray());
                     }
-                    else if (IsKeyUp)
-                        KeyboardSimulator.KeyUp(chords.ToArray());
                 }
             }
             else
