@@ -37,7 +37,7 @@ namespace ControllerCommon.Devices
                 AddressRegistry = 0x4E,
                 AddressData = 0x4F,
                 ValueMin = 0,
-                ValueMax = 184
+                ValueMax = 255
             };
 
             // unused
