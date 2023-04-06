@@ -763,12 +763,23 @@ namespace HandheldCompanion.Views
             {
                 case PowerManager.SystemStatus.SystemReady:
                     {
-                        // start timer manager
-                        TimerManager.Start();
+                        switch (prevStatus)
+                        {
+                            // cold boot
+                            case SystemStatus.SystemBooting:
+                                break;
+                            // resume from sleep
+                            default:
+                                Thread.Sleep(2000);
+                                break;
+                        }
 
                         // restore inputs manager
                         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                         InputsManager.Start();
+
+                        // start timer manager
+                        TimerManager.Start();
                     }
                     break;
                 case PowerManager.SystemStatus.SystemPending:

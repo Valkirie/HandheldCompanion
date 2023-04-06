@@ -551,17 +551,16 @@ namespace ControllerService
             {
                 case SystemStatus.SystemReady:
                     {
-                        // start timer manager
-                        TimerManager.Start();
-
                         switch (prevStatus)
                         {
-                            // we're just starting
+                            // cold boot
                             case SystemStatus.SystemBooting:
                                 IMU.SetSensorFamily(SensorSelection);
                                 IMU.Start();
                                 break;
+                            // resume from sleep
                             default:
+                                Thread.Sleep(2000);
                                 IMU.Restart(true);
                                 break;
                         }
@@ -575,6 +574,9 @@ namespace ControllerService
 
                         // update virtual controller
                         SetControllerMode(HIDmode);
+
+                        // start timer manager
+                        TimerManager.Start();
                     }
                     break;
                 case SystemStatus.SystemPending:
