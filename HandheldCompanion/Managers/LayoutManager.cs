@@ -170,6 +170,11 @@ namespace HandheldCompanion.Managers
                 currentLayout = profileLayout.Layout;
         }
 
+        public static Layout GetCurrent()
+        {
+            return currentLayout;
+        }
+
         private static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
         {
             string jsonString = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, new JsonSerializerSettings

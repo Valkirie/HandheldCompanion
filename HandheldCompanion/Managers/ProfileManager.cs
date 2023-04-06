@@ -90,8 +90,6 @@ namespace HandheldCompanion.Managers
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
             }
 
-
-
             IsInitialized = true;
             Initialized?.Invoke();
 
@@ -247,6 +245,11 @@ namespace HandheldCompanion.Managers
             if (HasDefault())
                 return profiles.Values.Where(a => a.Default).FirstOrDefault();
             return new();
+        }
+
+        public static Profile GetCurrent()
+        {
+            return currentProfile;
         }
 
         private static void ProcessProfile(string fileName)
