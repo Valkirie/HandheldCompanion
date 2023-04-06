@@ -223,8 +223,21 @@ namespace HandheldCompanion.Managers
                 if (foregroundProcess is not null)
                     backgroundProcess = foregroundProcess;
 
+                var attempts = 0;
                 while (!Processes.ContainsKey(proc.Id))
+                {
+                    attempts++;
+
+                    // exlusive fullscreen applications won't trigger WindowOpenedEvent
+                    // therefore we have to force call a process creation
+                    if (attempts == 10)
+                    {
+                        ProcessCreated(proc, (int)hWnd);
+                        attempts = 0;
+                    }
+
                     await Task.Delay(250);
+                }
 
                 // pull process from running processes
                 foregroundProcess = Processes[proc.Id];
