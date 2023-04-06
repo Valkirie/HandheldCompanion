@@ -9,6 +9,7 @@ namespace HandheldCompanion.Managers
     {
         private static SteamPlatform Steam;
         private static GOGGalaxy GOGGalaxy;
+        private static UbisoftConnect UbisoftConnect;
 
         private static bool IsInitialized;
 
@@ -17,6 +18,7 @@ namespace HandheldCompanion.Managers
             // initialize supported platforms
             Steam = new();
             GOGGalaxy = new();
+            UbisoftConnect = new();
 
             if (Steam.IsInstalled)
             {
@@ -26,6 +28,11 @@ namespace HandheldCompanion.Managers
             }
 
             if (GOGGalaxy.IsInstalled)
+            {
+                // do something
+            }
+
+            if (UbisoftConnect.IsInstalled)
             {
                 // do something
             }
@@ -49,6 +56,11 @@ namespace HandheldCompanion.Managers
                 // do something
             }
 
+            if (UbisoftConnect.IsInstalled)
+            {
+                // do something
+            }
+
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "PlatformManager");
@@ -62,8 +74,10 @@ namespace HandheldCompanion.Managers
             // is this process part of a specific platform
             if (Steam.IsRelated(proc))
                 return Steam.PlatformType;
-            if (GOGGalaxy.IsRelated(proc))
+            else if (GOGGalaxy.IsRelated(proc))
                 return GOGGalaxy.PlatformType;
+            else if (UbisoftConnect.IsRelated(proc))
+                return UbisoftConnect.PlatformType;
             else
                 return PlatformType.Windows;
         }
