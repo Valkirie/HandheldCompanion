@@ -1,8 +1,10 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using Force.Crc32;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using Newtonsoft.Json;
 using System;
@@ -15,12 +17,6 @@ namespace HandheldCompanion.Managers
 {
     public static class ProfileManager
     {
-        private static Dictionary<bool, uint> CRCs = new Dictionary<bool, uint>()
-        {
-            { false, 0xcd4906cc },
-            { true, 0x1e9df650 },
-        };
-
         public const string DefaultName = "Default";
 
         public static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>(StringComparer.InvariantCultureIgnoreCase);
@@ -56,6 +52,8 @@ namespace HandheldCompanion.Managers
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
             ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+
+            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         }
 
         public static void Start()
@@ -348,6 +346,8 @@ namespace HandheldCompanion.Managers
                     return ProfileErrorCode.MissingExecutable;
                 else if (!CommonUtils.IsDirectoryWritable(processpath))
                     return ProfileErrorCode.MissingPermission;
+                else if (profile.Running)
+                    return ProfileErrorCode.Running;
             }
 
             return ProfileErrorCode.None;
@@ -407,118 +407,55 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateProfileCloaking(Profile profile)
         {
-            if (profile.ErrorCode == ProfileErrorCode.MissingExecutable || profile.ErrorCode == ProfileErrorCode.MissingPath)
-                return;
-
-            if (profile.Whitelisted)
+            switch (profile.ErrorCode)
             {
-                // Register application on HidHide
-                HidHide.RegisterApplication(profile.Path);
+                case ProfileErrorCode.MissingExecutable:
+                case ProfileErrorCode.MissingPath:
+                case ProfileErrorCode.Default:
+                    return;
             }
-            else
+
+            switch (profile.Whitelisted)
             {
-                // Unregister application from HidHide
-                HidHide.UnregisterApplication(profile.Path);
+                case true:
+                    HidHide.RegisterApplication(profile.Path);
+                    break;
+                case false:
+                    HidHide.UnregisterApplication(profile.Path);
+                    break;
             }
         }
 
         public static void UpdateProfileWrapper(Profile profile)
         {
-            // deploy xinput wrapper
-            string XinputPlus = Properties.Resources.XInputPlus;
-
-            string[] fullpaths = new string[] { profile.Path };
-
-            // for testing purposes, this should not happen!
-            if (profile.Default)
+            switch (profile.ErrorCode)
             {
-                fullpaths = new string[]
-                {
-                    @"C:\Windows\System32\cmd.exe",
-                    @"C:\Windows\SysWOW64\cmd.exe"
-                };
+                case ProfileErrorCode.MissingPermission:
+                case ProfileErrorCode.MissingPath:
+                case ProfileErrorCode.Running:
+                case ProfileErrorCode.Default:
+                    return;
             }
 
-            foreach (string fullpath in fullpaths)
+            switch (profile.XInputPlus)
             {
-                string processpath = Path.GetDirectoryName(fullpath);
-                string inipath = Path.Combine(processpath, "XInputPlus.ini");
-                bool iniexist = File.Exists(inipath);
-
-                // get binary type (x64, x86)
-                BinaryType bt; GetBinaryType(fullpath, out bt);
-                bool x64 = bt == BinaryType.SCS_64BIT_BINARY;
-
-                if (profile.XInputPlus)
-                    File.WriteAllText(inipath, XinputPlus);
-                else if (iniexist)
-                    File.Delete(inipath);
-
-                for (int i = 0; i < 5; i++)
-                {
-                    string dllpath = Path.Combine(processpath, $"xinput1_{i + 1}.dll");
-                    string backpath = Path.Combine(processpath, $"xinput1_{i + 1}.back");
-
-                    // dll has a different naming format
-                    if (i == 4)
-                    {
-                        dllpath = Path.Combine(processpath, $"xinput9_1_0.dll");
-                        backpath = Path.Combine(processpath, $"xinput9_1_0.back");
-                    }
-
-                    bool dllexist = File.Exists(dllpath);
-                    bool backexist = File.Exists(backpath);
-
-                    byte[] data = new byte[] { 0 };
-
-                    // check CRC32
-                    if (dllexist) data = File.ReadAllBytes(dllpath);
-                    var crc = Crc32Algorithm.Compute(data);
-                    bool is_x360ce = CRCs[x64] == crc;
-
-                    // pull data from dll
-                    data = x64 ? Properties.Resources.xinput1_x64 : Properties.Resources.xinput1_x86;
-
-                    // do not try to write/erase files when profile is used
-                    if (profile.Running)
-                        return;
-
-                    switch (profile.ErrorCode)
-                    {
-                        // do not try to write/erase files when access is denied
-                        case ProfileErrorCode.MissingPermission:
-                        case ProfileErrorCode.MissingPath:
-                            return;
-                    }
-
-                    if (profile.XInputPlus)
-                    {
-                        if (dllexist && is_x360ce)
-                            continue; // skip to next file
-                        else if (!dllexist)
-                            File.WriteAllBytes(dllpath, data);
-                        else if (dllexist && !is_x360ce)
-                        {
-                            // create backup of current dll
-                            if (!backexist)
-                                File.Move(dllpath, backpath);
-
-                            // deploy wrapper
-                            File.WriteAllBytes(dllpath, data);
-                        }
-                    }
-                    else
-                    {
-                        // delete wrapper dll
-                        if (dllexist && is_x360ce)
-                            File.Delete(dllpath);
-
-                        // restore backup is exists
-                        if (backexist)
-                            File.Move(backpath, dllpath);
-                    }
-                }
+                case true:
+                    XInputPlus.RegisterApplication(profile);
+                    break;
+                case false:
+                    XInputPlus.UnregisterApplication(profile);
+                    break;
             }
+        }
+
+        private static void ControllerManager_ControllerSelected(IController Controller)
+        {
+            // only XInput controllers use XInputPlus
+            if (Controller.GetType() != typeof(XInputController))
+                return;
+
+            foreach(Profile profile in profiles.Values)
+                UpdateProfileWrapper(profile);
         }
 
         public static Profile GetProfileFromExec(string executable)

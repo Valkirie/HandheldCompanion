@@ -122,7 +122,6 @@
                     <!--  Profile details  -->
                     <Border
                         Padding="15,12,12,12"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 

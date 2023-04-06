@@ -819,7 +819,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Allow the application to access device physical controller</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
-    <value>Translates DirectInput calls to XInput calls</value>
+    <value>Extended compatibility (XInputPlus)</value>
   </data>
   <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>Yaw</value>
