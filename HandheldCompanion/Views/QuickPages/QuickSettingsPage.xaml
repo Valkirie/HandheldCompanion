@@ -59,7 +59,7 @@
                             Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderBrightness"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
@@ -72,7 +72,7 @@
                                 Maximum="100"
                                 Minimum="0"
                                 SmallChange="1"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
                                 ValueChanged="SliderBrightness_ValueChanged" />
                         </ui:SimpleStackPanel>
@@ -95,7 +95,7 @@
                             Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderVolume"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
@@ -107,7 +107,7 @@
                                 Maximum="100"
                                 Minimum="0"
                                 SmallChange="1"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
                                 ValueChanged="SliderVolume_ValueChanged" />
                         </ui:SimpleStackPanel>

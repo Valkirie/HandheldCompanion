@@ -143,7 +143,7 @@
                                             Text="{Binding Value, ElementName=Axis2AxisInnerDeadzone, Mode=OneWay}" />
                                     </Grid>
 
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Axis2AxisInnerDeadzone"
                                         FlowDirection="LeftToRight"
                                         IsMoveToPointEnabled="True"
@@ -151,7 +151,7 @@
                                         Maximum="100"
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -179,7 +179,7 @@
                                             Text="{Binding Value, ElementName=Axis2AxisOuterDeadzone, Mode=OneWay}" />
                                     </Grid>
 
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Axis2AxisOuterDeadzone"
                                         FlowDirection="RightToLeft"
                                         IsMoveToPointEnabled="True"
@@ -187,7 +187,7 @@
                                         Maximum="100"
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -215,14 +215,14 @@
                                             Text="{Binding Value, ElementName=Axis2AxisAntiDeadzone, Mode=OneWay}" />
                                     </Grid>
 
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Axis2AxisAntiDeadzone"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
@@ -317,14 +317,14 @@
                                             Text="{Binding Value, ElementName=Axis2MousePointerSpeed, Mode=OneWay}" />
                                     </Grid>
 
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Axis2MousePointerSpeed"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="5"
                                         ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
                                 </ui:SimpleStackPanel>
