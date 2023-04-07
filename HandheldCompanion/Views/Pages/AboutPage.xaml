@@ -23,24 +23,24 @@
                 Name="WarningBorder"
                 Padding="15,12,12,12"
                 d:Visibility="Visible"
-                Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="Collapsed">
 
                 <DockPanel>
                     <Grid>
                         <ui:FontIcon
+                            ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Foreground="White"
+                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                             Glyph="&#xF136;" />
-                        <ui:FontIcon
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Foreground="Black"
-                            Glyph="&#xF13C;" />
+                        <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
                     </Grid>
                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock
                             Name="WarningContent"
+                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                             Style="{StaticResource BodyTextBlockStyle}"
                             TextWrapping="Wrap" />
                     </ui:SimpleStackPanel>
