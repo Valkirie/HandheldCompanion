@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -55,6 +56,11 @@ namespace ControllerCommon
             }
         }
 
+        public void UpdateLayout()
+        {
+            Updated?.Invoke(this);
+        }
+
         public void UpdateLayout(ButtonFlags button, IActions action)
         {
             this.ButtonLayout[button] = action;
@@ -79,14 +85,10 @@ namespace ControllerCommon
             Updated?.Invoke(this);
         }
 
-        // Improve me !
         public object Clone()
         {
-            return new Layout()
-            {
-                AxisLayout = new(AxisLayout),
-                ButtonLayout = new(ButtonLayout),
-            };
+            string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+            return JsonConvert.DeserializeObject<Layout>(jsonString, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
         }
 
         public void Dispose()

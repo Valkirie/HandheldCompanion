@@ -169,12 +169,8 @@ namespace ControllerCommon
 
         public object Clone()
         {
-            Profile profile = (Profile)MemberwiseClone();
-            profile.Layout = this.Layout.Clone() as Layout;
-            profile.MotionTrigger = this.MotionTrigger.Clone() as ButtonState;
-            profile.AimingSightsTrigger = this.AimingSightsTrigger.Clone() as ButtonState;
-
-            return profile;
+            string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+            return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
         }
     }
 }

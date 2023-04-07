@@ -382,12 +382,6 @@ namespace HandheldCompanion.Managers
             if (isCurrent)
                 PipeClient.SendMessage(new PipeClientProfile(profile));
 
-            if (profile.ErrorCode != ProfileErrorCode.None && !profile.Default)
-            {
-                LogManager.LogError("Profile {0} returned error code {1}", profile.Name, profile.ErrorCode);
-                return;
-            }
-
             if (source == ProfileUpdateSource.Serialiazer)
                 return;
 

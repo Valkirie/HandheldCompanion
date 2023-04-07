@@ -231,6 +231,8 @@ namespace HandheldCompanion.Views.Pages
                 cB_Layouts.SelectedIndex = -1;
 
                 Monitor.Exit(updateLock);
+
+                currentLayout.UpdateLayout();
             }
         }
 
@@ -353,8 +355,9 @@ namespace HandheldCompanion.Views.Pages
                 case ContentDialogResult.Primary:
                     {
                         // update layout
-                        currentLayout.AxisLayout = layoutTemplate.Layout.AxisLayout;
-                        currentLayout.ButtonLayout = layoutTemplate.Layout.ButtonLayout;
+                        var newLayout = layoutTemplate.Layout.Clone() as Layout;
+                        currentLayout.AxisLayout = newLayout.AxisLayout;
+                        currentLayout.ButtonLayout = newLayout.ButtonLayout;
 
                         UpdatePages();
                     }

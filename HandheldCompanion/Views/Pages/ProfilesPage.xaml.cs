@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
@@ -162,7 +163,9 @@ namespace HandheldCompanion.Views.Pages
                     cB_Profiles.Items.Add(profile);
 
                 cB_Profiles.Items.Refresh();
-                cB_Profiles.SelectedItem = profile;
+
+                if (!profile.Default)
+                    cB_Profiles.SelectedItem = profile;
             });
 
             switch (source)
@@ -619,11 +622,17 @@ namespace HandheldCompanion.Views.Pages
             // update layout page with current layout
             // memory pointer
             LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
-            layoutTemplate.Layout = currentProfile.Layout;
+            layoutTemplate.Layout = currentProfile.Layout.Clone() as Layout;
             layoutTemplate.Executable = currentProfile.Executable;
+            layoutTemplate.Layout.Updated += Layout_Updated;
 
             MainWindow.layoutPage.UpdateLayout(layoutTemplate);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
+        }
+
+        private void Layout_Updated(Layout layout)
+        {
+            currentProfile.Layout = layout;
         }
     }
 }
