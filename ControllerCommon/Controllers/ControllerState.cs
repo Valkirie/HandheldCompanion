@@ -14,14 +14,21 @@ namespace ControllerCommon.Controllers
 
         // todo: move me and make me configurable !
         [JsonIgnore]
-        public static Dictionary<AxisLayoutFlags, short> AxisDeadzones = new()
+        public static readonly Dictionary<AxisLayoutFlags, short> AxisDeadzones = new()
         {
             { AxisLayoutFlags.RightThumb, Gamepad.RightThumbDeadZone },
             { AxisLayoutFlags.LeftThumb, Gamepad.LeftThumbDeadZone },
             { AxisLayoutFlags.L2, Gamepad.TriggerThreshold },
             { AxisLayoutFlags.R2, Gamepad.TriggerThreshold },
-            { AxisLayoutFlags.RightPad, Gamepad.TriggerThreshold },
-            { AxisLayoutFlags.LeftPad, Gamepad.TriggerThreshold },
+        };
+
+        [JsonIgnore]
+        public static readonly Dictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
+        {
+            { AxisLayoutFlags.RightThumb, ButtonFlags.RightThumbTouch },
+            { AxisLayoutFlags.LeftThumb, ButtonFlags.LeftThumbTouch },
+            { AxisLayoutFlags.RightPad, ButtonFlags.RightPadTouch },
+            { AxisLayoutFlags.LeftPad, ButtonFlags.LeftPadTouch },
         };
 
         public int Timestamp;
