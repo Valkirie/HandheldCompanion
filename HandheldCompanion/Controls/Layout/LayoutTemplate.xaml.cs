@@ -105,7 +105,7 @@ namespace HandheldCompanion.Controls
                         this.Layout.AxisLayout = new()
                         {
                             { AxisLayoutFlags.LeftThumb, new MouseActions() { MouseType = MouseActionsType.Scroll, Sensivity = 25.0f } },
-                            { AxisLayoutFlags.RightThumb, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 20.0f } },
+                            { AxisLayoutFlags.RightThumb, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 25.0f } },
                             { AxisLayoutFlags.LeftPad, new MouseActions() { MouseType = MouseActionsType.Scroll, Sensivity = 25.0f } },
                             { AxisLayoutFlags.RightPad, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 10.0f } },
                         };
@@ -154,7 +154,7 @@ namespace HandheldCompanion.Controls
                         this.Layout.AxisLayout = new()
                         {
                             { AxisLayoutFlags.LeftThumb, new EmptyActions() },
-                            { AxisLayoutFlags.RightThumb, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 20.0f } },
+                            { AxisLayoutFlags.RightThumb, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 25.0f } },
                             { AxisLayoutFlags.LeftPad, new EmptyActions() },
                             { AxisLayoutFlags.RightPad, new MouseActions() { MouseType = MouseActionsType.Move, Sensivity = 10.0f } },
                         };

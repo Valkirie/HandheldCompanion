@@ -138,9 +138,6 @@ namespace HandheldCompanion.Actions
 
         public void Execute(AxisLayout layout)
         {
-            if (layout.vector.Length() < ControllerState.AxisDeadzones[layout.flags])
-                layout.vector *= 0.0f;
-
             layout.vector.Y *= -1;
 
             switch (layout.flags)
@@ -151,21 +148,31 @@ namespace HandheldCompanion.Actions
                 case AxisLayoutFlags.LeftThumb:
                 case AxisLayoutFlags.RightThumb:
                     {
-                        if (layout.vector == Vector2.Zero)
+                        // convert to 0.0 - 1.0 values
+                        Vector = layout.vector / short.MaxValue;
+                        float deadzone = ControllerState.AxisDeadzones[layout.flags] / short.MaxValue;
+
+                        // apply deadzone
+                        if (Vector.Length() < deadzone)
                             return;
 
-                        // apply sensivity
-                        Vector = (layout.vector / short.MaxValue) * Sensivity * ((float)ControllerState.AxisDeadzones[layout.flags] / short.MaxValue);
+                        Vector *= (Vector.Length() - deadzone) / Vector.Length();  // shorten by deadzone
+                        Vector *= 1.0f / (1.0f - deadzone);                        // rescale to 0.0 - 1.0
+
+                        // apply sensitivity
+                        Vector *= Sensivity;
                         Vector *= (AxisInverted ? -1.0f : 1.0f);
 
                         if (MouseType == MouseActionsType.Move)
                         {
+                            Vector *= 0.3f;   // const for finetunning the Move sensitivity
                             MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
                         }
                         else
                         {
-                            // MouseSimulator.HorizontalScroll((int)(Sensivity * -Vector.X));
-                            MouseSimulator.VerticalScroll((int)(Sensivity * 0.01 * -Vector.Y));
+                            Vector *= 0.1f;   // const for finetunning the Scroll sensitivity
+                            // MouseSimulator.HorizontalScroll((int)-Vector.X);
+                            MouseSimulator.VerticalScroll((int)-Vector.Y);
                         }
                     }
                     break;
