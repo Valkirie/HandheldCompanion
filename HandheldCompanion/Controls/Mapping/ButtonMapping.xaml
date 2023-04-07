@@ -116,14 +116,14 @@
                                             Text="{Binding Value, ElementName=Turbo_Slider, Mode=OneWay}" />
                                     </Grid>
 
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Turbo_Slider"
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="10"
                                         ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         ValueChanged="Turbo_Slider_ValueChanged"
                                         Value="90" />

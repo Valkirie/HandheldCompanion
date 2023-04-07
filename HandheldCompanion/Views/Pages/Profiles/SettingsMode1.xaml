@@ -156,7 +156,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, ElementName=SliderSteeringAngle, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderSteeringAngle"
                                 Grid.Column="4"
                                 Margin="6,0,0,0"
@@ -168,7 +168,7 @@
                                 Maximum="80"
                                 Minimum="10"
                                 SmallChange="5"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderSteeringAngle_ValueChanged"
@@ -215,7 +215,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderPower"
                                 Grid.Column="4"
                                 Margin="6,0,0,0"
@@ -227,7 +227,7 @@
                                 LargeChange="0.5"
                                 Maximum="5"
                                 Minimum="0.2"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderPower_ValueChanged"
@@ -274,7 +274,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, ElementName=SliderDeadzoneAngle, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderDeadzoneAngle"
                                 Grid.Column="4"
                                 Margin="6,0,0,0"
@@ -285,7 +285,7 @@
                                 LargeChange="2"
                                 Maximum="5"
                                 SmallChange="1"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderDeadzoneAngle_ValueChanged" />
                         </DockPanel>

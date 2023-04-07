@@ -36,15 +36,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <Border
-                        Margin="-2"
                         Background="{DynamicResource SliderOuterThumbBackground}"
                         BorderBrush="{DynamicResource SliderThumbBorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{DynamicResource SliderThumbCornerRadius}">
+                        CornerRadius="16"
+                        BorderThickness="0">
                         <Ellipse
                             x:Name="SliderInnerThumb"
-                            Width="{DynamicResource SliderInnerThumbWidth}"
-                            Height="{DynamicResource SliderInnerThumbHeight}"
+                            Width="24"
+                            Height="24"
                             Fill="{TemplateBinding Background}"
                             RenderTransformOrigin="0.5, 0.5">
                             <Ellipse.RenderTransform>
@@ -249,8 +248,8 @@
                         <Track.Thumb>
                             <Thumb
                                 x:Name="HorizontalThumb"
-                                Width="{DynamicResource SliderHorizontalThumbWidth}"
-                                Height="{DynamicResource SliderHorizontalThumbHeight}"
+                                Width="32"
+                                Height="32"
                                 primitives:FocusVisualHelper.FocusVisualMargin="-14,-6,-14,-6"
                                 DataContext="{TemplateBinding Value}"
                                 Style="{StaticResource SliderThumbStyle}">

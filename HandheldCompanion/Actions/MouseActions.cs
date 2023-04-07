@@ -138,6 +138,9 @@ namespace HandheldCompanion.Actions
 
         public void Execute(AxisLayout layout)
         {
+            if (layout.vector == Vector2.Zero)
+                return;
+
             layout.vector.Y *= -1;
 
             switch (layout.flags)

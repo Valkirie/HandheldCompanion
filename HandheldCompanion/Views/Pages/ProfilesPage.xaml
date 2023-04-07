@@ -388,7 +388,7 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                                        <common:TouchSlider
+                                        <Slider
                                             x:Name="TDPSustainedSlider"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
@@ -400,7 +400,7 @@
                                             Maximum="30"
                                             Minimum="5"
                                             SmallChange="1"
-                                            Style="{DynamicResource DefaultSliderStyle}"
+                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ValueChanged="TDPSustainedSlider_ValueChanged" />
@@ -442,7 +442,7 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                                        <common:TouchSlider
+                                        <Slider
                                             x:Name="TDPBoostSlider"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
@@ -454,7 +454,7 @@
                                             Maximum="30"
                                             Minimum="5"
                                             SmallChange="1"
-                                            Style="{DynamicResource DefaultSliderStyle}"
+                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ValueChanged="TDPBoostSlider_ValueChanged" />
@@ -517,7 +517,7 @@
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}"
                                                 TextAlignment="Right" />
-                                            <common:TouchSlider
+                                            <Slider
                                                 x:Name="tb_ProfileGyroValue"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
@@ -527,7 +527,7 @@
                                                 IsSnapToTickEnabled="True"
                                                 Maximum="3"
                                                 Minimum="0.1"
-                                                Style="{DynamicResource DefaultSliderStyle}"
+                                                Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
                                                 Value="10" />
@@ -564,7 +564,7 @@
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}"
                                                 TextAlignment="Right" />
-                                            <common:TouchSlider
+                                            <Slider
                                                 x:Name="tb_ProfileAcceleroValue"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
@@ -575,7 +575,7 @@
                                                 LargeChange="1"
                                                 Maximum="3"
                                                 Minimum="0.1"
-                                                Style="{DynamicResource DefaultSliderStyle}"
+                                                Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
                                                 Value="10" />
@@ -794,7 +794,7 @@
                                             Text="{Binding Value, ElementName=tb_ProfileUMCAntiDeadzone, Mode=OneWay}"
                                             TextAlignment="Right" />
                                         <TextBlock VerticalAlignment="Center" Text="%" />
-                                        <common:TouchSlider
+                                        <Slider
                                             x:Name="tb_ProfileUMCAntiDeadzone"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
@@ -804,7 +804,7 @@
                                             LargeChange="10"
                                             Maximum="40"
                                             SmallChange="1"
-                                            Style="{DynamicResource DefaultSliderStyle}"
+                                            Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight" />
                                     </DockPanel>

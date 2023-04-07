@@ -82,7 +82,7 @@
                             Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}"
                             TextAlignment="Center" />
                         <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <common:TouchSlider
+                        <Slider
                             x:Name="TDPSustainedSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
@@ -95,7 +95,7 @@
                             Maximum="30"
                             Minimum="5"
                             SmallChange="1"
-                            Style="{DynamicResource DefaultSliderStyle}"
+                            Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ValueChanged="TDPSustainedSlider_ValueChanged" />
@@ -130,7 +130,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <common:TouchSlider
+                        <Slider
                             x:Name="TDPBoostSlider"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
@@ -143,7 +143,7 @@
                             Maximum="30"
                             Minimum="5"
                             SmallChange="1"
-                            Style="{DynamicResource DefaultSliderStyle}"
+                            Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ValueChanged="TDPBoostSlider_ValueChanged" />
@@ -253,7 +253,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
-                <common:TouchSlider
+                <Slider
                     x:Name="GPUSlider"
                     Margin="8,0,0,0"
                     HorizontalAlignment="Stretch"
@@ -262,7 +262,7 @@
                     AutoToolTipPrecision="0"
                     IsMoveToPointEnabled="True"
                     IsSnapToTickEnabled="True"
-                    Style="{DynamicResource DefaultSliderStyle}"
+                    Style="{DynamicResource SliderStyle1}"
                     TickFrequency="50"
                     TickPlacement="BottomRight"
                     ValueChanged="GPUSlider_ValueChanged" />
@@ -374,7 +374,7 @@
                         Margin="0,0,0,0"
                         VerticalAlignment="Center"
                         ScrollViewer.PanningMode="HorizontalOnly">
-                        <common:TouchSlider
+                        <Slider
                             x:Name="PowerModeSlider"
                             VerticalAlignment="Center"
                             AutoToolTipPlacement="None"
@@ -382,7 +382,7 @@
                             IsSnapToTickEnabled="True"
                             Maximum="2"
                             Minimum="0"
-                            Style="{DynamicResource DefaultSliderStyle}"
+                            Style="{DynamicResource SliderStyle1}"
                             TickFrequency="1"
                             TickPlacement="BottomRight"
                             ValueChanged="PowerModeSlider_ValueChanged" />

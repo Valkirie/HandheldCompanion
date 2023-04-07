@@ -246,7 +246,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderControllerSize"
                                 Grid.Column="3"
                                 Margin="6,0,0,0"
@@ -258,7 +258,7 @@
                                 Maximum="800"
                                 Minimum="200"
                                 SmallChange="50"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="50"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderControllerSize_ValueChanged" />
@@ -304,7 +304,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderControllerOpacity"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
@@ -316,7 +316,7 @@
                                 Maximum="1"
                                 Minimum="0.1"
                                 SmallChange="0.1"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderControllerOpacity_ValueChanged" />
@@ -491,7 +491,7 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N0, ElementName=Slider_Framerate, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Slider_Framerate"
                                         Margin="6,0,0,0"
                                         VerticalAlignment="Center"
@@ -502,7 +502,7 @@
                                         Maximum="60"
                                         Minimum="10"
                                         SmallChange="5"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         TickPlacement="BottomRight"
                                         ValueChanged="Slider_Framerate_ValueChanged" />
@@ -624,7 +624,7 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="Slider_RestingPitch"
                                         Margin="6,0,0,0"
                                         VerticalAlignment="Center"
@@ -637,7 +637,7 @@
                                         Maximum="90"
                                         Minimum="-90"
                                         SmallChange="5"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         TickPlacement="BottomRight"
                                         ValueChanged="Slider_RestingPitch_ValueChanged" />
@@ -745,7 +745,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderTrackpadsSize"
                                 Grid.Column="3"
                                 Margin="6,0,0,0"
@@ -757,7 +757,7 @@
                                 Maximum="800"
                                 Minimum="100"
                                 SmallChange="50"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="50"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderTrackpadsSize_ValueChanged" />
@@ -803,7 +803,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderTrackpadsOpacity"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
@@ -815,7 +815,7 @@
                                 Maximum="0.25"
                                 Minimum="0.01"
                                 SmallChange="0.01"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.01"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderTrackpadsOpacity_ValueChanged" />

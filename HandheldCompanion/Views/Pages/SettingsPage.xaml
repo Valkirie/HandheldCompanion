@@ -931,7 +931,7 @@
                                 Text="{Binding Value, StringFormat=N0, ElementName=FanDutyCycle, Mode=OneWay}"
                                 TextAlignment="Right" />
                             <TextBlock VerticalAlignment="Center" Text="%" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="FanDutyCycle"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
@@ -942,7 +942,7 @@
                                 Maximum="100"
                                 Minimum="10"
                                 SmallChange="5"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="5"
                                 TickPlacement="BottomRight"
                                 ValueChanged="FanDutyCycle_ValueChanged"

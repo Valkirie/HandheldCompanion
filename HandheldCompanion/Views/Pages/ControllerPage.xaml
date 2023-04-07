@@ -149,7 +149,7 @@
                                     Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}"
                                     TextAlignment="Right" />
                                 <TextBlock VerticalAlignment="Center" Text="%" />
-                                <common:TouchSlider
+                                <Slider
                                     x:Name="SliderStrength"
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
@@ -160,7 +160,7 @@
                                     Maximum="100"
                                     Minimum="0"
                                     SmallChange="5"
-                                    Style="{DynamicResource DefaultSliderStyle}"
+                                    Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="5"
                                     TickPlacement="BottomRight"
                                     ValueChanged="SliderStrength_ValueChanged"

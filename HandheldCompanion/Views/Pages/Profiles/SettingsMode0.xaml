@@ -60,7 +60,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderSensitivityX"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
@@ -72,7 +72,7 @@
                                 Maximum="3.0"
                                 Minimum="0.1"
                                 SmallChange="0.1"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderSensitivityX_ValueChanged"
@@ -119,7 +119,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}"
                                 TextAlignment="Right" />
-                            <common:TouchSlider
+                            <Slider
                                 x:Name="SliderSensitivityY"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
@@ -131,7 +131,7 @@
                                 Maximum="3.0"
                                 Minimum="0.1"
                                 SmallChange="0.1"
-                                Style="{DynamicResource DefaultSliderStyle}"
+                                Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="SliderSensitivityY_ValueChanged"
@@ -184,7 +184,7 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="tb_ProfileAimingDownSightsMultiplier"
                                         Margin="6,0,0,0"
                                         HorizontalAlignment="Stretch"
@@ -196,7 +196,7 @@
                                         LargeChange="0.5"
                                         Maximum="3.0"
                                         Minimum="0.5"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="0.1"
                                         TickPlacement="BottomRight"
                                         ValueChanged="SliderAimingDownSightsMultiplier_ValueChanged"
@@ -305,7 +305,7 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="tb_ProfileFlickDuration"
                                         Margin="6,0,0,0"
                                         HorizontalAlignment="Stretch"
@@ -317,7 +317,7 @@
                                         LargeChange="10"
                                         Maximum="800"
                                         Minimum="100"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="10"
                                         TickPlacement="BottomRight"
                                         ValueChanged="SliderFlickDuration_ValueChanged"
@@ -355,7 +355,7 @@
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}"
                                         TextAlignment="Right" />
-                                    <common:TouchSlider
+                                    <Slider
                                         x:Name="tb_ProfileStickSensitivity"
                                         Margin="6,0,0,0"
                                         HorizontalAlignment="Stretch"
@@ -367,7 +367,7 @@
                                         LargeChange="0.1"
                                         Maximum="10"
                                         Minimum="0.1"
-                                        Style="{DynamicResource DefaultSliderStyle}"
+                                        Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="0.1"
                                         TickPlacement="BottomRight"
                                         ValueChanged="SliderStickSensivity_ValueChanged"
