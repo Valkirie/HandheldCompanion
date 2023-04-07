@@ -162,6 +162,7 @@ namespace HandheldCompanion.Views
             ToastManager.Start();
             ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
+            ProfileManager.Start();
             ControllerManager.Start();
             HotkeysManager.Start();
 
@@ -170,7 +171,6 @@ namespace HandheldCompanion.Views
             DeviceManager.Start();
 
             PlatformManager.Start();
-            ProfileManager.Start();
             LayoutManager.Start();
             ProcessManager.Start();
             EnergyManager.Start();

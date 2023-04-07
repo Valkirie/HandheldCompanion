@@ -400,11 +400,7 @@ namespace HandheldCompanion.Views.Pages
                 ProfilesPageHotkey.DrawInput();
 
                 // display warnings
-                ProfileErrorCode currentError = currentProfile.ErrorCode;
-                if (currentProfile.Running)
-                    currentError = ProfileErrorCode.Running;
-
-                switch (currentError)
+                switch (currentProfile.ErrorCode)
                 {
                     default:
                     case ProfileErrorCode.None:
@@ -419,7 +415,7 @@ namespace HandheldCompanion.Views.Pages
                     case ProfileErrorCode.MissingPermission:
                     case ProfileErrorCode.Default:
                         WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentError);
+                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
                         cB_Whitelist.IsEnabled = false;     // you can't whitelist an application without path
                         cB_Wrapper.IsEnabled = false;       // you can't deploy wrapper on an application without path
                         break;
