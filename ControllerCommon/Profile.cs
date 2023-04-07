@@ -41,7 +41,7 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class Profile : ICloneable
+    public class Profile : ICloneable, IComparable
     {
         // todo: move me out of here !
         public static Dictionary<MotionInput, string> InputDescription = new()
@@ -64,9 +64,6 @@ namespace ControllerCommon
 
         public bool LayoutEnabled { get; set; } = false;
         public Layout Layout { get; set; } = new();
-
-        [JsonIgnore]
-        public bool Running { get; set; }
 
         public bool Whitelisted { get; set; }                       // if true, can see through the HidHide cloak
         public bool XInputPlus { get; set; }                        // if true, deploy xinput1_3.dll
@@ -107,8 +104,7 @@ namespace ControllerCommon
         public bool TDPOverrideEnabled { get; set; }
         public double[] TDPOverrideValues { get; set; } = new double[3];
 
-        [JsonIgnore]
-        public ProfileErrorCode ErrorCode;
+        public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 
         public Profile()
         {
@@ -171,6 +167,12 @@ namespace ControllerCommon
         {
             string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
             return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+        }
+
+        public int CompareTo(object obj)
+        {
+            Profile profile = (Profile)obj;
+            return profile.Name.CompareTo(Name);
         }
     }
 }

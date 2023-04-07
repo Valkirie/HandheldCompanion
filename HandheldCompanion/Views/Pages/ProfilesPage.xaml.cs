@@ -9,6 +9,7 @@ using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using ModernWpf.Controls;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -114,6 +115,9 @@ namespace HandheldCompanion.Views.Pages
 
                 cB_Output.Items.Add(panel);
             }
+
+            // auto-sort
+            cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
         }
 
         public void SettingsManager_SettingValueChanged(string name, object value)
@@ -164,8 +168,7 @@ namespace HandheldCompanion.Views.Pages
 
                 cB_Profiles.Items.Refresh();
 
-                if (!profile.Default)
-                    cB_Profiles.SelectedItem = profile;
+                cB_Profiles.SelectedItem = profile;
             });
 
             switch (source)
@@ -177,7 +180,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             _ = Dialog.ShowAsync($"{Properties.Resources.ProfilesPage_ProfileUpdated1}",
-                             $"{currentProfile.Name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
+                             $"{profile.Name} {Properties.Resources.ProfilesPage_ProfileUpdated2}",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
@@ -349,7 +352,7 @@ namespace HandheldCompanion.Views.Pages
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled = !currentProfile.Default && !currentProfile.Running;
+                b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default | ProfileErrorCode.Running);
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
                 // prevent user from setting power settings on default profile

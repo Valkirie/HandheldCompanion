@@ -140,7 +140,7 @@ namespace HandheldCompanion.Managers
                 if (profile is null || profile.Default)
                     return;
 
-                if (profile.Running)
+                if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
                 {
                     // warn owner
                     bool isCurrent = profile.Executable == currentProfile.Executable;
@@ -207,9 +207,10 @@ namespace HandheldCompanion.Managers
 
                 // update profile executable path
                 if (!profile.Default)
+                {
                     profile.Path = proc.Path;
-
-                UpdateOrCreateProfile(profile);
+                    UpdateOrCreateProfile(profile);
+                }
             }
             catch { }
         }
@@ -332,25 +333,27 @@ namespace HandheldCompanion.Managers
             File.WriteAllText(settingsPath, jsonString);
         }
 
-        private static ProfileErrorCode SanitizeProfile(Profile profile)
+        private static void SanitizeProfile(Profile profile)
         {
             string processpath = Path.GetDirectoryName(profile.Path);
+            profile.ErrorCode = ProfileErrorCode.None;
 
             if (profile.Default)
-                return ProfileErrorCode.Default;
+                profile.ErrorCode |= ProfileErrorCode.Default;
             else
             {
                 if (!Directory.Exists(processpath))
-                    return ProfileErrorCode.MissingPath;
-                else if (!File.Exists(profile.Path))
-                    return ProfileErrorCode.MissingExecutable;
-                else if (!CommonUtils.IsDirectoryWritable(processpath))
-                    return ProfileErrorCode.MissingPermission;
-                else if (profile.Running)
-                    return ProfileErrorCode.Running;
-            }
+                    profile.ErrorCode |= ProfileErrorCode.MissingPath;
 
-            return ProfileErrorCode.None;
+                if (!File.Exists(profile.Path))
+                    profile.ErrorCode |= ProfileErrorCode.MissingExecutable;
+
+                if (!CommonUtils.IsDirectoryWritable(processpath))
+                    profile.ErrorCode |= ProfileErrorCode.MissingPermission;
+
+                if (ProcessManager.GetProcesses(profile.Executable).Capacity > 0)
+                    profile.ErrorCode |= ProfileErrorCode.Running;
+            }
         }
 
         public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background)
@@ -363,14 +366,11 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            // check if application is running
-            profile.Running = ProcessManager.GetProcesses(profile.Executable).Capacity > 0;
-
             // check if this is current profile
             bool isCurrent = currentProfile is null ? false : profile.Executable == currentProfile.Executable;
 
             // refresh error code
-            profile.ErrorCode = SanitizeProfile(profile);
+            SanitizeProfile(profile);
 
             // update database
             profiles[profile.Name] = profile;

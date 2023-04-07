@@ -143,7 +143,7 @@ namespace HandheldCompanion.Managers
         private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             // ignore profile update if not current or not running
-            if (isCurrent && profile.Running)
+            if (isCurrent && profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
                 UpdateCurrentLayout(profile);
         }
 
