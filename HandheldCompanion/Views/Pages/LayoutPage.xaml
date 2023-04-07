@@ -24,7 +24,7 @@
         ItemInvoked="navView_ItemInvoked"
         Loaded="navView_Loaded"
         OpenPaneLength="150"
-        PaneDisplayMode="Left"
+        PaneDisplayMode="Top"
         SelectionFollowsFocus="Enabled"
         ShoulderNavigationEnabled="WhenSelectionFollowsFocus">
 
