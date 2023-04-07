@@ -172,7 +172,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 case ProfileUpdateSource.Background:
                 case ProfileUpdateSource.Creation:
-                case ProfileUpdateSource.Serialiazer:
+                case ProfileUpdateSource.Serializer:
                     return;
             }
 

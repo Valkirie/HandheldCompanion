@@ -24,7 +24,7 @@ namespace ControllerCommon
         ProfilesPage = 1,
         QuickProfilesPage = 2,
         Creation = 4,
-        Serialiazer = 5
+        Serializer = 5
     }
 
     [Serializable]

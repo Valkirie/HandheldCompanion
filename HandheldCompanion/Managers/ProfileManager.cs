@@ -286,7 +286,7 @@ namespace HandheldCompanion.Managers
                 PipeClient.SendMessage(new PipeClientProfile(profile));
             }
 
-            UpdateOrCreateProfile(profile, ProfileUpdateSource.Serialiazer);
+            UpdateOrCreateProfile(profile, ProfileUpdateSource.Serializer);
         }
 
         public static void DeleteProfile(Profile profile)
@@ -382,7 +382,7 @@ namespace HandheldCompanion.Managers
             if (isCurrent)
                 PipeClient.SendMessage(new PipeClientProfile(profile));
 
-            if (source == ProfileUpdateSource.Serialiazer)
+            if (source == ProfileUpdateSource.Serializer)
                 return;
 
             // serialize profile
