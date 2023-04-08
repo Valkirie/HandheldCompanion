@@ -122,6 +122,8 @@ namespace HandheldCompanion.Controls
                     // skip specific scenarios
                     switch (mouseType)
                     {
+                        case MouseActionsType.LeftButton:
+                        case MouseActionsType.RightButton:
                         case MouseActionsType.MiddleButton:
                         case MouseActionsType.ScrollUp:
                         case MouseActionsType.ScrollDown:
@@ -138,7 +140,6 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
-                Axis2MouseImprovePrecision.IsOn = ((MouseActions)this.Actions).EnhancePrecision;
                 Axis2MouseInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
             }
 
@@ -279,21 +280,6 @@ namespace HandheldCompanion.Controls
             {
                 case ActionType.Mouse:
                     ((MouseActions)this.Actions).Sensivity = (int)Axis2MousePointerSpeed.Value;
-                    break;
-            }
-
-            base.Update();
-        }
-
-        private void Axis2MouseImprovePrecision_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (this.Actions is null)
-                return;
-
-            switch (this.Actions.ActionType)
-            {
-                case ActionType.Mouse:
-                    ((MouseActions)this.Actions).EnhancePrecision = Axis2MouseImprovePrecision.IsOn;
                     break;
             }
 
