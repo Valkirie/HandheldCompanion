@@ -4,7 +4,6 @@ using ControllerCommon.Inputs;
 using HandheldCompanion.Simulators;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Numerics;
 
 namespace HandheldCompanion.Actions
@@ -41,7 +40,7 @@ namespace HandheldCompanion.Actions
 
         // settings
         public bool EnhancePrecision { get; set; } = false;
-        public float Sensivity { get; set; } = 10.0f;
+        public float Sensivity { get; set; } = 25.0f;
         public bool AxisInverted { get; set; } = false;
 
         public MouseActions()
@@ -129,107 +128,90 @@ namespace HandheldCompanion.Actions
         {
         }
 
-        private Vector2 entryMousePos = new();
-        private bool IsPressed = false;
+        private bool IsTouched = false;
 
-        private Vector2 Vector = new();
-        private Vector2 prevVector = new();
-        private Vector2 entryVector = new();
-
-        public void Execute(AxisLayout layout)
+        private bool IsNewTouch(bool value)
         {
+            if (value == IsTouched)
+                return false;
+            if (IsTouched = value)
+                return true;
+            return false;
+        }
+
+        private Vector2 prevVector = new();
+        private Vector2 restVector = new();
+
+        public void Execute(AxisLayout layout, bool touched)
+        {
+            // this line needs to be before the next vector zero check
+            bool newTouch = IsNewTouch(touched);
+
             if (layout.vector == Vector2.Zero)
                 return;
 
             layout.vector.Y *= -1;
 
+            Vector2 deltaVector;
+            float sensitivityFinetune;
+
             switch (layout.flags)
             {
-                // MoveBy
-                // ScrollBy
                 default:
                 case AxisLayoutFlags.LeftThumb:
                 case AxisLayoutFlags.RightThumb:
                     {
-                        // convert to 0.0 - 1.0 values
-                        Vector = layout.vector / short.MaxValue;
-                        float deadzone = ControllerState.AxisDeadzones[layout.flags] / short.MaxValue;
+                        // convert to <0.0-1.0> values
+                        deltaVector = layout.vector / short.MaxValue;
+                        float deadzone = (float)ControllerState.AxisDeadzones[layout.flags] / short.MaxValue;
 
                         // apply deadzone
-                        if (Vector.Length() < deadzone)
+                        if (deltaVector.Length() < deadzone)
                             return;
 
-                        Vector *= (Vector.Length() - deadzone) / Vector.Length();  // shorten by deadzone
-                        Vector *= 1.0f / (1.0f - deadzone);                        // rescale to 0.0 - 1.0
+                        deltaVector *= (deltaVector.Length() - deadzone) / deltaVector.Length();  // shorten by deadzone
+                        deltaVector *= 1.0f / (1.0f - deadzone);                                  // rescale to 0.0 - 1.0
 
-                        // apply sensitivity
-                        Vector *= Sensivity;
-                        Vector *= (AxisInverted ? -1.0f : 1.0f);
-
-                        if (MouseType == MouseActionsType.Move)
-                        {
-                            Vector *= 0.3f;   // const for finetunning the Move sensitivity
-                            MouseSimulator.MoveBy((int)Vector.X, (int)Vector.Y);
-                        }
-                        else
-                        {
-                            Vector *= 0.1f;   // const for finetunning the Scroll sensitivity
-                            // MouseSimulator.HorizontalScroll((int)-Vector.X);
-                            MouseSimulator.VerticalScroll((int)-Vector.Y);
-                        }
+                        sensitivityFinetune = (MouseType == MouseActionsType.Move ? 0.3f : 0.1f);
                     }
                     break;
 
-                // MoveTo
-                // ScrollTo
                 case AxisLayoutFlags.LeftPad:
                 case AxisLayoutFlags.RightPad:
                     {
-                        if (layout.vector == Vector2.Zero)
+                        // touchpad was touched, update entry point for delta calculations
+                        if (newTouch)
                         {
-                            IsPressed = false;
-                            prevVector = Vector2.Zero;
+                            prevVector = layout.vector;
                             return;
                         }
-                        else
-                        {
-                            // update entry point
-                            if (!IsPressed)
-                            {
-                                prevVector = layout.vector;
-                                entryVector = layout.vector;
 
-                                entryMousePos = new Vector2(MouseSimulator.GetMousePosition().X, MouseSimulator.GetMousePosition().Y);
+                        // calculate delta and convert to <0.0-1.0> values
+                        deltaVector = (layout.vector - prevVector) / short.MaxValue;
+                        prevVector = layout.vector;
 
-                                IsPressed = true;
-
-                                return;
-                            }
-
-                            // compute
-                            if (MouseType == MouseActionsType.Move)
-                            {
-                                Vector2 pointVector = (layout.vector - entryVector) / short.MaxValue * Sensivity * 10.0f;
-                                Vector = entryMousePos + pointVector;
-
-                                MouseSimulator.MoveTo((int)Vector.X, (int)Vector.Y);
-                            }
-                            else
-                            {
-                                Vector2 travelVector = (prevVector - layout.vector) / (100.0f - Sensivity);
-                                int scrollY = (int)Math.Round(travelVector.Y * 0.01);
-
-                                Debug.WriteLine($"t:{travelVector.Length()},x:{travelVector.X},y:{scrollY}");
-
-                                // MouseSimulator.HorizontalScroll((int)(travelVector.X));
-                                MouseSimulator.VerticalScroll(scrollY);
-                            }
-
-                            // update previous position
-                            prevVector = layout.vector;
-                        }
-                        break;
+                        sensitivityFinetune = (MouseType == MouseActionsType.Move ? 9.0f : 3.0f);
                     }
+                    break;
+            }
+
+            // apply sensitivity, invert and slider finetune
+            deltaVector *= Sensivity * sensitivityFinetune;
+            deltaVector *= (AxisInverted ? -1.0f : 1.0f);
+
+            // handle the fact that MoveBy()/*Scroll() are int only and we can have movement (0 < abs(delta) < 1)
+            deltaVector += restVector;                                               // add partial previous step
+            Vector2 intVector = new((int)Math.Truncate(deltaVector.X), (int)Math.Truncate(deltaVector.Y));
+            restVector = deltaVector - intVector;                                    // and save the unused rest
+
+            if (MouseType == MouseActionsType.Move)
+            {
+                MouseSimulator.MoveBy((int)intVector.X, (int)intVector.Y);
+            }
+            else /* if (MouseType == MouseActionsType.Scroll) */
+            {
+                // MouseSimulator.HorizontalScroll((int)-intVector.X);
+                MouseSimulator.VerticalScroll((int)-intVector.Y);
             }
         }
     }

@@ -79,7 +79,8 @@ namespace HandheldCompanion.Simulators
             }
         }
 
-        public static void MoveTo(int x, int y)
+        // TODO: unused, remove?
+        public static void MoveTo(double x, double y)
         {
             try
             {

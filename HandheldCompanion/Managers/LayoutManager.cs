@@ -317,7 +317,13 @@ namespace HandheldCompanion.Managers
                     case ActionType.Mouse:
                         {
                             MouseActions mAction = action as MouseActions;
-                            mAction.Execute(InLayout);
+
+                            // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
+                            bool touched = false;
+                            if (ControllerState.AxisTouchButtons.TryGetValue(InLayout.flags, out ButtonFlags touchButton))
+                                touched = controllerState.ButtonState[touchButton];
+
+                            mAction.Execute(InLayout, touched);
                         }
                         break;
 
