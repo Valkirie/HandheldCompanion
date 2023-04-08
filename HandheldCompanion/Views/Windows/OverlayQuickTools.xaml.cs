@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using Input = System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
 using Windows.System.Power;
@@ -33,6 +34,8 @@ namespace HandheldCompanion.Views.Windows
         public OverlayQuickTools()
         {
             InitializeComponent();
+
+            this.PreviewKeyDown += new Input.KeyEventHandler(HandleEsc);
 
             // create manager(s)
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -118,6 +121,12 @@ namespace HandheldCompanion.Views.Windows
             hwndSource = PresentationSource.FromVisual(this) as HwndSource;
             if (hwndSource is not null)
                 hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+        }
+
+        private void HandleEsc(object sender, Input.KeyEventArgs e)
+        {
+            if (e.Key == Input.Key.Escape)
+                this.Hide();
         }
 
         public void UpdateVisibility()
