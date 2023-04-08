@@ -247,34 +247,6 @@
                     <ui:SimpleStackPanel Spacing="12">
                         <ui:SimpleStackPanel Spacing="6">
 
-                            <!--  Implement me !  -->
-                            <Grid IsEnabled="False">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="9*" MinWidth="200" />
-                                    <ColumnDefinition MinWidth="80" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Enhance pointer precision" />
-
-                                <ui:ToggleSwitch
-                                    Name="Axis2MouseImprovePrecision"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                    Toggled="Axis2MouseImprovePrecision_Toggled" />
-                            </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
-
-
-
                             <!--  Invert Axis  -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -327,6 +299,41 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
                                         ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                            <!--  Deadzone  -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Deadzone" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, ElementName=Axis2MouseDeadzone, Mode=OneWay}" />
+                                    </Grid>
+
+                                    <Slider
+                                        x:Name="Axis2MouseDeadzone"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="1"
+                                        ValueChanged="Axis2MouseDeadzone_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
 

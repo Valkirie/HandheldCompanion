@@ -122,6 +122,8 @@ namespace HandheldCompanion.Controls
                     // skip specific scenarios
                     switch (mouseType)
                     {
+                        case MouseActionsType.LeftButton:
+                        case MouseActionsType.RightButton:
                         case MouseActionsType.MiddleButton:
                         case MouseActionsType.ScrollUp:
                         case MouseActionsType.ScrollDown:
@@ -138,8 +140,8 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
-                Axis2MouseImprovePrecision.IsOn = ((MouseActions)this.Actions).EnhancePrecision;
                 Axis2MouseInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
+                Axis2MouseDeadzone.Value = ((MouseActions)this.Actions).Deadzone;
             }
 
             base.Update();
@@ -285,21 +287,6 @@ namespace HandheldCompanion.Controls
             base.Update();
         }
 
-        private void Axis2MouseImprovePrecision_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (this.Actions is null)
-                return;
-
-            switch (this.Actions.ActionType)
-            {
-                case ActionType.Mouse:
-                    ((MouseActions)this.Actions).EnhancePrecision = Axis2MouseImprovePrecision.IsOn;
-                    break;
-            }
-
-            base.Update();
-        }
-
         private void Axis2MouseInvertAxis_Toggled(object sender, RoutedEventArgs e)
         {
             if (this.Actions is null)
@@ -313,6 +300,23 @@ namespace HandheldCompanion.Controls
             }
 
             base.Update();
+        }
+
+        private void Axis2MouseDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            {
+                if (this.Actions is null)
+                    return;
+
+                switch (this.Actions.ActionType)
+                {
+                    case ActionType.Mouse:
+                        ((MouseActions)this.Actions).Deadzone = (int)Axis2MouseDeadzone.Value;
+                        break;
+                }
+
+                base.Update();
+            }
         }
     }
 }

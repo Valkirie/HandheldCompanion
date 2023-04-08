@@ -12,16 +12,6 @@ namespace ControllerCommon.Controllers
         public ButtonState ButtonState = new();
         public AxisState AxisState = new();
 
-        // todo: move me and make me configurable !
-        [JsonIgnore]
-        public static readonly Dictionary<AxisLayoutFlags, short> AxisDeadzones = new()
-        {
-            { AxisLayoutFlags.RightThumb, Gamepad.RightThumbDeadZone },
-            { AxisLayoutFlags.LeftThumb, Gamepad.LeftThumbDeadZone },
-            { AxisLayoutFlags.L2, Gamepad.TriggerThreshold },
-            { AxisLayoutFlags.R2, Gamepad.TriggerThreshold },
-        };
-
         [JsonIgnore]
         public static readonly Dictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
         {
