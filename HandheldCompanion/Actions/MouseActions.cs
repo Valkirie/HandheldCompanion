@@ -39,7 +39,6 @@ namespace HandheldCompanion.Actions
         private int scrollAmountInClicks { get; set; } = 1;
 
         // settings
-        public bool EnhancePrecision { get; set; } = false;
         public float Sensivity { get; set; } = 25.0f;
         public float Deadzone { get; set; } = 25.0f;
         public bool AxisInverted { get; set; } = false;
