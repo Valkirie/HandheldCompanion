@@ -41,6 +41,7 @@ namespace HandheldCompanion.Actions
         // settings
         public bool EnhancePrecision { get; set; } = false;
         public float Sensivity { get; set; } = 25.0f;
+        public float Deadzone { get; set; } = 25.0f;
         public bool AxisInverted { get; set; } = false;
 
         public MouseActions()
@@ -163,7 +164,7 @@ namespace HandheldCompanion.Actions
                     {
                         // convert to <0.0-1.0> values
                         deltaVector = layout.vector / short.MaxValue;
-                        float deadzone = (float)ControllerState.AxisDeadzones[layout.flags] / short.MaxValue;
+                        float deadzone = Deadzone / 100.0f;
 
                         // apply deadzone
                         if (deltaVector.Length() < deadzone)

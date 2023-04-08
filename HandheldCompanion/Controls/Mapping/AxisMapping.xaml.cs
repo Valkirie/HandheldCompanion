@@ -141,6 +141,7 @@ namespace HandheldCompanion.Controls
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
                 Axis2MouseInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
+                Axis2MouseDeadzone.Value = ((MouseActions)this.Actions).Deadzone;
             }
 
             base.Update();
@@ -299,6 +300,23 @@ namespace HandheldCompanion.Controls
             }
 
             base.Update();
+        }
+
+        private void Axis2MouseDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            {
+                if (this.Actions is null)
+                    return;
+
+                switch (this.Actions.ActionType)
+                {
+                    case ActionType.Mouse:
+                        ((MouseActions)this.Actions).Deadzone = (int)Axis2MouseDeadzone.Value;
+                        break;
+                }
+
+                base.Update();
+            }
         }
     }
 }
