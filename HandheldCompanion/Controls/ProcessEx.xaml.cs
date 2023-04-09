@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using static HandheldCompanion.Managers.EnergyManager;
@@ -89,9 +90,12 @@ namespace HandheldCompanion.Controls
             this.Filter = filter;
             this.Platform = PlatformManager.GetPlatform(Process);
 
-            var icon = Icon.ExtractAssociatedIcon(Path);
-            if (icon is not null)
-                ProcessIcon.Source = icon.ToImageSource();
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
+            {
+                var icon = Icon.ExtractAssociatedIcon(Path);
+                if (icon is not null)
+                    ProcessIcon.Source = icon.ToImageSource();
+            }
         }
 
         public int GetProcessId()
