@@ -118,6 +118,9 @@ namespace HandheldCompanion.Views.Pages
                     case "CloseMinimises":
                         Toggle_CloseMinimizes.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "DesktopProfileOnStart":
+                        Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
+                        break;
                     case "ToastEnable":
                         Toggle_Notification.IsOn = Convert.ToBoolean(value);
                         break;
@@ -236,6 +239,14 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("CloseMinimises", Toggle_CloseMinimizes.IsOn);
+        }
+
+        private void Toggle_DesktopProfileOnStart_Toggled(object? sender, System.Windows.RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
         }
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
