@@ -127,6 +127,32 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
+                            <!--  Rotate Axis  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200" />
+                                    <ColumnDefinition MinWidth="80" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Rotate axis 90 degrees" />
+
+                                <ui:ToggleSwitch
+                                    Name="Axis2AxisRotateAxis"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Axis2AxisRotateAxis_Toggled" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
                             <!--  Inner deadzone  -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">

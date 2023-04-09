@@ -108,6 +108,7 @@ namespace HandheldCompanion.Controls
                 // settings
                 Axis2AxisImproveCircularity.IsOn = ((AxisActions)this.Actions).ImproveCircularity;
                 Axis2AxisInvertAxis.IsOn = ((AxisActions)this.Actions).AxisInverted;
+                Axis2AxisRotateAxis.IsOn = ((AxisActions)this.Actions).AxisRotated;
                 Axis2AxisInnerDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
                 Axis2AxisOuterDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
                 Axis2AxisAntiDeadzone.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
@@ -206,6 +207,21 @@ namespace HandheldCompanion.Controls
             {
                 case ActionType.Joystick:
                     ((AxisActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
+                    break;
+            }
+
+            base.Update();
+        }
+
+        private void Axis2AxisRotateAxis_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null)
+                return;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Joystick:
+                    ((AxisActions)this.Actions).AxisRotated = Axis2AxisRotateAxis.IsOn;
                     break;
             }
 

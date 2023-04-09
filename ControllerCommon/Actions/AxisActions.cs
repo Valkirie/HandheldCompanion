@@ -14,6 +14,7 @@ namespace ControllerCommon.Actions
 
         // Axis to axis
         public bool AxisInverted { get; set; } = false;
+        public bool AxisRotated { get; set; } = false;
         public int AxisDeadZoneInner { get; set; } = 0;
         public int AxisDeadZoneOuter { get; set; } = 0;
         public float AxisAntiDeadZone { get; set; } = 0.0f;
@@ -55,7 +56,7 @@ namespace ControllerCommon.Actions
             if (ImproveCircularity)
                 layout.vector = InputUtils.ImproveCircularity(layout.vector);
 
-            this.Vector = layout.vector * (AxisInverted ? -1.0f : 1.0f);
+            this.Vector = (AxisRotated ? new(layout.vector.Y, -layout.vector.X) : layout.vector) * (AxisInverted ? -1.0f : 1.0f);
         }
 
         public Vector2 GetValue()
