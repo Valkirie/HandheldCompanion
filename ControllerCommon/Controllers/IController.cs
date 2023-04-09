@@ -237,7 +237,7 @@ namespace ControllerCommon.Controllers
             foreach (var button in State.Buttons)
                 InjectedButtons[button] = IsKeyDown;
 
-            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", State, IsKeyDown, IsKeyUp, ToString());
+            LogManager.LogDebug("Injecting {0} (IsKeyDown:{1}) (IsKeyUp:{2}) to {3}", string.Join(',', State.Buttons), IsKeyDown, IsKeyUp, ToString());
         }
 
         public virtual void SetVibrationStrength(double value, bool rumble)

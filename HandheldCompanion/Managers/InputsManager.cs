@@ -196,9 +196,12 @@ namespace HandheldCompanion.Managers
                             return;
 
                         var layout = LayoutManager.GetCurrent();
-                        foreach (ButtonFlags button in chord.state.Buttons)
-                            if (layout.ButtonLayout.ContainsKey(button))
-                                return;
+                        if (layout is not null)
+                        {
+                            foreach (ButtonFlags button in chord.state.Buttons)
+                                if (layout.ButtonLayout.ContainsKey(button))
+                                    return;
+                        }
 
                         List<KeyCode> chords = chord.chords[IsKeyDown];
                         LogManager.LogDebug("Released: KeyCodes: {0}, IsKeyDown: {1}", string.Join(',', chords), IsKeyDown);
