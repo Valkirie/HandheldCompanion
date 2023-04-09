@@ -15,8 +15,8 @@ namespace ControllerService
 {
     public static class IMU
     {
-        public static Dictionary<XInputSensorFlags, Vector3> Acceleration = new();
-        public static Dictionary<XInputSensorFlags, Vector3> AngularVelocity = new();
+        public static SortedDictionary<XInputSensorFlags, Vector3> Acceleration = new();
+        public static SortedDictionary<XInputSensorFlags, Vector3> AngularVelocity = new();
         public static Vector3 IMU_Angle = new();
 
         public static IMUGyrometer Gyrometer;

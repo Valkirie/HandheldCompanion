@@ -10,8 +10,8 @@ namespace ControllerCommon
     [Serializable]
     public class Layout : ICloneable, IDisposable
     {
-        public Dictionary<ButtonFlags, IActions> ButtonLayout { get; set; } = new();
-        public Dictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
+        public SortedDictionary<ButtonFlags, IActions> ButtonLayout { get; set; } = new();
+        public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
 
         #region events
         public event UpdatedEventHandler Updated;

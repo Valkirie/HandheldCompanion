@@ -89,11 +89,11 @@ namespace HandheldCompanion.Managers
                 }
 
                 // hotkey is outdated and using an unknown inputs hotkey
-                if (!InputsHotkeys.ContainsKey(hotkey.hotkeyId))
+                if (!InputsHotkeys.TryGetValue(hotkey.hotkeyId, out InputsHotkey foundHotkey))
                     continue;
 
                 // pull inputs hotkey
-                hotkey.SetInputsHotkey(InputsHotkeys[hotkey.hotkeyId]);
+                hotkey.SetInputsHotkey(foundHotkey);
                 hotkey.Draw();
 
                 if (!Hotkeys.ContainsKey(hotkey.hotkeyId))

@@ -44,7 +44,7 @@ namespace ControllerCommon
     public class Profile : ICloneable, IComparable
     {
         // todo: move me out of here !
-        public static Dictionary<MotionInput, string> InputDescription = new()
+        public static readonly SortedDictionary<MotionInput, string> InputDescription = new()
         {
             { MotionInput.JoystickCamera, Properties.Resources.JoystickCameraDesc },
             { MotionInput.JoystickSteering, Properties.Resources.JoystickSteeringDesc },

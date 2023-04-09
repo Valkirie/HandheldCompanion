@@ -1,5 +1,6 @@
 using ControllerCommon.Inputs;
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -140,8 +141,8 @@ namespace HandheldCompanion.Models
             {
                 Material buttonMaterial = null;
 
-                if (ButtonMap.ContainsKey(button))
-                    foreach (var model3D in ButtonMap[button])
+                if (ButtonMap.TryGetValue(button, out List<Model3DGroup> map))
+                    foreach (var model3D in map)
                     {
                         switch (button)
                         {

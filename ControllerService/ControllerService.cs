@@ -604,7 +604,7 @@ namespace ControllerService
 
         public Dictionary<string, string> GetSettings()
         {
-            Dictionary<string, string> settings = new Dictionary<string, string>();
+            Dictionary<string, string> settings = new();
 
             foreach (string key in configuration.AppSettings.Settings.AllKeys)
                 settings.Add(key, configuration.AppSettings.Settings[key].Value);

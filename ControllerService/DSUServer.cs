@@ -404,8 +404,8 @@ namespace ControllerService
 
                     lock (clients)
                     {
-                        if (clients.ContainsKey(clientEP))
-                            clients[clientEP].RequestPadInfo(regFlags, idToReg, macToReg);
+                        if (clients.TryGetValue(clientEP, out ClientRequestTimes client))
+                            client.RequestPadInfo(regFlags, idToReg, macToReg);
                         else
                         {
                             var clientTimes = new ClientRequestTimes();
@@ -689,8 +689,8 @@ namespace ControllerService
                     else if ((padMeta.PadId < cl.Value.PadIdsTime.Length) &&
                              (now - cl.Value.PadIdsTime[(byte)padMeta.PadId]).TotalSeconds < TimeoutLimit)
                         clientsList.Add(cl.Key);
-                    else if (cl.Value.PadMacsTime.ContainsKey(padMeta.PadMacAddress) &&
-                             (now - cl.Value.PadMacsTime[padMeta.PadMacAddress]).TotalSeconds < TimeoutLimit)
+                    else if (cl.Value.PadMacsTime.TryGetValue(padMeta.PadMacAddress, out DateTime padTime) &&
+                             (now - padTime).TotalSeconds < TimeoutLimit)
                         clientsList.Add(cl.Key);
                     else //check if this client is totally dead, and remove it if so
                     {
