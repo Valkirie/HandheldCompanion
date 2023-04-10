@@ -107,8 +107,7 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2AxisImproveCircularity.IsOn = ((AxisActions)this.Actions).ImproveCircularity;
-                Axis2AxisInvertAxis.IsOn = ((AxisActions)this.Actions).AxisInverted;
-                Axis2AxisRotateAxis.IsOn = ((AxisActions)this.Actions).AxisRotated;
+                Axis2AxisRotation.Value = (((AxisActions)this.Actions).AxisInverted ? 180 : 0) + (((AxisActions)this.Actions).AxisRotated ? 90 : 0);
                 Axis2AxisInnerDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
                 Axis2AxisOuterDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
                 Axis2AxisAntiDeadzone.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
@@ -198,7 +197,7 @@ namespace HandheldCompanion.Controls
             }
         }
 
-        private void Axis2AxisInvertAxis_Toggled(object sender, RoutedEventArgs e)
+        private void Axis_Rotation_Slider_ValueChanged(object sender, RoutedEventArgs e)
         {
             if (this.Actions is null)
                 return;
@@ -206,22 +205,8 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Joystick:
-                    ((AxisActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
-                    break;
-            }
-
-            base.Update();
-        }
-
-        private void Axis2AxisRotateAxis_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (this.Actions is null)
-                return;
-
-            switch (this.Actions.ActionType)
-            {
-                case ActionType.Joystick:
-                    ((AxisActions)this.Actions).AxisRotated = Axis2AxisRotateAxis.IsOn;
+                    ((AxisActions)this.Actions).AxisInverted = (((int)Axis2AxisRotation.Value / 90) & 2) == 2;
+                    ((AxisActions)this.Actions).AxisRotated = (((int)Axis2AxisRotation.Value / 90) & 1) == 1;
                     break;
             }
 
