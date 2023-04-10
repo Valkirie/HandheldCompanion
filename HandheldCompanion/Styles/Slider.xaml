@@ -38,8 +38,8 @@
                     <Border
                         Background="{DynamicResource SliderOuterThumbBackground}"
                         BorderBrush="{DynamicResource SliderThumbBorderBrush}"
-                        CornerRadius="16"
-                        BorderThickness="0">
+                        BorderThickness="0"
+                        CornerRadius="16">
                         <Ellipse
                             x:Name="SliderInnerThumb"
                             Width="24"

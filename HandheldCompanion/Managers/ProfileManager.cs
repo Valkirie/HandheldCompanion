@@ -58,7 +58,7 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            // monitor profile file deletions
+            // monitor profile files
             profileWatcher = new FileSystemWatcher()
             {
                 Path = InstallPath,
@@ -82,7 +82,8 @@ namespace HandheldCompanion.Managers
                     Name = DefaultName,
                     Default = true,
                     Enabled = true,
-                    Layout = new Layout("Profile")
+                    Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
+                    LayoutTitle = LayoutTemplate.DefaultLayout.Name,
                 };
 
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);

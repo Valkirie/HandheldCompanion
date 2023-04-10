@@ -62,6 +62,7 @@ namespace ControllerCommon
         public bool Enabled { get; set; }
         public bool Default { get; set; }
 
+        public string LayoutTitle { get; set; } = string.Empty;
         public bool LayoutEnabled { get; set; } = false;
         public Layout Layout { get; set; } = new();
 
@@ -135,7 +136,7 @@ namespace ControllerCommon
             // enable the below variables when profile is created
             this.Enabled = true;
             this.MotionEnabled = true;
-            this.Layout = new("Profile");
+            this.Layout = new(true);
         }
 
         public float GetSensitivityX()

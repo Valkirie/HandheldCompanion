@@ -20,7 +20,7 @@ namespace ControllerCommon
 
         public Layout() { }
 
-        public Layout(string name) : this()
+        public Layout(bool fill) : this()
         {
             // generic button mapping
             foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))

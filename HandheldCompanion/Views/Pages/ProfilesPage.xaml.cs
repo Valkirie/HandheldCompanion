@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using System.Xml.Linq;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
@@ -622,14 +623,20 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            // update layout page with current layout
-            // memory pointer
-            LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
-            layoutTemplate.Layout = currentProfile.Layout.Clone() as Layout;
-            layoutTemplate.Executable = currentProfile.Executable;
+            // prepare layout template
+            // todo: localize me
+            string name = $"{currentProfile.LayoutTitle} - {currentProfile.Name}";
+            LayoutTemplate layoutTemplate = new LayoutTemplate(name, "Your modified layout for this executable.", Environment.UserName, false, true)
+            {
+                Layout = currentProfile.Layout.Clone() as Layout,
+                Executable = currentProfile.Executable,
+            };
             layoutTemplate.Layout.Updated += Layout_Updated;
 
+            // update layout page with layout template
             MainWindow.layoutPage.UpdateLayout(layoutTemplate);
+
+            // navigate
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
 

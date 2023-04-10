@@ -96,7 +96,7 @@ namespace HandheldCompanion.Controls
 
             this.ControllerType = deviceType;
 
-            this.Layout = new("Default");
+            this.Layout = new(true);
 
             switch (this.Name)
             {

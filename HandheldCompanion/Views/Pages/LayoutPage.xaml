@@ -118,7 +118,7 @@
                             Checked="CheckBoxDeviceLayouts_Checked"
                             IsChecked="True"
                             Unchecked="CheckBoxDeviceLayouts_Checked">
-                            Show device layouts only
+                            Show current controller layouts only
                         </CheckBox>
 
                         <ui:SimpleStackPanel
@@ -136,12 +136,67 @@
                             <!--  Implement me  -->
                             <Button
                                 Name="ButtonLayoutSettings"
-                                Click="ButtonLayoutSettings_Click"
-                                IsEnabled="False">
-                                <ui:SymbolIcon Symbol="Setting" />
+                                Height="31"
+                                Content="&#xE713;"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}">
+                                <ui:FlyoutService.Flyout>
+                                    <ui:Flyout AreOpenCloseAnimationsEnabled="True" Placement="Left">
+                                        <ui:SimpleStackPanel Width="400" Spacing="24">
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Export layout" />
+
+                                            <ui:SimpleStackPanel Spacing="6">
+                                                <TextBox
+                                                    Name="LayoutTitle"
+                                                    HorizontalAlignment="Stretch"
+                                                    ui:ControlHelper.Header="Layout title" />
+                                                <TextBox
+                                                    Name="LayoutDescription"
+                                                    HorizontalAlignment="Stretch"
+                                                    ui:ControlHelper.Header="Layout description" />
+                                                <TextBox
+                                                    Name="LayoutAuthor"
+                                                    HorizontalAlignment="Stretch"
+                                                    ui:ControlHelper.Header="Layout author" />
+                                                <CheckBox Content="Export for current controller" />
+
+                                                <!--  Separator  -->
+                                                <Separator
+                                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                    BorderThickness="0,1,0,0"
+                                                    Opacity="0.25" />
+
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="5*" />
+                                                        <ColumnDefinition Width="0.5*" />
+                                                        <ColumnDefinition Width="5*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Button
+                                                        Name="LayoutExportButton"
+                                                        Grid.Column="0"
+                                                        HorizontalAlignment="Stretch"
+                                                        Click="LayoutExportButton_Click"
+                                                        Content="Confirm" />
+                                                    <Button
+                                                        Grid.Column="2"
+                                                        HorizontalAlignment="Stretch"
+                                                        Content="Cancel" />
+                                                </Grid>
+                                            </ui:SimpleStackPanel>
+                                        </ui:SimpleStackPanel>
+                                    </ui:Flyout>
+                                </ui:FlyoutService.Flyout>
                             </Button>
                         </ui:SimpleStackPanel>
                     </Grid>
+
+                    <!--  Separator  -->
+                    <Separator
+                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        BorderThickness="0,1,0,0"
+                        Opacity="0.25" />
+
                 </ui:SimpleStackPanel>
 
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Current Layout" />

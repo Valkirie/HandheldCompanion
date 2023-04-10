@@ -32,6 +32,8 @@ namespace HandheldCompanion.Managers
 
         private static ControllerState outputState = new();
 
+        public static FileSystemWatcher layoutWatcher { get; set; }
+
         public static string InstallPath;
         private static bool IsInitialized;
 
@@ -49,11 +51,27 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(InstallPath))
                 Directory.CreateDirectory(InstallPath);
 
+            // monitor layout files
+            layoutWatcher = new FileSystemWatcher()
+            {
+                Path = InstallPath,
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = true,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
+            };
+            layoutWatcher.Created += LayoutWatcher_Created;
+
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Updated += ProfileManager_Updated;
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        }
+
+        private static void LayoutWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            ProcessLayoutTemplate(e.FullPath);
         }
 
         public static void Start()
@@ -125,6 +143,7 @@ namespace HandheldCompanion.Managers
                     break;
 
                 default:
+                    // todo: implement deduplication
                     Templates.Add(layoutTemplate);
                     break;
             }
@@ -175,7 +194,7 @@ namespace HandheldCompanion.Managers
             return currentLayout;
         }
 
-        private static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
+        public static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
         {
             string jsonString = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, new JsonSerializerSettings
             {

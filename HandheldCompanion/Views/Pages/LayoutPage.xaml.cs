@@ -5,14 +5,17 @@ using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Application = System.Windows.Application;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
@@ -35,6 +38,7 @@ namespace HandheldCompanion.Views.Pages
 
         private string preNavItemTag;
 
+        private LayoutTemplate currentTemplate = new();
         private Layout currentLayout = new();
 
         protected object updateLock = new();
@@ -211,10 +215,14 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateLayout(LayoutTemplate layoutTemplate)
         {
             // update current layout
+            currentTemplate = layoutTemplate;
             currentLayout = layoutTemplate.Layout;
 
             // manage visibility
             LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
+            LayoutTitle.Text = layoutTemplate.Name;
+            LayoutDescription.Text = layoutTemplate.Description;
+            LayoutAuthor.Text = layoutTemplate.Author;
 
             UpdatePages();
         }
@@ -358,16 +366,13 @@ namespace HandheldCompanion.Views.Pages
                         var newLayout = layoutTemplate.Layout.Clone() as Layout;
                         currentLayout.AxisLayout = newLayout.AxisLayout;
                         currentLayout.ButtonLayout = newLayout.ButtonLayout;
+                        LayoutTitle.Text = layoutTemplate.Name;
+                        LayoutDescription.Text = layoutTemplate.Description;
 
                         UpdatePages();
                     }
                     break;
             }
-        }
-
-        private void ButtonLayoutSettings_Click(object sender, RoutedEventArgs e)
-        {
-            // implement me
         }
 
         private void cB_Layouts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -381,6 +386,33 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("LayoutFilterOnDevice", CheckBoxDeviceLayouts.IsChecked);
+        }
+
+        private void LayoutExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutTemplate newLayout = new()
+            {
+                Layout = currentLayout,
+                Name = LayoutTitle.Text,
+                Description = LayoutDescription.Text,
+                Author = LayoutAuthor.Text,
+                Executable = currentTemplate.Executable
+            };
+
+            if ((bool)CheckBoxDeviceLayouts.IsChecked)
+                newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
+            
+            System.Windows.Forms.SaveFileDialog saveFileDialog = new()
+            {
+                FileName = $"{newLayout.Name}_{newLayout.Author}",
+                AddExtension = true,
+                DefaultExt = "json",
+                Filter = "Layout Files (*.json)|*.json",
+                InitialDirectory = LayoutManager.InstallPath,
+            };
+
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                LayoutManager.SerializeLayoutTemplate(newLayout);
         }
     }
 }
