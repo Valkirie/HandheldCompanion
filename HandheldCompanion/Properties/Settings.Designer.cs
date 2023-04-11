@@ -802,5 +802,17 @@ namespace HandheldCompanion.Properties {
                 this["MainWindowIsPaneOpen"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DesktopProfileOnStart {
+            get {
+                return ((bool)(this["DesktopProfileOnStart"]));
+            }
+            set {
+                this["DesktopProfileOnStart"] = value;
+            }
+        }
     }
 }

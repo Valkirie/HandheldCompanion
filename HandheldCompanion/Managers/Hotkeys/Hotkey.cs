@@ -143,7 +143,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        public void Refresh()
+        public void Draw()
         {
             // update name
             if (string.IsNullOrEmpty(Name) || inputsHotkey.hotkeyType != InputsHotkeyType.Custom)

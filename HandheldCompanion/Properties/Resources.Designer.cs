@@ -2763,7 +2763,25 @@ namespace HandheldCompanion.Properties {
                 return ResourceManager.GetString("SettingsPage_CloseMinimizesDesc", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Enable desktop profile on start.
+        /// </summary>
+        public static string SettingsPage_DesktopProfileOnStart {
+            get {
+                return ResourceManager.GetString("SettingsPage_DesktopProfileOnStart", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The desktop profile will be automatically enabled on application start.
+        /// </summary>
+        public static string SettingsPage_DesktopProfileOnStartDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_DesktopProfileOnStartDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>

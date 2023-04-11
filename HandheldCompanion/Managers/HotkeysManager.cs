@@ -83,7 +83,10 @@ namespace HandheldCompanion.Managers
 
                 // no hotkey found or failed parsing
                 if (hotkey is null)
+                {
                     hotkey = new Hotkey(Id);
+                    hotkey.IsPinned = inputsHotkey.DefaultPinned;
+                }
 
                 // hotkey is outdated and using an unknown inputs hotkey
                 if (!InputsHotkeys.ContainsKey(hotkey.hotkeyId))
@@ -91,7 +94,7 @@ namespace HandheldCompanion.Managers
 
                 // pull inputs hotkey
                 hotkey.SetInputsHotkey(InputsHotkeys[hotkey.hotkeyId]);
-                hotkey.Refresh();
+                hotkey.Draw();
 
                 if (!Hotkeys.ContainsKey(hotkey.hotkeyId))
                     Hotkeys.Add(hotkey.hotkeyId, hotkey);

@@ -213,6 +213,10 @@ namespace HandheldCompanion.Views
                 case "ToastEnable":
                     ToastManager.IsEnabled = Convert.ToBoolean(value);
                     break;
+                case "DesktopProfileOnStart":
+                    bool DesktopLayout = Convert.ToBoolean(value);
+                    SettingsManager.SetProperty("shortcutDesktopLayout", DesktopLayout, false, true);
+                    break;
             }
 
             if (PipeClient.IsConnected)
