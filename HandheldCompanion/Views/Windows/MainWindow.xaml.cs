@@ -185,10 +185,6 @@ namespace HandheldCompanion.Views
             foreach (Manager manager in _managers)
                 new Thread(manager.Start).Start();
 
-            // do this before SettingsManager.Start() so we have the correct profile on startup
-            if (SettingsManager.GetBoolean("DesktopProfileOnStart"))
-                SettingsManager.SetProperty("shortcutDesktopLayout", true, false, true);
-
             // start setting last
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Start();
@@ -216,6 +212,10 @@ namespace HandheldCompanion.Views
             {
                 case "ToastEnable":
                     ToastManager.IsEnabled = Convert.ToBoolean(value);
+                    break;
+                case "DesktopProfileOnStart":
+                    bool DesktopLayout = Convert.ToBoolean(value);
+                    SettingsManager.SetProperty("shortcutDesktopLayout", DesktopLayout, false, true);
                     break;
             }
 
