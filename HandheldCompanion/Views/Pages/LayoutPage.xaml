@@ -140,7 +140,11 @@
                                 Content="&#xE713;"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}">
                                 <ui:FlyoutService.Flyout>
-                                    <ui:Flyout AreOpenCloseAnimationsEnabled="True" Placement="Left">
+                                    <ui:Flyout
+                                        x:Name="LayoutFlyout"
+                                        AreOpenCloseAnimationsEnabled="True"
+                                        Opening="Flyout_Opening"
+                                        Placement="Left">
                                         <ui:SimpleStackPanel Width="400" Spacing="24">
                                             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Export layout" />
 
@@ -179,8 +183,10 @@
                                                         Click="LayoutExportButton_Click"
                                                         Content="Confirm" />
                                                     <Button
+                                                        Name="LayoutCancelButton"
                                                         Grid.Column="2"
                                                         HorizontalAlignment="Stretch"
+                                                        Click="LayoutCancelButton_Click"
                                                         Content="Cancel" />
                                                 </Grid>
                                             </ui:SimpleStackPanel>

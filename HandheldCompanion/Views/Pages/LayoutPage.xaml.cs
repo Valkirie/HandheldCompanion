@@ -225,20 +225,9 @@ namespace HandheldCompanion.Views.Pages
             currentTemplate = layoutTemplate;
             currentLayout = layoutTemplate.Layout;
 
-            UpdateLabels();
-            UpdatePages();
-        }
-
-        private void UpdateLabels()
-        {
-            // manage visibility
             LayoutPickerPanel.Visibility = currentTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
-            LayoutTitle.Text = $"{currentTemplate.Name} - {currentTemplate.Product}";
-            LayoutDescription.Text = currentTemplate.Description;
-            LayoutAuthor.Text = currentTemplate.Author;
 
-            if (currentTemplate.IsCommunity)
-                ProfilesPage.currentProfile.LayoutTitle = currentTemplate.Name;
+            UpdatePages();
         }
 
         private void UpdatePages()
@@ -387,7 +376,8 @@ namespace HandheldCompanion.Views.Pages
                         currentTemplate.Name = layoutTemplate.Name;
                         currentTemplate.Description = layoutTemplate.Description;
 
-                        UpdateLabels();
+                        ProfilesPage.currentProfile.LayoutTitle = currentTemplate.Name;
+
                         UpdatePages();
                     }
                     break;
@@ -435,6 +425,19 @@ namespace HandheldCompanion.Views.Pages
 
             if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 LayoutManager.SerializeLayoutTemplate(newLayout);
+        }
+
+        private void Flyout_Opening(object sender, object e)
+        {
+            // manage visibility
+            LayoutTitle.Text = $"{currentTemplate.Name} - {currentTemplate.Product}";
+            LayoutDescription.Text = currentTemplate.Description;
+            LayoutAuthor.Text = currentTemplate.Author;
+        }
+
+        private void LayoutCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutFlyout.Hide();
         }
     }
 }
