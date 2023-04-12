@@ -174,10 +174,5 @@ namespace ControllerCommon
             Profile profile = (Profile)obj;
             return profile.Name.CompareTo(Name);
         }
-
-        public string GetLayoutName()
-        {
-            return $"{LayoutTitle} - {Name}";
-        }
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using static PInvoke.Kernel32;
 using Layout = ControllerCommon.Layout;
 
 namespace HandheldCompanion.Managers
@@ -214,7 +215,13 @@ namespace HandheldCompanion.Managers
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            string settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
+            string settingsPath = string.Empty;
+            
+            if (layoutTemplate.IsTemplate)
+                settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
+            else
+                settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}_{layoutTemplate.Product}_{layoutTemplate.Author}.json");
+
             File.WriteAllText(settingsPath, jsonString);
         }
 

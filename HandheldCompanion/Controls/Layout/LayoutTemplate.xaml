@@ -28,12 +28,19 @@
         <StackPanel Grid.Column="1">
             <Grid>
                 <TextBlock Name="_Author" HorizontalAlignment="Right">HandheldCompanion</TextBlock>
-                <TextBlock
-                    Name="_Name"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource BaseTextBlockStyle}">
-                    Gamepad
-                </TextBlock>
+                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock
+                        Name="_Product"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Visibility="Collapsed" />
+                    <TextBlock
+                        Name="_Name"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource BaseTextBlockStyle}">
+                        Name
+                    </TextBlock>
+                </ui:SimpleStackPanel>
             </Grid>
             <TextBlock
                 Name="_Description"

@@ -60,6 +60,23 @@ namespace HandheldCompanion.Controls
         }
 
         [JsonProperty]
+        public string Product
+        {
+            get
+            {
+                return _Product.Text;
+            }
+
+            set
+            {
+                _Product.Text = value;
+
+                if (!string.IsNullOrEmpty(value))
+                    _Product.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        [JsonProperty]
         public string Executable { get; set; } = string.Empty;
 
         [JsonProperty]

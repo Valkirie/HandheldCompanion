@@ -624,10 +624,11 @@ namespace HandheldCompanion.Views.Pages
         {
             // prepare layout template
             // todo: localize me
-            LayoutTemplate layoutTemplate = new LayoutTemplate(currentProfile.GetLayoutName(), "Your modified layout for this executable.", Environment.UserName, false, true)
+            LayoutTemplate layoutTemplate = new LayoutTemplate(currentProfile.LayoutTitle, "Your modified layout for this executable.", Environment.UserName, false, true)
             {
                 Layout = currentProfile.Layout.Clone() as Layout,
                 Executable = currentProfile.Executable,
+                Product = currentProfile.Name,
             };
             layoutTemplate.Layout.Updated += Layout_Updated;
 

@@ -123,7 +123,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 if (layoutTemplate.IsTemplate)
                     idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates) + 1;
-                else if (layoutTemplate.IsCommunity)
+                else
                     idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity) + 1;
 
                 cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
@@ -225,20 +225,27 @@ namespace HandheldCompanion.Views.Pages
             currentTemplate = layoutTemplate;
             currentLayout = layoutTemplate.Layout;
 
-            // manage visibility
-            LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
-            LayoutTitle.Text = layoutTemplate.Name;
-            LayoutDescription.Text = layoutTemplate.Description;
-            LayoutAuthor.Text = layoutTemplate.Author;
-
+            UpdateLabels();
             UpdatePages();
+        }
+
+        private void UpdateLabels()
+        {
+            // manage visibility
+            LayoutPickerPanel.Visibility = currentTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
+            LayoutTitle.Text = $"{currentTemplate.Name} - {currentTemplate.Product}";
+            LayoutDescription.Text = currentTemplate.Description;
+            LayoutAuthor.Text = currentTemplate.Author;
+
+            if (currentTemplate.IsCommunity)
+                ProfilesPage.currentProfile.LayoutTitle = currentTemplate.Name;
         }
 
         private void UpdatePages()
         {
             if (Monitor.TryEnter(updateLock))
             {
-                // cascade update to (sub)pages
+                // cascade update to (sub)pages (async)
                 Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, page =>
                 {
                     page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
@@ -359,8 +366,8 @@ namespace HandheldCompanion.Views.Pages
             LayoutTemplate layoutTemplate = (LayoutTemplate)parent.Content;
 
             Task<ContentDialogResult> result = Dialog.ShowAsync(
-                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, layoutTemplate.Name),
-                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, layoutTemplate.Name),
+                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, currentTemplate.Name),
+                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, currentTemplate.Name),
                 ContentDialogButton.Primary,
                 $"{Properties.Resources.ProfilesPage_Cancel}",
                 $"{Properties.Resources.ProfilesPage_Yes}");
@@ -376,11 +383,11 @@ namespace HandheldCompanion.Views.Pages
                         currentLayout.AxisLayout = newLayout.AxisLayout;
                         currentLayout.ButtonLayout = newLayout.ButtonLayout;
 
-                        LayoutDescription.Text = layoutTemplate.Description;
+                        // update template
+                        currentTemplate.Name = layoutTemplate.Name;
+                        currentTemplate.Description = layoutTemplate.Description;
 
-                        ProfilesPage.currentProfile.LayoutTitle = layoutTemplate.Name;
-                        LayoutTitle.Text = ProfilesPage.currentProfile.GetLayoutName();
-
+                        UpdateLabels();
                         UpdatePages();
                     }
                     break;
@@ -408,7 +415,10 @@ namespace HandheldCompanion.Views.Pages
                 Name = currentTemplate.Name,
                 Description = currentTemplate.Description,
                 Author = currentTemplate.Author,
-                Executable = currentTemplate.Executable
+                Executable = currentTemplate.Executable,
+                Product = ProfilesPage.currentProfile.Name,
+                IsCommunity = true,
+                IsTemplate = false
             };
 
             if ((bool)CheckBoxDeviceLayouts.IsChecked)
@@ -416,7 +426,7 @@ namespace HandheldCompanion.Views.Pages
             
             System.Windows.Forms.SaveFileDialog saveFileDialog = new()
             {
-                FileName = $"{newLayout.Name}_{newLayout.Author}",
+                FileName = $"{newLayout.Name}_{newLayout.Product}_{newLayout.Author}",
                 AddExtension = true,
                 DefaultExt = "json",
                 Filter = "Layout Files (*.json)|*.json",
