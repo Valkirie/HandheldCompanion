@@ -77,6 +77,8 @@ namespace HandheldCompanion.Controls
         }
 
         [JsonProperty]
+        public Guid Guid { get; set; } = Guid.NewGuid();
+        [JsonProperty]
         public string Executable { get; set; } = string.Empty;
 
         [JsonProperty]

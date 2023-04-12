@@ -1,3 +1,4 @@
+using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
@@ -5,18 +6,14 @@ using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using static HandheldCompanion.Managers.EnergyManager;
 using Application = System.Windows.Application;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
@@ -115,18 +112,47 @@ namespace HandheldCompanion.Views.Pages
 
         private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
         {
-            // Get template separator index
-            int idx = 0;
-
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (layoutTemplate.IsTemplate)
-                    idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates) + 1;
-                else
-                    idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity) + 1;
+                // Get template separator index
+                int idx = -1;
 
-                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
+                // search if we already have this template listed
+                foreach (object item in cB_Layouts.Items)
+                {
+                    if (item.GetType() != typeof(ComboBoxItem))
+                        continue;
+
+                    // get template
+                    ComboBoxItem parent = (ComboBoxItem)item;
+                    if (parent.Content.GetType() != typeof(LayoutTemplate))
+                        continue;
+
+                    LayoutTemplate template = (LayoutTemplate)parent.Content;
+                    if (template.Guid.Equals(layoutTemplate.Guid))
+                    {
+                        idx = cB_Layouts.Items.IndexOf(parent);
+                        break;
+                    }
+                }
+
+                if (idx != -1)
+                {
+                    // found it
+                    cB_Layouts.Items[idx] = new ComboBoxItem() { Content = layoutTemplate };
+                }
+                else
+                {
+                    // new entry
+                    if (layoutTemplate.IsTemplate)
+                        idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates) + 1;
+                    else
+                        idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity) + 1;
+
+                    cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
+                }
+
                 cB_Layouts.Items.Refresh();
             });
         }
@@ -375,6 +401,7 @@ namespace HandheldCompanion.Views.Pages
                         // update template
                         currentTemplate.Name = layoutTemplate.Name;
                         currentTemplate.Description = layoutTemplate.Description;
+                        currentTemplate.Guid = layoutTemplate.Guid; // not needed
 
                         ProfilesPage.currentProfile.LayoutTitle = currentTemplate.Name;
 
@@ -414,7 +441,7 @@ namespace HandheldCompanion.Views.Pages
             if ((bool)CheckBoxDeviceLayouts.IsChecked)
                 newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
             
-            System.Windows.Forms.SaveFileDialog saveFileDialog = new()
+            /* System.Windows.Forms.SaveFileDialog saveFileDialog = new()
             {
                 FileName = $"{newLayout.Name}_{newLayout.Product}_{newLayout.Author}",
                 AddExtension = true,
@@ -423,8 +450,17 @@ namespace HandheldCompanion.Views.Pages
                 InitialDirectory = LayoutManager.InstallPath,
             };
 
-            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                LayoutManager.SerializeLayoutTemplate(newLayout);
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) */
+            LayoutManager.SerializeLayoutTemplate(newLayout);
+
+            // close flyout
+            LayoutFlyout.Hide();
+
+            // display message
+            // todo: localize me
+            _ = Dialog.ShowAsync("Layout template updated",
+                             $"{currentTemplate.Name} was updated.",
+                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         private void Flyout_Opening(object sender, object e)
