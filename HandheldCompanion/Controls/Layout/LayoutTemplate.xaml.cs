@@ -15,7 +15,7 @@ namespace HandheldCompanion.Controls
     /// </summary>
     /// 
     [JsonObject(MemberSerialization.OptIn)]
-    public partial class LayoutTemplate : UserControl
+    public partial class LayoutTemplate : UserControl, IComparable
     {
         [JsonProperty]
         public string Author
@@ -213,6 +213,12 @@ namespace HandheldCompanion.Controls
         private void Layout_Updated(Layout layout)
         {
             Updated?.Invoke(this);
+        }
+
+        public int CompareTo(object obj)
+        {
+            LayoutTemplate profile = (LayoutTemplate)obj;
+            return profile.Name.CompareTo(Name);
         }
 
         public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true, false);

@@ -268,8 +268,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     Profile profile = new Profile(path);
-
-                    // set default value(s)
+                    profile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
                     profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                     bool exists = false;
@@ -625,8 +624,7 @@ namespace HandheldCompanion.Views.Pages
         {
             // prepare layout template
             // todo: localize me
-            string name = $"{currentProfile.LayoutTitle} - {currentProfile.Name}";
-            LayoutTemplate layoutTemplate = new LayoutTemplate(name, "Your modified layout for this executable.", Environment.UserName, false, true)
+            LayoutTemplate layoutTemplate = new LayoutTemplate(currentProfile.GetLayoutName(), "Your modified layout for this executable.", Environment.UserName, false, true)
             {
                 Layout = currentProfile.Layout.Clone() as Layout,
                 Executable = currentProfile.Executable,

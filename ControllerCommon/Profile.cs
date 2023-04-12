@@ -136,7 +136,6 @@ namespace ControllerCommon
             // enable the below variables when profile is created
             this.Enabled = true;
             this.MotionEnabled = true;
-            this.Layout = new(true);
         }
 
         public float GetSensitivityX()
@@ -174,6 +173,11 @@ namespace ControllerCommon
         {
             Profile profile = (Profile)obj;
             return profile.Name.CompareTo(Name);
+        }
+
+        public string GetLayoutName()
+        {
+            return $"{LayoutTitle} - {Name}";
         }
     }
 }

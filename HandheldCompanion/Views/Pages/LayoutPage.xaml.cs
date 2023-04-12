@@ -8,6 +8,7 @@ using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using static HandheldCompanion.Managers.EnergyManager;
 using Application = System.Windows.Application;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
@@ -92,10 +94,13 @@ namespace HandheldCompanion.Views.Pages
                 axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
             }
 
+            LayoutManager.Updated += LayoutManager_Updated;
             LayoutManager.Initialized += LayoutManager_Initialized;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // auto-sort
+            // cB_Layouts.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)
@@ -105,23 +110,25 @@ namespace HandheldCompanion.Views.Pages
 
         private void LayoutManager_Initialized()
         {
-            // Get template separator index
-            int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates.Where(a => a.IsTemplate))
-            {
-                idx++;
-                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
-            }
-
-            // Get community separator index
-            idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity);
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates.Where(a => a.IsCommunity))
-            {
-                idx++;
-                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
-            }
-
             RefreshLayoutList();
+        }
+
+        private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
+        {
+            // Get template separator index
+            int idx = 0;
+
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (layoutTemplate.IsTemplate)
+                    idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates) + 1;
+                else if (layoutTemplate.IsCommunity)
+                    idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity) + 1;
+
+                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
+                cB_Layouts.Items.Refresh();
+            });
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
@@ -236,7 +243,7 @@ namespace HandheldCompanion.Views.Pages
                     page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
 
                 // clear layout selection
-                cB_Layouts.SelectedIndex = -1;
+                cB_Layouts.SelectedValue = null;
 
                 Monitor.Exit(updateLock);
 
@@ -366,8 +373,11 @@ namespace HandheldCompanion.Views.Pages
                         var newLayout = layoutTemplate.Layout.Clone() as Layout;
                         currentLayout.AxisLayout = newLayout.AxisLayout;
                         currentLayout.ButtonLayout = newLayout.ButtonLayout;
-                        LayoutTitle.Text = layoutTemplate.Name;
+
                         LayoutDescription.Text = layoutTemplate.Description;
+
+                        ProfilesPage.currentProfile.LayoutTitle = layoutTemplate.Name;
+                        LayoutTitle.Text = ProfilesPage.currentProfile.GetLayoutName();
 
                         UpdatePages();
                     }
@@ -393,9 +403,9 @@ namespace HandheldCompanion.Views.Pages
             LayoutTemplate newLayout = new()
             {
                 Layout = currentLayout,
-                Name = LayoutTitle.Text,
-                Description = LayoutDescription.Text,
-                Author = LayoutAuthor.Text,
+                Name = currentTemplate.Name,
+                Description = currentTemplate.Description,
+                Author = currentTemplate.Author,
                 Executable = currentTemplate.Executable
             };
 
