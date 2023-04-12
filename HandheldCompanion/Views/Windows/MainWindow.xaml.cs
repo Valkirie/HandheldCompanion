@@ -74,6 +74,8 @@ namespace HandheldCompanion.Views
         {
             InitializeComponent();
 
+            SettingsManager.SetProperty("DuringStartup", true, false, true);
+
             fileVersionInfo = _fileVersionInfo;
             CurrentWindow = this;
 
@@ -204,6 +206,8 @@ namespace HandheldCompanion.Views
             // update FirstStart
             if (IsFirstStart)
                 SettingsManager.SetProperty("FirstStart", false);
+
+            SettingsManager.SetProperty("DuringStartup", false, false, true);
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)

@@ -97,12 +97,6 @@ namespace HandheldCompanion.Views.QuickPages
                     case "QuickToolsPerformanceGPUEnabled":
                         GPUToggle.IsOn = Convert.ToBoolean(value);
                         break;
-                    case "QuietModeEnabled":
-                        QuietModeToggle.IsEnabled = Convert.ToBoolean(value);
-                        break;
-                    case "QuietModeToggled":
-                        QuietModeToggle.IsOn = Convert.ToBoolean(value);
-                        break;
                     case "QuickToolsPerformanceTDPSustainedValue":
                         {
                             double TDP = Convert.ToDouble(value);
