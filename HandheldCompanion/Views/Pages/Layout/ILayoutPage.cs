@@ -16,8 +16,8 @@ namespace HandheldCompanion.Views.Pages
 
         public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
         {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 foreach (var pair in MappingButtons)
                 {

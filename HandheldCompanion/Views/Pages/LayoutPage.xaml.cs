@@ -239,8 +239,10 @@ namespace HandheldCompanion.Views.Pages
             if (Monitor.TryEnter(updateLock))
             {
                 // cascade update to (sub)pages
-                foreach (ILayoutPage page in _pages.Values)
+                Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, page =>
+                {
                     page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+                });
 
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
