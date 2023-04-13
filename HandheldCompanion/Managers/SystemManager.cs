@@ -206,12 +206,27 @@ namespace HandheldCompanion.Managers
         {
             switch (name)
             {
+                case "QuietModeEnabled":
+                    {
+                        bool enabled = Convert.ToBoolean(value);
+                        bool toggled = SettingsManager.GetBoolean("QuietModeToggled");
+
+                        if (!enabled && toggled)
+                            SettingsManager.SetProperty("QuietModeToggled", false);
+                    }
+                    break;
                 case "QuietModeToggled":
                     {
-                        bool status = Convert.ToBoolean(value);
-                        MainWindow.CurrentDevice.SetFanControl(status);
+                        bool toggled = Convert.ToBoolean(value);
+                        bool startup = SettingsManager.GetBoolean("DuringStartup", true);
 
-                        if (!status)
+                        // if it's off avoid sending any control commands to the hardware on startup
+                        if (startup && !toggled)
+                            return;
+
+                        MainWindow.CurrentDevice.SetFanControl(toggled);
+
+                        if (!toggled)
                             return;
 
                         double duty = SettingsManager.GetDouble("QuietModeDuty");
@@ -220,11 +235,13 @@ namespace HandheldCompanion.Managers
                     break;
                 case "QuietModeDuty":
                     {
-                        bool status = SettingsManager.GetBoolean("QuietModeEnabled");
-                        if (!status)
+                        bool enabled = SettingsManager.GetBoolean("QuietModeEnabled");
+                        bool toggled = SettingsManager.GetBoolean("QuietModeToggled");
+
+                        if (!enabled || !toggled)
                             return;
 
-                        double duty = SettingsManager.GetDouble("QuietModeDuty");
+                        double duty = Convert.ToDouble(value);
                         MainWindow.CurrentDevice.SetFanDuty(duty);
                     }
                     break;
