@@ -107,22 +107,15 @@ namespace HandheldCompanion.Views
 
             notifyIcon.DoubleClick += (sender, e) => { SwapWindowState(); };
 
+            AddNotifyIconItem("Main Window");
+            AddNotifyIconItem("Quick Tools");
+            AddNotifyIconSeparator();
+
             foreach (NavigationViewItem item in navView.FooterMenuItems)
-            {
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(item.Content.ToString());
-                menuItem.Tag = item.Tag;
-                menuItem.Click += MenuItem_Click;
+                AddNotifyIconItem(item.Content.ToString(), item.Tag);
 
-                notifyIcon.ContextMenuStrip.Items.Add(menuItem);
-            }
-
-            ToolStripSeparator separator = new ToolStripSeparator();
-            notifyIcon.ContextMenuStrip.Items.Add(separator);
-
-            ToolStripMenuItem menuItemExit = new ToolStripMenuItem("Exit"); // todo: localize me
-            menuItemExit.Tag = menuItemExit.Text;
-            menuItemExit.Click += MenuItem_Click;
-            notifyIcon.ContextMenuStrip.Items.Add(menuItemExit);
+            AddNotifyIconSeparator();
+            AddNotifyIconItem("Exit");
 
             // paths
             CurrentExe = process.MainModule.FileName;
@@ -204,6 +197,22 @@ namespace HandheldCompanion.Views
             // update FirstStart
             if (IsFirstStart)
                 SettingsManager.SetProperty("FirstStart", false);
+        }
+
+        private void AddNotifyIconItem(string name, object tag = null)
+        {
+            tag ??= string.Concat(name.Where(c => !char.IsWhiteSpace(c)));
+
+            ToolStripMenuItem menuItemMainWindow = new ToolStripMenuItem(name);
+            menuItemMainWindow.Tag = tag;
+            menuItemMainWindow.Click += MenuItem_Click;
+            notifyIcon.ContextMenuStrip.Items.Add(menuItemMainWindow);
+        }
+
+        private void AddNotifyIconSeparator()
+        {
+            ToolStripSeparator separator = new ToolStripSeparator();
+            notifyIcon.ContextMenuStrip.Items.Add(separator);
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -354,6 +363,12 @@ namespace HandheldCompanion.Views
         {
             switch (((ToolStripMenuItem)sender).Tag)
             {
+                case "MainWindow":
+                    SwapWindowState();
+                    break;
+                case "QuickTools":
+                    overlayquickTools.UpdateVisibility();
+                    break;
                 case "ServiceStart":
                     _ = serviceManager.StartServiceAsync();
                     break;
@@ -467,10 +482,10 @@ namespace HandheldCompanion.Views
 
                         if (notifyIcon.ContextMenuStrip is not null)
                         {
-                            notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                            notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
                             notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
+                            notifyIcon.ContextMenuStrip.Items[5].Enabled = true;
+                            notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
                         }
                         break;
 
@@ -487,10 +502,10 @@ namespace HandheldCompanion.Views
 
                                     if (notifyIcon.ContextMenuStrip is not null)
                                     {
-                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = true;
-                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[4].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[5].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[6].Enabled = true;
                                     }
                                     break;
                                 case ServiceControllerStatus.Running:
@@ -501,10 +516,10 @@ namespace HandheldCompanion.Views
 
                                     if (notifyIcon.ContextMenuStrip is not null)
                                     {
-                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = true;
-                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[5].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
                                     }
                                     break;
                                 case ServiceControllerStatus.ContinuePending:
@@ -518,10 +533,10 @@ namespace HandheldCompanion.Views
 
                                     if (notifyIcon.ContextMenuStrip is not null)
                                     {
-                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = false;
                                         notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[5].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
                                     }
                                     break;
                                 default:
@@ -532,10 +547,10 @@ namespace HandheldCompanion.Views
 
                                     if (notifyIcon.ContextMenuStrip is not null)
                                     {
-                                        notifyIcon.ContextMenuStrip.Items[0].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[1].Enabled = false;
-                                        notifyIcon.ContextMenuStrip.Items[2].Enabled = true;
                                         notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
+                                        notifyIcon.ContextMenuStrip.Items[5].Enabled = true;
+                                        notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
                                     }
                                     break;
                             }
