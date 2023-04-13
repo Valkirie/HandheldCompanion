@@ -101,24 +101,34 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
-                            <!--  Invert Axis  -->
+                            <!--  Axis rotation  -->
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="9*" MinWidth="200" />
-                                    <ColumnDefinition MinWidth="80" />
-                                </Grid.ColumnDefinitions>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Rotate axis (degrees)" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, ElementName=Axis2AxisRotation, Mode=OneWay}" />
+                                    </Grid>
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Invert axis" />
-
-                                <ui:ToggleSwitch
-                                    Name="Axis2AxisInvertAxis"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                    Toggled="Axis2AxisInvertAxis_Toggled" />
+                                    <Slider
+                                        x:Name="Axis2AxisRotation"
+                                        FlowDirection="LeftToRight"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="270"
+                                        Minimum="0"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="90"
+                                        ValueChanged="Axis_Rotation_Slider_ValueChanged" />
+                                </ui:SimpleStackPanel>
                             </Grid>
 
                             <!--  Separator  -->
@@ -247,24 +257,34 @@
                     <ui:SimpleStackPanel Spacing="12">
                         <ui:SimpleStackPanel Spacing="6">
 
-                            <!--  Invert Axis  -->
+                            <!--  Axis rotation  -->
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="9*" MinWidth="200" />
-                                    <ColumnDefinition MinWidth="80" />
-                                </Grid.ColumnDefinitions>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Rotate axis (degrees)" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, ElementName=Axis2MouseRotation, Mode=OneWay}" />
+                                    </Grid>
 
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="Invert axis" />
-
-                                <ui:ToggleSwitch
-                                    Name="Axis2MouseInvertAxis"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                    Toggled="Axis2MouseInvertAxis_Toggled" />
+                                    <Slider
+                                        x:Name="Axis2MouseRotation"
+                                        FlowDirection="LeftToRight"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="270"
+                                        Minimum="0"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="90"
+                                        ValueChanged="Axis2MouseRotation_ValueChanged" />
+                                </ui:SimpleStackPanel>
                             </Grid>
 
                             <!--  Separator  -->

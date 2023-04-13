@@ -107,7 +107,7 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2AxisImproveCircularity.IsOn = ((AxisActions)this.Actions).ImproveCircularity;
-                Axis2AxisInvertAxis.IsOn = ((AxisActions)this.Actions).AxisInverted;
+                Axis2AxisRotation.Value = (((AxisActions)this.Actions).AxisInverted ? 180 : 0) + (((AxisActions)this.Actions).AxisRotated ? 90 : 0);
                 Axis2AxisInnerDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
                 Axis2AxisOuterDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
                 Axis2AxisAntiDeadzone.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
@@ -140,7 +140,7 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
-                Axis2MouseInvertAxis.IsOn = ((MouseActions)this.Actions).AxisInverted;
+                Axis2MouseRotation.Value = (((MouseActions)this.Actions).AxisInverted ? 180 : 0) + (((MouseActions)this.Actions).AxisRotated ? 90 : 0);
                 Axis2MouseDeadzone.Value = ((MouseActions)this.Actions).Deadzone;
             }
 
@@ -197,7 +197,7 @@ namespace HandheldCompanion.Controls
             }
         }
 
-        private void Axis2AxisInvertAxis_Toggled(object sender, RoutedEventArgs e)
+        private void Axis_Rotation_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (this.Actions is null)
                 return;
@@ -205,7 +205,8 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Joystick:
-                    ((AxisActions)this.Actions).AxisInverted = Axis2AxisInvertAxis.IsOn;
+                    ((AxisActions)this.Actions).AxisInverted = (((int)Axis2AxisRotation.Value / 90) & 2) == 2;
+                    ((AxisActions)this.Actions).AxisRotated = (((int)Axis2AxisRotation.Value / 90) & 1) == 1;
                     break;
             }
 
@@ -287,7 +288,7 @@ namespace HandheldCompanion.Controls
             base.Update();
         }
 
-        private void Axis2MouseInvertAxis_Toggled(object sender, RoutedEventArgs e)
+        private void Axis2MouseRotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (this.Actions is null)
                 return;
@@ -295,7 +296,8 @@ namespace HandheldCompanion.Controls
             switch (this.Actions.ActionType)
             {
                 case ActionType.Mouse:
-                    ((MouseActions)this.Actions).AxisInverted = Axis2MouseInvertAxis.IsOn;
+                    ((MouseActions)this.Actions).AxisInverted = (((int)Axis2MouseRotation.Value / 90) & 2) == 2;
+                    ((MouseActions)this.Actions).AxisRotated = (((int)Axis2MouseRotation.Value / 90) & 1) == 1;
                     break;
             }
 
