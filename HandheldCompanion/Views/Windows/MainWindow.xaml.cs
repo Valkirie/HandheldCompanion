@@ -74,8 +74,6 @@ namespace HandheldCompanion.Views
         {
             InitializeComponent();
 
-            SettingsManager.SetProperty("DuringStartup", true, false, true);
-
             fileVersionInfo = _fileVersionInfo;
             CurrentWindow = this;
 
@@ -199,8 +197,6 @@ namespace HandheldCompanion.Views
             // update FirstStart
             if (IsFirstStart)
                 SettingsManager.SetProperty("FirstStart", false);
-
-            SettingsManager.SetProperty("DuringStartup", false, false, true);
         }
 
         private void AddNotifyIconItem(string name, object tag = null)
@@ -227,8 +223,9 @@ namespace HandheldCompanion.Views
                     ToastManager.IsEnabled = Convert.ToBoolean(value);
                     break;
                 case "DesktopProfileOnStart":
-                    if (!SettingsManager.GetBoolean("DuringStartup", true))
+                    if (SettingsManager.IsInitialized)
                         break;
+
                     bool DesktopLayout = Convert.ToBoolean(value);
                     SettingsManager.SetProperty("shortcutDesktopLayout", DesktopLayout, false, true);
                     break;
