@@ -127,6 +127,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="90"
+                                        TickPlacement="BottomRight"
                                         ValueChanged="Axis_Rotation_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -283,6 +284,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="90"
+                                        TickPlacement="BottomRight"
                                         ValueChanged="Axis2MouseRotation_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
