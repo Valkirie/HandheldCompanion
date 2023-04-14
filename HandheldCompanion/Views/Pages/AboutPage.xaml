@@ -180,7 +180,7 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Nefarius, CasperH20, B-Core, Frank东, Toomy" />
+                                        Text="Nefarius, CasperH20, B-Core, Frank东, Toomy, Staubgeborener, Havner, Shadowflare" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
