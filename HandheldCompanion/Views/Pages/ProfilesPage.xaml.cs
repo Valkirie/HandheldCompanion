@@ -352,7 +352,7 @@ namespace HandheldCompanion.Views.Pages
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default | ProfileErrorCode.Running);
+                b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
                 // prevent user from setting power settings on default profile
