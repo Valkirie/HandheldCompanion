@@ -1,10 +1,16 @@
-﻿using System.Diagnostics;
+﻿using SharpDX.Multimedia;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows.Documents;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ControllerCommon.Utils
 {
@@ -24,6 +30,20 @@ namespace ControllerCommon.Utils
 
             FinalString = STR.Substring(Pos1, Pos2 - Pos1);
             return KeepBorders ? FirstString + FinalString + LastString : FinalString;
+        }
+
+        public static string RegexReplace(string inputRaw, string pattern, string replacement)
+        {
+            List<string> outputRaw = new();
+            using (StringReader reader = new StringReader(inputRaw))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    outputRaw.Add(Regex.Replace(line, pattern, replacement));
+                }
+            }
+            return string.Join("\n", outputRaw);
         }
 
         public static bool IsTextAValidIPAddress(string text)

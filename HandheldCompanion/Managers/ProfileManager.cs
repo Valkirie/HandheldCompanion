@@ -6,7 +6,9 @@ using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Views;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -257,6 +259,20 @@ namespace HandheldCompanion.Managers
             try
             {
                 string outputraw = File.ReadAllText(fileName);
+                var jObject = JObject.Parse(outputraw);
+
+                // latest pre-versionning release
+                Version version = new("0.15.0.4");
+                if (jObject.ContainsKey("Version"))
+                    version = new(JObject.Parse(outputraw)["Version"].ToString());
+
+                switch(version.ToString())
+                {
+                    case "0.15.0.4":
+                        outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"", "Generic.SortedDictionary$1System.Collections\"");
+                        break;
+                }
+
                 profile = JsonConvert.DeserializeObject<Profile>(outputraw, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
@@ -324,6 +340,9 @@ namespace HandheldCompanion.Managers
 
         public static void SerializeProfile(Profile profile)
         {
+            // update profile version to current build
+            profile.Version = new(MainWindow.fileVersionInfo.ProductVersion);
+
             string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
