@@ -5,6 +5,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,9 @@ namespace HandheldCompanion.Managers
 
         public static FileSystemWatcher layoutWatcher { get; set; }
 
-        public static string InstallPath;
+        public static string LayoutsPath;
+        public static string TemplatesPath;
+
         private static bool IsInitialized;
 
         #region events
@@ -49,14 +52,18 @@ namespace HandheldCompanion.Managers
         static LayoutManager()
         {
             // initialiaze path
-            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "layouts");
-            if (!Directory.Exists(InstallPath))
-                Directory.CreateDirectory(InstallPath);
+            LayoutsPath = Path.Combine(MainWindow.SettingsPath, "layouts");
+            if (!Directory.Exists(LayoutsPath))
+                Directory.CreateDirectory(LayoutsPath);
+
+            TemplatesPath = Path.Combine(MainWindow.SettingsPath, "templates");
+            if (!Directory.Exists(TemplatesPath))
+                Directory.CreateDirectory(TemplatesPath);
 
             // monitor layout files
             layoutWatcher = new FileSystemWatcher()
             {
-                Path = InstallPath,
+                Path = LayoutsPath,
                 EnableRaisingEvents = true,
                 IncludeSubdirectories = true,
                 Filter = "*.json",
@@ -77,7 +84,10 @@ namespace HandheldCompanion.Managers
                 SerializeLayoutTemplate(desktopLayout);
 
             // process community layouts
-            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
+            List<string> fileEntries = new();
+            fileEntries.AddRange(Directory.GetFiles(LayoutsPath, "*.json", SearchOption.AllDirectories));
+            fileEntries.AddRange(Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories));
+
             foreach (string fileName in fileEntries)
                 ProcessLayoutTemplate(fileName);
 
@@ -110,7 +120,7 @@ namespace HandheldCompanion.Managers
 
         private static bool LayoutTemplateExist(LayoutTemplate layoutTemplate)
         {
-            string fileName = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
+            string fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}.json");
             return File.Exists(fileName);
         }
 
@@ -215,14 +225,14 @@ namespace HandheldCompanion.Managers
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            string settingsPath = string.Empty;
+            string fileName = string.Empty;
             
             if (layoutTemplate.IsTemplate)
-                settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
+                fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}.json");
             else
-                settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}_{layoutTemplate.Product}_{layoutTemplate.Author}.json");
+                fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}_{layoutTemplate.Product}_{layoutTemplate.Author}.json");
 
-            File.WriteAllText(settingsPath, jsonString);
+            File.WriteAllText(fileName, jsonString);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)

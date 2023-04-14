@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Managers;
+using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
@@ -21,7 +22,6 @@ namespace HandheldCompanion.Managers
         private Dictionary<string, UpdateFile> updateFiles = new();
 
         private UpdateStatus status;
-        private string path;
         private string url;
 
         public event UpdatedEventHandler Updated;
@@ -46,11 +46,11 @@ namespace HandheldCompanion.Managers
             assembly = Assembly.GetExecutingAssembly();
             build = assembly.GetName().Version;
 
-            path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "cache");
+            InstallPath = Path.Combine(MainWindow.SettingsPath, "cache");
 
             // initialize folder
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
+            if (!Directory.Exists(InstallPath))
+                Directory.CreateDirectory(InstallPath);
 
             webClient = new WebClient();
             webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
@@ -168,7 +168,7 @@ namespace HandheldCompanion.Managers
             Updated?.Invoke(status, update, null);
 
             // download release
-            string filename = System.IO.Path.Combine(path, update.filename);
+            string filename = System.IO.Path.Combine(InstallPath, update.filename);
             webClient.DownloadFileAsync(update.uri, filename, update.filename);
         }
 
@@ -284,7 +284,7 @@ namespace HandheldCompanion.Managers
 
         public void InstallUpdate(UpdateFile updateFile)
         {
-            string filename = System.IO.Path.Combine(path, updateFile.filename);
+            string filename = System.IO.Path.Combine(InstallPath, updateFile.filename);
 
             if (!File.Exists(filename))
             {

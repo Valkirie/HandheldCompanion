@@ -4,6 +4,7 @@ using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Simulators;
+using HandheldCompanion.Views;
 using ModernWpf.Controls;
 using Newtonsoft.Json;
 using System;
@@ -45,7 +46,7 @@ namespace HandheldCompanion.Managers
         static HotkeysManager()
         {
             // initialize path
-            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "hotkeys");
+            InstallPath = Path.Combine(MainWindow.SettingsPath, "hotkeys");
             if (!Directory.Exists(InstallPath))
                 Directory.CreateDirectory(InstallPath);
 

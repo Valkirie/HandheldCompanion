@@ -6,6 +6,7 @@ using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace HandheldCompanion.Managers
         static ProfileManager()
         {
             // initialiaze path
-            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "profiles");
+            InstallPath = Path.Combine(MainWindow.SettingsPath, "profiles");
             if (!Directory.Exists(InstallPath))
                 Directory.CreateDirectory(InstallPath);
 
