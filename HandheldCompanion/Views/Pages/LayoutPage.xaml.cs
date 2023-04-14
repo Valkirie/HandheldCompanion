@@ -154,6 +154,7 @@ namespace HandheldCompanion.Views.Pages
                 }
 
                 cB_Layouts.Items.Refresh();
+                cB_Layouts.InvalidateVisual();
             });
         }
 
@@ -358,7 +359,7 @@ namespace HandheldCompanion.Views.Pages
                     continue;
 
                 ComboBoxItem layoutTemplate = (ComboBoxItem)item;
-                layoutTemplate.Width = comboBox.ActualWidth - 30;
+                layoutTemplate.Width = comboBox.ActualWidth;
                 layoutTemplate.InvalidateVisual();
             }
         }
@@ -458,8 +459,8 @@ namespace HandheldCompanion.Views.Pages
 
             // display message
             // todo: localize me
-            _ = Dialog.ShowAsync("Layout template updated",
-                             $"{currentTemplate.Name} was updated.",
+            _ = Dialog.ShowAsync("Layout template exported",
+                             $"{currentTemplate.Name} was exported.",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
