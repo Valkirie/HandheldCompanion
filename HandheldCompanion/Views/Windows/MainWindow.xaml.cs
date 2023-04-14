@@ -790,19 +790,17 @@ namespace HandheldCompanion.Views
             if (status == prevStatus)
                 return;
 
-            LogManager.LogInformation("System status set to {0}", status);
-
             switch (status)
             {
                 case PowerManager.SystemStatus.SystemReady:
                     {
                         switch (prevStatus)
                         {
-                            // cold boot
                             case SystemStatus.SystemBooting:
+                                // cold boot
                                 break;
-                            // resume from sleep
-                            default:
+                            case SystemStatus.SystemPending:
+                                // resume from sleep
                                 Thread.Sleep(2000);
                                 break;
                         }

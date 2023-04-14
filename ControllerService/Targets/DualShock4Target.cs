@@ -6,6 +6,8 @@ using ControllerService.Sensors;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
+using System;
+using System.Threading;
 
 namespace ControllerService.Targets
 {
@@ -52,14 +54,23 @@ namespace ControllerService.Targets
             if (IsConnected)
                 return;
 
-            try
+            while (!IsConnected)
             {
-                virtualController.Connect();
-                TimerManager.Tick += UpdateReport;
+                try
+                {
+                    virtualController.Connect();
+                    TimerManager.Tick += UpdateReport;
 
-                base.Connect();
+                    base.Connect();
+                }
+                catch (Exception ex)
+                {
+                    virtualController.Disconnect();
+
+                    LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
+                    Thread.Sleep(2000);
+                }
             }
-            catch { }
         }
 
         public override void Disconnect()
