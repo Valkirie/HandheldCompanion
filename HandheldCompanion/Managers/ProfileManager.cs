@@ -277,6 +277,9 @@ namespace HandheldCompanion.Managers
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
+
+                // update profile version to current build
+                profile.Version = new(MainWindow.fileVersionInfo.ProductVersion);
             }
             catch (Exception ex)
             {
@@ -340,9 +343,6 @@ namespace HandheldCompanion.Managers
 
         public static void SerializeProfile(Profile profile)
         {
-            // update profile version to current build
-            profile.Version = new(MainWindow.fileVersionInfo.ProductVersion);
-
             string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
