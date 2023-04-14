@@ -433,25 +433,15 @@ namespace HandheldCompanion.Views.Pages
                 Name = LayoutTitle.Text,
                 Description = LayoutDescription.Text,
                 Author = LayoutAuthor.Text,
-                Executable = currentTemplate.Executable,
-                Product = ProfilesPage.currentProfile.Name,
+                Executable = SaveGameInfo.IsChecked == true ? currentTemplate.Executable : "",
+                Product = SaveGameInfo.IsChecked == true ? ProfilesPage.currentProfile.Name : "",
                 IsCommunity = true,
                 IsTemplate = false
             };
 
-            if ((bool)CheckBoxDeviceLayouts.IsChecked)
+            if (ExportForCurrent.IsChecked == true)
                 newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
             
-            /* System.Windows.Forms.SaveFileDialog saveFileDialog = new()
-            {
-                FileName = $"{newLayout.Name}_{newLayout.Product}_{newLayout.Author}",
-                AddExtension = true,
-                DefaultExt = "json",
-                Filter = "Layout Files (*.json)|*.json",
-                InitialDirectory = LayoutManager.InstallPath,
-            };
-
-            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) */
             LayoutManager.SerializeLayoutTemplate(newLayout);
 
             // close flyout
@@ -460,14 +450,14 @@ namespace HandheldCompanion.Views.Pages
             // display message
             // todo: localize me
             _ = Dialog.ShowAsync("Layout template exported",
-                             $"{currentTemplate.Name} was exported.",
+                             $"{newLayout.Name} was exported.",
                              ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         private void Flyout_Opening(object sender, object e)
         {
-            // manage visibility
-            LayoutTitle.Text = $"{currentTemplate.Name} - {currentTemplate.Product}";
+            string separator = (currentTemplate.Name.Length > 0 && currentTemplate.Product.Length > 0) ? " - " : "";
+            LayoutTitle.Text = $"{currentTemplate.Name}{separator}{currentTemplate.Product}";
             LayoutDescription.Text = currentTemplate.Description;
             LayoutAuthor.Text = currentTemplate.Author;
         }

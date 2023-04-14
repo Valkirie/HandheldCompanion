@@ -269,7 +269,7 @@ namespace HandheldCompanion.Views.Pages
 
                     Profile profile = new Profile(path);
                     profile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
-                    profile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
+                    profile.LayoutTitle = LayoutTemplate.DefaultLayout.Name;
                     profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                     bool exists = false;
