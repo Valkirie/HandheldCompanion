@@ -4,7 +4,7 @@
     {
         public bool IsEnabled { get; set; }
         public bool IsInitialized { get; set; }
-        protected string Path { get; set; }
+        protected string InstallPath { get; set; }
 
         public event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();

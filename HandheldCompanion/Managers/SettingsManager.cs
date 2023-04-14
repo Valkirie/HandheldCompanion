@@ -4,6 +4,7 @@ using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 
 namespace HandheldCompanion.Managers
@@ -18,6 +19,10 @@ namespace HandheldCompanion.Managers
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
+
+        static SettingsManager()
+        {
+        }
 
         public static void Start()
         {

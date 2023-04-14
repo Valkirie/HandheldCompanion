@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
+using System.Xml.Linq;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
@@ -154,7 +155,7 @@ namespace HandheldCompanion.Views.Pages
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    if (pr.Executable == profile.Executable)
+                    if (pr.Guid == profile.Guid)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -191,7 +192,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
-                    if (pr.Executable == profile.Executable)
+                    if (pr.Guid == profile.Guid)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -267,8 +268,8 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     Profile profile = new Profile(path);
-
-                    // set default value(s)
+                    profile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
+                    profile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
                     profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                     bool exists = false;
@@ -352,7 +353,7 @@ namespace HandheldCompanion.Views.Pages
                 UniversalSettings.IsEnabled = true;
 
                 // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default | ProfileErrorCode.Running);
+                b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
                 // prevent user from setting power settings on default profile
@@ -622,14 +623,20 @@ namespace HandheldCompanion.Views.Pages
 
         private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            // update layout page with current layout
-            // memory pointer
-            LayoutTemplate layoutTemplate = new LayoutTemplate("Custom", "Your current template", "N/A", false, true);
-            layoutTemplate.Layout = currentProfile.Layout.Clone() as Layout;
-            layoutTemplate.Executable = currentProfile.Executable;
+            // prepare layout template
+            // todo: localize me
+            LayoutTemplate layoutTemplate = new LayoutTemplate(currentProfile.LayoutTitle, "Your modified layout for this executable.", Environment.UserName, false, true)
+            {
+                Layout = currentProfile.Layout.Clone() as Layout,
+                Executable = currentProfile.Executable,
+                Product = currentProfile.Name,
+            };
             layoutTemplate.Layout.Updated += Layout_Updated;
 
+            // update layout page with layout template
             MainWindow.layoutPage.UpdateLayout(layoutTemplate);
+
+            // navigate
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
 

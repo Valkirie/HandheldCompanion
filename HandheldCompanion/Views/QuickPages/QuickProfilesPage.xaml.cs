@@ -9,6 +9,8 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
 
@@ -173,7 +175,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (profile.Executable == currentProfile.Executable)
+            if (profile.Guid == currentProfile.Guid)
                 ProcessManager_ForegroundChanged(currentProcess, null);
 
             currentProfile = null;
@@ -361,8 +363,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             // create profile
             currentProfile = new Profile(currentProcess.Path);
-
-            // set default value(s)
+            currentProfile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
+            currentProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
             currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
             // if an update is pending, execute it and stop timer

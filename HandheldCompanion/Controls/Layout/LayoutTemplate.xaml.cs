@@ -15,7 +15,7 @@ namespace HandheldCompanion.Controls
     /// </summary>
     /// 
     [JsonObject(MemberSerialization.OptIn)]
-    public partial class LayoutTemplate : UserControl
+    public partial class LayoutTemplate : UserControl, IComparable
     {
         [JsonProperty]
         public string Author
@@ -60,6 +60,25 @@ namespace HandheldCompanion.Controls
         }
 
         [JsonProperty]
+        public string Product
+        {
+            get
+            {
+                return _Product.Text;
+            }
+
+            set
+            {
+                _Product.Text = value;
+
+                if (!string.IsNullOrEmpty(value))
+                    _Product.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        [JsonProperty]
+        public Guid Guid { get; set; } = Guid.NewGuid();
+        [JsonProperty]
         public string Executable { get; set; } = string.Empty;
 
         [JsonProperty]
@@ -96,7 +115,7 @@ namespace HandheldCompanion.Controls
 
             this.ControllerType = deviceType;
 
-            this.Layout = new("Default");
+            this.Layout = new(true);
 
             switch (this.Name)
             {
@@ -213,6 +232,12 @@ namespace HandheldCompanion.Controls
         private void Layout_Updated(Layout layout)
         {
             Updated?.Invoke(this);
+        }
+
+        public int CompareTo(object obj)
+        {
+            LayoutTemplate profile = (LayoutTemplate)obj;
+            return profile.Name.CompareTo(Name);
         }
 
         public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true, false);

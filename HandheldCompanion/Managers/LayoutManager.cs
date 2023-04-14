@@ -5,10 +5,13 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
+using static PInvoke.Kernel32;
 using Layout = ControllerCommon.Layout;
 
 namespace HandheldCompanion.Managers
@@ -25,19 +28,23 @@ namespace HandheldCompanion.Managers
             LayoutTemplate.KeyboardLayout,
             LayoutTemplate.GamepadMouseLayout,
             LayoutTemplate.GamepadJoystickLayout,
-            LayoutTemplate.DesktopLayout,
         };
 
         private static Layout currentLayout;
 
         private static ControllerState outputState = new();
 
-        public static string InstallPath;
+        public static FileSystemWatcher layoutWatcher { get; set; }
+
+        public static string LayoutsPath;
+        public static string TemplatesPath;
+
         private static bool IsInitialized;
 
         #region events
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
+
         public static event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
         #endregion
@@ -45,9 +52,23 @@ namespace HandheldCompanion.Managers
         static LayoutManager()
         {
             // initialiaze path
-            InstallPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion", "layouts");
-            if (!Directory.Exists(InstallPath))
-                Directory.CreateDirectory(InstallPath);
+            LayoutsPath = Path.Combine(MainWindow.SettingsPath, "layouts");
+            if (!Directory.Exists(LayoutsPath))
+                Directory.CreateDirectory(LayoutsPath);
+
+            TemplatesPath = Path.Combine(MainWindow.SettingsPath, "templates");
+            if (!Directory.Exists(TemplatesPath))
+                Directory.CreateDirectory(TemplatesPath);
+
+            // monitor layout files
+            layoutWatcher = new FileSystemWatcher()
+            {
+                Path = LayoutsPath,
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = true,
+                Filter = "*.json",
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
+            };
 
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Updated += ProfileManager_Updated;
@@ -62,10 +83,19 @@ namespace HandheldCompanion.Managers
             if (!LayoutTemplateExist(desktopLayout))
                 SerializeLayoutTemplate(desktopLayout);
 
-            // process existing layouts
-            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
+            // process community layouts
+            List<string> fileEntries = new();
+            fileEntries.AddRange(Directory.GetFiles(LayoutsPath, "*.json", SearchOption.AllDirectories));
+            fileEntries.AddRange(Directory.GetFiles(TemplatesPath, "*.json", SearchOption.AllDirectories));
+
             foreach (string fileName in fileEntries)
                 ProcessLayoutTemplate(fileName);
+
+            // process template layouts
+            foreach (LayoutTemplate layoutTemplate in Templates)
+                Updated?.Invoke(layoutTemplate);
+
+            layoutWatcher.Created += LayoutWatcher_Created;
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -83,9 +113,14 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "LayoutManager");
         }
 
+        private static void LayoutWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            ProcessLayoutTemplate(e.FullPath);
+        }
+
         private static bool LayoutTemplateExist(LayoutTemplate layoutTemplate)
         {
-            string fileName = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
+            string fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}.json");
             return File.Exists(fileName);
         }
 
@@ -93,41 +128,49 @@ namespace HandheldCompanion.Managers
         {
             string layoutName = Path.GetFileNameWithoutExtension(fileName);
 
-            // initialize value
-            LayoutTemplate layoutTemplate = null;
-
-            try
+            // UI thread (synchronous)
+            // We need to wait for each controller to initialize and take (or not) its slot in the array
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                string outputraw = File.ReadAllText(fileName);
-                layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
+                // initialize value
+                LayoutTemplate layoutTemplate = null;
+
+                try
                 {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
-            }
+                    string outputraw = File.ReadAllText(fileName);
+                    layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    });
+                }
+                catch (Exception ex)
+                {
+                    LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
+                }
 
-            // failed to parse
-            if (layoutTemplate is null || layoutTemplate.Layout is null)
-            {
-                LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
-                return;
-            }
+                // failed to parse
+                if (layoutTemplate is null || layoutTemplate.Layout is null)
+                {
+                    LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
+                    return;
+                }
 
-            // create/update templates
-            switch (layoutTemplate.Name)
-            {
-                case "Desktop":
-                    desktopLayout = layoutTemplate;
-                    desktopLayout.Updated += LayoutTemplate_Updated;
-                    break;
+                // create/update templates
+                switch (layoutTemplate.Name)
+                {
+                    case "Desktop":
+                        desktopLayout = layoutTemplate;
+                        desktopLayout.Updated += LayoutTemplate_Updated;
+                        break;
 
-                default:
-                    Templates.Add(layoutTemplate);
-                    break;
-            }
+                    default:
+                        // todo: implement deduplication
+                        Templates.Add(layoutTemplate);
+                        break;
+                }
+
+                Updated?.Invoke(layoutTemplate);
+            });
         }
 
         private static void LayoutTemplate_Updated(LayoutTemplate layoutTemplate)
@@ -143,7 +186,7 @@ namespace HandheldCompanion.Managers
         private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             // ignore profile update if not current or not running
-            if (isCurrent && (profile.ErrorCode.HasFlag(ProfileErrorCode.Running) || profile.ErrorCode.HasFlag(ProfileErrorCode.Default)))
+            if (isCurrent && (profile.ErrorCode.HasFlag(ProfileErrorCode.Running & ProfileErrorCode.Default)))
                 UpdateCurrentLayout(profile);
         }
 
@@ -175,15 +218,21 @@ namespace HandheldCompanion.Managers
             return currentLayout;
         }
 
-        private static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
+        public static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
         {
             string jsonString = JsonConvert.SerializeObject(layoutTemplate, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            string settingsPath = Path.Combine(InstallPath, $"{layoutTemplate.Name}.json");
-            File.WriteAllText(settingsPath, jsonString);
+            string fileName = string.Empty;
+            
+            if (layoutTemplate.IsTemplate)
+                fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}.json");
+            else
+                fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}_{layoutTemplate.Product}_{layoutTemplate.Author}.json");
+
+            File.WriteAllText(fileName, jsonString);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)

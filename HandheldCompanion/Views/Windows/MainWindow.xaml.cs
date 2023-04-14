@@ -70,6 +70,9 @@ namespace HandheldCompanion.Views
         private static MainWindow CurrentWindow;
         public static FileVersionInfo fileVersionInfo;
 
+        public static string InstallPath;
+        public static string SettingsPath;
+
         public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
         {
             InitializeComponent();
@@ -96,6 +99,13 @@ namespace HandheldCompanion.Views
             var tablets = Tablet.TabletDevices;
 
             // define current directory
+            InstallPath = AppDomain.CurrentDomain.BaseDirectory;
+            SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HandheldCompanion");
+
+            // initialiaze path
+            if (!Directory.Exists(SettingsPath))
+                Directory.CreateDirectory(SettingsPath);
+
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
             // initialize notifyIcon

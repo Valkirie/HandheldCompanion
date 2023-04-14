@@ -1,3 +1,4 @@
+using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Application = System.Windows.Application;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
@@ -35,6 +37,7 @@ namespace HandheldCompanion.Views.Pages
 
         private string preNavItemTag;
 
+        private LayoutTemplate currentTemplate = new();
         private Layout currentLayout = new();
 
         protected object updateLock = new();
@@ -88,10 +91,13 @@ namespace HandheldCompanion.Views.Pages
                 axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
             }
 
+            LayoutManager.Updated += LayoutManager_Updated;
             LayoutManager.Initialized += LayoutManager_Initialized;
             ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            // auto-sort
+            // cB_Layouts.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
         }
 
         private void ControllerManager_ControllerSelected(IController Controller)
@@ -101,23 +107,55 @@ namespace HandheldCompanion.Views.Pages
 
         private void LayoutManager_Initialized()
         {
-            // Get template separator index
-            int idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates);
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates.Where(a => a.IsTemplate))
-            {
-                idx++;
-                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
-            }
-
-            // Get community separator index
-            idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity);
-            foreach (LayoutTemplate layoutTemplate in LayoutManager.Templates.Where(a => a.IsCommunity))
-            {
-                idx++;
-                cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
-            }
-
             RefreshLayoutList();
+        }
+
+        private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
+        {
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Get template separator index
+                int idx = -1;
+
+                // search if we already have this template listed
+                foreach (object item in cB_Layouts.Items)
+                {
+                    if (item.GetType() != typeof(ComboBoxItem))
+                        continue;
+
+                    // get template
+                    ComboBoxItem parent = (ComboBoxItem)item;
+                    if (parent.Content.GetType() != typeof(LayoutTemplate))
+                        continue;
+
+                    LayoutTemplate template = (LayoutTemplate)parent.Content;
+                    if (template.Guid.Equals(layoutTemplate.Guid))
+                    {
+                        idx = cB_Layouts.Items.IndexOf(parent);
+                        break;
+                    }
+                }
+
+                if (idx != -1)
+                {
+                    // found it
+                    cB_Layouts.Items[idx] = new ComboBoxItem() { Content = layoutTemplate };
+                }
+                else
+                {
+                    // new entry
+                    if (layoutTemplate.IsTemplate)
+                        idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates) + 1;
+                    else
+                        idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity) + 1;
+
+                    cB_Layouts.Items.Insert(idx, new ComboBoxItem() { Content = layoutTemplate });
+                }
+
+                cB_Layouts.Items.Refresh();
+                cB_Layouts.InvalidateVisual();
+            });
         }
 
         private void SettingsManager_SettingValueChanged(string? name, object value)
@@ -211,10 +249,10 @@ namespace HandheldCompanion.Views.Pages
         public void UpdateLayout(LayoutTemplate layoutTemplate)
         {
             // update current layout
+            currentTemplate = layoutTemplate;
             currentLayout = layoutTemplate.Layout;
 
-            // manage visibility
-            LayoutPickerPanel.Visibility = layoutTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
+            LayoutPickerPanel.Visibility = currentTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
 
             UpdatePages();
         }
@@ -223,12 +261,14 @@ namespace HandheldCompanion.Views.Pages
         {
             if (Monitor.TryEnter(updateLock))
             {
-                // cascade update to (sub)pages
-                foreach (ILayoutPage page in _pages.Values)
+                // cascade update to (sub)pages (async)
+                Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, page =>
+                {
                     page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+                });
 
                 // clear layout selection
-                cB_Layouts.SelectedIndex = -1;
+                cB_Layouts.SelectedValue = null;
 
                 Monitor.Exit(updateLock);
 
@@ -319,7 +359,7 @@ namespace HandheldCompanion.Views.Pages
                     continue;
 
                 ComboBoxItem layoutTemplate = (ComboBoxItem)item;
-                layoutTemplate.Width = comboBox.ActualWidth - 30;
+                layoutTemplate.Width = comboBox.ActualWidth;
                 layoutTemplate.InvalidateVisual();
             }
         }
@@ -342,8 +382,8 @@ namespace HandheldCompanion.Views.Pages
             LayoutTemplate layoutTemplate = (LayoutTemplate)parent.Content;
 
             Task<ContentDialogResult> result = Dialog.ShowAsync(
-                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, layoutTemplate.Name),
-                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, layoutTemplate.Name),
+                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, currentTemplate.Name),
+                String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, currentTemplate.Name),
                 ContentDialogButton.Primary,
                 $"{Properties.Resources.ProfilesPage_Cancel}",
                 $"{Properties.Resources.ProfilesPage_Yes}");
@@ -359,15 +399,17 @@ namespace HandheldCompanion.Views.Pages
                         currentLayout.AxisLayout = newLayout.AxisLayout;
                         currentLayout.ButtonLayout = newLayout.ButtonLayout;
 
+                        // update template
+                        currentTemplate.Name = layoutTemplate.Name;
+                        currentTemplate.Description = layoutTemplate.Description;
+                        currentTemplate.Guid = layoutTemplate.Guid; // not needed
+
+                        ProfilesPage.currentProfile.LayoutTitle = currentTemplate.Name;
+
                         UpdatePages();
                     }
                     break;
             }
-        }
-
-        private void ButtonLayoutSettings_Click(object sender, RoutedEventArgs e)
-        {
-            // implement me
         }
 
         private void cB_Layouts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -381,6 +423,58 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("LayoutFilterOnDevice", CheckBoxDeviceLayouts.IsChecked);
+        }
+
+        private void LayoutExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutTemplate newLayout = new()
+            {
+                Layout = currentLayout,
+                Name = LayoutTitle.Text,
+                Description = LayoutDescription.Text,
+                Author = LayoutAuthor.Text,
+                Executable = currentTemplate.Executable,
+                Product = ProfilesPage.currentProfile.Name,
+                IsCommunity = true,
+                IsTemplate = false
+            };
+
+            if ((bool)CheckBoxDeviceLayouts.IsChecked)
+                newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
+            
+            /* System.Windows.Forms.SaveFileDialog saveFileDialog = new()
+            {
+                FileName = $"{newLayout.Name}_{newLayout.Product}_{newLayout.Author}",
+                AddExtension = true,
+                DefaultExt = "json",
+                Filter = "Layout Files (*.json)|*.json",
+                InitialDirectory = LayoutManager.InstallPath,
+            };
+
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) */
+            LayoutManager.SerializeLayoutTemplate(newLayout);
+
+            // close flyout
+            LayoutFlyout.Hide();
+
+            // display message
+            // todo: localize me
+            _ = Dialog.ShowAsync("Layout template exported",
+                             $"{currentTemplate.Name} was exported.",
+                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+        }
+
+        private void Flyout_Opening(object sender, object e)
+        {
+            // manage visibility
+            LayoutTitle.Text = $"{currentTemplate.Name} - {currentTemplate.Product}";
+            LayoutDescription.Text = currentTemplate.Description;
+            LayoutAuthor.Text = currentTemplate.Author;
+        }
+
+        private void LayoutCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            LayoutFlyout.Hide();
         }
     }
 }
