@@ -134,11 +134,7 @@
                             </Button>
 
                             <!--  Implement me  -->
-                            <Button
-                                Name="ButtonLayoutSettings"
-                                Height="31"
-                                Content="&#xE713;"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}">
+                            <Button Name="ButtonLayoutSettings" Content="Export layout">
                                 <ui:FlyoutService.Flyout>
                                     <ui:Flyout
                                         x:Name="LayoutFlyout"
