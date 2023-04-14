@@ -8,7 +8,7 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public class ButtonState : ICloneable
     {
-        public Dictionary<ButtonFlags, bool> State = new();
+        public SortedDictionary<ButtonFlags, bool> State = new();
 
         public bool this[ButtonFlags button]
         {
@@ -31,7 +31,7 @@ namespace ControllerCommon.Inputs
         [JsonIgnore]
         public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value is true).Select(a => a.Key).ToList();
 
-        public ButtonState(Dictionary<ButtonFlags, bool> buttonState)
+        public ButtonState(SortedDictionary<ButtonFlags, bool> buttonState)
         {
             foreach (var state in buttonState)
                 this[state.Key] = state.Value;

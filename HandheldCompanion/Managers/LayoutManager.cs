@@ -288,11 +288,8 @@ namespace HandheldCompanion.Managers
                 bool value = buttonState.Value;
 
                 // skip, if not mapped
-                if (!currentLayout.ButtonLayout.ContainsKey(button))
+                if (!currentLayout.ButtonLayout.TryGetValue(button, out IActions action))
                     continue;
-
-                // pull action
-                IActions action = currentLayout.ButtonLayout[button];
 
                 if (action is null)
                     continue;

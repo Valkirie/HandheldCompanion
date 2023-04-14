@@ -15,7 +15,7 @@ namespace ControllerCommon.Inputs
         public static AxisLayout LeftPad = new AxisLayout(AxisLayoutFlags.LeftPad, AxisFlags.LeftPadX, AxisFlags.LeftPadY);
         public static AxisLayout RightPad = new AxisLayout(AxisLayoutFlags.RightPad, AxisFlags.RightPadX, AxisFlags.RightPadY);
 
-        public static Dictionary<AxisLayoutFlags, AxisLayout> Layouts = new()
+        public static SortedDictionary<AxisLayoutFlags, AxisLayout> Layouts = new()
         {
             { AxisLayoutFlags.None, None },
             { AxisLayoutFlags.LeftThumb, LeftThumb },
@@ -27,7 +27,7 @@ namespace ControllerCommon.Inputs
         };
 
         public AxisLayoutFlags flags = AxisLayoutFlags.None;
-        private Dictionary<char, AxisFlags> axis = new();
+        private SortedDictionary<char, AxisFlags> axis = new();
         public Vector2 vector = new();
 
         public AxisLayout(AxisLayoutFlags flags)
@@ -47,8 +47,8 @@ namespace ControllerCommon.Inputs
 
         public AxisFlags GetAxisFlags(char axisName)
         {
-            if (axis.ContainsKey(axisName))
-                return axis[axisName];
+            if (axis.TryGetValue(axisName, out AxisFlags foundAxis))
+                return foundAxis;
 
             return AxisFlags.None;
         }

@@ -200,18 +200,18 @@ namespace ControllerService.Targets
             }
 
             // Use IMU sensor data, map to proper range, invert where needed
-            if (IMU.AngularVelocity.ContainsKey(XInputSensorFlags.Default))
+            if (IMU.AngularVelocity.TryGetValue(XInputSensorFlags.Default, out System.Numerics.Vector3 velocity))
             {
-                outDS4Report.wGyroX = (short)InputUtils.rangeMap(IMU.AngularVelocity[XInputSensorFlags.Default].X, DS4GyroscopeSensorSpec);    // gyroPitchFull
-                outDS4Report.wGyroY = (short)InputUtils.rangeMap(-IMU.AngularVelocity[XInputSensorFlags.Default].Y, DS4GyroscopeSensorSpec);   // gyroYawFull
-                outDS4Report.wGyroZ = (short)InputUtils.rangeMap(IMU.AngularVelocity[XInputSensorFlags.Default].Z, DS4GyroscopeSensorSpec);    // gyroRollFull
+                outDS4Report.wGyroX = (short)InputUtils.rangeMap(velocity.X, DS4GyroscopeSensorSpec);    // gyroPitchFull
+                outDS4Report.wGyroY = (short)InputUtils.rangeMap(-velocity.Y, DS4GyroscopeSensorSpec);   // gyroYawFull
+                outDS4Report.wGyroZ = (short)InputUtils.rangeMap(velocity.Z, DS4GyroscopeSensorSpec);    // gyroRollFull
             }
 
-            if (IMU.Acceleration.ContainsKey(XInputSensorFlags.Default))
+            if (IMU.Acceleration.TryGetValue(XInputSensorFlags.Default, out System.Numerics.Vector3 acceleration))
             {
-                outDS4Report.wAccelX = (short)InputUtils.rangeMap(-IMU.Acceleration[XInputSensorFlags.Default].X, DS4AccelerometerSensorSpec); // accelXFull
-                outDS4Report.wAccelY = (short)InputUtils.rangeMap(-IMU.Acceleration[XInputSensorFlags.Default].Y, DS4AccelerometerSensorSpec); // accelYFull
-                outDS4Report.wAccelZ = (short)InputUtils.rangeMap(IMU.Acceleration[XInputSensorFlags.Default].Z, DS4AccelerometerSensorSpec);  // accelZFull
+                outDS4Report.wAccelX = (short)InputUtils.rangeMap(-acceleration.X, DS4AccelerometerSensorSpec); // accelXFull
+                outDS4Report.wAccelY = (short)InputUtils.rangeMap(-acceleration.Y, DS4AccelerometerSensorSpec); // accelYFull
+                outDS4Report.wAccelZ = (short)InputUtils.rangeMap(acceleration.Z, DS4AccelerometerSensorSpec);  // accelZFull
             }
 
             outDS4Report.bBatteryLvlSpecial = 11;

@@ -11,7 +11,7 @@ namespace ControllerCommon
         public bool silenced;
         public ButtonState state = new();
 
-        public Dictionary<bool, List<KeyCode>> chords = new Dictionary<bool, List<KeyCode>>()
+        public SortedDictionary<bool, List<KeyCode>> chords = new SortedDictionary<bool, List<KeyCode>>()
         {
             { true, new List<KeyCode>() },
             { false, new List<KeyCode>() }

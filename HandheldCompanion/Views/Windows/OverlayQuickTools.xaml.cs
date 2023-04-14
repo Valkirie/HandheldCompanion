@@ -93,8 +93,8 @@ namespace HandheldCompanion.Views.Windows
                 // set key
                 string Key = $"Battery{KeyStatus}{KeyValue}";
 
-                if (PowerManager.PowerStatusIcon.ContainsKey(Key))
-                    BatteryIndicatorIcon.Glyph = PowerManager.PowerStatusIcon[Key];
+                if (PowerManager.PowerStatusIcon.TryGetValue(Key, out string glyph))
+                    BatteryIndicatorIcon.Glyph = glyph;
 
                 if (status.BatteryLifeRemaining > 0)
                 {

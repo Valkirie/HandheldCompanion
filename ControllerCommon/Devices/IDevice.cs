@@ -61,7 +61,7 @@ namespace ControllerCommon.Devices
         public double[] GfxClock = { 100, 1800 };
 
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        public Dictionary<char, char> AngularVelocityAxisSwap = new()
+        public SortedDictionary<char, char> AngularVelocityAxisSwap = new()
         {
             { 'X', 'X' },
             { 'Y', 'Y' },
@@ -69,7 +69,7 @@ namespace ControllerCommon.Devices
         };
 
         public Vector3 AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        public Dictionary<char, char> AccelerationAxisSwap = new()
+        public SortedDictionary<char, char> AccelerationAxisSwap = new()
         {
             { 'X', 'X' },
             { 'Y', 'Y' },

@@ -14,7 +14,7 @@ namespace HandheldCompanion.Views.Pages
         public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
         public Dictionary<AxisLayoutFlags, TriggerMapping> MappingTriggers = new();
 
-        public void Refresh(Dictionary<ButtonFlags, IActions> buttonMapping, Dictionary<AxisLayoutFlags, IActions> axisMapping)
+        public void Refresh(SortedDictionary<ButtonFlags, IActions> buttonMapping, SortedDictionary<AxisLayoutFlags, IActions> axisMapping)
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
@@ -24,10 +24,8 @@ namespace HandheldCompanion.Views.Pages
                     ButtonFlags button = pair.Key;
                     ButtonMapping mapping = pair.Value;
 
-                    if (buttonMapping.ContainsKey(button))
+                    if (buttonMapping.TryGetValue(button, out IActions actions))
                     {
-                        IActions actions = buttonMapping[button];
-
                         if (actions is null)
                             actions = new EmptyActions();
 
@@ -43,10 +41,8 @@ namespace HandheldCompanion.Views.Pages
                     AxisLayoutFlags axis = pair.Key;
                     AxisMapping mapping = pair.Value;
 
-                    if (axisMapping.ContainsKey(axis))
+                    if (axisMapping.TryGetValue(axis, out IActions actions))
                     {
-                        IActions actions = axisMapping[axis];
-
                         if (actions is null)
                             actions = new EmptyActions();
 
@@ -62,10 +58,8 @@ namespace HandheldCompanion.Views.Pages
                     AxisLayoutFlags axis = pair.Key;
                     TriggerMapping mapping = pair.Value;
 
-                    if (axisMapping.ContainsKey(axis))
+                    if (axisMapping.TryGetValue(axis, out IActions actions))
                     {
-                        IActions actions = axisMapping[axis];
-
                         if (actions is null)
                             actions = new EmptyActions();
 

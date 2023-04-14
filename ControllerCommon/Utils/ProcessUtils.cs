@@ -166,7 +166,7 @@ namespace ControllerCommon.Utils
 
         public static Dictionary<string, string> GetAppProperties(string filePath1)
         {
-            Dictionary<string, string> AppProperties = new Dictionary<string, string>();
+            Dictionary<string, string> AppProperties = new ();
 
             ShellObject shellFile = ShellObject.FromParsingName(filePath1);
             foreach (var property in typeof(ShellProperties.PropertySystem).GetProperties(BindingFlags.Public | BindingFlags.Instance))

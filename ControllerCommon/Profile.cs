@@ -44,7 +44,7 @@ namespace ControllerCommon
     public class Profile : ICloneable, IComparable
     {
         // todo: move me out of here !
-        public static Dictionary<MotionInput, string> InputDescription = new()
+        public static readonly SortedDictionary<MotionInput, string> InputDescription = new()
         {
             { MotionInput.JoystickCamera, Properties.Resources.JoystickCameraDesc },
             { MotionInput.JoystickSteering, Properties.Resources.JoystickSteeringDesc },
@@ -62,6 +62,7 @@ namespace ControllerCommon
         public string Executable { get; set; } = string.Empty;
         public bool Enabled { get; set; }
         public bool Default { get; set; }
+        public Version Version { get; set; }
 
         public string LayoutTitle { get; set; } = string.Empty;
         public bool LayoutEnabled { get; set; } = false;

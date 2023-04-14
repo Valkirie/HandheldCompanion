@@ -13,7 +13,7 @@ namespace ControllerCommon.Controllers
         public AxisState AxisState = new();
 
         [JsonIgnore]
-        public static readonly Dictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
+        public static readonly SortedDictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
         {
             { AxisLayoutFlags.RightThumb, ButtonFlags.RightThumbTouch },
             { AxisLayoutFlags.LeftThumb, ButtonFlags.LeftThumbTouch },

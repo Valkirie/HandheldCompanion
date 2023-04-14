@@ -315,10 +315,8 @@ namespace HandheldCompanion.Managers
 
         private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
         {
-            if (!Controllers.ContainsKey(details.deviceInstanceId))
+            if (!Controllers.TryGetValue(details.deviceInstanceId, out IController controller))
                 return;
-
-            IController controller = Controllers[details.deviceInstanceId];
 
             if (!controller.IsConnected())
                 return;
@@ -388,10 +386,8 @@ namespace HandheldCompanion.Managers
 
         private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
         {
-            if (!Controllers.ContainsKey(details.deviceInstanceId))
+            if (!Controllers.TryGetValue(details.deviceInstanceId, out IController controller))
                 return;
-
-            XInputController controller = (XInputController)Controllers[details.deviceInstanceId];
 
             if (controller.IsConnected())
                 return;
@@ -424,10 +420,9 @@ namespace HandheldCompanion.Managers
             PipeClient.SendMessage(new PipeClientControllerDisconnect());
 
             // look for new controller
-            if (!Controllers.ContainsKey(baseContainerDeviceInstancePath))
+            if (!Controllers.TryGetValue(baseContainerDeviceInstancePath, out IController controller))
                 return;
 
-            IController controller = Controllers[baseContainerDeviceInstancePath];
             if (controller is null)
                 return;
 

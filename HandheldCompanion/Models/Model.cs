@@ -26,7 +26,7 @@ namespace HandheldCompanion
         public Model3DGroup LeftMotor;
         public Model3DGroup RightMotor;
 
-        public Dictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
+        public SortedDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
         // Rotation Points
         public Vector3D JoystickRotationPointCenterLeftMillimeter;

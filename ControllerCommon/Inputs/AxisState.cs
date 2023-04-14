@@ -8,7 +8,7 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public class AxisState : ICloneable
     {
-        public Dictionary<AxisFlags, short> State = new();
+        public SortedDictionary<AxisFlags, short> State = new();
 
         public short this[AxisFlags axis]
         {
@@ -31,7 +31,7 @@ namespace ControllerCommon.Inputs
         [JsonIgnore]
         public IEnumerable<AxisFlags> Axis => State.Where(a => a.Value != 0).Select(a => a.Key).ToList();
 
-        public AxisState(Dictionary<AxisFlags, short> axisState)
+        public AxisState(SortedDictionary<AxisFlags, short> axisState)
         {
             foreach (var state in axisState)
                 this[state.Key] = state.Value;
@@ -87,7 +87,7 @@ namespace ControllerCommon.Inputs
             return false;
         }
 
-        public static bool EqualsWithValues(Dictionary<AxisFlags, short> obj1, Dictionary<AxisFlags, short> obj2)
+        public static bool EqualsWithValues(SortedDictionary<AxisFlags, short> obj1, SortedDictionary<AxisFlags, short> obj2)
         {
             bool result = false;
             if (obj1.Count == obj2.Count)

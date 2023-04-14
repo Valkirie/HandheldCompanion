@@ -37,7 +37,7 @@ namespace ControllerCommon.Managers
 
         public static bool IsInitialized;
 
-        public static Dictionary<string, string> PowerStatusIcon = new()
+        public static readonly SortedDictionary<string, string> PowerStatusIcon = new()
         {
             { "Battery0", "\uE850" },
             { "Battery1", "\uE851" },

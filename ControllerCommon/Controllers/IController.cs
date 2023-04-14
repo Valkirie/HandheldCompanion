@@ -69,8 +69,8 @@ namespace ControllerCommon.Controllers
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
 
-        protected Dictionary<ButtonFlags, Brush> ColoredButtons = new();
-        protected Dictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
+        protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = new();
+        protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
 
         public ButtonState InjectedButtons = new();
 
@@ -445,16 +445,16 @@ namespace ControllerCommon.Controllers
 
         public Brush GetGlyphColor(ButtonFlags button)
         {
-            if (ColoredButtons.ContainsKey(button))
-                return ColoredButtons[button];
+            if (ColoredButtons.TryGetValue(button, out Brush brush))
+                return brush;
 
             return null;
         }
 
         public Brush GetGlyphColor(AxisLayoutFlags axis)
         {
-            /* if (AxisBrush.ContainsKey(axis))
-                return AxisBrush[axis]; */
+            /* if (AxisBrush.TryGetValue(axis, out Brush brush))
+                return brush; */
 
             return null;
         }
