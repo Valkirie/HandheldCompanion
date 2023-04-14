@@ -12,7 +12,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
-    d:DesignHeight="1000"
+    d:DesignHeight="1500"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -337,15 +337,18 @@
                 <!--  Steam Deck settings  -->
                 <ui:SimpleStackPanel
                     Name="SteamDeckPanel"
+                    d:Visibility="Visible"
                     Spacing="6"
                     Visibility="Collapsed">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Steam Deck Settings" />
 
                     <!--  Lizard mode (Mouse)  -->
+                    <!--  Deprecated  -->
                     <Border
                         Padding="15,12,12,12"
                         Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Visibility="Collapsed">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -381,10 +384,12 @@
                     </Border>
 
                     <!--  Lizard mode (Buttons)  -->
+                    <!--  Deprecated  -->
                     <Border
                         Padding="15,12,12,12"
                         Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Visibility="Collapsed">
 
                         <Grid>
                             <Grid.ColumnDefinitions>

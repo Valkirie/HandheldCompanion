@@ -107,6 +107,9 @@ namespace HandheldCompanion.Managers
                 hotkey.Summoned += (hotkey) => InvokeTrigger(hotkey, false, true);
                 hotkey.Updated += (hotkey) => SerializeHotkey(hotkey, true);
 
+                if (!string.IsNullOrEmpty(hotkey.inputsHotkey.Settings))
+                    hotkey.IsEnabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
+                
                 HotkeyCreated?.Invoke(hotkey);
             }
 
@@ -131,32 +134,21 @@ namespace HandheldCompanion.Managers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                switch (name)
+                // manage toggle type hotkeys
+                foreach(Hotkey hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
                 {
-                    case "SteamDeckLizardMouse":
-                    case "SteamDeckLizardButtons":
-                    case "shortcutDesktopLayout":
-                    case "QuietModeToggled":
-                        {
-                            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(name)).FirstOrDefault();
-                            if (hotkey is null)
-                                return;
+                    if (!hotkey.inputsHotkey.IsToggle)
+                        continue;
 
-                            bool toggle = Convert.ToBoolean(value);
-                            hotkey.SetToggle(toggle);
-                        }
-                        break;
+                    bool toggle = Convert.ToBoolean(value);
+                    hotkey.SetToggle(toggle);
+                }
 
-                    case "QuietModeEnabled":
-                        {
-                            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)).FirstOrDefault();
-                            if (hotkey is null)
-                                return;
-
-                            bool toggle = Convert.ToBoolean(value);
-                            hotkey.IsEnabled = toggle;
-                        }
-                        break;
+                // manage settings type hotkeys
+                foreach(Hotkey hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
+                {
+                    bool enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
+                    hotkey.IsEnabled = enabled;
                 }
             });
         }
