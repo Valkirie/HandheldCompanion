@@ -155,7 +155,7 @@ namespace HandheldCompanion.Views.Pages
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    if (pr.Executable == profile.Executable)
+                    if (pr.Guid == profile.Guid)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -192,7 +192,7 @@ namespace HandheldCompanion.Views.Pages
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
-                    if (pr.Executable == profile.Executable)
+                    if (pr.Guid == profile.Guid)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;

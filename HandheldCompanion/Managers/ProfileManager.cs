@@ -111,7 +111,7 @@ namespace HandheldCompanion.Managers
         public static bool Contains(Profile profile)
         {
             foreach (Profile pr in profiles.Values)
-                if (pr.Executable == profile.Executable)
+                if (pr.Guid.Equals(profile.Guid))
                     return true;
 
             return false;
@@ -124,7 +124,7 @@ namespace HandheldCompanion.Managers
             for (int i = 0; i < profiles.Count; i++)
             {
                 Profile pr = profiles.Values.ToList()[i];
-                if (pr.Executable == profile.Executable)
+                if (pr.Guid.Equals(profile.Guid))
                     return i;
             }
 
@@ -144,7 +144,7 @@ namespace HandheldCompanion.Managers
                 if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
                 {
                     // warn owner
-                    bool isCurrent = profile.Executable == currentProfile.Executable;
+                    bool isCurrent = profile.Guid == currentProfile.Guid;
 
                     // (re)set current profile
                     if (isCurrent)
@@ -303,7 +303,7 @@ namespace HandheldCompanion.Managers
                 profiles.Remove(profile.Name);
 
                 // warn owner
-                bool isCurrent = profile.Executable == currentProfile.Executable;
+                bool isCurrent = profile.Guid == currentProfile.Guid;
 
                 // (re)set current profile
                 if (isCurrent)
@@ -368,7 +368,7 @@ namespace HandheldCompanion.Managers
             }
 
             // check if this is current profile
-            bool isCurrent = currentProfile is null ? false : profile.Executable == currentProfile.Executable;
+            bool isCurrent = currentProfile is null ? false : profile.Guid == currentProfile.Guid;
 
             // refresh error code
             SanitizeProfile(profile);

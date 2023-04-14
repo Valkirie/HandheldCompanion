@@ -175,7 +175,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (profile.Executable == currentProfile.Executable)
+            if (profile.Guid == currentProfile.Guid)
                 ProcessManager_ForegroundChanged(currentProcess, null);
 
             currentProfile = null;
