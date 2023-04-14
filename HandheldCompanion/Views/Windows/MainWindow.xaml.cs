@@ -227,6 +227,8 @@ namespace HandheldCompanion.Views
                     ToastManager.IsEnabled = Convert.ToBoolean(value);
                     break;
                 case "DesktopProfileOnStart":
+                    if (!SettingsManager.GetBoolean("DuringStartup", true))
+                        break;
                     bool DesktopLayout = Convert.ToBoolean(value);
                     SettingsManager.SetProperty("shortcutDesktopLayout", DesktopLayout, false, true);
                     break;
