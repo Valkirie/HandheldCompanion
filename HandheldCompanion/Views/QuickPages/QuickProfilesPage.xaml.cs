@@ -364,6 +364,7 @@ namespace HandheldCompanion.Views.QuickPages
             // create profile
             currentProfile = new Profile(currentProcess.Path);
             currentProfile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
+            currentProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
             currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
             // if an update is pending, execute it and stop timer
