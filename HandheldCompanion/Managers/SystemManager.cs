@@ -218,10 +218,9 @@ namespace HandheldCompanion.Managers
                 case "QuietModeToggled":
                     {
                         bool toggled = Convert.ToBoolean(value);
-                        bool startup = SettingsManager.GetBoolean("DuringStartup", true);
 
-                        // if it's off avoid sending any control commands to the hardware on startup
-                        if (startup && !toggled)
+                        // do not send command to device on startup if toggle is off
+                        if (!SettingsManager.IsInitialized && !toggled)
                             return;
 
                         MainWindow.CurrentDevice.SetFanControl(toggled);
