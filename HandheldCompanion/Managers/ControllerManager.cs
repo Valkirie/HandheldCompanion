@@ -103,6 +103,11 @@ namespace HandheldCompanion.Managers
                 foreach (IController controller in Controllers.Values)
                     controller.Unhide();
 
+            // unplug on close
+            IController target = GetTargetController();
+            if (target is not null)
+                target.Unplug();
+
             LogManager.LogInformation("{0} has stopped", "ControllerManager");
         }
 
