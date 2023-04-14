@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 using SystemPowerManager = Windows.System.Power.PowerManager;
+using System.Timers;
 
 namespace ControllerCommon.Managers
 {
@@ -30,6 +32,8 @@ namespace ControllerCommon.Managers
 
         private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
         private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
+
+        private static Timer updateTimer = new(250) { AutoReset = false };
 
         public static bool IsInitialized;
 
@@ -111,7 +115,8 @@ namespace ControllerCommon.Managers
                 IsSessionLocked = false;
             }
 
-            SystemRoutine();
+            updateTimer.Elapsed += UpdateTimer_Elapsed;
+            updateTimer.Start();
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -151,7 +156,9 @@ namespace ControllerCommon.Managers
 
             LogManager.LogDebug("Device power mode set to {0}", e.Mode);
 
-            SystemRoutine();
+            // reset timer
+            updateTimer.Stop();
+            updateTimer.Start();
         }
 
         private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -170,10 +177,12 @@ namespace ControllerCommon.Managers
 
             LogManager.LogDebug("Session switched to {0}", e.Reason);
 
-            SystemRoutine();
+            // reset timer
+            updateTimer.Stop();
+            updateTimer.Start();
         }
 
-        private static void SystemRoutine()
+        private static void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (!IsPowerSuspended && !IsSessionLocked)
                 currentSystemStatus = SystemStatus.SystemReady;
@@ -185,9 +194,9 @@ namespace ControllerCommon.Managers
             {
                 LogManager.LogInformation("System status set to {0}", currentSystemStatus);
                 SystemStatusChanged?.Invoke(currentSystemStatus, previousSystemStatus);
-            }
 
-            previousSystemStatus = currentSystemStatus;
+                previousSystemStatus = currentSystemStatus;
+            }
         }
     }
 }

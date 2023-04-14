@@ -500,9 +500,6 @@ namespace ControllerService
             if (DSUEnabled)
                 DSUServer.Start();
 
-            // update virtual controller
-            SetControllerMode(HIDmode);
-
             // start Pipe Server
             PipeServer.Open();
 
@@ -525,7 +522,6 @@ namespace ControllerService
             SetControllerMode(HIDmode.NoController);
 
             // stop Power Manager
-            PowerManager.SystemStatusChanged -= OnSystemStatusChanged;
             PowerManager.Stop();
 
             // stop DSUClient
@@ -545,22 +541,20 @@ namespace ControllerService
             if (status == prevStatus)
                 return;
 
-            LogManager.LogInformation("System status set to {0}", status);
-
             switch (status)
             {
                 case SystemStatus.SystemReady:
                     {
                         switch (prevStatus)
                         {
-                            // cold boot
                             case SystemStatus.SystemBooting:
+                                // cold boot
                                 IMU.SetSensorFamily(SensorSelection);
                                 IMU.Start();
                                 break;
-                            // resume from sleep
-                            default:
-                                Thread.Sleep(2000);
+                            case SystemStatus.SystemPending:
+                                // resume from sleep
+                                Thread.Sleep(10000);
                                 IMU.Restart(true);
                                 break;
                         }
@@ -570,7 +564,8 @@ namespace ControllerService
                             return;
 
                         // (re)initialize ViGEm
-                        vClient = new ViGEmClient();
+                        if (vClient is null)
+                            vClient = new ViGEmClient();
 
                         // update virtual controller
                         SetControllerMode(HIDmode);
