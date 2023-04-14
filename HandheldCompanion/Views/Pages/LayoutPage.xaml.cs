@@ -430,9 +430,9 @@ namespace HandheldCompanion.Views.Pages
             LayoutTemplate newLayout = new()
             {
                 Layout = currentLayout,
-                Name = currentTemplate.Name,
-                Description = currentTemplate.Description,
-                Author = currentTemplate.Author,
+                Name = LayoutTitle.Text,
+                Description = LayoutDescription.Text,
+                Author = LayoutAuthor.Text,
                 Executable = currentTemplate.Executable,
                 Product = ProfilesPage.currentProfile.Name,
                 IsCommunity = true,
