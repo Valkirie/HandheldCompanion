@@ -335,10 +335,10 @@ namespace HandheldCompanion.Controllers
             // https://www.precisionmicrodrives.com/ab-003
             // Scale motor input request with user vibration strenth 0 to 100% accordingly
 
-            byte AmplitudeLeft = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
+            byte AmplitudeLeft = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
 
-            bool leftHaptic = LargeMotor > 0;
-            byte PeriodLeft = (byte)(30 - AmplitudeLeft);
+            bool leftHaptic = SmallMotor > 0;
+            byte PeriodLeft = (byte)(28 - AmplitudeLeft);
 
             if (leftHaptic != lastLeftHapticOn)
             {
@@ -346,10 +346,10 @@ namespace HandheldCompanion.Controllers
                 lastLeftHapticOn = leftHaptic;
             }
 
-            byte AmplitudeRight = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
+            byte AmplitudeRight = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
 
-            bool rightHaptic = SmallMotor > 0;
-            byte PeriodRight = (byte)(30 - AmplitudeRight);
+            bool rightHaptic = LargeMotor > 0;
+            byte PeriodRight = (byte)(28 - AmplitudeRight);
 
             if (rightHaptic != lastRightHapticOn)
             {
