@@ -4,6 +4,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -118,6 +119,10 @@ namespace HandheldCompanion.Controls
                         startTime = thread.StartTime;
                         mainThread = thread;
                     }
+                }
+                catch (Win32Exception)
+                {
+                    // Access if denied
                 }
                 catch (InvalidOperationException)
                 {
