@@ -128,7 +128,7 @@ namespace HandheldCompanion.Managers
         {
             // UI thread (synchronous)
             // We need to wait for each controller to initialize and take (or not) its slot in the array
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 // initialize value
                 LayoutTemplate layoutTemplate = null;
@@ -157,6 +157,8 @@ namespace HandheldCompanion.Managers
                 switch (layoutTemplate.Name)
                 {
                     case "Desktop":
+                        // if we need to make this function async, then we need to check below if we're in desktop mode
+                        // if yes, update currentLayout with desktopLayout
                         desktopLayout = layoutTemplate;
                         desktopLayout.Updated += LayoutTemplate_Updated;
                         break;
