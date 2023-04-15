@@ -31,15 +31,16 @@ namespace ControllerCommon.Devices
                 true, ButtonFlags.OEM1
                 ));
 
+            // note, need to manually configured in GPD app
             OEMChords.Add(new DeviceChord("Bottom button left",
-                new List<KeyCode>() { KeyCode.D9 },
-                new List<KeyCode>() { KeyCode.D9 },
+                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
+                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
                 false, ButtonFlags.OEM2
                 ));
 
             OEMChords.Add(new DeviceChord("Bottom button right",
-                new List<KeyCode>() { KeyCode.D0 },
-                new List<KeyCode>() { KeyCode.D0 },
+                new List<KeyCode>() { KeyCode.F12, KeyCode.R },
+                new List<KeyCode>() { KeyCode.F12, KeyCode.R },
                 false, ButtonFlags.OEM3
                 ));
         }
