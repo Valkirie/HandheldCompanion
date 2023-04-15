@@ -274,7 +274,8 @@ namespace HandheldCompanion.Views.Pages
 
                     bool exists = false;
 
-                    if (ProfileManager.Contains(profile))
+                    // check on path rather than profile
+                    if (ProfileManager.Contains(path))
                     {
                         Task<ContentDialogResult> result = Dialog.ShowAsync(
                             String.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, profile.Name),
