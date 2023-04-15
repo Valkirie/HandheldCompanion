@@ -125,6 +125,8 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal"
                             Spacing="6">
+
+                            <!-- Apply layout -->
                             <Button
                                 Name="ButtonApplyLayout"
                                 Click="ButtonApplyLayout_Click"
@@ -133,7 +135,7 @@
                                 Apply layout
                             </Button>
 
-                            <!--  Implement me  -->
+                            <!--  Export layout  -->
                             <Button Name="ButtonLayoutSettings" Content="Export layout">
                                 <ui:FlyoutService.Flyout>
                                     <ui:Flyout
@@ -157,7 +159,8 @@
                                                     Name="LayoutAuthor"
                                                     HorizontalAlignment="Stretch"
                                                     ui:ControlHelper.Header="Layout author" />
-                                                <CheckBox Content="Export for current controller" />
+                                                <CheckBox x:Name="ExportForCurrent" Content="Export for current controller" />
+                                                <CheckBox x:Name="SaveGameInfo" Content="Save game information with the layout" IsChecked="True" />
 
                                                 <!--  Separator  -->
                                                 <Separator

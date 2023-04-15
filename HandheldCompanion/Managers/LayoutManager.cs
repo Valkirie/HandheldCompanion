@@ -120,14 +120,12 @@ namespace HandheldCompanion.Managers
 
         private static bool LayoutTemplateExist(LayoutTemplate layoutTemplate)
         {
-            string fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}.json");
+            string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}.json");
             return File.Exists(fileName);
         }
 
         private static void ProcessLayoutTemplate(string fileName)
         {
-            string layoutName = Path.GetFileNameWithoutExtension(fileName);
-
             // UI thread (synchronous)
             // We need to wait for each controller to initialize and take (or not) its slot in the array
             Application.Current.Dispatcher.BeginInvoke(() =>
@@ -230,7 +228,7 @@ namespace HandheldCompanion.Managers
             if (layoutTemplate.IsTemplate)
                 fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}.json");
             else
-                fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}_{layoutTemplate.Product}_{layoutTemplate.Author}.json");
+                fileName = Path.Combine(LayoutsPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
 
             File.WriteAllText(fileName, jsonString);
         }
