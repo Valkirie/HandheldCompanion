@@ -113,7 +113,7 @@ namespace HandheldCompanion.Managers
         public static bool Contains(Profile profile)
         {
             foreach (Profile pr in profiles.Values)
-                if (pr.Guid.Equals(profile.Guid))
+                if (pr.Executable.Equals(profile.Executable))
                     return true;
 
             return false;
