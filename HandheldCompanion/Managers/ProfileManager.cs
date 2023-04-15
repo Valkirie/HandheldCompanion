@@ -119,6 +119,27 @@ namespace HandheldCompanion.Managers
             return false;
         }
 
+        public static bool Contains(string fileName)
+        {
+            foreach (Profile pr in profiles.Values)
+                if (pr.Path.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+
+            return false;
+        }
+
+        public static Profile GetProfileFromPath(string path)
+        {
+            var profile = profiles.Values.Where(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            return profile is not null ? profile : GetDefault();
+        }
+
+        public static Profile GetProfileFromExecutable(string fileName)
+        {
+            var profile = profiles.Values.Where(a => a.Executable.Equals(fileName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            return profile is not null ? profile : GetDefault();
+        }
+
         public static int GetProfileIndex(Profile profile)
         {
             int idx = -1;
@@ -137,7 +158,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromExec(processEx.Executable);
+                Profile profile = GetProfileFromPath(processEx.Path);
 
                 // do not discard default profile
                 if (profile is null || profile.Default)
@@ -166,7 +187,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromExec(processEx.Executable);
+                Profile profile = GetProfileFromPath(processEx.Path);
 
                 if (profile is null || profile.Default)
                     return;
@@ -184,7 +205,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                var profile = GetProfileFromExec(proc.Executable);
+                var profile = GetProfileFromPath(proc.Path);
 
                 // raise event
                 Applied?.Invoke(profile);
@@ -470,12 +491,6 @@ namespace HandheldCompanion.Managers
 
             foreach(Profile profile in profiles.Values)
                 UpdateProfileWrapper(profile);
-        }
-
-        public static Profile GetProfileFromExec(string executable)
-        {
-            var profile = profiles.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            return profile is not null ? profile : GetDefault();
         }
     }
 }
