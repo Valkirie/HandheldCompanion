@@ -154,17 +154,12 @@ namespace HandheldCompanion.Platforms
             return controllers.Contains(id);
         }
 
-        public override bool IsRunning()
-        {
-            return Process is not null;
-        }
-
         public override bool Start()
         {
             if (!IsInstalled)
                 return false;
 
-            if (!IsRunning())
+            if (IsRunning())
                 return false;
 
             var process = Process.Start(new ProcessStartInfo()
@@ -184,7 +179,7 @@ namespace HandheldCompanion.Platforms
             if (!IsInstalled)
                 return false;
 
-            if (IsRunning())
+            if (!IsRunning())
                 return false;
 
             var process = Process.Start(new ProcessStartInfo()

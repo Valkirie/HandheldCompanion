@@ -14,7 +14,8 @@ namespace ControllerCommon.Platforms
         Steam = 1,
         Origin = 2,
         UbisoftConnect = 3,
-        GOG = 4
+        GOG = 4,
+        RTSS = 5
     }
 
     public abstract class IPlatform
@@ -95,7 +96,7 @@ namespace ControllerCommon.Platforms
 
         public virtual bool IsRunning()
         {
-            return false;
+            return Process is not null;
         }
 
         public virtual bool Start()

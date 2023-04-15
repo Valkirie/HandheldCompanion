@@ -11,7 +11,7 @@ namespace ControllerCommon
         string EXE = Assembly.GetExecutingAssembly().GetName().Name;
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
+        static extern bool WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
         static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
@@ -28,19 +28,19 @@ namespace ControllerCommon
             return RetVal.ToString();
         }
 
-        public void Write(string Key, string Value, string Section = null)
+        public bool Write(string Key, string Value, string Section = null)
         {
-            WritePrivateProfileString(Section ?? EXE, Key, Value, Path);
+            return WritePrivateProfileString(Section ?? EXE, Key, Value, Path);
         }
 
-        public void DeleteKey(string Key, string Section = null)
+        public bool DeleteKey(string Key, string Section = null)
         {
-            Write(Key, null, Section ?? EXE);
+            return Write(Key, null, Section ?? EXE);
         }
 
-        public void DeleteSection(string Section = null)
+        public bool DeleteSection(string Section = null)
         {
-            Write(null, null, Section ?? EXE);
+            return Write(null, null, Section ?? EXE);
         }
 
         public bool KeyExists(string Key, string Section = null)

@@ -275,6 +275,85 @@
             BorderThickness="0,1,0,0"
             Opacity="0.25" />
 
+        <!--  Framerate Limit  -->
+        <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="0.2*" MinWidth="80" />
+                </Grid.ColumnDefinitions>
+
+                <DockPanel>
+                    <ui:FontIcon
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xF119;" />
+
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Framerate limit" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="Limits framerate for 3D applications"
+                            TextWrapping="Wrap" />
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+
+                <ui:ToggleSwitch
+                    Name="FramerateToggle"
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                    Toggled="FramerateToggle_Toggled" />
+            </Grid>
+        </Border>
+
+        <!--  Content  -->
+        <Border
+            Padding="15,6,15,6"
+            d:Visibility="Visible"
+            CornerRadius="{DynamicResource ControlCornerRadius}"
+            Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <DockPanel
+                Grid.Column="1"
+                Margin="0,0,0,0"
+                ScrollViewer.PanningMode="HorizontalOnly">
+                <TextBlock
+                    Width="30"
+                    VerticalAlignment="Center"
+                    Text="{Binding Value, ElementName=FramerateSlider, Mode=OneWay}"
+                    TextAlignment="Center" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="FPS" />
+                <Slider
+                    x:Name="FramerateSlider"
+                    Margin="8,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    AutoToolTipPlacement="TopLeft"
+                    AutoToolTipPrecision="0"
+                    IsMoveToPointEnabled="True"
+                    IsSnapToTickEnabled="True"
+                    Maximum="60"
+                    Minimum="15"
+                    Style="{DynamicResource SliderStyle1}"
+                    TickFrequency="15"
+                    TickPlacement="BottomRight"
+                    ValueChanged="FramerateSlider_ValueChanged" />
+            </DockPanel>
+        </Border>
+
+        <!--  Separator  -->
+        <Separator
+            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+            BorderThickness="0,1,0,0"
+            Opacity="0.25" />
+
         <!--  Refresh rate  -->
         <ui:SimpleStackPanel Spacing="6">
             <!--  Header  -->

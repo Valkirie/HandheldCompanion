@@ -7,15 +7,19 @@ namespace HandheldCompanion.Managers
 {
     public static class PlatformManager
     {
+        // gaming platforms
         private static SteamPlatform Steam;
         private static GOGGalaxy GOGGalaxy;
         private static UbisoftConnect UbisoftConnect;
+
+        // misc platforms
+        public static RTSS RTSS;
 
         private static bool IsInitialized;
 
         public static void Start()
         {
-            // initialize supported platforms
+            // initialize supported gaming platforms
             Steam = new();
             GOGGalaxy = new();
             UbisoftConnect = new();
@@ -35,6 +39,15 @@ namespace HandheldCompanion.Managers
             if (UbisoftConnect.IsInstalled)
             {
                 // do something
+            }
+
+            // initialize supported misc platforms
+            RTSS = new();
+
+            if (RTSS.IsInstalled)
+            {
+                int Limit = RTSS.GetTargetFPS();
+                RTSS.SetTargetFPS(60);
             }
 
             IsInitialized = true;
