@@ -28,19 +28,6 @@ namespace ControllerCommon
     }
 
     [Serializable]
-    public class ProfileVector
-    {
-        public double x { get; set; }
-        public double y { get; set; }
-
-        public ProfileVector(double x, double y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    [Serializable]
     public class Profile : ICloneable, IComparable
     {
         // todo: move me out of here !
@@ -85,7 +72,7 @@ namespace ControllerCommon
         public bool MotionInvertVertical { get; set; }              // if false, invert vertical axis
         public float MotionSensivityX { get; set; } = 1.0f;
         public float MotionSensivityY { get; set; } = 1.0f;
-        public List<ProfileVector> MotionSensivityArray { get; set; } = new();
+        public SortedDictionary<double, double> MotionSensivityArray { get; set; } = new();
 
         public ButtonState MotionTrigger { get; set; } = new();
 
@@ -117,8 +104,7 @@ namespace ControllerCommon
                 for (int i = 0; i < SensivityArraySize; i++)
                 {
                     double value = (double)i / (double)(SensivityArraySize - 1);
-                    ProfileVector vector = new ProfileVector(value, 0.5f);
-                    MotionSensivityArray.Add(vector);
+                    MotionSensivityArray[value] = 0.5f;
                 }
             }
         }

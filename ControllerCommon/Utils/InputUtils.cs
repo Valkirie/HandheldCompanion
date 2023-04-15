@@ -258,21 +258,19 @@ namespace ControllerCommon.Utils
         // Custom sensitivity
         // Interpolation function (linear), takes list of nodes coordinates and gamepad joystick position returns game input
         private static int SensivityIdx = 2;
-        public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, List<ProfileVector> Nodes)
+        public static float ApplyCustomSensitivity(float AngularValue, float MaxValue, SortedDictionary<double, double> Nodes)
         {
-            int NodeAmount = Profile.SensivityArraySize;
-
             // Use absolute joystick position, range -1 to 1, re-apply direction later
             float JoystickPosAbs = (float)Math.Abs(AngularValue / MaxValue);
             float JoystickPosAdjusted = 0.0f;
 
             // Check what we will be sending
-            if (JoystickPosAbs <= Nodes[0].x)
+            if (JoystickPosAbs <= 0)
             {
                 // Send 0 output to game
                 JoystickPosAdjusted = 0.0f;
             }
-            else if (JoystickPosAbs >= Nodes[NodeAmount - 1].x)
+            else if (JoystickPosAbs >= 1)
             {
                 // Send 1 output to game
                 JoystickPosAdjusted = 1.0f;
@@ -280,9 +278,9 @@ namespace ControllerCommon.Utils
             // Calculate custom sensitivty
             else
             {
-                var closests = Nodes.Select(n => new { n, distance = Math.Abs(n.x - JoystickPosAbs) }).OrderBy(p => p.distance).Take(SensivityIdx);
+                var closests = Nodes.Select(n => new { n, distance = Math.Abs(n.Key - JoystickPosAbs) }).OrderBy(p => p.distance).Take(SensivityIdx);
                 foreach (var item in closests)
-                    JoystickPosAdjusted += (float)(item.n.y / (1.0f + item.distance));
+                    JoystickPosAdjusted += (float)(item.n.Value / (1.0f + item.distance));
 
                 JoystickPosAdjusted /= SensivityIdx;
                 JoystickPosAdjusted *= 2.0f; // a 1.0f vector means a 100% increase
