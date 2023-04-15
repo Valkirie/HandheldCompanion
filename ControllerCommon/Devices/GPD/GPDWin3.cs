@@ -16,16 +16,16 @@ namespace ControllerCommon.Devices
             this.cTDP = new double[] { 7, 25 };
             this.GfxClock = new double[] { 100, 1400 };
 
-            // note, need to manually configured as 0 and 9 in GPD app
+            // note, need to manually configured in GPD app
             OEMChords.Add(new DeviceChord("Bottom button left",
-                new List<KeyCode>() { KeyCode.D9 },
-                new List<KeyCode>() { KeyCode.D9 },
+                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
+                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
                 false, ButtonFlags.OEM1
                 ));
 
             OEMChords.Add(new DeviceChord("Bottom button right",
-                new List<KeyCode>() { KeyCode.D0 },
-                new List<KeyCode>() { KeyCode.D0 },
+                new List<KeyCode>() { KeyCode.F12, KeyCode.R },
+                new List<KeyCode>() { KeyCode.F12, KeyCode.R },
                 false, ButtonFlags.OEM2
                 ));
         }
