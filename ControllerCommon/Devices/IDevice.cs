@@ -151,6 +151,9 @@ namespace ControllerCommon.Devices
                             case "G1618-03":
                                 device = new GPDWin3();
                                 break;
+                            case "G1618-04":
+                                device = new GPDWin4();
+                                break;
                             case "G1619-03":
                                 device = new GPDWinMax2Intel();
                                 break;
