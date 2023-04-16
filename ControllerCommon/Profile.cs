@@ -49,7 +49,7 @@ namespace ControllerCommon
         public string Executable { get; set; } = string.Empty;
         public bool Enabled { get; set; }
         public bool Default { get; set; }
-        public Version Version { get; set; }
+        public Version Version { get; set; } = new();
 
         public string LayoutTitle { get; set; } = string.Empty;
         public bool LayoutEnabled { get; set; } = false;
