@@ -51,16 +51,16 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
             // temp
             StackCurve.Children.Clear();
-            for (int i = 1; i <= Profile.SensivityArraySize; i++)
+            foreach (var elem in ProfilesPage.currentProfile.MotionSensivityArray)
             {
                 // skip first item ?
-                if (i == 1)
+                if (elem.Key == 0)
                     continue;
 
-                double height = ProfilesPage.currentProfile.MotionSensivityArray[i - 1].y * StackCurve.Height;
+                double height = elem.Value * StackCurve.Height;
                 Thumb thumb = new Thumb()
                 {
-                    Tag = i - 1,
+                    Tag = elem.Key,
                     Width = 8,
                     MaxHeight = StackCurve.Height,
                     Height = height,
@@ -126,10 +126,9 @@ namespace HandheldCompanion.Views.Pages.Profiles
 
                 foreach (Control control in StackCurve.Children)
                 {
-                    int idx = (int)control.Tag;
-                    ProfileVector vector = ProfilesPage.currentProfile.MotionSensivityArray[idx];
+                    double x = (double)control.Tag;
 
-                    if (dist_x > vector.x)
+                    if (dist_x > x)
                         control.BorderThickness = new Thickness(0, 0, 0, 20);
                     else
                         control.BorderThickness = new Thickness(0);
@@ -168,9 +167,9 @@ namespace HandheldCompanion.Views.Pages.Profiles
             if (e.LeftButton == MouseButtonState.Pressed)
             {
 
-                int idx = (int)Thumb.Tag;
+                double x = (double)Thumb.Tag;
                 Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
-                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
             }
         }
 
@@ -179,38 +178,37 @@ namespace HandheldCompanion.Views.Pages.Profiles
             // default preset
             foreach (Control Thumb in StackCurve.Children)
             {
-                int idx = (int)Thumb.Tag;
-
+                double x = (double)Thumb.Tag;
                 Thumb.Height = StackCurve.Height / 2.0f;
-                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
             }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             // agressive preset
-            float tempx = 0.50f / Profile.SensivityArraySize;
+            float tempx = 24f / Profile.SensivityArraySize;
             foreach (Control Thumb in StackCurve.Children)
             {
-                int idx = (int)Thumb.Tag;
-                float value = (float)(-Math.Sqrt(idx * tempx) + 0.85f);
+                double x = (double)Thumb.Tag;
+                float value = (float)(-Math.Sqrt(x * tempx) + 0.85f);
 
                 Thumb.Height = StackCurve.Height * value;
-                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
             }
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             // precise preset
-            float tempx = 0.25f / Profile.SensivityArraySize;
+            float tempx = 12f / Profile.SensivityArraySize;
             foreach (Control Thumb in StackCurve.Children)
             {
-                int idx = (int)Thumb.Tag;
-                float value = (float)(Math.Sqrt(idx * tempx) + 0.25f - (tempx * idx));
+                double x = (double)Thumb.Tag;
+                float value = (float)(Math.Sqrt(x * tempx) + 0.25f - (tempx * x));
 
                 Thumb.Height = StackCurve.Height * value;
-                ProfilesPage.currentProfile.MotionSensivityArray[idx].y = Thumb.Height / StackCurve.Height;
+                ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
             }
         }
 

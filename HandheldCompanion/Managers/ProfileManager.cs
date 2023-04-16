@@ -286,12 +286,15 @@ namespace HandheldCompanion.Managers
                 // latest pre-versionning release
                 Version version = new("0.15.0.4");
                 if (jObject.ContainsKey("Version"))
-                    version = new(JObject.Parse(outputraw)["Version"].ToString());
+                    version = new(jObject["Version"].ToString());
 
                 switch(version.ToString())
                 {
                     case "0.15.0.4":
                         outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"", "Generic.SortedDictionary$1System.Collections\"");
+                        jObject = JObject.Parse(outputraw);
+                        jObject.Remove("MotionSensivityArray");
+                        outputraw = jObject.ToString();
                         break;
                 }
 
