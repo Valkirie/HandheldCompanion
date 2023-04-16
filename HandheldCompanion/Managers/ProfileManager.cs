@@ -398,7 +398,7 @@ namespace HandheldCompanion.Managers
             }
 
             // check if this is current profile
-            bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+            bool isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
             // refresh error code
             SanitizeProfile(profile);
