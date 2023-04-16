@@ -1,4 +1,3 @@
-using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
@@ -441,7 +440,7 @@ namespace HandheldCompanion.Views.Pages
 
             if (ExportForCurrent.IsChecked == true)
                 newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
-            
+
             LayoutManager.SerializeLayoutTemplate(newLayout);
 
             // close flyout

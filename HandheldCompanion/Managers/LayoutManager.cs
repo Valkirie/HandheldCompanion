@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using static PInvoke.Kernel32;
 using Layout = ControllerCommon.Layout;
 
 namespace HandheldCompanion.Managers
@@ -226,7 +225,7 @@ namespace HandheldCompanion.Managers
             });
 
             string fileName = string.Empty;
-            
+
             if (layoutTemplate.IsTemplate)
                 fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}.json");
             else

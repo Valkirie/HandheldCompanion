@@ -3,7 +3,6 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
-using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
@@ -13,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static ControllerCommon.Utils.ProcessUtils;
 
 namespace HandheldCompanion.Managers
 {
@@ -275,7 +273,7 @@ namespace HandheldCompanion.Managers
                 if (jObject.ContainsKey("Version"))
                     version = new(jObject["Version"].ToString());
 
-                switch(version.ToString())
+                switch (version.ToString())
                 {
                     case "0.15.0.4":
                         outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"", "Generic.SortedDictionary$1System.Collections\"");
@@ -479,7 +477,7 @@ namespace HandheldCompanion.Managers
             if (Controller.GetType() != typeof(XInputController))
                 return;
 
-            foreach(Profile profile in profiles.Values)
+            foreach (Profile profile in profiles.Values)
                 UpdateProfileWrapper(profile);
         }
     }

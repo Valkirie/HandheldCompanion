@@ -1,6 +1,4 @@
-﻿using SharpDX.Multimedia;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -9,8 +7,6 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Documents;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ControllerCommon.Utils
 {

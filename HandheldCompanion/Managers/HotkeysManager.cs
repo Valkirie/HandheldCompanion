@@ -110,7 +110,7 @@ namespace HandheldCompanion.Managers
 
                 if (!string.IsNullOrEmpty(hotkey.inputsHotkey.Settings))
                     hotkey.IsEnabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
-                
+
                 HotkeyCreated?.Invoke(hotkey);
             }
 
@@ -136,7 +136,7 @@ namespace HandheldCompanion.Managers
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // manage toggle type hotkeys
-                foreach(Hotkey hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
+                foreach (Hotkey hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
                 {
                     if (!hotkey.inputsHotkey.IsToggle)
                         continue;
@@ -146,7 +146,7 @@ namespace HandheldCompanion.Managers
                 }
 
                 // manage settings type hotkeys
-                foreach(Hotkey hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
+                foreach (Hotkey hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
                 {
                     bool enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
                     hotkey.IsEnabled = enabled;

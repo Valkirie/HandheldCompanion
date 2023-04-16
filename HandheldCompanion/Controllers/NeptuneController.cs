@@ -8,7 +8,6 @@ using neptune_hidapi.net;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers

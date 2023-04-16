@@ -1,6 +1,5 @@
 ﻿using ControllerCommon.Inputs;
 using System.Collections.Generic;
-using System.Net;
 using System.Numerics;
 using WindowsInput.Events;
 
@@ -66,8 +65,8 @@ namespace ControllerCommon.Devices
                 ));
 
             OEMChords.Add(new DeviceChord("Bottom button right",
-                new List<KeyCode>() { KeyCode.F12, KeyCode.R},
-                new List<KeyCode>() { KeyCode.F12, KeyCode.R},
+                new List<KeyCode>() { KeyCode.F12, KeyCode.R },
+                new List<KeyCode>() { KeyCode.F12, KeyCode.R },
                 false, ButtonFlags.OEM3
                 ));
         }

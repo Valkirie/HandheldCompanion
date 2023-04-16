@@ -4,15 +4,10 @@ using ControllerCommon.Managers;
 using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
-using HelixToolkit.Wpf;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static ControllerCommon.Utils.ProcessUtils;
-using static PInvoke.Kernel32;
 
 namespace HandheldCompanion
 {
@@ -44,7 +39,7 @@ namespace HandheldCompanion
             {
                 XInputController XController = (XInputController)controller;
                 int idx = XController.GetUserIndex() + 1;
-                
+
                 IniFile IniFile = new IniFile(IniPath);
                 IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
 

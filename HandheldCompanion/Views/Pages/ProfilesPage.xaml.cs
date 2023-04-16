@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using System.Xml.Linq;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 

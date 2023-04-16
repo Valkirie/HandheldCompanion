@@ -1,5 +1,4 @@
 ﻿using ControllerCommon.Inputs;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;

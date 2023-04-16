@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Timer = System.Timers.Timer;
-using SystemPowerManager = Windows.System.Power.PowerManager;
 using System.Timers;
+using System.Windows.Forms;
+using SystemPowerManager = Windows.System.Power.PowerManager;
+using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Managers
 {

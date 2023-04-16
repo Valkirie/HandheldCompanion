@@ -9,7 +9,6 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
