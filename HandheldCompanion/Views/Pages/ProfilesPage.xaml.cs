@@ -302,7 +302,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     if (!exists)
-                        ProfileManager.UpdateOrCreateProfile(profile, ProfileUpdateSource.ProfilesPage);
+                        ProfileManager.UpdateOrCreateProfile(profile, ProfileUpdateSource.Creation);
                 }
                 catch (Exception ex)
                 {
