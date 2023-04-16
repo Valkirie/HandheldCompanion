@@ -554,7 +554,7 @@ namespace ControllerService
                                 break;
                             case SystemStatus.SystemPending:
                                 // resume from sleep
-                                Thread.Sleep(10000);
+                                Thread.Sleep(16000);
                                 IMU.Restart(true);
                                 break;
                         }
