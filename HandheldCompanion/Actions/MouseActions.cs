@@ -4,6 +4,7 @@ using HandheldCompanion.Simulators;
 using System;
 using System.ComponentModel;
 using System.Numerics;
+using System.Windows.Forms;
 
 namespace HandheldCompanion.Actions
 {
@@ -36,12 +37,14 @@ namespace HandheldCompanion.Actions
         private bool IsCursorDown { get; set; }
         private bool IsCursorUp { get; set; }
         private int scrollAmountInClicks { get; set; } = 1;
+        private ScreenOrientation currentAutoOrientation = ScreenOrientation.Angle0;
 
         // settings
         public float Sensivity { get; set; } = 25.0f;
         public float Deadzone { get; set; } = 25.0f;
         public bool AxisInverted { get; set; } = false;
         public bool AxisRotated { get; set; } = false;
+        public bool AutoRotate { get; set; } = false;
 
         public MouseActions()
         {
@@ -56,6 +59,11 @@ namespace HandheldCompanion.Actions
         public MouseActions(MouseActionsType type) : this()
         {
             this.MouseType = type;
+        }
+
+        public void SetAutoOrientation(ScreenOrientation autoOrientation)
+        {
+            this.currentAutoOrientation = autoOrientation;
         }
 
         public override void Execute(ButtonFlags button, bool value)
@@ -197,9 +205,18 @@ namespace HandheldCompanion.Actions
 
             // apply sensitivity, rotation and slider finetune
             deltaVector *= Sensivity * sensitivityFinetune;
-            if (AxisRotated)
-                deltaVector = new(-deltaVector.Y, deltaVector.X);
-            deltaVector *= (AxisInverted ? -1.0f : 1.0f);
+            if (AutoRotate)
+            {
+                if ((this.currentAutoOrientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90)
+                    deltaVector = new(-deltaVector.Y, deltaVector.X);
+                deltaVector *= (((this.currentAutoOrientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180) ? -1.0f : 1.0f);
+            }
+            else
+            {
+                if (AxisRotated)
+                    deltaVector = new(-deltaVector.Y, deltaVector.X);
+                deltaVector *= (AxisInverted ? -1.0f : 1.0f);
+            }
 
             // handle the fact that MoveBy()/*Scroll() are int only and we can have movement (0 < abs(delta) < 1)
             deltaVector += restVector;                                               // add partial previous step

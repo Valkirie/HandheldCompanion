@@ -107,7 +107,9 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2AxisImproveCircularity.IsOn = ((AxisActions)this.Actions).ImproveCircularity;
+                Axis2AxisAutoRotate.IsOn = ((AxisActions)this.Actions).AutoRotate;
                 Axis2AxisRotation.Value = (((AxisActions)this.Actions).AxisInverted ? 180 : 0) + (((AxisActions)this.Actions).AxisRotated ? 90 : 0);
+                Axis2AxisRotation.IsEnabled = !Axis2AxisAutoRotate.IsOn;
                 Axis2AxisInnerDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
                 Axis2AxisOuterDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
                 Axis2AxisAntiDeadzone.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
@@ -140,7 +142,9 @@ namespace HandheldCompanion.Controls
 
                 // settings
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
+                Axis2MouseAutoRotate.IsOn = ((MouseActions)this.Actions).AutoRotate;
                 Axis2MouseRotation.Value = (((MouseActions)this.Actions).AxisInverted ? 180 : 0) + (((MouseActions)this.Actions).AxisRotated ? 90 : 0);
+                Axis2MouseRotation.IsEnabled = !Axis2MouseAutoRotate.IsOn;
                 Axis2MouseDeadzone.Value = ((MouseActions)this.Actions).Deadzone;
             }
 
@@ -195,6 +199,23 @@ namespace HandheldCompanion.Controls
                 TargetComboBox.SelectedItem = null;
                 Monitor.Exit(updateLock);
             }
+        }
+
+        private void Axis2AxisAutoRotate_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null)
+                return;
+
+            Axis2AxisRotation.IsEnabled = !Axis2AxisAutoRotate.IsOn;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Joystick:
+                    ((AxisActions)this.Actions).AutoRotate = Axis2AxisAutoRotate.IsOn;
+                    break;
+            }
+
+            base.Update();
         }
 
         private void Axis_Rotation_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -282,6 +303,23 @@ namespace HandheldCompanion.Controls
             {
                 case ActionType.Mouse:
                     ((MouseActions)this.Actions).Sensivity = (int)Axis2MousePointerSpeed.Value;
+                    break;
+            }
+
+            base.Update();
+        }
+
+        private void Axis2MouseAutoRotate_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (this.Actions is null)
+                return;
+
+            Axis2MouseRotation.IsEnabled = !Axis2MouseAutoRotate.IsOn;
+
+            switch (this.Actions.ActionType)
+            {
+                case ActionType.Mouse:
+                    ((MouseActions)this.Actions).AutoRotate = Axis2MouseAutoRotate.IsOn;
                     break;
             }
 
