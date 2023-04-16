@@ -155,7 +155,8 @@ namespace HandheldCompanion.Views.Pages
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    if (pr.Guid == profile.Guid)
+                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (isCurrent)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
@@ -192,11 +193,14 @@ namespace HandheldCompanion.Views.Pages
             {
                 int idx = -1;
                 foreach (Profile pr in cB_Profiles.Items)
-                    if (pr.Guid == profile.Guid)
+                {
+                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (isCurrent)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
                         break;
                     }
+                }
                 cB_Profiles.Items.RemoveAt(idx);
             });
         }
@@ -298,7 +302,7 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     if (!exists)
-                        ProfileManager.UpdateOrCreateProfile(profile, ProfileUpdateSource.ProfilesPage);
+                        ProfileManager.UpdateOrCreateProfile(profile, ProfileUpdateSource.Creation);
                 }
                 catch (Exception ex)
                 {

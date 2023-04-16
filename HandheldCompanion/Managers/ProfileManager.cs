@@ -113,7 +113,7 @@ namespace HandheldCompanion.Managers
         public static bool Contains(Profile profile)
         {
             foreach (Profile pr in profiles.Values)
-                if (pr.Guid.Equals(profile.Guid))
+                if (pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
                     return true;
 
             return false;
@@ -140,20 +140,6 @@ namespace HandheldCompanion.Managers
             return profile is not null ? profile : GetDefault();
         }
 
-        public static int GetProfileIndex(Profile profile)
-        {
-            int idx = -1;
-
-            for (int i = 0; i < profiles.Count; i++)
-            {
-                Profile pr = profiles.Values.ToList()[i];
-                if (pr.Guid.Equals(profile.Guid))
-                    return i;
-            }
-
-            return idx;
-        }
-
         private static void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
             try
@@ -167,7 +153,7 @@ namespace HandheldCompanion.Managers
                 if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
                 {
                     // warn owner
-                    bool isCurrent = profile.Guid == currentProfile.Guid;
+                    bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
                     // (re)set current profile
                     if (isCurrent)
@@ -241,12 +227,13 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileDeleted(object sender, FileSystemEventArgs e)
         {
+            // not ideal
             string ProfileName = e.Name.Replace(".json", "");
+            Profile profile = profiles.Values.Where(p => p.Name.Equals(ProfileName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
 
-            if (!profiles.ContainsKey(ProfileName))
+            // couldn't find a matching profile
+            if (profile is null)
                 return;
-
-            Profile profile = profiles[ProfileName];
 
             // you can't delete default profile !
             if (profile.Default)
@@ -335,15 +322,15 @@ namespace HandheldCompanion.Managers
         {
             string settingsPath = Path.Combine(InstallPath, profile.GetFileName());
 
-            if (profiles.ContainsKey(profile.Name))
+            if (profiles.ContainsKey(profile.Path))
             {
                 // Unregister application from HidHide
                 HidHide.UnregisterApplication(profile.Path);
 
-                profiles.Remove(profile.Name);
+                profiles.Remove(profile.Path);
 
                 // warn owner
-                bool isCurrent = profile.Guid == currentProfile.Guid;
+                bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
                 // (re)set current profile
                 if (isCurrent)
@@ -411,13 +398,13 @@ namespace HandheldCompanion.Managers
             }
 
             // check if this is current profile
-            bool isCurrent = currentProfile is null ? false : profile.Guid == currentProfile.Guid;
+            bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
             // refresh error code
             SanitizeProfile(profile);
 
             // update database
-            profiles[profile.Name] = profile;
+            profiles[profile.Path] = profile;
 
             // raise event(s)
             Updated?.Invoke(profile, source, isCurrent);
