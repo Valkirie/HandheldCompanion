@@ -113,7 +113,7 @@ namespace HandheldCompanion.Managers
         public static bool Contains(Profile profile)
         {
             foreach (Profile pr in profiles.Values)
-                if (pr.Guid.Equals(profile.Guid))
+                if (pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
                     return true;
 
             return false;
@@ -153,7 +153,7 @@ namespace HandheldCompanion.Managers
                 if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
                 {
                     // warn owner
-                    bool isCurrent = profile.Guid == currentProfile.Guid;
+                    bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
                     // (re)set current profile
                     if (isCurrent)
@@ -327,7 +327,7 @@ namespace HandheldCompanion.Managers
                 profiles.Remove(profile.Path);
 
                 // warn owner
-                bool isCurrent = profile.Guid == currentProfile.Guid;
+                bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
                 // (re)set current profile
                 if (isCurrent)
@@ -395,7 +395,7 @@ namespace HandheldCompanion.Managers
             }
 
             // check if this is current profile
-            bool isCurrent = currentProfile is null ? false : profile.Guid == currentProfile.Guid;
+            bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
             // refresh error code
             SanitizeProfile(profile);
