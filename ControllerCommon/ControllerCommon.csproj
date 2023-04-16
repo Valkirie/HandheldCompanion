@@ -17,7 +17,7 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
@@ -25,13 +25,13 @@
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="NAudio" Version="2.1.0" />
     <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.60" />
-    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.8.228" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.9.255" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="NetCoreNamedPipeWrapper" Version="1.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PInvoke.User32" Version="0.7.124" />
-    <PackageReference Include="PrecisionTimer.NET" Version="2.2.4.8" />
+    <PackageReference Include="PrecisionTimer.NET" Version="2.2.4.9" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
@@ -42,9 +42,9 @@
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
     <PackageReference Include="System.IO.Pipes.AccessControl" Version="5.0.0" />
     <PackageReference Include="System.IO.Ports" Version="7.0.0" />
-    <PackageReference Include="System.Management" Version="7.0.0" />
+    <PackageReference Include="System.Management" Version="7.0.1" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.0" />
-    <PackageReference Include="WindowsInput" Version="6.4.0" />
+    <PackageReference Include="WindowsInput" Version="6.4.1" />
   </ItemGroup>
 
   <ItemGroup>
