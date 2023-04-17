@@ -23,6 +23,8 @@ namespace HandheldCompanion.Platforms
 
         public SteamPlatform()
         {
+            base.PlatformType = PlatformType.Steam;
+
             Name = "Steam";
             ExecutableName = "steam.exe";
 
@@ -48,8 +50,6 @@ namespace HandheldCompanion.Platforms
                 // check executable
                 IsInstalled = File.Exists(ExecutablePath);
             }
-
-            base.PlatformType = PlatformType.Steam;
         }
 
         public HashSet<string>? GetControllerBlacklist()

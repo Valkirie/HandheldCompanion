@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace HandheldCompanion.Platforms
 {
@@ -57,10 +58,21 @@ namespace HandheldCompanion.Platforms
         private const uint RTSSHOOKSFLAG_LIMITER_DISABLED = 4;
         private const string GLOBAL_PROFILE = "";
 
+        private int RequestedFramerate = 0;
+
         public RTSS()
         {
+            base.PlatformType = PlatformType.RTSS;
+            base.KeepAlive = true;
+
             Name = "RTSS";
             ExecutableName = "RTSS.exe";
+
+            // store specific modules
+            Modules = new List<string>()
+            {
+                "RTSSHooks64.dll",
+            };
 
             // check if platform is installed
             InstallPath = RegistryUtils.GetString(@"SOFTWARE\WOW6432Node\Unwinder\RTSS", "InstallDir");
@@ -74,7 +86,43 @@ namespace HandheldCompanion.Platforms
                 IsInstalled = File.Exists(ExecutablePath);
             }
 
-            base.PlatformType = PlatformType.RTSS;
+            if (!IsInstalled)
+            {
+                LogManager.LogCritical("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                return;
+            }
+
+            if (!HasModules)
+            {
+                LogManager.LogCritical("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                return;
+            }
+
+            // start RTSS if not running
+            if (!IsRunning())
+                Start();
+
+            Process.Exited += Process_Exited;
+
+            base.MonitorTimer = new(2000) { Enabled = true };
+            base.MonitorTimer.Elapsed += MonitorTimer_Elapsed;
+        }
+
+        private void MonitorTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (Monitor.TryEnter(updateLock))
+            {
+                if (GetTargetFPS() != RequestedFramerate)
+                    SetTargetFPS(RequestedFramerate);
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void Process_Exited(object? sender, EventArgs e)
+        {
+            if (KeepAlive)
+                Start();
         }
 
         public bool GetProfileProperty<T>(string propertyName, out T value)
@@ -141,18 +189,25 @@ namespace HandheldCompanion.Platforms
             return current;
         }
 
-        public bool SetTargetFPS(int Limit)
+        private bool SetTargetFPS(int Limit)
         {
-            LoadProfile();
+            if (!IsRunning())
+                return false;
 
-            if (SetProfileProperty("FramerateLimit", Limit))
+            try
             {
-                SaveProfile();
-                UpdateSettings();
-                UpdateProfiles();
+                LoadProfile();
 
-                return true;
+                if (SetProfileProperty("FramerateLimit", Limit))
+                {
+                    SaveProfile();
+                    UpdateSettings();
+                    UpdateProfiles();
+
+                    return true;
+                }
             }
+            catch {}
 
             /*
             if (File.Exists(SettingsPath))
@@ -169,12 +224,19 @@ namespace HandheldCompanion.Platforms
             return false;
         }
 
-        public int GetTargetFPS()
+        private int GetTargetFPS()
         {
-            LoadProfile();
+            if (!IsRunning())
+                return 0;
 
-            if (GetProfileProperty("FramerateLimit", out int fpsLimit))
-                return fpsLimit;
+            try
+            {
+                LoadProfile();
+
+                if (GetProfileProperty("FramerateLimit", out int fpsLimit))
+                    return fpsLimit;
+            }
+            catch { }
 
             return 0;
 
@@ -185,6 +247,11 @@ namespace HandheldCompanion.Platforms
                 return Convert.ToInt32(iniFile.Read("Limit", "Framerate"));
             }
             */
+        }
+
+        public void RequestFPS(double framerate)
+        {
+            RequestedFramerate = (int)framerate;
         }
 
         public override bool Start()
@@ -202,6 +269,8 @@ namespace HandheldCompanion.Platforms
                 UseShellExecute = false,
                 CreateNoWindow = true
             });
+
+            process.WaitForInputIdle();
 
             return process is not null;
         }

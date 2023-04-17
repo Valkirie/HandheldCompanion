@@ -8,22 +8,17 @@ namespace HandheldCompanion.Managers
     public static class PlatformManager
     {
         // gaming platforms
-        private static SteamPlatform Steam;
-        private static GOGGalaxy GOGGalaxy;
-        private static UbisoftConnect UbisoftConnect;
+        private static SteamPlatform Steam = new();
+        private static GOGGalaxy GOGGalaxy = new();
+        private static UbisoftConnect UbisoftConnect = new();
 
         // misc platforms
-        public static RTSS RTSS;
+        public static RTSS RTSS = new();
 
         private static bool IsInitialized;
 
         public static void Start()
         {
-            // initialize supported gaming platforms
-            Steam = new();
-            GOGGalaxy = new();
-            UbisoftConnect = new();
-
             if (Steam.IsInstalled)
             {
                 // overwrite controller files
@@ -41,13 +36,9 @@ namespace HandheldCompanion.Managers
                 // do something
             }
 
-            // initialize supported misc platforms
-            RTSS = new();
-
             if (RTSS.IsInstalled)
             {
-                int Limit = RTSS.GetTargetFPS();
-                RTSS.SetTargetFPS(60);
+                // do something
             }
 
             IsInitialized = true;

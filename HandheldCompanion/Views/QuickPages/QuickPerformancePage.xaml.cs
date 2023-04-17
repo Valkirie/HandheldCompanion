@@ -388,6 +388,15 @@ namespace HandheldCompanion.Views.QuickPages
             if (!IsLoaded)
                 return;
 
+            // restore default value is toggled off
+            if (!FramerateToggle.IsOn)
+                PlatformManager.RTSS.RequestFPS(0);
+            else
+            {
+                double framerate = SettingsManager.GetDouble("QuickToolsPerformanceFramerateValue");
+                PlatformManager.RTSS.RequestFPS(framerate);
+            }
+
             SettingsManager.SetProperty("QuickToolsPerformanceFramerateEnabled", FramerateToggle.IsOn);
         }
 
@@ -396,7 +405,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceFramerateEnabled"))
                 return;
 
-            PlatformManager.RTSS.SetTargetFPS((int)FramerateSlider.Value);
+            PlatformManager.RTSS.RequestFPS(FramerateSlider.Value);
 
             if (!IsLoaded)
                 return;

@@ -11,6 +11,8 @@ namespace HandheldCompanion.Platforms
     {
         public UbisoftConnect()
         {
+            base.PlatformType = PlatformType.UbisoftConnect;
+
             Name = "Ubisoft Connect";
             ExecutableName = "UbisoftConnect.exe";
 
@@ -36,8 +38,6 @@ namespace HandheldCompanion.Platforms
                 // check executable
                 IsInstalled = File.Exists(ExecutablePath);
             }
-
-            base.PlatformType = PlatformType.UbisoftConnect;
         }
 
         public override bool Start()

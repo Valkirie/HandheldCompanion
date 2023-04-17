@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Timers;
 
 namespace ControllerCommon.Platforms
 {
@@ -27,6 +28,10 @@ namespace ControllerCommon.Platforms
         protected string SettingsPath;
         protected string ExecutablePath;
 
+        protected bool KeepAlive;
+        protected Timer MonitorTimer;
+        protected object updateLock = new();
+
         protected Process? Process
         {
             get
@@ -41,6 +46,8 @@ namespace ControllerCommon.Platforms
                     if (process.HasExited)
                         return null;
 
+                    process.EnableRaisingEvents = true;
+
                     return process;
                 }
                 catch
@@ -51,6 +58,22 @@ namespace ControllerCommon.Platforms
         }
 
         public bool IsInstalled;
+        public bool HasModules
+        {
+            get
+            {
+                foreach(var file in Modules)
+                {
+                    var filename = Path.Combine(InstallPath, file);
+                    if (File.Exists(filename))
+                        continue;
+                    else
+                        return false;
+                }
+
+                return true;
+            }
+        }
 
         public PlatformType PlatformType;
 
