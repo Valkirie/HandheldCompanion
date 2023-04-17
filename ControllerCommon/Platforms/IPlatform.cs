@@ -19,7 +19,7 @@ namespace ControllerCommon.Platforms
         RTSS = 5
     }
 
-    public abstract class IPlatform
+    public abstract class IPlatform : IDisposable
     {
         protected string Name;
         protected string ExecutableName;
@@ -29,7 +29,7 @@ namespace ControllerCommon.Platforms
         protected string ExecutablePath;
 
         protected bool KeepAlive;
-        protected Timer MonitorTimer;
+        protected Timer PlatformWatchdog;
         protected object updateLock = new();
 
         protected Process? Process
@@ -252,6 +252,12 @@ namespace ControllerCommon.Platforms
                 LogManager.LogError("Failed to overwrite {0} configuration file", this.PlatformType);
                 return false;
             }
+        }
+
+        public virtual void Dispose()
+        {
+            if (PlatformWatchdog is not null)
+                PlatformWatchdog.Dispose();
         }
     }
 }

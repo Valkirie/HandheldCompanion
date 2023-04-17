@@ -53,16 +53,23 @@ namespace HandheldCompanion.Managers
                 // restore controller files
                 foreach (var config in SteamPlatform.ControllerFiles)
                     Steam.ResetFile(config.Key);
+
+                Steam.Dispose();
             }
 
             if (GOGGalaxy.IsInstalled)
             {
-                // do something
+                GOGGalaxy.Dispose();
             }
 
             if (UbisoftConnect.IsInstalled)
             {
-                // do something
+                UbisoftConnect.Dispose();
+            }
+
+            if (RTSS.IsInstalled)
+            {
+                RTSS.Dispose();
             }
 
             IsInitialized = false;

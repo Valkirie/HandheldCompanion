@@ -1,8 +1,13 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
+using PrecisionTiming;
+using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,6 +65,8 @@ namespace HandheldCompanion.Platforms
 
         private int RequestedFramerate = 0;
 
+        private PrecisionTimer FrameRateTimer;
+
         public RTSS()
         {
             base.PlatformType = PlatformType.RTSS;
@@ -102,13 +109,48 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 Start();
 
+            // hook into RTSS process
             Process.Exited += Process_Exited;
 
-            base.MonitorTimer = new(2000) { Enabled = true };
-            base.MonitorTimer.Elapsed += MonitorTimer_Elapsed;
+            // our main watchdog to (re)apply requested settings
+            base.PlatformWatchdog = new(2000) { Enabled = true };
+            base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
+
+            // hook into process manager
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
+            // timer used to monitor foreground application framerate
+            FrameRateTimer = new PrecisionTimer();
+            FrameRateTimer.SetAutoResetMode(true);
+            FrameRateTimer.SetResolution(0);
+            FrameRateTimer.SetPeriod(100);
+            FrameRateTimer.Tick += TimerTicked;
         }
 
-        private void MonitorTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+        {
+            var app = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
+            if (app is null)
+                FrameRateTimer.Stop();
+            else
+            {
+                ProcessId = app.ProcessId;
+                FrameRateTimer.Start();
+            }
+        }
+
+        private int ProcessId = 0;
+        private void TimerTicked(object? sender, EventArgs e)
+        {
+            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
+            if (appE is not null)
+            {
+                var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
+                Debug.WriteLine("{0} at {1}", Math.Round(duration / appE.InstantaneousFrameTime), appE.StatTimeStart.ToString());
+            }
+        }
+
+        private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             if (Monitor.TryEnter(updateLock))
             {
@@ -286,6 +328,12 @@ namespace HandheldCompanion.Platforms
             Process.Kill();
 
             return true;
+        }
+
+        public override void Dispose()
+        {
+            FrameRateTimer.Dispose();
+            base.Dispose();
         }
     }
 }
