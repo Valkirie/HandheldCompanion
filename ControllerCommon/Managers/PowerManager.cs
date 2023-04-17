@@ -2,10 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows.Forms;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Managers
 {
@@ -32,8 +30,6 @@ namespace ControllerCommon.Managers
 
         private static SystemStatus currentSystemStatus = SystemStatus.SystemBooting;
         private static SystemStatus previousSystemStatus = SystemStatus.SystemBooting;
-
-        private static Timer updateTimer = new(250) { AutoReset = false };
 
         public static bool IsInitialized;
 
@@ -115,8 +111,7 @@ namespace ControllerCommon.Managers
                 IsSessionLocked = false;
             }
 
-            updateTimer.Elapsed += UpdateTimer_Elapsed;
-            updateTimer.Start();
+            SystemRoutine();
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -156,9 +151,7 @@ namespace ControllerCommon.Managers
 
             LogManager.LogDebug("Device power mode set to {0}", e.Mode);
 
-            // reset timer
-            updateTimer.Stop();
-            updateTimer.Start();
+            SystemRoutine();
         }
 
         private static void OnSessionSwitch(object sender, SessionSwitchEventArgs e)
@@ -177,12 +170,10 @@ namespace ControllerCommon.Managers
 
             LogManager.LogDebug("Session switched to {0}", e.Reason);
 
-            // reset timer
-            updateTimer.Stop();
-            updateTimer.Start();
+            SystemRoutine();
         }
 
-        private static void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private static void SystemRoutine()
         {
             if (!IsPowerSuspended && !IsSessionLocked)
                 currentSystemStatus = SystemStatus.SystemReady;
