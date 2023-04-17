@@ -1,6 +1,7 @@
 ﻿using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers;
+using System;
 using System.Runtime.InteropServices;
 using WindowsInput.Events;
 
@@ -20,7 +21,14 @@ namespace HandheldCompanion.Simulators
 
         public static void KeyDown(VirtualKeyCode key)
         {
-            InputSimulator.Keyboard.KeyDown(key);
+            try
+            {
+                InputSimulator.Keyboard.KeyDown(key);
+            }
+            catch (Exception)
+            {
+                // Some simulated input commands were not sent successfully.
+            }
         }
 
         public static void KeyDown(KeyCode[] keys)
@@ -31,7 +39,14 @@ namespace HandheldCompanion.Simulators
 
         public static void KeyUp(VirtualKeyCode key)
         {
-            InputSimulator.Keyboard.KeyUp(key);
+            try
+            {
+                InputSimulator.Keyboard.KeyUp(key);
+            }
+            catch (Exception)
+            {
+                // Some simulated input commands were not sent successfully.
+            }
         }
 
         public static void KeyUp(KeyCode[] keys)
@@ -42,7 +57,14 @@ namespace HandheldCompanion.Simulators
 
         public static void KeyPress(VirtualKeyCode key)
         {
-            InputSimulator.Keyboard.KeyPress(key);
+            try
+            {
+                InputSimulator.Keyboard.KeyPress(key);
+            }
+            catch (Exception)
+            {
+                // Some simulated input commands were not sent successfully.
+            }
         }
 
         public static void KeyPress(VirtualKeyCode[] keys)
@@ -73,7 +95,14 @@ namespace HandheldCompanion.Simulators
 
         public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
         {
-            InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
+            try
+            {
+                InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
+            }
+            catch (Exception)
+            {
+                // Some simulated input commands were not sent successfully.
+            }
         }
 
         public static string GetVirtualKey(VirtualKeyCode key)
