@@ -128,7 +128,7 @@
                                 Opacity="0.25" />
 
                             <!--  Axis rotation  -->
-                            <Grid>
+                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2AxisAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock
@@ -311,7 +311,7 @@
                                 Opacity="0.25" />
 
                             <!--  Axis rotation  -->
-                            <Grid>
+                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2MouseAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock

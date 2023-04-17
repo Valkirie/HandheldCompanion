@@ -109,7 +109,6 @@ namespace HandheldCompanion.Controls
                 Axis2AxisImproveCircularity.IsOn = ((AxisActions)this.Actions).ImproveCircularity;
                 Axis2AxisAutoRotate.IsOn = ((AxisActions)this.Actions).AutoRotate;
                 Axis2AxisRotation.Value = (((AxisActions)this.Actions).AxisInverted ? 180 : 0) + (((AxisActions)this.Actions).AxisRotated ? 90 : 0);
-                Axis2AxisRotation.IsEnabled = !Axis2AxisAutoRotate.IsOn;
                 Axis2AxisInnerDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneInner;
                 Axis2AxisOuterDeadzone.Value = ((AxisActions)this.Actions).AxisDeadZoneOuter;
                 Axis2AxisAntiDeadzone.Value = ((AxisActions)this.Actions).AxisAntiDeadZone;
@@ -144,7 +143,6 @@ namespace HandheldCompanion.Controls
                 Axis2MousePointerSpeed.Value = ((MouseActions)this.Actions).Sensivity;
                 Axis2MouseAutoRotate.IsOn = ((MouseActions)this.Actions).AutoRotate;
                 Axis2MouseRotation.Value = (((MouseActions)this.Actions).AxisInverted ? 180 : 0) + (((MouseActions)this.Actions).AxisRotated ? 90 : 0);
-                Axis2MouseRotation.IsEnabled = !Axis2MouseAutoRotate.IsOn;
                 Axis2MouseDeadzone.Value = ((MouseActions)this.Actions).Deadzone;
             }
 
@@ -205,8 +203,6 @@ namespace HandheldCompanion.Controls
         {
             if (this.Actions is null)
                 return;
-
-            Axis2AxisRotation.IsEnabled = !Axis2AxisAutoRotate.IsOn;
 
             switch (this.Actions.ActionType)
             {
@@ -313,8 +309,6 @@ namespace HandheldCompanion.Controls
         {
             if (this.Actions is null)
                 return;
-
-            Axis2MouseRotation.IsEnabled = !Axis2MouseAutoRotate.IsOn;
 
             switch (this.Actions.ActionType)
             {
