@@ -66,6 +66,8 @@ namespace HandheldCompanion.Platforms
         private int RequestedFramerate = 0;
 
         private PrecisionTimer FrameRateTimer;
+        private OSD Overlay = new OSD("HC");
+
 
         public RTSS()
         {
@@ -146,7 +148,9 @@ namespace HandheldCompanion.Platforms
             if (appE is not null)
             {
                 var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-                Debug.WriteLine("{0} at {1}", Math.Round(duration / appE.InstantaneousFrameTime), appE.StatTimeStart.ToString());
+                double FPS = Math.Round(duration / appE.InstantaneousFrameTime);
+                Debug.WriteLine("FPS: {0}", FPS);
+                Overlay.Update(FPS.ToString());
             }
         }
 
