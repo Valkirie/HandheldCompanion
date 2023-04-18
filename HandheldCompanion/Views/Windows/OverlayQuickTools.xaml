@@ -25,7 +25,6 @@
     ShowActivated="True"
     ShowInTaskbar="False"
     Topmost="True"
-    WindowState="Minimized"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
 

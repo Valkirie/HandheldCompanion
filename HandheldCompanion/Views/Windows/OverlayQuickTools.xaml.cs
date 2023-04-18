@@ -132,18 +132,18 @@ namespace HandheldCompanion.Views.Windows
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                switch (WindowState)
+                switch (Visibility)
                 {
-                    case WindowState.Normal:
-                    case WindowState.Maximized:
+                    case Visibility.Collapsed:
+                    case Visibility.Hidden:
                         if (hwndSource is not null)
                             hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-                        WindowState = WindowState.Minimized;
+                        this.Show();
                         break;
-                    case WindowState.Minimized:
+                    case Visibility.Visible:
                         if (hwndSource is not null)
                             hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
-                        WindowState = WindowState.Normal;
+                        this.Hide();
                         break;
                 }
             });
