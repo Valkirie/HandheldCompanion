@@ -83,6 +83,9 @@ namespace HandheldCompanion.Views.Pages
                     case "HIDstrength":
                         SliderStrength.Value = Convert.ToDouble(value);
                         break;
+                    case "shortcutDesktopLayout":
+                        Toggle_DesktopLayout.IsOn = Convert.ToBoolean(value);
+                        break;
 
                     case "SteamDeckLizardMouse":
                         Toggle_SDLizardMouse.IsOn = Convert.ToBoolean(value);
@@ -377,6 +380,20 @@ namespace HandheldCompanion.Views.Pages
             // update layout page with current layout
             MainWindow.layoutPage.UpdateLayout(LayoutManager.desktopLayout);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
+        }
+
+        private void Toggle_DesktopLayout_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            // temporary settings
+            SettingsManager.SetProperty("shortcutDesktopLayout", Toggle_DesktopLayout.IsOn, false, true);
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ((Expander)sender).BringIntoView();
         }
     }
 }
