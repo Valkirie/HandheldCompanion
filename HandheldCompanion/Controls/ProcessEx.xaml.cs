@@ -72,6 +72,12 @@ namespace HandheldCompanion.Controls
         private ThreadState prevThreadState = ThreadState.Terminated;
         private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
 
+        public event MainThreadChangedEventHandler MainThreadChanged;
+        public delegate void MainThreadChangedEventHandler(ProcessEx process);
+
+        public event TitleChangedEventHandler TitleChanged;
+        public delegate void TitleChangedEventHandler(ProcessEx process);
+
         public event ChildProcessCreatedEventHandler ChildProcessCreated;
         public delegate void ChildProcessCreatedEventHandler(ProcessEx parent, int Id);
 
@@ -137,11 +143,16 @@ namespace HandheldCompanion.Controls
             if (Process.HasExited)
                 return;
 
-            // pull MainThread if we have none
             if (MainThread is null)
             {
+                // refresh main thread
                 MainThread = GetMainThread(Process);
-                return; // prevents null mainthread from passing
+
+                // raise event
+                MainThreadChanged?.Invoke(this);
+
+                // prevents null mainthread from passing
+                return;
             }
 
             string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
@@ -150,8 +161,13 @@ namespace HandheldCompanion.Controls
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // refresh title
-                if (!string.IsNullOrEmpty(MainWindowTitle))
+                if (!string.IsNullOrEmpty(MainWindowTitle) && MainWindowTitle.Equals(Title))
+                {
                     Title = MainWindowTitle;
+
+                    // raise event
+                    TitleChanged?.Invoke(this);
+                }
 
                 switch (EfficiencyMode)
                 {
@@ -225,7 +241,7 @@ namespace HandheldCompanion.Controls
             foreach (int pid in childs)
             {
                 Children.Add(pid);
-                //ChildProcessCreated?.Invoke(this, child);
+                ChildProcessCreated?.Invoke(this, pid);
             }
         }
 

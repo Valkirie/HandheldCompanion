@@ -66,8 +66,9 @@ namespace HandheldCompanion.Platforms
         private int RequestedFramerate = 0;
 
         private PrecisionTimer FrameRateTimer;
-        private OSD Overlay = new OSD("HC");
+        private int ProcessId = 0;
 
+        private OSD Overlay = new OSD("HC");
 
         public RTSS()
         {
@@ -129,19 +130,27 @@ namespace HandheldCompanion.Platforms
             FrameRateTimer.Tick += TimerTicked;
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+        private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
         {
-            var app = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
-            if (app is null)
-                FrameRateTimer.Stop();
-            else
-            {
+            var app = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
+
+            if (app is not null)
                 ProcessId = app.ProcessId;
-                FrameRateTimer.Start();
-            }
+            else
+                ProcessId = 0;
+
+            // hook into event
+            process.MainThreadChanged += ProcessEx_MainThreadChanged;
         }
 
-        private int ProcessId = 0;
+        private void ProcessEx_MainThreadChanged(ProcessEx process)
+        {
+            if (ProcessId == 0)
+                FrameRateTimer.Stop();
+            else
+                FrameRateTimer.Start();
+        }
+
         private void TimerTicked(object? sender, EventArgs e)
         {
             var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
@@ -149,8 +158,8 @@ namespace HandheldCompanion.Platforms
             {
                 var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
                 double FPS = Math.Round(duration / appE.InstantaneousFrameTime);
-                Debug.WriteLine("FPS: {0}", FPS);
-                Overlay.Update(FPS.ToString());
+                // Debug.WriteLine("FPS: {0}", FPS);
+                Overlay.Update($"{FPS}");
             }
         }
 
