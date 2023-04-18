@@ -119,8 +119,6 @@ namespace HandheldCompanion.Views.Windows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-            if (hwndSource is not null)
-                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
         }
 
         private void HandleEsc(object sender, Input.KeyEventArgs e)
@@ -134,33 +132,21 @@ namespace HandheldCompanion.Views.Windows
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                switch (Visibility)
+                switch (WindowState)
                 {
-                    case Visibility.Visible:
-                        this.Hide();
+                    case WindowState.Normal:
+                    case WindowState.Maximized:
+                        if (hwndSource is not null)
+                            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+                        WindowState = WindowState.Minimized;
                         break;
-                    case Visibility.Collapsed:
-                    case Visibility.Hidden:
-                        this.Show();
+                    case WindowState.Minimized:
+                        if (hwndSource is not null)
+                            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+                        WindowState = WindowState.Normal;
                         break;
                 }
             });
-        }
-
-        public void Hide()
-        {
-            if (hwndSource is not null)
-                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
-
-            base.Hide();
-        }
-
-        public void Show()
-        {
-            if (hwndSource is not null)
-                hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-
-            base.Show();
         }
 
         #region navView
@@ -281,7 +267,7 @@ namespace HandheldCompanion.Views.Windows
             SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
 
             e.Cancel = !isClosing;
-            this.Visibility = Visibility.Collapsed;
+            this.WindowState = WindowState.Minimized;
         }
 
         private bool isClosing;
