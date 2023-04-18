@@ -212,45 +212,78 @@
                 <ui:SimpleStackPanel Spacing="6">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Non-game controller layouts" />
 
-                    <!--  Non-game controller layout  -->
-                    <Border
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="120" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
+                    <Expander
+                        Name="GlobalSettings"
+                        HorizontalAlignment="Stretch"
+                        Expanded="Expander_Expanded">
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE7FC;" />
+                                    Glyph="&#xE713;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Desktop layout" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Define controller layout when in Desktop mode"
+                                        Text="Define controller layout when in desktop mode"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
+                        </Expander.Header>
 
-                            <Button
-                                Name="Button_Layout"
-                                Grid.Column="1"
-                                Width="120"
-                                Height="40"
-                                HorizontalAlignment="Right"
-                                Click="Button_Layout_Click"
-                                Content="Edit" />
-                        </Grid>
-                    </Border>
+                        <Expander.Content>
+                            <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="Enable desktop layout" />
+
+                                    <ui:ToggleSwitch
+                                        Name="Toggle_DesktopLayout"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                        Toggled="Toggle_DesktopLayout_Toggled" />
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="Define desktop layout" />
+
+                                    <Button
+                                        Name="Button_Layout"
+                                        Grid.Column="1"
+                                        Width="120"
+                                        Height="40"
+                                        HorizontalAlignment="Right"
+                                        Click="Button_Layout_Click"
+                                        Content="Edit" />
+                                </Grid>
+                            </ui:SimpleStackPanel>
+                        </Expander.Content>
+                    </Expander>
                 </ui:SimpleStackPanel>
 
                 <!--  Controller cloaking  -->
