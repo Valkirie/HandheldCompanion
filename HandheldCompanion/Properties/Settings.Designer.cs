@@ -814,5 +814,29 @@ namespace HandheldCompanion.Properties {
                 this["DesktopProfileOnStart"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickToolsPerformanceFramerateEnabled {
+            get {
+                return ((bool)(this["QuickToolsPerformanceFramerateEnabled"]));
+            }
+            set {
+                this["QuickToolsPerformanceFramerateEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int QuickToolsPerformanceFramerateValue {
+            get {
+                return ((int)(this["QuickToolsPerformanceFramerateValue"]));
+            }
+            set {
+                this["QuickToolsPerformanceFramerateValue"] = value;
+            }
+        }
     }
 }

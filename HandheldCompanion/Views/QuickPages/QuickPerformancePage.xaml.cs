@@ -2,9 +2,11 @@
 using ControllerCommon.Processor;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages
 {
@@ -97,6 +99,9 @@ namespace HandheldCompanion.Views.QuickPages
                     case "QuickToolsPerformanceGPUEnabled":
                         GPUToggle.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "QuickToolsPerformanceFramerateEnabled":
+                        FramerateToggle.IsOn = Convert.ToBoolean(value);
+                        break;
                     case "QuickToolsPerformanceTDPSustainedValue":
                         {
                             double TDP = Convert.ToDouble(value);
@@ -128,6 +133,9 @@ namespace HandheldCompanion.Views.QuickPages
                     case "ConfigurableTDPOverrideDown":
                         TDPSustainedSlider.Minimum = Convert.ToInt32(value);
                         TDPBoostSlider.Minimum = Convert.ToInt32(value);
+                        break;
+                    case "QuickToolsPerformanceFramerateValue":
+                        FramerateSlider.Value = Convert.ToDouble(value);
                         break;
                 }
             });
@@ -373,6 +381,36 @@ namespace HandheldCompanion.Views.QuickPages
 
             // update current screen resolution
             SystemManager.SetResolution(resolution.width, resolution.height, frequency.frequency);
+        }
+
+        private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            // restore default value is toggled off
+            if (!FramerateToggle.IsOn)
+                PlatformManager.RTSS.RequestFPS(0);
+            else
+            {
+                double framerate = SettingsManager.GetDouble("QuickToolsPerformanceFramerateValue");
+                PlatformManager.RTSS.RequestFPS(framerate);
+            }
+
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateEnabled", FramerateToggle.IsOn);
+        }
+
+        private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!SettingsManager.GetBoolean("QuickToolsPerformanceFramerateEnabled"))
+                return;
+
+            PlatformManager.RTSS.RequestFPS(FramerateSlider.Value);
+
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", FramerateSlider.Value);
         }
 
         private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -37,23 +37,17 @@ namespace HandheldCompanion.Platforms
             base.PlatformType = PlatformType.GOG;
         }
 
-        public override bool IsRunning()
-        {
-            return Process is not null;
-        }
-
         public override bool Start()
         {
             if (!IsInstalled)
                 return false;
 
-            if (!IsRunning())
+            if (IsRunning())
                 return false;
 
             var process = Process.Start(new ProcessStartInfo()
             {
                 FileName = ExecutablePath,
-                // ArgumentList = { "-gamepadui" },
                 WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = false,
                 CreateNoWindow = true
@@ -67,19 +61,12 @@ namespace HandheldCompanion.Platforms
             if (!IsInstalled)
                 return false;
 
-            if (IsRunning())
+            if (!IsRunning())
                 return false;
 
-            var process = Process.Start(new ProcessStartInfo()
-            {
-                FileName = ExecutablePath,
-                ArgumentList = { "-shutdown" },
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
+            Process.Kill();
 
-            return process is not null;
+            return true;
         }
     }
 }

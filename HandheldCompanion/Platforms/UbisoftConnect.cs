@@ -11,6 +11,8 @@ namespace HandheldCompanion.Platforms
     {
         public UbisoftConnect()
         {
+            base.PlatformType = PlatformType.UbisoftConnect;
+
             Name = "Ubisoft Connect";
             ExecutableName = "UbisoftConnect.exe";
 
@@ -36,13 +38,6 @@ namespace HandheldCompanion.Platforms
                 // check executable
                 IsInstalled = File.Exists(ExecutablePath);
             }
-
-            base.PlatformType = PlatformType.UbisoftConnect;
-        }
-
-        public override bool IsRunning()
-        {
-            return Process is not null;
         }
 
         public override bool Start()
@@ -50,13 +45,12 @@ namespace HandheldCompanion.Platforms
             if (!IsInstalled)
                 return false;
 
-            if (!IsRunning())
+            if (IsRunning())
                 return false;
 
             var process = Process.Start(new ProcessStartInfo()
             {
                 FileName = ExecutablePath,
-                // ArgumentList = { "-gamepadui" },
                 WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = false,
                 CreateNoWindow = true
@@ -70,19 +64,12 @@ namespace HandheldCompanion.Platforms
             if (!IsInstalled)
                 return false;
 
-            if (IsRunning())
+            if (!IsRunning())
                 return false;
 
-            var process = Process.Start(new ProcessStartInfo()
-            {
-                FileName = ExecutablePath,
-                ArgumentList = { "-shutdown" },
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
+            Process.Kill();
 
-            return process is not null;
+            return true;
         }
     }
 }

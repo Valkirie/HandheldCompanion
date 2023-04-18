@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Timers;
 
 namespace ControllerCommon.Platforms
 {
@@ -14,10 +15,11 @@ namespace ControllerCommon.Platforms
         Steam = 1,
         Origin = 2,
         UbisoftConnect = 3,
-        GOG = 4
+        GOG = 4,
+        RTSS = 5
     }
 
-    public abstract class IPlatform
+    public abstract class IPlatform : IDisposable
     {
         protected string Name;
         protected string ExecutableName;
@@ -25,6 +27,10 @@ namespace ControllerCommon.Platforms
         protected string InstallPath;
         protected string SettingsPath;
         protected string ExecutablePath;
+
+        protected bool KeepAlive;
+        protected Timer PlatformWatchdog;
+        protected object updateLock = new();
 
         protected Process? Process
         {
@@ -40,6 +46,8 @@ namespace ControllerCommon.Platforms
                     if (process.HasExited)
                         return null;
 
+                    process.EnableRaisingEvents = true;
+
                     return process;
                 }
                 catch
@@ -50,6 +58,22 @@ namespace ControllerCommon.Platforms
         }
 
         public bool IsInstalled;
+        public bool HasModules
+        {
+            get
+            {
+                foreach(var file in Modules)
+                {
+                    var filename = Path.Combine(InstallPath, file);
+                    if (File.Exists(filename))
+                        continue;
+                    else
+                        return false;
+                }
+
+                return true;
+            }
+        }
 
         public PlatformType PlatformType;
 
@@ -95,7 +119,7 @@ namespace ControllerCommon.Platforms
 
         public virtual bool IsRunning()
         {
-            return false;
+            return Process is not null;
         }
 
         public virtual bool Start()
@@ -228,6 +252,12 @@ namespace ControllerCommon.Platforms
                 LogManager.LogError("Failed to overwrite {0} configuration file", this.PlatformType);
                 return false;
             }
+        }
+
+        public virtual void Dispose()
+        {
+            if (PlatformWatchdog is not null)
+                PlatformWatchdog.Dispose();
         }
     }
 }

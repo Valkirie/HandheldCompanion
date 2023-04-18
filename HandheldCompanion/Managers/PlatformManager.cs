@@ -7,19 +7,18 @@ namespace HandheldCompanion.Managers
 {
     public static class PlatformManager
     {
-        private static SteamPlatform Steam;
-        private static GOGGalaxy GOGGalaxy;
-        private static UbisoftConnect UbisoftConnect;
+        // gaming platforms
+        private static SteamPlatform Steam = new();
+        private static GOGGalaxy GOGGalaxy = new();
+        private static UbisoftConnect UbisoftConnect = new();
+
+        // misc platforms
+        public static RTSS RTSS = new();
 
         private static bool IsInitialized;
 
         public static void Start()
         {
-            // initialize supported platforms
-            Steam = new();
-            GOGGalaxy = new();
-            UbisoftConnect = new();
-
             if (Steam.IsInstalled)
             {
                 // overwrite controller files
@@ -37,6 +36,11 @@ namespace HandheldCompanion.Managers
                 // do something
             }
 
+            if (RTSS.IsInstalled)
+            {
+                // do something
+            }
+
             IsInitialized = true;
 
             LogManager.LogInformation("{0} has started", "PlatformManager");
@@ -49,16 +53,23 @@ namespace HandheldCompanion.Managers
                 // restore controller files
                 foreach (var config in SteamPlatform.ControllerFiles)
                     Steam.ResetFile(config.Key);
+
+                Steam.Dispose();
             }
 
             if (GOGGalaxy.IsInstalled)
             {
-                // do something
+                GOGGalaxy.Dispose();
             }
 
             if (UbisoftConnect.IsInstalled)
             {
-                // do something
+                UbisoftConnect.Dispose();
+            }
+
+            if (RTSS.IsInstalled)
+            {
+                RTSS.Dispose();
             }
 
             IsInitialized = false;

@@ -2137,6 +2137,15 @@
     <None Update="Resources\Segoe Fluent Icons.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="RTSSHooks.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="RTSSHooks64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\RTSSSharedMemoryNET.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="WinRing0x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2169,6 +2178,9 @@
     </Reference>
     <Reference Include="neptune-hidapi.net">
       <HintPath>..\Resources\neptune-hidapi.net.dll</HintPath>
+    </Reference>
+    <Reference Include="RTSSSharedMemoryNET">
+      <HintPath>Resources\RTSSSharedMemoryNET.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive">
       <HintPath>..\Resources\System.Reactive.dll</HintPath>
