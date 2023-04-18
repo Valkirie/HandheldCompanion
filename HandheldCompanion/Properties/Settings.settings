@@ -206,5 +206,8 @@
     <Setting Name="QuickToolsPerformanceFramerateValue" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">60</Value>
     </Setting>
+    <Setting Name="QuietModeDisclosure" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

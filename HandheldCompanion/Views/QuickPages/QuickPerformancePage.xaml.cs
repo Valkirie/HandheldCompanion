@@ -1,9 +1,11 @@
 ﻿using ControllerCommon;
+using ControllerCommon.Devices;
 using ControllerCommon.Processor;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -39,6 +41,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
+
+            SettingsManager.SetProperty("QuietModeEnabled", MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl));
         }
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -142,6 +146,9 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "QuietModeEnabled":
                         QuietModeToggle.IsEnabled = Convert.ToBoolean(value);
+                        break;
+                    case "QuietModeDuty":
+                        QuietModeSlider.Value = Convert.ToDouble(value);
                         break;
                 }
             });
@@ -419,15 +426,49 @@ namespace HandheldCompanion.Views.QuickPages
             SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", FramerateSlider.Value);
         }
 
-        private void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
+        private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!SettingsManager.GetBoolean("QuietModeEnabled"))
+            if (!IsLoaded)
+                return;
+
+            bool Disclosure = SettingsManager.GetBoolean("QuietModeDisclosure");
+            if (QuietModeToggle.IsOn && !Disclosure)
+            {
+                // todo: localize me !
+                Task<ContentDialogResult> result = Dialog.ShowAsync(
+                    "Warning",
+                    "Altering fan duty cycle might cause instabilities and overheating. It might also trigger anti cheat systems and get you banned. Product warranties may not apply if you operate your device beyond its specifications. Use at your own risk.",
+                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
+
+                await result; // sync call
+
+                switch (result.Result)
+                {
+                    case ContentDialogResult.Primary:
+                        // save state
+                        SettingsManager.SetProperty("QuietModeDisclosure", true);
+                        break;
+                    default:
+                    case ContentDialogResult.None:
+                        // restore previous state
+                        QuietModeToggle.IsOn = false;
+                        return;
+                }
+            }
+
+            SettingsManager.SetProperty("QuietModeToggled", QuietModeToggle.IsOn);
+        }
+
+        private void QuietModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double value = QuietModeSlider.Value;
+            if (double.IsNaN(value))
                 return;
 
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("QuietModeToggled", QuietModeToggle.IsOn);
+            SettingsManager.SetProperty("QuietModeDuty", value);
         }
 
         private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
