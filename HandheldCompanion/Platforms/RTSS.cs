@@ -65,11 +65,6 @@ namespace HandheldCompanion.Platforms
 
         private int RequestedFramerate = 0;
 
-        private PrecisionTimer FrameRateTimer;
-        private int ProcessId = 0;
-
-        private OSD Overlay = new OSD("HC");
-
         public RTSS()
         {
             base.PlatformType = PlatformType.RTSS;
@@ -118,49 +113,6 @@ namespace HandheldCompanion.Platforms
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
-
-            // hook into process manager
-            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-
-            // timer used to monitor foreground application framerate
-            FrameRateTimer = new PrecisionTimer();
-            FrameRateTimer.SetAutoResetMode(true);
-            FrameRateTimer.SetResolution(0);
-            FrameRateTimer.SetPeriod(100);
-            FrameRateTimer.Tick += TimerTicked;
-        }
-
-        private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
-        {
-            var app = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
-
-            if (app is not null)
-                ProcessId = app.ProcessId;
-            else
-                ProcessId = 0;
-
-            // hook into event
-            process.MainThreadChanged += ProcessEx_MainThreadChanged;
-        }
-
-        private void ProcessEx_MainThreadChanged(ProcessEx process)
-        {
-            if (ProcessId == 0)
-                FrameRateTimer.Stop();
-            else
-                FrameRateTimer.Start();
-        }
-
-        private void TimerTicked(object? sender, EventArgs e)
-        {
-            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
-            if (appE is not null)
-            {
-                var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-                double FPS = Math.Round(duration / appE.InstantaneousFrameTime);
-                // Debug.WriteLine("FPS: {0}", FPS);
-                Overlay.Update($"{FPS}");
-            }
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -345,7 +297,6 @@ namespace HandheldCompanion.Platforms
 
         public override void Dispose()
         {
-            FrameRateTimer.Dispose();
             base.Dispose();
         }
     }
