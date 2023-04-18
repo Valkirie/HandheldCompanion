@@ -191,18 +191,19 @@ namespace HandheldCompanion.Controls
                             { ButtonFlags.Back, new KeyboardActions() { Key = VirtualKeyCode.TAB } },
                             { ButtonFlags.Start, new KeyboardActions() { Key = VirtualKeyCode.ESCAPE } },
 
-                            { ButtonFlags.DPadUp, new KeyboardActions() { Key = VirtualKeyCode.UP } },
-                            { ButtonFlags.DPadDown, new KeyboardActions() { Key = VirtualKeyCode.DOWN } },
-                            { ButtonFlags.DPadLeft, new KeyboardActions() { Key = VirtualKeyCode.LEFT } },
-                            { ButtonFlags.DPadRight, new KeyboardActions() { Key = VirtualKeyCode.RIGHT } },
+                            { ButtonFlags.DPadUp, new KeyboardActions() { Key = VirtualKeyCode.VK_1 } },
+                            { ButtonFlags.DPadDown, new KeyboardActions() { Key = VirtualKeyCode.VK_3 } },
+                            { ButtonFlags.DPadLeft, new KeyboardActions() { Key = VirtualKeyCode.VK_4 } },
+                            { ButtonFlags.DPadRight, new KeyboardActions() { Key = VirtualKeyCode.VK_2 } },
 
-                            { ButtonFlags.L2, new MouseActions() { MouseType = MouseActionsType.LeftButton } },
-                            { ButtonFlags.R2, new MouseActions() { MouseType = MouseActionsType.RightButton } },
+                            { ButtonFlags.L2, new MouseActions() { MouseType = MouseActionsType.RightButton } },
+                            { ButtonFlags.R2, new MouseActions() { MouseType = MouseActionsType.LeftButton } },
 
                             { ButtonFlags.LeftThumbUp, new KeyboardActions() { Key = VirtualKeyCode.VK_W } },
                             { ButtonFlags.LeftThumbDown, new KeyboardActions() { Key = VirtualKeyCode.VK_S } },
                             { ButtonFlags.LeftThumbLeft, new KeyboardActions() { Key = VirtualKeyCode.VK_A } },
                             { ButtonFlags.LeftThumbRight, new KeyboardActions() { Key = VirtualKeyCode.VK_D } },
+
                             { ButtonFlags.LeftThumb, new KeyboardActions() { Key = VirtualKeyCode.LSHIFT } },
                             { ButtonFlags.RightThumb, new MouseActions() { MouseType = MouseActionsType.LeftButton } },
 
@@ -210,6 +211,7 @@ namespace HandheldCompanion.Controls
                             { ButtonFlags.LeftPadClickDown, new KeyboardActions() { Key = VirtualKeyCode.VK_3 } },
                             { ButtonFlags.LeftPadClickLeft, new KeyboardActions() { Key = VirtualKeyCode.VK_4 } },
                             { ButtonFlags.LeftPadClickRight, new KeyboardActions() { Key = VirtualKeyCode.VK_2 } },
+
                             { ButtonFlags.RightPadClick, new MouseActions() { MouseType = MouseActionsType.LeftButton } },
                         };
                     }
