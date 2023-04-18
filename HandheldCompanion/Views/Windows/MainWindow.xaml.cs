@@ -305,7 +305,9 @@ namespace HandheldCompanion.Views
             // initialize overlay
             overlayModel = new OverlayModel();
             overlayTrackpad = new OverlayTrackpad();
+
             overlayquickTools = new OverlayQuickTools();
+            overlayquickTools.Show();
         }
 
         private void loadManagers()
