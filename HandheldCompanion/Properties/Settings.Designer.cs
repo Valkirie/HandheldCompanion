@@ -838,5 +838,17 @@ namespace HandheldCompanion.Properties {
                 this["QuickToolsPerformanceFramerateValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuietModeDisclosure {
+            get {
+                return ((bool)(this["QuietModeDisclosure"]));
+            }
+            set {
+                this["QuietModeDisclosure"] = value;
+            }
+        }
     }
 }

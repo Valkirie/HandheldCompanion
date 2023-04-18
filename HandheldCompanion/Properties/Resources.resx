@@ -1164,7 +1164,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Controller layout</value>
   </data>
   <data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
-    <value>Quiet mode</value>
+    <value>Fan override</value>
   </data>
   <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>Set the fan duty cycle to user-defined value</value>

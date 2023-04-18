@@ -46,7 +46,7 @@ namespace HandheldCompanion.Managers
             { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE961",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   true) },
 
             // Device specific hotkeys
-            { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE708",   "QuietModeToggled",                 "Segoe Fluent Icons",   20, false,  true,   null,                   "QuietModeEnabled",     false,  true) },
+            { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE9CA",   "QuietModeToggled",                 "Segoe Fluent Icons",   20, false,  true,   null,                   "QuietModeDisclosure",  false,  true) },
             { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "SteamDeckLizardMouse",             "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck),      "Deprecated",           false,  true) },
             { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "SteamDeckLizardButtons",           "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck),      "Deprecated",           false,  true) },
 
