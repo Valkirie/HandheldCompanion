@@ -137,6 +137,12 @@ namespace HandheldCompanion.Views.QuickPages
                     case "QuickToolsPerformanceFramerateValue":
                         FramerateSlider.Value = Convert.ToDouble(value);
                         break;
+                    case "QuietModeToggled":
+                        QuietModeToggle.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "QuietModeEnabled":
+                        QuietModeToggle.IsEnabled = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -411,6 +417,17 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", FramerateSlider.Value);
+        }
+
+        private void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!SettingsManager.GetBoolean("QuietModeEnabled"))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("QuietModeToggled", QuietModeToggle.IsOn);
         }
 
         private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
