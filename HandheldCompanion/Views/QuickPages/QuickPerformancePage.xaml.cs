@@ -42,7 +42,9 @@ namespace HandheldCompanion.Views.QuickPages
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
 
+            // todo: move me ?
             SettingsManager.SetProperty("QuietModeEnabled", MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl));
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateEnabled", PlatformManager.RTSS.IsInstalled);
         }
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -103,8 +105,11 @@ namespace HandheldCompanion.Views.QuickPages
                     case "QuickToolsPerformanceGPUEnabled":
                         GPUToggle.IsOn = Convert.ToBoolean(value);
                         break;
-                    case "QuickToolsPerformanceFramerateEnabled":
+                    case "QuickToolsPerformanceFramerateToggled":
                         FramerateToggle.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "QuickToolsPerformanceFramerateEnabled":
+                        FramerateToggle.IsEnabled = Convert.ToBoolean(value);
                         break;
                     case "QuickToolsPerformanceTDPSustainedValue":
                         {
@@ -410,12 +415,12 @@ namespace HandheldCompanion.Views.QuickPages
                 PlatformManager.RTSS.RequestFPS(framerate);
             }
 
-            SettingsManager.SetProperty("QuickToolsPerformanceFramerateEnabled", FramerateToggle.IsOn);
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateToggled", FramerateToggle.IsOn);
         }
 
         private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!SettingsManager.GetBoolean("QuickToolsPerformanceFramerateEnabled"))
+            if (!SettingsManager.GetBoolean("QuickToolsPerformanceFramerateToggled"))
                 return;
 
             PlatformManager.RTSS.RequestFPS(FramerateSlider.Value);
