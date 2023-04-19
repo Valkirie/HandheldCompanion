@@ -64,6 +64,25 @@ namespace ControllerCommon.Utils
         [DllImport("User32.dll")]
         public static extern bool IsIconic(IntPtr handle);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(
+        IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(
+            uint processAccess,
+            bool bInheritHandle,
+            int processId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool QueryFullProcessImageName(
+            IntPtr hProcess,
+            int dwFlags,
+            System.Text.StringBuilder lpExeName,
+            ref int lpdwSize);
+
+        private const int QueryLimitedInformation = 0x00001000;
+
         [ComImport, Guid("4ce576fa-83dc-4F88-951c-9d0782b4e376")]
         public class UIHostNoLaunch
         {
@@ -132,7 +151,7 @@ namespace ControllerCommon.Utils
                     {
                         EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
                         UWPattempt++;
-                        Thread.Sleep(200);
+                        Thread.Sleep(250);
                     }
                 }
                 catch
@@ -197,20 +216,26 @@ namespace ControllerCommon.Utils
             }
             catch
             {
-                string query = "SELECT ExecutablePath, ProcessID FROM Win32_Process";
+                string query = $"SELECT ExecutablePath, ProcessID FROM Win32_Process WHERE ProcessID = {process.Id}";
                 ManagementObjectSearcher searcher = new(query);
 
                 foreach (ManagementObject item in searcher.Get())
-                {
-                    int id = Convert.ToInt32(item["ProcessID"]);
-                    string path = Convert.ToString(item["ExecutablePath"]);
-
-                    if (!string.IsNullOrEmpty(path) && id == process.Id)
-                        return path;
-                }
+                    return Convert.ToString(item["ExecutablePath"]);
             }
 
             return string.Empty;
+        }
+
+        public static string GetPathToApp(int pid)
+        {
+            var size = 1024;
+            var sb = new System.Text.StringBuilder(size);
+            var handle = OpenProcess(QueryLimitedInformation, false, pid);
+            if (handle == IntPtr.Zero) return null;
+            var success = QueryFullProcessImageName(handle, 0, sb, ref size);
+            CloseHandle(handle);
+            if (!success) return null;
+            return sb.ToString();
         }
 
         public static List<Process> GetChildProcesses(Process process)

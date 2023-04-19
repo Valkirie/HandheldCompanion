@@ -211,7 +211,7 @@ namespace HandheldCompanion.Managers
                 if (proc.HasExited)
                     return;
 
-                string path = ProcessUtils.GetPathToApp(proc);
+                string path = ProcessUtils.GetPathToApp((int)processInfo.ProcessId);
                 string exec = Path.GetFileName(path);
 
                 // ignore if self or specific
@@ -309,7 +309,7 @@ namespace HandheldCompanion.Managers
                 if (proc.HasExited)
                     return;
 
-                string path = ProcessUtils.GetPathToApp(proc);
+                string path = ProcessUtils.GetPathToApp(proc.Id);
                 string exec = Path.GetFileName(path);
 
                 if (!Processes.ContainsKey(proc.Id))
