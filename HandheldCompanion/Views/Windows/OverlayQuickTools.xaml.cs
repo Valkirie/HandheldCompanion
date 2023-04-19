@@ -31,6 +31,8 @@ namespace HandheldCompanion.Views.Windows
         public QuickProfilesPage profilesPage;
         public QuickSuspenderPage suspenderPage;
 
+        private HwndSource hwndSource;
+
         public OverlayQuickTools()
         {
             InitializeComponent();
@@ -115,10 +117,14 @@ namespace HandheldCompanion.Views.Windows
             });
         }
 
-        private HwndSource hwndSource;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+            // do something
+        }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            // do something
         }
 
         private void HandleEsc(object sender, Input.KeyEventArgs e)
@@ -136,13 +142,9 @@ namespace HandheldCompanion.Views.Windows
                 {
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
-                        if (hwndSource is not null)
-                            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
                         this.Show();
                         break;
                     case Visibility.Visible:
-                        if (hwndSource is not null)
-                            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
                         this.Hide();
                         break;
                 }
@@ -267,7 +269,7 @@ namespace HandheldCompanion.Views.Windows
             SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
 
             e.Cancel = !isClosing;
-            this.WindowState = WindowState.Minimized;
+            this.Hide();
         }
 
         private bool isClosing;
@@ -275,6 +277,23 @@ namespace HandheldCompanion.Views.Windows
         {
             isClosing = v;
             this.Close();
+        }
+
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+            switch (Visibility)
+            {
+                case Visibility.Collapsed:
+                case Visibility.Hidden:
+                    if (hwndSource is not null)
+                        hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+                    break;
+                case Visibility.Visible:
+                    if (hwndSource is not null)
+                        hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+                    break;
+            }
         }
     }
 }

@@ -25,6 +25,8 @@
     ShowActivated="True"
     ShowInTaskbar="False"
     Topmost="True"
+    IsVisibleChanged="Window_IsVisibleChanged"
+    SourceInitialized="Window_SourceInitialized"
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
 
