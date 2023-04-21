@@ -168,14 +168,11 @@ namespace HandheldCompanion.Managers
                 var element = sender as AutomationElement;
                 if (element is not null)
                 {
-                    IntPtr hWnd = (IntPtr)element.Current.NativeWindowHandle;
-                    ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-
+                    ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(element.Current.NativeWindowHandle)._realProcess;
                     if (processInfo is null)
                         return;
 
-                    Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-                    ProcessCreated(proc, element.Current.NativeWindowHandle);
+                    ProcessCreated((int)processInfo.ProcessId, element.Current.NativeWindowHandle);
                 }
             }
             catch
@@ -188,9 +185,10 @@ namespace HandheldCompanion.Managers
             if (IsWindowVisible((int)hWnd))
             {
                 ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
+                if (processInfo is null)
+                    return false;
 
-                Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-                ProcessCreated(proc, (int)hWnd, true);
+                ProcessCreated((int)processInfo.ProcessId, (int)hWnd, true);
             }
             return true;
         }
@@ -198,33 +196,15 @@ namespace HandheldCompanion.Managers
         private static async void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-
             if (processInfo is null)
                 return;
 
             try
             {
-                Process proc = Process.GetProcessById((int)processInfo.ProcessId);
-                string MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
+                int processId = (int)processInfo.ProcessId;
 
-                // process has exited on arrival
-                if (proc.HasExited)
-                    return;
-
-                string path = ProcessUtils.GetPathToApp((int)processInfo.ProcessId);
-                string exec = Path.GetFileName(path);
-
-                // ignore if self or specific
-                ProcessFilter filter = GetFilter(exec, path, MainWindowTitle);
-                if (filter == ProcessFilter.Ignored)
-                    return;
-
-                // save previous process (if exists)
-                if (foregroundProcess is not null)
-                    backgroundProcess = foregroundProcess;
-
-                var attempts = 0;
-                while (!Processes.ContainsKey(proc.Id))
+                byte attempts = 0;
+                while (!Processes.ContainsKey(processId))
                 {
                     attempts++;
 
@@ -232,7 +212,7 @@ namespace HandheldCompanion.Managers
                     // therefore we have to force call a process creation
                     if (attempts == 10)
                     {
-                        ProcessCreated(proc, (int)hWnd);
+                        ProcessCreated(processId, (int)hWnd);
                         attempts = 0;
                     }
 
@@ -240,7 +220,19 @@ namespace HandheldCompanion.Managers
                 }
 
                 // pull process from running processes
-                foregroundProcess = Processes[proc.Id];
+                ProcessEx process = Processes[processId];
+
+                // get filter
+                ProcessFilter filter = GetFilter(process.Executable, process.Path, ProcessUtils.GetWindowTitle(hWnd));
+                if (filter == ProcessFilter.Ignored)
+                    return;
+
+                // save previous process (if exists)
+                if (foregroundProcess is not null)
+                    backgroundProcess = foregroundProcess;
+
+                // update foreground process
+                foregroundProcess = process;
 
                 // update main window handle
                 foregroundProcess.MainWindowHandle = hWnd;
@@ -301,27 +293,33 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void ProcessCreated(Process proc, int NativeWindowHandle = 0, bool OnStartup = false)
+        private static void ProcessCreated(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)
         {
             try
             {
                 // process has exited on arrival
+                Process proc = Process.GetProcessById(ProcessID);
                 if (proc.HasExited)
                     return;
 
-                string path = ProcessUtils.GetPathToApp(proc.Id);
-                string exec = Path.GetFileName(path);
-
                 if (!Processes.ContainsKey(proc.Id))
                 {
-                    // get filter
-                    ProcessFilter filter = GetFilter(exec, path);
-
                     // UI thread (async)
                     Application.Current.Dispatcher.BeginInvoke(() =>
                     {
+                        // check process path
+                        string path = ProcessUtils.GetPathToApp(proc.Id);
+                        if (string.IsNullOrEmpty(path))
+                            return;
+
+                        string exec = Path.GetFileName(path);
+                        IntPtr hWnd = NativeWindowHandle != 0 ? NativeWindowHandle : proc.MainWindowHandle;
+
+                        // get filter
+                        ProcessFilter filter = GetFilter(exec, path);
+
                         ProcessEx processEx = new ProcessEx(proc, path, exec, filter);
-                        processEx.MainWindowHandle = NativeWindowHandle != 0 ? (IntPtr)NativeWindowHandle : proc.MainWindowHandle;
+                        processEx.MainWindowHandle = hWnd;
                         // processEx.ChildProcessCreated += ChildProcessCreated;
 
                         Processes.TryAdd(processEx.GetProcessId(), processEx);
