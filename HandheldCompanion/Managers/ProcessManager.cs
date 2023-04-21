@@ -95,18 +95,18 @@ namespace HandheldCompanion.Managers
                 eventHandler: OnWindowOpened);
 
             // hook: on window foregroud
-            listener = new WinEventProc(EventCallback);
+            listener = new WinEventProc(OnWindowForeground);
             winHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, listener, 0, 0, WINEVENT_OUTOFCONTEXT);
 
             // hook: on process stop
             MonitorWatcher.Start();
 
-            // list all current processes
-            EnumWindows(new WindowEnumCallback(AddWnd), 0);
+            // list all current windows
+            EnumWindows(new WindowEnumCallback(OnWindowDiscovered), 0);
 
             // get current foreground process
             IntPtr hWnd = GetforegroundWindow();
-            EventCallback((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
+            OnWindowForeground((IntPtr)0, 0, hWnd, 0, 0, 0, 0);
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -180,7 +180,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static bool AddWnd(IntPtr hWnd, int lparam)
+        private static bool OnWindowDiscovered(IntPtr hWnd, int lparam)
         {
             if (IsWindowVisible((int)hWnd))
             {
@@ -193,7 +193,7 @@ namespace HandheldCompanion.Managers
             return true;
         }
 
-        private static async void EventCallback(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
+        private static async void OnWindowForeground(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
             if (processInfo is null)
