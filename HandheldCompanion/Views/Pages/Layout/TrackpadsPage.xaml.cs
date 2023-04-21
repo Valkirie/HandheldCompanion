@@ -22,8 +22,6 @@ namespace HandheldCompanion.Views.Pages
         {
             InitializeComponent();
 
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
             // draw UI
             foreach (ButtonFlags button in LeftButtons)
             {
@@ -63,49 +61,53 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
         }
 
-        private void ControllerManager_ControllerSelected(IController Controller)
+        public override void UpdateController(IController Controller)
         {
-            // controller based
-            foreach (var mapping in MappingButtons)
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                ButtonFlags button = mapping.Key;
-                ButtonMapping buttonMapping = mapping.Value;
-
-                // update mapping visibility
-                if (!Controller.IsButtonSupported(button))
-                    buttonMapping.Visibility = Visibility.Collapsed;
-                else
+                // controller based
+                foreach (var mapping in MappingButtons)
                 {
-                    buttonMapping.Visibility = Visibility.Visible;
+                    ButtonFlags button = mapping.Key;
+                    ButtonMapping buttonMapping = mapping.Value;
 
-                    // update icon
-                    FontIcon newIcon = Controller.GetFontIcon(button);
-                    string newLabel = Controller.GetButtonName(button);
+                    // update mapping visibility
+                    if (!Controller.IsButtonSupported(button))
+                        buttonMapping.Visibility = Visibility.Collapsed;
+                    else
+                    {
+                        buttonMapping.Visibility = Visibility.Visible;
 
-                    buttonMapping.UpdateIcon(newIcon, newLabel);
+                        // update icon
+                        FontIcon newIcon = Controller.GetFontIcon(button);
+                        string newLabel = Controller.GetButtonName(button);
+
+                        buttonMapping.UpdateIcon(newIcon, newLabel);
+                    }
                 }
-            }
 
-            foreach (var mapping in MappingAxis)
-            {
-                AxisLayoutFlags flags = mapping.Key;
-                AxisLayout layout = AxisLayout.Layouts[flags];
-
-                AxisMapping axisMapping = mapping.Value;
-
-                // update mapping visibility
-                if (!Controller.IsAxisSupported(flags))
-                    axisMapping.Visibility = Visibility.Collapsed;
-                else
+                foreach (var mapping in MappingAxis)
                 {
-                    axisMapping.Visibility = Visibility.Visible;
+                    AxisLayoutFlags flags = mapping.Key;
+                    AxisLayout layout = AxisLayout.Layouts[flags];
 
-                    // update icon
-                    FontIcon newIcon = Controller.GetFontIcon(flags);
-                    string newLabel = Controller.GetAxisName(flags);
-                    axisMapping.UpdateIcon(newIcon, newLabel);
+                    AxisMapping axisMapping = mapping.Value;
+
+                    // update mapping visibility
+                    if (!Controller.IsAxisSupported(flags))
+                        axisMapping.Visibility = Visibility.Collapsed;
+                    else
+                    {
+                        axisMapping.Visibility = Visibility.Visible;
+
+                        // update icon
+                        FontIcon newIcon = Controller.GetFontIcon(flags);
+                        string newLabel = Controller.GetAxisName(flags);
+                        axisMapping.UpdateIcon(newIcon, newLabel);
+                    }
                 }
-            }
+            });
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

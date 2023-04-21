@@ -19,8 +19,6 @@ namespace HandheldCompanion.Views.Pages
         {
             InitializeComponent();
 
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-
             // draw UI
             foreach (ButtonFlags button in DPAD)
             {
@@ -36,25 +34,29 @@ namespace HandheldCompanion.Views.Pages
             this.Tag = Tag;
         }
 
-        private void ControllerManager_ControllerSelected(IController Controller)
+        public override void UpdateController(IController Controller)
         {
-            // controller based
-            foreach (var mapping in MappingButtons)
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                ButtonFlags button = mapping.Key;
-                ButtonMapping buttonMapping = mapping.Value;
+                // controller based
+                foreach (var mapping in MappingButtons)
+                {
+                    ButtonFlags button = mapping.Key;
+                    ButtonMapping buttonMapping = mapping.Value;
 
-                // update mapping visibility
-                if (!Controller.IsButtonSupported(button))
-                    buttonMapping.Visibility = Visibility.Collapsed;
-                else
-                    buttonMapping.Visibility = Visibility.Visible;
+                    // update mapping visibility
+                    if (!Controller.IsButtonSupported(button))
+                        buttonMapping.Visibility = Visibility.Collapsed;
+                    else
+                        buttonMapping.Visibility = Visibility.Visible;
 
-                // update icon
-                FontIcon newIcon = Controller.GetFontIcon(button);
-                string newLabel = Controller.GetButtonName(button);
-                buttonMapping.UpdateIcon(newIcon, newLabel);
-            }
+                    // update icon
+                    FontIcon newIcon = Controller.GetFontIcon(button);
+                    string newLabel = Controller.GetButtonName(button);
+                    buttonMapping.UpdateIcon(newIcon, newLabel);
+                }
+            });
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

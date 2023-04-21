@@ -159,7 +159,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.fr.resx">
+    <EmbeddedResource Update="Properties\Resources.fr-FR.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.fr.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
