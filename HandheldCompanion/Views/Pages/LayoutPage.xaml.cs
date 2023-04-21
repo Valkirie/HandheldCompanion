@@ -2,6 +2,8 @@ using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
+using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
@@ -102,6 +104,12 @@ namespace HandheldCompanion.Views.Pages
         private void ControllerManager_ControllerSelected(IController Controller)
         {
             RefreshLayoutList();
+
+            // cascade update to (sub)pages (async)
+            Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, page =>
+            {
+                page.UpdateController(Controller);
+            });
         }
 
         private void LayoutManager_Initialized()

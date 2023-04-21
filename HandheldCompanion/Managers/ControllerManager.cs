@@ -4,6 +4,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Platforms;
+using ControllerCommon.Utils;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
@@ -43,7 +44,9 @@ namespace HandheldCompanion.Managers
             { UserIndex.Four, true },
         };
 
-        private static XInputController? defaultController = new XInputController();
+        private static XInputController? emptyXInput = new();
+        private static DS4Controller? emptyDS4 = new();
+
         private static IController? targetController;
         private static ProcessEx? foregroundProcess;
 
@@ -73,7 +76,7 @@ namespace HandheldCompanion.Managers
 
             // summon an empty controller, used to feed Layout UI
             // todo: improve me
-            ControllerSelected?.Invoke(defaultController);
+            ControllerSelected?.Invoke(GetEmulatedController());
 
             LogManager.LogInformation("{0} has started", "ControllerManager");
         }
@@ -464,7 +467,7 @@ namespace HandheldCompanion.Managers
 
         public static IController GetTargetController()
         {
-            return targetController is not null ? targetController : defaultController;
+            return targetController is not null ? targetController : GetEmulatedController();
         }
 
         public static bool HasController()
@@ -530,6 +533,21 @@ namespace HandheldCompanion.Managers
         {
             // pass movements to service
             PipeClient.SendMessage(new PipeClientMovements(Movements));
+        }
+
+        internal static IController GetEmulatedController()
+        {
+            HIDmode HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+            switch (HIDmode)
+            {
+                default:
+                case HIDmode.NoController:
+                case HIDmode.Xbox360Controller:
+                    return emptyXInput;
+
+                case HIDmode.DualShock4Controller:
+                    return emptyDS4;
+            }
         }
     }
 }

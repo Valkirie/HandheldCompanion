@@ -10,6 +10,9 @@ namespace HandheldCompanion.Controllers
 {
     public class DS4Controller : DInputController
     {
+        public DS4Controller()
+        { }
+
         public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
         {
             // UI

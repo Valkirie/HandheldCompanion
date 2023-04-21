@@ -74,7 +74,7 @@ namespace HandheldCompanion.Controls
             TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
             // get current controller
-            IController controller = ControllerManager.GetTargetController();
+            IController controller = ControllerManager.GetEmulatedController();
 
             // populate target dropdown based on action type
             ActionType type = (ActionType)ActionComboBox.SelectedIndex;

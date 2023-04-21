@@ -298,6 +298,8 @@ namespace HandheldCompanion.Views.Pages
             PipeClient.SendMessage(settings);
 
             UpdateController();
+
+            SettingsManager.SetProperty("HIDmode", controllerMode, false, true);
         }
 
         private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -311,6 +313,8 @@ namespace HandheldCompanion.Views.Pages
             PipeClient.SendMessage(settings);
 
             UpdateController();
+
+            SettingsManager.SetProperty("HIDstatus", controllerStatus, false, true);
         }
 
         private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)

@@ -1,5 +1,8 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ControllerCommon.Pipes;
+using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
@@ -24,8 +27,6 @@ namespace HandheldCompanion.Views.Pages
         public ButtonsPage()
         {
             InitializeComponent();
-
-            ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
             // draw UI
             foreach (ButtonFlags button in ABXY)
@@ -76,36 +77,40 @@ namespace HandheldCompanion.Views.Pages
             gridOEM.Visibility = MainWindow.CurrentDevice.OEMButtons.Count() > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void ControllerManager_ControllerSelected(IController Controller)
+        public override void UpdateController(IController Controller)
         {
-            // controller based
-            foreach (var mapping in MappingButtons)
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                ButtonFlags button = mapping.Key;
-                ButtonMapping buttonMapping = mapping.Value;
-
-                // update icon
-                FontIcon newIcon = Controller.GetFontIcon(button);
-                string newLabel = Controller.GetButtonName(button);
-                buttonMapping.UpdateIcon(newIcon, newLabel);
-
-                // specific buttons are handled elsewhere
-                if (OEM.Contains(button))
+                // controller based
+                foreach (var mapping in MappingButtons)
                 {
-                    buttonMapping.Name.Text = MainWindow.CurrentDevice.GetButtonName(button);
-                    continue;
+                    ButtonFlags button = mapping.Key;
+                    ButtonMapping buttonMapping = mapping.Value;
+
+                    // update icon
+                    FontIcon newIcon = Controller.GetFontIcon(button);
+                    string newLabel = Controller.GetButtonName(button);
+                    buttonMapping.UpdateIcon(newIcon, newLabel);
+
+                    // specific buttons are handled elsewhere
+                    if (OEM.Contains(button))
+                    {
+                        buttonMapping.Name.Text = MainWindow.CurrentDevice.GetButtonName(button);
+                        continue;
+                    }
+
+                    // update mapping visibility
+                    if (!Controller.IsButtonSupported(button))
+                        buttonMapping.Visibility = Visibility.Collapsed;
+                    else
+                        buttonMapping.Visibility = Visibility.Visible;
                 }
 
-                // update mapping visibility
-                if (!Controller.IsButtonSupported(button))
-                    buttonMapping.Visibility = Visibility.Collapsed;
-                else
-                    buttonMapping.Visibility = Visibility.Visible;
-            }
-
-            // manage layout pages visibility
-            bool HasBackGrips = Controller.IsButtonSupported(ButtonFlags.L4) || Controller.IsButtonSupported(ButtonFlags.L5) || Controller.IsButtonSupported(ButtonFlags.R4) || Controller.IsButtonSupported(ButtonFlags.R5);
-            gridBACKGRIPS.Visibility = HasBackGrips ? Visibility.Visible : Visibility.Collapsed;
+                // manage layout pages visibility
+                bool HasBackGrips = Controller.IsButtonSupported(ButtonFlags.L4) || Controller.IsButtonSupported(ButtonFlags.L5) || Controller.IsButtonSupported(ButtonFlags.R4) || Controller.IsButtonSupported(ButtonFlags.R5);
+                gridBACKGRIPS.Visibility = HasBackGrips ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         public ButtonsPage(string Tag) : this()

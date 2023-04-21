@@ -10,6 +10,9 @@ namespace HandheldCompanion.Controllers
         protected JoystickState State = new();
         protected JoystickState prevState = new();
 
+        public DInputController()
+        { }
+
         public DInputController(Joystick joystick, PnPDetails details)
         {
             if (joystick is null)
