@@ -321,30 +321,51 @@
                 Grid.Column="1"
                 Margin="0,0,0,0"
                 ScrollViewer.PanningMode="HorizontalOnly">
-                <TextBlock
-                    Width="30"
+
+                <ui:SimpleStackPanel
+                    Margin="0,0,0,0"
                     VerticalAlignment="Center"
-                    Text="{Binding Value, ElementName=FramerateSlider, Mode=OneWay}"
-                    TextAlignment="Center" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="FPS" />
-                <Slider
-                    x:Name="FramerateSlider"
-                    Margin="8,0,0,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    AutoToolTipPlacement="TopLeft"
-                    AutoToolTipPrecision="0"
-                    IsMoveToPointEnabled="True"
-                    IsSnapToTickEnabled="True"
-                    Maximum="60"
-                    Minimum="15"
-                    Style="{DynamicResource SliderStyle1}"
-                    TickFrequency="5"
-                    TickPlacement="BottomRight"
-                    ValueChanged="FramerateSlider_ValueChanged" />
+                    ScrollViewer.PanningMode="HorizontalOnly">
+                    <Slider
+                        x:Name="FramerateSlider"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        IsMoveToPointEnabled="True"
+                        IsSnapToTickEnabled="True"
+                        Maximum="2"
+                        Minimum="0"
+                        Style="{DynamicResource SliderStyle1}"
+                        TickFrequency="1"
+                        TickPlacement="BottomRight"
+                        ValueChanged="FramerateSlider_ValueChanged" />
+                    <Grid Name="FramerateModeGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Name="FramerateQuarter"
+                            Grid.Column="0"
+                            Margin="0,0,76,0"
+                            HorizontalAlignment="Center"
+                            Text="15" />
+                        <TextBlock
+                            Name="FramerateHalf"
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            Text="30" />
+                        <TextBlock
+                            Name="FramerateFull"
+                            Grid.Column="2"
+                            Margin="76,0,0,0"
+                            HorizontalAlignment="Center"
+                            Text="60" />
+                    </Grid>
+                </ui:SimpleStackPanel>
             </DockPanel>
         </Border>
 

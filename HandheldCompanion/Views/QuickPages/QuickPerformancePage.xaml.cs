@@ -20,6 +20,8 @@ namespace HandheldCompanion.Views.QuickPages
         private bool CanChangeTDP, CanChangeGPU;
         private Profile currentProfile;
 
+        private double[] frequency_slider = new double[3] { 15, 30, 60 };
+
         public QuickPerformancePage()
         {
             InitializeComponent();
@@ -58,6 +60,17 @@ namespace HandheldCompanion.Views.QuickPages
         {
             ComboBoxResolution.SelectedItem = resolution;
             ComboBoxFrequency.SelectedItem = SystemManager.GetScreenFrequency();
+
+            double frequency_current = SystemManager.GetScreenFrequency().frequency;
+            frequency_slider[0] = frequency_current / 4.0d;
+            frequency_slider[1] = frequency_current / 2.0d;
+            frequency_slider[2] = frequency_current;
+
+            FramerateQuarter.Text = Convert.ToString(frequency_slider[0]);
+            FramerateHalf.Text = Convert.ToString(frequency_slider[1]);
+            FramerateFull.Text = Convert.ToString(frequency_slider[2]);
+
+            UpdateFrequency();
         }
 
         private void HotkeysManager_CommandExecuted(string listener)
@@ -420,15 +433,34 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            // update settings
+            int value = (int)FramerateSlider.Value;
+
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                foreach (TextBlock tb in FramerateModeGrid.Children)
+                    tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                TextBlock TextBlock = (TextBlock)FramerateModeGrid.Children[value];
+                TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+            });
+
+            UpdateFrequency();
+        }
+
+        private void UpdateFrequency()
+        {
             if (!SettingsManager.GetBoolean("QuickToolsPerformanceFramerateToggled"))
                 return;
 
-            PlatformManager.RTSS.RequestFPS(FramerateSlider.Value);
+            double frequency = frequency_slider[(int)FramerateSlider.Value];
+            PlatformManager.RTSS.RequestFPS(frequency);
 
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", FramerateSlider.Value);
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", frequency);
         }
 
         private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
