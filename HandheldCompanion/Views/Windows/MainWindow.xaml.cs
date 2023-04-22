@@ -62,6 +62,7 @@ namespace HandheldCompanion.Views
 
         private WindowState prevWindowState;
         private NotifyIcon notifyIcon;
+        private bool NotifyInTaskbar;
 
         public static string CurrentExe, CurrentPath, CurrentPathService;
         private bool appClosing;
@@ -719,7 +720,12 @@ namespace HandheldCompanion.Views
                 case WindowState.Minimized:
                     notifyIcon.Visible = true;
                     ShowInTaskbar = false;
-                    ToastManager.SendToast(Title, "is running in the background");
+
+                    if (!NotifyInTaskbar)
+                    {
+                        ToastManager.SendToast(Title, "is running in the background");
+                        NotifyInTaskbar = true;
+                    }
                     break;
                 case WindowState.Normal:
                 case WindowState.Maximized:
