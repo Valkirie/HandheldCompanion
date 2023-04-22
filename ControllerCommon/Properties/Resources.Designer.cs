@@ -448,6 +448,15 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to STEAM.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Menu.
         /// </summary>
         public static string Enum_NeptuneController_ButtonFlags_Start {
@@ -583,20 +592,11 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to STEAM.
+        ///   Looks up a localized string similar to Options.
         /// </summary>
         public static string Enum_SteamDeck_ButtonFlags_OEM1 {
             get {
                 return ResourceManager.GetString("Enum.SteamDeck.ButtonFlags.OEM1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Options.
-        /// </summary>
-        public static string Enum_SteamDeck_ButtonFlags_OEM2 {
-            get {
-                return ResourceManager.GetString("Enum.SteamDeck.ButtonFlags.OEM2", resourceCulture);
             }
         }
         

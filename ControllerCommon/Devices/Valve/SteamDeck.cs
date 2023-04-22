@@ -58,14 +58,9 @@ namespace ControllerCommon.Devices
             // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
             this.GfxClock = new double[] { 100, 1600 };
 
-            OEMChords.Add(new DeviceChord("STEAM",
-                new(), new(),
-                false, ButtonFlags.OEM1
-                ));
-
             OEMChords.Add(new DeviceChord("...",
                 new(), new(),
-                false, ButtonFlags.OEM2
+                false, ButtonFlags.OEM1
                 ));
         }
 

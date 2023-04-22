@@ -328,9 +328,9 @@
     <value>Handheld Companion</value>
   </data>
   <data name="Enum.SteamDeck.ButtonFlags.OEM1" xml:space="preserve">
-    <value>STEAM</value>
-  </data>
-  <data name="Enum.SteamDeck.ButtonFlags.OEM2" xml:space="preserve">
     <value>Options</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
+    <value>STEAM</value>
   </data>
 </root>
