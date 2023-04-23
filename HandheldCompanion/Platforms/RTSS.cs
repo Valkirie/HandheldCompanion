@@ -64,6 +64,11 @@ namespace HandheldCompanion.Platforms
         private const string GLOBAL_PROFILE = "";
 
         private int RequestedFramerate = 0;
+        private PrecisionTimer FramerateTimer;
+        private const int FramerateInterval = 100;
+
+        private int ForegroundProcessId = 0;
+        private double ForegroundFramerate;
 
         public RTSS()
         {
@@ -113,6 +118,40 @@ namespace HandheldCompanion.Platforms
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
+
+            // hook into process manager
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
+            // timer used to monitor foreground application framerate
+            FramerateTimer = new PrecisionTimer();
+            FramerateTimer.SetAutoResetMode(true);
+            FramerateTimer.SetResolution(0);
+            FramerateTimer.SetPeriod(FramerateInterval);
+            FramerateTimer.Tick += TimerTicked;
+        }
+
+        private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
+        {
+            AppEntry appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
+
+            if (appEntry is null)
+            {
+                FramerateTimer.Stop();
+                return;
+            }
+
+            ForegroundProcessId = appEntry.ProcessId;
+            FramerateTimer.Start();
+        }
+
+        private void TimerTicked(object? sender, EventArgs e)
+        {
+            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ForegroundProcessId).FirstOrDefault();
+            if (appE is null)
+                return;
+
+            var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
+            ForegroundFramerate = Math.Round(duration / appE.InstantaneousFrameTime);
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -130,6 +169,11 @@ namespace HandheldCompanion.Platforms
         {
             if (KeepAlive)
                 Start();
+        }
+
+        public double GetInstantaneousFramerate()
+        {
+            return ForegroundFramerate;
         }
 
         public bool GetProfileProperty<T>(string propertyName, out T value)
