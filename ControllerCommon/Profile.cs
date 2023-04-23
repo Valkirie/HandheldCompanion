@@ -123,7 +123,6 @@ namespace ControllerCommon
 
             // enable the below variables when profile is created
             this.Enabled = true;
-            this.MotionEnabled = true;
         }
 
         public float GetSensitivityX()

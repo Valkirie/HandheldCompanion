@@ -84,6 +84,7 @@ namespace HandheldCompanion.Managers
                     Enabled = true,
                     Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
                     LayoutTitle = LayoutTemplate.DefaultLayout.Name,
+                    LayoutEnabled = true,
                 };
 
                 UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
