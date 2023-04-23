@@ -266,7 +266,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-OutputBaseFilename={#MyAppSetupName}-{#MyConfiguration}-{#MyConfigurationExt}-{#MyAppVersion}-offline
+OutputBaseFilename={#MyBuildId}-{#MyAppVersion}-offline
 DefaultGroupName={#MyAppSetupName}
 DefaultDirName={autopf}\{#MyAppSetupName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
@@ -466,11 +466,6 @@ end;
 
 function InitializeSetup: Boolean;
 begin
-#ifdef UseDotNet60
-  ExtractTemporaryFile('dotnet-runtime-6.0.6-win-x64.exe');
-  ExtractTemporaryFile('windowsdesktop-runtime-6.0.6-win-x64.exe');
-#endif
-
 #ifdef UseDotNet70
   ExtractTemporaryFile('dotnet-runtime-7.0.0-win-x64.exe');
   ExtractTemporaryFile('windowsdesktop-runtime-7.0.0-win-x64.exe');
