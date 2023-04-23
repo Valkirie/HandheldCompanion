@@ -45,7 +45,7 @@
                         VerticalAlignment="Center"
                         SelectedIndex="0"
                         SelectionChanged="Action_SelectionChanged">
-                        <ComboBoxItem Content="None" IsEnabled="True" />
+                        <ComboBoxItem Content="Disabled" IsEnabled="True" />
                         <ComboBoxItem Content="Button" IsEnabled="False" />
                         <ComboBoxItem Content="Joystick" IsEnabled="False" />
                         <ComboBoxItem Content="Keyboard" IsEnabled="False" />

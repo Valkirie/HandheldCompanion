@@ -8,7 +8,7 @@ namespace HandheldCompanion.Actions
     {
         public EmptyActions()
         {
-            this.ActionType = ActionType.None;
+            this.ActionType = ActionType.Disabled;
         }
     }
 }

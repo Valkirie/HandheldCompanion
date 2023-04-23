@@ -79,7 +79,7 @@ namespace HandheldCompanion.Controls
             // populate target dropdown based on action type
             ActionType type = (ActionType)ActionComboBox.SelectedIndex;
 
-            if (type == ActionType.None)
+            if (type == ActionType.Disabled)
             {
                 if (this.Actions is not null)
                     base.Delete();

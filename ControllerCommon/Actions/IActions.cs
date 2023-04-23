@@ -7,7 +7,7 @@ namespace ControllerCommon.Actions
     [Serializable]
     public enum ActionType
     {
-        None = 0,
+        Disabled = 0,
         Button = 1,
         Joystick = 2,
         Keyboard = 3,
@@ -18,7 +18,7 @@ namespace ControllerCommon.Actions
     [Serializable]
     public abstract class IActions : ICloneable
     {
-        public ActionType ActionType { get; set; } = ActionType.None;
+        public ActionType ActionType { get; set; } = ActionType.Disabled;
 
         protected object Value;
         protected object prevValue;
