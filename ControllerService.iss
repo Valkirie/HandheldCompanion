@@ -215,37 +215,11 @@ begin
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
-procedure Dependency_AddDotNet60;
-begin
-  // https://dotnet.microsoft.com/download/dotnet/6.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 6.0.6') then begin
-    Dependency_Add('dotnet50' + Dependency_ArchSuffix + '.exe',
-      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Runtime 6.0.6' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/60c4767e-c0df-491b-970c-cf69d0c2c581/524ccc6ff8aa96120753ab387bf22d5d/dotnet-runtime-6.0.6-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/7989338b-8ae9-4a5d-8425-020148016812/c26361fde7f706279265a505b4d1d93a/dotnet-runtime-6.0.6-win-x64.exe'),
-      '', False, False);
-  end;
-end;
-
-procedure Dependency_AddDotNet60Desktop;
-begin
-  // https://dotnet.microsoft.com/download/dotnet/6.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 6.0.6') then begin
-    Dependency_Add('dotnet60desktop' + Dependency_ArchSuffix + '.exe',
-      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Desktop Runtime 6.0.6' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/cc04076c-d188-4c20-9b4f-89be06f1a39c/32da746ef46fbeedb4f609b67cb451c3/windowsdesktop-runtime-6.0.6-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/9d6b6b34-44b5-4cf4-b924-79a00deb9795/2f17c30bdf42b6a8950a8552438cf8c1/windowsdesktop-runtime-6.0.6-win-x64.exe'),
-      '', False, False);
-  end;
-end;
-
 procedure Dependency_AddDotNet70;
 begin
   // https://dotnet.microsoft.com/download/dotnet/7.0
   if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 7.0.0') then begin
-    Dependency_Add('dotnet50' + Dependency_ArchSuffix + '.exe',
+    Dependency_Add('dotnet70' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '.NET Runtime 7.0.0' + Dependency_ArchTitle,
       Dependency_String('https://download.visualstudio.microsoft.com/download/pr/75c0d7c7-9f30-46fd-9675-a301f0e051f4/ec04d5cc40aa6537a4af21fad6bf8ba9/dotnet-runtime-7.0.0-win-x86.exe',
@@ -258,7 +232,7 @@ procedure Dependency_AddDotNet70Desktop;
 begin
   // https://dotnet.microsoft.com/download/dotnet/7.0
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.0') then begin
-    Dependency_Add('dotnet60desktop' + Dependency_ArchSuffix + '.exe',
+    Dependency_Add('dotnet70desktop' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '.NET Desktop Runtime 7.0.0' + Dependency_ArchTitle,
       Dependency_String('https://download.visualstudio.microsoft.com/download/pr/d05a833c-2cf9-4d06-89ae-a0f3e10c5c91/c668ff42e23c2f67aa3d80227860585f/windowsdesktop-runtime-7.0.0-win-x86.exe',
