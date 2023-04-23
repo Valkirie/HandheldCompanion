@@ -369,6 +369,14 @@ begin
     '', True, False);
 end;
 
+procedure Dependency_AddRTSS;
+begin
+  Dependency_Add('RTSSSetup734.exe',
+    '/S',
+    'RTSS Setup v7.3.4',
+    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup734.exe',
+    '', True, False);
+end;
 
 [Setup]
 ; -------------
@@ -379,7 +387,6 @@ end;
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  ;#define UseDotNet60  
   #define UseDotNet70
 #endif
 
@@ -394,6 +401,7 @@ end;
 ; install ViGem first
 #define UseViGem
 #define UseHideHide
+#define UseRTSS
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
@@ -405,16 +413,9 @@ end;
 #define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
 
-#ifdef UseDotNet60
-	#define MyConfigurationExt "net6.0"
-#endif
-
 #ifdef UseDotNet70
 	#define MyConfigurationExt "net7.0"
-#endif
-
-; #define ClearProfiles
-; #define ClearHotkeys    
+#endif 
 
 AppName={#MyAppSetupName}
 AppVersion={#MyAppVersion}
@@ -462,9 +463,6 @@ Source: "{#SourcePath}\bin\{#MyConfiguration}\{#MyConfigurationExt}-windows10.0.
 Source: "{#SourcePath}\redist\Segoe Fluent Icons.ttf"; DestDir: "{autofonts}"; FontInstall: "Segoe Fluent Icons"; Flags: onlyifdoesntexist uninsneveruninstall
 Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInstall: "PromptFont"; Flags: uninsneveruninstall
 
-Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
-
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppSetupName}}"; Filename: "{uninstallexe}"
@@ -482,15 +480,6 @@ Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCL
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
-
-[InstallDelete]
-#ifdef ClearHotkeys
-Type: filesandordirs; Name: "{userdocs}\{#MyBuildId}\hotkeys"
-#endif
-
-#ifdef ClearProfiles
-Type: filesandordirs; Name: "{userdocs}\{#MyBuildId}\profiles"
-#endif
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
@@ -595,10 +584,6 @@ end;
 
 function InitializeSetup: Boolean;
 begin
-#ifdef UseDotNet60
-  Dependency_AddDotNet60;
-  Dependency_AddDotNet60Desktop;
-#endif
 
 #ifdef UseDotNet70
   Dependency_AddDotNet70;
@@ -634,6 +619,10 @@ begin
 
 #ifdef UseViGem
   Dependency_AddViGem;
+#endif
+
+#ifdef UseRTSS
+  Dependency_AddRTSS;
 #endif
 
   Result := True;

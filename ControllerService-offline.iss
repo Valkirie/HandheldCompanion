@@ -225,7 +225,6 @@ end;
 #ifdef UseNetCoreCheck
 #endif
 
-;#define UseDotNet60
 #define UseDotNet70
 
 #define UseVC2005
@@ -238,6 +237,7 @@ end;
 #define UseDirectX
 #define UseHideHide
 #define UseViGem
+#define UseRTSS
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
@@ -248,10 +248,6 @@ end;
 #define MyAppExeName "HandheldCompanion.exe"
 #define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
-
-#ifdef UseDotNet60
-	#define MyConfigurationExt "net6.0"
-#endif
 
 #ifdef UseDotNet70
 	#define MyConfigurationExt "net7.0"
@@ -308,11 +304,6 @@ Source: "vcredist2010_x64.exe"; Flags: dontcopy noencryption
 Source: "vcredist2012_x64.exe"; Flags: dontcopy noencryption
 Source: "vcredist2013_x64.exe"; Flags: dontcopy noencryption
 Source: "vcredist2019_x64.exe"; Flags: dontcopy noencryption
-
-	#ifdef UseDotNet60
-		Source: "dotnet-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
-		Source: "windowsdesktop-runtime-6.0.6-win-x64.exe"; Flags: dontcopy noencryption
-	#endif
 	
 	#ifdef UseDotNet70
 		Source: "dotnet-runtime-7.0.0-win-x64.exe"; Flags: dontcopy noencryption
@@ -329,6 +320,7 @@ Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInsta
 
 Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\redist\RTSSSetup734.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
@@ -347,11 +339,6 @@ Filename: "{tmp}\vcredist2010_x64.exe"; StatusMsg: "Installing Visual C++ 2010 R
 Filename: "{tmp}\vcredist2008_x64.exe"; StatusMsg: "Installing Visual C++ 2008 Redistributable"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\vcredist2005_x64.exe"; StatusMsg: "Installing Visual C++ 2005 Redistributable"; Parameters: "/Q"; Flags: waituntilterminated
 
-#ifdef UseDotNet60
-Filename: "{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe"; StatusMsg: ".NET Desktop Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
-Filename: "{tmp}\dotnet-runtime-6.0.6-win-x64.exe"; StatusMsg: "Installing .NET Runtime 6.0.6"; Parameters: "/passive /norestart"; Flags: waituntilterminated
-#endif
-
 #ifdef UseDotNet70
 Filename: "{tmp}\windowsdesktop-runtime-7.0.0-win-x64"; StatusMsg: ".NET Desktop Runtime 7.0.0"; Parameters: "/passive /norestart"; Flags: waituntilterminated
 Filename: "{tmp}\dotnet-runtime-7.0.0-win-x64"; StatusMsg: "Installing .NET Runtime 7.0.0"; Parameters: "/passive /norestart"; Flags: waituntilterminated
@@ -359,6 +346,7 @@ Filename: "{tmp}\dotnet-runtime-7.0.0-win-x64"; StatusMsg: "Installing .NET Runt
 
 Filename: "{app}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; StatusMsg: "Installing ViGEmBus"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; StatusMsg: "Installing HidHide"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
+Filename: "{app}\redist\RTSSSetup734.exe"; StatusMsg: "Installing RTSS"; Parameters: "/S"; Flags: runascurrentuser
 
 [UninstallRun]
 Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
@@ -517,6 +505,10 @@ begin
 
 #ifdef UseViGem
   ExtractTemporaryFile('ViGEmBus_1.21.442_x64_x86_arm64.exe');
+#endif
+
+#ifdef UseRTSS
+  ExtractTemporaryFile('RTSSSetup734.exe');
 #endif
 
   Result := True;
