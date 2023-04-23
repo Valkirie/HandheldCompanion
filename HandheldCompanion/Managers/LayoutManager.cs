@@ -31,8 +31,6 @@ namespace HandheldCompanion.Managers
 
         private static Layout currentLayout;
 
-        private static ControllerState outputState = new();
-
         public static FileSystemWatcher layoutWatcher { get; set; }
 
         public static string LayoutsPath;
@@ -260,26 +258,9 @@ namespace HandheldCompanion.Managers
             if (currentLayout is null)
                 return controllerState;
 
-            outputState.ButtonState = controllerState.ButtonState.Clone() as ButtonState;
-            outputState.AxisState = controllerState.AxisState.Clone() as AxisState;
-
-            // consume origin button state
-            foreach (ButtonFlags button in currentLayout.ButtonLayout.Keys)
-                outputState.ButtonState[button] = false;
-
-            // consume origin axis state
-            foreach (var axisLayout in currentLayout.AxisLayout)
-            {
-                AxisLayoutFlags flags = axisLayout.Key;
-
-                // read origin values
-                AxisLayout InLayout = AxisLayout.Layouts[flags];
-                AxisFlags InAxisX = InLayout.GetAxisFlags('X');
-                AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
-
-                outputState.AxisState[InAxisX] = 0;
-                outputState.AxisState[InAxisY] = 0;
-            }
+            // clean output state, there should be no leaking of current controller state,
+            // only buttons/axes mapped from the layout should be passed on
+            ControllerState outputState = new();
 
             foreach (var buttonState in controllerState.ButtonState.State)
             {
