@@ -17,6 +17,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using static HandheldCompanion.Platforms.RTSS;
 
 namespace HandheldCompanion.Platforms
 {
@@ -64,11 +65,14 @@ namespace HandheldCompanion.Platforms
         private const string GLOBAL_PROFILE = "";
 
         private int RequestedFramerate = 0;
-        private PrecisionTimer FramerateTimer;
-        private const int FramerateInterval = 100;
 
         private int ForegroundProcessId = 0;
-        private double ForegroundFramerate;
+
+        public event HookedEventHandler Hooked;
+        public delegate void HookedEventHandler(int processId);
+
+        public event UnhookedEventHandler Unhooked;
+        public delegate void UnhookedEventHandler(int processId);
 
         public RTSS()
         {
@@ -121,37 +125,30 @@ namespace HandheldCompanion.Platforms
 
             // hook into process manager
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-
-            // timer used to monitor foreground application framerate
-            FramerateTimer = new PrecisionTimer();
-            FramerateTimer.SetAutoResetMode(true);
-            FramerateTimer.SetResolution(0);
-            FramerateTimer.SetPeriod(FramerateInterval);
-            FramerateTimer.Tick += TimerTicked;
         }
 
         private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
         {
+            CheckProcess(process);
+            process.MainThreadChanged += CheckProcess;
+        }
+
+        private void CheckProcess(ProcessEx process)
+        {
+            if (IsHooked())
+                Unhooked?.Invoke(ForegroundProcessId);
+
             AppEntry appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
 
             if (appEntry is null)
             {
-                FramerateTimer.Stop();
+                ForegroundProcessId = 0;
                 return;
             }
 
             ForegroundProcessId = appEntry.ProcessId;
-            FramerateTimer.Start();
-        }
 
-        private void TimerTicked(object? sender, EventArgs e)
-        {
-            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ForegroundProcessId).FirstOrDefault();
-            if (appE is null)
-                return;
-
-            var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-            ForegroundFramerate = Math.Round(duration / appE.InstantaneousFrameTime);
+            Hooked?.Invoke(ForegroundProcessId);
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -171,9 +168,22 @@ namespace HandheldCompanion.Platforms
                 Start();
         }
 
+        public bool IsHooked()
+        {
+            return ForegroundProcessId != 0;
+        }
+
         public double GetInstantaneousFramerate()
         {
-            return ForegroundFramerate;
+            if (!IsHooked())
+                return 0.0d;
+
+            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ForegroundProcessId).FirstOrDefault();
+            if (appE is null)
+                return 0.0d;
+
+            var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
+            return Math.Round(duration / appE.InstantaneousFrameTime);
         }
 
         public bool GetProfileProperty<T>(string propertyName, out T value)

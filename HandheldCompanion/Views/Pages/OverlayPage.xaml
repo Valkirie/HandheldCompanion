@@ -21,46 +21,49 @@
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
+
+            <!--  OSD options  -->
             <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="On-screen display options" />
 
-                <!--  Overlay preview  -->
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayPreview}" />
+                <!--  AlwaysOnTop  -->
                 <Border
-                    Padding="12"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
-                    <Border.Background>
-                        <ImageBrush ImageSource="/Resources/overlay_back.png" Stretch="UniformToFill" />
-                    </Border.Background>
 
-                    <Grid Name="PreviewGrid" Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=MainGrid, Path=ActualWidth, ConverterParameter=0.33}">
-                        <Grid Name="TrackpadsPositionUI">
-                            <Border
-                                Width="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                HorizontalAlignment="Left"
-                                Background="Black"
-                                CornerRadius="4"
-                                Opacity="0.5" />
-                            <Border
-                                Width="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                HorizontalAlignment="Right"
-                                Background="Black"
-                                CornerRadius="4"
-                                Opacity="0.5" />
-                        </Grid>
-                        <Grid Name="ControllerPositionUI">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
                             <ui:FontIcon
-                                Margin="4,4,0,0"
-                                FontSize="60"
-                                Foreground="Black"
-                                Glyph="&#xE7FC;"
-                                Opacity="0.5" />
-                            <ui:FontIcon FontSize="60" Glyph="&#xE7FC;" />
-                        </Grid>
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE78B;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="On-screen display" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Enable on-screen display support"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_OnScreenDisplay"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_OnScreenDisplay_Toggled" />
                     </Grid>
                 </Border>
+
             </ui:SimpleStackPanel>
 
             <!--  Controller options  -->

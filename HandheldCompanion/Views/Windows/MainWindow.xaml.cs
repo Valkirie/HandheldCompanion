@@ -175,6 +175,7 @@ namespace HandheldCompanion.Views
             DeviceManager.Start();
 
             PlatformManager.Start();
+            OSDManager.Start();
             LayoutManager.Start();
             ProcessManager.Start();
             EnergyManager.Start();
@@ -653,6 +654,7 @@ namespace HandheldCompanion.Views
             InputsManager.Stop();
             DeviceManager.Stop();
             PlatformManager.Stop();
+            OSDManager.Stop();
             ProfileManager.Stop();
             LayoutManager.Stop();
             ProcessManager.Stop();
