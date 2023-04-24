@@ -46,20 +46,17 @@ namespace HandheldCompanion.Managers
         private static void RTSS_Unhooked(int processId)
         {
             // clear previous display
-            if (OnScreenDisplay is not null)
+            if (OnScreenDisplay.TryGetValue(HookedProcessId, out var OSD))
             {
-                OnScreenDisplay[processId].Update(string.Empty);
-                OnScreenDisplay[processId].Dispose();
-
-                OnScreenDisplay.Remove(processId);
+                OSD.Update(string.Empty);
+                OSD.Dispose();
             }
+
+            OnScreenDisplay.Remove(processId);
         }
 
         private static void RTSS_Hooked(int processId)
         {
-            if (!IsEnabled)
-                return;
-
             ProcessEx processEx = ProcessManager.GetProcess(processId);
             if (processEx is null)
                 return;
