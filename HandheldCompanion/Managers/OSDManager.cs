@@ -5,6 +5,7 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,7 +86,11 @@ namespace HandheldCompanion.Managers
                 var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
                 var ProfileName = ProfileManager.GetCurrent().Name;
 
-                processOSD.Update($"Profile: {ProfileName}\n{FPS} FPS");
+                try
+                {
+                    processOSD.Update($"Profile: {ProfileName}\n{FPS} FPS");
+                }
+                catch (FileNotFoundException ex) { }
             }
         }
 

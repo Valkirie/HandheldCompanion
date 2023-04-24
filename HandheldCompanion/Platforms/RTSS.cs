@@ -134,13 +134,17 @@ namespace HandheldCompanion.Platforms
 
         private async void ProcessManager_ProcessStartedAsync(ProcessEx processEx, bool OnStartup)
         {
-            AppEntry appEntry;
+            AppEntry appEntry = null;
             
             do
             {
-                appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
-                if (processEx.Process.HasExited)
-                    return;
+                try
+                {
+                    appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
+                    if (processEx.Process.HasExited)
+                        return;
+                }
+                catch (FileNotFoundException ex) { }
 
                 await Task.Delay(250);
             }
@@ -168,12 +172,18 @@ namespace HandheldCompanion.Platforms
 
         public double GetInstantaneousFramerate(int processId)
         {
-            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processId).FirstOrDefault();
-            if (appE is null)
-                return 0.0d;
+            try
+            {
+                var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processId).FirstOrDefault();
+                if (appE is null)
+                    return 0.0d;
 
-            var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-            return Math.Round(duration / appE.InstantaneousFrameTime);
+                var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
+                return Math.Round(duration / appE.InstantaneousFrameTime);
+            }
+            catch (FileNotFoundException ex) { }
+
+            return 0.0d;
         }
 
         public bool GetProfileProperty<T>(string propertyName, out T value)
