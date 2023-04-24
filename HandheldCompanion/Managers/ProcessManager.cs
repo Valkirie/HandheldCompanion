@@ -193,9 +193,6 @@ namespace HandheldCompanion.Managers
 
         private static async void OnWindowForeground(IntPtr hWinEventHook, uint iEvent, IntPtr hWnd, int idObject, int idChild, int dwEventThread, int dwmsEventTime)
         {
-            if (!IsWindowVisible((int)hWnd))
-                return;
-
             ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
             if (processInfo is null)
                 return;

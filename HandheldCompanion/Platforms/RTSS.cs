@@ -17,6 +17,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using static HandheldCompanion.Platforms.RTSS;
 
 namespace HandheldCompanion.Platforms
@@ -65,8 +66,6 @@ namespace HandheldCompanion.Platforms
         private const string GLOBAL_PROFILE = "";
 
         private int RequestedFramerate = 0;
-
-        private int ForegroundProcessId = 0;
 
         public event HookedEventHandler Hooked;
         public delegate void HookedEventHandler(int processId);
@@ -124,31 +123,30 @@ namespace HandheldCompanion.Platforms
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
             // hook into process manager
-            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStarted += ProcessManager_ProcessStartedAsync;
+            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
-            CheckProcess(process);
-            process.MainThreadChanged += CheckProcess;
+            Unhooked?.Invoke(processEx.GetProcessId());
         }
 
-        private void CheckProcess(ProcessEx process)
+        private async void ProcessManager_ProcessStartedAsync(ProcessEx processEx, bool OnStartup)
         {
-            if (IsHooked())
-                Unhooked?.Invoke(ForegroundProcessId);
-
-            AppEntry appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
-
-            if (appEntry is null)
+            AppEntry appEntry;
+            
+            do
             {
-                ForegroundProcessId = 0;
-                return;
+                appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
+                if (processEx.Process.HasExited)
+                    return;
+
+                await Task.Delay(250);
             }
+            while (appEntry is null);
 
-            ForegroundProcessId = appEntry.ProcessId;
-
-            Hooked?.Invoke(ForegroundProcessId);
+            Hooked?.Invoke(processEx.GetProcessId());
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -168,17 +166,9 @@ namespace HandheldCompanion.Platforms
                 Start();
         }
 
-        public bool IsHooked()
+        public double GetInstantaneousFramerate(int processId)
         {
-            return ForegroundProcessId != 0;
-        }
-
-        public double GetInstantaneousFramerate()
-        {
-            if (!IsHooked())
-                return 0.0d;
-
-            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ForegroundProcessId).FirstOrDefault();
+            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processId).FirstOrDefault();
             if (appE is null)
                 return 0.0d;
 

@@ -4,6 +4,7 @@ using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,8 +17,6 @@ namespace HandheldCompanion.Managers
     {
         public static bool IsEnabled;
         private static bool IsInitialized;
-
-        private static int HookedProcessId;
 
         private static PrecisionTimer RefreshTimer;
         private static int RefreshInterval = 100;
@@ -46,7 +45,7 @@ namespace HandheldCompanion.Managers
         private static void RTSS_Unhooked(int processId)
         {
             // clear previous display
-            if (OnScreenDisplay.TryGetValue(HookedProcessId, out var OSD))
+            if (OnScreenDisplay.TryGetValue(processId, out var OSD))
             {
                 OSD.Update(string.Empty);
                 OSD.Dispose();
@@ -62,7 +61,6 @@ namespace HandheldCompanion.Managers
                 return;
 
             OnScreenDisplay[processId] = new(processEx.Title);
-            HookedProcessId = processId;
         }
 
         public static void Start()
@@ -77,14 +75,17 @@ namespace HandheldCompanion.Managers
         {
             if (!IsEnabled)
                 return;
-            
-            if (OnScreenDisplay.TryGetValue(HookedProcessId, out var OSD))
+
+            foreach (var pair in OnScreenDisplay)
             {
+                int processId = pair.Key;
+                OSD processOSD = pair.Value;
+
                 // temp (test)
-                var FPS = PlatformManager.RTSS.GetInstantaneousFramerate();
+                var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
                 var ProfileName = ProfileManager.GetCurrent().Name;
 
-                OSD.Update($"Profile: {ProfileName}\n{FPS} FPS");
+                processOSD.Update($"Profile: {ProfileName}\n{FPS} FPS");
             }
         }
 
@@ -113,6 +114,14 @@ namespace HandheldCompanion.Managers
                     }
                     else
                     {
+                        // clear OnScreenDisplay array
+                        foreach(var OSD in OnScreenDisplay.Values)
+                        {
+                            OSD.Update(string.Empty);
+                            OSD.Dispose();
+                        }
+                        OnScreenDisplay.Clear();
+
                         RefreshTimer.Stop();
                     }
 
