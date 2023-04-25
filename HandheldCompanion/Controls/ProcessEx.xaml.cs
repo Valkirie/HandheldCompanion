@@ -107,8 +107,12 @@ namespace HandheldCompanion.Controls
 
         public int GetProcessId()
         {
-            if (Process is not null)
-                return Process.Id;
+            try
+            {
+                if (Process is not null)
+                    return Process.Id;
+            }
+            catch { }
             return 0;
         }
 
