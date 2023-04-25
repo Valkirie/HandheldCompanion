@@ -221,8 +221,11 @@ namespace HandheldCompanion.Managers
                 // update profile executable path
                 if (!profile.Default)
                 {
-                    profile.Path = proc.Path;
-                    UpdateOrCreateProfile(profile);
+                    if (!profile.Path.Equals(proc.Path))
+                    {
+                        profile.Path = proc.Path;
+                        UpdateOrCreateProfile(profile);
+                    }
                 }
             }
             catch { }
