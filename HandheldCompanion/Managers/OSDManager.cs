@@ -123,6 +123,13 @@ namespace HandheldCompanion.Managers
                     else
                     {
                         RefreshTimer.Stop();
+
+                        // clear UI on stop
+                        foreach (var pair in OnScreenDisplay)
+                        {
+                            OSD processOSD = pair.Value;
+                            processOSD.Update(string.Empty);
+                        }
                     }
 
                     break;
