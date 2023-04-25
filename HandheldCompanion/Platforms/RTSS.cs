@@ -125,17 +125,18 @@ namespace HandheldCompanion.Platforms
             // hook into process manager
             ProcessManager.ProcessStarted += ProcessManager_ProcessStartedAsync;
             ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+            ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         }
 
-        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            Unhooked?.Invoke(processEx.GetProcessId());
-        }
+            // unhook previous process
+            if (backgroundEx is not null)
+                Unhooked?.Invoke(backgroundEx.GetProcessId());
 
-        private async void ProcessManager_ProcessStartedAsync(ProcessEx processEx, bool OnStartup)
-        {
+            // hook new process
             AppEntry appEntry = null;
-            
+
             do
             {
                 try
@@ -151,6 +152,16 @@ namespace HandheldCompanion.Platforms
             while (appEntry is null);
 
             Hooked?.Invoke(processEx.GetProcessId());
+        }
+
+        private async void ProcessManager_ProcessStopped(ProcessEx processEx)
+        {
+            // do something
+        }
+
+        private async void ProcessManager_ProcessStartedAsync(ProcessEx processEx, bool OnStartup)
+        {
+            // do something
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
