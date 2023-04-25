@@ -417,7 +417,10 @@ namespace HandheldCompanion.Managers
 
             // inform service
             if (isCurrent)
+            {
                 PipeClient.SendMessage(new PipeClientProfile(profile));
+                Applied?.Invoke(profile);
+            }
 
             if (source == ProfileUpdateSource.Serializer)
                 return;
