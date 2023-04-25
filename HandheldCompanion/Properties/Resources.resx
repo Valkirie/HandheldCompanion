@@ -1169,4 +1169,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>Set the fan duty cycle to user-defined value</value>
   </data>
+  <data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
+    <value>On-screen display</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
+    <value>Enable on-screen display support</value>
+  </data>
 </root>
