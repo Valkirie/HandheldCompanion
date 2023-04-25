@@ -84,11 +84,14 @@ namespace HandheldCompanion.Managers
 
                 // temp (test)
                 var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
-                var ProfileName = ProfileManager.GetCurrent().Name;
+
+                var profile = ProfileManager.GetCurrent();
+                var ProfileName = profile.Name;
+                var UMC = profile.MotionEnabled;
 
                 try
                 {
-                    processOSD.Update($"Profile: {ProfileName}\n{FPS} FPS");
+                    processOSD.Update($"Profile: {ProfileName}\nUMC: {UMC}\n{FPS} FPS");
                 }
                 catch (FileNotFoundException ex) { }
             }
@@ -119,14 +122,6 @@ namespace HandheldCompanion.Managers
                     }
                     else
                     {
-                        // clear OnScreenDisplay array
-                        foreach(var OSD in OnScreenDisplay.Values)
-                        {
-                            OSD.Update(string.Empty);
-                            OSD.Dispose();
-                        }
-                        OnScreenDisplay.Clear();
-
                         RefreshTimer.Stop();
                     }
 
