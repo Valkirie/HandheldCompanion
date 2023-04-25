@@ -192,6 +192,10 @@ namespace HandheldCompanion.Managers
             {
                 var profile = GetProfileFromPath(proc.Path);
 
+                // if profile is disabled, pick default ?
+                if (!profile.Enabled)
+                    profile = GetDefault();
+
                 // raise event
                 Applied?.Invoke(profile);
 
