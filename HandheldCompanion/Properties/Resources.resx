@@ -1169,4 +1169,28 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>Set the fan duty cycle to user-defined value</value>
   </data>
+  <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
+    <value>Decrease brightness</value>
+  </data>
+  <data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
+    <value>Decrease the current display brightness by 5%</value>
+  </data>
+  <data name="InputsHotkey_decreaseVolume" xml:space="preserve">
+    <value>Decrease volume</value>
+  </data>
+  <data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
+    <value>Decrease the system volume by 5%</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
+    <value>Increase brightness</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>Increase the current display brightness by 5%</value>
+  </data>
+  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
+    <value>Increase volume</value>
+  </data>
+  <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
+    <value>Increase the system volume by 5%</value>
+  </data>
 </root>

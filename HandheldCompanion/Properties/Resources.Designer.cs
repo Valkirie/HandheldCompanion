@@ -415,6 +415,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decrease brightness.
+        /// </summary>
+        public static string InputsHotkey_decreaseBrightness {
+            get {
+                return ResourceManager.GetString("InputsHotkey_decreaseBrightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease the current display brightness by 5%.
+        /// </summary>
+        public static string InputsHotkey_decreaseBrightnessDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_decreaseBrightnessDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decrease thermal power limit (TDP).
         /// </summary>
         public static string InputsHotkey_decreaseTDP {
@@ -429,6 +447,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_decreaseTDPDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_decreaseTDPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease volume.
+        /// </summary>
+        public static string InputsHotkey_decreaseVolume {
+            get {
+                return ResourceManager.GetString("InputsHotkey_decreaseVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease the system volume by 5%.
+        /// </summary>
+        public static string InputsHotkey_decreaseVolumeDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_decreaseVolumeDesc", resourceCulture);
             }
         }
         
@@ -451,6 +487,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Increase brightness.
+        /// </summary>
+        public static string InputsHotkey_increaseBrightness {
+            get {
+                return ResourceManager.GetString("InputsHotkey_increaseBrightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase the current display brightness by 5%.
+        /// </summary>
+        public static string InputsHotkey_increaseBrightnessDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_increaseBrightnessDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Increase thermal power limit (TDP).
         /// </summary>
         public static string InputsHotkey_increaseTDP {
@@ -465,6 +519,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_increaseTDPDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_increaseTDPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase volume.
+        /// </summary>
+        public static string InputsHotkey_increaseVolume {
+            get {
+                return ResourceManager.GetString("InputsHotkey_increaseVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase the system volume by 5%.
+        /// </summary>
+        public static string InputsHotkey_increaseVolumeDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_increaseVolumeDesc", resourceCulture);
             }
         }
         
