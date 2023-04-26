@@ -122,11 +122,11 @@ namespace HandheldCompanion.Managers
             CheckForSequence(false, true);
         }
 
-        private static void CheckForSequence(bool IsKeyDown, bool IsKeyUp)
+        private static bool CheckForSequence(bool IsKeyDown, bool IsKeyUp)
         {
             if (currentChord.State.IsEmpty() &&
                 currentChord.OutputKeys.Count == 0)
-                return;
+                return false;
 
             // reset index
             KeyIndex = 0;
@@ -182,6 +182,7 @@ namespace HandheldCompanion.Managers
                         }
 
                         TriggerRaised?.Invoke(key, chord, IsKeyDown, IsKeyUp);
+                        return true;
                     }
                 }
                 else
@@ -193,14 +194,14 @@ namespace HandheldCompanion.Managers
                         currentChord.InputsType = InputsChordType.Long;
                         keys = GetTriggersFromChord(currentChord);
                         if (keys.Count != 0)
-                            return;
+                            return false;
 
                         var layout = LayoutManager.GetCurrent();
                         if (layout is not null)
                         {
                             foreach (ButtonFlags button in chord.state.Buttons)
                                 if (layout.ButtonLayout.ContainsKey(button))
-                                    return;
+                                    return false;
                         }
 
                         List<KeyCode> chords = chord.chords[IsKeyDown];
@@ -215,6 +216,8 @@ namespace HandheldCompanion.Managers
                         }
                         else if (IsKeyUp)
                             KeyboardSimulator.KeyUp(chords.ToArray());
+
+                        return true;
                     }
                 }
             }
@@ -226,7 +229,7 @@ namespace HandheldCompanion.Managers
                     {
                         case InputsChordType.Click:
                         case InputsChordType.Hold:
-                            return;
+                            return false;
                     }
                 }
 
@@ -243,6 +246,8 @@ namespace HandheldCompanion.Managers
 
                 StopListening(currentChord);
             }
+
+            return false;
         }
 
         private static List<KeyEventArgsExt> InjectModifiers(KeyEventArgsExt args)
@@ -480,6 +485,10 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "InputsManager");
         }
 
+        private static bool IsKeyDown = false;
+        private static bool IsKeyUp = false;
+        private static bool IsKeyDownCatch = false;
+
         public static void UpdateReport(ButtonState buttonState)
         {
             // half-press should be removed if full-press is also present
@@ -521,9 +530,6 @@ namespace HandheldCompanion.Managers
 
             // GamepadResetTimer.Stop();
 
-            bool IsKeyDown = false;
-            bool IsKeyUp = false;
-
             // IsKeyDown (filter on "fake" keys)
             if (!buttonState.IsEmpty())
             {
@@ -531,31 +537,32 @@ namespace HandheldCompanion.Managers
                 InputsChordHoldTimer.Stop();
                 InputsChordHoldTimer.Start();
 
-                if (GamepadClearPending)
-                {
+                if (!IsKeyDownCatch)
                     currentChord.State = buttonState.Clone() as ButtonState;
-                    GamepadClearPending = false;
-                }
                 else
                     currentChord.State.AddRange(buttonState);
 
                 currentChord.InputsType = InputsChordType.Click;
 
                 IsKeyDown = true;
+                IsKeyUp = false;
             }
             // IsKeyUp
-            else if (buttonState.IsEmpty() && !currentChord.State.IsEmpty())
+            else if (IsKeyDown && !currentChord.State.IsEmpty())
             {
                 GamepadClearPending = true;
 
                 IsKeyUp = true;
+                IsKeyDown = false;
             }
 
-            if (!currentChord.State.IsEmpty())
-                CheckForSequence(IsKeyDown, IsKeyUp);
+            var success = CheckForSequence(IsKeyDown, IsKeyUp);
+            if (success)
+                IsKeyDownCatch = true;
 
-            if (IsKeyUp)
+            if (buttonState.IsEmpty() && IsKeyUp)
             {
+                IsKeyDownCatch = false;
                 currentChord.State.Clear();
             }
 
