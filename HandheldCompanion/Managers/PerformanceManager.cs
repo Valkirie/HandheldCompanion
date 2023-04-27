@@ -393,30 +393,27 @@ namespace HandheldCompanion.Managers
             // initialize processor
             processor = Processor.GetCurrent();
 
-            if (!processor.IsInitialized)
-                return;
-
-            // read OS specific values
-            bool VulnerableDriverBlocklistEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnabled");
-
             // higher interval on Intel CPUs to avoid CPU overload
             if (processor.GetType() == typeof(IntelProcessor))
             {
                 cpuWatchdog.Interval = INTERVAL_INTEL;
-                if (VulnerableDriverBlocklistEnabled)
-                {
-                    cpuWatchdog.Stop();
-                    processor.Stop();
 
-                    LogManager.LogWarning("Core isolation, Memory integrity setting is turned on. TDP read/write is disabled");
-                }
+                // read OS specific values
+                bool HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity", "Enabled");
+                bool VulnerableDriverBlocklistEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnabled");
+
+                if (VulnerableDriverBlocklistEnabled || HypervisorEnforcedCodeIntegrityEnabled)
+                    LogManager.LogWarning("Core isolation settings are turned on. TDP read/write is disabled");
             }
 
-            processor.ValueChanged += Processor_ValueChanged;
-            processor.StatusChanged += Processor_StatusChanged;
-            processor.LimitChanged += Processor_LimitChanged;
-            processor.MiscChanged += Processor_MiscChanged;
-            processor.Initialize();
+            if (processor.IsInitialized)
+            {
+                processor.ValueChanged += Processor_ValueChanged;
+                processor.StatusChanged += Processor_StatusChanged;
+                processor.LimitChanged += Processor_LimitChanged;
+                processor.MiscChanged += Processor_MiscChanged;
+                processor.Initialize();
+            }
 
             base.Start();
         }
