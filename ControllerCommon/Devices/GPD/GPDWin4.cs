@@ -3,6 +3,7 @@ using ControllerCommon.Managers;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Windows.Documents;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -19,20 +20,17 @@ namespace ControllerCommon.Devices
             this.cTDP = new double[] { 5, 28 };
             this.GfxClock = new double[] { 100, 2200 };
 
-            // Note, requires new feature to enable, somehow, TBD.            
-            // win4 EC address（2E，2F）：Speed Read：0xC880,0xC881，C880 - high byte，C881 - low byte；Control：0xC311，0 - auto，> 0:manual，Set Speed from 1 to 127，127 - 100 %.
-
             // device specific capacities
             this.Capacities = DeviceCapacities.FanControl;
 
             this.FanDetails = new FanDetails()
             {
-                AddressControl = 0xC311,// done
-                AddressDuty = 0xC880,   // done
-                AddressRegistry = 0x2E, // done
-                AddressData = 0x2F,     // done
-                ValueMin = 0,           // done
-                ValueMax = 127          // done
+                AddressControl = 0xC311,
+                AddressDuty = 0xC880,
+                AddressRegistry = 0x2E,
+                AddressData = 0x2F,
+                ValueMin = 0,
+                ValueMax = 127,
             };
 
             this.AngularVelocityAxis = new Vector3(-1.0f, -1.0f, 1.0f);
@@ -69,6 +67,27 @@ namespace ControllerCommon.Devices
                 new List<KeyCode>() { KeyCode.F12, KeyCode.R },
                 false, ButtonFlags.OEM3
                 ));
+        }
+
+        public override void SetFanControl(bool enable)
+        {
+            switch(enable)
+            {
+                case false:
+                    base.SetFanDuty(0);
+                    return;
+            }
+        }
+
+        public override void SetFanDuty(double percent)
+        {
+            if (FanDetails.AddressControl == 0)
+                return;
+
+            double duty = percent * (FanDetails.ValueMax - FanDetails.ValueMin) / 100 + FanDetails.ValueMin;
+            byte data = Convert.ToByte(duty);
+
+            ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
         }
 
         public override bool Open()
