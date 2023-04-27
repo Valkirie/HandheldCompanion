@@ -563,7 +563,7 @@ namespace ControllerService
                         if (vTarget is not null)
                             return;
 
-                        while(!vTarget.IsConnected)
+                        while(vTarget is null || !vTarget.IsConnected)
                         {
                             // reset vigem
                             ResetViGEm();
@@ -602,12 +602,18 @@ namespace ControllerService
         private void ResetViGEm()
         {
             // dispose virtual controller
-            vTarget.Dispose();
-            vTarget = null;
+            if (vTarget is not null)
+            {
+                vTarget.Dispose();
+                vTarget = null;
+            }
 
-            // dispose ViGEm
-            vClient.Dispose();
-            vClient = null;
+            // dispose ViGEm drivers
+            if (vClient is not null)
+            {
+                vClient.Dispose();
+                vClient = null;
+            }
         }
 
         public Dictionary<string, string> GetSettings()
