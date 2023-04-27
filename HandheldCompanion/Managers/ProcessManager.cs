@@ -224,8 +224,12 @@ namespace HandheldCompanion.Managers
 
                 // get filter
                 ProcessFilter filter = GetFilter(process.Executable, process.Path, ProcessUtils.GetWindowTitle(hWnd));
-                if (filter == ProcessFilter.Ignored)
-                    return;
+                switch(filter)
+                {
+                    case ProcessFilter.HandheldCompanion:
+                    // case ProcessFilter.Desktop:
+                        return;
+                }
 
                 // save previous process (if exists)
                 if (foregroundProcess is not null)
@@ -356,6 +360,21 @@ namespace HandheldCompanion.Managers
             // manual filtering
             switch (exec.ToLower())
             {
+                // handheld companion
+                case "handheldcompanion.exe":
+                    {
+                        if (!string.IsNullOrEmpty(MainWindowTitle))
+                        {
+                            switch (MainWindowTitle)
+                            {
+                                case "QuickTools":
+                                    return ProcessFilter.HandheldCompanion;
+                            }
+                        }
+
+                        return ProcessFilter.Restricted;
+                    }
+
                 case "rw.exe":                  // Used to change TDP
                 case "kx.exe":                  // Used to change TDP
                 case "devenv.exe":              // Visual Studio
@@ -381,34 +400,19 @@ namespace HandheldCompanion.Managers
                 case "bdagent.exe":             // Bitdefender Agent
                 case "monotificationux.exe":
 
-                // handheld companion
-                case "handheldcompanion.exe":
-                    {
-                        if (!string.IsNullOrEmpty(MainWindowTitle))
-                        {
-                            switch (MainWindowTitle)
-                            {
-                                case "QuickTools":
-                                    return ProcessFilter.Ignored;
-                            }
-                        }
-
-                        return ProcessFilter.Restricted;
-                    }
-                    break;
-
-                // controller service
+                // Controller service
                 case "controllerservice.exe":
                 case "controllerservice.dll":
                     return ProcessFilter.Restricted;
 
+                // Desktop
                 case "radeonsoftware.exe":
                 case "applicationframehost.exe":
                 case "shellexperiencehost.exe":
                 case "startmenuexperiencehost.exe":
                 case "searchhost.exe":
                 case "explorer.exe":
-                    return ProcessFilter.Ignored;
+                    return ProcessFilter.Desktop;
 
                 default:
                     return ProcessFilter.Allowed;

@@ -34,8 +34,11 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
             ProfileManager.Updated += ProfileUpdated;
             ProfileManager.Deleted += ProfileDeleted;
+            // ProfileManager.Applied += ProfileApplied;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
@@ -165,6 +168,22 @@ namespace HandheldCompanion.Views.QuickPages
                         TDPSustainedSlider.Minimum = Convert.ToInt32(value);
                         TDPBoostSlider.Minimum = Convert.ToInt32(value);
                         break;
+                }
+            });
+        }
+
+        private void ProfileApplied(Profile profile)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                if (profile.Default)
+                {
+                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
+                    ProcessPath.Text = string.Empty;
+
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Collapsed;
                 }
             });
         }
