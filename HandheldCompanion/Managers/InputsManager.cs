@@ -28,7 +28,6 @@ namespace HandheldCompanion.Managers
         // Gamepad variables
         private static PrecisionTimer KeyboardResetTimer;
 
-        private static bool GamepadClearPending;
         private static ButtonState prevState = new();
 
         // InputsChord variables
@@ -487,7 +486,7 @@ namespace HandheldCompanion.Managers
 
         private static bool IsKeyDown = false;
         private static bool IsKeyUp = false;
-        private static bool IsKeyDownCatch = false;
+        private static ButtonState SuccessState = new();
 
         public static void UpdateReport(ButtonState buttonState)
         {
@@ -528,19 +527,14 @@ namespace HandheldCompanion.Managers
             if (prevState.Equals(buttonState))
                 return;
 
-            // GamepadResetTimer.Stop();
+            // reset hold timer
+            InputsChordHoldTimer.Stop();
+            InputsChordHoldTimer.Start();
 
-            // IsKeyDown (filter on "fake" keys)
+            // IsKeyDown
             if (!buttonState.IsEmpty())
             {
-                // reset hold timer
-                InputsChordHoldTimer.Stop();
-                InputsChordHoldTimer.Start();
-
-                if (!IsKeyDownCatch)
-                    currentChord.State = buttonState.Clone() as ButtonState;
-                else
-                    currentChord.State.AddRange(buttonState);
+                currentChord.State = buttonState.Clone() as ButtonState;
 
                 currentChord.InputsType = InputsChordType.Click;
 
@@ -548,22 +542,25 @@ namespace HandheldCompanion.Managers
                 IsKeyUp = false;
             }
             // IsKeyUp
-            else if (IsKeyDown && !currentChord.State.IsEmpty())
+            else if (IsKeyDown && !currentChord.State.Equals(buttonState))
             {
-                GamepadClearPending = true;
-
                 IsKeyUp = true;
                 IsKeyDown = false;
+
+                if (!SuccessState.IsEmpty())
+                    currentChord.State = SuccessState;
             }
 
             var success = CheckForSequence(IsKeyDown, IsKeyUp);
+
+            // store state on success
             if (success)
-                IsKeyDownCatch = true;
+                SuccessState = currentChord.State.Clone() as ButtonState;
 
             if (buttonState.IsEmpty() && IsKeyUp)
             {
-                IsKeyDownCatch = false;
                 currentChord.State.Clear();
+                SuccessState.State.Clear();
             }
 
             prevState = buttonState.Clone() as ButtonState;
