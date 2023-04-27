@@ -335,6 +335,19 @@ namespace ControllerCommon.Devices
             ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
         }
 
+        public static byte ECRamReadByte(ushort address)
+        {
+            try
+            {
+                return openLibSys.ReadIoPortByte(address);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Couldn't read byte from address {0} using OpenLibSys. ErrorCode: {1}", address, ex.Message);
+                return 0;
+            }
+        }
+
         public static bool ECRamDirectWrite(ushort address, byte data)
         {
             try
