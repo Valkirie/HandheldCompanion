@@ -29,7 +29,7 @@ namespace ControllerCommon.Devices
                 AddressDuty = 0xC880,
                 AddressRegistry = 0x2E,
                 AddressData = 0x2F,
-                ValueMin = 0,
+                ValueMin = 1,
                 ValueMax = 127,
             };
 
