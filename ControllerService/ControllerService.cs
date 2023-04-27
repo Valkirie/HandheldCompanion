@@ -563,29 +563,18 @@ namespace ControllerService
                         if (vTarget is not null)
                             return;
 
-                        // (re)initialize ViGEm
-                        if (vClient is null)
+                        while(!vTarget.IsConnected)
+                        {
+                            // reset vigem
+                            ResetViGEm();
+
+                            // create new ViGEm client
                             vClient = new ViGEmClient();
 
-                        // update virtual controller
-                        SetControllerMode(HIDmode);
+                            // set controller mode
+                            SetControllerMode(HIDmode);
 
-                        switch (prevStatus)
-                        {
-                            case SystemStatus.SystemPending:
-                                LogManager.LogWarning("WORKAROUND !");
-
-                                // dispose virtual controller
-                                vTarget.Dispose();
-                                vTarget = null;
-
-                                // dispose ViGEm
-                                vClient.Dispose();
-                                vClient = null;
-
-                                vClient = new ViGEmClient();
-                                SetControllerMode(HIDmode);
-                                break;
+                            Thread.Sleep(1000);
                         }
 
                         // start timer manager
@@ -603,16 +592,22 @@ namespace ControllerService
                         // stop sensors
                         IMU.Stop();
 
-                        // dispose virtual controller
-                        vTarget.Dispose();
-                        vTarget = null;
-
-                        // dispose ViGEm
-                        vClient.Dispose();
-                        vClient = null;
+                        // reset vigem
+                        ResetViGEm();
                     }
                     break;
             }
+        }
+
+        private void ResetViGEm()
+        {
+            // dispose virtual controller
+            vTarget.Dispose();
+            vTarget = null;
+
+            // dispose ViGEm
+            vClient.Dispose();
+            vClient = null;
         }
 
         public Dictionary<string, string> GetSettings()
