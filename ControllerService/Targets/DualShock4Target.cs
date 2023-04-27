@@ -68,7 +68,7 @@ namespace ControllerService.Targets
                     virtualController.Disconnect();
 
                     LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                 }
             }
         }

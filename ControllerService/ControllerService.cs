@@ -554,7 +554,7 @@ namespace ControllerService
                                 break;
                             case SystemStatus.SystemPending:
                                 // resume from sleep
-                                Thread.Sleep(16000);
+                                Thread.Sleep(2000);
                                 IMU.Restart(true);
                                 break;
                         }
@@ -569,6 +569,24 @@ namespace ControllerService
 
                         // update virtual controller
                         SetControllerMode(HIDmode);
+
+                        switch (prevStatus)
+                        {
+                            case SystemStatus.SystemPending:
+                                LogManager.LogWarning("WORKAROUND !");
+
+                                // dispose virtual controller
+                                vTarget.Dispose();
+                                vTarget = null;
+
+                                // dispose ViGEm
+                                vClient.Dispose();
+                                vClient = null;
+
+                                vClient = new ViGEmClient();
+                                SetControllerMode(HIDmode);
+                                break;
+                        }
 
                         // start timer manager
                         TimerManager.Start();
