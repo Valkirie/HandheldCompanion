@@ -27,8 +27,8 @@ namespace HandheldCompanion.Managers
 
             // Quicktools hotkeys
             { 10, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A",   "quickTools",                       "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
-            { 11, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2795",   "increaseTDP",                      "Segoe UI Symbol",      20, false,  true,   null,                   string.Empty,           false,  false) },
-            { 12, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2796",   "decreaseTDP",                      "Segoe UI Symbol",      20, false,  true,   null,                   string.Empty,           false,  false) },
+            { 11, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2795",   "increaseTDP",                      "Segoe UI Symbol",      20, true,   false,  null,                   string.Empty,           false,  false) },
+            { 12, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2796",   "decreaseTDP",                      "Segoe UI Symbol",      20, true,   false,  null,                   string.Empty,           false,  false) },
             { 13, new InputsHotkey(InputsHotkeyType.Quicktools, "\uE769",   "suspendResumeTask",                "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
 
             // Microsoft Windows hotkeys

@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using static ControllerCommon.Managers.PowerManager;
+using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
@@ -354,7 +355,7 @@ namespace HandheldCompanion.Views
             settingsPage.UpdateDevice(device);
         }
 
-        private void InputsManager_TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
+        private void InputsManager_TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp)
         {
             switch (listener)
             {
