@@ -150,6 +150,9 @@ namespace HandheldCompanion.Views.Pages
         #region UI
         private void ProfileApplied(Profile profile)
         {
+            if (profile.Default)
+                return;
+
             ProfileUpdated(profile, ProfileUpdateSource.Background, true);
         }
 
