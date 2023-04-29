@@ -244,29 +244,24 @@ namespace HandheldCompanion.Managers
             HotkeyUpdated?.Invoke(hotkey);
         }
 
-        public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
+        public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp)
         {
-            // we use @ as a special character to link two ore more listeners together
-            listener = listener.TrimEnd('@');
-
-            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener)).FirstOrDefault();
-            if (hotkey is null)
-                return;
-
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
-
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+                // we use @ as a special character to link two ore more listeners together
+                var trimmed = listener.TrimEnd('@');
+                var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(trimmed));
                 foreach (var hotkey in hotkeys)
-                {
                     hotkey.Highlight();
-                }
             });
 
             // These are special shortcut keys with no related events
-            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
-                return;
+            switch(type)
+            {
+                case InputsHotkeyType.Embedded:
+                    return;
+            }
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 

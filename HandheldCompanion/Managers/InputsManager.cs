@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Events;
+using static HandheldCompanion.Managers.InputsHotkey;
 using ButtonState = ControllerCommon.Inputs.ButtonState;
 using KeyboardSimulator = HandheldCompanion.Simulators.KeyboardSimulator;
 using Timer = System.Timers.Timer;
@@ -66,7 +67,7 @@ namespace HandheldCompanion.Managers
         private static IKeyboardMouseEvents m_GlobalHook;
 
         public static event TriggerRaisedEventHandler TriggerRaised;
-        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, bool IsKeyDown, bool IsKeyUp);
+        public delegate void TriggerRaisedEventHandler(string listener, InputsChord inputs, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp);
 
         public static event TriggerUpdatedEventHandler TriggerUpdated;
         public delegate void TriggerUpdatedEventHandler(string listener, InputsChord inputs, ListenerType type);
@@ -174,7 +175,7 @@ namespace HandheldCompanion.Managers
                                 break;
                         }
 
-                        TriggerRaised?.Invoke(key, chord, IsKeyDown, IsKeyUp);
+                        TriggerRaised?.Invoke(key, chord, hotkey.hotkeyType, IsKeyDown, IsKeyUp);
                     }
 
                     return true;
@@ -628,10 +629,10 @@ namespace HandheldCompanion.Managers
         internal static void InvokeTrigger(Hotkey hotkey, bool IsKeyDown, bool IsKeyUp)
         {
             if (IsKeyDown && hotkey.inputsHotkey.OnKeyDown)
-                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, true, false);
+                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, hotkey.inputsHotkey.hotkeyType, true, false);
 
             if (IsKeyUp && hotkey.inputsHotkey.OnKeyUp)
-                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, false, true);
+                TriggerRaised?.Invoke(hotkey.inputsHotkey.Listener, hotkey.inputsChord, hotkey.inputsHotkey.hotkeyType, false, true);
         }
     }
 }
