@@ -24,6 +24,8 @@ namespace HandheldCompanion.Controls
             Allowed = 0,
             Restricted = 1,
             Ignored = 2,
+            HandheldCompanion = 3,
+            Desktop = 4,
         }
 
         public Process Process;

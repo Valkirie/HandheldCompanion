@@ -143,6 +143,8 @@ namespace HandheldCompanion.Views.Windows
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
                         this.Show();
+                        this.Activate();
+                        this.Focus();
                         break;
                     case Visibility.Visible:
                         this.Hide();

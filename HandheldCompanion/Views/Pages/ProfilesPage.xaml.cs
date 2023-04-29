@@ -42,6 +42,8 @@ namespace HandheldCompanion.Views.Pages
 
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Updated += ProfileUpdated;
+            ProfileManager.Applied += ProfileApplied;
+
             ProfileManager.Initialized += ProfileManagerLoaded;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -146,6 +148,14 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
+        private void ProfileApplied(Profile profile)
+        {
+            if (profile.Default)
+                return;
+
+            ProfileUpdated(profile, ProfileUpdateSource.Background, true);
+        }
+
         public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             // UI thread (async)
