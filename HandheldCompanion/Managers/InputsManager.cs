@@ -7,6 +7,7 @@ using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Events;
@@ -33,6 +34,7 @@ namespace HandheldCompanion.Managers
         // InputsChord variables
         private static InputsChord currentChord = new();
         private static InputsChord prevChord = new();
+        private static InputsChord storedChord = new();
         private static string SpecialKey;
 
         private static Timer InputsChordHoldTimer;
@@ -147,14 +149,15 @@ namespace HandheldCompanion.Managers
 
                     foreach (string key in keys)
                     {
-                        InputsChord chord = Triggers[key];
+                        InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == key).FirstOrDefault();
+                        if (hotkey is null)
+                            continue;
 
+                        InputsChord chord = Triggers[key];
                         switch (chord.InputsType)
                         {
                             case InputsChordType.Click:
                                 {
-                                    InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == key).FirstOrDefault();
-
                                     if (!hotkey.OnKeyDown && IsKeyDown)
                                         continue;
 
@@ -165,24 +168,16 @@ namespace HandheldCompanion.Managers
 
                             case InputsChordType.Long:
                                 {
-                                    // skip as we've already executed it
                                     if (IsKeyUp)
-                                        continue;
-                                }
-                                break;
-
-                            case InputsChordType.Hold:
-                                {
-                                    // skip as we've already executed it
-                                    if (IsKeyDown && currentChord.InputsType == InputsChordType.Long)
                                         continue;
                                 }
                                 break;
                         }
 
                         TriggerRaised?.Invoke(key, chord, IsKeyDown, IsKeyUp);
-                        return true;
                     }
+
+                    return true;
                 }
                 else
                 {
@@ -227,19 +222,7 @@ namespace HandheldCompanion.Managers
                     switch (currentChord.InputsType)
                     {
                         case InputsChordType.Click:
-                        case InputsChordType.Hold:
                             return false;
-                    }
-                }
-
-                InputsHotkey hotkey = InputsHotkey.InputsHotkeys.Values.Where(item => item.Listener == currentHotkey.Listener).FirstOrDefault();
-                if (hotkey is not null)
-                {
-                    switch (hotkey.OnKeyDown)
-                    {
-                        case true:
-                            currentChord.InputsType = InputsChordType.Hold;
-                            break;
                     }
                 }
 
@@ -407,7 +390,7 @@ namespace HandheldCompanion.Managers
                 InputsChordType InputsType = chord.InputsType;
                 ButtonState State = chord.State;
 
-                if (InputsType.HasFlag(lookup.InputsType) && (State.Buttons.Count() != 0 && lookup.State.Contains(State)))
+                if (InputsType.HasFlag(lookup.InputsType) && (State.Buttons.Count() != 0 && lookup.State.Equals(State)))
                     keys.Add(key);
             }
 
@@ -486,7 +469,6 @@ namespace HandheldCompanion.Managers
 
         private static bool IsKeyDown = false;
         private static bool IsKeyUp = false;
-        private static ButtonState SuccessState = new();
 
         public static void UpdateReport(ButtonState buttonState)
         {
@@ -535,6 +517,7 @@ namespace HandheldCompanion.Managers
             if (!buttonState.IsEmpty())
             {
                 currentChord.State = buttonState.Clone() as ButtonState;
+                storedChord.State.AddRange(buttonState);
 
                 currentChord.InputsType = InputsChordType.Click;
 
@@ -547,20 +530,17 @@ namespace HandheldCompanion.Managers
                 IsKeyUp = true;
                 IsKeyDown = false;
 
-                if (!SuccessState.IsEmpty())
-                    currentChord.State = SuccessState;
+                currentChord.State = storedChord.State.Clone() as ButtonState;
             }
 
-            var success = CheckForSequence(IsKeyDown, IsKeyUp);
+            Debug.WriteLine(IsKeyDown + "\t" + string.Join(',', currentChord.State.Buttons));
 
-            // store state on success
-            if (success)
-                SuccessState = currentChord.State.Clone() as ButtonState;
+            var success = CheckForSequence(IsKeyDown, IsKeyUp);
 
             if (buttonState.IsEmpty() && IsKeyUp)
             {
                 currentChord.State.Clear();
-                SuccessState.State.Clear();
+                storedChord.State.Clear();
             }
 
             prevState = buttonState.Clone() as ButtonState;

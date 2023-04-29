@@ -253,17 +253,15 @@ namespace HandheldCompanion.Managers
             if (hotkey is null)
                 return;
 
-            // Hotkey is disabled
-            if (!hotkey.IsEnabled)
-                return;
-
             var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
 
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                foreach (var htkey in hotkeys)
+                foreach (var hotkey in hotkeys)
+                {
                     hotkey.Highlight();
+                }
             });
 
             // These are special shortcut keys with no related events
