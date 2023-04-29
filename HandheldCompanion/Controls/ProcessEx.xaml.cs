@@ -139,6 +139,10 @@ namespace HandheldCompanion.Controls
                     // thread has exited
                 }
             }
+
+            if (mainThread is null)
+                mainThread = process.Threads[0];
+
             return mainThread;
         }
 
