@@ -534,8 +534,6 @@ namespace HandheldCompanion.Managers
                 currentChord.State = storedChord.State.Clone() as ButtonState;
             }
 
-            Debug.WriteLine(IsKeyDown + "\t" + string.Join(',', currentChord.State.Buttons));
-
             var success = CheckForSequence(IsKeyDown, IsKeyUp);
 
             if (buttonState.IsEmpty() && IsKeyUp)
