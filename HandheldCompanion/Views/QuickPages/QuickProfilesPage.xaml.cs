@@ -38,7 +38,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             ProfileManager.Updated += ProfileUpdated;
             ProfileManager.Deleted += ProfileDeleted;
-            // ProfileManager.Applied += ProfileApplied;
+            ProfileManager.Applied += ProfileApplied;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
@@ -175,18 +175,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileApplied(Profile profile)
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                if (profile.Default)
-                {
-                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
-                    ProcessPath.Text = string.Empty;
-
-                    b_CreateProfile.Visibility = Visibility.Collapsed;
-                    GridProfile.Visibility = Visibility.Collapsed;
-                }
-            });
+            ProfileUpdated(profile, ProfileUpdateSource.Background, true);
         }
 
         private void ProfileDeleted(Profile profile)
@@ -233,7 +222,7 @@ namespace HandheldCompanion.Views.QuickPages
                     b_CreateProfile.Visibility = Visibility.Collapsed;
                     GridProfile.Visibility = Visibility.Visible;
 
-                    ProfileToggle.IsEnabled = true;
+                    ProfileToggle.IsEnabled = !profile.Default;
                     ProfileToggle.IsOn = profile.Enabled;
                     UMCToggle.IsOn = profile.MotionEnabled;
                     cB_Input.SelectedIndex = (int)profile.MotionInput;
