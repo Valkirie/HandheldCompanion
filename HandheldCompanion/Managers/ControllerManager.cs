@@ -487,14 +487,15 @@ namespace HandheldCompanion.Managers
 
         private static void UpdateInputs(ControllerState controllerState)
         {
-            // pass inputs to InputsManager
             ButtonState InputsState = controllerState.ButtonState.Clone() as ButtonState;
+
+            // pass inputs to Inputs manager
             InputsManager.UpdateReport(InputsState);
 
             // pass inputs to Overlay Model
             MainWindow.overlayModel.UpdateReport(controllerState);
 
-            // pass inputs to Layout Manager
+            // pass inputs to Layout manager
             controllerState = LayoutManager.MapController(controllerState);
 
             // Controller specific scenarios
