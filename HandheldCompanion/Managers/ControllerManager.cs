@@ -489,6 +489,11 @@ namespace HandheldCompanion.Managers
         {
             ButtonState InputsState = controllerState.ButtonState.Clone() as ButtonState;
 
+            // check if motion trigger is pressed
+            Profile currentProfile = ProfileManager.GetCurrent();
+            controllerState.MotionTriggered = (currentProfile.MotionMode == MotionMode.Off && controllerState.ButtonState.ContainsTrue(currentProfile.MotionTrigger)) ||
+                (currentProfile.MotionMode == MotionMode.On && !controllerState.ButtonState.ContainsTrue(currentProfile.MotionTrigger));
+
             // pass inputs to Inputs manager
             InputsManager.UpdateReport(InputsState);
 

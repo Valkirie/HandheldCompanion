@@ -262,10 +262,6 @@ namespace HandheldCompanion.Managers
             // only buttons/axes mapped from the layout should be passed on
             ControllerState outputState = new();
 
-            // pass virtual buttons
-            foreach(ButtonFlags button in IController.VirtualButtons)
-                outputState.ButtonState[button] = controllerState.ButtonState[button];
-
             foreach (var buttonState in controllerState.ButtonState.State)
             {
                 ButtonFlags button = buttonState.Key;
