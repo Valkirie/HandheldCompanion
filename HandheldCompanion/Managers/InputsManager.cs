@@ -328,14 +328,15 @@ namespace HandheldCompanion.Managers
                 BufferKeys.Add(args);
 
                 // search for matching triggers
-                string buffer_keys = GetChord(BufferKeys);
+                var buffer_keys = GetChord(BufferKeys);
 
                 foreach (DeviceChord chord in MainWindow.CurrentDevice.OEMChords.Where(a => a.chords[args.IsKeyDown].Count == BufferKeys.Count))
                 {
                     // compare ordered enumerable
-                    string chord_keys = chord.GetChord(args.IsKeyDown);
+                    var chord_keys = chord.GetChord(args.IsKeyDown);
 
-                    if (chord_keys.Equals(buffer_keys))
+                    bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
+                    if (existsCheck)
                     {
                         // reset index
                         KeyIndex = 0;
@@ -438,9 +439,9 @@ namespace HandheldCompanion.Managers
             BufferKeys.Clear();
         }
 
-        private static string GetChord(List<KeyEventArgsExt> args)
+        private static List<KeyCode> GetChord(List<KeyEventArgsExt> args)
         {
-            return string.Join(" | ", args.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList());
+            return args.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList();
         }
 
         public static void Start()

@@ -255,7 +255,7 @@ namespace HandheldCompanion.Managers
                     case EVENT_SYSTEM_MINIMIZESTART:
                         {
                             // ignore if not foreground window
-                            if (currentProcess.MainWindowHandle != hWnd)
+                            if (currentProcess is null || currentProcess.MainWindowHandle != hWnd)
                                 return;
 
                             // update foreground process
@@ -328,8 +328,16 @@ namespace HandheldCompanion.Managers
             {
                 // process has exited on arrival
                 Process proc = Process.GetProcessById(ProcessID);
-                if (proc.HasExited)
+                try
+                {
+                    if (proc.HasExited)
+                        return;
+                    proc.EnableRaisingEvents = true;
+                }
+                catch
+                {
                     return;
+                }
 
                 if (!Processes.ContainsKey(proc.Id))
                 {
@@ -352,7 +360,6 @@ namespace HandheldCompanion.Managers
                         // processEx.ChildProcessCreated += ChildProcessCreated;
 
                         Processes.TryAdd(processEx.GetProcessId(), processEx);
-                        proc.EnableRaisingEvents = true;
                         proc.Exited += ProcessHalted;
 
                         if (processEx.Filter != ProcessFilter.Allowed)
