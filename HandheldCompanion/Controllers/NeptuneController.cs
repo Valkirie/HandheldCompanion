@@ -9,6 +9,7 @@ using neptune_hidapi.net.Hid;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers
@@ -21,17 +22,20 @@ namespace HandheldCompanion.Controllers
         private bool isConnected = false;
         private bool isVirtualMuted = false;
 
-        private bool lastLeftHapticOn = false;
-        private bool lastRightHapticOn = false;
-
         private const short TrackPadInner = 21844;
 
         private NeptuneControllerInputState prevState;
         private bool prevLizardMouseEnabled = false;
         private bool prevLizardButtonsEnabled = false;
 
+        public byte FeedbackLargeMotor;
+        public byte FeedbackSmallMotor;
+
         public const sbyte MinIntensity = -2;
         public const sbyte MaxIntensity = 10;
+
+        private Thread thread;
+        private bool ThreadRunning;
 
         public NeptuneController(PnPDetails details)
         {
@@ -55,6 +59,10 @@ namespace HandheldCompanion.Controllers
                 LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
                 return;
             }
+
+            // manage rumble thread
+            ThreadRunning = true;
+            thread = new Thread(ThreadLoop);
 
             // bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
             // bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
@@ -90,6 +98,22 @@ namespace HandheldCompanion.Controllers
             VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
             VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
             VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+        }
+
+        private Task<bool> lastLeftHapticOn;
+        private Task<bool> lastRightHapticOn;
+        private void ThreadLoop(object? obj)
+        {
+            while(ThreadRunning)
+            {
+                if (lastLeftHapticOn is not null && lastLeftHapticOn.IsCompleted || lastLeftHapticOn is null)                    
+                    if (GetHapticIntensity(FeedbackLargeMotor, 2, out var leftIntensity))
+                        lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
+
+                if (lastRightHapticOn is not null && lastRightHapticOn.IsCompleted || lastRightHapticOn is null)
+                    if (GetHapticIntensity(FeedbackSmallMotor, 2, out var rightIntensity))
+                        lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+            }
         }
 
         public override string ToString()
@@ -288,6 +312,8 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick += UpdateInputs;
             TimerManager.Tick += UpdateMovements;
 
+            thread.Start();
+
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
 
             PipeClient.ServerMessage += OnServerMessage;
@@ -318,6 +344,9 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick -= UpdateInputs;
             TimerManager.Tick -= UpdateMovements;
 
+            // kill rumble thread
+            ThreadRunning = false;
+
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
         }
@@ -328,8 +357,8 @@ namespace HandheldCompanion.Controllers
             if (input is null || input.Value == 0)
                 return false;
 
-            int value = MinIntensity + (maxIntensity - MinIntensity) * input.Value / 255;
-            output = (sbyte)value;
+            double value = MinIntensity + (maxIntensity - MinIntensity) * input.Value * VibrationStrength / 255;
+            output = (sbyte)(value - 5); // convert from dB to values
             return true;
         }
 
@@ -342,11 +371,8 @@ namespace HandheldCompanion.Controllers
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
-            if (GetHapticIntensity(LargeMotor, 2, out var leftIntensity))
-            _ = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
-
-            if (GetHapticIntensity(SmallMotor, 2, out var rightIntensity))
-                _ = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+            this.FeedbackLargeMotor = LargeMotor;
+            this.FeedbackSmallMotor = SmallMotor;
         }
 
         private void OnServerMessage(PipeMessage message)
