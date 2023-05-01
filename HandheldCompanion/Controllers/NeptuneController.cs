@@ -37,6 +37,9 @@ namespace HandheldCompanion.Controllers
         private Thread thread;
         private bool ThreadRunning;
 
+        private Task<bool> lastLeftHapticOn;
+        private Task<bool> lastRightHapticOn;
+
         public NeptuneController(PnPDetails details)
         {
             if (details is null)
@@ -63,6 +66,7 @@ namespace HandheldCompanion.Controllers
             // manage rumble thread
             ThreadRunning = true;
             thread = new Thread(ThreadLoop);
+            thread.IsBackground = true;
 
             // bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
             // bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
@@ -100,18 +104,16 @@ namespace HandheldCompanion.Controllers
             VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
         }
 
-        private Task<bool> lastLeftHapticOn;
-        private Task<bool> lastRightHapticOn;
         private void ThreadLoop(object? obj)
         {
             while(ThreadRunning)
             {
                 if (lastLeftHapticOn is not null && lastLeftHapticOn.IsCompleted || lastLeftHapticOn is null)                    
-                    if (GetHapticIntensity(FeedbackLargeMotor, 2, out var leftIntensity))
+                    if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
                         lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
 
                 if (lastRightHapticOn is not null && lastRightHapticOn.IsCompleted || lastRightHapticOn is null)
-                    if (GetHapticIntensity(FeedbackSmallMotor, 2, out var rightIntensity))
+                    if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
                         lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
             }
         }
