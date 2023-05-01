@@ -137,6 +137,9 @@ namespace ControllerCommon.Devices
                             case "GEEK":
                                 device = new AYANEO2();
                                 break;
+                            case "AB05-AMD":
+                                device = new AYANEOAIRPlus();
+                                break;
                         }
                     }
                     break;
