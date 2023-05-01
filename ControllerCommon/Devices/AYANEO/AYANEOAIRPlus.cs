@@ -50,7 +50,7 @@ namespace ControllerCommon.Devices
 
             OEMChords.Add(new DeviceChord("Custom Key Small",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
+                new List<KeyCode>() { KeyCode.D, KeyCode.LWin },
                 false, ButtonFlags.OEM2
                 ));
         }
