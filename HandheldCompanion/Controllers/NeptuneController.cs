@@ -5,6 +5,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
+using neptune_hidapi.net.Hid;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,9 @@ namespace HandheldCompanion.Controllers
         private NeptuneControllerInputState prevState;
         private bool prevLizardMouseEnabled = false;
         private bool prevLizardButtonsEnabled = false;
+
+        public const sbyte MinIntensity = -2;
+        public const sbyte MaxIntensity = 10;
 
         public NeptuneController(PnPDetails details)
         {
@@ -318,6 +322,17 @@ namespace HandheldCompanion.Controllers
             base.Unplug();
         }
 
+        public bool GetHapticIntensity(byte? input, sbyte maxIntensity, out sbyte output)
+        {
+            output = default;
+            if (input is null || input.Value == 0)
+                return false;
+
+            int value = MinIntensity + (maxIntensity - MinIntensity) * input.Value / 255;
+            output = (sbyte)value;
+            return true;
+        }
+
         public override void SetVibrationStrength(double value, bool rumble)
         {
             base.SetVibrationStrength(value, rumble);
@@ -327,34 +342,11 @@ namespace HandheldCompanion.Controllers
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
-            // todo: improve me
-            // todo: https://github.com/mKenfenheuer/steam-deck-windows-usermode-driver/blob/69ce8085d3b6afe888cb2e36bd95836cea58084a/SWICD/Services/ControllerService.cs
+            if (GetHapticIntensity(LargeMotor, 2, out var leftIntensity))
+            _ = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
 
-            // Linear motors have a peak bell curve / s curve like responce, use left half, no linearization (yet?)
-            // https://www.precisionmicrodrives.com/ab-003
-            // Scale motor input request with user vibration strenth 0 to 100% accordingly
-
-            byte AmplitudeLeft = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
-
-            bool leftHaptic = SmallMotor > 0;
-            byte PeriodLeft = (byte)(28 - AmplitudeLeft);
-
-            if (leftHaptic != lastLeftHapticOn)
-            {
-                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? AmplitudeLeft : 0), (ushort)(leftHaptic ? PeriodLeft : 0), 0);
-                lastLeftHapticOn = leftHaptic;
-            }
-
-            byte AmplitudeRight = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
-
-            bool rightHaptic = LargeMotor > 0;
-            byte PeriodRight = (byte)(28 - AmplitudeRight);
-
-            if (rightHaptic != lastRightHapticOn)
-            {
-                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? AmplitudeRight : 0), (ushort)(rightHaptic ? PeriodRight : 0), 0);
-                lastRightHapticOn = rightHaptic;
-            }
+            if (GetHapticIntensity(SmallMotor, 2, out var rightIntensity))
+                _ = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
         }
 
         private void OnServerMessage(PipeMessage message)
