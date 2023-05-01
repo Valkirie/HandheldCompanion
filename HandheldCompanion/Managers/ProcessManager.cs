@@ -229,12 +229,6 @@ namespace HandheldCompanion.Managers
                 {
                     case EVENT_SYSTEM_FOREGROUND:
                         {
-                            // update foreground process
-                            currentProcess = process;
-
-                            // update main window handle
-                            currentProcess.MainWindowHandle = hWnd;
-
                             // filter based on current process status
                             ProcessFilter filter = GetFilter(process.Executable, process.Path, ProcessUtils.GetWindowTitle(hWnd));
                             switch (filter)
@@ -247,6 +241,12 @@ namespace HandheldCompanion.Managers
                                 default:
                                     break;
                             }
+
+                            // update foreground process
+                            currentProcess = process;
+
+                            // update main window handle
+                            currentProcess.MainWindowHandle = hWnd;
 
                             LogManager.LogDebug("{0} executable {1} now has the foreground", currentProcess.Platform, currentProcess.Executable);
                         }

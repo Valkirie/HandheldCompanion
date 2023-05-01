@@ -282,14 +282,14 @@ namespace HandheldCompanion.Managers
                         KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
