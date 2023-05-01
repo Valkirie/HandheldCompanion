@@ -44,6 +44,7 @@ namespace ControllerCommon.Controllers
             ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
             ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
             ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10,
+            ButtonFlags.VolumeUp, ButtonFlags.VolumeDown,
         };
 
         public static List<AxisLayoutFlags> VirtualAxis = new()
@@ -375,6 +376,10 @@ namespace ControllerCommon.Controllers
                     return "\u2788";
                 case ButtonFlags.OEM10:
                     return "\u2789";
+                case ButtonFlags.VolumeUp:
+                    return "\u21fe";
+                case ButtonFlags.VolumeDown:
+                    return "\u21fd";
             }
             return "\u2753";
         }

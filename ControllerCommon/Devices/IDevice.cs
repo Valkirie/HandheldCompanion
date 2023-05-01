@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using WindowsInput.Events;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 using static HandheldCompanion.OpenLibSys;
@@ -82,6 +83,21 @@ namespace ControllerCommon.Devices
         // trigger specific settings
         public List<DeviceChord> OEMChords = new();
         public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
+
+        public IDevice()
+        {
+            // We assume all the devices have those keys
+            OEMChords.Add(new DeviceChord("Volume Up",
+                new List<KeyCode>() { KeyCode.VolumeUp },
+                new List<KeyCode>() { KeyCode.VolumeUp },
+                false, ButtonFlags.VolumeUp
+                ));
+            OEMChords.Add(new DeviceChord("Volume Down",
+                new List<KeyCode>() { KeyCode.VolumeDown },
+                new List<KeyCode>() { KeyCode.VolumeDown },
+                false, ButtonFlags.VolumeDown
+                ));
+        }
 
         private static IDevice device;
         public static IDevice GetDefault()
