@@ -17,19 +17,6 @@ namespace ControllerCommon.Devices
             this.cTDP = new double[] { 3, 33 };
             this.GfxClock = new double[] { 100, 2200 };
 
-            // device specific capacities
-            this.Capacities = DeviceCapacities.FanControl;
-
-            this.FanDetails = new FanDetails()
-            {
-                AddressControl = 0x44A,
-                AddressDuty = 0x44B,
-                AddressRegistry = 0x4E,
-                AddressData = 0x4F,
-                ValueMin = 0,
-                ValueMax = 100
-            };
-
             OEMChords.Add(new DeviceChord("Custom Key Top Right",
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.F16 },
                 new List<KeyCode>() { KeyCode.F16, KeyCode.LControl, KeyCode.LWin },
