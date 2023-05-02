@@ -86,22 +86,14 @@ namespace HandheldCompanion.Controllers
             DrawControls();
             RefreshControls();
 
-            // Specific buttons
-            SupportedButtons.Add(ButtonFlags.L4);
-            SupportedButtons.Add(ButtonFlags.R4);
-            SupportedButtons.Add(ButtonFlags.L5);
-            SupportedButtons.Add(ButtonFlags.R5);
+            // Additional controller specific source buttons/axes
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftThumbTouch, ButtonFlags.RightThumbTouch });
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
 
-            SupportedAxis.Add(AxisLayoutFlags.LeftPad);
-            SupportedAxis.Add(AxisLayoutFlags.RightPad);
-
-            SupportedButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            SupportedButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
-
-            // Specific buttons that shouldn't be mappable
-            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
-            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+            SourceAxis.Add(AxisLayoutFlags.LeftPad);
+            SourceAxis.Add(AxisLayoutFlags.RightPad);
         }
 
         private void ThreadLoop(object? obj)
