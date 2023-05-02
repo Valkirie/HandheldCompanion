@@ -25,7 +25,7 @@ namespace ControllerCommon
             // generic button mapping
             foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
             {
-                if (IController.VirtualButtons.Contains(button))
+                if (!IController.TargetButtons.Contains(button))
                     continue;
 
                 ButtonLayout[button] = new ButtonActions() { Button = button };
@@ -40,7 +40,7 @@ namespace ControllerCommon
             // generic axis mapping
             foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
             {
-                if (IController.VirtualAxis.Contains(axis))
+                if (!IController.TargetAxis.Contains(axis))
                     continue;
 
                 switch (axis)

@@ -46,7 +46,7 @@ namespace HandheldCompanion.Views.Pages
                     ButtonMapping buttonMapping = mapping.Value;
 
                     // update mapping visibility
-                    if (!Controller.IsButtonSupported(button))
+                    if (!Controller.HasSourceButton(button))
                         buttonMapping.Visibility = Visibility.Collapsed;
                     else
                         buttonMapping.Visibility = Visibility.Visible;

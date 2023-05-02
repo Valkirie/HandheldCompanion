@@ -91,7 +91,7 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
-                foreach (AxisLayoutFlags axis in controller.GetTriggers())
+                foreach (AxisLayoutFlags axis in IController.GetTargetTriggers())
                 {
                     // create a label, store AxisLayoutFlags as Tag and Label as controller specific string
                     Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
