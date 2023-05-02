@@ -324,6 +324,8 @@ namespace ControllerCommon.Controllers
             usbDevice.CyclePort();
         }
 
+        public static readonly string defaultGlyph = "\u2753";
+
         public virtual string GetGlyph(ButtonFlags button)
         {
             switch (button)
@@ -381,7 +383,7 @@ namespace ControllerCommon.Controllers
                 case ButtonFlags.VolumeDown:
                     return "\u21fd";
             }
-            return "\u2753";
+            return defaultGlyph;
         }
 
         public virtual string GetGlyph(AxisFlags axis)
@@ -397,7 +399,7 @@ namespace ControllerCommon.Controllers
                 case AxisFlags.RightThumbY:
                     return "\u21F5";
             }
-            return "\u2753";
+            return defaultGlyph;
         }
 
         public virtual string GetGlyph(AxisLayoutFlags axis)
@@ -409,7 +411,7 @@ namespace ControllerCommon.Controllers
                 case AxisLayoutFlags.RightThumb:
                     return "\u21CC";
             }
-            return "\u2753";
+            return defaultGlyph;
         }
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)

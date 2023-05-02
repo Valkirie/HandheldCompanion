@@ -108,7 +108,7 @@ namespace HandheldCompanion.Controllers
         {
             while(ThreadRunning)
             {
-                if (lastLeftHapticOn is not null && lastLeftHapticOn.IsCompleted || lastLeftHapticOn is null)                    
+                if (lastLeftHapticOn is not null && lastLeftHapticOn.IsCompleted || lastLeftHapticOn is null)
                     if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
                         lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
 
@@ -431,6 +431,14 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.R2:
                 case ButtonFlags.R3:
                     return "\u21B3";
+                case ButtonFlags.L4:
+                    return "\u219c\u24f8";
+                case ButtonFlags.L5:
+                    return "\u219c\u24f9";
+                case ButtonFlags.R4:
+                    return "\u219d\u24f8";
+                case ButtonFlags.R5:
+                    return "\u219d\u24f9";
                 case ButtonFlags.Special:
                     return "\u21E4";
                 case ButtonFlags.OEM1:
