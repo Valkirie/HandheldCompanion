@@ -141,7 +141,7 @@ namespace HandheldCompanion.Platforms
             {
                 try
                 {
-                    appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
+                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
                     if (processEx.Process.HasExited)
                         return;
                 }
@@ -185,11 +185,11 @@ namespace HandheldCompanion.Platforms
         {
             try
             {
-                var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == processId).FirstOrDefault();
+                var appE = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == processId).FirstOrDefault();
                 if (appE is null)
                     return 0.0d;
 
-                var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
+                double duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
                 return Math.Round(duration / appE.InstantaneousFrameTime);
             }
             catch (FileNotFoundException ex) { }
