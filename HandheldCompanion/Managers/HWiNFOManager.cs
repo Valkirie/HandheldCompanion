@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Managers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Timers;
@@ -71,12 +72,12 @@ namespace HandheldCompanion.Managers
             public string NameOrig;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = HWiNFO_SENSORS_STRING_LEN)]
             public string NameUser;
-            public List<SensorElement> Elements;
+            public Dictionary<uint, SensorElement> Elements;
         }
         #endregion
 
         #region events
-        public static event FailedEventHandler Failed;
+        public static event FailedEventHandler HasFailed;
         public delegate void FailedEventHandler();
 
         public static event InitializedEventHandler Initialized;
@@ -108,10 +109,17 @@ namespace HandheldCompanion.Managers
 
             UpdateTimer = new Timer(INTERVAL_UPDATE);
             UpdateTimer.AutoReset = true;
+            UpdateTimer.Elapsed += UpdateTimer_Elapsed;
 
             SharedMemoryTimer = new Timer(INTERVAL_SHAREDMEMORY);
             SharedMemoryTimer.AutoReset = true;
             SharedMemoryTimer.Elapsed += (e, sender) => SharedMemoryTicked();
+        }
+
+        private static void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            if (MemoryMapped is not null)
+                ReadSensors();
         }
 
         private static void SharedMemoryTicked()
@@ -119,28 +127,30 @@ namespace HandheldCompanion.Managers
             // check if shared memory is enabled
             try
             {
-                MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
+                // connect to shared memory
+                MemoryMapped = MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
+                MemoryAccessor = MemoryMapped.CreateViewAccessor(0L, Marshal.SizeOf(typeof(SharedMemory)), MemoryMappedFileAccess.Read);
+                MemoryAccessor.Read(0L, out HWiNFOMemory);
+
+                // we're already connected
+                Debug.WriteLine("poll_time:{0}", HWiNFOMemory.poll_time);
+                if (HWiNFOMemory.poll_time == prevPoll_time)
+                {
+                    Failed();
+                    return;
+                }
+
+                // (re)initiliaze sensors library
+                Sensors = new();
+
+                // populate sensors names
+                ReadSensorNames();
             }
             catch
             {
-                // HWiNFO is not running anymore or 12-HOUR LIMIT has triggered
-                Failed?.Invoke();
+                Failed();
                 return;
             }
-
-            // we're already connected
-            if (MemoryMapped is not null)
-                return;
-
-            // connect to shared memory
-            MemoryMapped = MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
-            MemoryAccessor = MemoryMapped.CreateViewAccessor(0L, Marshal.SizeOf(typeof(SharedMemory)), MemoryMappedFileAccess.Read);
-            MemoryAccessor.Read(0L, out HWiNFOMemory);
-
-            // (re)initiliaze sensors library
-            Sensors = new();
-            // populate sensors names
-            ReadSensorNames();
         }
 
         public static void Start()
@@ -161,6 +171,7 @@ namespace HandheldCompanion.Managers
 
             // stop HWiNFO watcher
             SharedMemoryTimer.Stop();
+            UpdateTimer.Stop();
 
             // dispose objects
             MemoryMapped.Dispose();
@@ -169,6 +180,14 @@ namespace HandheldCompanion.Managers
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "HWiNFOManager");
+        }
+
+        private static void Failed()
+        {
+            // HWiNFO is not running anymore or 12-HOUR LIMIT has triggered
+            UpdateTimer.Stop();
+            HasFailed?.Invoke();
+            MemoryMapped = null;
         }
 
         public static void ReadSensorNames()
@@ -186,12 +205,16 @@ namespace HandheldCompanion.Managers
                     {
                         NameOrig = structure.szSensorNameOrig,
                         NameUser = structure.szSensorNameUser,
-                        Elements = new List<SensorElement>()
+                        Elements = new()
                     };
                     Sensors.Add(obj);
                 }
             }
+
+            UpdateTimer.Start();
         }
+
+        private static long prevPoll_time;
 
         public static void ReadSensors()
         {
@@ -204,17 +227,31 @@ namespace HandheldCompanion.Managers
                         byte[] buffer = new byte[(int)HWiNFOMemory.dwSizeOfReadingElement];
                         viewStream.Read(buffer, 0, (int)HWiNFOMemory.dwSizeOfReadingElement);
                         GCHandle gcHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-                        SensorElement structure = (SensorElement)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(SensorElement));
+
+                        SensorElement sensor = (SensorElement)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(SensorElement));
                         gcHandle.Free();
-                        Sensors[(int)structure.dwSensorIndex].Elements.Add(structure);
+
+                        Sensors[(int)sensor.dwSensorIndex].Elements[sensor.dwSensorID] = sensor;
+
+                        if (sensor.tReading == SENSOR_READING_TYPE.SENSOR_TYPE_POWER)
+                        {
+                            switch(sensor.szLabelOrig)
+                            {
+                                case "PL1 Power Limit":
+                                case "CPU Package Power":
+                                case "PL2 Power Limit":
+                                    Debug.WriteLine("{0}:{1}", sensor.szLabelOrig, sensor.Value);
+                                    break;
+                            }
+
+                            continue;
+                        }
                     }
                 }
             }
             catch
             {
-                // HWiNFO is not running anymore or 12-HOUR LIMIT has triggered
-                MemoryMapped = null;
-                Failed?.Invoke();
+                Failed();
             }
         }
     }

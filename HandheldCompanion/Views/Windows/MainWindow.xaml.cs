@@ -184,7 +184,6 @@ namespace HandheldCompanion.Views
             PowerManager.Start();
 
             SystemManager.Start();
-            // HWiNFOManager.Start();
 
             // start managers asynchroneously
             foreach (Manager manager in _managers)

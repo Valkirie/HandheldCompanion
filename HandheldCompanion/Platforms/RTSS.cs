@@ -98,13 +98,13 @@ namespace HandheldCompanion.Platforms
 
             if (!IsInstalled)
             {
-                LogManager.LogCritical("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                LogManager.LogWarning("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
             if (!HasModules)
             {
-                LogManager.LogCritical("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
@@ -320,6 +320,9 @@ namespace HandheldCompanion.Platforms
                 UseShellExecute = false,
                 CreateNoWindow = true
             });
+
+            process.EnableRaisingEvents = true;
+            process.Exited += Process_Exited;
 
             process.WaitForInputIdle();
 
