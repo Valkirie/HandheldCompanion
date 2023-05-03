@@ -337,7 +337,7 @@ namespace HandheldCompanion.Platforms
 
                                         case "CPU PPT SLOW Limit":
                                             {
-                                                int reading = (int)Math.Ceiling(MonitoredSensors["CPUPower"].Value * (1.0d + sensor.Value / 100.0d));
+                                                int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / sensor.Value * 100.0d);
                                                 if (reading != MonitoredSensors["PL1"].Value)
                                                     PowerLimitChanged?.Invoke(PowerType.Slow, reading);
 
@@ -347,7 +347,7 @@ namespace HandheldCompanion.Platforms
                                             break;
                                         case "CPU PPT FAST Limit":
                                             {
-                                                int reading = (int)Math.Ceiling(MonitoredSensors["CPUPower"].Value * (1.0d + sensor.Value / 100.0d));
+                                                int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / sensor.Value * 100.0d);
                                                 if (reading != MonitoredSensors["PL2"].Value)
                                                     PowerLimitChanged?.Invoke(PowerType.Fast, reading);
 
