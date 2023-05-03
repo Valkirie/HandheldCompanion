@@ -51,6 +51,17 @@ namespace HandheldCompanion.Managers
         private static extern uint PowerSetActiveOverlayScheme(Guid OverlaySchemeGuid);
         #endregion
 
+        #region events
+        public event LimitChangedHandler PowerLimitChanged;
+        public delegate void LimitChangedHandler(PowerType type, int limit);
+
+        public event ValueChangedHandler PowerValueChanged;
+        public delegate void ValueChangedHandler(PowerType type, float value);
+
+        public event StatusChangedHandler ProcessorStatusChanged;
+        public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
+        #endregion
+
         private Processor processor;
         public static int MaxDegreeOfParallelism = 4;
 
@@ -68,15 +79,6 @@ namespace HandheldCompanion.Managers
         private const short INTERVAL_DEFAULT = 3000;            // default interval between value scans
         private const short INTERVAL_INTEL = 5000;              // intel interval between value scans
         private const short INTERVAL_DEGRADED = 10000;          // degraded interval between value scans
-
-        public event LimitChangedHandler PowerLimitChanged;
-        public delegate void LimitChangedHandler(PowerType type, int limit);
-
-        public event ValueChangedHandler PowerValueChanged;
-        public delegate void ValueChangedHandler(PowerType type, float value);
-
-        public event StatusChangedHandler ProcessorStatusChanged;
-        public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
         // TDP limits
         private double[] FallbackTDP = new double[3];   // used to store fallback TDP
