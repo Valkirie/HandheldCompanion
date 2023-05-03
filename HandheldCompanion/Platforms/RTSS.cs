@@ -109,8 +109,9 @@ namespace HandheldCompanion.Platforms
             }
 
             // start RTSS if not running
-            if (!IsRunning())
-                Start();
+            if (IsRunning())
+                Stop();
+            Start();
 
             // hook into RTSS process
             Process.Exited += Process_Exited;

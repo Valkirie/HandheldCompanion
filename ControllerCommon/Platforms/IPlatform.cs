@@ -30,6 +30,8 @@ namespace ControllerCommon.Platforms
         protected string ExecutablePath;
 
         protected bool KeepAlive;
+        protected bool IsStarting;
+
         protected Timer PlatformWatchdog;
         protected object updateLock = new();
 
