@@ -256,9 +256,10 @@ namespace HandheldCompanion.Platforms
                                 case "PL1 Power Limit":
                                 case "CPU Package Power":
                                 case "PL2 Power Limit":
-                                    Debug.WriteLine("{0}:{1}", sensor.szLabelOrig, sensor.Value);
                                     break;
                             }
+
+                            Debug.WriteLine("{0}:{1}", sensor.szLabelOrig, sensor.Value);
 
                             continue;
                         }
