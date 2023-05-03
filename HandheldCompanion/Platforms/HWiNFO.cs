@@ -1,22 +1,14 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
-using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
-using PrecisionTiming;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -232,6 +224,23 @@ namespace HandheldCompanion.Platforms
             }
         }
 
+        private double BatteryChargeLevel;          // %
+        private double BatteryRemainingCapacity;    // Wh
+
+        private double GPUUtilization;              // %
+        private double GPUPower;                    // W
+        private double GPUTemperature;              // °C
+        private double GPUFrequency;                // MHz
+        private double GPUMemoryUsage;              // GB
+
+        private double CPUUtilization;              // %
+        private double CPUPower;                    // W
+        private double CPUTemperature;              // °C
+        private double CPUFrequency;                // MHz
+
+        private double PhysicalMemoryUsage;         // GB
+        private double VirtualMemoryUsage;          // GB
+
         public void PopulateSensors()
         {
             try
@@ -249,20 +258,67 @@ namespace HandheldCompanion.Platforms
 
                         HWiNFOSensors[(int)sensor.dwSensorIndex].Elements[sensor.dwSensorID] = sensor;
 
-                        if (sensor.tReading == SENSOR_READING_TYPE.SENSOR_TYPE_POWER)
+                        // Level one
+                        // FPS
+
+                        // Level two
+                        // Battery % and W, GPU and CPU usage and W, RAM usage, FPS
+
+                        // Level three
+                        // GPU and CPU usage and temp and W
+                        // VRAM usage
+                        // RAM usage
+                        // Battery % and W
+                        // FPS and latency
+
+                        // Level four
+                        // Level three + per CPU % and Mhz + Gamescope + FSR
+
+                        switch (sensor.tReading)
                         {
-                            switch (sensor.szLabelOrig)
-                            {
-                                case "PL1 Power Limit":
-                                case "CPU Package Power":
-                                case "PL2 Power Limit":
-                                    break;
-                            }
+                            case SENSOR_READING_TYPE.SENSOR_TYPE_TEMP:
+                                {
+                                    switch(sensor.szLabelOrig)
+                                    {
+                                        case "CPU Package":
+                                        case "CPU (Tctl/Tdie)":
+                                            CPUTemperature = sensor.Value;
+                                            break;
 
-                            Debug.WriteLine("{0}:{1}", sensor.szLabelOrig, sensor.Value);
+                                        case "GPU Temperature":
+                                            GPUTemperature = sensor.Value;
+                                            break;
+                                    }
+                                }
+                                break;
 
-                            continue;
+                            case SENSOR_READING_TYPE.SENSOR_TYPE_POWER:
+                                {
+                                }
+                                break;
+
+                            case SENSOR_READING_TYPE.SENSOR_TYPE_USAGE:
+                                {
+                                }
+                                break;
+
+                            case SENSOR_READING_TYPE.SENSOR_TYPE_CLOCK:
+                                {
+                                }
+                                break;
+
+                            case SENSOR_READING_TYPE.SENSOR_TYPE_VOLT:
+                                {
+                                }
+                                break;
+
+                            case SENSOR_READING_TYPE.SENSOR_TYPE_OTHER:
+                                {
+                                }
+                                break;
                         }
+
+                        Debug.WriteLine("{0}: {1} {2}", sensor.szLabelOrig, sensor.Value, sensor.szUnit);
                     }
                 }
             }
