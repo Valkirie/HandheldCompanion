@@ -242,6 +242,9 @@ namespace HandheldCompanion.Platforms
 
         public void PopulateSensors()
         {
+            if (MemoryMapped is null)
+                return;
+
             try
             {
                 for (uint index = 0; index < HWiNFOMemory.dwNumReadingElements; ++index)

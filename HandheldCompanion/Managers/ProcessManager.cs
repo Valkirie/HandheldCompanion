@@ -143,6 +143,12 @@ namespace HandheldCompanion.Managers
             return Processes.Values.Where(item => item.IsSuspended()).LastOrDefault();
         }
 
+        public static ProcessEx GetProcess(int processId)
+        {
+            Processes.TryGetValue(processId, out var process);
+            return process;
+        }
+
         public static List<ProcessEx> GetProcesses()
         {
             return Processes.Values.ToList();
@@ -151,14 +157,6 @@ namespace HandheldCompanion.Managers
         public static List<ProcessEx> GetProcesses(string executable)
         {
             return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase)).ToList();
-        }
-
-        public static ProcessEx GetProcesses(int pId)
-        {
-            if (Processes.ContainsKey(pId))
-                return Processes[pId];
-
-            return null;
         }
 
         private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)

@@ -409,7 +409,7 @@ namespace HandheldCompanion.Managers
 
             // raise event(s)
             Updated?.Invoke(profile, source, isCurrent);
-
+			
             if (source == ProfileUpdateSource.Serializer)
                 return;
 

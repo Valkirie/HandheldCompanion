@@ -220,7 +220,7 @@ namespace HandheldCompanion.Managers
             if (parent is not null)
                 return;
 
-            ProcessEx processEx = ProcessManager.GetProcesses(pId);
+            ProcessEx processEx = ProcessManager.GetProcess(pId);
             if (processEx is null)
                 return;
 

@@ -541,6 +541,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to On-screen display.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplay {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable on-screen display support.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplayDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display 3D controller.
         /// </summary>
         public static string InputsHotkey_overlayGamepad {
