@@ -83,17 +83,16 @@ namespace HandheldCompanion.Managers
                 OSD processOSD = pair.Value;
 
                 // temp (test)
-                var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
-
                 var profile = ProfileManager.GetCurrent();
                 var ProfileName = profile.Name;
                 var UMC = profile.MotionEnabled;
+                var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
 
                 try
                 {
-                    processOSD.Update($"Profile: {ProfileName}\nUMC: {UMC}\n{FPS} FPS");
+                    processOSD.Update($"Profile: {ProfileName}");
                 }
-                catch (FileNotFoundException ex) { }
+                catch (FileNotFoundException) { }
             }
         }
 

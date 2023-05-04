@@ -523,14 +523,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to On-screen display.
-        /// </summary>
-        public static string InputsHotkey_OnScreenDisplay {
-            get {
-                return ResourceManager.GetString("InputsHotkey_OnScreenDisplay", resourceCulture);
-            }
-        }
-		
         ///   Looks up a localized string similar to Increase volume.
         /// </summary>
         public static string InputsHotkey_increaseVolume {
@@ -540,19 +532,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable on-screen display support.
-        /// </summary>
-        public static string InputsHotkey_OnScreenDisplayDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayDesc", resourceCulture);
-            }
-        }
-		
         ///   Looks up a localized string similar to Increase the system volume by 5%.
         /// </summary>
         public static string InputsHotkey_increaseVolumeDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_increaseVolumeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On-screen display.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplay {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable on-screen display support.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplayDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayDesc", resourceCulture);
             }
         }
         

@@ -1174,6 +1174,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
     <value>Enable on-screen display support</value>
+  </data>
   <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
     <value>Decrease brightness</value>
   </data>

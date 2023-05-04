@@ -128,32 +128,33 @@ namespace HandheldCompanion.Platforms
 
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            AppEntry appEntry = null;
-
-            try
-            {
-                appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
-            }
-            catch (FileNotFoundException) { }
+            // unhook previous process
+            if (backgroundEx is not null)
+                Unhooked?.Invoke(backgroundEx.GetProcessId());
 
             // hook new process
             AppEntry appEntry = null;
+
+            var ProcessId = processEx.GetProcessId();
+            if (ProcessId == 0)
+                return;
 
             do
             {
                 try
                 {
-                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == processEx.GetProcessId()).FirstOrDefault();
+                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
                     if (processEx.Process.HasExited)
-                        return;
+                        break;
                 }
-                catch (FileNotFoundException ex) { }
+                catch (InvalidOperationException) { }
+                catch (FileNotFoundException) { }
 
                 await Task.Delay(250);
             }
             while (appEntry is null);
 
-            Hooked?.Invoke(processEx.GetProcessId());
+            Hooked?.Invoke(ProcessId);
         }
 
         private async void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -191,6 +192,7 @@ namespace HandheldCompanion.Platforms
                 if (appE is null)
                     return 0.0d;
 
+                // todo: @Casper fix me
                 double duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
                 return Math.Round(duration / appE.InstantaneousFrameTime);
             }
@@ -382,7 +384,6 @@ namespace HandheldCompanion.Platforms
 
         public override void Dispose()
         {
-            FramerateTimer.Stop();
             PlatformWatchdog.Stop();
 
             base.Dispose();
