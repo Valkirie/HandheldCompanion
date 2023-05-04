@@ -5,6 +5,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -83,7 +84,7 @@ namespace HandheldCompanion.Platforms
             public string NameOrig;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = HWiNFO_SENSORS_STRING_LEN)]
             public string NameUser;
-            public Dictionary<uint, SensorElement> Elements;
+            public ConcurrentDictionary<uint, SensorElement> Elements;
         }
         #endregion
 
@@ -105,7 +106,7 @@ namespace HandheldCompanion.Platforms
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;
-        private Dictionary<uint, Sensor> HWiNFOSensors;
+        private ConcurrentDictionary<uint, Sensor> HWiNFOSensors;
 
         public HWiNFO()
         {
