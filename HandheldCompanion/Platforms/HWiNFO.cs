@@ -12,6 +12,7 @@ using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
+using static HandheldCompanion.Platforms.HWiNFO;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms
@@ -104,7 +105,7 @@ namespace HandheldCompanion.Platforms
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;
-        private List<Sensor> HWiNFOSensors;
+        private Dictionary<uint, Sensor> HWiNFOSensors;
 
         public HWiNFO()
         {
@@ -215,13 +216,13 @@ namespace HandheldCompanion.Platforms
                         GCHandle gcHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
                         SensorStructure structure = (SensorStructure)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(SensorStructure));
                         gcHandle.Free();
-                        Sensor obj = new Sensor
+                        Sensor sensor = new Sensor
                         {
                             NameOrig = structure.szSensorNameOrig,
                             NameUser = structure.szSensorNameUser,
                             Elements = new()
                         };
-                        HWiNFOSensors.Add(obj);
+                        HWiNFOSensors[index] = sensor;
                     }
                 }
             }
@@ -250,10 +251,13 @@ namespace HandheldCompanion.Platforms
                         viewStream.Read(buffer, 0, (int)HWiNFOMemory.dwSizeOfReadingElement);
                         GCHandle gcHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
 
-                        SensorElement sensor = (SensorElement)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(SensorElement));
+                        SensorElement element = (SensorElement)Marshal.PtrToStructure(gcHandle.AddrOfPinnedObject(), typeof(SensorElement));
                         gcHandle.Free();
 
-                        HWiNFOSensors[(int)sensor.dwSensorIndex].Elements[sensor.dwSensorID] = sensor;
+                        if (HWiNFOSensors.TryGetValue(element.dwSensorIndex, out Sensor sensor))
+                            sensor.Elements[element.dwSensorID] = element;
+                        else
+                            continue;
 
                         // Level one
                         // FPS
@@ -271,19 +275,19 @@ namespace HandheldCompanion.Platforms
                         // Level four
                         // Level three + per CPU % and Mhz + Gamescope + FSR
 
-                        switch (sensor.tReading)
+                        switch (element.tReading)
                         {
                             case SENSOR_READING_TYPE.SENSOR_TYPE_TEMP:
                                 {
-                                    switch(sensor.szLabelOrig)
+                                    switch(element.szLabelOrig)
                                     {
                                         case "CPU Package":
                                         case "CPU (Tctl/Tdie)":
-                                            MonitoredSensors["CPUTemperature"] = sensor;
+                                            MonitoredSensors["CPUTemperature"] = element;
                                             break;
 
                                         case "GPU Temperature":
-                                            MonitoredSensors["GPUTemperature"] = sensor;
+                                            MonitoredSensors["GPUTemperature"] = element;
                                             break;
                                     }
                                 }
@@ -291,37 +295,37 @@ namespace HandheldCompanion.Platforms
 
                             case SENSOR_READING_TYPE.SENSOR_TYPE_POWER:
                                 {
-                                    switch(sensor.szLabelOrig)
+                                    switch(element.szLabelOrig)
                                     {
                                         case "CPU Package Power":
                                         case "CPU PPT":
-                                            MonitoredSensors["CPUPower"] = sensor;
+                                            MonitoredSensors["CPUPower"] = element;
                                             break;
 
                                         case "PL1 Power Limit":
                                             {
-                                                int reading = (int)Math.Ceiling(sensor.Value);
+                                                int reading = (int)Math.Ceiling(element.Value);
                                                 if (reading != MonitoredSensors["PL1"].Value)
                                                     PowerLimitChanged?.Invoke(PowerType.Slow, reading);
 
-                                                sensor.Value = reading;
-                                                MonitoredSensors["PL1"] = sensor;
+                                                element.Value = reading;
+                                                MonitoredSensors["PL1"] = element;
                                             }
                                             break;
                                         case "PL2 Power Limit":
                                             {
-                                                int reading = (int)Math.Ceiling(sensor.Value);
+                                                int reading = (int)Math.Ceiling(element.Value);
                                                 if (reading != MonitoredSensors["PL2"].Value)
                                                     PowerLimitChanged?.Invoke(PowerType.Fast, reading);
 
-                                                sensor.Value = reading;
-                                                MonitoredSensors["PL2"] = sensor;
+                                                element.Value = reading;
+                                                MonitoredSensors["PL2"] = element;
                                             }
                                             break;
 
                                         case "GPU SoC Power (VDDCR_SOC)":
                                         case "GPU PPT":
-                                            MonitoredSensors["GPUPower"] = sensor;
+                                            MonitoredSensors["GPUPower"] = element;
                                             break;
                                     }
                                 }
@@ -329,36 +333,36 @@ namespace HandheldCompanion.Platforms
 
                             case SENSOR_READING_TYPE.SENSOR_TYPE_USAGE:
                                 {
-                                    switch(sensor.szLabelOrig)
+                                    switch(element.szLabelOrig)
                                     {
                                         case "GPU Utilization":
                                         case "GPU D3D Usage":
-                                            MonitoredSensors["GPUUtilization"] = sensor;
+                                            MonitoredSensors["GPUUtilization"] = element;
                                             break;
 
                                         case "CPU PPT SLOW Limit":
                                             {
-                                                int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / sensor.Value * 100.0d);
+                                                int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / element.Value * 100.0d);
                                                 if (reading != MonitoredSensors["PL1"].Value)
                                                     PowerLimitChanged?.Invoke(PowerType.Slow, reading);
 
-                                                sensor.Value = reading;
-                                                MonitoredSensors["PL1"] = sensor;
+                                                element.Value = reading;
+                                                MonitoredSensors["PL1"] = element;
                                             }
                                             break;
                                         case "CPU PPT FAST Limit":
                                             {
-                                                int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / sensor.Value * 100.0d);
+                                                int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / element.Value * 100.0d);
                                                 if (reading != MonitoredSensors["PL2"].Value)
                                                     PowerLimitChanged?.Invoke(PowerType.Fast, reading);
 
-                                                sensor.Value = reading;
-                                                MonitoredSensors["PL2"] = sensor;
+                                                element.Value = reading;
+                                                MonitoredSensors["PL2"] = element;
                                             }
                                             break;
 
                                         case "Charge Level":
-                                            MonitoredSensors["BatteryChargeLevel"] = sensor;
+                                            MonitoredSensors["BatteryChargeLevel"] = element;
                                             break;
                                     }
                                 }
@@ -366,11 +370,11 @@ namespace HandheldCompanion.Platforms
 
                             case SENSOR_READING_TYPE.SENSOR_TYPE_CLOCK:
                                 {
-                                    switch(sensor.szLabelOrig)
+                                    switch(element.szLabelOrig)
                                     {
                                         case "GPU Clock":
                                         case "GPU SoC Clock": // keep me ?
-                                            MonitoredSensors["GPUFrequency"] = sensor;
+                                            MonitoredSensors["GPUFrequency"] = element;
                                             break;
 
                                         case "Core 0 Clock":
@@ -394,8 +398,8 @@ namespace HandheldCompanion.Platforms
                                         case "Core 18 Clock": // improve me (lol)
                                             {
                                                 // we'll keep the highest known frequency right now
-                                                if (sensor.Value > MonitoredSensors["CPUFrequency"].Value)
-                                                    MonitoredSensors["CPUFrequency"] = sensor;
+                                                if (element.Value > MonitoredSensors["CPUFrequency"].Value)
+                                                    MonitoredSensors["CPUFrequency"] = element;
                                             }
                                             break;
                                     }
@@ -414,24 +418,24 @@ namespace HandheldCompanion.Platforms
                         }
 
                         // move me !
-                        switch(sensor.szLabelOrig)
+                        switch(element.szLabelOrig)
                         {
                             case "Remaining Capacity":
-                                MonitoredSensors["BatteryRemainingCapacity"] = sensor;
+                                MonitoredSensors["BatteryRemainingCapacity"] = element;
                                 break;
                             case "Estimated Remaining Time":
-                                MonitoredSensors["BatteryRemainingTime"] = sensor;
+                                MonitoredSensors["BatteryRemainingTime"] = element;
                                 break;
 
                             case "Physical Memory Used":
-                                MonitoredSensors["PhysicalMemoryUsage"] = sensor;
+                                MonitoredSensors["PhysicalMemoryUsage"] = element;
                                 break;
                             case "Virtual Memory Committed":
-                                MonitoredSensors["VirtualMemoryUsage"] = sensor;
+                                MonitoredSensors["VirtualMemoryUsage"] = element;
                                 break;
 
                             case "GPU Memory Usage":
-                                MonitoredSensors["GPUMemoryUsage"] = sensor;
+                                MonitoredSensors["GPUMemoryUsage"] = element;
                                 break;
                         }
 
