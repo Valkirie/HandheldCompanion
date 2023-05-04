@@ -144,10 +144,10 @@
                                 Margin="12,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock
-                                    Width="25"
+                                    Width="35"
                                     VerticalAlignment="Center"
                                     Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}"
-                                    TextAlignment="Right" />
+                                    TextAlignment="Center" />
                                 <TextBlock VerticalAlignment="Center" Text="%" />
                                 <Slider
                                     x:Name="SliderStrength"

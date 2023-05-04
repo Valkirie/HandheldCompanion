@@ -493,7 +493,7 @@ namespace HandheldCompanion.Platforms
                     FileName = ExecutablePath,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = false,
-                    CreateNoWindow = true,
+                    CreateNoWindow = true
                 });
 
                 if (process is not null)
@@ -527,7 +527,7 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 return false;
 
-            Process.Kill();
+            Kill();
 
             return true;
         }

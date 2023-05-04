@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.WinAPI;
@@ -16,8 +17,8 @@ namespace HandheldCompanion.Managers
 {
     public static class OSDManager
     {
-        public static bool IsEnabled;
         private static bool IsInitialized;
+        private static short OverlayLevel;
 
         private static PrecisionTimer RefreshTimer;
         private static int RefreshInterval = 100;
@@ -26,6 +27,9 @@ namespace HandheldCompanion.Managers
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
+
+        private const string Header = "<C0=008040><C1=0080C0><C2=C08080><C3=FF0000><C4=FFFFFF><C250=FF8000><A0=-4><A1=5><A2=-2><A3=-3><A4=-4><A5=-5><S0=-50><S1=50>";
+        private static List<string> Content;
 
         static OSDManager()
         {
@@ -36,6 +40,7 @@ namespace HandheldCompanion.Managers
 
             // timer used to monitor foreground application framerate
             RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
+
             RefreshTimer = new PrecisionTimer();
             RefreshTimer.SetAutoResetMode(true);
             RefreshTimer.SetResolution(0);
@@ -74,7 +79,7 @@ namespace HandheldCompanion.Managers
 
         private static void UpdateOSD(object? sender, EventArgs e)
         {
-            if (!IsEnabled)
+            if (OverlayLevel == 0)
                 return;
 
             foreach (var pair in OnScreenDisplay)
@@ -88,12 +93,35 @@ namespace HandheldCompanion.Managers
                 var UMC = profile.MotionEnabled;
                 var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
 
+                string content = Draw(processId);
+
                 try
                 {
-                    processOSD.Update($"Profile: {ProfileName}");
+                    processOSD.Update(content);
                 }
                 catch (FileNotFoundException) { }
             }
+        }
+
+        public static string Draw(int processId)
+        {
+            Content = new()
+            {
+                Header
+            };
+
+            switch (OverlayLevel)
+            {
+                default:
+                case 0:
+                    break;
+
+                case 1:
+                    Content.Add(string.Format("{0} <C4>FPS<C>", PlatformManager.RTSS.GetInstantaneousFramerate(processId)));
+                    break;
+            }
+
+            return string.Join("\n", Content);
         }
 
         public static void Stop()
@@ -112,34 +140,39 @@ namespace HandheldCompanion.Managers
         {
             switch (name)
             {
-                case "OnScreenDisplay":
-                    IsEnabled = Convert.ToBoolean(value);
-
-                    if (IsEnabled)
+                case "OnScreenDisplayLevel":
                     {
-                        RefreshTimer.Start();
-                    }
-                    else
-                    {
-                        RefreshTimer.Stop();
+                        OverlayLevel = Convert.ToInt16(value);
 
-                        // clear UI on stop
-                        foreach (var pair in OnScreenDisplay)
+                        if (OverlayLevel >= 0)
                         {
-                            OSD processOSD = pair.Value;
-                            processOSD.Update(string.Empty);
+                            RefreshTimer.Start();
+                        }
+                        else
+                        {
+                            RefreshTimer.Stop();
+
+                            // clear UI on stop
+                            foreach (var pair in OnScreenDisplay)
+                            {
+                                OSD processOSD = pair.Value;
+                                processOSD.Update(string.Empty);
+                            }
                         }
                     }
-
                     break;
+
                 case "OnScreenDisplayRefreshRate":
-                    RefreshInterval = Convert.ToInt32(value);
+                    {
+                        RefreshInterval = Convert.ToInt32(value);
 
-                    RefreshTimer.Stop();
-                    RefreshTimer.SetPeriod(RefreshInterval);
-
-                    if (IsEnabled)
-                        RefreshTimer.Start();
+                        if (RefreshTimer.IsRunning())
+                        {
+                            RefreshTimer.Stop();
+                            RefreshTimer.SetPeriod(RefreshInterval);
+                            RefreshTimer.Start();
+                        }
+                    }
                     break;
             }
         }

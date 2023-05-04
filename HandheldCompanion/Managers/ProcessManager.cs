@@ -272,7 +272,8 @@ namespace HandheldCompanion.Managers
                 PipeClient.SendMessage(new PipeClientProcess { executable = currentProcess.Executable, platform = currentProcess.Platform });
 
                 // raise event
-                ForegroundChanged?.Invoke(currentProcess, previousProcess);
+                if (!previousProcess.Executable.Equals(currentProcess.Executable))
+                    ForegroundChanged?.Invoke(currentProcess, previousProcess);
             }
             catch
             {
@@ -443,6 +444,7 @@ namespace HandheldCompanion.Managers
                 case "startmenuexperiencehost.exe":
                 case "searchhost.exe":
                 case "explorer.exe":
+                case "hwinfo64.exe":
                     return ProcessFilter.Desktop;
 
                 default:

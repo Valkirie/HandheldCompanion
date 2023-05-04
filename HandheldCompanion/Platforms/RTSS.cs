@@ -144,7 +144,6 @@ namespace HandheldCompanion.Platforms
                 try
                 {
                     appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
-
                 }
                 catch (InvalidOperationException) { }
                 catch (FileNotFoundException) { }
@@ -376,7 +375,7 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 return false;
 
-            Process.Kill();
+            Kill();
 
             return true;
         }

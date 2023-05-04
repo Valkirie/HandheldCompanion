@@ -44,7 +44,7 @@ namespace HandheldCompanion.Managers
             // Handheld Companion hotkeys
             { 30, new InputsHotkey(InputsHotkeyType.HC,         "\uE7C4",   "shortcutMainwindow",               "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   false) },
             { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE961",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   true) },
-            { 32, new InputsHotkey(InputsHotkeyType.HC,         "\uE78B",   "OnScreenDisplay",                  "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   true) },
+            { 32, new InputsHotkey(InputsHotkeyType.HC,         "\uE78B",   "OnScreenDisplayLevel",                  "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   true) },
 
             // Device specific hotkeys
             { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE9CA",   "QuietModeToggled",                 "Segoe Fluent Icons",   20, false,  true,   null,                   "QuietModeDisclosure",  false,  true) },

@@ -358,7 +358,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
 
-                    case "OnScreenDisplay":
+                    case "OnScreenDisplayLevel":
                         {
                             bool value = !SettingsManager.GetBoolean(listener);
                             SettingsManager.SetProperty(listener, value);

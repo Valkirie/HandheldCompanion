@@ -146,7 +146,7 @@ namespace ControllerCommon.Platforms
                 using (process) { process.Kill(); }
                 return true;
             }
-            catch (System.ComponentModel.Win32Exception)
+            catch (Win32Exception)
             {
                 return false;
             }
