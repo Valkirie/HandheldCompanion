@@ -5,9 +5,11 @@ using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using neptune_hidapi.net;
+using neptune_hidapi.net.Hid;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers
@@ -20,14 +22,23 @@ namespace HandheldCompanion.Controllers
         private bool isConnected = false;
         private bool isVirtualMuted = false;
 
-        private bool lastLeftHapticOn = false;
-        private bool lastRightHapticOn = false;
-
         private const short TrackPadInner = 21844;
 
         private NeptuneControllerInputState prevState;
         private bool prevLizardMouseEnabled = false;
         private bool prevLizardButtonsEnabled = false;
+
+        public byte FeedbackLargeMotor;
+        public byte FeedbackSmallMotor;
+
+        public const sbyte MinIntensity = -2;
+        public const sbyte MaxIntensity = 10;
+
+        private Thread thread;
+        private bool ThreadRunning;
+
+        private Task<bool> lastLeftHapticOn;
+        private Task<bool> lastRightHapticOn;
 
         public NeptuneController(PnPDetails details)
         {
@@ -52,6 +63,11 @@ namespace HandheldCompanion.Controllers
                 return;
             }
 
+            // manage rumble thread
+            ThreadRunning = true;
+            thread = new Thread(ThreadLoop);
+            thread.IsBackground = true;
+
             // bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
             // bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
 
@@ -70,22 +86,28 @@ namespace HandheldCompanion.Controllers
             DrawControls();
             RefreshControls();
 
-            // Specific buttons
-            SupportedButtons.Add(ButtonFlags.L4);
-            SupportedButtons.Add(ButtonFlags.R4);
-            SupportedButtons.Add(ButtonFlags.L5);
-            SupportedButtons.Add(ButtonFlags.R5);
+            // Additional controller specific source buttons/axes
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftThumbTouch, ButtonFlags.RightThumbTouch });
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+            SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
 
-            SupportedAxis.Add(AxisLayoutFlags.LeftPad);
-            SupportedAxis.Add(AxisLayoutFlags.RightPad);
+            SourceAxis.Add(AxisLayoutFlags.LeftPad);
+            SourceAxis.Add(AxisLayoutFlags.RightPad);
+        }
 
-            SupportedButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            SupportedButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+        private void ThreadLoop(object? obj)
+        {
+            while(ThreadRunning)
+            {
+                if (lastLeftHapticOn is not null && lastLeftHapticOn.IsCompleted || lastLeftHapticOn is null)
+                    if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
+                        lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
 
-            // Specific buttons that shouldn't be mappable
-            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
-            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
-            VirtualButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
+                if (lastRightHapticOn is not null && lastRightHapticOn.IsCompleted || lastRightHapticOn is null)
+                    if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
+                        lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+            }
         }
 
         public override string ToString()
@@ -284,6 +306,8 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick += UpdateInputs;
             TimerManager.Tick += UpdateMovements;
 
+            thread.Start();
+
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
 
             PipeClient.ServerMessage += OnServerMessage;
@@ -314,8 +338,22 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick -= UpdateInputs;
             TimerManager.Tick -= UpdateMovements;
 
+            // kill rumble thread
+            ThreadRunning = false;
+
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
+        }
+
+        public bool GetHapticIntensity(byte? input, sbyte maxIntensity, out sbyte output)
+        {
+            output = default;
+            if (input is null || input.Value == 0)
+                return false;
+
+            double value = MinIntensity + (maxIntensity - MinIntensity) * input.Value * VibrationStrength / 255;
+            output = (sbyte)(value - 5); // convert from dB to values
+            return true;
         }
 
         public override void SetVibrationStrength(double value, bool rumble)
@@ -327,34 +365,8 @@ namespace HandheldCompanion.Controllers
 
         public override void SetVibration(byte LargeMotor, byte SmallMotor)
         {
-            // todo: improve me
-            // todo: https://github.com/mKenfenheuer/steam-deck-windows-usermode-driver/blob/69ce8085d3b6afe888cb2e36bd95836cea58084a/SWICD/Services/ControllerService.cs
-
-            // Linear motors have a peak bell curve / s curve like responce, use left half, no linearization (yet?)
-            // https://www.precisionmicrodrives.com/ab-003
-            // Scale motor input request with user vibration strenth 0 to 100% accordingly
-
-            byte AmplitudeLeft = (byte)(SmallMotor * VibrationStrength / byte.MaxValue * 12);
-
-            bool leftHaptic = SmallMotor > 0;
-            byte PeriodLeft = (byte)(28 - AmplitudeLeft);
-
-            if (leftHaptic != lastLeftHapticOn)
-            {
-                _ = Controller.SetHaptic(1, (ushort)(leftHaptic ? AmplitudeLeft : 0), (ushort)(leftHaptic ? PeriodLeft : 0), 0);
-                lastLeftHapticOn = leftHaptic;
-            }
-
-            byte AmplitudeRight = (byte)(LargeMotor * VibrationStrength / byte.MaxValue * 12);
-
-            bool rightHaptic = LargeMotor > 0;
-            byte PeriodRight = (byte)(28 - AmplitudeRight);
-
-            if (rightHaptic != lastRightHapticOn)
-            {
-                _ = Controller.SetHaptic(0, (ushort)(rightHaptic ? AmplitudeRight : 0), (ushort)(rightHaptic ? PeriodRight : 0), 0);
-                lastRightHapticOn = rightHaptic;
-            }
+            this.FeedbackLargeMotor = LargeMotor;
+            this.FeedbackSmallMotor = SmallMotor;
         }
 
         private void OnServerMessage(PipeMessage message)
@@ -411,6 +423,14 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.R2:
                 case ButtonFlags.R3:
                     return "\u21B3";
+                case ButtonFlags.L4:
+                    return "\u219c\u24f8";
+                case ButtonFlags.L5:
+                    return "\u219c\u24f9";
+                case ButtonFlags.R4:
+                    return "\u219d\u24f8";
+                case ButtonFlags.R5:
+                    return "\u219d\u24f9";
                 case ButtonFlags.Special:
                     return "\u21E4";
                 case ButtonFlags.OEM1:

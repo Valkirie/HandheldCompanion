@@ -268,19 +268,28 @@ namespace HandheldCompanion.Managers
 
                 foreach (ButtonFlags button in inputsChord.State.Buttons)
                 {
-                    if (controller is not null && controller.IsButtonSupported(button))
+                    UIElement? label = null;
+
+                    if (controller is not null)
                     {
                         FontIcon fontIcon = controller.GetFontIcon(button);
-                        if (fontIcon.Foreground is null)
-                            fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                        // we display only one label, default one is not enough
+                        if (fontIcon.Glyph != IController.defaultGlyph)
+                        {
+                            if (fontIcon.Foreground is null)
+                                fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
 
-                        inputContent.Children.Add(fontIcon);
+                            label = fontIcon;
+                        }
                     }
-                    else if (device is not null)
+                    if (label is null && device is not null)
                     {
                         Label buttonLabel = new Label() { Content = device.GetButtonName(button) };
-                        inputContent.Children.Add(buttonLabel);
+                        label = buttonLabel;
                     }
+
+                    if (label is not null)
+                        inputContent.Children.Add(label);
                 }
 
                 TextBlock type = new TextBlock()

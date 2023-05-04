@@ -97,7 +97,7 @@ namespace HandheldCompanion.Controls
                 if (controller is null)
                     return;
 
-                foreach (ButtonFlags button in controller.GetButtons())
+                foreach (ButtonFlags button in IController.GetTargetButtons())
                 {
                     // create a label, store ButtonFlags as Tag and Label as controller specific string
                     Label buttonLabel = new Label() { Tag = button, Content = controller.GetButtonName(button) };

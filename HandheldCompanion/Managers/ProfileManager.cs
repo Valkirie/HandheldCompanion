@@ -139,6 +139,24 @@ namespace HandheldCompanion.Managers
             return profile is not null ? profile : GetDefault();
         }
 
+        private static void ApplyProfile(Profile profile)
+        {
+            // raise event
+            Applied?.Invoke(profile);
+
+            // update current profile
+            currentProfile = profile;
+
+            LogManager.LogInformation("Profile {0} applied", profile.Name);
+
+            // inform service
+            PipeClient.SendMessage(new PipeClientProfile(profile));
+
+            // send toast
+            // todo: localize me
+            ToastManager.SendToast($"Profile {profile.Name} applied");
+        }
+
         private static void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
             try
@@ -154,15 +172,14 @@ namespace HandheldCompanion.Managers
                     // warn owner
                     bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
-                    // (re)set current profile
-                    if (isCurrent)
-                        currentProfile = profile;
-
                     // raise event
                     Discarded?.Invoke(profile, isCurrent, false);
 
                     // update profile
                     UpdateOrCreateProfile(profile);
+
+                    // restore default profile
+                    ApplyProfile(GetDefault());
                 }
             }
             catch { }
@@ -196,27 +213,12 @@ namespace HandheldCompanion.Managers
                 if (!profile.Enabled)
                     profile = GetDefault();
 
-                // raise event
-                Applied?.Invoke(profile);
-
                 // skip if is current profile
                 if (currentProfile == profile)
                     return;
 
                 // raise event
                 Discarded?.Invoke(currentProfile, true, true);
-
-                // update current profile
-                currentProfile = profile;
-
-                LogManager.LogInformation("Profile {0} applied", profile.Name);
-
-                // inform service
-                PipeClient.SendMessage(new PipeClientProfile(profile));
-
-                // send toast
-                // todo: localize me
-                ToastManager.SendToast($"Profile {profile.Name} applied");
 
                 // update profile executable path
                 if (!profile.Default)
@@ -227,6 +229,8 @@ namespace HandheldCompanion.Managers
                         UpdateOrCreateProfile(profile);
                     }
                 }
+
+                ApplyProfile(profile);
             }
             catch { }
         }
@@ -308,20 +312,11 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
+            UpdateOrCreateProfile(profile, ProfileUpdateSource.Serializer);
+
             // default specific
             if (profile.Default)
-            {
-                // update current profile
-                currentProfile = profile;
-
-                // raise event
-                Applied?.Invoke(profile);
-
-                // ping service
-                PipeClient.SendMessage(new PipeClientProfile(profile));
-            }
-
-            UpdateOrCreateProfile(profile, ProfileUpdateSource.Serializer);
+                ApplyProfile(profile);
         }
 
         public static void DeleteProfile(Profile profile)
@@ -338,10 +333,6 @@ namespace HandheldCompanion.Managers
                 // warn owner
                 bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
-                // (re)set current profile
-                if (isCurrent)
-                    currentProfile = GetDefault();
-
                 // raise event(s)
                 Deleted?.Invoke(profile);
                 Discarded?.Invoke(profile, isCurrent, false);
@@ -351,6 +342,10 @@ namespace HandheldCompanion.Managers
                 ToastManager.SendToast($"Profile {profile.Name} deleted");
 
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
+
+                // (re)set current profile
+                if (isCurrent)
+                    ApplyProfile(profile);
             }
 
             File.Delete(settingsPath);
@@ -414,19 +409,16 @@ namespace HandheldCompanion.Managers
 
             // raise event(s)
             Updated?.Invoke(profile, source, isCurrent);
-
-            // inform service
-            if (isCurrent)
-            {
-                PipeClient.SendMessage(new PipeClientProfile(profile));
-                Applied?.Invoke(profile);
-            }
-
+			
             if (source == ProfileUpdateSource.Serializer)
                 return;
 
             // serialize profile
             SerializeProfile(profile);
+
+            // inform service
+            if (isCurrent)
+                ApplyProfile(profile);
 
             // do not update wrapper and cloaking from default profile
             if (profile.Default)

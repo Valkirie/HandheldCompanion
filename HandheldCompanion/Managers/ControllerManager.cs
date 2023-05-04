@@ -487,14 +487,15 @@ namespace HandheldCompanion.Managers
 
         private static void UpdateInputs(ControllerState controllerState)
         {
-            // pass inputs to InputsManager
             ButtonState InputsState = controllerState.ButtonState.Clone() as ButtonState;
+
+            // pass inputs to Inputs manager
             InputsManager.UpdateReport(InputsState);
 
             // pass inputs to Overlay Model
             MainWindow.overlayModel.UpdateReport(controllerState);
 
-            // pass inputs to Layout Manager
+            // pass inputs to Layout manager
             controllerState = LayoutManager.MapController(controllerState);
 
             // Controller specific scenarios
@@ -524,6 +525,11 @@ namespace HandheldCompanion.Managers
                     }
                 }
             }
+
+            // check if motion trigger is pressed
+            Profile currentProfile = ProfileManager.GetCurrent();
+            controllerState.MotionTriggered = (currentProfile.MotionMode == MotionMode.Off && InputsState.ContainsTrue(currentProfile.MotionTrigger)) ||
+                (currentProfile.MotionMode == MotionMode.On && !InputsState.ContainsTrue(currentProfile.MotionTrigger));
 
             // pass inputs to service
             PipeClient.SendMessage(new PipeClientInputs(controllerState));

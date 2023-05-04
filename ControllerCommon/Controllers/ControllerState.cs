@@ -11,6 +11,9 @@ namespace ControllerCommon.Controllers
         public ButtonState ButtonState = new();
         public AxisState AxisState = new();
 
+        public int Timestamp { get; set; }
+        public bool MotionTriggered { get; set; }
+
         [JsonIgnore]
         public static readonly SortedDictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
         {
@@ -19,8 +22,6 @@ namespace ControllerCommon.Controllers
             { AxisLayoutFlags.RightPad, ButtonFlags.RightPadTouch },
             { AxisLayoutFlags.LeftPad, ButtonFlags.LeftPadTouch },
         };
-
-        public int Timestamp;
 
         public ControllerState()
         { }

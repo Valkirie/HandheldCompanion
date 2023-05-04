@@ -34,8 +34,12 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+
             ProfileManager.Updated += ProfileUpdated;
             ProfileManager.Deleted += ProfileDeleted;
+            ProfileManager.Applied += ProfileApplied;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
@@ -169,6 +173,11 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
+        private void ProfileApplied(Profile profile)
+        {
+            ProfileUpdated(profile, ProfileUpdateSource.Background, true);
+        }
+
         private void ProfileDeleted(Profile profile)
         {
             if (currentProfile is null)
@@ -213,7 +222,7 @@ namespace HandheldCompanion.Views.QuickPages
                     b_CreateProfile.Visibility = Visibility.Collapsed;
                     GridProfile.Visibility = Visibility.Visible;
 
-                    ProfileToggle.IsEnabled = true;
+                    ProfileToggle.IsEnabled = !profile.Default;
                     ProfileToggle.IsOn = profile.Enabled;
                     UMCToggle.IsOn = profile.MotionEnabled;
                     cB_Input.SelectedIndex = (int)profile.MotionInput;
@@ -250,10 +259,17 @@ namespace HandheldCompanion.Views.QuickPages
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
+                if (processEx.MainWindowHandle != IntPtr.Zero)
+                {
+                    string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
 
-                ProcessName.Text = currentProcess.Executable;
-                ProcessPath.Text = currentProcess.Path;
+                    ProcessName.Text = currentProcess.Executable;
+                    ProcessPath.Text = currentProcess.Path;
+                }
+                else
+                {
+                    ProcessManager_ProcessStopped(processEx);
+                }
 
                 // disable create button if process is bypassed
                 b_CreateProfile.IsEnabled = processEx.Filter == ProcessEx.ProcessFilter.Allowed;
@@ -268,6 +284,22 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     b_CreateProfile.Visibility = Visibility.Collapsed;
                     GridProfile.Visibility = Visibility.Visible;
+                }
+            });
+        }
+
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                if (currentProcess == processEx)
+                {
+                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
+                    ProcessPath.Text = string.Empty;
+
+                    b_CreateProfile.Visibility = Visibility.Collapsed;
+                    GridProfile.Visibility = Visibility.Collapsed;
                 }
             });
         }

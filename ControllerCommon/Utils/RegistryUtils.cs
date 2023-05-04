@@ -10,7 +10,7 @@ namespace ControllerCommon.Utils
         private static object GetValue(string key, string value)
         {
             string keyName = HKLM + "\\" + key;
-            return Registry.GetValue(keyName, value, string.Empty);
+            return Registry.GetValue(keyName, value, null);
         }
 
         public static string GetString(string key, string value)

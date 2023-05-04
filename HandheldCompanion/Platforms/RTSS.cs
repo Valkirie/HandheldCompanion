@@ -101,22 +101,20 @@ namespace HandheldCompanion.Platforms
 
             if (!IsInstalled)
             {
-                LogManager.LogCritical("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                LogManager.LogWarning("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
             if (!HasModules)
             {
-                LogManager.LogCritical("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
             // start RTSS if not running
-            if (!IsRunning())
-                Start();
-
-            // hook into RTSS process
-            Process.Exited += Process_Exited;
+            if (IsRunning())
+                Stop();
+            Start();
 
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
@@ -130,9 +128,13 @@ namespace HandheldCompanion.Platforms
 
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            // unhook previous process
-            if (backgroundEx is not null)
-                Unhooked?.Invoke(backgroundEx.GetProcessId());
+            AppEntry appEntry = null;
+
+            try
+            {
+                appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
+            }
+            catch (FileNotFoundException) { }
 
             // hook new process
             AppEntry appEntry = null;
@@ -330,28 +332,46 @@ namespace HandheldCompanion.Platforms
         {
             if (!IsInstalled)
                 return false;
-
             if (IsRunning())
                 return false;
 
-            var process = Process.Start(new ProcessStartInfo()
+            try
             {
-                FileName = ExecutablePath,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
+                // set lock
+                IsStarting = true;
 
-            process.WaitForInputIdle();
+                var process = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = ExecutablePath,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
 
-            return process is not null;
+                if (process is not null)
+                {
+                    process.EnableRaisingEvents = true;
+                    process.Exited += Process_Exited;
+
+                    process.WaitForInputIdle();
+
+                    // release lock
+                    IsStarting = false;
+                }
+
+                return true;
+            }
+            catch {}
+
+            return false;
         }
 
         public override bool Stop()
         {
+            if (IsStarting)
+                return false;
             if (!IsInstalled)
                 return false;
-
             if (!IsRunning())
                 return false;
 
@@ -362,6 +382,9 @@ namespace HandheldCompanion.Platforms
 
         public override void Dispose()
         {
+            FramerateTimer.Stop();
+            PlatformWatchdog.Stop();
+
             base.Dispose();
         }
     }

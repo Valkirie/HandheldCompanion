@@ -193,6 +193,12 @@ namespace HandheldCompanion.Managers
             EventWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
             EventWatcher.EventArrived += new EventArrivedEventHandler(onWMIEvent);
 
+            // start brightness watcher
+            EventWatcher.Start();
+
+            // check if we have control over brightness
+            BrightnessSupport = GetBrightness() != -1;
+
             if (MainWindow.CurrentDevice.IsOpen && MainWindow.CurrentDevice.IsSupported)
             {
                 if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl))
@@ -200,6 +206,7 @@ namespace HandheldCompanion.Managers
             }
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -247,16 +254,45 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static void HotkeysManager_CommandExecuted(string listener)
+        {
+            switch (listener)
+            {
+                case "increaseBrightness":
+                    {
+                        int stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
+                        int brightness = stepRoundDn * 5 + 5;
+                        SystemManager.SetBrightness(brightness);
+                    }
+                    break;
+                case "decreaseBrightness":
+                    {
+                        int stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
+                        int brightness = stepRoundUp * 5 - 5;
+                        SystemManager.SetBrightness(brightness);
+                    }
+                    break;
+                case "increaseVolume":
+                    {
+                        int stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
+                        int volume = stepRoundDn * 5 + 5;
+                        SystemManager.SetVolume(volume);
+                    }
+                    break;
+                case "decreaseVolume":
+                    {
+                        int stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
+                        int volume = stepRoundUp * 5 - 5;
+                        SystemManager.SetVolume(volume);
+                    }
+                    break;
+            }
+        }
+
         public static void Start()
         {
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
             SystemEvents_DisplaySettingsChanged(null, null);
-
-            // start brightness watcher
-            EventWatcher.Start();
-
-            // check if we have control over brightness
-            BrightnessSupport = GetBrightness() != -1;
 
             IsInitialized = true;
             Initialized?.Invoke();

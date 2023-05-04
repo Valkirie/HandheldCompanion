@@ -21,9 +21,9 @@ namespace HandheldCompanion.Controllers
             ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 244, 149, 193)));
             ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 73, 191, 115)));
 
-            // Specific buttons
-            SupportedButtons.Add(ButtonFlags.LeftPadClick);
-            SupportedButtons.Add(ButtonFlags.RightPadClick);
+            // Additional controller specific source buttons
+            SourceButtons.Add(ButtonFlags.LeftPadClick);
+            SourceButtons.Add(ButtonFlags.RightPadClick);
         }
 
         public override void UpdateInputs(long ticks)

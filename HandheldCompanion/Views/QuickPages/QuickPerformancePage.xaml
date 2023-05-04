@@ -334,7 +334,7 @@
                         AutoToolTipPrecision="0"
                         IsMoveToPointEnabled="True"
                         IsSnapToTickEnabled="True"
-                        Maximum="2"
+                        Maximum="3"
                         Minimum="0"
                         Style="{DynamicResource SliderStyle1}"
                         TickFrequency="1"
@@ -342,28 +342,36 @@
                         ValueChanged="FramerateSlider_ValueChanged" />
                     <Grid Name="FramerateModeGrid">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <TextBlock
                             Name="FramerateQuarter"
                             Grid.Column="0"
-                            Margin="0,0,76,0"
+                            Margin="0,0,51,0"
                             HorizontalAlignment="Center"
-                            Text="15" />
+                            Text="|" />
+                        <TextBlock
+                            Name="FramerateThird"
+                            Grid.Column="1"
+                            Margin="0,0,19,0"
+                            HorizontalAlignment="Center"
+                            Text="|" />
                         <TextBlock
                             Name="FramerateHalf"
-                            Grid.Column="1"
+                            Grid.Column="2"
+                            Margin="15,0,0,0"
                             HorizontalAlignment="Center"
-                            Text="30" />
+                            Text="|" />
                         <TextBlock
                             Name="FramerateFull"
-                            Grid.Column="2"
-                            Margin="76,0,0,0"
+                            Grid.Column="3"
+                            Margin="50,0,0,0"
                             HorizontalAlignment="Center"
-                            Text="60" />
+                            Text="|" />
                     </Grid>
                 </ui:SimpleStackPanel>
             </DockPanel>
