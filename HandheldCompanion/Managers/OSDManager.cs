@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static ControllerCommon.WinAPI;
+using static HandheldCompanion.Platforms.HWiNFO;
 using static PInvoke.Kernel32;
 
 namespace HandheldCompanion.Managers
@@ -117,7 +118,50 @@ namespace HandheldCompanion.Managers
                     break;
 
                 case 1:
-                    Content.Add(string.Format("{0} <C4>FPS<C>", PlatformManager.RTSS.GetInstantaneousFramerate(processId)));
+                    {
+                        Content.Add(string.Format("{0} <C4>FPS<C>", PlatformManager.RTSS.GetInstantaneousFramerate(processId)));
+                    }
+                    break;
+
+                case 2:
+                    {
+                        List<string> FirstLine = new();
+                        SensorElement sensor;
+
+                        // First item: Battery
+                        List<string> Item = new();
+
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("BatteryChargeLevel", out sensor))
+                            Item.Add(string.Format("<C4>{0:00} {1}<C>", sensor.Value, sensor.szUnit));
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("BatteryRemainingCapacity", out sensor))
+                            Item.Add(string.Format("<C4>{0:00} {1}<C>", sensor.Value, sensor.szUnit));
+
+                        if (Item.Count != 0)
+                        {
+                            Item.Insert(0, "BATT");
+
+                            var ItemStr = string.Join(" ", Item);
+                            FirstLine.Add(ItemStr);
+                        }
+
+                        // Second item: GPU
+                        Item = new();
+
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("GPUUtilization", out sensor))
+                            Item.Add(string.Format("<C4>{0:00}<A><A1><S1>{1}<S><A><C>", sensor.Value, sensor.szUnit));
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("GPUPower", out sensor))
+                            Item.Add(string.Format("<C4>{0:00}<A><A1><S1>{1}<S><A><C>", sensor.Value, sensor.szUnit));
+
+                        if (Item.Count != 0)
+                        {
+                            Item.Insert(0, "GPU");
+
+                            var ItemStr = string.Join(" ", Item);
+                            FirstLine.Add(ItemStr);
+                        }
+
+                        Content.Add(string.Join("|", FirstLine));
+                    }
                     break;
             }
 
