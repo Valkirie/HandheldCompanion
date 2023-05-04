@@ -46,7 +46,7 @@
                                 Glyph="&#xE78B;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="On-screen display level" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Display level" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -102,10 +102,10 @@
                                 Height="40"
                                 HorizontalAlignment="Center"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE78B;" />
+                                Glyph="&#xE823;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="On-screen display update rate" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Update rate" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
