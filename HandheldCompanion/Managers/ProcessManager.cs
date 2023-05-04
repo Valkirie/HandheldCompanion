@@ -326,16 +326,11 @@ namespace HandheldCompanion.Managers
             {
                 // process has exited on arrival
                 Process proc = Process.GetProcessById(ProcessID);
-                try
-                {
-                    if (proc.HasExited)
-                        return false;
-                    proc.EnableRaisingEvents = true;
-                }
-                catch
-                {
+                if (proc.HasExited)
                     return false;
-                }
+
+                // hook into events
+                proc.EnableRaisingEvents = true;
 
                 if (!Processes.ContainsKey(proc.Id))
                 {
