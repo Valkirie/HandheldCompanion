@@ -340,6 +340,10 @@ namespace HandheldCompanion.Platforms
                                             MonitoredSensors["GPUUtilization"] = element;
                                             break;
 
+                                        case "Total CPU Usage":
+                                            MonitoredSensors["CPUUtilization"] = element;
+                                            break;
+
                                         case "CPU PPT SLOW Limit":
                                             {
                                                 int reading = (int)Math.Floor(MonitoredSensors["CPUPower"].Value / element.Value * 100.0d);
