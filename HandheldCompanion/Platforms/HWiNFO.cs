@@ -294,6 +294,7 @@ namespace HandheldCompanion.Platforms
                                     switch(sensor.szLabelOrig)
                                     {
                                         case "CPU Package Power":
+                                        case "CPU PPT":
                                             MonitoredSensors["CPUPower"] = sensor;
                                             break;
 
@@ -434,7 +435,9 @@ namespace HandheldCompanion.Platforms
                                 break;
                         }
 
-                        Debug.WriteLine("{0}:\t\t{1} {2}\t{3}", sensor.szLabelOrig, sensor.Value, sensor.szUnit, sensor.tReading);
+                        Debug.WriteLine("PL1: {0}", MonitoredSensors["PL1"].Value);
+                        Debug.WriteLine("PL2: {0}", MonitoredSensors["PL2"].Value);
+                        // Debug.WriteLine("{0}:\t\t{1} {2}\t{3}", sensor.szLabelOrig, sensor.Value, sensor.szUnit, sensor.tReading);
                     }
                 }
             }
