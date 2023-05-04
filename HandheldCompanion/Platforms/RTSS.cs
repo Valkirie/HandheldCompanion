@@ -113,9 +113,6 @@ namespace HandheldCompanion.Platforms
                 Stop();
             Start();
 
-            // hook into RTSS process
-            Process.Exited += Process_Exited;
-
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
@@ -133,7 +130,13 @@ namespace HandheldCompanion.Platforms
 
         private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
         {
-            AppEntry appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
+            AppEntry appEntry = null;
+
+            try
+            {
+                appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
+            }
+            catch (FileNotFoundException) { }
 
             if (appEntry is null)
             {
@@ -310,31 +313,46 @@ namespace HandheldCompanion.Platforms
         {
             if (!IsInstalled)
                 return false;
-
             if (IsRunning())
                 return false;
 
-            var process = Process.Start(new ProcessStartInfo()
+            try
             {
-                FileName = ExecutablePath,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
+                // set lock
+                IsStarting = true;
 
-            process.EnableRaisingEvents = true;
-            process.Exited += Process_Exited;
+                var process = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = ExecutablePath,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
 
-            process.WaitForInputIdle();
+                if (process is not null)
+                {
+                    process.EnableRaisingEvents = true;
+                    process.Exited += Process_Exited;
 
-            return process is not null;
+                    process.WaitForInputIdle();
+
+                    // release lock
+                    IsStarting = false;
+                }
+
+                return true;
+            }
+            catch {}
+
+            return false;
         }
 
         public override bool Stop()
         {
+            if (IsStarting)
+                return false;
             if (!IsInstalled)
                 return false;
-
             if (!IsRunning())
                 return false;
 
@@ -345,6 +363,9 @@ namespace HandheldCompanion.Platforms
 
         public override void Dispose()
         {
+            FramerateTimer.Stop();
+            PlatformWatchdog.Stop();
+
             base.Dispose();
         }
     }

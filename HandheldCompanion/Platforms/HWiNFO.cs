@@ -231,7 +231,7 @@ namespace HandheldCompanion.Platforms
             }
         }
 
-        private Dictionary<string, SensorElement> MonitoredSensors = new()
+        public Dictionary<string, SensorElement> MonitoredSensors = new()
         {
             { "PL1", new SensorElement() },
             { "PL2", new SensorElement() },
@@ -312,7 +312,7 @@ namespace HandheldCompanion.Platforms
                                             {
                                                 int reading = (int)Math.Ceiling(sensor.Value);
                                                 if (reading != MonitoredSensors["PL2"].Value)
-                                                    PowerLimitChanged?.Invoke(PowerType.Slow, reading);
+                                                    PowerLimitChanged?.Invoke(PowerType.Fast, reading);
 
                                                 sensor.Value = reading;
                                                 MonitoredSensors["PL2"] = sensor;
@@ -435,8 +435,6 @@ namespace HandheldCompanion.Platforms
                                 break;
                         }
 
-                        Debug.WriteLine("PL1: {0}", MonitoredSensors["PL1"].Value);
-                        Debug.WriteLine("PL2: {0}", MonitoredSensors["PL2"].Value);
                         // Debug.WriteLine("{0}:\t\t{1} {2}\t{3}", sensor.szLabelOrig, sensor.Value, sensor.szUnit, sensor.tReading);
                     }
                 }
@@ -470,6 +468,7 @@ namespace HandheldCompanion.Platforms
                 return false;
 
             // Shared Memory Support [12-HOUR LIMIT]
+            SetProperty("OpenSensors", 0);
             SetProperty("SensorsSM", 1);
 
             try
