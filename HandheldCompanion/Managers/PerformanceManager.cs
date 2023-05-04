@@ -51,6 +51,17 @@ namespace HandheldCompanion.Managers
         private static extern uint PowerSetActiveOverlayScheme(Guid OverlaySchemeGuid);
         #endregion
 
+        #region events
+        public event LimitChangedHandler PowerLimitChanged;
+        public delegate void LimitChangedHandler(PowerType type, int limit);
+
+        public event ValueChangedHandler PowerValueChanged;
+        public delegate void ValueChangedHandler(PowerType type, float value);
+
+        public event StatusChangedHandler ProcessorStatusChanged;
+        public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
+        #endregion
+
         private Processor processor;
         public static int MaxDegreeOfParallelism = 4;
 
@@ -65,18 +76,8 @@ namespace HandheldCompanion.Managers
         protected object gfxLock = new();
         private bool gfxWatchdogPendingStop;
 
-        private const short INTERVAL_DEFAULT = 3000;            // default interval between value scans
-        private const short INTERVAL_INTEL = 5000;              // intel interval between value scans
+        private const short INTERVAL_DEFAULT = 2000;            // default interval between value scans
         private const short INTERVAL_DEGRADED = 10000;          // degraded interval between value scans
-
-        public event LimitChangedHandler PowerLimitChanged;
-        public delegate void LimitChangedHandler(PowerType type, int limit);
-
-        public event ValueChangedHandler PowerValueChanged;
-        public delegate void ValueChangedHandler(PowerType type, float value);
-
-        public event StatusChangedHandler ProcessorStatusChanged;
-        public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
         // TDP limits
         private double[] FallbackTDP = new double[3];   // used to store fallback TDP
@@ -107,6 +108,8 @@ namespace HandheldCompanion.Managers
             ProfileManager.Updated += ProfileManager_Updated;
             ProfileManager.Discarded += ProfileManager_Discarded;
 
+            PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
+
             // initialize settings
             double TDPdown = SettingsManager.GetDouble("QuickToolsPerformanceTDPSustainedValue");
             double TDPup = SettingsManager.GetDouble("QuickToolsPerformanceTDPBoostValue");
@@ -116,6 +119,16 @@ namespace HandheldCompanion.Managers
             RequestTDP(PowerType.Slow, TDPdown);
             RequestTDP(PowerType.Stapm, TDPdown);
             RequestTDP(PowerType.Fast, TDPup);
+
+            /*
+            CurrentTDP[(int)PowerType.Slow] = PlatformManager.HWiNFO.MonitoredSensors["PL1"].Value;
+            CurrentTDP[(int)PowerType.Stapm] = PlatformManager.HWiNFO.MonitoredSensors["PL1"].Value;
+            CurrentTDP[(int)PowerType.Fast] = PlatformManager.HWiNFO.MonitoredSensors["PL2"].Value;
+
+            // MSR
+            CurrentTDP[(int)PowerType.MsrSlow] = PlatformManager.HWiNFO.MonitoredSensors["PL1"].Value;
+            CurrentTDP[(int)PowerType.MsrFast] = PlatformManager.HWiNFO.MonitoredSensors["PL2"].Value;
+            */
 
             // request GPUclock
             if (GPU != 0)
@@ -353,16 +366,40 @@ namespace HandheldCompanion.Managers
         }
 
         #region events
+        private void HWiNFO_PowerLimitChanged(PowerType type, int limit)
+        {
+            int idx = (int)type;
+            CurrentTDP[idx] = limit;
+
+            // workaround, HWiNFO doesn't have the ability to report MSR
+            switch (type)
+            {
+                case PowerType.Slow:
+                    CurrentTDP[(int)PowerType.MsrSlow] = limit;
+                    break;
+                case PowerType.Fast:
+                    CurrentTDP[(int)PowerType.MsrFast] = limit;
+                    break;
+            }
+
+            // raise event
+            PowerLimitChanged?.Invoke(type, limit);
+
+            LogManager.LogDebug("PowerLimitChanged: {0}\t{1} W", type, limit);
+        }
+
         private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
             ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
         }
 
+        [Obsolete("Method is deprecated.")]
         private void Processor_ValueChanged(PowerType type, float value)
         {
             PowerValueChanged?.Invoke(type, value);
         }
 
+        [Obsolete("Method is deprecated.")]
         private void Processor_LimitChanged(PowerType type, int limit)
         {
             int idx = (int)type;
@@ -372,6 +409,7 @@ namespace HandheldCompanion.Managers
             PowerLimitChanged?.Invoke(type, limit);
         }
 
+        [Obsolete("Method is deprecated.")]
         private void Processor_MiscChanged(string misc, float value)
         {
             switch (misc)
@@ -396,8 +434,6 @@ namespace HandheldCompanion.Managers
             // higher interval on Intel CPUs to avoid CPU overload
             if (processor.GetType() == typeof(IntelProcessor))
             {
-                cpuWatchdog.Interval = INTERVAL_INTEL;
-
                 // read OS specific values
                 bool HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity", "Enabled");
                 bool VulnerableDriverBlocklistEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnabled");
@@ -408,12 +444,16 @@ namespace HandheldCompanion.Managers
 
             if (processor.IsInitialized)
             {
-                processor.ValueChanged += Processor_ValueChanged;
                 processor.StatusChanged += Processor_StatusChanged;
-                processor.LimitChanged += Processor_LimitChanged;
-                processor.MiscChanged += Processor_MiscChanged;
                 processor.Initialize();
             }
+
+            // deprecated
+            /*
+            processor.ValueChanged += Processor_ValueChanged;
+            processor.LimitChanged += Processor_LimitChanged;
+            processor.MiscChanged += Processor_MiscChanged;
+            */
 
             base.Start();
         }

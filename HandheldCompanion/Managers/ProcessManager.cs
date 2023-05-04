@@ -203,21 +203,19 @@ namespace HandheldCompanion.Managers
             {
                 int processId = (int)processInfo.ProcessId;
 
+                // events such as EVENT_SYSTEM_FOREGROUND can be raised before OnWindowDiscovered
+                // therefore we need to give it some breathing space (2500ms)
                 byte attempts = 0;
-                while (!Processes.ContainsKey(processId))
+                while (!Processes.ContainsKey(processId) && attempts < 10)
                 {
                     attempts++;
-
-                    // exlusive fullscreen applications won't trigger WindowOpenedEvent
-                    // therefore we have to force call a process creation
-                    if (attempts == 10)
-                    {
-                        ProcessCreated(processId, (int)hWnd);
-                        attempts = 0;
-                    }
-
                     await Task.Delay(250);
                 }
+
+                // create process if doesn't exist already
+                bool success = ProcessCreated(processId, (int)hWnd);
+                if (!success)
+                    return;
 
                 // pull process from running processes
                 ProcessEx process = Processes[processId];
@@ -322,32 +320,27 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void ProcessCreated(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)
+        private static bool ProcessCreated(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)
         {
             try
             {
                 // process has exited on arrival
                 Process proc = Process.GetProcessById(ProcessID);
-                try
-                {
-                    if (proc.HasExited)
-                        return;
-                    proc.EnableRaisingEvents = true;
-                }
-                catch
-                {
-                    return;
-                }
+                if (proc.HasExited)
+                    return false;
+
+                // hook into events
+                proc.EnableRaisingEvents = true;
 
                 if (!Processes.ContainsKey(proc.Id))
                 {
-                    // UI thread (async)
-                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    // UI thread (synchronous)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         // check process path
                         string path = ProcessUtils.GetPathToApp(proc.Id);
                         if (string.IsNullOrEmpty(path))
-                            return;
+                            return false;
 
                         string exec = Path.GetFileName(path);
                         IntPtr hWnd = NativeWindowHandle != 0 ? NativeWindowHandle : proc.MainWindowHandle;
@@ -363,18 +356,24 @@ namespace HandheldCompanion.Managers
                         proc.Exited += ProcessHalted;
 
                         if (processEx.Filter != ProcessFilter.Allowed)
-                            return;
+                            return true;
 
                         // raise event
                         ProcessStarted?.Invoke(processEx, OnStartup);
+
+                        return true;
                     });
                 }
+
+                // process already exists
+                return true;
             }
             catch
             {
                 // process has too high elevation
-                return;
             }
+
+            return false;
         }
 
         private static void ChildProcessCreated(ProcessEx parent, int pId)
