@@ -145,8 +145,7 @@ namespace HandheldCompanion.Platforms
                 {
                     appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
                 }
-                catch (InvalidOperationException) { }
-                catch (FileNotFoundException) { }
+                catch (Exception) { }
 
                 await Task.Delay(250);
             }

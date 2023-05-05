@@ -272,8 +272,7 @@ namespace HandheldCompanion.Managers
                 PipeClient.SendMessage(new PipeClientProcess { executable = currentProcess.Executable, platform = currentProcess.Platform });
 
                 // raise event
-                if (!previousProcess.Executable.Equals(currentProcess.Executable))
-                    ForegroundChanged?.Invoke(currentProcess, previousProcess);
+                ForegroundChanged?.Invoke(currentProcess, previousProcess);
             }
             catch
             {
