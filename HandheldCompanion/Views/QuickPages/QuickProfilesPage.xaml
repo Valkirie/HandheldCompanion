@@ -641,14 +641,15 @@
                                 AutoToolTipPrecision="0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
-                                LargeChange="10"
+                                LargeChange="5"
                                 Maximum="60"
                                 Minimum="30"
-                                SmallChange="10"
+                                SmallChange="5"
                                 Style="{DynamicResource SliderStyle1}"
-                                TickFrequency="10"
+                                TickFrequency="5"
                                 TickPlacement="BottomRight"
-                                ValueChanged="AutoTDPRequestedFPSSlider_ValueChanged" />
+                                ValueChanged="AutoTDPRequestedFPSSlider_ValueChanged"
+                                Value="30" />
                         </DockPanel>
                     </StackPanel>
                 </Border>

@@ -236,6 +236,9 @@ namespace HandheldCompanion.Views.QuickPages
 
                     TDPToggle.IsOn = profile.TDPOverrideEnabled;
 
+                    AutoTDPToggle.IsOn = profile.AutoTDPEnabled;
+                    AutoTDPRequestedFPSSlider.Value = profile.AutoTDPRequestedFPS;
+
                     // Slider settings
                     SliderUMCAntiDeadzone.Value = profile.MotionAntiDeadzone;
                     SliderSensitivityX.Value = profile.MotionSensivityX;
@@ -480,6 +483,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
+                AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
