@@ -462,7 +462,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", frequency);
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", FramerateSlider.Value);
         }
 
         private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
