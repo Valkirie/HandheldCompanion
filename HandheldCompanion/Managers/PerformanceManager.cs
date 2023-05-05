@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Views;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -77,7 +78,8 @@ namespace HandheldCompanion.Managers
         private bool gfxWatchdogPendingStop;
 
         private const short INTERVAL_DEFAULT = 1000;            // default interval between value scans
-        private const short INTERVAL_DEGRADED = 1000;          // degraded interval between value scans
+        private const short INTERVAL_AUTO = 1000;               // default interval between value scans
+        private const short INTERVAL_DEGRADED = 5000;           // degraded interval between value scans
 
         // TDP limits
         private double[] FallbackTDP = new double[3];   // used to store fallback TDP
@@ -119,35 +121,107 @@ namespace HandheldCompanion.Managers
             PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
 
             // initialize settings
-            double TDPdown = SettingsManager.GetDouble("QuickToolsPerformanceTDPSustainedValue");
-            double TDPup = SettingsManager.GetDouble("QuickToolsPerformanceTDPBoostValue");
-            double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
+            SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
 
-            // request TDP(s)
-            RequestTDP(PowerType.Slow, TDPdown);
-            RequestTDP(PowerType.Stapm, TDPdown);
-            RequestTDP(PowerType.Fast, TDPup);
-
-            /*
-            CurrentTDP[(int)PowerType.Slow] = PlatformManager.HWiNFO.MonitoredSensors["PL1"].Value;
-            CurrentTDP[(int)PowerType.Stapm] = PlatformManager.HWiNFO.MonitoredSensors["PL1"].Value;
-            CurrentTDP[(int)PowerType.Fast] = PlatformManager.HWiNFO.MonitoredSensors["PL2"].Value;
-
-            // MSR
-            CurrentTDP[(int)PowerType.MsrSlow] = PlatformManager.HWiNFO.MonitoredSensors["PL1"].Value;
-            CurrentTDP[(int)PowerType.MsrFast] = PlatformManager.HWiNFO.MonitoredSensors["PL2"].Value;
-            */
-
-            // Todo, doing it this way, requires an application restart if ranges are adjusted
-            TDPMinLimit = SettingsManager.GetDouble("ConfigurableTDPOverrideDown");
-            TDPMaxLimit = SettingsManager.GetDouble("ConfigurableTDPOverrideUp");
             TDPSetpoint = (TDPMaxLimit + TDPMinLimit) / 2;
 
             // request GPUclock
+            double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
 
             MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
+        }
+
+        private void SettingsManagerOnSettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "QuickToolsPerformanceTDPValue":
+                    {
+                        double TDP = Convert.ToDouble(value);
+
+                        RequestTDP(PowerType.Slow, TDP);
+                        RequestTDP(PowerType.Stapm, TDP);
+                        RequestTDP(PowerType.Fast, TDP);
+                    }
+                    break;
+                case "QuickToolsPerformanceTDPEnabled":
+                    {
+                        bool TDPenabled = Convert.ToBoolean(value);
+                        
+                        switch(TDPenabled)
+                        {
+                            case true:
+                                {
+                                    double TDP = SettingsManager.GetDouble("QuickToolsPerformanceTDPValue");
+
+                                    RequestTDP(PowerType.Slow, TDP);
+                                    RequestTDP(PowerType.Stapm, TDP);
+                                    RequestTDP(PowerType.Fast, TDP);
+
+                                    StartTDPWatchdog();
+                                }
+                                break;
+                            case false:
+                                {
+                                    // restore default TDP and halt watchdog
+                                    RequestTDP(MainWindow.CurrentDevice.nTDP);
+                                    StopTDPWatchdog();
+                                }
+                                break;
+                        }
+                    }
+                    break;
+
+                case "QuickToolsPerformanceGPUValue":
+                    {
+                        double GPU = Convert.ToDouble(value);
+                        RequestGPUClock(GPU);
+                    }
+                    break;
+
+                case "QuickToolsPerformanceGPUEnabled":
+                    {
+                        bool GPUenabled = Convert.ToBoolean(value);
+
+                        switch (GPUenabled)
+                        {
+                            case true:
+                                {
+                                    double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
+
+                                    RequestGPUClock(GPU);
+                                    StartGPUWatchdog();
+                                }
+                                break;
+                            case false:
+                                {
+                                    // restore default GPU and halt watchdog
+                                    RequestGPUClock(255 * 50);
+                                    StopGPUWatchdog();
+                                }
+                                break;
+                        }
+                    }
+                    break;
+
+                case "ConfigurableTDPOverrideDown":
+                    {
+                        TDPMinLimit = Convert.ToDouble(value);
+                    }
+                    break;
+                case "ConfigurableTDPOverrideUp":
+                    {
+                        TDPMaxLimit = Convert.ToDouble(value);
+                    }
+                    break;
+
+                case "QuickToolsPowerModeValue":
+                    int power = Convert.ToInt32(value);
+                    RequestPowerMode(power);
+                    break;
+            }
         }
 
         private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
@@ -213,9 +287,10 @@ namespace HandheldCompanion.Managers
             if (Monitor.TryEnter(cpuLock))
             {
                 // Auto TDP
-                if (AutoTDPEnabled) { 
-
+                if (AutoTDPEnabled)
+                {
                     double ProcessValueFPS = PlatformManager.RTSS.GetFramerate(PlatformManager.RTSS.AutoTDPProcessId);
+
                     // Be realistic with expectd proces value
                     ProcessValueFPS = Math.Clamp(ProcessValueFPS, 1, 500);
 
@@ -294,18 +369,20 @@ namespace HandheldCompanion.Managers
 
                     double ReadTDP = CurrentTDP[idx];
 
-                    // we're in degraded condition
-                    if (ReadTDP == 0 || ReadTDP < byte.MinValue || ReadTDP > byte.MaxValue)
-                        cpuWatchdog.Interval = INTERVAL_DEGRADED;
-                    else
+                    if (ReadTDP > byte.MinValue && ReadTDP < byte.MaxValue)
                         cpuWatchdog.Interval = INTERVAL_DEFAULT;
+                    else if (AutoTDPEnabled)
+                        cpuWatchdog.Interval = INTERVAL_AUTO;
+                    else
+                        cpuWatchdog.Interval = INTERVAL_DEGRADED;
 
                     // only request an update if current limit is different than stored
                     if (ReadTDP != TDP)
                         processor.SetTDPLimit(type, TDP);
-                    else
-                        TDPdone = true;
                 }
+
+                // are we done ?
+                TDPdone = CurrentTDP[0] == StoredTDP[0] && CurrentTDP[1] == StoredTDP[1] && CurrentTDP[2] == StoredTDP[2];
 
                 // processor specific
                 if (processor.GetType() == typeof(IntelProcessor))
@@ -387,6 +464,7 @@ namespace HandheldCompanion.Managers
 
         internal void StartGPUWatchdog()
         {
+            gfxWatchdogPendingStop = false;
             gfxWatchdog.Start();
         }
 
@@ -402,6 +480,7 @@ namespace HandheldCompanion.Managers
 
         internal void StartTDPWatchdog()
         {
+            cpuWatchdogPendingStop = false;
             cpuWatchdog.Start();
         }
 
@@ -418,11 +497,14 @@ namespace HandheldCompanion.Managers
 
         public void RequestTDP(double[] values, bool UserRequested = true)
         {
-            if (UserRequested)
-                FallbackTDP = values;
+            for(int idx = (int)PowerType.Slow; idx < (int)PowerType.Fast; idx++)
+            {
+                if (UserRequested)
+                    FallbackTDP[idx] = values[idx];
 
-            // update value read by timer
-            StoredTDP = values;
+                // update value read by timer
+                StoredTDP[idx] = values[idx];
+            }
         }
 
         public void RequestGPUClock(double value, bool UserRequested = true)
@@ -452,6 +534,7 @@ namespace HandheldCompanion.Managers
             switch (type)
             {
                 case PowerType.Slow:
+                    CurrentTDP[(int)PowerType.Stapm] = limit;
                     CurrentTDP[(int)PowerType.MsrSlow] = limit;
                     break;
                 case PowerType.Fast:

@@ -56,99 +56,43 @@
                 </Grid>
             </Border>
 
-            <!--  TDP Sustained  -->
+            <!--  TDP  -->
             <Border
                 Padding="15,6,15,6"
                 d:Visibility="Visible"
                 CornerRadius="{DynamicResource ControlCornerRadius}"
                 Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                <StackPanel>
+                <DockPanel
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    ScrollViewer.PanningMode="HorizontalOnly">
                     <TextBlock
-                        Width="62"
-                        HorizontalAlignment="Left"
+                        Width="20"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Text="{x:Static resx:Resources.QuickPerformancePage_TDPSustained}" />
-
-                    <DockPanel
-                        Grid.Column="1"
+                        IsManipulationEnabled="True"
+                        Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
+                    <Slider
+                        x:Name="TDPSlider"
                         Margin="8,0,0,0"
-                        ScrollViewer.PanningMode="HorizontalOnly">
-                        <TextBlock
-                            Width="20"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsManipulationEnabled="True"
-                            Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}"
-                            TextAlignment="Center" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <Slider
-                            x:Name="TDPSustainedSlider"
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            AutoToolTipPlacement="TopLeft"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="5"
-                            Maximum="30"
-                            Minimum="5"
-                            SmallChange="1"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight"
-                            ValueChanged="TDPSustainedSlider_ValueChanged" />
-                    </DockPanel>
-                </StackPanel>
-            </Border>
-
-            <!--  TDP Boost  -->
-            <Border
-                Padding="15,6,15,6"
-                d:Visibility="Visible"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                <StackPanel>
-                    <TextBlock
-                        Width="62"
-                        HorizontalAlignment="Left"
+                        HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        Text="{x:Static resx:Resources.QuickPerformancePage_TDPBoost}" />
-
-                    <DockPanel
-                        Grid.Column="1"
-                        Margin="8,0,0,0"
-                        ScrollViewer.PanningMode="HorizontalOnly">
-                        <TextBlock
-                            Width="20"
-                            VerticalAlignment="Center"
-                            Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}"
-                            TextAlignment="Center" />
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                        <Slider
-                            x:Name="TDPBoostSlider"
-                            Margin="8,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            AutoToolTipPlacement="TopLeft"
-                            AutoToolTipPrecision="0"
-                            IsMoveToPointEnabled="True"
-                            IsSnapToTickEnabled="True"
-                            LargeChange="5"
-                            Maximum="30"
-                            Minimum="5"
-                            SmallChange="1"
-                            Style="{DynamicResource SliderStyle1}"
-                            TickFrequency="1"
-                            TickPlacement="BottomRight"
-                            ValueChanged="TDPBoostSlider_ValueChanged" />
-                    </DockPanel>
-                </StackPanel>
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        IsMoveToPointEnabled="True"
+                        IsSnapToTickEnabled="True"
+                        LargeChange="5"
+                        Maximum="30"
+                        Minimum="5"
+                        SmallChange="1"
+                        Style="{DynamicResource SliderStyle1}"
+                        TickFrequency="1"
+                        TickPlacement="BottomRight"
+                        ValueChanged="TDPSlider_ValueChanged" />
+                </DockPanel>
             </Border>
 
             <!--  Warning  -->

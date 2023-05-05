@@ -98,7 +98,7 @@
     <Setting Name="QuickToolsTop" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceTDPSustainedValue" Type="System.Double" Scope="User">
+    <Setting Name="QuickToolsPerformanceTDPValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="QuickToolsPerformanceTDPEnabled" Type="System.Boolean" Scope="User">

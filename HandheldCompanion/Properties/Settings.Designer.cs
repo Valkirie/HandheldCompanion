@@ -410,12 +410,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsPerformanceTDPSustainedValue {
+        public double QuickToolsPerformanceTDPValue {
             get {
-                return ((double)(this["QuickToolsPerformanceTDPSustainedValue"]));
+                return ((double)(this["QuickToolsPerformanceTDPValue"]));
             }
             set {
-                this["QuickToolsPerformanceTDPSustainedValue"] = value;
+                this["QuickToolsPerformanceTDPValue"] = value;
             }
         }
         

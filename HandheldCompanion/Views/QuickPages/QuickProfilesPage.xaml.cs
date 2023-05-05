@@ -137,8 +137,7 @@ namespace HandheldCompanion.Views.QuickPages
                             if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
                                 return;
 
-                            TDPBoostSlider.Value++;
-                            TDPSustainedSlider.Value++;
+                            TDPSlider.Value++;
                         }
                         break;
                     case "decreaseTDP":
@@ -146,8 +145,7 @@ namespace HandheldCompanion.Views.QuickPages
                             if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
                                 return;
 
-                            TDPSustainedSlider.Value--;
-                            TDPBoostSlider.Value--;
+                            TDPSlider.Value--;
                         }
                         break;
                 }
@@ -162,12 +160,10 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (name)
                 {
                     case "ConfigurableTDPOverrideUp":
-                        TDPSustainedSlider.Maximum = Convert.ToInt32(value);
-                        TDPBoostSlider.Maximum = Convert.ToInt32(value);
+                        TDPSlider.Maximum = Convert.ToInt32(value);
                         break;
                     case "ConfigurableTDPOverrideDown":
-                        TDPSustainedSlider.Minimum = Convert.ToInt32(value);
-                        TDPBoostSlider.Minimum = Convert.ToInt32(value);
+                        TDPSlider.Minimum = Convert.ToInt32(value);
                         break;
                 }
             });
@@ -231,8 +227,7 @@ namespace HandheldCompanion.Views.QuickPages
 
                     // Sustained TDP settings (slow, stapm, long)
                     double[] TDP = profile.TDPOverrideValues is not null ? profile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
-                    TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
-                    TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
+                    TDPSlider.Value = TDP[(int)PowerType.Slow];
 
                     TDPToggle.IsOn = profile.TDPOverrideEnabled;
 
@@ -423,7 +418,7 @@ namespace HandheldCompanion.Views.QuickPages
             }
         }
 
-        private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
                 return;
@@ -431,50 +426,20 @@ namespace HandheldCompanion.Views.QuickPages
             if (!TDPToggle.IsOn)
                 return;
 
-            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+            if (!TDPSlider.IsInitialized)
                 return;
-
-            // Prevent sustained value being higher then boost
-            if (TDPSustainedSlider.Value > TDPBoostSlider.Value)
-            {
-                TDPBoostSlider.Value = TDPSustainedSlider.Value;
-            }
 
             if (Monitor.TryEnter(updateLock))
             {
-                currentProfile.TDPOverrideValues[0] = (int)TDPSustainedSlider.Value;
-                currentProfile.TDPOverrideValues[1] = (int)TDPSustainedSlider.Value;
+                currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
+                currentProfile.TDPOverrideValues[(int)PowerType.Stapm] = (int)TDPSlider.Value;
+                currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);
             }
         }
 
-        private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (currentProfile is null)
-                return;
-
-            if (!TDPToggle.IsOn)
-                return;
-
-            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
-                return;
-
-            // Prevent boost value being lower then sustained
-            if (TDPBoostSlider.Value < TDPSustainedSlider.Value)
-            {
-                TDPSustainedSlider.Value = TDPBoostSlider.Value;
-            }
-
-            if (Monitor.TryEnter(updateLock))
-            {
-                currentProfile.TDPOverrideValues[2] = (int)TDPBoostSlider.Value;
-                RequestUpdate();
-
-                Monitor.Exit(updateLock);
-            }
-        }
         private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (currentProfile is null)
