@@ -63,6 +63,11 @@ namespace HandheldCompanion.Platforms
             public double ValueMin;
             public double ValueMax;
             public double ValueAvg;
+
+            public override string ToString()
+            {
+                return string.Format("<C4>{0:00}<S1>{1}<S><C>", Value, szUnit);
+            }
         }
 
         public enum SENSOR_READING_TYPE
@@ -98,6 +103,7 @@ namespace HandheldCompanion.Platforms
         private const int HWiNFO_UNIT_STRING_LEN = 16;
 
         private long prevPoll_time = -1;
+        private byte prevPoll_attempt;
 
         private MemoryMappedFile MemoryMapped;
         private MemoryMappedViewAccessor MemoryAccessor;
@@ -167,8 +173,12 @@ namespace HandheldCompanion.Platforms
             // we couldn't poll HWiNFO, halt process
             if (HWiNFOMemory.poll_time == prevPoll_time)
             {
-                Stop();
-                return;
+                prevPoll_attempt++;
+                if (prevPoll_attempt == 2)
+                {
+                    Stop();
+                    return;
+                }
             }
 
             // update poll time
@@ -556,6 +566,7 @@ namespace HandheldCompanion.Platforms
             PlatformWatchdog.Stop();
 
             prevPoll_time = -1;
+            prevPoll_attempt = 0;
         }
     }
 }

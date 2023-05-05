@@ -325,19 +325,24 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderOnScreenDisplay_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            double value = SliderOnScreenDisplay.Value;
+
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (value)
+                {
+                    case 0:
+                        HelperOnScreenDisplay.Text = "OFF";
+                        break;
+                    default:
+                        HelperOnScreenDisplay.Text = Convert.ToString(value);
+                        break;
+                }
+            });
+
             if (!IsLoaded)
                 return;
-
-            double value = SliderOnScreenDisplay.Value;
-            switch(value)
-            {
-                case 0:
-                    HelperOnScreenDisplay.Text = "OFF";
-                    break;
-                default:
-                    HelperOnScreenDisplay.Text = Convert.ToString(value);
-                    break;
-            }
 
             SettingsManager.SetProperty("OnScreenDisplayLevel", value);
         }

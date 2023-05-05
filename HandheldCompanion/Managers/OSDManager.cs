@@ -6,10 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WinRT;
 using static ControllerCommon.WinAPI;
 using static HandheldCompanion.Platforms.HWiNFO;
 using static PInvoke.Kernel32;
@@ -119,48 +121,64 @@ namespace HandheldCompanion.Managers
 
                 case 1:
                     {
-                        Content.Add(string.Format("{0} <C4>FPS<C>", PlatformManager.RTSS.GetInstantaneousFramerate(processId)));
+                        using (OverlayRow row1 = new())
+                        {
+                            using (OverlayEntry FPSentry = new("GAMESCOPE"))
+                            {
+                                FPSentry.elements.Add(new SensorElement()
+                                {
+                                    Value = PlatformManager.RTSS.GetInstantaneousFramerate(processId),
+                                    szUnit = "FPS"
+                                });
+
+                                row1.entries.Add(FPSentry);
+                            }
+
+                            Content.Add(row1.ToString());
+                        }
                     }
                     break;
 
                 case 2:
                     {
-                        List<string> FirstLine = new();
+                        OverlayRow row1 = new();
                         SensorElement sensor;
 
-                        // First item: Battery
-                        List<string> Item = new();
-
+                        OverlayEntry BATTentry = new("BATT");
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("BatteryChargeLevel", out sensor))
-                            Item.Add(string.Format("<C4>{0:00} {1}<C>", sensor.Value, sensor.szUnit));
+                            BATTentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("BatteryRemainingCapacity", out sensor))
-                            Item.Add(string.Format("<C4>{0:00} {1}<C>", sensor.Value, sensor.szUnit));
+                            BATTentry.elements.Add(sensor);
+                        row1.entries.Add(BATTentry);
 
-                        if (Item.Count != 0)
-                        {
-                            Item.Insert(0, "BATT");
-
-                            var ItemStr = string.Join(" ", Item);
-                            FirstLine.Add(ItemStr);
-                        }
-
-                        // Second item: GPU
-                        Item = new();
-
+                        OverlayEntry GPUentry = new("GPU");
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("GPUUtilization", out sensor))
-                            Item.Add(string.Format("<C4>{0:00}<A><A1><S1>{1}<S><A><C>", sensor.Value, sensor.szUnit));
+                            GPUentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("GPUPower", out sensor))
-                            Item.Add(string.Format("<C4>{0:00}<A><A1><S1>{1}<S><A><C>", sensor.Value, sensor.szUnit));
+                            GPUentry.elements.Add(sensor);
+                        row1.entries.Add(GPUentry);
 
-                        if (Item.Count != 0)
+                        OverlayEntry CPUentry = new("CPU");
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("CPUUtilization", out sensor))
+                            CPUentry.elements.Add(sensor);
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("CPUPower", out sensor))
+                            CPUentry.elements.Add(sensor);
+                        row1.entries.Add(CPUentry);
+
+                        OverlayEntry RAMentry = new("RAM");
+                        if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue("PhysicalMemoryUsage", out sensor))
+                            RAMentry.elements.Add(sensor);
+                        row1.entries.Add(RAMentry);
+
+                        OverlayEntry FPSentry = new("GAMESCOPE");
+                        FPSentry.elements.Add(new SensorElement()
                         {
-                            Item.Insert(0, "GPU");
+                            Value = PlatformManager.RTSS.GetInstantaneousFramerate(processId),
+                            szUnit = "FPS"
+                        });
+                        row1.entries.Add(FPSentry);
 
-                            var ItemStr = string.Join(" ", Item);
-                            FirstLine.Add(ItemStr);
-                        }
-
-                        Content.Add(string.Join("|", FirstLine));
+                        Content.Add(row1.ToString());
                     }
                     break;
             }
@@ -219,6 +237,52 @@ namespace HandheldCompanion.Managers
                     }
                     break;
             }
+        }
+    }
+
+    public class OverlayEntry : IDisposable
+    {
+        public List<SensorElement> elements = new();
+        public string Name { get; set; }
+
+        public OverlayEntry(string name)
+        {
+            this.Name = name;
+        }
+
+        public void Dispose()
+        {
+            elements.Clear();
+            elements = null;
+        }
+    }
+
+    public class OverlayRow : IDisposable
+    {
+        public List<OverlayEntry> entries = new();
+
+        public override string ToString()
+        {
+            List<string> rowStr = new();
+
+            foreach (OverlayEntry entry in entries.Where(a => a.elements.Count != 0))
+            {
+                List<string> entriesStr = new() { entry.Name };
+
+                foreach(SensorElement element in entry.elements)
+                    entriesStr.Add(element.ToString());
+
+                var ItemStr = string.Join(" ", entriesStr);
+                rowStr.Add(ItemStr);
+            }
+
+            return string.Join(" | ", rowStr);
+        }
+
+        public void Dispose()
+        {
+            entries.Clear();
+            entries = null;
         }
     }
 }
