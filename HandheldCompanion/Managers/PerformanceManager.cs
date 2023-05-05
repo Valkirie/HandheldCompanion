@@ -123,8 +123,6 @@ namespace HandheldCompanion.Managers
             // initialize settings
             SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
 
-            TDPSetpoint = (TDPMaxLimit + TDPMinLimit) / 2;
-
             // request GPUclock
             double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
             if (GPU != 0)
@@ -209,11 +207,13 @@ namespace HandheldCompanion.Managers
                 case "ConfigurableTDPOverrideDown":
                     {
                         TDPMinLimit = Convert.ToDouble(value);
+                        TDPSetpoint = (TDPMaxLimit + TDPMinLimit) / 2.0d;
                     }
                     break;
                 case "ConfigurableTDPOverrideUp":
                     {
                         TDPMaxLimit = Convert.ToDouble(value);
+                        TDPSetpoint = (TDPMaxLimit + TDPMinLimit) / 2.0d;
                     }
                     break;
 
