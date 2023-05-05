@@ -91,7 +91,7 @@ namespace HandheldCompanion.Managers
                 var profile = ProfileManager.GetCurrent();
                 var ProfileName = profile.Name;
                 var UMC = profile.MotionEnabled;
-                var FPS = PlatformManager.RTSS.GetInstantaneousFramerate(processId);
+                var FPS = PlatformManager.RTSS.GetFramerate(processId);
 
                 string content = Draw(processId);
 
@@ -117,7 +117,7 @@ namespace HandheldCompanion.Managers
                     break;
 
                 case 1:
-                    Content.Add(string.Format("{0} <C4>FPS<C>", PlatformManager.RTSS.GetInstantaneousFramerate(processId)));
+                    Content.Add(string.Format("{0} <C4>FPS<C>", PlatformManager.RTSS.GetFramerate(processId)));
                     break;
             }
 

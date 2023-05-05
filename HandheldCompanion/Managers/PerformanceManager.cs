@@ -1,4 +1,4 @@
-﻿using ControllerCommon;
+using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
@@ -76,8 +76,8 @@ namespace HandheldCompanion.Managers
         protected object gfxLock = new();
         private bool gfxWatchdogPendingStop;
 
-        private const short INTERVAL_DEFAULT = 2000;            // default interval between value scans
-        private const short INTERVAL_DEGRADED = 10000;          // degraded interval between value scans
+        private const short INTERVAL_DEFAULT = 1000;            // default interval between value scans
+        private const short INTERVAL_DEGRADED = 1000;          // degraded interval between value scans
 
         // TDP limits
         private double[] FallbackTDP = new double[3];   // used to store fallback TDP
@@ -91,6 +91,14 @@ namespace HandheldCompanion.Managers
 
         // Power modes
         private Guid RequestedPowerMode;
+
+        // AutoTDP
+        private bool AutoTDPFirstRun = true;
+        private bool AutoTDPEnabled;
+        private double TDPSetpoint;
+        private double WantedFPS;
+        private double TDPMinLimit;
+        private double TDPMaxLimit;
 
         public PerformanceManager() : base()
         {
@@ -130,6 +138,11 @@ namespace HandheldCompanion.Managers
             CurrentTDP[(int)PowerType.MsrFast] = PlatformManager.HWiNFO.MonitoredSensors["PL2"].Value;
             */
 
+            // Todo, doing it this way, requires an application restart if ranges are adjusted
+            TDPMinLimit = SettingsManager.GetDouble("ConfigurableTDPOverrideDown");
+            TDPMaxLimit = SettingsManager.GetDouble("ConfigurableTDPOverrideUp");
+            TDPSetpoint = (TDPMaxLimit + TDPMinLimit) / 2;
+
             // request GPUclock
             if (GPU != 0)
                 RequestGPUClock(GPU, true);
@@ -155,7 +168,7 @@ namespace HandheldCompanion.Managers
 
             // stop cpuWatchdog if system settings is disabled
             bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
-            if (profile.TDPOverrideEnabled && !cpuWatchdogState)
+            if ((profile.TDPOverrideEnabled || profile.AutoTDPEnabled) && !cpuWatchdogState)
                 StopTDPWatchdog();
         }
 
@@ -163,7 +176,7 @@ namespace HandheldCompanion.Managers
         {
             // start cpuWatchdog if system settings is disabled
             bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
-            if (profile.TDPOverrideEnabled && !cpuWatchdogState)
+            if ((profile.TDPOverrideEnabled || profile.AutoTDPEnabled) && !cpuWatchdogState)
                 StartTDPWatchdog();
 
             // apply profile defined TDP
@@ -171,6 +184,17 @@ namespace HandheldCompanion.Managers
                 RequestTDP(profile.TDPOverrideValues, false);
             else
                 RequestTDP(FallbackTDP, false); // redudant with ProfileManager_Discarded ?
+
+            // AutoTDP
+            if (profile.AutoTDPEnabled && profile.AutoTDPRequestedFPS != 0.0f)
+            {
+                WantedFPS = profile.AutoTDPRequestedFPS;
+                AutoTDPEnabled = true;
+            }
+            else
+            {
+                AutoTDPEnabled = false;
+            }
         }
 
         private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
@@ -188,6 +212,59 @@ namespace HandheldCompanion.Managers
 
             if (Monitor.TryEnter(cpuLock))
             {
+                // Auto TDP
+                if (AutoTDPEnabled) { 
+
+                    double ProcessValueFPS = PlatformManager.RTSS.GetFramerate(PlatformManager.RTSS.AutoTDPProcessId);
+                    // Be realistic with expectd proces value
+                    ProcessValueFPS = Math.Clamp(ProcessValueFPS, 1, 500);
+
+                    // If actual and target FPS are very similar, add a small amount of positive "error" make controller always try to reduce
+                    double ProcessValueFPSModifier = 0;
+                    if (WantedFPS - 0.2 <= ProcessValueFPS && ProcessValueFPS <= WantedFPS + 0.1) { ProcessValueFPSModifier = 0.5; }
+
+                    // Determine error amount
+                    double ControllerError = WantedFPS - ProcessValueFPS - ProcessValueFPSModifier;
+
+                    // Clamp error amount that is corrected within a single cycle
+                    // -5 +15, going lower always overshoots (not safe, leads to instability), going higher always undershoots (which is safe)
+                    // Adjust clamp in case of actual FPS being 2.5x requested FPS, menu's going to 300+ fps for example.
+                    double ClampLowerLimit = ProcessValueFPS >= 2.5 * WantedFPS ? -100 : -5;
+                    ControllerError = Math.Clamp(ControllerError, ClampLowerLimit, 15);
+
+                    // Todo, use TDP from profile or some average device range value for the initial setpoint to allow continuation from last time?
+
+                    // Based on FPS/TDP ratio, determine how much adjustment is needed
+                    double TDPAdjustment = ControllerError * TDPSetpoint / ProcessValueFPS;
+                    // Going lower or higher, we need to reduce the amount of TDP by a factor.
+                    if (ControllerError < 0.0)
+                    {
+                        // Going to lower TDP and thus FPS
+                        TDPAdjustment *= 0.9;
+                    }
+                    else
+                    {
+                        // Going to higher TDP and thus FPS
+                        TDPAdjustment *= 0.7;
+                    }
+
+                    // Determine final setpoint
+                    // Skip calculating TDP the very first run, first need to set to determine values next round
+                    if (!AutoTDPFirstRun)
+                    {
+                        TDPSetpoint += TDPAdjustment;
+                    }
+                    else { AutoTDPFirstRun = false; }
+
+                    // Prevent run away of TDP setpoint value
+                    TDPSetpoint = Math.Clamp(TDPSetpoint, TDPMinLimit, TDPMaxLimit);
+
+                    StoredTDP[0] = StoredTDP[1] = StoredTDP[2] = TDPSetpoint;
+
+                    // Log
+                    LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000}", WantedFPS, TDPSetpoint, TDPAdjustment, ProcessValueFPS);
+                }
+
                 bool TDPdone = false;
                 bool MSRdone = false;
 

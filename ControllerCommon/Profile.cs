@@ -93,6 +93,8 @@ namespace ControllerCommon
         // power
         public bool TDPOverrideEnabled { get; set; }
         public double[] TDPOverrideValues { get; set; } = new double[3];
+        public bool AutoTDPEnabled { get; set; }
+        public float AutoTDPRequestedFPS { get; set; } = 30.0f;
 
         public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 

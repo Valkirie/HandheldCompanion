@@ -73,6 +73,8 @@ namespace HandheldCompanion.Platforms
         public event UnhookedEventHandler Unhooked;
         public delegate void UnhookedEventHandler(int processId);
 
+        public int AutoTDPProcessId;
+
         public RTSS()
         {
             base.PlatformType = PlatformType.RTSS;
@@ -135,7 +137,8 @@ namespace HandheldCompanion.Platforms
             // hook new process
             AppEntry appEntry = null;
 
-            var ProcessId = processEx.GetProcessId();
+            var ProcessId = AutoTDPProcessId = processEx.GetProcessId();
+
             if (ProcessId == 0)
                 return;
 
@@ -181,7 +184,7 @@ namespace HandheldCompanion.Platforms
                 Start();
         }
 
-        public double GetInstantaneousFramerate(int processId)
+        public double GetFramerate(int processId)
         {
             try
             {
@@ -189,9 +192,7 @@ namespace HandheldCompanion.Platforms
                 if (appE is null)
                     return 0.0d;
 
-                // todo: @Casper fix me
-                double duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-                return Math.Round(duration / appE.InstantaneousFrameTime);
+                return (double)appE.StatFrameTimeBufFramerate / 10;
             }
             catch (FileNotFoundException ex) { }
 

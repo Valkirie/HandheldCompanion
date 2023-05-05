@@ -563,6 +563,98 @@
                 </Border>
 
             </ui:SimpleStackPanel>
+
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
+
+            <!--  Auto TDP  -->
+            <ui:SimpleStackPanel
+                Name="StackProfileAutoTDP"
+                IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}"
+                Spacing="2">
+                <!--  AutoTDP Toggle  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Auto TDP" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Text="Automatic TDP adjustment to meet requested FPS"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="AutoTDPToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="AutoTDPToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Auto TDP Requested FPS Slider  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="Desired FPS" />
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="8,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                Width="20"
+                                VerticalAlignment="Center"
+                                Text="{Binding Value, StringFormat=N0, ElementName=AutoTDPRequestedFPSSlider, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center" Text="FPS" />
+                            <Slider
+                                x:Name="AutoTDPRequestedFPSSlider"
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="60"
+                                Minimum="30"
+                                SmallChange="10"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="10"
+                                TickPlacement="BottomRight"
+                                ValueChanged="AutoTDPRequestedFPSSlider_ValueChanged" />
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+            </ui:SimpleStackPanel>
+
         </ui:SimpleStackPanel>
 
     </ui:SimpleStackPanel>

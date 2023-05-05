@@ -472,6 +472,41 @@ namespace HandheldCompanion.Views.QuickPages
                 Monitor.Exit(updateLock);
             }
         }
+        private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
+                RequestUpdate();
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void AutoTDPRequestedFPSSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (!AutoTDPToggle.IsOn)
+                return;
+
+            if (!AutoTDPRequestedFPSSlider.IsInitialized)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
+                RequestUpdate();
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+
 
         private void SliderUMCAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
