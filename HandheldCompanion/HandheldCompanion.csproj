@@ -76,10 +76,12 @@
     <None Remove="Resources\overlay_back.png" />
     <None Remove="Resources\Screen.mtl" />
     <None Remove="Resources\Screen.obj" />
+    <None Remove="Resources\seguiemj.ttf" />
     <None Remove="Resources\ShoulderButtonLeft.mtl" />
     <None Remove="Resources\ShoulderButtonLeft.obj" />
     <None Remove="Resources\ShoulderButtonRight.mtl" />
     <None Remove="Resources\ShoulderButtonRight.obj" />
+    <None Remove="Resources\xinput1_x64.dll" />
     <None Remove="Views\Pages\overlay_back.webp" />
   </ItemGroup>
 
@@ -90,6 +92,8 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="Resources\icon.ico" />
+    <Content Include="Resources\seguiemj.ttf" />
+    <Content Include="Resources\xinput1_x64.dll" />
   </ItemGroup>
 
   <ItemGroup>

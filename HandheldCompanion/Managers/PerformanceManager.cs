@@ -7,6 +7,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
@@ -82,7 +83,6 @@ namespace HandheldCompanion.Managers
         private const short INTERVAL_DEGRADED = 5000;           // degraded interval between value scans
 
         // TDP limits
-        private double[] FallbackTDP = new double[3];   // used to store fallback TDP
         private double[] StoredTDP = new double[3];     // used to store TDP
         private double[] CurrentTDP = new double[5];    // used to store current TDP
 
@@ -123,11 +123,6 @@ namespace HandheldCompanion.Managers
             // initialize settings
             SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
 
-            // request GPUclock
-            double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
-            if (GPU != 0)
-                RequestGPUClock(GPU, true);
-
             MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
         }
 
@@ -135,75 +130,6 @@ namespace HandheldCompanion.Managers
         {
             switch (name)
             {
-                case "QuickToolsPerformanceTDPValue":
-                    {
-                        double TDP = Convert.ToDouble(value);
-
-                        RequestTDP(PowerType.Slow, TDP);
-                        RequestTDP(PowerType.Stapm, TDP);
-                        RequestTDP(PowerType.Fast, TDP);
-                    }
-                    break;
-                case "QuickToolsPerformanceTDPEnabled":
-                    {
-                        bool TDPenabled = Convert.ToBoolean(value);
-                        
-                        switch(TDPenabled)
-                        {
-                            case true:
-                                {
-                                    double TDP = SettingsManager.GetDouble("QuickToolsPerformanceTDPValue");
-
-                                    RequestTDP(PowerType.Slow, TDP);
-                                    RequestTDP(PowerType.Stapm, TDP);
-                                    RequestTDP(PowerType.Fast, TDP);
-
-                                    StartTDPWatchdog();
-                                }
-                                break;
-                            case false:
-                                {
-                                    // restore default TDP and halt watchdog
-                                    RequestTDP(MainWindow.CurrentDevice.nTDP);
-                                    StopTDPWatchdog();
-                                }
-                                break;
-                        }
-                    }
-                    break;
-
-                case "QuickToolsPerformanceGPUValue":
-                    {
-                        double GPU = Convert.ToDouble(value);
-                        RequestGPUClock(GPU);
-                    }
-                    break;
-
-                case "QuickToolsPerformanceGPUEnabled":
-                    {
-                        bool GPUenabled = Convert.ToBoolean(value);
-
-                        switch (GPUenabled)
-                        {
-                            case true:
-                                {
-                                    double GPU = SettingsManager.GetDouble("QuickToolsPerformanceGPUValue");
-
-                                    RequestGPUClock(GPU);
-                                    StartGPUWatchdog();
-                                }
-                                break;
-                            case false:
-                                {
-                                    // restore default GPU and halt watchdog
-                                    RequestGPUClock(255 * 50);
-                                    StopGPUWatchdog();
-                                }
-                                break;
-                        }
-                    }
-                    break;
-
                 case "ConfigurableTDPOverrideDown":
                     {
                         TDPMinLimit = Convert.ToDouble(value);
@@ -234,30 +160,54 @@ namespace HandheldCompanion.Managers
 
         private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
         {
-            if (!isCurrent)
+            // skip if part of a profile swap
+            if (isUpdate)
                 return;
 
-            // restore user defined TDP
-            RequestTDP(FallbackTDP, false);
-
-            // stop cpuWatchdog if system settings is disabled
-            bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
-            if ((profile.TDPOverrideEnabled || profile.AutoTDPEnabled) && !cpuWatchdogState)
+            // restore default TDP and halt watchdog
+            if (profile.TDPOverrideEnabled || profile.AutoTDPEnabled)
+            {
+                RequestTDP(MainWindow.CurrentDevice.nTDP);
                 StopTDPWatchdog();
+            }
+
+            // restore default GPU and halt watchdog
+            if (profile.GPUOverrideEnabled)
+            {
+                RequestGPUClock(255 * 50);
+                StopGPUWatchdog();
+            }
         }
 
         private void ProfileManager_Applied(Profile profile)
         {
-            // start cpuWatchdog if system settings is disabled
-            bool cpuWatchdogState = SettingsManager.GetBoolean("QuickToolsPerformanceTDPEnabled");
-            if ((profile.TDPOverrideEnabled || profile.AutoTDPEnabled) && !cpuWatchdogState)
-                StartTDPWatchdog();
+            // if profile is disabled, use default instead
+            if (!profile.Enabled)
+                profile = ProfileManager.GetDefault();
 
             // apply profile defined TDP
-            if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
-                RequestTDP(profile.TDPOverrideValues, false);
+            if (profile.TDPOverrideEnabled || profile.AutoTDPEnabled)
+            {
+                RequestTDP(profile.TDPOverrideValues);
+                StartTDPWatchdog();
+            }
             else
-                RequestTDP(FallbackTDP, false); // redudant with ProfileManager_Discarded ?
+            {
+                RequestTDP(MainWindow.CurrentDevice.nTDP);
+                StopTDPWatchdog();
+            }
+
+            // apply profile defined GPU
+            if (profile.GPUOverrideEnabled)
+            {
+                RequestGPUClock(profile.GPUOverrideValue);
+                StartGPUWatchdog();
+            }
+            else
+            {
+                RequestGPUClock(255 * 50);
+                StopGPUWatchdog();
+            }
 
             // AutoTDP
             if (profile.AutoTDPEnabled && profile.AutoTDPRequestedFPS != 0.0f)
@@ -484,34 +434,25 @@ namespace HandheldCompanion.Managers
             cpuWatchdog.Start();
         }
 
-        public void RequestTDP(PowerType type, double value, bool UserRequested = true)
+        public void RequestTDP(PowerType type, double value)
         {
             int idx = (int)type;
-
-            if (UserRequested)
-                FallbackTDP[idx] = value;
 
             // update value read by timer
             StoredTDP[idx] = value;
         }
 
-        public void RequestTDP(double[] values, bool UserRequested = true)
+        public void RequestTDP(double[] values)
         {
-            for(int idx = (int)PowerType.Slow; idx < (int)PowerType.Fast; idx++)
+            for(int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
             {
-                if (UserRequested)
-                    FallbackTDP[idx] = values[idx];
-
                 // update value read by timer
                 StoredTDP[idx] = values[idx];
             }
         }
 
-        public void RequestGPUClock(double value, bool UserRequested = true)
+        public void RequestGPUClock(double value)
         {
-            if (UserRequested)
-                FallbackGfxClock = value;
-
             // update value read by timer
             StoredGfxClock = value;
         }

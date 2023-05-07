@@ -173,7 +173,7 @@ namespace HandheldCompanion.Managers
                     bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
                     // raise event
-                    Discarded?.Invoke(profile, isCurrent, false);
+                    Discarded?.Invoke(profile, isCurrent, true);
 
                     // update profile
                     UpdateOrCreateProfile(profile);
@@ -208,10 +208,6 @@ namespace HandheldCompanion.Managers
             try
             {
                 var profile = GetProfileFromPath(proc.Path);
-
-                // if profile is disabled, pick default ?
-                if (!profile.Enabled)
-                    profile = GetDefault();
 
                 // skip if is current profile
                 if (currentProfile == profile)
@@ -335,7 +331,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
-                Discarded?.Invoke(profile, isCurrent, false);
+                Discarded?.Invoke(profile, isCurrent, true);
 
                 // send toast
                 // todo: localize me
@@ -343,9 +339,9 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
 
-                // (re)set current profile
+                // restore default profile
                 if (isCurrent)
-                    ApplyProfile(profile);
+                    ApplyProfile(GetDefault());
             }
 
             File.Delete(settingsPath);

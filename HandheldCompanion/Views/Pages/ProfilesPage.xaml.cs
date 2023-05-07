@@ -377,6 +377,8 @@ namespace HandheldCompanion.Views.Pages
                 GlobalSettings.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile
                 Toggle_EnableProfile.IsEnabled = !currentProfile.Default;
+                // prevent user from disabling default profile layout
+                Toggle_ControllerLayout.IsEnabled = !currentProfile.Default;
 
                 // Profile info
                 tB_ProfileName.Text = currentProfile.Name;

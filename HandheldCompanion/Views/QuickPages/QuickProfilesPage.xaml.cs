@@ -41,10 +41,13 @@ namespace HandheldCompanion.Views.QuickPages
             ProfileManager.Applied += ProfileApplied;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
+            HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
             HotkeysManager.HotkeyCreated += TriggerCreated;
+
             InputsManager.TriggerUpdated += TriggerUpdated;
+
+            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
 
             foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
             {
@@ -112,9 +115,23 @@ namespace HandheldCompanion.Views.QuickPages
                 cB_Output.Items.Add(panel);
             }
 
+            // device settings
+            GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
+            GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
+
             UpdateTimer = new Timer(UpdateInterval);
             UpdateTimer.AutoReset = false;
             UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
+        }
+
+        private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                TDPToggle.IsEnabled = CanChangeTDP;
+                GPUToggle.IsEnabled = CanChangeGPU;
+            });
         }
 
         public void SubmitProfile(ProfileUpdateSource source = ProfileUpdateSource.QuickProfilesPage)
@@ -134,7 +151,7 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     case "increaseTDP":
                         {
-                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
+                            if (currentProfile is null || !currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSlider.Value++;
@@ -142,7 +159,7 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "decreaseTDP":
                         {
-                            if (currentProfile is null || currentProfile.Default || !currentProfile.TDPOverrideEnabled)
+                            if (currentProfile is null || !currentProfile.TDPOverrideEnabled)
                                 return;
 
                             TDPSlider.Value--;
@@ -188,7 +205,7 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            if (!isCurrent || profile.Default)
+            if (!isCurrent)
                 return;
 
             if (Monitor.TryEnter(updateLock))
@@ -214,10 +231,6 @@ namespace HandheldCompanion.Views.QuickPages
                 // UI thread (async)
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    // manage visibility here too...
-                    b_CreateProfile.Visibility = Visibility.Collapsed;
-                    GridProfile.Visibility = Visibility.Visible;
-
                     ProfileToggle.IsEnabled = !profile.Default;
                     ProfileToggle.IsOn = profile.Enabled;
                     UMCToggle.IsOn = profile.MotionEnabled;
@@ -230,6 +243,7 @@ namespace HandheldCompanion.Views.QuickPages
                     TDPSlider.Value = TDP[(int)PowerType.Slow];
 
                     TDPToggle.IsOn = profile.TDPOverrideEnabled;
+                    GPUToggle.IsOn = profile.GPUOverrideEnabled;
 
                     AutoTDPToggle.IsOn = profile.AutoTDPEnabled;
                     AutoTDPRequestedFPSSlider.Value = profile.AutoTDPRequestedFPS;
@@ -257,6 +271,8 @@ namespace HandheldCompanion.Views.QuickPages
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+                ProfileIcon.Source = processEx.imgSource;
+
                 if (processEx.MainWindowHandle != IntPtr.Zero)
                 {
                     string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
@@ -274,32 +290,14 @@ namespace HandheldCompanion.Views.QuickPages
 
                 Profile profile = ProfileManager.GetProfileFromPath(currentProcess.Path);
                 if (profile is null || profile.Default)
-                {
                     b_CreateProfile.Visibility = Visibility.Visible;
-                    GridProfile.Visibility = Visibility.Collapsed;
-                }
                 else
-                {
                     b_CreateProfile.Visibility = Visibility.Collapsed;
-                    GridProfile.Visibility = Visibility.Visible;
-                }
             });
         }
 
         private void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                if (currentProcess == processEx)
-                {
-                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
-                    ProcessPath.Text = string.Empty;
-
-                    b_CreateProfile.Visibility = Visibility.Collapsed;
-                    GridProfile.Visibility = Visibility.Collapsed;
-                }
-            });
         }
 
         private void RequestUpdate()
@@ -562,6 +560,40 @@ namespace HandheldCompanion.Views.QuickPages
             if (Monitor.TryEnter(updateLock))
             {
                 currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+                RequestUpdate();
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.GPUOverrideEnabled = (bool)GPUToggle.IsOn;
+                RequestUpdate();
+
+                Monitor.Exit(updateLock);
+            }
+        }
+
+        private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (!GPUToggle.IsOn)
+                return;
+
+            if (!GPUToggle.IsInitialized)
+                return;
+
+            if (Monitor.TryEnter(updateLock))
+            {
+                currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
                 RequestUpdate();
 
                 Monitor.Exit(updateLock);

@@ -409,42 +409,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsPerformanceTDPValue {
-            get {
-                return ((double)(this["QuickToolsPerformanceTDPValue"]));
-            }
-            set {
-                this["QuickToolsPerformanceTDPValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuickToolsPerformanceTDPEnabled {
-            get {
-                return ((bool)(this["QuickToolsPerformanceTDPEnabled"]));
-            }
-            set {
-                this["QuickToolsPerformanceTDPEnabled"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool QuickToolsPerformanceGPUEnabled {
-            get {
-                return ((bool)(this["QuickToolsPerformanceGPUEnabled"]));
-            }
-            set {
-                this["QuickToolsPerformanceGPUEnabled"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int QuickToolsPowerModeValue {
             get {
@@ -452,18 +416,6 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["QuickToolsPowerModeValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsPerformanceTDPBoostValue {
-            get {
-                return ((double)(this["QuickToolsPerformanceTDPBoostValue"]));
-            }
-            set {
-                this["QuickToolsPerformanceTDPBoostValue"] = value;
             }
         }
         
@@ -584,18 +536,6 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["UseEnergyStar"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("500")]
-        public double QuickToolsPerformanceGPUValue {
-            get {
-                return ((double)(this["QuickToolsPerformanceGPUValue"]));
-            }
-            set {
-                this["QuickToolsPerformanceGPUValue"] = value;
             }
         }
         

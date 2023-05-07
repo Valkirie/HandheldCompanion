@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static HandheldCompanion.Managers.EnergyManager;
 
 namespace HandheldCompanion.Controls
@@ -35,6 +36,8 @@ namespace HandheldCompanion.Controls
 
         public IntPtr MainWindowHandle;
         private EfficiencyMode EfficiencyMode;
+
+        public ImageSource imgSource;
 
         public string Path;
 
@@ -103,7 +106,10 @@ namespace HandheldCompanion.Controls
             {
                 var icon = Icon.ExtractAssociatedIcon(Path);
                 if (icon is not null)
-                    ProcessIcon.Source = icon.ToImageSource();
+                {
+                    imgSource = icon.ToImageSource();
+                    ProcessIcon.Source = imgSource;
+                }
             }
         }
 
