@@ -14,7 +14,7 @@ namespace ControllerCommon.Devices
             // device specific capacities
             this.Capacities = DeviceCapacities.FanControl;
 
-            this.FanDetails = new FanDetails()
+            this.ECDetails = new ECDetails()
             {
                 AddressControl = 0x275,
                 AddressDuty = 0x1809,

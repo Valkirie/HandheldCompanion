@@ -23,7 +23,7 @@ namespace ControllerCommon.Devices
             // device specific capacities
             this.Capacities = DeviceCapacities.FanControl;
 
-            this.FanDetails = new FanDetails()
+            this.ECDetails = new ECDetails()
             {
                 AddressControl = 0xC311,
                 AddressDuty = 0xC880,
@@ -81,13 +81,13 @@ namespace ControllerCommon.Devices
 
         public override void SetFanDuty(double percent)
         {
-            if (FanDetails.AddressControl == 0)
+            if (ECDetails.AddressControl == 0)
                 return;
 
-            double duty = percent * (FanDetails.ValueMax - FanDetails.ValueMin) / 100 + FanDetails.ValueMin;
+            double duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
             byte data = Convert.ToByte(duty);
 
-            ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
+            ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
         }
 
         public override bool Open()
@@ -104,7 +104,7 @@ namespace ControllerCommon.Devices
                 EC_Chip_Ver = (byte)(EC_Chip_Ver | 0x80);
 
                 LogManager.LogInformation("Unlocked GPD WIN 4 ({0}) fan control", EC_Chip_Ver);
-                return ECRamDirectWrite(0x1060, EC_Chip_Ver);
+                return ECRamDirectWrite(0x1060, ECDetails, EC_Chip_Ver);
             }
 
             return false;
