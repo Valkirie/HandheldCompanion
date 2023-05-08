@@ -73,8 +73,6 @@ namespace HandheldCompanion.Platforms
         public event UnhookedEventHandler Unhooked;
         public delegate void UnhookedEventHandler(int processId);
 
-        public int AutoTDPProcessId;
-
         public RTSS()
         {
             base.PlatformType = PlatformType.RTSS;
@@ -123,8 +121,6 @@ namespace HandheldCompanion.Platforms
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
             // hook into process manager
-            ProcessManager.ProcessStarted += ProcessManager_ProcessStartedAsync;
-            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         }
 
@@ -137,8 +133,7 @@ namespace HandheldCompanion.Platforms
             // hook new process
             AppEntry appEntry = null;
 
-            var ProcessId = AutoTDPProcessId = processEx.GetProcessId();
-
+            var ProcessId = processEx.GetProcessId();
             if (ProcessId == 0)
                 return;
 
@@ -146,7 +141,7 @@ namespace HandheldCompanion.Platforms
             {
                 try
                 {
-                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
+                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == ProcessId);
                 }
                 catch (Exception) { }
 
@@ -155,16 +150,6 @@ namespace HandheldCompanion.Platforms
             while (appEntry is null);
 
             Hooked?.Invoke(ProcessId);
-        }
-
-        private async void ProcessManager_ProcessStopped(ProcessEx processEx)
-        {
-            // do something
-        }
-
-        private async void ProcessManager_ProcessStartedAsync(ProcessEx processEx, bool OnStartup)
-        {
-            // do something
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
