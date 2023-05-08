@@ -3,6 +3,8 @@ using ControllerCommon.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
 namespace ControllerCommon
 {
@@ -47,6 +49,7 @@ namespace ControllerCommon
 
         public Guid Guid { get; set; } = Guid.NewGuid();
         public string Executable { get; set; } = string.Empty;
+        [JsonPropertyName("Enabled")]
         public bool Enabled { get; set; }
         public bool Default { get; set; }
         public Version Version { get; set; } = new();

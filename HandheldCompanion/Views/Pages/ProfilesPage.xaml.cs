@@ -187,6 +187,7 @@ namespace HandheldCompanion.Views.Pages
                 case ProfileUpdateSource.Background:
                 case ProfileUpdateSource.Creation:
                 case ProfileUpdateSource.Serializer:
+                case ProfileUpdateSource.QuickProfilesPage:
                     return;
             }
 

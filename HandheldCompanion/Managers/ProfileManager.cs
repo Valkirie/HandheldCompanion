@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -81,7 +82,7 @@ namespace HandheldCompanion.Managers
                 {
                     Name = DefaultName,
                     Default = true,
-                    Enabled = true,
+                    Enabled = false,
                     Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
                     LayoutTitle = LayoutTemplate.DefaultLayout.Name,
                     LayoutEnabled = true,
@@ -127,20 +128,25 @@ namespace HandheldCompanion.Managers
             return false;
         }
 
-        public static Profile GetProfileFromPath(string path)
+        public static Profile GetProfileFromPath(string path, bool ignoreStatus)
         {
-            var profile = profiles.Values.Where(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            return profile is not null ? profile : GetDefault();
-        }
+            Profile profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
 
-        public static Profile GetProfileFromExecutable(string fileName)
-        {
-            var profile = profiles.Values.Where(a => a.Executable.Equals(fileName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            return profile is not null ? profile : GetDefault();
+            if (profile is null)
+                return GetDefault();
+
+            // ignore profile status (enabled/disabled)
+            if (ignoreStatus)
+                return profile;
+            else
+                return profile.Enabled ? profile : GetDefault();
         }
 
         private static void ApplyProfile(Profile profile)
         {
+            // might not be the same anymore if disabled
+            profile = GetProfileFromPath(profile.Path, false);
+
             // raise event
             Applied?.Invoke(profile);
 
@@ -161,7 +167,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromPath(processEx.Path);
+                Profile profile = GetProfileFromPath(processEx.Path, false);
 
                 // do not discard default profile
                 if (profile is null || profile.Default)
@@ -189,7 +195,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromPath(processEx.Path);
+                Profile profile = GetProfileFromPath(processEx.Path, true);
 
                 if (profile is null || profile.Default)
                     return;
@@ -207,10 +213,10 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                var profile = GetProfileFromPath(proc.Path);
+                Profile profile = GetProfileFromPath(proc.Path, false);
 
                 // skip if is current profile
-                if (currentProfile == profile)
+                if (profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase))
                     return;
 
                 // raise event
@@ -265,7 +271,10 @@ namespace HandheldCompanion.Managers
 
         public static Profile GetCurrent()
         {
-            return currentProfile;
+            if (currentProfile is not null)
+                return currentProfile;
+
+            return GetDefault();
         }
 
         private static void ProcessProfile(string fileName)
@@ -390,6 +399,7 @@ namespace HandheldCompanion.Managers
             {
                 // update current profile on creation
                 case ProfileUpdateSource.Creation:
+                case ProfileUpdateSource.QuickProfilesPage:
                     currentProfile = profile;
                     break;
             }

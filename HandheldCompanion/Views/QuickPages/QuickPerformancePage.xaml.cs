@@ -17,18 +17,11 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickPerformancePage : Page
     {
-        private bool CanChangeTDP, CanChangeGPU;
-        private Profile currentProfile;
-
         private double[] frequency_slider = new double[4] { 15, 20, 30, 60 };
 
         public QuickPerformancePage()
         {
             InitializeComponent();
-
-            ProfileManager.Updated += ProfileManager_Updated;
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -96,27 +89,6 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                 }
             });
-        }
-
-        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
-        {
-            if (!isCurrent)
-                return;
-
-            currentProfile = profile;
-        }
-
-        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
-        {
-            if (!isCurrent)
-                return;
-
-            currentProfile = null;
-        }
-
-        private void ProfileManager_Applied(Profile profile)
-        {
-            currentProfile = profile;
         }
 
         private void PowerModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

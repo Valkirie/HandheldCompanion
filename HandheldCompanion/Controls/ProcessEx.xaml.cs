@@ -30,6 +30,8 @@ namespace HandheldCompanion.Controls
         }
 
         public Process Process;
+        private int ProcessId;
+
         public ProcessThread MainThread;
 
         public ConcurrentList<int> Children = new();
@@ -94,6 +96,8 @@ namespace HandheldCompanion.Controls
         public ProcessEx(Process process, string path, string executable, ProcessFilter filter) : this()
         {
             this.Process = process;
+            this.ProcessId = process.Id;
+
             this.Path = path;
 
             this.Executable = executable;
@@ -115,13 +119,7 @@ namespace HandheldCompanion.Controls
 
         public int GetProcessId()
         {
-            try
-            {
-                if (Process is not null)
-                    return Process.Id;
-            }
-            catch { }
-            return 0;
+            return ProcessId;
         }
 
         private static ProcessThread GetMainThread(Process process)

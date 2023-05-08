@@ -683,7 +683,7 @@
     <value>Delete profile</value>
   </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
-    <value>Enable profile</value>
+    <value>User per-game profile</value>
   </data>
   <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
     <value>The profile will be automatically applied when the associated application is detected</value>

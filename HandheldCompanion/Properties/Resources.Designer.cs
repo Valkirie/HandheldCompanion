@@ -1648,7 +1648,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable profile.
+        ///   Looks up a localized string similar to User per-game profile.
         /// </summary>
         public static string ProfilesPage_EnableProfile {
             get {

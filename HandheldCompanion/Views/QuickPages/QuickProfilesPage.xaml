@@ -53,20 +53,9 @@
             BorderThickness="0,1,0,0"
             Opacity="0.25" />
 
-        <!--  Buttons  -->
-        <Button
-            Name="b_CreateProfile"
-            Margin="12,2,15,2"
-            HorizontalAlignment="Stretch"
-            d:Visibility="Visible"
-            Click="b_CreateProfile_Click"
-            Content="{x:Static resx:Resources.QuickProfilesPage_Create}"
-            Style="{DynamicResource AccentButtonStyle}"
-            Visibility="Collapsed" />
-
         <Grid Name="StackProfileToggle">
             <!--  Header  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border Padding="15,0,15,0" CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -81,32 +70,24 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xE7EE;" />
 
-                        <StackPanel Margin="12,0,0,0" Orientation="Vertical">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.ProfilesPage_EnableProfileDesc}"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
                     </DockPanel>
 
                     <ui:ToggleSwitch
                         Name="ProfileToggle"
                         Grid.Column="1"
                         HorizontalAlignment="Right"
-                        IsEnabled="False"
                         Style="{DynamicResource InvertedToggleSwitchStyle}"
                         Toggled="ProfileToggle_Toggled" />
                 </Grid>
             </Border>
         </Grid>
 
-        <ui:SimpleStackPanel
-            Name="GridProfile"
-            IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}"
-            Spacing="6">
-
+        <ui:SimpleStackPanel Name="GridProfile" Spacing="6">
             <!--  Separator  -->
             <Separator
                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
@@ -115,10 +96,7 @@
 
             <Grid Name="StackProfileUMC">
                 <!--  Header  -->
-                <Border
-                    Padding="15,6,15,6"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    IsEnabled="{Binding ElementName=ProfileToggle, Path=IsOn}">
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <ui:SimpleStackPanel Spacing="6">
                         <Grid>

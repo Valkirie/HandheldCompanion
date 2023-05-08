@@ -181,10 +181,6 @@ namespace HandheldCompanion.Managers
 
         private void ProfileManager_Applied(Profile profile)
         {
-            // if profile is disabled, use default instead
-            if (!profile.Enabled)
-                profile = ProfileManager.GetDefault();
-
             // apply profile defined TDP
             if (profile.TDPOverrideEnabled || profile.AutoTDPEnabled)
             {
