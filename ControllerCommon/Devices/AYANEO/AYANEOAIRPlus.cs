@@ -1,5 +1,6 @@
 using ControllerCommon.Inputs;
 using System.Collections.Generic;
+using System.Numerics;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -16,6 +17,22 @@ namespace ControllerCommon.Devices
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 3, 33 };
             this.GfxClock = new double[] { 100, 2200 };
+
+            this.AngularVelocityAxis = new Vector3(1.0f, -1.0f, -1.0f);
+            this.AngularVelocityAxisSwap = new()
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' },
+            };
+
+            this.AccelerationAxis = new Vector3(-1.0f, -1.0f, -1.0f);
+            this.AccelerationAxisSwap = new()
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' },
+            };
 
             OEMChords.Add(new DeviceChord("Custom Key Top Right",
                 new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.F16 },
