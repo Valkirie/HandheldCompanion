@@ -26,7 +26,7 @@ namespace ControllerCommon.Devices
         FanControl = 16,
     }
 
-    public struct FanDetails
+    public struct ECDetails
     {
         public ushort AddressRegistry;
         public ushort AddressData;
@@ -51,7 +51,7 @@ namespace ControllerCommon.Devices
 
         public DeviceCapacities Capacities = DeviceCapacities.None;
 
-        public FanDetails FanDetails;
+        public ECDetails ECDetails;
         private static OpenLibSys openLibSys;
 
         // device nominal TDP (slow, fast)
@@ -336,39 +336,69 @@ namespace ControllerCommon.Devices
 
         public virtual void SetFanDuty(double percent)
         {
-            if (FanDetails.AddressDuty == 0)
+            if (ECDetails.AddressDuty == 0)
                 return;
 
-            double duty = percent * (FanDetails.ValueMax - FanDetails.ValueMin) / 100 + FanDetails.ValueMin;
+            double duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
             byte data = Convert.ToByte(duty);
 
-            ECRamDirectWrite(FanDetails.AddressDuty, FanDetails, data);
+            ECRamDirectWrite(ECDetails.AddressDuty, ECDetails, data);
         }
 
         public virtual void SetFanControl(bool enable)
         {
-            if (FanDetails.AddressControl == 0)
+            if (ECDetails.AddressControl == 0)
                 return;
 
             byte data = Convert.ToByte(enable);
-            ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
+            ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
         }
 
-        public static bool ECRamDirectWrite(ushort address, byte data)
+        public static byte ECRamReadByte(ushort address)
         {
             try
             {
-                openLibSys.WriteIoPortByte(address, data);
-                return true;
+                return openLibSys.ReadIoPortByte(address);
             }
             catch (Exception ex)
             {
-                LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
-                return false;
+                LogManager.LogError("Couldn't read byte from address {0} using OpenLibSys. ErrorCode: {1}", address, ex.Message);
+                return 0;
             }
         }
 
-        public static bool ECRamDirectWrite(ushort address, FanDetails details, byte data)
+        public static byte ECRamReadByte(ushort address, ECDetails details, byte data)
+        {
+            byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
+            byte addr_lower = ((byte)(address & byte.MaxValue));
+
+            try
+            {
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)17);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)16);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, data);
+
+                return openLibSys.ReadIoPortByte(details.AddressData);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Couldn't read to port using OpenLibSys. ErrorCode: {0}", ex.Message);
+                return 0;
+            }
+        }
+
+        public static bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
         {
             byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
             byte addr_lower = ((byte)(address & byte.MaxValue));
