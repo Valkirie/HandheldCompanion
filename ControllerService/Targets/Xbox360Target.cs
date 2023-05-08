@@ -31,22 +31,17 @@ namespace ControllerService.Targets
             if (IsConnected)
                 return;
 
-            while (!IsConnected)
+            try
             {
-                try
-                {
-                    virtualController.Connect();
-                    TimerManager.Tick += UpdateReport;
+                virtualController.Connect();
+                TimerManager.Tick += UpdateReport;
 
-                    base.Connect();
-                }
-                catch (Exception ex)
-                {
-                    virtualController.Disconnect();
-
-                    LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
-                    Thread.Sleep(2000);
-                }
+                base.Connect();
+            }
+            catch (Exception ex)
+            {
+                virtualController.Disconnect();
+                LogManager.LogWarning("Failed to connect {0}. {1}", this.ToString(), ex.Message);
             }
         }
 
