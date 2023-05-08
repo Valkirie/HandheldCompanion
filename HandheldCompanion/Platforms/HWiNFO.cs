@@ -480,8 +480,14 @@ namespace HandheldCompanion.Platforms
                 return false;
 
             // Shared Memory Support [12-HOUR LIMIT]
-            SetProperty("OpenSensors", 0);
             SetProperty("SensorsSM", 1);
+
+            // Quiet startup
+            SetProperty("ShowWelcomeAndProgress", 0);
+            SetProperty("OpenSystemSummary", 0);
+            SetProperty("OpenSensors", 0);
+            SetProperty("MinimalizeSensors", 1);
+            SetProperty("MinimalizeSensorsClose", 1);
 
             try
             {
