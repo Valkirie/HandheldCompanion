@@ -21,46 +21,129 @@
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
+
+            <!--  OSD options  -->
             <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="On-screen display options" />
 
-                <!--  Overlay preview  -->
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayPreview}" />
+                <!--  On-screen display level  -->
                 <Border
-                    Padding="12"
-                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
-                    <Border.Background>
-                        <ImageBrush ImageSource="/Resources/overlay_back.png" Stretch="UniformToFill" />
-                    </Border.Background>
 
-                    <Grid Name="PreviewGrid" Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=MainGrid, Path=ActualWidth, ConverterParameter=0.33}">
-                        <Grid Name="TrackpadsPositionUI">
-                            <Border
-                                Width="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                HorizontalAlignment="Left"
-                                Background="Black"
-                                CornerRadius="4"
-                                Opacity="0.5" />
-                            <Border
-                                Width="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                Height="{Binding Converter={StaticResource PercentageConverter}, ElementName=PreviewGrid, Path=ActualHeight, ConverterParameter=0.5}"
-                                HorizontalAlignment="Right"
-                                Background="Black"
-                                CornerRadius="4"
-                                Opacity="0.5" />
-                        </Grid>
-                        <Grid Name="ControllerPositionUI">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
                             <ui:FontIcon
-                                Margin="4,4,0,0"
-                                FontSize="60"
-                                Foreground="Black"
-                                Glyph="&#xE7FC;"
-                                Opacity="0.5" />
-                            <ui:FontIcon FontSize="60" Glyph="&#xE7FC;" />
-                        </Grid>
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE78B;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Display level" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Change the on-screen display level of information"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                x:Name="HelperOnScreenDisplay"
+                                Width="35"
+                                VerticalAlignment="Center"
+                                Text="OFF"
+                                TextAlignment="Center" />
+                            <Slider
+                                x:Name="SliderOnScreenDisplay"
+                                Grid.Column="3"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="1"
+                                Maximum="3"
+                                Minimum="0"
+                                SmallChange="1"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ValueChanged="SliderOnScreenDisplay_ValueChanged" />
+                        </DockPanel>
                     </Grid>
                 </Border>
+
+                <!--  On-screen display update rate  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE823;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Update rate" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Change the on-screen display update rate, in milliseconds"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                x:Name="HelperOnScreenUpdateRate"
+                                Width="35"
+                                VerticalAlignment="Center"
+                                Text="{Binding Value, ElementName=SliderOnScreenUpdateRate, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <Slider
+                                x:Name="SliderOnScreenUpdateRate"
+                                Grid.Column="3"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="200"
+                                Maximum="1000"
+                                Minimum="100"
+                                SmallChange="100"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="100"
+                                TickPlacement="BottomRight"
+                                ValueChanged="SliderOnScreenUpdateRate_ValueChanged" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
             </ui:SimpleStackPanel>
 
             <!--  Controller options  -->
@@ -242,10 +325,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderControllerSize"
                                 Grid.Column="3"
@@ -300,10 +383,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderControllerOpacity"
                                 Margin="6,0,0,0"
@@ -487,10 +570,10 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock
-                                        Width="25"
+                                        Width="35"
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N0, ElementName=Slider_Framerate, Mode=OneWay}"
-                                        TextAlignment="Right" />
+                                        TextAlignment="Center" />
                                     <Slider
                                         x:Name="Slider_Framerate"
                                         Margin="6,0,0,0"
@@ -623,7 +706,7 @@
                                         Width="35"
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}"
-                                        TextAlignment="Right" />
+                                        TextAlignment="Center" />
                                     <Slider
                                         x:Name="Slider_RestingPitch"
                                         Margin="6,0,0,0"
@@ -741,10 +824,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderTrackpadsSize"
                                 Grid.Column="3"
@@ -799,10 +882,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderTrackpadsOpacity"
                                 Margin="6,0,0,0"

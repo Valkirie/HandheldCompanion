@@ -830,9 +830,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int QuickToolsPerformanceFramerateValue {
+        public double QuickToolsPerformanceFramerateValue {
             get {
-                return ((int)(this["QuickToolsPerformanceFramerateValue"]));
+                return ((double)(this["QuickToolsPerformanceFramerateValue"]));
             }
             set {
                 this["QuickToolsPerformanceFramerateValue"] = value;
@@ -860,6 +860,30 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["QuickToolsPerformanceFramerateToggled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double OnScreenDisplayLevel {
+            get {
+                return ((double)(this["OnScreenDisplayLevel"]));
+            }
+            set {
+                this["OnScreenDisplayLevel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public double OnScreenDisplayRefreshRate {
+            get {
+                return ((double)(this["OnScreenDisplayRefreshRate"]));
+            }
+            set {
+                this["OnScreenDisplayRefreshRate"] = value;
             }
         }
     }

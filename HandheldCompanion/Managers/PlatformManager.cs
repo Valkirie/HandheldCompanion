@@ -14,6 +14,7 @@ namespace HandheldCompanion.Managers
 
         // misc platforms
         public static RTSS RTSS = new();
+        public static HWiNFO HWiNFO = new();
 
         private static bool IsInitialized;
 
@@ -37,6 +38,11 @@ namespace HandheldCompanion.Managers
             }
 
             if (RTSS.IsInstalled)
+            {
+                // do something
+            }
+
+            if (HWiNFO.IsInstalled)
             {
                 // do something
             }
@@ -70,6 +76,11 @@ namespace HandheldCompanion.Managers
             if (RTSS.IsInstalled)
             {
                 RTSS.Dispose();
+            }
+
+            if (HWiNFO.IsInstalled)
+            {
+                HWiNFO.Dispose();
             }
 
             IsInitialized = false;

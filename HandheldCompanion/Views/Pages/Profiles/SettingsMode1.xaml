@@ -152,10 +152,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, ElementName=SliderSteeringAngle, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderSteeringAngle"
                                 Grid.Column="4"
@@ -211,10 +211,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderPower"
                                 Grid.Column="4"
@@ -270,10 +270,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, ElementName=SliderDeadzoneAngle, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderDeadzoneAngle"
                                 Grid.Column="4"

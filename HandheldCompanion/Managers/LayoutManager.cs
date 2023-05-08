@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Layout = ControllerCommon.Layout;
 
@@ -29,6 +30,7 @@ namespace HandheldCompanion.Managers
             LayoutTemplate.GamepadJoystickLayout,
         };
 
+        private static bool updateLock;
         private static Layout currentLayout;
 
         public static FileSystemWatcher layoutWatcher { get; set; }
@@ -207,7 +209,7 @@ namespace HandheldCompanion.Managers
 
             // only update current layout if we're not into desktop layout mode
             if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
-                currentLayout = profileLayout.Layout;
+                UpdateCurrentLayout(profileLayout.Layout);
         }
 
         public static Layout GetCurrent()
@@ -242,10 +244,10 @@ namespace HandheldCompanion.Managers
                         switch (toggle)
                         {
                             case true:
-                                currentLayout = desktopLayout.Layout;
+                                UpdateCurrentLayout(desktopLayout.Layout);
                                 break;
                             case false:
-                                currentLayout = profileLayout.Layout;
+                                UpdateCurrentLayout(profileLayout.Layout);
                                 break;
                         }
                     }
@@ -253,10 +255,21 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static async void UpdateCurrentLayout(Layout layout)
+        {
+            while (updateLock)
+                await Task.Delay(5);
+
+            currentLayout = layout;
+        }
+
         public static ControllerState MapController(ControllerState controllerState)
         {
             if (currentLayout is null)
                 return controllerState;
+
+            // set lock
+            updateLock = true;
 
             // clean output state, there should be no leaking of current controller state,
             // only buttons/axes mapped from the layout should be passed on
@@ -367,6 +380,9 @@ namespace HandheldCompanion.Managers
                         break;
                 }
             }
+
+            // release lock
+            updateLock = false;
 
             return outputState;
         }

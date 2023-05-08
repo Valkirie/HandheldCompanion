@@ -606,16 +606,16 @@ namespace ControllerService
                 outIdx += 8;
 
                 //accelerometer
-                if (IMU.Acceleration[XInputSensorFlags.Default] != Vector3.Zero)
+                if (IMU.Acceleration.TryGetValue(XInputSensorFlags.Default, out Vector3 AccelerationVector) && AccelerationVector != Vector3.Zero)
                 {
                     // accelXG
-                    Array.Copy(BitConverter.GetBytes(IMU.Acceleration[XInputSensorFlags.Default].X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(AccelerationVector.X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelYG
-                    Array.Copy(BitConverter.GetBytes(IMU.Acceleration[XInputSensorFlags.Default].Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(AccelerationVector.Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // accelZG
-                    Array.Copy(BitConverter.GetBytes(-IMU.Acceleration[XInputSensorFlags.Default].Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-AccelerationVector.Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else
@@ -625,16 +625,16 @@ namespace ControllerService
                 }
 
                 //gyroscope
-                if (IMU.AngularVelocity[XInputSensorFlags.CenteredRatio] != Vector3.Zero)
+                if (IMU.AngularVelocity.TryGetValue(XInputSensorFlags.CenteredRatio, out Vector3 AngularVector) && AngularVector != Vector3.Zero)
                 {
                     // angVelPitch
-                    Array.Copy(BitConverter.GetBytes(IMU.AngularVelocity[XInputSensorFlags.CenteredRatio].X), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(AngularVector.X), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelYaw
-                    Array.Copy(BitConverter.GetBytes(IMU.AngularVelocity[XInputSensorFlags.CenteredRatio].Y), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(AngularVector.Y), 0, outputData, outIdx, 4);
                     outIdx += 4;
                     // angVelRoll
-                    Array.Copy(BitConverter.GetBytes(-IMU.AngularVelocity[XInputSensorFlags.CenteredRatio].Z), 0, outputData, outIdx, 4);
+                    Array.Copy(BitConverter.GetBytes(-AngularVector.Z), 0, outputData, outIdx, 4);
                     outIdx += 4;
                 }
                 else

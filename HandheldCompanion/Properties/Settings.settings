@@ -203,7 +203,7 @@
     <Setting Name="QuickToolsPerformanceFramerateEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceFramerateValue" Type="System.Int32" Scope="User">
+    <Setting Name="QuickToolsPerformanceFramerateValue" Type="System.Double" Scope="User">
       <Value Profile="(Default)">60</Value>
     </Setting>
     <Setting Name="QuietModeDisclosure" Type="System.Boolean" Scope="User">
@@ -211,6 +211,12 @@
     </Setting>
     <Setting Name="QuickToolsPerformanceFramerateToggled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OnScreenDisplayLevel" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OnScreenDisplayRefreshRate" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

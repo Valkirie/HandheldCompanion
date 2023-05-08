@@ -20,7 +20,7 @@ namespace HandheldCompanion.Views.QuickPages
         private bool CanChangeTDP, CanChangeGPU;
         private Profile currentProfile;
 
-        private double[] frequency_slider = new double[3] { 15, 30, 60 };
+        private double[] frequency_slider = new double[4] { 15, 20, 30, 60 };
 
         public QuickPerformancePage()
         {
@@ -63,12 +63,14 @@ namespace HandheldCompanion.Views.QuickPages
 
             double frequency_current = SystemManager.GetScreenFrequency().frequency;
             frequency_slider[0] = frequency_current / 4.0d;
-            frequency_slider[1] = frequency_current / 2.0d;
-            frequency_slider[2] = frequency_current;
+            frequency_slider[1] = frequency_current / 3.0d;
+            frequency_slider[2] = frequency_current / 2.0d;
+            frequency_slider[3] = frequency_current;
 
-            FramerateQuarter.Text = Convert.ToString(frequency_slider[0]);
-            FramerateHalf.Text = Convert.ToString(frequency_slider[1]);
-            FramerateFull.Text = Convert.ToString(frequency_slider[2]);
+            FramerateQuarter.Text = String.Format("{0:0.#}", frequency_slider[0]);
+            FramerateThird.Text = String.Format("{0:0.#}", frequency_slider[1]);
+            FramerateHalf.Text = String.Format("{0:0.#}", frequency_slider[2]);
+            FramerateFull.Text = String.Format("{0:0.#}", frequency_slider[3]);
 
             UpdateFrequency();
         }
@@ -460,7 +462,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", frequency);
+            SettingsManager.SetProperty("QuickToolsPerformanceFramerateValue", FramerateSlider.Value);
         }
 
         private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)

@@ -27,8 +27,8 @@ namespace HandheldCompanion.Managers
 
             // Quicktools hotkeys
             { 10, new InputsHotkey(InputsHotkeyType.Quicktools, "\uEC7A",   "quickTools",                       "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
-            { 11, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2795",   "increaseTDP",                      "Segoe UI Symbol",      20, false,  true,   null,                   string.Empty,           false,  false) },
-            { 12, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2796",   "decreaseTDP",                      "Segoe UI Symbol",      20, false,  true,   null,                   string.Empty,           false,  false) },
+            { 11, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2795",   "increaseTDP",                      "Segoe UI Symbol",      20, true,   false,  null,                   string.Empty,           false,  false) },
+            { 12, new InputsHotkey(InputsHotkeyType.Quicktools, "\u2796",   "decreaseTDP",                      "Segoe UI Symbol",      20, true,   false,  null,                   string.Empty,           false,  false) },
             { 13, new InputsHotkey(InputsHotkeyType.Quicktools, "\uE769",   "suspendResumeTask",                "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
 
             // Microsoft Windows hotkeys
@@ -44,11 +44,16 @@ namespace HandheldCompanion.Managers
             // Handheld Companion hotkeys
             { 30, new InputsHotkey(InputsHotkeyType.HC,         "\uE7C4",   "shortcutMainwindow",               "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   false) },
             { 31, new InputsHotkey(InputsHotkeyType.HC,         "\uE961",   "shortcutDesktopLayout",            "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   true) },
+            { 32, new InputsHotkey(InputsHotkeyType.HC,         "\uE78B",   "OnScreenDisplayLevel",                  "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   true) },
 
             // Device specific hotkeys
             { 40, new InputsHotkey(InputsHotkeyType.Device,     "\uE9CA",   "QuietModeToggled",                 "Segoe Fluent Icons",   20, false,  true,   null,                   "QuietModeDisclosure",  false,  true) },
-            { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "SteamDeckLizardMouse",             "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck),      "Deprecated",           false,  true) },
-            { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "SteamDeckLizardButtons",           "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck),      "Deprecated",           false,  true) },
+            { 41, new InputsHotkey(InputsHotkeyType.Device,     "\uE706",   "increaseBrightness",               "Segoe Fluent Icons",   20, true,   false,  null,                   "HasBrightnessSupport", false,  false) },
+            { 42, new InputsHotkey(InputsHotkeyType.Device,     "\uEC8A",   "decreaseBrightness",               "Segoe Fluent Icons",   20, true,   false,  null,                   "HasBrightnessSupport", false,  false) },
+            { 43, new InputsHotkey(InputsHotkeyType.Device,     "\uE995",   "increaseVolume",                   "Segoe Fluent Icons",   20, true,   false,  null,                   "HasVolumeSupport",     false,  false) },
+            { 44, new InputsHotkey(InputsHotkeyType.Device,     "\uE993",   "decreaseVolume",                   "Segoe Fluent Icons",   20, true,   false,  null,                   "HasVolumeSupport",     false,  false) },
+            { 45, new InputsHotkey(InputsHotkeyType.Device,     "\uEFA5",   "SteamDeckLizardMouse",             "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck),      "Deprecated",           false,  true) },
+            { 46, new InputsHotkey(InputsHotkeyType.Device,     "\uF093",   "SteamDeckLizardButtons",           "Segoe MDL2 Assets",    20, false,  true,   typeof(SteamDeck),      "Deprecated",           false,  true) },
 
             // User customizable hotkeys
             { 50, new InputsHotkey(InputsHotkeyType.Custom,     "\u2780",   "shortcutCustom0",                  "Segoe UI Symbol",      20, false,  true,   null,                   string.Empty,           false,  false) },

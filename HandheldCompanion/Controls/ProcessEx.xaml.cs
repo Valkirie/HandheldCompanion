@@ -24,6 +24,8 @@ namespace HandheldCompanion.Controls
             Allowed = 0,
             Restricted = 1,
             Ignored = 2,
+            HandheldCompanion = 3,
+            Desktop = 4,
         }
 
         public Process Process;
@@ -120,9 +122,10 @@ namespace HandheldCompanion.Controls
         {
             ProcessThread mainThread = null;
             var startTime = DateTime.MaxValue;
-            foreach (ProcessThread thread in process.Threads)
+
+            try
             {
-                try
+                foreach (ProcessThread thread in process.Threads)
                 {
                     if (thread.StartTime < startTime)
                     {
@@ -130,15 +133,19 @@ namespace HandheldCompanion.Controls
                         mainThread = thread;
                     }
                 }
-                catch (Win32Exception)
-                {
-                    // Access if denied
-                }
-                catch (InvalidOperationException)
-                {
-                    // thread has exited
-                }
             }
+            catch (Win32Exception)
+            {
+                // Access if denied
+            }
+            catch (InvalidOperationException)
+            {
+                // thread has exited
+            }
+
+            if (mainThread is null)
+                mainThread = process.Threads[0];
+
             return mainThread;
         }
 

@@ -27,9 +27,9 @@ namespace ControllerCommon
             chords[false].AddRange(chordUP);
         }
 
-        public string GetChord(bool IsKeyDown)
+        public List<KeyCode> GetChord(bool IsKeyDown)
         {
-            return string.Join(" | ", chords[IsKeyDown].OrderBy(key => key).ToList());
+            return chords[IsKeyDown].OrderBy(key => key).OrderBy(key => key).ToList();
         }
     }
 }

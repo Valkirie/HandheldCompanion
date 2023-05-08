@@ -101,14 +101,14 @@ namespace HandheldCompanion.Views.Pages
                     }
 
                     // update mapping visibility
-                    if (!Controller.IsButtonSupported(button))
+                    if (!Controller.HasSourceButton(button))
                         buttonMapping.Visibility = Visibility.Collapsed;
                     else
                         buttonMapping.Visibility = Visibility.Visible;
                 }
 
                 // manage layout pages visibility
-                bool HasBackGrips = Controller.IsButtonSupported(ButtonFlags.L4) || Controller.IsButtonSupported(ButtonFlags.L5) || Controller.IsButtonSupported(ButtonFlags.R4) || Controller.IsButtonSupported(ButtonFlags.R5);
+                bool HasBackGrips = Controller.HasSourceButton(ButtonFlags.L4) || Controller.HasSourceButton(ButtonFlags.L5) || Controller.HasSourceButton(ButtonFlags.R4) || Controller.HasSourceButton(ButtonFlags.R5);
                 gridBACKGRIPS.Visibility = HasBackGrips ? Visibility.Visible : Visibility.Collapsed;
             });
         }

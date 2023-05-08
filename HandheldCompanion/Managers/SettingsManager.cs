@@ -143,6 +143,12 @@ namespace HandheldCompanion.Managers
                         return GPUvalue;
                     }
 
+                case "HasBrightnessSupport":
+                    return SystemManager.HasBrightnessSupport();
+
+                case "HasVolumeSupport":
+                    return SystemManager.HasVolumeSupport();
+
                 default:
                     {
                         if (temporary && Settings.ContainsKey(name))
