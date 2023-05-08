@@ -8,37 +8,42 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public class AxisState : ICloneable
     {
-        public SortedDictionary<AxisFlags, short> State = new();
+        public short[] State = new short[(int)AxisFlags.MaxValue];
 
         public short this[AxisFlags axis]
         {
             get
             {
-                if (!State.ContainsKey(axis))
-                {
-                    return 0;
-                }
-
-                return State[axis];
+                return State[(int)axis];
             }
 
             set
             {
-                State[axis] = value;
+                State[(int)axis] = value;
             }
         }
 
         [JsonIgnore]
-        public IEnumerable<AxisFlags> Axis => State.Where(a => a.Value != 0).Select(a => a.Key).ToList();
+        public IEnumerable<AxisFlags> Axis => GetAxis();
 
-        public AxisState(SortedDictionary<AxisFlags, short> axisState)
+        public AxisState(short[] axisState)
         {
-            foreach (var state in axisState)
-                this[state.Key] = state.Value;
+            for (int i = 0; i < State.Length; i++)
+                State[i] = axisState[i];
         }
 
         public AxisState()
         {
+        }
+
+        private List<AxisFlags> GetAxis()
+        {
+            List<AxisFlags> buttons = new();
+            for (int i = 0; i < State.Length; i++)
+                if (State[i] != 0)
+                    buttons.Add((AxisFlags)i);
+
+            return buttons;
         }
 
         public bool IsEmpty()
@@ -48,13 +53,14 @@ namespace ControllerCommon.Inputs
 
         public void Clear()
         {
-            State.Clear();
+            for (int i = 0; i < State.Length; i++)
+                State[i] = 0;
         }
 
         public bool Contains(AxisState axisState)
         {
-            foreach (var state in axisState.State)
-                if (this[state.Key] != state.Value)
+            for (int i = 0; i < axisState.State.Length; i++)
+                if (State[i] != axisState.State[i])
                     return false;
 
             return true;
@@ -65,55 +71,35 @@ namespace ControllerCommon.Inputs
             if (this.IsEmpty() || axisState.IsEmpty())
                 return false;
 
-            foreach (var state in axisState.State.Where(a => a.Value is not 0))
-                if (this[state.Key] != state.Value)
-                    return false;
+            for (int i = 0; i < axisState.State.Length; i++)
+                if (axisState.State[i] != 0)
+                    if (State[i] != axisState.State[i])
+                        return false;
 
             return true;
         }
 
         public void AddRange(AxisState axisState)
         {
-            foreach (var state in axisState.State)
-                this[state.Key] = state.Value;
+            for (int i = 0; i < axisState.State.Length; i++)
+                State[i] = axisState.State[i];
         }
 
         public override bool Equals(object obj)
         {
             AxisState axisState = obj as AxisState;
-            if (axisState != null)
-                return EqualsWithValues(State, axisState.State);
+            if (axisState is null)
+                return false;
 
-            return false;
-        }
-
-        public static bool EqualsWithValues(SortedDictionary<AxisFlags, short> obj1, SortedDictionary<AxisFlags, short> obj2)
-        {
-            bool result = false;
-            if (obj1.Count == obj2.Count)
+            for (int i = 0; i < axisState.State.Length; i++)
             {
-                result = true;
-                {
-                    foreach (KeyValuePair<AxisFlags, short> item in obj1)
-                    {
-                        if (obj2.TryGetValue(item.Key, out var value))
-                        {
-                            if (!value.Equals(item.Value))
-                            {
-                                return false;
-                            }
+                if (State[i] == axisState.State[i])
+                    continue;
 
-                            continue;
-                        }
-
-                        return false;
-                    }
-
-                    return result;
-                }
+                return false;
             }
 
-            return result;
+            return true;
         }
 
         public object Clone()
