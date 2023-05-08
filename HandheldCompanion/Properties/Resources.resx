@@ -782,10 +782,10 @@
     <value>Change sustained thermal power limit</value>
   </data>
   <data name="ProfilesPage_TDPOverride" xml:space="preserve">
-    <value>Thermal Power (TDP) Override</value>
+    <value>Thermal Power (TDP) Limit</value>
   </data>
   <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
-    <value>Override the processor thermal power limit</value>
+    <value>Limits processor power for less total power</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controller</value>

@@ -420,7 +420,12 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (!isDrawing)
             {
-                currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
+                // TDP and AutoTDP are mutually exclusive
+                bool toggled = TDPToggle.IsOn;
+                if (toggled)
+                    AutoTDPToggle.IsOn = false;
+
+                currentProfile.TDPOverrideEnabled = toggled;
                 RequestUpdate();
             }
         }
@@ -452,7 +457,12 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (!isDrawing)
             {
-                currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
+                // TDP and AutoTDP are mutually exclusive
+                bool toggled = AutoTDPToggle.IsOn;
+                if (toggled)
+                    TDPToggle.IsOn = false;
+
+                currentProfile.AutoTDPEnabled = toggled;
                 AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
                 RequestUpdate();
             }

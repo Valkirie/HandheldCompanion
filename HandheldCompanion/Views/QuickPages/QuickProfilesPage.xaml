@@ -501,85 +501,6 @@
                 BorderThickness="0,1,0,0"
                 Opacity="0.25" />
 
-            <!--  Manual GPU Clock Control  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
-
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE950;" />
-
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
-                                TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:ToggleSwitch
-                        Name="GPUToggle"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                        Toggled="GPUToggle_Toggled" />
-                </Grid>
-            </Border>
-
-            <!--  Content  -->
-            <Border
-                Padding="15,6,15,6"
-                d:Visibility="Visible"
-                CornerRadius="{DynamicResource ControlCornerRadius}"
-                Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                <DockPanel
-                    Grid.Column="1"
-                    Margin="0,0,0,0"
-                    ScrollViewer.PanningMode="HorizontalOnly">
-                    <TextBlock
-                        Width="30"
-                        VerticalAlignment="Center"
-                        Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}"
-                        TextAlignment="Center" />
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
-                    <Slider
-                        x:Name="GPUSlider"
-                        Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        AutoToolTipPlacement="TopLeft"
-                        AutoToolTipPrecision="0"
-                        IsMoveToPointEnabled="True"
-                        IsSnapToTickEnabled="True"
-                        LargeChange="5"
-                        SmallChange="1"
-                        Style="{DynamicResource SliderStyle1}"
-                        TickFrequency="1"
-                        TickPlacement="BottomRight"
-                        ValueChanged="GPUSlider_ValueChanged" />
-                </DockPanel>
-            </Border>
-
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <!--  Auto TDP  -->
             <ui:SimpleStackPanel Name="StackProfileAutoTDP" Spacing="2">
                 <!--  AutoTDP Toggle  -->
@@ -599,9 +520,10 @@
                                 Glyph="&#xE9D9;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="Auto TDP" />
+                                <TextBlock Text="Automatic TDP" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="Automatic TDP adjustment to meet requested FPS"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
@@ -659,6 +581,85 @@
                                 Value="30" />
                         </DockPanel>
                     </StackPanel>
+                </Border>
+
+                <!--  Separator  -->
+                <Separator
+                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                    BorderThickness="0,1,0,0"
+                    Opacity="0.25" />
+
+                <!--  Manual GPU Clock Control  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE950;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="GPUToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="GPUToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Content  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <DockPanel
+                        Grid.Column="1"
+                        Margin="0,0,0,0"
+                        ScrollViewer.PanningMode="HorizontalOnly">
+                        <TextBlock
+                            Width="30"
+                            VerticalAlignment="Center"
+                            Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}"
+                            TextAlignment="Center" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
+                        <Slider
+                            x:Name="GPUSlider"
+                            Margin="8,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            AutoToolTipPlacement="TopLeft"
+                            AutoToolTipPrecision="0"
+                            IsMoveToPointEnabled="True"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="5"
+                            SmallChange="1"
+                            Style="{DynamicResource SliderStyle1}"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight"
+                            ValueChanged="GPUSlider_ValueChanged" />
+                    </DockPanel>
                 </Border>
 
             </ui:SimpleStackPanel>
