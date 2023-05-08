@@ -167,7 +167,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromPath(processEx.Path, false);
+                Profile profile = GetProfileFromPath(processEx.Path, true);
 
                 // do not discard default profile
                 if (profile is null || profile.Default)
@@ -372,13 +372,14 @@ namespace HandheldCompanion.Managers
 
         private static void SanitizeProfile(Profile profile)
         {
-            string processpath = Path.GetDirectoryName(profile.Path);
             profile.ErrorCode = ProfileErrorCode.None;
 
             if (profile.Default)
                 profile.ErrorCode |= ProfileErrorCode.Default;
             else
             {
+                string processpath = Path.GetDirectoryName(profile.Path);
+
                 if (!Directory.Exists(processpath))
                     profile.ErrorCode |= ProfileErrorCode.MissingPath;
 

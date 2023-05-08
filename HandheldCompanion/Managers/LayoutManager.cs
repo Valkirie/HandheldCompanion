@@ -196,10 +196,6 @@ namespace HandheldCompanion.Managers
 
         private static void UpdateCurrentLayout(Profile profile = null)
         {
-            // if profile is disabled, use default instead
-            if (!profile.Enabled)
-                profile = ProfileManager.GetDefault();
-
             if (profile.LayoutEnabled)
                 profileLayout.Layout = profile.Layout.Clone() as Layout;
             else
