@@ -565,9 +565,9 @@ namespace HandheldCompanion.Managers
             {
                 // read OS specific values
                 bool HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity", "Enabled");
-                bool VulnerableDriverBlocklistEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnabled");
+                bool VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable");
 
-                if (VulnerableDriverBlocklistEnabled || HypervisorEnforcedCodeIntegrityEnabled)
+                if (VulnerableDriverBlocklistEnable || HypervisorEnforcedCodeIntegrityEnabled)
                     LogManager.LogWarning("Core isolation settings are turned on. TDP read/write is disabled");
             }
 
