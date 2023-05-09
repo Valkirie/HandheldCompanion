@@ -96,7 +96,7 @@ namespace HandheldCompanion.Controllers
             SourceAxis.Add(AxisLayoutFlags.RightPad);
         }
 
-        private void ThreadLoop(object? obj)
+        private async void ThreadLoop(object? obj)
         {
             while(ThreadRunning)
             {
@@ -107,6 +107,13 @@ namespace HandheldCompanion.Controllers
                 if (lastRightHapticOn is not null && lastRightHapticOn.IsCompleted || lastRightHapticOn is null)
                     if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
                         lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+
+                if (lastLeftHapticOn is not null)
+                    await lastLeftHapticOn;
+                if (lastRightHapticOn is not null)
+                    await lastRightHapticOn;
+
+                Thread.Sleep(10);
             }
         }
 
