@@ -133,8 +133,10 @@ namespace HandheldCompanion.Views.QuickPages
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                TDPToggle.IsEnabled = CanChangeTDP;
-                GPUToggle.IsEnabled = CanChangeGPU;
+                StackProfileTDP.IsEnabled = CanChangeTDP;
+                StackProfileAutoTDP.IsEnabled = CanChangeTDP;
+
+                StackProfileGPU.IsEnabled = CanChangeGPU;
             });
         }
 
