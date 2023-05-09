@@ -28,7 +28,7 @@ namespace ControllerCommon.Inputs
 
         public ButtonState(bool[] buttonState)
         {
-            for (int i = 0; i < State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
                 State[i] = buttonState[i];
         }
 
@@ -39,7 +39,7 @@ namespace ControllerCommon.Inputs
         private List<ButtonFlags> GetButtons()
         {
             List<ButtonFlags > buttons = new();
-            for (int i = 0; i < State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
                 if (State[i])
                     buttons.Add((ButtonFlags)i);
 
@@ -53,13 +53,13 @@ namespace ControllerCommon.Inputs
 
         public void Clear()
         {
-            for (int i = 0; i < State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
                 State[i] = false;
         }
 
         public bool Contains(ButtonState buttonState)
         {
-            for (int i = 0; i < buttonState.State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
                 if (State[i] != buttonState.State[i])
                     return false;
 
@@ -71,7 +71,7 @@ namespace ControllerCommon.Inputs
             if (this.IsEmpty() || buttonState.IsEmpty())
                 return false;
 
-            for (int i = 0; i < buttonState.State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
                 if (buttonState.State[i])
                     if (State[i] != buttonState.State[i])
                         return false;
@@ -82,7 +82,7 @@ namespace ControllerCommon.Inputs
         public void AddRange(ButtonState buttonState)
         {
             // only add pressed button
-            for (int i = 0; i < buttonState.State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
                 if (buttonState.State[i])
                     State[i] = buttonState.State[i];
         }
@@ -93,7 +93,7 @@ namespace ControllerCommon.Inputs
             if (buttonState is null)
                 return false;
 
-            for (int i = 0; i < buttonState.State.Length; i++)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
             {
                 if (State[i] == buttonState.State[i])
                     continue;

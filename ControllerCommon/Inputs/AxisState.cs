@@ -28,7 +28,7 @@ namespace ControllerCommon.Inputs
 
         public AxisState(short[] axisState)
         {
-            for (int i = 0; i < State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
                 State[i] = axisState[i];
         }
 
@@ -39,7 +39,7 @@ namespace ControllerCommon.Inputs
         private List<AxisFlags> GetAxis()
         {
             List<AxisFlags> buttons = new();
-            for (int i = 0; i < State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
                 if (State[i] != 0)
                     buttons.Add((AxisFlags)i);
 
@@ -53,13 +53,13 @@ namespace ControllerCommon.Inputs
 
         public void Clear()
         {
-            for (int i = 0; i < State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
                 State[i] = 0;
         }
 
         public bool Contains(AxisState axisState)
         {
-            for (int i = 0; i < axisState.State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
                 if (State[i] != axisState.State[i])
                     return false;
 
@@ -71,7 +71,7 @@ namespace ControllerCommon.Inputs
             if (this.IsEmpty() || axisState.IsEmpty())
                 return false;
 
-            for (int i = 0; i < axisState.State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
                 if (axisState.State[i] != 0)
                     if (State[i] != axisState.State[i])
                         return false;
@@ -81,7 +81,7 @@ namespace ControllerCommon.Inputs
 
         public void AddRange(AxisState axisState)
         {
-            for (int i = 0; i < axisState.State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
                 State[i] = axisState.State[i];
         }
 
@@ -91,7 +91,7 @@ namespace ControllerCommon.Inputs
             if (axisState is null)
                 return false;
 
-            for (int i = 0; i < axisState.State.Length; i++)
+            for (int i = 0; i < (int)AxisFlags.MaxValue; i++)
             {
                 if (State[i] == axisState.State[i])
                     continue;
