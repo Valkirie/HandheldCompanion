@@ -160,7 +160,8 @@ namespace HandheldCompanion.Platforms
             catch
             {
                 // shared memory is disabled, halt process
-                Stop();
+                if (prevPoll_time != -1)
+                    Stop();
                 return;
             }
 
@@ -172,7 +173,8 @@ namespace HandheldCompanion.Platforms
             }
 
             // update poll time
-            prevPoll_time = HWiNFOMemory.poll_time;
+            if (HWiNFOMemory.poll_time != 0)
+                prevPoll_time = HWiNFOMemory.poll_time;
 
             // connect to shared memory
             if (MemoryMapped is null)
@@ -307,6 +309,8 @@ namespace HandheldCompanion.Platforms
                                             break;
 
                                         case "PL1 Power Limit":
+                                        case "PL1 Power Limit (Static)":
+                                        case "PL1 Power Limit (Dynamic)":
                                             {
                                                 int reading = (int)Math.Ceiling(element.Value);
                                                 if (reading != MonitoredSensors["PL1"].Value)
@@ -317,6 +321,8 @@ namespace HandheldCompanion.Platforms
                                             }
                                             break;
                                         case "PL2 Power Limit":
+                                        case "PL2 Power Limit (Static)":
+                                        case "PL2 Power Limit (Dynamic)":
                                             {
                                                 int reading = (int)Math.Ceiling(element.Value);
                                                 if (reading != MonitoredSensors["PL2"].Value)
@@ -479,15 +485,6 @@ namespace HandheldCompanion.Platforms
             if (IsRunning())
                 return false;
 
-            // Shared Memory Support [12-HOUR LIMIT]
-            SetProperty("SensorsSM", 1);
-
-            // Quiet startup
-            SetProperty("ShowWelcomeAndProgress", 0);
-            SetProperty("OpenSystemSummary", 0);
-            SetProperty("OpenSensors", 0);
-            SetProperty("MinimalizeSensors", 1);
-            SetProperty("MinimalizeSensorsClose", 1);
 
             try
             {
