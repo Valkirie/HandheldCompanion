@@ -176,7 +176,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="libryzenadj.dll">
+    <None Update="Resources\libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Models\8BitDoLite2\B1-Symbol.obj">
@@ -2118,7 +2118,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Update="libryzenadj.dll">
+    <None Update="Resources\libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\inpoutx64.dll">
@@ -2127,7 +2127,7 @@
     <None Update="Resources\Intel\KX\KX.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="libryzenadj.dll">
+    <None Update="Resources\libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\PromptFont.otf">
