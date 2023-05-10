@@ -293,10 +293,10 @@ namespace HandheldCompanion.Managers
                         // Prevent run away of TDP setpoint value
                         AutoTDP = Math.Clamp(AutoTDP, AutoTDPMin, AutoTDPMax);
 
-                        RequestTDP(new double[3] { AutoTDP, AutoTDP, AutoTDP });
+                        var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                        RequestTDP(values, true);
 
-                        // Log
-                        LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS);
+                        // LogManager.LodDebug("TDPSet\t{0:0.0};{1:0.000};{2:0.0000};{3:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS);
                     }
                 }
 
@@ -461,27 +461,39 @@ namespace HandheldCompanion.Managers
             cpuWatchdog.Start();
         }
 
-        public void RequestTDP(PowerType type, double value)
+        public void RequestTDP(PowerType type, double value, bool immediate = false)
         {
             int idx = (int)type;
 
             // update value read by timer
             StoredTDP[idx] = value;
+
+            // immediately apply
+            if (immediate)
+                processor.SetTDPLimit((PowerType)idx, value);
         }
 
-        public void RequestTDP(double[] values)
+        public void RequestTDP(double[] values, bool immediate = false)
         {
             for(int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
             {
                 // update value read by timer
                 StoredTDP[idx] = values[idx];
+
+                // immediately apply
+                if (immediate)
+                    processor.SetTDPLimit((PowerType)idx, values[idx]);
             }
         }
 
-        public void RequestGPUClock(double value)
+        public void RequestGPUClock(double value, bool immediate = false)
         {
             // update value read by timer
             StoredGfxClock = value;
+
+            // immediately apply
+            if (immediate)
+                processor.SetGPUClock(value);
         }
 
         public void RequestPowerMode(int idx)
