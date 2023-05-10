@@ -4,6 +4,7 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -155,6 +156,7 @@ namespace HandheldCompanion.Managers
 
         private static MMDeviceEnumerator DevEnum;
         private static MMDevice multimediaDevice;
+        private static MMDeviceNotificationClient notificationClient;
         private static bool VolumeSupport;
 
         private static ManagementEventWatcher EventWatcher;
@@ -166,24 +168,26 @@ namespace HandheldCompanion.Managers
         private static Screen PrimaryScreen;
         public static bool IsInitialized;
 
+        private class MMDeviceNotificationClient : IMMNotificationClient
+        {
+            public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
+            {
+                SetDefaultAudioEndPoint();
+            }
+
+            public void OnDeviceAdded(string deviceId) { }
+            public void OnDeviceRemoved(string deviceId) { }
+            public void OnDeviceStateChanged(string deviceId, DeviceState newState) { }
+            public void OnPropertyValueChanged(string deviceId, PropertyKey key) { }
+        }
+
         static SystemManager()
         {
-            // get current volume value
-            try
-            {
-                DevEnum = new MMDeviceEnumerator();
-                multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-
-                if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
-                {
-                    VolumeSupport = true;
-                    multimediaDevice.AudioEndpointVolume.OnVolumeNotification += (data) => VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
-                }
-            }
-            catch (Exception)
-            {
-                LogManager.LogError("No AudioEndpoint available");
-            }
+            // setup the multimedia device and get current volume value
+            notificationClient = new MMDeviceNotificationClient();
+            DevEnum = new MMDeviceEnumerator();
+            DevEnum.RegisterEndpointNotificationCallback(notificationClient);
+            SetDefaultAudioEndPoint();
 
             // get current brightness value
             Scope = new ManagementScope(@"\\.\root\wmi");
@@ -207,6 +211,38 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+        }
+
+        private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
+        {
+            VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
+        }
+
+        private static void SetDefaultAudioEndPoint()
+        {
+            try
+            {
+                if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
+                {
+                    VolumeSupport = false;
+                    multimediaDevice.AudioEndpointVolume.OnVolumeNotification -= AudioEndpointVolume_OnVolumeNotification;
+                }
+
+                multimediaDevice = DevEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+                if (multimediaDevice is not null && multimediaDevice.AudioEndpointVolume is not null)
+                {
+                    VolumeSupport = true;
+                    multimediaDevice.AudioEndpointVolume.OnVolumeNotification += AudioEndpointVolume_OnVolumeNotification;
+                }
+
+                // do this even when no device found, to set to 0
+                VolumeNotification?.Invoke((float)GetVolume());
+            }
+            catch (Exception)
+            {
+                LogManager.LogError("No AudioEndpoint available");
+            }
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -370,6 +406,8 @@ namespace HandheldCompanion.Managers
         {
             if (!IsInitialized)
                 return;
+
+            DevEnum.UnregisterEndpointNotificationCallback(notificationClient);
 
             IsInitialized = false;
 
