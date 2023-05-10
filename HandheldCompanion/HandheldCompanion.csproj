@@ -141,6 +141,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ControllerCommon\ControllerCommon.csproj" />
     <ProjectReference Include="..\ControllerService\ControllerService.csproj" />
+    <ProjectReference Include="..\neptune-hidapi.net\neptune-hidapi.net.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -175,12 +176,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="hidapi.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="hidapi.net.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2179,9 +2174,6 @@
     </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="neptune-hidapi.net">
-      <HintPath>..\Resources\neptune-hidapi.net.dll</HintPath>
     </Reference>
     <Reference Include="RTSSSharedMemoryNET">
       <HintPath>Resources\RTSSSharedMemoryNET.dll</HintPath>
