@@ -486,6 +486,13 @@ namespace HandheldCompanion.Platforms
             if (IsRunning())
                 return false;
 
+            // Shared Memory Support [12-HOUR LIMIT]
+            SetProperty("SensorsSM", 1);
+
+            // Quiet startup
+            // Todo: make this configurable ?
+            SetProperty("OpenSensors", 1);
+            SetProperty("MinimalizeSensors", 1);
 
             try
             {
