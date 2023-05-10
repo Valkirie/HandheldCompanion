@@ -4,6 +4,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
 using SharpDX.Multimedia;
 using System;
@@ -43,6 +44,8 @@ namespace HandheldCompanion.Views.QuickPages
             ProfileManager.Updated += ProfileUpdated;
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Applied += ProfileApplied;
+
+            SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -128,6 +131,20 @@ namespace HandheldCompanion.Views.QuickPages
             UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
         }
 
+        private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ScreenFrequency screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
+
+                FramerateQuarter.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Quarter));
+                FramerateThird.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Third));
+                FramerateHalf.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Half));
+                FramerateFull.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Full));
+            });
+        }
+
         private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
             // UI thread (async)
@@ -188,6 +205,9 @@ namespace HandheldCompanion.Views.QuickPages
                     case "ConfigurableTDPOverrideDown":
                         TDPSlider.Minimum = Convert.ToInt32(value);
                         break;
+                    case "QuickToolsPerformanceFramerateEnabled":
+                        FramerateToggle.IsEnabled = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -244,13 +264,20 @@ namespace HandheldCompanion.Views.QuickPages
                     cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
                     cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
 
-                    // Sustained TDP settings (slow, stapm, long)
+                    // TDP
+                    TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
                     double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
                     TDPSlider.Value = TDP[(int)PowerType.Slow];
 
-                    TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
+                    // GPU
                     GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
+                    GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : (255 * 50);
 
+                    // Framerate
+                    FramerateToggle.IsOn = currentProfile.FramerateEnabled;
+                    FramerateSlider.Value = currentProfile.FramerateValue;
+
+                    // AutoTDP
                     AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
                     AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
 
@@ -437,12 +464,6 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!TDPToggle.IsOn)
-                return;
-
-            if (!TDPSlider.IsInitialized)
-                return;
-
             if (!isDrawing)
             {
                 currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
@@ -473,12 +494,6 @@ namespace HandheldCompanion.Views.QuickPages
         private void AutoTDPRequestedFPSSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (currentProfile is null)
-                return;
-
-            if (!AutoTDPToggle.IsOn)
-                return;
-
-            if (!AutoTDPRequestedFPSSlider.IsInitialized)
                 return;
 
             if (!isDrawing)
@@ -588,15 +603,45 @@ namespace HandheldCompanion.Views.QuickPages
             if (currentProfile is null)
                 return;
 
-            if (!GPUToggle.IsOn)
-                return;
+            if (!isDrawing)
+            {
+                currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
+                RequestUpdate();
+            }
+        }
 
-            if (!GPUToggle.IsInitialized)
+        private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (currentProfile is null)
                 return;
 
             if (!isDrawing)
             {
-                currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
+                currentProfile.FramerateEnabled = (bool)FramerateToggle.IsOn;
+                RequestUpdate();
+            }
+        }
+
+        private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                int value = (int)FramerateSlider.Value;
+
+                foreach (TextBlock tb in FramerateModeGrid.Children)
+                    tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                TextBlock TextBlock = (TextBlock)FramerateModeGrid.Children[value];
+                TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+            });
+
+            if (currentProfile is null)
+                return;
+
+            if (!isDrawing)
+            {
+                currentProfile.FramerateValue = (int)FramerateSlider.Value;
                 RequestUpdate();
             }
         }

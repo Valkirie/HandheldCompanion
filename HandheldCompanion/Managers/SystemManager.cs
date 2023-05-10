@@ -34,7 +34,7 @@ namespace HandheldCompanion.Managers
         public const int DISP_CHANGE_FAILED = -1;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct DEVMODE
+        public struct Display
         {
             public const int DM_DISPLAYFREQUENCY = 0x400000;
             public const int DM_PELSWIDTH = 0x80000;
@@ -87,10 +87,10 @@ namespace HandheldCompanion.Managers
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int ChangeDisplaySettings([In] ref DEVMODE lpDevMode, int dwFlags);
+        private static extern int ChangeDisplaySettings([In] ref Display lpDevMode, int dwFlags);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern bool EnumDisplaySettings(string lpszDeviceName, Int32 iModeNum, ref DEVMODE lpDevMode); [Flags()]
+        private static extern bool EnumDisplaySettings(string lpszDeviceName, Int32 iModeNum, ref Display lpDevMode); [Flags()]
 
         public enum DisplayDeviceStateFlags : int
         {
@@ -150,8 +150,6 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private static DesktopScreen DesktopScreen;
-        private static ScreenResolution ScreenResolution;
-        private static ScreenFrequency ScreenFrequency;
 
         private static MMDeviceEnumerator DevEnum;
         private static MMDevice multimediaDevice;
@@ -163,7 +161,6 @@ namespace HandheldCompanion.Managers
 
         private static bool FanControlSupport;
 
-        private static Screen PrimaryScreen;
         public static bool IsInitialized;
 
         static SystemManager()
@@ -308,26 +305,23 @@ namespace HandheldCompanion.Managers
 
         private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
         {
-            if (PrimaryScreen is null || PrimaryScreen.DeviceName != Screen.PrimaryScreen.DeviceName)
+            Screen PrimaryScreen = Screen.PrimaryScreen;
+
+            if (DesktopScreen is null || DesktopScreen.PrimaryScreen.DeviceName != PrimaryScreen.DeviceName)
             {
-                // update current primary screen
-                PrimaryScreen = Screen.PrimaryScreen;
+                // update current desktop screen
+                DesktopScreen = new DesktopScreen(PrimaryScreen);
 
                 // pull resolutions details
-                var resolutions = GetResolutions(PrimaryScreen.DeviceName);
+                var resolutions = GetResolutions(DesktopScreen.PrimaryScreen.DeviceName);
 
-                // update current desktop screen
-                DesktopScreen = new DesktopScreen(PrimaryScreen.DeviceName);
-
-                foreach (DEVMODE mode in resolutions)
+                foreach (Display mode in resolutions)
                 {
                     ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight);
 
-                    var frequencies = resolutions.Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight).Select(b => b.dmDisplayFrequency).Distinct().ToList();
-                    res.AddFrequencies(frequencies);
-
-                    // sort frequencies
-                    res.SortFrequencies();
+                    List<int> frequencies = resolutions.Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight).Select(b => b.dmDisplayFrequency).Distinct().ToList();
+                    foreach (int frequency in frequencies)
+                        res.frequencies[frequency] = new ScreenFrequency(frequency);
 
                     if (!DesktopScreen.HasResolution(res))
                         DesktopScreen.resolutions.Add(res);
@@ -340,12 +334,9 @@ namespace HandheldCompanion.Managers
                 PrimaryScreenChanged?.Invoke(DesktopScreen);
             }
 
-            // pull current resolution details
-            var resolution = GetResolution(PrimaryScreen.DeviceName);
-
             // update current desktop resolution
-            ScreenResolution = DesktopScreen.GetResolution(resolution.dmPelsWidth, resolution.dmPelsHeight);
-            ScreenFrequency = new ScreenFrequency(resolution.dmDisplayFrequency);
+            DesktopScreen.devMode = GetDisplay(DesktopScreen.PrimaryScreen.DeviceName);
+            var ScreenResolution = DesktopScreen.GetResolution(DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
 
             // raise event
             DisplaySettingsChanged?.Invoke(ScreenResolution);
@@ -354,16 +345,6 @@ namespace HandheldCompanion.Managers
         public static DesktopScreen GetDesktopScreen()
         {
             return DesktopScreen;
-        }
-
-        public static ScreenResolution GetScreenResolution()
-        {
-            return ScreenResolution;
-        }
-
-        public static ScreenFrequency GetScreenFrequency()
-        {
-            return ScreenFrequency;
         }
 
         public static void Stop()
@@ -383,12 +364,12 @@ namespace HandheldCompanion.Managers
 
             bool ret = false;
             long RetVal = 0;
-            DEVMODE dm = new DEVMODE();
-            dm.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+            Display dm = new Display();
+            dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
             dm.dmPelsWidth = width;
             dm.dmPelsHeight = height;
             dm.dmDisplayFrequency = displayFrequency;
-            dm.dmFields = DEVMODE.DM_PELSWIDTH | DEVMODE.DM_PELSHEIGHT | DEVMODE.DM_DISPLAYFREQUENCY;
+            dm.dmFields = Display.DM_PELSWIDTH | Display.DM_PELSHEIGHT | Display.DM_DISPLAYFREQUENCY;
             RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
             if (RetVal == 0)
             {
@@ -405,13 +386,13 @@ namespace HandheldCompanion.Managers
 
             bool ret = false;
             long RetVal = 0;
-            DEVMODE dm = new DEVMODE();
-            dm.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+            Display dm = new Display();
+            dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
             dm.dmPelsWidth = width;
             dm.dmPelsHeight = height;
             dm.dmDisplayFrequency = displayFrequency;
             dm.dmBitsPerPel = bitsPerPel;
-            dm.dmFields = DEVMODE.DM_PELSWIDTH | DEVMODE.DM_PELSHEIGHT | DEVMODE.DM_DISPLAYFREQUENCY;
+            dm.dmFields = Display.DM_PELSWIDTH | Display.DM_PELSHEIGHT | Display.DM_DISPLAYFREQUENCY;
             RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
             if (RetVal == 0)
             {
@@ -421,20 +402,20 @@ namespace HandheldCompanion.Managers
             return ret;
         }
 
-        public static DEVMODE GetResolution(string DeviceName)
+        public static Display GetDisplay(string DeviceName)
         {
-            DEVMODE dm = new DEVMODE();
-            dm.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+            Display dm = new Display();
+            dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
             bool mybool;
             mybool = EnumDisplaySettings(DeviceName, -1, ref dm);
             return dm;
         }
 
-        public static List<DEVMODE> GetResolutions(string DeviceName)
+        public static List<Display> GetResolutions(string DeviceName)
         {
-            List<DEVMODE> allMode = new List<DEVMODE>();
-            DEVMODE dm = new DEVMODE();
-            dm.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+            List<Display> allMode = new List<Display>();
+            Display dm = new Display();
+            dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
             int index = 0;
             while (EnumDisplaySettings(DeviceName, index, ref dm))
             {

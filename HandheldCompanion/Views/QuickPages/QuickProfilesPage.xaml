@@ -133,12 +133,6 @@
                 </Border>
             </Grid>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <Grid Name="StackProfileUMCSettings">
                 <!--  Header  -->
                 <Border
@@ -320,13 +314,11 @@
                             </DockPanel>
                         </ui:SimpleStackPanel>
 
-
                         <!--  Separator  -->
                         <Separator
                             BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                             BorderThickness="0,1,0,0"
                             Opacity="0.25" />
-
 
                         <ui:SimpleStackPanel Name="GridSensivity" Spacing="6">
                             <Grid>
@@ -411,16 +403,127 @@
                                     Value="1" />
                             </DockPanel>
                         </ui:SimpleStackPanel>
-
-                        <!--  Separator  -->
-                        <Separator
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0"
-                            Opacity="0.25" />
-
                     </ui:SimpleStackPanel>
                 </Border>
             </Grid>
+
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
+
+            <!--  Framerate Limit  -->
+            <ui:SimpleStackPanel Name="StackProfileFramerate" Spacing="2">
+
+                <!--  Header  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xF119;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Framerate limit" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Limits framerate for 3D applications"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="FramerateToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="FramerateToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Content  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <DockPanel
+                        Grid.Column="1"
+                        Margin="0,0,0,0"
+                        ScrollViewer.PanningMode="HorizontalOnly">
+
+                        <ui:SimpleStackPanel
+                            Margin="0,0,0,0"
+                            VerticalAlignment="Center"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <Slider
+                                x:Name="FramerateSlider"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="3"
+                                Minimum="0"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ValueChanged="FramerateSlider_ValueChanged" />
+                            <Grid Name="FramerateModeGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Name="FramerateQuarter"
+                                    Grid.Column="0"
+                                    Margin="0,0,51,0"
+                                    HorizontalAlignment="Center"
+                                    Text="|" />
+                                <TextBlock
+                                    Name="FramerateThird"
+                                    Grid.Column="1"
+                                    Margin="0,0,19,0"
+                                    HorizontalAlignment="Center"
+                                    Text="|" />
+                                <TextBlock
+                                    Name="FramerateHalf"
+                                    Grid.Column="2"
+                                    Margin="15,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    Text="|" />
+                                <TextBlock
+                                    Name="FramerateFull"
+                                    Grid.Column="3"
+                                    Margin="50,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    Text="|" />
+                            </Grid>
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
 
             <!--  Thermal Power (TDP) Limit  -->
             <ui:SimpleStackPanel

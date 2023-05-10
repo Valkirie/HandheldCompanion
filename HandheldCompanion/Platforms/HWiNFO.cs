@@ -309,7 +309,7 @@ namespace HandheldCompanion.Platforms
                                             break;
 
                                         case "PL1 Power Limit":
-                                        case "PL1 Power Limit (Static)":
+                                        // case "PL1 Power Limit (Static)":
                                         case "PL1 Power Limit (Dynamic)":
                                             {
                                                 int reading = (int)Math.Ceiling(element.Value);
@@ -321,7 +321,7 @@ namespace HandheldCompanion.Platforms
                                             }
                                             break;
                                         case "PL2 Power Limit":
-                                        case "PL2 Power Limit (Static)":
+                                        // case "PL2 Power Limit (Static)":
                                         case "PL2 Power Limit (Dynamic)":
                                             {
                                                 int reading = (int)Math.Ceiling(element.Value);

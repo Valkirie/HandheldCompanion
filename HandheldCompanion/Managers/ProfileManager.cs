@@ -142,7 +142,7 @@ namespace HandheldCompanion.Managers
                 return profile.Enabled ? profile : GetDefault();
         }
 
-        private static void ApplyProfile(Profile profile)
+        private static void ApplyProfile(Profile profile, bool announce = true)
         {
             // might not be the same anymore if disabled
             profile = GetProfileFromPath(profile.Path, false);
@@ -153,14 +153,16 @@ namespace HandheldCompanion.Managers
             // update current profile
             currentProfile = profile;
 
-            LogManager.LogInformation("Profile {0} applied", profile.Name);
+            // send toast
+            // todo: localize me
+            if (announce)
+            {
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
+                ToastManager.SendToast($"Profile {profile.Name} applied");
+            }
 
             // inform service
             PipeClient.SendMessage(new PipeClientProfile(profile));
-
-            // send toast
-            // todo: localize me
-            ToastManager.SendToast($"Profile {profile.Name} applied");
         }
 
         private static void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -423,9 +425,9 @@ namespace HandheldCompanion.Managers
             // serialize profile
             SerializeProfile(profile);
 
-            // inform service
+            // apply profile (silently)
             if (isCurrent)
-                ApplyProfile(profile);
+                ApplyProfile(profile, false);
 
             // do not update wrapper and cloaking from default profile
             if (profile.Default)

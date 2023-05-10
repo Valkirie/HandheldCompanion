@@ -100,10 +100,11 @@ namespace ControllerCommon
         public bool GPUOverrideEnabled { get; set; }
         public double GPUOverrideValue { get; set; }
 
-
-
         public bool AutoTDPEnabled { get; set; }
         public float AutoTDPRequestedFPS { get; set; } = 30.0f;
+
+        public bool FramerateEnabled { get; set; }
+        public int FramerateValue { get; set; } = 0;
 
         public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 

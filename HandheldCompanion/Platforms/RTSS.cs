@@ -5,6 +5,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Properties;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
@@ -122,6 +123,44 @@ namespace HandheldCompanion.Platforms
 
             // hook into process manager
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
+        }
+
+        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
+        {
+            // skip if part of a profile swap
+            if (isUpdate)
+                return;
+
+            // restore default framerate
+            if (profile.FramerateEnabled)
+                RequestFPS(0);
+        }
+
+        private void ProfileManager_Applied(Profile profile)
+        {
+            // apply profile defined framerate
+            if (profile.FramerateEnabled)
+            {
+                double frequency = SystemManager.GetDesktopScreen().GetFrequency().GetFrequency((Frequency)profile.FramerateValue);
+                RequestFPS(frequency);
+            }
+            else
+            {
+                // restore default framerate
+                RequestFPS(0);
+            }
+        }
+
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
+        {
+            if (!isCurrent)
+                return;
+
+            ProfileManager_Applied(profile);
         }
 
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)

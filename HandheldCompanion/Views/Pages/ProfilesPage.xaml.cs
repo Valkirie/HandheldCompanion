@@ -50,6 +50,8 @@ namespace HandheldCompanion.Views.Pages
             HotkeysManager.HotkeyCreated += TriggerCreated;
             InputsManager.TriggerUpdated += TriggerUpdated;
 
+            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
+
             // draw input modes
             foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
             {
@@ -120,6 +122,16 @@ namespace HandheldCompanion.Views.Pages
 
             // auto-sort
             cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
+        }
+
+        private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                PowerSettings.IsEnabled = CanChangeTDP;
+                // StackProfileGPU.IsEnabled = CanChangeGPU;
+            });
         }
 
         public void SettingsManager_SettingValueChanged(string name, object value)
@@ -363,6 +375,7 @@ namespace HandheldCompanion.Views.Pages
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // enable all expanders
+                // todo: move me to XAML ?
                 ProfileDetails.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
@@ -372,8 +385,6 @@ namespace HandheldCompanion.Views.Pages
 
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
-                // prevent user from setting power settings on default profile
-                PowerSettings.IsEnabled = !currentProfile.Default;
                 // disable global settings on default profile
                 GlobalSettings.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile
