@@ -113,7 +113,7 @@ namespace HandheldCompanion.Controllers
                 if (lastRightHapticOn is not null)
                     await lastRightHapticOn;
 
-                Thread.Sleep(10);
+                Thread.Sleep(TimerManager.GetPeriod());
             }
         }
 
