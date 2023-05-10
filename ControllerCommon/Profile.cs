@@ -3,6 +3,8 @@ using ControllerCommon.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
 namespace ControllerCommon
 {
@@ -47,6 +49,7 @@ namespace ControllerCommon
 
         public Guid Guid { get; set; } = Guid.NewGuid();
         public string Executable { get; set; } = string.Empty;
+        [JsonPropertyName("Enabled")]
         public bool Enabled { get; set; }
         public bool Default { get; set; }
         public Version Version { get; set; } = new();
@@ -93,6 +96,15 @@ namespace ControllerCommon
         // power
         public bool TDPOverrideEnabled { get; set; }
         public double[] TDPOverrideValues { get; set; } = new double[3];
+
+        public bool GPUOverrideEnabled { get; set; }
+        public double GPUOverrideValue { get; set; }
+
+        public bool AutoTDPEnabled { get; set; }
+        public float AutoTDPRequestedFPS { get; set; } = 30.0f;
+
+        public bool FramerateEnabled { get; set; }
+        public int FramerateValue { get; set; } = 0;
 
         public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 

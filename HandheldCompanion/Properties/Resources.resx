@@ -683,7 +683,7 @@
     <value>Delete profile</value>
   </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
-    <value>Enable profile</value>
+    <value>User per-game profile</value>
   </data>
   <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
     <value>The profile will be automatically applied when the associated application is detected</value>
@@ -782,10 +782,10 @@
     <value>Change sustained thermal power limit</value>
   </data>
   <data name="ProfilesPage_TDPOverride" xml:space="preserve">
-    <value>Thermal Power (TDP) Override</value>
+    <value>Thermal Power (TDP) Limit</value>
   </data>
   <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
-    <value>Override the processor thermal power limit</value>
+    <value>Limits processor power for less total power</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controller</value>

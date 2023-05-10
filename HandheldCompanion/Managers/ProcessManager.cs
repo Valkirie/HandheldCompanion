@@ -353,8 +353,16 @@ namespace HandheldCompanion.Managers
                         Processes.TryAdd(processEx.GetProcessId(), processEx);
                         proc.Exited += ProcessHalted;
 
-                        if (processEx.Filter != ProcessFilter.Allowed)
-                            return true;
+                        switch (processEx.Filter)
+                        {
+                            // skip foreground change
+                            case ProcessFilter.Desktop:
+                            case ProcessFilter.HandheldCompanion:
+                                return false;
+                            // continue
+                            default:
+                                break;
+                        }
 
                         // raise event
                         ProcessStarted?.Invoke(processEx, OnStartup);

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -81,7 +82,7 @@ namespace HandheldCompanion.Managers
                 {
                     Name = DefaultName,
                     Default = true,
-                    Enabled = true,
+                    Enabled = false,
                     Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
                     LayoutTitle = LayoutTemplate.DefaultLayout.Name,
                     LayoutEnabled = true,
@@ -127,41 +128,48 @@ namespace HandheldCompanion.Managers
             return false;
         }
 
-        public static Profile GetProfileFromPath(string path)
+        public static Profile GetProfileFromPath(string path, bool ignoreStatus)
         {
-            var profile = profiles.Values.Where(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            return profile is not null ? profile : GetDefault();
+            Profile profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+
+            if (profile is null)
+                return GetDefault();
+
+            // ignore profile status (enabled/disabled)
+            if (ignoreStatus)
+                return profile;
+            else
+                return profile.Enabled ? profile : GetDefault();
         }
 
-        public static Profile GetProfileFromExecutable(string fileName)
+        private static void ApplyProfile(Profile profile, bool announce = true)
         {
-            var profile = profiles.Values.Where(a => a.Executable.Equals(fileName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            return profile is not null ? profile : GetDefault();
-        }
+            // might not be the same anymore if disabled
+            profile = GetProfileFromPath(profile.Path, false);
 
-        private static void ApplyProfile(Profile profile)
-        {
             // raise event
             Applied?.Invoke(profile);
 
             // update current profile
             currentProfile = profile;
 
-            LogManager.LogInformation("Profile {0} applied", profile.Name);
+            // send toast
+            // todo: localize me
+            if (announce)
+            {
+                LogManager.LogInformation("Profile {0} applied", profile.Name);
+                ToastManager.SendToast($"Profile {profile.Name} applied");
+            }
 
             // inform service
             PipeClient.SendMessage(new PipeClientProfile(profile));
-
-            // send toast
-            // todo: localize me
-            ToastManager.SendToast($"Profile {profile.Name} applied");
         }
 
         private static void ProcessManager_ProcessStopped(ProcessEx processEx)
         {
             try
             {
-                Profile profile = GetProfileFromPath(processEx.Path);
+                Profile profile = GetProfileFromPath(processEx.Path, true);
 
                 // do not discard default profile
                 if (profile is null || profile.Default)
@@ -173,7 +181,7 @@ namespace HandheldCompanion.Managers
                     bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
                     // raise event
-                    Discarded?.Invoke(profile, isCurrent, false);
+                    Discarded?.Invoke(profile, isCurrent, true);
 
                     // update profile
                     UpdateOrCreateProfile(profile);
@@ -189,7 +197,7 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                Profile profile = GetProfileFromPath(processEx.Path);
+                Profile profile = GetProfileFromPath(processEx.Path, true);
 
                 if (profile is null || profile.Default)
                     return;
@@ -207,14 +215,10 @@ namespace HandheldCompanion.Managers
         {
             try
             {
-                var profile = GetProfileFromPath(proc.Path);
-
-                // if profile is disabled, pick default ?
-                if (!profile.Enabled)
-                    profile = GetDefault();
+                Profile profile = GetProfileFromPath(proc.Path, false);
 
                 // skip if is current profile
-                if (currentProfile == profile)
+                if (profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase))
                     return;
 
                 // raise event
@@ -269,7 +273,10 @@ namespace HandheldCompanion.Managers
 
         public static Profile GetCurrent()
         {
-            return currentProfile;
+            if (currentProfile is not null)
+                return currentProfile;
+
+            return GetDefault();
         }
 
         private static void ProcessProfile(string fileName)
@@ -335,7 +342,7 @@ namespace HandheldCompanion.Managers
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
-                Discarded?.Invoke(profile, isCurrent, false);
+                Discarded?.Invoke(profile, isCurrent, true);
 
                 // send toast
                 // todo: localize me
@@ -343,9 +350,9 @@ namespace HandheldCompanion.Managers
 
                 LogManager.LogInformation("Deleted profile {0}", settingsPath);
 
-                // (re)set current profile
+                // restore default profile
                 if (isCurrent)
-                    ApplyProfile(profile);
+                    ApplyProfile(GetDefault());
             }
 
             File.Delete(settingsPath);
@@ -367,13 +374,14 @@ namespace HandheldCompanion.Managers
 
         private static void SanitizeProfile(Profile profile)
         {
-            string processpath = Path.GetDirectoryName(profile.Path);
             profile.ErrorCode = ProfileErrorCode.None;
 
             if (profile.Default)
                 profile.ErrorCode |= ProfileErrorCode.Default;
             else
             {
+                string processpath = Path.GetDirectoryName(profile.Path);
+
                 if (!Directory.Exists(processpath))
                     profile.ErrorCode |= ProfileErrorCode.MissingPath;
 
@@ -394,6 +402,7 @@ namespace HandheldCompanion.Managers
             {
                 // update current profile on creation
                 case ProfileUpdateSource.Creation:
+                case ProfileUpdateSource.QuickProfilesPage:
                     currentProfile = profile;
                     break;
             }
@@ -416,9 +425,9 @@ namespace HandheldCompanion.Managers
             // serialize profile
             SerializeProfile(profile);
 
-            // inform service
+            // apply profile (silently)
             if (isCurrent)
-                ApplyProfile(profile);
+                ApplyProfile(profile, false);
 
             // do not update wrapper and cloaking from default profile
             if (profile.Default)
