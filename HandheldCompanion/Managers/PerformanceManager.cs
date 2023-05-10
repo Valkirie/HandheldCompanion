@@ -252,24 +252,23 @@ namespace HandheldCompanion.Managers
                     if (ProcessValueFPS != 0)
                     {
                         // Be realistic with expectd proces value
-                        ProcessValueFPS = Math.Clamp(ProcessValueFPS, 1, 500);
+                        ProcessValueFPS = Math.Clamp(ProcessValueFPS, 5, 500);
 
                         // If actual and target FPS are very similar, add a small amount of positive "error" make controller always try to reduce
-                        double ProcessValueFPSModifier = 0;
-                        if (AutoTDPTargetFPS - 0.2 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1) { ProcessValueFPSModifier = 0.5; }
+                        double ProcessValueFPSModifier = AutoTDPTargetFPS - 0.2 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1 ? 0.5 : 0.0;
 
                         // Determine error amount
                         double ControllerError = AutoTDPTargetFPS - ProcessValueFPS - ProcessValueFPSModifier;
 
                         // Clamp error amount that is corrected within a single cycle
-                        // -5 +15, going lower always overshoots (not safe, leads to instability), going higher always undershoots (which is safe)
-                        // Adjust clamp in case of actual FPS being 2.5x requested FPS, menu's going to 300+ fps for example.
+                        // Adjust clamp in case of actual FPS being 2.5x requested FPS, for example, menu's going to 300+ fps.
                         double ClampLowerLimit = ProcessValueFPS >= 2.5 * AutoTDPTargetFPS ? -100 : -5;
+                        // -5 +15, going lower always overshoots (not safe, leads to instability), going higher always undershoots (which is safe)
                         ControllerError = Math.Clamp(ControllerError, ClampLowerLimit, 15);
 
                         // Todo, use TDP from profile or some average device range value for the initial setpoint to allow continuation from last time?
 
-                        // Based on FPS/TDP ratio, determine how much adjustment is needed
+                        // Based on TDP/FPS ratio, determine how much adjustment is needed
                         double TDPAdjustment = ControllerError * AutoTDP / ProcessValueFPS;
                         // Going lower or higher, we need to reduce the amount of TDP by a factor.
                         if (ControllerError < 0.0)
