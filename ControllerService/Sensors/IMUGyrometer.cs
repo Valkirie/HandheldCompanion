@@ -1,6 +1,8 @@
+using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;
@@ -50,9 +52,16 @@ namespace ControllerService.Sensors
             switch (sensorFamily)
             {
                 case SensorFamily.Windows:
-                    ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
+                    {
+                        // workaround Bosch BMI323
+                        string path = ((Gyrometer)sensor).DeviceId;
+                        using (PnPDetails details = DeviceManager.GetDeviceByInterfaceId(path))
+                            details.CyclePort();
 
-                    LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
+                        ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
+
+                        LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
+                    }
                     break;
                 case SensorFamily.SerialUSBIMU:
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
