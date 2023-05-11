@@ -22,7 +22,7 @@ namespace HandheldCompanion.Views.Pages
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-            SliderOnScreenDisplay.IsEnabled = PlatformManager.RTSS.IsInstalled;
+            OnScreenDisplayLevel.IsEnabled = PlatformManager.RTSS.IsInstalled;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -76,7 +76,7 @@ namespace HandheldCompanion.Views.Pages
                         Toggle_MotionActivated.IsOn = Convert.ToBoolean(value);
                         break;
                     case "OnScreenDisplayLevel":
-                        SliderOnScreenDisplay.Value = Convert.ToDouble(value);
+                        OnScreenDisplayLevel.SelectedIndex = Convert.ToInt32(value);
                         break;
                     case "OnScreenDisplayRefreshRate":
                         SliderOnScreenUpdateRate.Value = Convert.ToDouble(value);
@@ -323,28 +323,12 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("OverlayControllerAlwaysOnTop", Toggle_AlwaysOnTop.IsOn);
         }
 
-        private void SliderOnScreenDisplay_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void OnScreenDisplayLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            double value = SliderOnScreenDisplay.Value;
-
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                switch (value)
-                {
-                    case 0:
-                        HelperOnScreenDisplay.Text = "OFF";
-                        break;
-                    default:
-                        HelperOnScreenDisplay.Text = Convert.ToString(value);
-                        break;
-                }
-            });
-
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("OnScreenDisplayLevel", value);
+            SettingsManager.SetProperty("OnScreenDisplayLevel", OnScreenDisplayLevel.SelectedIndex);
         }
 
         private void SliderOnScreenUpdateRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
