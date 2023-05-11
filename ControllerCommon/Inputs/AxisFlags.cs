@@ -13,5 +13,7 @@ namespace ControllerCommon.Inputs
         // Steam Deck
         LeftPadX = 7, RightPadX = 8,
         LeftPadY = 9, RightPadY = 10,
+
+        MaxValue = 11
     }
 }

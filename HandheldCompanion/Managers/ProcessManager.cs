@@ -272,8 +272,7 @@ namespace HandheldCompanion.Managers
                 PipeClient.SendMessage(new PipeClientProcess { executable = currentProcess.Executable, platform = currentProcess.Platform });
 
                 // raise event
-                if (!previousProcess.Executable.Equals(currentProcess.Executable))
-                    ForegroundChanged?.Invoke(currentProcess, previousProcess);
+                ForegroundChanged?.Invoke(currentProcess, previousProcess);
             }
             catch
             {
@@ -354,8 +353,16 @@ namespace HandheldCompanion.Managers
                         Processes.TryAdd(processEx.GetProcessId(), processEx);
                         proc.Exited += ProcessHalted;
 
-                        if (processEx.Filter != ProcessFilter.Allowed)
-                            return true;
+                        switch (processEx.Filter)
+                        {
+                            // skip foreground change
+                            case ProcessFilter.Desktop:
+                            case ProcessFilter.HandheldCompanion:
+                                return false;
+                            // continue
+                            default:
+                                break;
+                        }
 
                         // raise event
                         ProcessStarted?.Invoke(processEx, OnStartup);

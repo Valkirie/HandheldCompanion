@@ -161,7 +161,7 @@ namespace ControllerCommon.Managers
                 return null;
         }
 
-        private static PnPDetails FindDeviceFromUSB(string SymLink, bool Removed)
+        public static PnPDetails FindDeviceFromUSB(string SymLink, bool Removed)
         {
             PnPDetails details = PnPDevices.Values.Where(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
 
@@ -185,7 +185,7 @@ namespace ControllerCommon.Managers
             return details;
         }
 
-        private static PnPDetails FindDeviceFromHID(string SymLink, bool Removed)
+        public static PnPDetails FindDeviceFromHID(string SymLink, bool Removed)
         {
             PnPDevices.TryGetValue(SymLink, out var device);
             return device;
@@ -279,6 +279,22 @@ namespace ControllerCommon.Managers
             return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a => a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
         }
 
+        public static PnPDetails GetDeviceByInterfaceId(string path)
+        {
+            PnPDevice device = PnPDevice.GetDeviceByInterfaceId(path);
+            if (device is null)
+                return null;
+
+            return new PnPDetails()
+            {
+                Path = path,
+                SymLink = PathToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString()),
+
+                deviceInstanceId = device.InstanceId,
+                baseContainerDeviceInstanceId = device.InstanceId
+            };
+        }
+
         public static string GetManufacturerString(string path)
         {
             using var handle = Kernel32.CreateFile(path,
@@ -361,9 +377,12 @@ namespace ControllerCommon.Managers
             return (((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1205)) || ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1142)) || (0x05 == capabilities.UsagePage) || (0x01 == capabilities.UsagePage) && ((0x04 == capabilities.Usage) || (0x05 == capabilities.Usage)));
         }
 
-        private static PnPDetails GetPnPDeviceEx(string SymLink)
+        public static PnPDetails GetPnPDeviceEx(string SymLink)
         {
-            return PnPDevices[SymLink];
+            if (PnPDevices.TryGetValue(SymLink, out PnPDetails details))
+                return details;
+
+            return null;
         }
 
         public static string PathToInstanceId(string SymLink, string InterfaceGuid)

@@ -2,6 +2,7 @@
 using ControllerCommon.Utils;
 using System;
 using System.Numerics;
+using System.Windows.Forms;
 
 namespace ControllerCommon.Actions
 {
@@ -56,7 +57,12 @@ namespace ControllerCommon.Actions
             if (ImproveCircularity)
                 layout.vector = InputUtils.ImproveCircularity(layout.vector);
 
-            this.Vector = (AxisRotated ? new(layout.vector.Y, -layout.vector.X) : layout.vector) * (AxisInverted ? -1.0f : 1.0f);
+            if (AutoRotate)
+                this.Vector = (((this.Orientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90) ? new(layout.vector.Y, -layout.vector.X) : layout.vector)
+                              * (((this.Orientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180) ? -1.0f : 1.0f);
+            else
+                this.Vector = (AxisRotated ? new(layout.vector.Y, -layout.vector.X) : layout.vector)
+                              * (AxisInverted ? -1.0f : 1.0f);
         }
 
         public Vector2 GetValue()

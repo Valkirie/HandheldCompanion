@@ -30,7 +30,7 @@ namespace ControllerCommon.Devices
             // device specific capacities
             this.Capacities = DeviceCapacities.FanControl;
 
-            this.FanDetails = new FanDetails()
+            this.ECDetails = new ECDetails()
             {
                 AddressControl = 0x44A,
                 AddressDuty = 0x44B,
@@ -92,13 +92,13 @@ namespace ControllerCommon.Devices
 
             // allow OneX button to pass key inputs
             LogManager.LogInformation("Unlocked {0} OEM button", "");
-            return ECRamDirectWrite(0xF1, 0x40);
+            return ECRamDirectWrite(0xF1, ECDetails, 0x40);
         }
 
         public override void Close()
         {
             LogManager.LogInformation("Locked {0} OEM button", "");
-            ECRamDirectWrite(0xF1, 0x00);
+            ECRamDirectWrite(0xF1, ECDetails, 0x00);
             base.Close();
         }
     }

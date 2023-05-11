@@ -1,6 +1,9 @@
 ﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Windows.Documents;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -17,23 +20,18 @@ namespace ControllerCommon.Devices
             this.cTDP = new double[] { 5, 28 };
             this.GfxClock = new double[] { 100, 2200 };
 
-            // Note, requires new feature to enable, somehow, TBD.            
-            // win4 EC address（2E，2F）：Speed Read：0xC880,0xC881，C880 - high byte，C881 - low byte；Control：0xC311，0 - auto，> 0:manual，Set Speed from 1 to 127，127 - 100 %.
-
             // device specific capacities
-            //this.Capacities = DeviceCapacities.FanControl;
+            this.Capacities = DeviceCapacities.FanControl;
 
-            /*
-            this.FanDetails = new FanDetails()
+            this.ECDetails = new ECDetails()
             {
-                AddressControl = 0xC311,// done
-                AddressDuty = 0x1809,   // unsure
-                AddressRegistry = 0x2E, // done
-                AddressData = 0x2F,     // done
-                ValueMin = 0,           // done
-                ValueMax = 127          // done
+                AddressControl = 0xC311,
+                AddressDuty = 0xC880,
+                AddressRegistry = 0x2E,
+                AddressData = 0x2F,
+                ValueMin = 1,
+                ValueMax = 127,
             };
-            */
 
             this.AngularVelocityAxis = new Vector3(-1.0f, -1.0f, 1.0f);
             this.AngularVelocityAxisSwap = new()
@@ -69,6 +67,52 @@ namespace ControllerCommon.Devices
                 new List<KeyCode>() { KeyCode.F12, KeyCode.R },
                 false, ButtonFlags.OEM3
                 ));
+        }
+
+        public override void SetFanControl(bool enable)
+        {
+            switch(enable)
+            {
+                case false:
+                    base.SetFanDuty(0);
+                    return;
+            }
+        }
+
+        public override void SetFanDuty(double percent)
+        {
+            if (ECDetails.AddressControl == 0)
+                return;
+
+            double duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
+            byte data = Convert.ToByte(duty);
+
+            ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
+        }
+
+        public override bool Open()
+        {
+            bool success = base.Open();
+            if (!success)
+                return false;
+
+            // allow fan manipulation
+            byte EC_Chip_ID1 = ECRamReadByte(0x2000);
+            if (EC_Chip_ID1 == 0x55)
+            {
+                byte EC_Chip_Ver = ECRamReadByte(0x1060);
+                EC_Chip_Ver = (byte)(EC_Chip_Ver | 0x80);
+
+                LogManager.LogInformation("Unlocked GPD WIN 4 ({0}) fan control", EC_Chip_Ver);
+                return ECRamDirectWrite(0x1060, ECDetails, EC_Chip_Ver);
+            }
+
+            return false;
+        }
+
+        public override void Close()
+        {
+            base.Close();
         }
     }
 }

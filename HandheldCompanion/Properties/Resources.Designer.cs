@@ -1648,7 +1648,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable profile.
+        ///   Looks up a localized string similar to User per-game profile.
         /// </summary>
         public static string ProfilesPage_EnableProfile {
             get {
@@ -1981,7 +1981,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thermal Power (TDP) Override.
+        ///   Looks up a localized string similar to Thermal Power (TDP) Limit.
         /// </summary>
         public static string ProfilesPage_TDPOverride {
             get {
@@ -1990,7 +1990,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Override the processor thermal power limit.
+        ///   Looks up a localized string similar to Limits processor power for less total power.
         /// </summary>
         public static string ProfilesPage_TDPOverrideDesc {
             get {

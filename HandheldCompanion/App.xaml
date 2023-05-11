@@ -64,6 +64,7 @@
             <converters:IndexToVisibilityConverter x:Key="IndexToVisibilityConverter" />
             <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
             <converters:PercentageConverter x:Key="PercentageConverter" />
+            <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

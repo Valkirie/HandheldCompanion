@@ -101,8 +101,34 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
-                            <!--  Axis rotation  -->
+                            <!--  Auto rotate  -->
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200" />
+                                    <ColumnDefinition MinWidth="80" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Rotate to match screen orientation" />
+
+                                <ui:ToggleSwitch
+                                    Name="Axis2AxisAutoRotate"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Axis2AxisAutoRotate_Toggled" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                            <!--  Axis rotation  -->
+                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2AxisAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock
@@ -258,8 +284,34 @@
                     <ui:SimpleStackPanel Spacing="12">
                         <ui:SimpleStackPanel Spacing="6">
 
-                            <!--  Axis rotation  -->
+                            <!--  Auto rotate  -->
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="9*" MinWidth="200" />
+                                    <ColumnDefinition MinWidth="80" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Rotate to match screen orientation" />
+
+                                <ui:ToggleSwitch
+                                    Name="Axis2MouseAutoRotate"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Axis2MouseAutoRotate_Toggled" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                            <!--  Axis rotation  -->
+                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2MouseAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock

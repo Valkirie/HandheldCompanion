@@ -5,11 +5,13 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using Layout = ControllerCommon.Layout;
 
@@ -29,7 +31,9 @@ namespace HandheldCompanion.Managers
             LayoutTemplate.GamepadJoystickLayout,
         };
 
+        private static bool updateLock;
         private static Layout currentLayout;
+        private static ScreenRotation currentOrientation = new();
 
         public static FileSystemWatcher layoutWatcher { get; set; }
 
@@ -72,6 +76,8 @@ namespace HandheldCompanion.Managers
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            SystemManager.DisplayOrientationChanged += DesktopManager_DisplayOrientationChanged;
         }
 
         public static void Start()
@@ -177,37 +183,33 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile)
         {
-            UpdateCurrentLayout(profile);
+            UpdateProfileLayout(profile);
         }
 
         private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             // ignore profile update if not current or not running
             if (isCurrent && (profile.ErrorCode.HasFlag(ProfileErrorCode.Running & ProfileErrorCode.Default)))
-                UpdateCurrentLayout(profile);
+                UpdateProfileLayout(profile);
         }
 
         private static void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
         {
             // ignore discard signal if part of a profile switch
             if (!isUpdate)
-                UpdateCurrentLayout();
+                UpdateProfileLayout();
         }
 
-        private static void UpdateCurrentLayout(Profile profile = null)
+        private static void UpdateProfileLayout(Profile profile = null)
         {
-            Profile defaultProfile = ProfileManager.GetDefault();
-
-            if (profile is not null && profile.LayoutEnabled && profile.Enabled)
+            if (profile.LayoutEnabled)
                 profileLayout.Layout = profile.Layout.Clone() as Layout;
-            else if (defaultProfile is not null && defaultProfile.LayoutEnabled && defaultProfile.Enabled)
-                profileLayout.Layout = defaultProfile.Layout.Clone() as Layout;
             else
                 profileLayout.Layout = null;
 
             // only update current layout if we're not into desktop layout mode
             if (!SettingsManager.GetBoolean("shortcutDesktopLayout", true))
-                currentLayout = profileLayout.Layout;
+                UpdateCurrentLayout(profileLayout.Layout);
         }
 
         public static Layout GetCurrent()
@@ -242,10 +244,10 @@ namespace HandheldCompanion.Managers
                         switch (toggle)
                         {
                             case true:
-                                currentLayout = desktopLayout.Layout;
+                                UpdateCurrentLayout(desktopLayout.Layout);
                                 break;
                             case false:
-                                currentLayout = profileLayout.Layout;
+                                UpdateCurrentLayout(profileLayout.Layout);
                                 break;
                         }
                     }
@@ -253,20 +255,57 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static void DesktopManager_DisplayOrientationChanged(ScreenRotation rotation)
+        {
+            currentOrientation = rotation;
+
+            // apply orientation
+            UpdateOrientation();
+        }
+
+        private static void UpdateOrientation()
+        {
+            foreach (var axisLayout in currentLayout.AxisLayout)
+            {
+                // pull action
+                IActions action = axisLayout.Value;
+
+                if (action is null)
+                    continue;
+
+                if (action.AutoRotate)
+                    action.SetOrientation(currentOrientation);
+            }
+        }
+          
+        private static async void UpdateCurrentLayout(Layout layout)
+        {
+            while (updateLock)
+                await Task.Delay(5);
+
+            currentLayout = layout;
+
+            // restore orientation
+            UpdateOrientation();
+        }
+
         public static ControllerState MapController(ControllerState controllerState)
         {
             if (currentLayout is null)
                 return controllerState;
 
+            // set lock
+            updateLock = true;
+
             // clean output state, there should be no leaking of current controller state,
             // only buttons/axes mapped from the layout should be passed on
             ControllerState outputState = new();
 
-            foreach (var buttonState in controllerState.ButtonState.State)
+            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
             {
-                ButtonFlags button = buttonState.Key;
-                bool value = buttonState.Value;
-
+                ButtonFlags button = (ButtonFlags)i;
+                bool value = controllerState.ButtonState.State[i];
+                
                 // skip, if not mapped
                 if (!currentLayout.ButtonLayout.TryGetValue(button, out IActions action))
                     continue;
@@ -367,6 +406,9 @@ namespace HandheldCompanion.Managers
                         break;
                 }
             }
+
+            // release lock
+            updateLock = false;
 
             return outputState;
         }

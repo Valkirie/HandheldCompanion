@@ -209,7 +209,7 @@ namespace HandheldCompanion.Managers
                             // stop hold timer
                             InputsChordHoldTimer.Stop();
                         }
-                        else if (IsKeyUp)
+                        // else if (IsKeyUp)
                             KeyboardSimulator.KeyUp(chords.ToArray());
 
                         return true;

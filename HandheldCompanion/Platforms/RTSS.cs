@@ -5,6 +5,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Properties;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
@@ -121,9 +122,45 @@ namespace HandheldCompanion.Platforms
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
             // hook into process manager
-            ProcessManager.ProcessStarted += ProcessManager_ProcessStartedAsync;
-            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
+        }
+
+        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
+        {
+            // skip if part of a profile swap
+            if (isUpdate)
+                return;
+
+            // restore default framerate
+            if (profile.FramerateEnabled)
+                RequestFPS(0);
+        }
+
+        private void ProfileManager_Applied(Profile profile)
+        {
+            // apply profile defined framerate
+            if (profile.FramerateEnabled)
+            {
+                double frequency = SystemManager.GetDesktopScreen().GetFrequency().GetFrequency((Frequency)profile.FramerateValue);
+                RequestFPS(frequency);
+            }
+            else
+            {
+                // restore default framerate
+                RequestFPS(0);
+            }
+        }
+
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
+        {
+            if (!isCurrent)
+                return;
+
+            ProfileManager_Applied(profile);
         }
 
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
@@ -139,10 +176,9 @@ namespace HandheldCompanion.Platforms
             {
                 try
                 {
-                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == ProcessId).FirstOrDefault();
+                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == ProcessId);
                 }
-                catch (InvalidOperationException) { }
-                catch (FileNotFoundException) { }
+                catch (Exception) { }
 
                 await Task.Delay(250);
             }
@@ -153,16 +189,6 @@ namespace HandheldCompanion.Platforms
                 Unhooked?.Invoke(backgroundEx.GetProcessId());
 
             Hooked?.Invoke(ProcessId);
-        }
-
-        private async void ProcessManager_ProcessStopped(ProcessEx processEx)
-        {
-            // do something
-        }
-
-        private async void ProcessManager_ProcessStartedAsync(ProcessEx processEx, bool OnStartup)
-        {
-            // do something
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -182,7 +208,7 @@ namespace HandheldCompanion.Platforms
                 Start();
         }
 
-        public double GetInstantaneousFramerate(int processId)
+        public double GetFramerate(int processId)
         {
             try
             {
@@ -190,9 +216,7 @@ namespace HandheldCompanion.Platforms
                 if (appE is null)
                     return 0.0d;
 
-                // todo: @Casper fix me
-                double duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-                return Math.Round(duration / appE.InstantaneousFrameTime);
+                return (double)appE.StatFrameTimeBufFramerate / 10;
             }
             catch (FileNotFoundException ex) { }
 

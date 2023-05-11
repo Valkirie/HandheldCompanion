@@ -112,7 +112,9 @@ namespace HandheldCompanion.Platforms
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;
-        private ConcurrentDictionary<uint, Sensor> HWiNFOSensors;
+
+        private ConcurrentDictionary<uint, Sensor> HWiNFOSensors = new();
+        public ConcurrentDictionary<string, SensorElement> MonitoredSensors = new();
 
         public HWiNFO()
         {
@@ -149,6 +151,12 @@ namespace HandheldCompanion.Platforms
                 Stop();
             Start();
 
+            // initialize a few values
+            // todo: improve me
+            MonitoredSensors["PL1"] = new SensorElement();
+            MonitoredSensors["PL2"] = new SensorElement();
+            MonitoredSensors["CPUFrequency"] = new SensorElement();
+
             MemoryTimer = new(MemoryInterval);
             MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
 
@@ -166,7 +174,8 @@ namespace HandheldCompanion.Platforms
             catch
             {
                 // shared memory is disabled, halt process
-                Stop();
+                if (prevPoll_time != -1)
+                    Stop();
                 return;
             }
 
@@ -182,7 +191,8 @@ namespace HandheldCompanion.Platforms
             }
 
             // update poll time
-            prevPoll_time = HWiNFOMemory.poll_time;
+            if (HWiNFOMemory.poll_time != 0)
+                prevPoll_time = HWiNFOMemory.poll_time;
 
             // connect to shared memory
             if (MemoryMapped is null)
@@ -197,7 +207,7 @@ namespace HandheldCompanion.Platforms
             if (HWiNFOSensors is null)
             {
                 // (re)set sensors array
-                HWiNFOSensors = new();
+                HWiNFOSensors.Clear();
 
                 // populate sensors array
                 GetSensors();
@@ -242,7 +252,7 @@ namespace HandheldCompanion.Platforms
                 // do something
             }
         }
-
+        
         public SortedDictionary<SensorElementType, SensorElement> MonitoredSensors = new()
         {
             // those are used for computes
@@ -274,7 +284,7 @@ namespace HandheldCompanion.Platforms
             PhysicalMemoryUsage,
             VirtualMemoryUsage
         }
-
+        
         public void PopulateSensors()
         {
             if (MemoryMapped is null)
@@ -342,6 +352,8 @@ namespace HandheldCompanion.Platforms
                                             break;
 
                                         case "PL1 Power Limit":
+                                        // case "PL1 Power Limit (Static)":
+                                        case "PL1 Power Limit (Dynamic)":
                                             {
                                                 int reading = (int)Math.Ceiling(element.Value);
                                                 if (reading != MonitoredSensors[SensorElementType.PL1].Value)
@@ -352,6 +364,8 @@ namespace HandheldCompanion.Platforms
                                             }
                                             break;
                                         case "PL2 Power Limit":
+                                        // case "PL2 Power Limit (Static)":
+                                        case "PL2 Power Limit (Dynamic)":
                                             {
                                                 int reading = (int)Math.Ceiling(element.Value);
                                                 if (reading != MonitoredSensors[SensorElementType.PL2].Value)
@@ -515,8 +529,12 @@ namespace HandheldCompanion.Platforms
                 return false;
 
             // Shared Memory Support [12-HOUR LIMIT]
-            SetProperty("OpenSensors", 0);
             SetProperty("SensorsSM", 1);
+
+            // Quiet startup
+            // Todo: make this configurable ?
+            SetProperty("OpenSensors", 1);
+            SetProperty("MinimalizeSensors", 1);
 
             try
             {

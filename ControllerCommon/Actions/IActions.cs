@@ -1,6 +1,7 @@
 ﻿using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using System;
+using System.Windows.Forms;
 
 namespace ControllerCommon.Actions
 {
@@ -33,6 +34,9 @@ namespace ControllerCommon.Actions
         public bool Toggle { get; set; }
         protected bool IsToggled;
 
+        protected ScreenOrientation Orientation = ScreenOrientation.Angle0;
+        public bool AutoRotate { get; set; } = false;
+
         public IActions()
         {
             Period = TimerManager.GetPeriod();
@@ -52,6 +56,11 @@ namespace ControllerCommon.Actions
 
         public virtual void Execute(AxisFlags axis, short value)
         {
+        }
+
+        public virtual void SetOrientation(ScreenOrientation orientation)
+        {
+            this.Orientation = orientation;
         }
 
         // Improve me !

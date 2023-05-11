@@ -554,7 +554,7 @@ namespace ControllerService
                                 break;
                             case SystemStatus.SystemPending:
                                 // resume from sleep
-                                Thread.Sleep(16000);
+                                Thread.Sleep(6000);
                                 IMU.Restart(true);
                                 break;
                         }
@@ -563,12 +563,19 @@ namespace ControllerService
                         if (vTarget is not null)
                             return;
 
-                        // (re)initialize ViGEm
-                        if (vClient is null)
+                        while(vTarget is null || !vTarget.IsConnected)
+                        {
+                            // reset vigem
+                            ResetViGEm();
+
+                            // create new ViGEm client
                             vClient = new ViGEmClient();
 
-                        // update virtual controller
-                        SetControllerMode(HIDmode);
+                            // set controller mode
+                            SetControllerMode(HIDmode);
+
+                            Thread.Sleep(1000);
+                        }
 
                         // start timer manager
                         TimerManager.Start();
@@ -585,15 +592,27 @@ namespace ControllerService
                         // stop sensors
                         IMU.Stop();
 
-                        // dispose virtual controller
-                        vTarget.Dispose();
-                        vTarget = null;
-
-                        // dispose ViGEm
-                        vClient.Dispose();
-                        vClient = null;
+                        // reset vigem
+                        ResetViGEm();
                     }
                     break;
+            }
+        }
+
+        private void ResetViGEm()
+        {
+            // dispose virtual controller
+            if (vTarget is not null)
+            {
+                vTarget.Dispose();
+                vTarget = null;
+            }
+
+            // dispose ViGEm drivers
+            if (vClient is not null)
+            {
+                vClient.Dispose();
+                vClient = null;
             }
         }
 
