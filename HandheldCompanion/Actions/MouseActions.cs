@@ -37,14 +37,12 @@ namespace HandheldCompanion.Actions
         private bool IsCursorDown { get; set; }
         private bool IsCursorUp { get; set; }
         private int scrollAmountInClicks { get; set; } = 1;
-        private ScreenOrientation currentAutoOrientation = ScreenOrientation.Angle0;
 
         // settings
         public float Sensivity { get; set; } = 25.0f;
         public float Deadzone { get; set; } = 25.0f;
         public bool AxisInverted { get; set; } = false;
         public bool AxisRotated { get; set; } = false;
-        public bool AutoRotate { get; set; } = false;
 
         public MouseActions()
         {
@@ -59,11 +57,6 @@ namespace HandheldCompanion.Actions
         public MouseActions(MouseActionsType type) : this()
         {
             this.MouseType = type;
-        }
-
-        public void SetAutoOrientation(ScreenOrientation autoOrientation)
-        {
-            this.currentAutoOrientation = autoOrientation;
         }
 
         public override void Execute(ButtonFlags button, bool value)
@@ -207,9 +200,9 @@ namespace HandheldCompanion.Actions
             deltaVector *= Sensivity * sensitivityFinetune;
             if (AutoRotate)
             {
-                if ((this.currentAutoOrientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90)
+                if ((this.Orientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90)
                     deltaVector = new(-deltaVector.Y, deltaVector.X);
-                deltaVector *= (((this.currentAutoOrientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180) ? -1.0f : 1.0f);
+                deltaVector *= (((this.Orientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180) ? -1.0f : 1.0f);
             }
             else
             {

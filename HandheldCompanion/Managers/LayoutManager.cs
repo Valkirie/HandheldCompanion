@@ -260,6 +260,18 @@ namespace HandheldCompanion.Managers
         private static void DesktopManager_DisplayOrientationChanged(ScreenRotation rotation)
         {
             currentOrientation = rotation;
+
+            foreach (var axisLayout in currentLayout.AxisLayout)
+            {
+                // pull action
+                IActions action = axisLayout.Value;
+
+                if (action is null)
+                    continue;
+
+                if (action.AutoRotate)
+                    action.SetOrientation(currentOrientation);
+            }
         }
 
         public static ControllerState MapController(ControllerState controllerState)
@@ -337,8 +349,6 @@ namespace HandheldCompanion.Managers
                     case ActionType.Joystick:
                         {
                             AxisActions aAction = action as AxisActions;
-                            if (aAction.AutoRotate)
-                                aAction.SetAutoOrientation(currentOrientation);
                             aAction.Execute(InLayout);
 
                             // read output axis
@@ -354,8 +364,6 @@ namespace HandheldCompanion.Managers
                     case ActionType.Mouse:
                         {
                             MouseActions mAction = action as MouseActions;
-                            if (mAction.AutoRotate)
-                                mAction.SetAutoOrientation(currentOrientation);
 
                             // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
                             bool touched = false;
