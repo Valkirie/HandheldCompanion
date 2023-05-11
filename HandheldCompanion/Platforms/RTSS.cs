@@ -165,10 +165,6 @@ namespace HandheldCompanion.Platforms
 
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
-            // unhook previous process
-            if (backgroundEx is not null)
-                Unhooked?.Invoke(backgroundEx.GetProcessId());
-
             // hook new process
             AppEntry appEntry = null;
 
@@ -187,6 +183,10 @@ namespace HandheldCompanion.Platforms
                 await Task.Delay(250);
             }
             while (appEntry is null);
+
+            // unhook previous process
+            if (backgroundEx is not null)
+                Unhooked?.Invoke(backgroundEx.GetProcessId());
 
             Hooked?.Invoke(ProcessId);
         }

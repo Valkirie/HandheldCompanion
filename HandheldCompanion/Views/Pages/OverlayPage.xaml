@@ -55,33 +55,18 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
+                        <ComboBox
+                            Name="OnScreenDisplayLevel"
                             Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                x:Name="HelperOnScreenDisplay"
-                                Width="35"
-                                VerticalAlignment="Center"
-                                Text="OFF"
-                                TextAlignment="Center" />
-                            <Slider
-                                x:Name="SliderOnScreenDisplay"
-                                Grid.Column="3"
-                                Margin="6,0,0,0"
-                                VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
-                                IsMoveToPointEnabled="True"
-                                IsSnapToTickEnabled="True"
-                                LargeChange="1"
-                                Maximum="3"
-                                Minimum="0"
-                                SmallChange="1"
-                                Style="{DynamicResource SliderStyle1}"
-                                TickFrequency="1"
-                                TickPlacement="BottomRight"
-                                ValueChanged="SliderOnScreenDisplay_ValueChanged" />
-                        </DockPanel>
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            SelectionChanged="OnScreenDisplayLevel_SelectionChanged">
+
+                            <Label Content="Disabled" />
+                            <Label Content="Minimal" />
+                            <Label Content="Extended" />
+                            <Label Content="Full" />
+                        </ComboBox>
                     </Grid>
                 </Border>
 
@@ -109,21 +94,19 @@
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Change the on-screen display update rate, in milliseconds"
+                                    Text="Change the on-screen display update rate"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
                                 x:Name="HelperOnScreenUpdateRate"
                                 Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, ElementName=SliderOnScreenUpdateRate, Mode=OneWay}"
                                 TextAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center" Text="ms" />
                             <Slider
                                 x:Name="SliderOnScreenUpdateRate"
                                 Grid.Column="3"
@@ -320,10 +303,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
                                 Width="35"
                                 VerticalAlignment="Center"
@@ -378,10 +358,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
                                 Width="35"
                                 VerticalAlignment="Center"
@@ -436,10 +413,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
@@ -565,10 +539,7 @@
                                         TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock
                                         Width="35"
                                         VerticalAlignment="Center"
@@ -698,10 +669,7 @@
                                         TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <DockPanel
-                                    Grid.Column="1"
-                                    Margin="12,0,0,0"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock
                                         Width="35"
                                         VerticalAlignment="Center"
@@ -819,10 +787,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
                                 Width="35"
                                 VerticalAlignment="Center"
@@ -877,10 +842,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
                                 Width="35"
                                 VerticalAlignment="Center"

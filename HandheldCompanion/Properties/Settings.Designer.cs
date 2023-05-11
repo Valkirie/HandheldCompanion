@@ -782,9 +782,9 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double OnScreenDisplayLevel {
+        public int OnScreenDisplayLevel {
             get {
-                return ((double)(this["OnScreenDisplayLevel"]));
+                return ((int)(this["OnScreenDisplayLevel"]));
             }
             set {
                 this["OnScreenDisplayLevel"] = value;
