@@ -847,42 +847,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Lizard mode (Buttons).
-        /// </summary>
-        public static string InputsHotkey_SteamDeckLizardButtons {
-            get {
-                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardButtons", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Toggle buttons from or into lizard brain (mouse and keyboard emulation).
-        /// </summary>
-        public static string InputsHotkey_SteamDeckLizardButtonsDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardButtonsDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Lizard mode (Mouse).
-        /// </summary>
-        public static string InputsHotkey_SteamDeckLizardMouse {
-            get {
-                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardMouse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Toggle trackpads from or into lizard brain (mouse and keyboard emulation).
-        /// </summary>
-        public static string InputsHotkey_SteamDeckLizardMouseDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_SteamDeckLizardMouseDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Toggle Suspender.
         /// </summary>
         public static string InputsHotkey_suspendResumeTask {

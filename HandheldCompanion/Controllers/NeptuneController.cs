@@ -25,8 +25,6 @@ namespace HandheldCompanion.Controllers
         private const short TrackPadInner = 21844;
 
         private NeptuneControllerInputState prevState;
-        private bool prevLizardMouseEnabled = false;
-        private bool prevLizardButtonsEnabled = false;
 
         public byte FeedbackLargeMotor;
         public byte FeedbackSmallMotor;
@@ -67,13 +65,6 @@ namespace HandheldCompanion.Controllers
             ThreadRunning = true;
             thread = new Thread(ThreadLoop);
             thread.IsBackground = true;
-
-            // bool LizardMouse = SettingsManager.GetBoolean("SteamDeckLizardMouse");
-            // bool LizardButtons = SettingsManager.GetBoolean("SteamDeckLizardButtons");
-
-            // get previous lizard state
-            prevLizardMouseEnabled = Controller.LizardMouseEnabled;
-            prevLizardButtonsEnabled = Controller.LizardButtonsEnabled;
 
             // disable lizard state
             SetLizardMouse(false);
@@ -331,8 +322,8 @@ namespace HandheldCompanion.Controllers
             try
             {
                 // restore lizard state
-                SetLizardButtons(prevLizardButtonsEnabled);
-                SetLizardMouse(prevLizardMouseEnabled);
+                SetLizardButtons(true);
+                SetLizardMouse(true);
 
                 Controller.Close();
                 isConnected = false;

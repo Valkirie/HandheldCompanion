@@ -301,18 +301,6 @@
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>Change hotkey by pressing a button or a special key</value>
   </data>
-  <data name="InputsHotkey_SteamDeckLizardButtons" xml:space="preserve">
-    <value>Lizard mode (Buttons)</value>
-  </data>
-  <data name="InputsHotkey_SteamDeckLizardButtonsDesc" xml:space="preserve">
-    <value>Toggle buttons from or into lizard brain (mouse and keyboard emulation)</value>
-  </data>
-  <data name="InputsHotkey_SteamDeckLizardMouse" xml:space="preserve">
-    <value>Lizard mode (Mouse)</value>
-  </data>
-  <data name="InputsHotkey_SteamDeckLizardMouseDesc" xml:space="preserve">
-    <value>Toggle trackpads from or into lizard brain (mouse and keyboard emulation)</value>
-  </data>
   <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
     <value>Open Task Manager</value>
   </data>

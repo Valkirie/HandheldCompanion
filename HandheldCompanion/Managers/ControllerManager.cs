@@ -126,30 +126,6 @@ namespace HandheldCompanion.Managers
                         SetHIDStrength(HIDstrength);
                         break;
 
-                    case "SteamDeckLizardMouse":
-                    case "SteamDeckLizardButtons":
-                        {
-                            IController target = GetTargetController();
-                            if (target is null)
-                                return;
-
-                            if (typeof(NeptuneController) != target.GetType())
-                                return;
-
-                            bool LizardMode = Convert.ToBoolean(value);
-
-                            switch (name)
-                            {
-                                case "SteamDeckLizardMouse":
-                                    ((NeptuneController)target).SetLizardMouse(LizardMode);
-                                    break;
-                                case "SteamDeckLizardButtons":
-                                    ((NeptuneController)target).SetLizardButtons(LizardMode);
-                                    break;
-                            }
-                        }
-                        break;
-
                     case "SteamDeckMuteController":
                         {
                             IController target = GetTargetController();
@@ -505,10 +481,6 @@ namespace HandheldCompanion.Managers
                 if (targetController.GetType() == typeof(NeptuneController))
                 {
                     NeptuneController neptuneController = (NeptuneController)targetController;
-
-                    // mute controller if lizard buttons mode is enabled
-                    if (neptuneController.IsLizardButtonsEnabled())
-                        return;
 
                     // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
                     if (foregroundProcess is not null)
