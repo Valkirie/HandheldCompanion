@@ -18,7 +18,6 @@ namespace HandheldCompanion.Managers
 {
     public static class SystemManager
     {
-
         #region imports
         public enum DMDO
         {
@@ -154,6 +153,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private static DesktopScreen DesktopScreen;
+        private static ScreenRotation ScreenOrientation;
 
         private static MMDeviceEnumerator DevEnum;
         private static MMDevice multimediaDevice;
@@ -399,7 +399,7 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
             {
                 ScreenRotation.Rotations nativeScreenRotation = (ScreenRotation.Rotations)SettingsManager.GetInt("NativeDisplayOrientation");
-                ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)resolution.dmDisplayOrientation, nativeScreenRotation);
+                ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)DesktopScreen.devMode.dmDisplayOrientation, nativeScreenRotation);
                 oldOrientation = ScreenRotation.Rotations.UNSET;
 
                 if (nativeScreenRotation == ScreenRotation.Rotations.UNSET)
@@ -408,7 +408,7 @@ namespace HandheldCompanion.Managers
                 }
             }
             else
-                ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)resolution.dmDisplayOrientation, ScreenOrientation.rotationNativeBase);
+                ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)DesktopScreen.devMode.dmDisplayOrientation, ScreenOrientation.rotationNativeBase);
 
             // raise event
             DisplaySettingsChanged?.Invoke(ScreenResolution);
@@ -422,7 +422,12 @@ namespace HandheldCompanion.Managers
         {
             return DesktopScreen;
         }
-      
+
+        public static ScreenRotation GetScreenOrientation()
+        {
+            return ScreenOrientation;
+        }
+
         public static void Stop()
         {
             if (!IsInitialized)
