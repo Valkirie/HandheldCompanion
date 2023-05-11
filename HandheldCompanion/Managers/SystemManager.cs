@@ -140,6 +140,9 @@ namespace HandheldCompanion.Managers
         public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
         public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
 
+        public static event DisplayOrientationChangedEventHandler DisplayOrientationChanged;
+        public delegate void DisplayOrientationChangedEventHandler(ScreenRotation rotation);
+
         public static event VolumeNotificationEventHandler VolumeNotification;
         public delegate void VolumeNotificationEventHandler(float volume);
 
@@ -246,6 +249,23 @@ namespace HandheldCompanion.Managers
         {
             switch (name)
             {
+                case "NativeDisplayOrientation":
+                    {
+                        ScreenRotation.Rotations nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
+
+                        if (!IsInitialized)
+                            return;
+
+                        ScreenRotation.Rotations oldOrientation = ScreenOrientation.rotation;
+                        ScreenOrientation = new ScreenRotation(ScreenOrientation.rotationUnnormalized, nativeOrientation);
+
+                        if (oldOrientation != ScreenOrientation.rotation)
+                        {
+                            // Though the real orientation didn't change, raise event because the interpretation of it changed
+                            DisplayOrientationChanged?.Invoke(ScreenOrientation);
+                        }
+                    }
+                    break;
                 case "QuietModeEnabled":
                     {
                         bool enabled = Convert.ToBoolean(value);
@@ -374,15 +394,35 @@ namespace HandheldCompanion.Managers
             DesktopScreen.devMode = GetDisplay(DesktopScreen.PrimaryScreen.DeviceName);
             var ScreenResolution = DesktopScreen.GetResolution(DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
 
+            ScreenRotation.Rotations oldOrientation = ScreenOrientation.rotation;
+
+            if (!IsInitialized)
+            {
+                ScreenRotation.Rotations nativeScreenRotation = (ScreenRotation.Rotations)SettingsManager.GetInt("NativeDisplayOrientation");
+                ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)resolution.dmDisplayOrientation, nativeScreenRotation);
+                oldOrientation = ScreenRotation.Rotations.UNSET;
+
+                if (nativeScreenRotation == ScreenRotation.Rotations.UNSET)
+                {
+                    SettingsManager.SetProperty("NativeDisplayOrientation", (int)ScreenOrientation.rotationNativeBase, true);
+                }
+            }
+            else
+                ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)resolution.dmDisplayOrientation, ScreenOrientation.rotationNativeBase);
+
             // raise event
             DisplaySettingsChanged?.Invoke(ScreenResolution);
+
+            if (oldOrientation != ScreenOrientation.rotation)
+                // raise event
+                DisplayOrientationChanged?.Invoke(ScreenOrientation);
         }
 
         public static DesktopScreen GetDesktopScreen()
         {
             return DesktopScreen;
         }
-
+      
         public static void Stop()
         {
             if (!IsInitialized)

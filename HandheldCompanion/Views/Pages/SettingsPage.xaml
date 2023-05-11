@@ -250,6 +250,52 @@
                     </Grid>
                 </Border>
 
+                <!--  Native display orientation  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE1CA;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Native display orientation" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display's orientation to the orientation that matches your controller, then click Detect"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly" HorizontalAlignment="Right">
+                            <TextBlock x:Name="Text_NativeDisplayOrientation" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" Text="Not set" />
+                            <Button
+                                Name="Button_DetectNativeDisplayOrientation"
+                                Grid.Column="1"
+                                Width="120"
+                                Height="40"
+                                HorizontalAlignment="Right"
+                                Click="Button_DetectNativeDisplayOrientation_Click"
+                                Content="Detect" Margin="12,0,0,0" />
+                        </DockPanel>
+                    </Grid>
+                </Border>
+
                 <!--  Application theme  -->
                 <Border
                     Padding="15,12,12,12"

@@ -802,5 +802,17 @@ namespace HandheldCompanion.Properties {
                 this["OnScreenDisplayRefreshRate"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int NativeDisplayOrientation {
+            get {
+                return ((int)(this["NativeDisplayOrientation"]));
+            }
+            set {
+                this["NativeDisplayOrientation"] = value;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using HandheldCompanion.Simulators;
 using System;
 using System.ComponentModel;
 using System.Numerics;
+using System.Windows.Forms;
 
 namespace HandheldCompanion.Actions
 {
@@ -197,9 +198,18 @@ namespace HandheldCompanion.Actions
 
             // apply sensitivity, rotation and slider finetune
             deltaVector *= Sensivity * sensitivityFinetune;
-            if (AxisRotated)
-                deltaVector = new(-deltaVector.Y, deltaVector.X);
-            deltaVector *= (AxisInverted ? -1.0f : 1.0f);
+            if (AutoRotate)
+            {
+                if ((this.Orientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90)
+                    deltaVector = new(-deltaVector.Y, deltaVector.X);
+                deltaVector *= (((this.Orientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180) ? -1.0f : 1.0f);
+            }
+            else
+            {
+                if (AxisRotated)
+                    deltaVector = new(-deltaVector.Y, deltaVector.X);
+                deltaVector *= (AxisInverted ? -1.0f : 1.0f);
+            }
 
             // handle the fact that MoveBy()/*Scroll() are int only and we can have movement (0 < abs(delta) < 1)
             deltaVector += restVector;                                               // add partial previous step

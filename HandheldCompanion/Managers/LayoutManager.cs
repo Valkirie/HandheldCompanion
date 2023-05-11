@@ -5,6 +5,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using System;
@@ -32,6 +33,7 @@ namespace HandheldCompanion.Managers
 
         private static bool updateLock;
         private static Layout currentLayout;
+        private static ScreenRotation currentOrientation = new();
 
         public static FileSystemWatcher layoutWatcher { get; set; }
 
@@ -74,6 +76,8 @@ namespace HandheldCompanion.Managers
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            SystemManager.DisplayOrientationChanged += DesktopManager_DisplayOrientationChanged;
         }
 
         public static void Start()
@@ -251,6 +255,23 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static void DesktopManager_DisplayOrientationChanged(ScreenRotation rotation)
+        {
+            currentOrientation = rotation;
+
+            foreach (var axisLayout in currentLayout.AxisLayout)
+            {
+                // pull action
+                IActions action = axisLayout.Value;
+
+                if (action is null)
+                    continue;
+
+                if (action.AutoRotate)
+                    action.SetOrientation(currentOrientation);
+            }
+        }
+          
         private static async void UpdateCurrentLayout(Layout layout)
         {
             while (updateLock)

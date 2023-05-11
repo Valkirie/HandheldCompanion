@@ -1,6 +1,7 @@
 using ControllerCommon.Devices;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -119,6 +120,29 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "DesktopProfileOnStart":
                         Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "NativeDisplayOrientation":
+                        ScreenRotation.Rotations nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
+
+                        switch (nativeOrientation)
+                        {
+                            case ScreenRotation.Rotations.DEFAULT:
+                                Text_NativeDisplayOrientation.Text = "Landscape";
+                                break;
+                            case ScreenRotation.Rotations.D90:
+                                Text_NativeDisplayOrientation.Text = "Portrait";
+                                break;
+                            case ScreenRotation.Rotations.D180:
+                                Text_NativeDisplayOrientation.Text = "Flipped Landscape";
+                                break;
+                            case ScreenRotation.Rotations.D270:
+                                Text_NativeDisplayOrientation.Text = "Flipped Portrait";
+                                break;
+                            default:
+                                Text_NativeDisplayOrientation.Text = "Not set";
+                                break;
+                        }
+
                         break;
                     case "ToastEnable":
                         Toggle_Notification.IsOn = Convert.ToBoolean(value);
@@ -239,6 +263,16 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
+        }
+
+        private void Button_DetectNativeDisplayOrientation_Click(object sender, System.Windows.RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ScreenRotation rotation = SystemManager.GetScreenOrientation();
+            rotation = new ScreenRotation(rotation.rotationUnnormalized, ScreenRotation.Rotations.UNSET);
+            SettingsManager.SetProperty("NativeDisplayOrientation", (int)rotation.rotationNativeBase);
         }
 
         private void UpdateManager_Updated(UpdateStatus status, UpdateFile updateFile, object value)
