@@ -183,24 +183,24 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile)
         {
-            UpdateCurrentLayout(profile);
+            UpdateProfileLayout(profile);
         }
 
         private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             // ignore profile update if not current or not running
             if (isCurrent && (profile.ErrorCode.HasFlag(ProfileErrorCode.Running & ProfileErrorCode.Default)))
-                UpdateCurrentLayout(profile);
+                UpdateProfileLayout(profile);
         }
 
         private static void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
         {
             // ignore discard signal if part of a profile switch
             if (!isUpdate)
-                UpdateCurrentLayout();
+                UpdateProfileLayout();
         }
 
-        private static void UpdateCurrentLayout(Profile profile = null)
+        private static void UpdateProfileLayout(Profile profile = null)
         {
             if (profile.LayoutEnabled)
                 profileLayout.Layout = profile.Layout.Clone() as Layout;
@@ -259,6 +259,12 @@ namespace HandheldCompanion.Managers
         {
             currentOrientation = rotation;
 
+            // apply orientation
+            UpdateOrientation();
+        }
+
+        private static void UpdateOrientation()
+        {
             foreach (var axisLayout in currentLayout.AxisLayout)
             {
                 // pull action
@@ -278,6 +284,9 @@ namespace HandheldCompanion.Managers
                 await Task.Delay(5);
 
             currentLayout = layout;
+
+            // restore orientation
+            UpdateOrientation();
         }
 
         public static ControllerState MapController(ControllerState controllerState)
