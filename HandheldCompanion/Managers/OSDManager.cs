@@ -120,7 +120,7 @@ namespace HandheldCompanion.Managers
                         OverlayEntry FPSentry = new("FPS");
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetInstantaneousFramerate(processId),
+                            Value = PlatformManager.RTSS.GetFramerate(processId),
                             szUnit = "FPS"
                         });
                         row1.entries.Add(FPSentry);
@@ -162,7 +162,7 @@ namespace HandheldCompanion.Managers
                         OverlayEntry FPSentry = new("FPS");
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetInstantaneousFramerate(processId),
+                            Value = PlatformManager.RTSS.GetFramerate(processId),
                             szUnit = "FPS"
                         });
                         row1.entries.Add(FPSentry);
@@ -220,7 +220,7 @@ namespace HandheldCompanion.Managers
                         OverlayEntry FPSentry = new("FPS", true);
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetInstantaneousFramerate(processId),
+                            Value = PlatformManager.RTSS.GetFramerate(processId),
                             szUnit = "FPS"
                         });
                         row6.entries.Add(FPSentry);

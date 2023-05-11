@@ -114,7 +114,6 @@ namespace HandheldCompanion.Platforms
         private SharedMemory HWiNFOMemory;
 
         private ConcurrentDictionary<uint, Sensor> HWiNFOSensors = new();
-        public ConcurrentDictionary<string, SensorElement> MonitoredSensors = new();
 
         public HWiNFO()
         {
@@ -150,12 +149,6 @@ namespace HandheldCompanion.Platforms
             if (IsRunning())
                 Stop();
             Start();
-
-            // initialize a few values
-            // todo: improve me
-            MonitoredSensors["PL1"] = new SensorElement();
-            MonitoredSensors["PL2"] = new SensorElement();
-            MonitoredSensors["CPUFrequency"] = new SensorElement();
 
             MemoryTimer = new(MemoryInterval);
             MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
@@ -207,7 +200,7 @@ namespace HandheldCompanion.Platforms
             if (HWiNFOSensors is null)
             {
                 // (re)set sensors array
-                HWiNFOSensors.Clear();
+                HWiNFOSensors = new();
 
                 // populate sensors array
                 GetSensors();
@@ -604,7 +597,10 @@ namespace HandheldCompanion.Platforms
                 MemoryAccessor.Dispose();
                 MemoryAccessor = null;
             }
-            
+
+            if (HWiNFOSensors is not null)
+                HWiNFOSensors = null;
+
             MemoryTimer.Stop();
             PlatformWatchdog.Stop();
 
