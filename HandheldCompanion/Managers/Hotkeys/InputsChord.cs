@@ -12,7 +12,6 @@ namespace HandheldCompanion.Managers
         None = 0,
         Click = 1,
         Long = 2,
-        Hold = 3,
     }
 
     [Serializable]

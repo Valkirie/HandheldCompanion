@@ -683,7 +683,7 @@
     <value>Delete profile</value>
   </data>
   <data name="ProfilesPage_EnableProfile" xml:space="preserve">
-    <value>Enable profile</value>
+    <value>User per-game profile</value>
   </data>
   <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
     <value>The profile will be automatically applied when the associated application is detected</value>
@@ -782,10 +782,10 @@
     <value>Change sustained thermal power limit</value>
   </data>
   <data name="ProfilesPage_TDPOverride" xml:space="preserve">
-    <value>Thermal Power (TDP) Override</value>
+    <value>Thermal Power (TDP) Limit</value>
   </data>
   <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
-    <value>Override the processor thermal power limit</value>
+    <value>Limits processor power for less total power</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>Enable universal motion controller</value>
@@ -1168,5 +1168,35 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>Set the fan duty cycle to user-defined value</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
+    <value>On-screen display</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
+    <value>Enable on-screen display support</value>
+  </data>
+  <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
+    <value>Decrease brightness</value>
+  </data>
+  <data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
+    <value>Decrease the current display brightness by 5%</value>
+  </data>
+  <data name="InputsHotkey_decreaseVolume" xml:space="preserve">
+    <value>Decrease volume</value>
+  </data>
+  <data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
+    <value>Decrease the system volume by 5%</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
+    <value>Increase brightness</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>Increase the current display brightness by 5%</value>
+  </data>
+  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
+    <value>Increase volume</value>
+  </data>
+  <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
+    <value>Increase the system volume by 5%</value>
   </data>
 </root>

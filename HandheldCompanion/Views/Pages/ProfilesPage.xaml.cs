@@ -42,11 +42,15 @@ namespace HandheldCompanion.Views.Pages
 
             ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Updated += ProfileUpdated;
+            ProfileManager.Applied += ProfileApplied;
+
             ProfileManager.Initialized += ProfileManagerLoaded;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             HotkeysManager.HotkeyCreated += TriggerCreated;
             InputsManager.TriggerUpdated += TriggerUpdated;
+
+            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
 
             // draw input modes
             foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
@@ -120,6 +124,16 @@ namespace HandheldCompanion.Views.Pages
             cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
         }
 
+        private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                PowerSettings.IsEnabled = CanChangeTDP;
+                // StackProfileGPU.IsEnabled = CanChangeGPU;
+            });
+        }
+
         public void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread (async)
@@ -128,10 +142,10 @@ namespace HandheldCompanion.Views.Pages
                 switch (name)
                 {
                     case "ConfigurableTDPOverrideDown":
-                        TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = (double)value;
+                        TDPSlider.Minimum = (double)value;
                         break;
                     case "ConfigurableTDPOverrideUp":
-                        TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = (double)value;
+                        TDPSlider.Maximum = (double)value;
                         break;
                 }
             });
@@ -146,6 +160,14 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
+        private void ProfileApplied(Profile profile)
+        {
+            if (profile.Default)
+                return;
+
+            ProfileUpdated(profile, ProfileUpdateSource.Background, true);
+        }
+
         public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
             // UI thread (async)
@@ -177,6 +199,7 @@ namespace HandheldCompanion.Views.Pages
                 case ProfileUpdateSource.Background:
                 case ProfileUpdateSource.Creation:
                 case ProfileUpdateSource.Serializer:
+                case ProfileUpdateSource.QuickProfilesPage:
                     return;
             }
 
@@ -352,6 +375,7 @@ namespace HandheldCompanion.Views.Pages
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // enable all expanders
+                // todo: move me to XAML ?
                 ProfileDetails.IsEnabled = true;
                 MotionSettings.IsEnabled = true;
                 UniversalSettings.IsEnabled = true;
@@ -361,12 +385,12 @@ namespace HandheldCompanion.Views.Pages
 
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
-                // prevent user from setting power settings on default profile
-                PowerSettings.IsEnabled = !currentProfile.Default;
                 // disable global settings on default profile
                 GlobalSettings.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile
                 Toggle_EnableProfile.IsEnabled = !currentProfile.Default;
+                // prevent user from disabling default profile layout
+                Toggle_ControllerLayout.IsEnabled = !currentProfile.Default;
 
                 // Profile info
                 tB_ProfileName.Text = currentProfile.Name;
@@ -387,8 +411,7 @@ namespace HandheldCompanion.Views.Pages
 
                 // Sustained TDP settings (slow, stapm, long)
                 double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
-                TDPSustainedSlider.Value = TDP[(int)PowerType.Slow];
-                TDPBoostSlider.Value = TDP[(int)PowerType.Fast];
+                TDPSlider.Value = TDP[(int)PowerType.Slow];
 
                 TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
 
@@ -397,10 +420,10 @@ namespace HandheldCompanion.Views.Pages
 
                 // define slider(s) min and max values based on device specifications
                 var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
-                TDPBoostSlider.Minimum = TDPSustainedSlider.Minimum = TDPdown;
-
                 var TDPup = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
-                TDPBoostSlider.Maximum = TDPSustainedSlider.Maximum = TDPup;
+
+                TDPSlider.Minimum = TDPdown;
+                TDPSlider.Maximum = TDPup;
 
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
@@ -490,9 +513,9 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
             // Power settings
-            currentProfile.TDPOverrideValues[0] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDPOverrideValues[1] = (int)TDPSustainedSlider.Value;
-            currentProfile.TDPOverrideValues[2] = (int)TDPBoostSlider.Value;
+            currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
+            currentProfile.TDPOverrideValues[(int)PowerType.Stapm] = (int)TDPSlider.Value;
+            currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
 
             // Layout settings
@@ -575,22 +598,10 @@ namespace HandheldCompanion.Views.Pages
                 return;
         }
 
-        private void TDPSustainedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
+            if (!TDPSlider.IsInitialized)
                 return;
-
-            // set boost slider minimum value to sustained current value
-            TDPBoostSlider.Minimum = TDPSustainedSlider.Value;
-        }
-
-        private void TDPBoostSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (!TDPSustainedSlider.IsInitialized || !TDPBoostSlider.IsInitialized)
-                return;
-
-            // set sustained slider maximum value to boost current value
-            TDPSustainedSlider.Maximum = TDPBoostSlider.Value;
         }
 
         private void TDPToggle_Toggled(object sender, RoutedEventArgs e)

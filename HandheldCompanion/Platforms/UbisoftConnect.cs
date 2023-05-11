@@ -67,7 +67,7 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 return false;
 
-            Process.Kill();
+            Kill();
 
             return true;
         }

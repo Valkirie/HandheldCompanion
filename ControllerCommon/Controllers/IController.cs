@@ -35,36 +35,40 @@ namespace ControllerCommon.Controllers
         public ControllerState Inputs = new();
         public ControllerMovements Movements = new();
 
-        public static List<ButtonFlags> VirtualButtons = new()
-        {
-            ButtonFlags.None,
-            ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5,
-            ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
-            ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
-            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight,
-            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight,
-            ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10,
-        };
-
-        public static List<AxisLayoutFlags> VirtualAxis = new()
-        {
-            AxisLayoutFlags.None,
-            AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad
-        };
-
-        protected List<ButtonFlags> SupportedButtons = new()
+        // Buttons and axes we should be able to map to.
+        // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
+        public static readonly List<ButtonFlags> TargetButtons = new()
         {
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
             ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
-            ButtonFlags.L1, ButtonFlags.R1, ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,
+            ButtonFlags.L1, ButtonFlags.R1,
             ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
+        };
+        public static readonly List<AxisLayoutFlags> TargetAxis = new()
+        {
+            AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
+            AxisLayoutFlags.L2, AxisLayoutFlags.R2,
+        };
+
+        // Buttons and axes all controllers have that we can map.
+        // Additional ones can be added per controller.
+        protected List<ButtonFlags> SourceButtons = new()
+        {
+            // same as target, we assume all controllers have those buttons
+            ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+            ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
+            ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
+            ButtonFlags.L1, ButtonFlags.R1,
+            ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
+            // additional buttons calculated from the above
+            ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,
             ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
             ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight,
         };
-
-        protected List<AxisLayoutFlags> SupportedAxis = new()
+        protected List<AxisLayoutFlags> SourceAxis = new()
         {
+            // same as target, we assume all controllers have those axes
             AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
@@ -296,7 +300,6 @@ namespace ControllerCommon.Controllers
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
-            // CyclePort();
         }
 
         public void Unhide()
@@ -305,23 +308,9 @@ namespace ControllerCommon.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             RefreshControls();
-            // CyclePort();
         }
 
-        private void CyclePort()
-        {
-            var pnpDevice = PnPDevice.GetDeviceByInstanceId(Details.baseContainerDeviceInstanceId);
-            if (pnpDevice is null)
-                return;
-
-            // is this a USB device
-            string enumerator = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-            if (!Equals(enumerator, "USB"))
-                return;
-
-            var usbDevice = pnpDevice.ToUsbPnPDevice();
-            usbDevice.CyclePort();
-        }
+        public static readonly string defaultGlyph = "\u2753";
 
         public virtual string GetGlyph(ButtonFlags button)
         {
@@ -375,8 +364,12 @@ namespace ControllerCommon.Controllers
                     return "\u2788";
                 case ButtonFlags.OEM10:
                     return "\u2789";
+                case ButtonFlags.VolumeUp:
+                    return "\u21fe";
+                case ButtonFlags.VolumeDown:
+                    return "\u21fd";
             }
-            return "\u2753";
+            return defaultGlyph;
         }
 
         public virtual string GetGlyph(AxisFlags axis)
@@ -392,7 +385,7 @@ namespace ControllerCommon.Controllers
                 case AxisFlags.RightThumbY:
                     return "\u21F5";
             }
-            return "\u2753";
+            return defaultGlyph;
         }
 
         public virtual string GetGlyph(AxisLayoutFlags axis)
@@ -404,7 +397,7 @@ namespace ControllerCommon.Controllers
                 case AxisLayoutFlags.RightThumb:
                     return "\u21CC";
             }
-            return "\u2753";
+            return defaultGlyph;
         }
 
         public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
@@ -459,50 +452,40 @@ namespace ControllerCommon.Controllers
             return null;
         }
 
-        public IEnumerable<ButtonFlags> GetButtons()
+        private static bool IsTrigger(AxisLayoutFlags axis)
+        {
+            return axis is AxisLayoutFlags.L2 || axis is AxisLayoutFlags.R2;
+        }
+
+        public static IEnumerable<ButtonFlags> GetTargetButtons()
         {
             IEnumerable<ButtonFlags> buttons = Enum.GetValues(typeof(ButtonFlags)).Cast<ButtonFlags>();
 
-            return buttons.Where(a => IsButtonSupported(a) && !IsButtonBlacklisted(a));
+            return buttons.Where(a => TargetButtons.Contains(a));
         }
 
-        public IEnumerable<AxisLayoutFlags> GetAxis()
+        public static IEnumerable<AxisLayoutFlags> GetTargetAxis()
         {
             IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
 
-            return axis.Where(a => IsAxisSupported(a) && !IsAxisBlacklisted(a) && !IsAxisTrigger(a));
+            return axis.Where(a => TargetAxis.Contains(a) && !IsTrigger(a));
         }
 
-        public IEnumerable<AxisLayoutFlags> GetTriggers()
+        public static IEnumerable<AxisLayoutFlags> GetTargetTriggers()
         {
             IEnumerable<AxisLayoutFlags> axis = Enum.GetValues(typeof(AxisLayoutFlags)).Cast<AxisLayoutFlags>();
 
-            return axis.Where(a => IsAxisSupported(a) && !IsAxisBlacklisted(a) && IsAxisTrigger(a));
+            return axis.Where(a => TargetAxis.Contains(a) && IsTrigger(a));
         }
 
-        public bool IsButtonBlacklisted(ButtonFlags button)
+        public bool HasSourceButton(ButtonFlags button)
         {
-            return VirtualButtons.Contains(button);
+            return SourceButtons.Contains(button);
         }
 
-        public bool IsAxisBlacklisted(AxisLayoutFlags axis)
+        public bool HasSourceAxis(AxisLayoutFlags axis)
         {
-            return VirtualAxis.Contains(axis);
-        }
-
-        public bool IsButtonSupported(ButtonFlags button)
-        {
-            return SupportedButtons.Contains(button);
-        }
-
-        public bool IsAxisSupported(AxisLayoutFlags axis)
-        {
-            return SupportedAxis.Contains(axis);
-        }
-
-        public bool IsAxisTrigger(AxisLayoutFlags axis)
-        {
-            return axis is AxisLayoutFlags.L2 || axis is AxisLayoutFlags.R2;
+            return SourceAxis.Contains(axis);
         }
 
         public string GetButtonName(ButtonFlags button)

@@ -73,7 +73,7 @@ namespace HandheldCompanion.Views.Pages
                     ButtonMapping buttonMapping = mapping.Value;
 
                     // update mapping visibility
-                    if (!Controller.IsButtonSupported(button))
+                    if (!Controller.HasSourceButton(button))
                         buttonMapping.Visibility = Visibility.Collapsed;
                     else
                     {
@@ -95,7 +95,7 @@ namespace HandheldCompanion.Views.Pages
                     TriggerMapping axisMapping = mapping.Value;
 
                     // update mapping visibility
-                    if (!Controller.IsAxisSupported(flags))
+                    if (!Controller.HasSourceAxis(flags))
                         axisMapping.Visibility = Visibility.Collapsed;
                     else
                     {

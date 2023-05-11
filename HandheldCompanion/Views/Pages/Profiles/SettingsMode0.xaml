@@ -56,10 +56,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderSensitivityX"
                                 Margin="6,0,0,0"
@@ -115,10 +115,10 @@
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
-                                Width="25"
+                                Width="35"
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}"
-                                TextAlignment="Right" />
+                                TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderSensitivityY"
                                 Margin="6,0,0,0"
@@ -180,10 +180,10 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock
-                                        Width="25"
+                                        Width="35"
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}"
-                                        TextAlignment="Right" />
+                                        TextAlignment="Center" />
                                     <Slider
                                         x:Name="tb_ProfileAimingDownSightsMultiplier"
                                         Margin="6,0,0,0"
@@ -301,10 +301,10 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock
-                                        Width="25"
+                                        Width="35"
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}"
-                                        TextAlignment="Right" />
+                                        TextAlignment="Center" />
                                     <Slider
                                         x:Name="tb_ProfileFlickDuration"
                                         Margin="6,0,0,0"
@@ -351,10 +351,10 @@
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
                                     <TextBlock
-                                        Width="25"
+                                        Width="35"
                                         VerticalAlignment="Center"
                                         Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}"
-                                        TextAlignment="Right" />
+                                        TextAlignment="Center" />
                                     <Slider
                                         x:Name="tb_ProfileStickSensitivity"
                                         Margin="6,0,0,0"

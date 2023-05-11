@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Windows.Devices.Sensors;
+using WindowsInput.Events;
 using static ControllerCommon.OneEuroFilter;
 using static ControllerCommon.Utils.DeviceUtils;
 using static HandheldCompanion.OpenLibSys;
@@ -25,7 +26,7 @@ namespace ControllerCommon.Devices
         FanControl = 16,
     }
 
-    public struct FanDetails
+    public struct ECDetails
     {
         public ushort AddressRegistry;
         public ushort AddressData;
@@ -50,7 +51,7 @@ namespace ControllerCommon.Devices
 
         public DeviceCapacities Capacities = DeviceCapacities.None;
 
-        public FanDetails FanDetails;
+        public ECDetails ECDetails;
         private static OpenLibSys openLibSys;
 
         // device nominal TDP (slow, fast)
@@ -82,6 +83,21 @@ namespace ControllerCommon.Devices
         // trigger specific settings
         public List<DeviceChord> OEMChords = new();
         public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
+
+        public IDevice()
+        {
+            // We assume all the devices have those keys
+            OEMChords.Add(new DeviceChord("Volume Up",
+                new List<KeyCode>() { KeyCode.VolumeUp },
+                new List<KeyCode>() { KeyCode.VolumeUp },
+                false, ButtonFlags.VolumeUp
+                ));
+            OEMChords.Add(new DeviceChord("Volume Down",
+                new List<KeyCode>() { KeyCode.VolumeDown },
+                new List<KeyCode>() { KeyCode.VolumeDown },
+                false, ButtonFlags.VolumeDown
+                ));
+        }
 
         private static IDevice device;
         public static IDevice GetDefault()
@@ -136,6 +152,9 @@ namespace ControllerCommon.Devices
                             case "AYANEO 2":
                             case "GEEK":
                                 device = new AYANEO2();
+                                break;
+                            case "AB05-AMD":
+                                device = new AYANEOAIRPlus();
                                 break;
                         }
                     }
@@ -317,39 +336,69 @@ namespace ControllerCommon.Devices
 
         public virtual void SetFanDuty(double percent)
         {
-            if (FanDetails.AddressDuty == 0)
+            if (ECDetails.AddressDuty == 0)
                 return;
 
-            double duty = percent * (FanDetails.ValueMax - FanDetails.ValueMin) / 100 + FanDetails.ValueMin;
+            double duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
             byte data = Convert.ToByte(duty);
 
-            ECRamDirectWrite(FanDetails.AddressDuty, FanDetails, data);
+            ECRamDirectWrite(ECDetails.AddressDuty, ECDetails, data);
         }
 
         public virtual void SetFanControl(bool enable)
         {
-            if (FanDetails.AddressControl == 0)
+            if (ECDetails.AddressControl == 0)
                 return;
 
             byte data = Convert.ToByte(enable);
-            ECRamDirectWrite(FanDetails.AddressControl, FanDetails, data);
+            ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
         }
 
-        public static bool ECRamDirectWrite(ushort address, byte data)
+        public static byte ECRamReadByte(ushort address)
         {
             try
             {
-                openLibSys.WriteIoPortByte(address, data);
-                return true;
+                return openLibSys.ReadIoPortByte(address);
             }
             catch (Exception ex)
             {
-                LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
-                return false;
+                LogManager.LogError("Couldn't read byte from address {0} using OpenLibSys. ErrorCode: {1}", address, ex.Message);
+                return 0;
             }
         }
 
-        public static bool ECRamDirectWrite(ushort address, FanDetails details, byte data)
+        public static byte ECRamReadByte(ushort address, ECDetails details, byte data)
+        {
+            byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
+            byte addr_lower = ((byte)(address & byte.MaxValue));
+
+            try
+            {
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)17);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)16);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
+                openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressData, data);
+
+                return openLibSys.ReadIoPortByte(details.AddressData);
+            }
+            catch (Exception ex)
+            {
+                LogManager.LogError("Couldn't read to port using OpenLibSys. ErrorCode: {0}", ex.Message);
+                return 0;
+            }
+        }
+
+        public static bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
         {
             byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
             byte addr_lower = ((byte)(address & byte.MaxValue));

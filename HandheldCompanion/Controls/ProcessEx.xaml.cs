@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using static HandheldCompanion.Managers.EnergyManager;
 
 namespace HandheldCompanion.Controls
@@ -24,15 +25,21 @@ namespace HandheldCompanion.Controls
             Allowed = 0,
             Restricted = 1,
             Ignored = 2,
+            HandheldCompanion = 3,
+            Desktop = 4,
         }
 
         public Process Process;
+        private int ProcessId;
+
         public ProcessThread MainThread;
 
         public ConcurrentList<int> Children = new();
 
         public IntPtr MainWindowHandle;
         private EfficiencyMode EfficiencyMode;
+
+        public ImageSource imgSource;
 
         public string Path;
 
@@ -89,6 +96,8 @@ namespace HandheldCompanion.Controls
         public ProcessEx(Process process, string path, string executable, ProcessFilter filter) : this()
         {
             this.Process = process;
+            this.ProcessId = process.Id;
+
             this.Path = path;
 
             this.Executable = executable;
@@ -101,28 +110,26 @@ namespace HandheldCompanion.Controls
             {
                 var icon = Icon.ExtractAssociatedIcon(Path);
                 if (icon is not null)
-                    ProcessIcon.Source = icon.ToImageSource();
+                {
+                    imgSource = icon.ToImageSource();
+                    ProcessIcon.Source = imgSource;
+                }
             }
         }
 
         public int GetProcessId()
         {
-            try
-            {
-                if (Process is not null)
-                    return Process.Id;
-            }
-            catch { }
-            return 0;
+            return ProcessId;
         }
 
         private static ProcessThread GetMainThread(Process process)
         {
             ProcessThread mainThread = null;
             var startTime = DateTime.MaxValue;
-            foreach (ProcessThread thread in process.Threads)
+
+            try
             {
-                try
+                foreach (ProcessThread thread in process.Threads)
                 {
                     if (thread.StartTime < startTime)
                     {
@@ -130,15 +137,19 @@ namespace HandheldCompanion.Controls
                         mainThread = thread;
                     }
                 }
-                catch (Win32Exception)
-                {
-                    // Access if denied
-                }
-                catch (InvalidOperationException)
-                {
-                    // thread has exited
-                }
             }
+            catch (Win32Exception)
+            {
+                // Access if denied
+            }
+            catch (InvalidOperationException)
+            {
+                // thread has exited
+            }
+
+            if (mainThread is null)
+                mainThread = process.Threads[0];
+
             return mainThread;
         }
 

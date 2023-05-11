@@ -1,51 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using ControllerCommon.Inputs;
+using PInvoke;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+using static HandheldCompanion.Managers.SystemManager;
 
 namespace HandheldCompanion.Managers.Desktop
 {
-    public struct ScreenResolution
+    public class ScreenResolution
     {
         public int width;
         public int height;
 
-        public List<ScreenFrequency> frequencies;
+        public SortedDictionary<int, ScreenFrequency> frequencies;
 
-        public ScreenResolution(int dmPelsWidth, int dmPelsHeight) : this()
+        public ScreenResolution(int dmPelsWidth, int dmPelsHeight)
         {
             this.width = dmPelsWidth;
             this.height = dmPelsHeight;
-            this.frequencies = new();
+            this.frequencies = new SortedDictionary<int, ScreenFrequency>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
         }
 
         public override string ToString()
         {
             return $"{width} x {height}";
         }
-
-        public void AddFrequencies(List<int> _frequencies)
-        {
-            foreach (int frequency in _frequencies)
-                frequencies.Add(new ScreenFrequency(frequency));
-        }
-
-        public void SortFrequencies()
-        {
-            frequencies = frequencies.OrderByDescending(a => a.frequency).ToList();
-        }
     }
 
-    public struct ScreenFrequency
+    public enum Frequency
     {
-        public int frequency;
+        Quarter = 0,
+        Third = 1,
+        Half = 2,
+        Full = 3
+    }
+
+    public class ScreenFrequency
+    {
+        private SortedDictionary<Frequency, double> frequencies = new();
 
         public ScreenFrequency(int frequency)
         {
-            this.frequency = frequency;
+            this.frequencies[Frequency.Quarter] = Math.Round(frequency / 4.0d, 1);
+            this.frequencies[Frequency.Third] = Math.Round(frequency / 3.0d, 1);
+            this.frequencies[Frequency.Half] = Math.Round(frequency / 2.0d, 1);
+            this.frequencies[Frequency.Full] = frequency;
+        }
+
+        public double GetFrequency(Frequency frequency)
+        {
+            return this.frequencies[frequency];
         }
 
         public override string ToString()
         {
-            return $"{frequency} Hz";
+            return $"{this.frequencies[Frequency.Full]} Hz";
+        }
+
+        public override bool Equals(object obj)
+        {
+            ScreenFrequency frequency = obj as ScreenFrequency;
+            if (frequency != null)
+            {
+                foreach (Frequency freq in (Frequency[])Enum.GetValues(typeof(Frequency)))
+                {
+                    if (frequencies[freq] != frequency.frequencies[freq])
+                        return false;
+                }
+            }
+
+            return true;
         }
     }
 
@@ -104,11 +129,12 @@ namespace HandheldCompanion.Managers.Desktop
     public class DesktopScreen
     {
         public List<ScreenResolution> resolutions;
-        private string deviceName;
+        public Screen PrimaryScreen;
+        public Display devMode;
 
-        public DesktopScreen(string deviceName)
+        public DesktopScreen(Screen primaryScreen)
         {
-            this.deviceName = deviceName;
+            this.PrimaryScreen = primaryScreen;
             this.resolutions = new();
         }
 
@@ -120,6 +146,11 @@ namespace HandheldCompanion.Managers.Desktop
         public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
         {
             return resolutions.Where(a => a.width == dmPelsWidth && a.height == dmPelsHeight).FirstOrDefault();
+        }
+
+        public ScreenFrequency GetFrequency()
+        {
+            return new ScreenFrequency(devMode.dmDisplayFrequency);
         }
 
         public void SortResolutions()

@@ -16,7 +16,8 @@ namespace ControllerCommon.Platforms
         Origin = 2,
         UbisoftConnect = 3,
         GOG = 4,
-        RTSS = 5
+        RTSS = 5,
+        HWiNFO = 6
     }
 
     public abstract class IPlatform : IDisposable
@@ -29,6 +30,8 @@ namespace ControllerCommon.Platforms
         protected string ExecutablePath;
 
         protected bool KeepAlive;
+        protected bool IsStarting;
+
         protected Timer PlatformWatchdog;
         protected object updateLock = new();
 
@@ -143,7 +146,7 @@ namespace ControllerCommon.Platforms
                 using (process) { process.Kill(); }
                 return true;
             }
-            catch (System.ComponentModel.Win32Exception)
+            catch (Win32Exception)
             {
                 return false;
             }

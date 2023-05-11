@@ -18,15 +18,15 @@
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="160" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
                 <ui:FontIcon
                     Name="Icon"
-                    Width="40"
                     Height="40"
+                    Margin="0,0,5,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     FontFamily="{DynamicResource PhoneFontFamilyNormal}"

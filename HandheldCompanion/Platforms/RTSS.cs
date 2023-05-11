@@ -5,6 +5,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Properties;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
@@ -17,6 +18,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
+using static HandheldCompanion.Platforms.RTSS;
 
 namespace HandheldCompanion.Platforms
 {
@@ -64,11 +67,12 @@ namespace HandheldCompanion.Platforms
         private const string GLOBAL_PROFILE = "";
 
         private int RequestedFramerate = 0;
-        private PrecisionTimer FramerateTimer;
-        private const int FramerateInterval = 100;
 
-        private int ForegroundProcessId = 0;
-        private double ForegroundFramerate;
+        public event HookedEventHandler Hooked;
+        public delegate void HookedEventHandler(int processId);
+
+        public event UnhookedEventHandler Unhooked;
+        public delegate void UnhookedEventHandler(int processId);
 
         public RTSS()
         {
@@ -98,22 +102,20 @@ namespace HandheldCompanion.Platforms
 
             if (!IsInstalled)
             {
-                LogManager.LogCritical("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                LogManager.LogWarning("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
             if (!HasModules)
             {
-                LogManager.LogCritical("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
             // start RTSS if not running
-            if (!IsRunning())
-                Start();
-
-            // hook into RTSS process
-            Process.Exited += Process_Exited;
+            if (IsRunning())
+                Stop();
+            Start();
 
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
@@ -122,36 +124,71 @@ namespace HandheldCompanion.Platforms
             // hook into process manager
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
-            // timer used to monitor foreground application framerate
-            FramerateTimer = new PrecisionTimer();
-            FramerateTimer.SetAutoResetMode(true);
-            FramerateTimer.SetResolution(0);
-            FramerateTimer.SetPeriod(FramerateInterval);
-            FramerateTimer.Tick += TimerTicked;
+            ProfileManager.Updated += ProfileManager_Updated;
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
         }
 
-        private void ProcessManager_ForegroundChanged(ProcessEx process, ProcessEx background)
+        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
         {
-            AppEntry appEntry = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == process.GetProcessId()).FirstOrDefault();
+            // skip if part of a profile swap
+            if (isUpdate)
+                return;
 
-            if (appEntry is null)
+            // restore default framerate
+            if (profile.FramerateEnabled)
+                RequestFPS(0);
+        }
+
+        private void ProfileManager_Applied(Profile profile)
+        {
+            // apply profile defined framerate
+            if (profile.FramerateEnabled)
             {
-                FramerateTimer.Stop();
-                return;
+                double frequency = SystemManager.GetDesktopScreen().GetFrequency().GetFrequency((Frequency)profile.FramerateValue);
+                RequestFPS(frequency);
             }
-
-            ForegroundProcessId = appEntry.ProcessId;
-            FramerateTimer.Start();
+            else
+            {
+                // restore default framerate
+                RequestFPS(0);
+            }
         }
 
-        private void TimerTicked(object? sender, EventArgs e)
+        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
         {
-            var appE = OSD.GetAppEntries(AppFlags.MASK).Where(a => a.ProcessId == ForegroundProcessId).FirstOrDefault();
-            if (appE is null)
+            if (!isCurrent)
                 return;
 
-            var duration = appE.InstantaneousTimeStart - appE.InstantaneousTimeEnd;
-            ForegroundFramerate = Math.Round(duration / appE.InstantaneousFrameTime);
+            ProfileManager_Applied(profile);
+        }
+
+        private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+        {
+            // unhook previous process
+            if (backgroundEx is not null)
+                Unhooked?.Invoke(backgroundEx.GetProcessId());
+
+            // hook new process
+            AppEntry appEntry = null;
+
+            var ProcessId = processEx.GetProcessId();
+            if (ProcessId == 0)
+                return;
+
+            do
+            {
+                try
+                {
+                    appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).FirstOrDefault(a => a.ProcessId == ProcessId);
+                }
+                catch (Exception) { }
+
+                await Task.Delay(250);
+            }
+            while (appEntry is null);
+
+            Hooked?.Invoke(ProcessId);
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -171,9 +208,19 @@ namespace HandheldCompanion.Platforms
                 Start();
         }
 
-        public double GetInstantaneousFramerate()
+        public double GetFramerate(int processId)
         {
-            return ForegroundFramerate;
+            try
+            {
+                var appE = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None).Where(a => a.ProcessId == processId).FirstOrDefault();
+                if (appE is null)
+                    return 0.0d;
+
+                return (double)appE.StatFrameTimeBufFramerate / 10;
+            }
+            catch (FileNotFoundException ex) { }
+
+            return 0.0d;
         }
 
         public bool GetProfileProperty<T>(string propertyName, out T value)
@@ -309,38 +356,58 @@ namespace HandheldCompanion.Platforms
         {
             if (!IsInstalled)
                 return false;
-
             if (IsRunning())
                 return false;
 
-            var process = Process.Start(new ProcessStartInfo()
+            try
             {
-                FileName = ExecutablePath,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
+                // set lock
+                IsStarting = true;
 
-            process.WaitForInputIdle();
+                var process = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = ExecutablePath,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                });
 
-            return process is not null;
+                if (process is not null)
+                {
+                    process.EnableRaisingEvents = true;
+                    process.Exited += Process_Exited;
+
+                    process.WaitForInputIdle();
+
+                    // release lock
+                    IsStarting = false;
+                }
+
+                return true;
+            }
+            catch {}
+
+            return false;
         }
 
         public override bool Stop()
         {
+            if (IsStarting)
+                return false;
             if (!IsInstalled)
                 return false;
-
             if (!IsRunning())
                 return false;
 
-            Process.Kill();
+            Kill();
 
             return true;
         }
 
         public override void Dispose()
         {
+            PlatformWatchdog.Stop();
+
             base.Dispose();
         }
     }

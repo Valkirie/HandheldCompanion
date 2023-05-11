@@ -244,31 +244,24 @@ namespace HandheldCompanion.Managers
             HotkeyUpdated?.Invoke(hotkey);
         }
 
-        public static void TriggerRaised(string listener, InputsChord input, bool IsKeyDown, bool IsKeyUp)
+        public static void TriggerRaised(string listener, InputsChord input, InputsHotkeyType type, bool IsKeyDown, bool IsKeyUp)
         {
-            // we use @ as a special character to link two ore more listeners together
-            listener = listener.TrimEnd('@');
-
-            var hotkey = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener)).FirstOrDefault();
-            if (hotkey is null)
-                return;
-
-            // Hotkey is disabled
-            if (!hotkey.IsEnabled)
-                return;
-
-            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(listener));
-
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                foreach (var htkey in hotkeys)
+                // we use @ as a special character to link two ore more listeners together
+                var trimmed = listener.TrimEnd('@');
+                var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Contains(trimmed));
+                foreach (var hotkey in hotkeys)
                     hotkey.Highlight();
             });
 
             // These are special shortcut keys with no related events
-            if (hotkey.inputsHotkey.hotkeyType == InputsHotkeyType.Embedded)
-                return;
+            switch(type)
+            {
+                case InputsHotkeyType.Embedded:
+                    return;
+            }
 
             ProcessEx fProcess = ProcessManager.GetForegroundProcess();
 
@@ -289,14 +282,14 @@ namespace HandheldCompanion.Managers
                         KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });
                         break;
                     case "shortcutESC":
-                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null)
                         {
                             ProcessUtils.SetForegroundWindow(fProcess.MainWindowHandle);
                             KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
                         }
                         break;
                     case "shortcutExpand":
-                        if (fProcess is not null && fProcess.Filter == ProcessEx.ProcessFilter.Allowed)
+                        if (fProcess is not null)
                         {
                             var Placement = ProcessUtils.GetPlacement(fProcess.MainWindowHandle);
 
@@ -362,6 +355,13 @@ namespace HandheldCompanion.Managers
                             SettingsManager.SetProperty(listener, value);
 
                             ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
+                        }
+                        break;
+
+                    case "OnScreenDisplayLevel":
+                        {
+                            bool value = !SettingsManager.GetBoolean(listener);
+                            SettingsManager.SetProperty(listener, value);
                         }
                         break;
 

@@ -21,6 +21,8 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            SliderOnScreenDisplay.IsEnabled = PlatformManager.RTSS.IsInstalled;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -73,6 +75,12 @@ namespace HandheldCompanion.Views.Pages
                     case "OverlayControllerMotion":
                         Toggle_MotionActivated.IsOn = Convert.ToBoolean(value);
                         break;
+                    case "OnScreenDisplayLevel":
+                        SliderOnScreenDisplay.Value = Convert.ToDouble(value);
+                        break;
+                    case "OnScreenDisplayRefreshRate":
+                        SliderOnScreenUpdateRate.Value = Convert.ToDouble(value);
+                        break;
                 }
             });
         }
@@ -103,15 +111,12 @@ namespace HandheldCompanion.Views.Pages
             switch (trackpadsAlignment)
             {
                 case 0:
-                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Top;
                     MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 1:
-                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Center;
                     MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 2:
-                    TrackpadsPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
                     MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
@@ -133,19 +138,16 @@ namespace HandheldCompanion.Views.Pages
                 case 0:
                 case 1:
                 case 2:
-                    ControllerPositionUI.VerticalAlignment = VerticalAlignment.Top;
                     MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Top;
                     break;
                 case 3:
                 case 4:
                 case 5:
-                    ControllerPositionUI.VerticalAlignment = VerticalAlignment.Center;
                     MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Center;
                     break;
                 case 6:
                 case 7:
                 case 8:
-                    ControllerPositionUI.VerticalAlignment = VerticalAlignment.Bottom;
                     MainWindow.overlayModel.VerticalAlignment = VerticalAlignment.Bottom;
                     break;
             }
@@ -155,19 +157,16 @@ namespace HandheldCompanion.Views.Pages
                 case 0:
                 case 3:
                 case 6:
-                    ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Left;
                     MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Left;
                     break;
                 case 1:
                 case 4:
                 case 7:
-                    ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Center;
                     MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Center;
                     break;
                 case 2:
                 case 5:
                 case 8:
-                    ControllerPositionUI.HorizontalAlignment = HorizontalAlignment.Right;
                     MainWindow.overlayModel.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
             }
@@ -322,6 +321,33 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("OverlayControllerAlwaysOnTop", Toggle_AlwaysOnTop.IsOn);
+        }
+
+        private void SliderOnScreenDisplay_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!IsLoaded)
+                return;
+
+            double value = SliderOnScreenDisplay.Value;
+            switch(value)
+            {
+                case 0:
+                    HelperOnScreenDisplay.Text = "OFF";
+                    break;
+                default:
+                    HelperOnScreenDisplay.Text = Convert.ToString(value);
+                    break;
+            }
+
+            SettingsManager.SetProperty("OnScreenDisplayLevel", value);
+        }
+
+        private void SliderOnScreenUpdateRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("OnScreenDisplayRefreshRate", SliderOnScreenUpdateRate.Value);
         }
     }
 }

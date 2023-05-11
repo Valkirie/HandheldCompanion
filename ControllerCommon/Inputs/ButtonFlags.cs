@@ -99,5 +99,12 @@ namespace ControllerCommon.Inputs
         RightPadClickLeft = 58,
         [Description("Right")]
         RightPadClickRight = 59,
+
+        [Description("Volume Up")]
+        VolumeUp = 60,
+        [Description("Volume Down")]
+        VolumeDown = 61,
+
+        MaxValue = 62
     }
 }

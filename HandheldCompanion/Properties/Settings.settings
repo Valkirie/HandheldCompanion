@@ -98,20 +98,8 @@
     <Setting Name="QuickToolsTop" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceTDPSustainedValue" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">0</Value>
-    </Setting>
-    <Setting Name="QuickToolsPerformanceTDPEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="QuickToolsPerformanceGPUEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="QuickToolsPowerModeValue" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="QuickToolsPerformanceTDPBoostValue" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="ConfigurableTDPOverride" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -142,9 +130,6 @@
     </Setting>
     <Setting Name="UseEnergyStar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="QuickToolsPerformanceGPUValue" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">500</Value>
     </Setting>
     <Setting Name="UpdateUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://api.github.com/repos/Valkirie/HandheldCompanion</Value>
@@ -203,14 +188,14 @@
     <Setting Name="QuickToolsPerformanceFramerateEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceFramerateValue" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">60</Value>
-    </Setting>
     <Setting Name="QuietModeDisclosure" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="QuickToolsPerformanceFramerateToggled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="OnScreenDisplayLevel" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="OnScreenDisplayRefreshRate" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1000</Value>
     </Setting>
     <Setting Name="NativeDisplayOrientation" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>

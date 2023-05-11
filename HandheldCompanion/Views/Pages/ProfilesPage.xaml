@@ -380,16 +380,16 @@
                                         Margin="12,0,0,0"
                                         ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock
-                                            Width="25"
+                                            Width="35"
                                             VerticalAlignment="Center"
-                                            Text="{Binding Value, StringFormat=N0, ElementName=TDPSustainedSlider, Mode=OneWay}"
-                                            TextAlignment="Right" />
+                                            Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}"
+                                            TextAlignment="Center" />
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
                                         <Slider
-                                            x:Name="TDPSustainedSlider"
+                                            x:Name="TDPSlider"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
                                             AutoToolTipPlacement="TopLeft"
@@ -403,61 +403,7 @@
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
-                                            ValueChanged="TDPSustainedSlider_ValueChanged" />
-                                    </DockPanel>
-                                </Grid>
-
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <!--  TDP Boost  -->
-                                <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_BoostPower}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_BoostPowerDesc}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-
-                                    <DockPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <TextBlock
-                                            Width="25"
-                                            VerticalAlignment="Center"
-                                            Text="{Binding Value, StringFormat=N0, ElementName=TDPBoostSlider, Mode=OneWay}"
-                                            TextAlignment="Right" />
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                                        <Slider
-                                            x:Name="TDPBoostSlider"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPlacement="TopLeft"
-                                            AutoToolTipPrecision="0"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="5"
-                                            Maximum="30"
-                                            Minimum="5"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            ValueChanged="TDPBoostSlider_ValueChanged" />
+                                            ValueChanged="TDPSlider_ValueChanged" />
                                     </DockPanel>
                                 </Grid>
                             </ui:SimpleStackPanel>
@@ -513,10 +459,10 @@
                                             Margin="12,0,0,0"
                                             ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
-                                                Width="25"
+                                                Width="35"
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}"
-                                                TextAlignment="Right" />
+                                                TextAlignment="Center" />
                                             <Slider
                                                 x:Name="tb_ProfileGyroValue"
                                                 Margin="6,0,0,0"
@@ -560,10 +506,10 @@
                                             Margin="12,0,0,0"
                                             ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
-                                                Width="25"
+                                                Width="35"
                                                 VerticalAlignment="Center"
                                                 Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}"
-                                                TextAlignment="Right" />
+                                                TextAlignment="Center" />
                                             <Slider
                                                 x:Name="tb_ProfileAcceleroValue"
                                                 Margin="6,0,0,0"
@@ -789,10 +735,10 @@
                                         Margin="12,0,0,0"
                                         ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock
-                                            Width="25"
+                                            Width="35"
                                             VerticalAlignment="Center"
                                             Text="{Binding Value, ElementName=tb_ProfileUMCAntiDeadzone, Mode=OneWay}"
-                                            TextAlignment="Right" />
+                                            TextAlignment="Center" />
                                         <TextBlock VerticalAlignment="Center" Text="%" />
                                         <Slider
                                             x:Name="tb_ProfileUMCAntiDeadzone"

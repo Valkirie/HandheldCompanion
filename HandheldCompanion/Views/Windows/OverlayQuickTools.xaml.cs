@@ -143,6 +143,8 @@ namespace HandheldCompanion.Views.Windows
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
                         this.Show();
+                        this.Activate();
+                        this.Focus();
                         break;
                     case Visibility.Visible:
                         this.Hide();
@@ -168,7 +170,7 @@ namespace HandheldCompanion.Views.Windows
                     case "shortcutDesktop":
                     case "shortcutESC":
                     case "shortcutExpand":
-                        HotkeysManager.TriggerRaised(navItemTag, null, false, true);
+                        HotkeysManager.TriggerRaised(navItemTag, null, 0, false, true);
                         break;
                 }
 
