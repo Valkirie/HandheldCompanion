@@ -107,6 +107,7 @@ namespace HandheldCompanion.Managers
         private double AutoTDPMin;
         private double AutoTDPMax;
         private int AutoTDPFPSSetpointMetCounter;
+        private double ProcessValueFPSPrevious;
 
         public PerformanceManager() : base()
         {
@@ -296,23 +297,22 @@ namespace HandheldCompanion.Managers
 
                         // Based on TDP/FPS ratio, determine how much adjustment is needed
                         double TDPAdjustment = ControllerError * AutoTDP / ProcessValueFPS;
-                        // Going lower or higher, we need to reduce the amount of TDP by a factor.
-                        if (ControllerError < 0.0)
-                        {
-                            // Going to lower TDP and thus FPS
-                            TDPAdjustment *= 0.9;
-                        }
-                        else
-                        {
-                            // Going to higher TDP and thus FPS
-                            TDPAdjustment *= 0.7;
-                        }
+                        // Always have a little bit of undershoot
+                        TDPAdjustment *= 0.9;
+
+                        // (PI)D derivate control component to dampen
+                        if (ProcessValueFPSPrevious == float.NaN) { ProcessValueFPSPrevious = ProcessValueFPS; } // First time around, initialise previous
+                        double DFactor = -0.25;
+                        double DeltaError = ProcessValueFPS - ProcessValueFPSPrevious;
+                        double DTerm = DeltaError / ((double)INTERVAL_AUTO / 1000.0); // Perhaps improve with actual timer?
+                        double TDPDamping = AutoTDP / ProcessValueFPS * DFactor * DTerm;
+                        ProcessValueFPSPrevious = ProcessValueFPS; // For next loop
 
                         // Determine final setpoint
                         // Skip calculating TDP the very first run, first need to set to determine values next round
                         if (!AutoTDPFirstRun)
                         {
-                            AutoTDP += TDPAdjustment;
+                            AutoTDP += TDPAdjustment + TDPDamping;
                         }
                         else { AutoTDPFirstRun = false; }
 
