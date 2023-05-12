@@ -488,8 +488,6 @@ namespace HandheldCompanion.Views.QuickPages
                 currentProfile.AutoTDPEnabled = toggled;
                 AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
 
-                if (FramerateToggle.IsOn && AutoTDPToggle.IsOn && AutoTDPRequestedFPSSlider.Value > FramerateSlider.Value) { AutoTDPRequestedFPSSlider.Value = FramerateSlider.Value; }
-
                 RequestUpdate();
             }
         }
@@ -500,8 +498,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             if (!isDrawing)
-            {
-                if (AutoTDPRequestedFPSSlider.Value > FramerateSlider.Value && FramerateToggle.IsOn == true) { AutoTDPRequestedFPSSlider.Value = (int)FramerateSlider.Value; }
+            {                 
                 currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
                 RequestUpdate();
             }
@@ -622,8 +619,6 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isDrawing)
             {
                 currentProfile.FramerateEnabled = (bool)FramerateToggle.IsOn;
-
-                if (FramerateToggle.IsOn && AutoTDPToggle.IsOn && AutoTDPRequestedFPSSlider.Value > FramerateSlider.Value) { AutoTDPRequestedFPSSlider.Value = FramerateSlider.Value; }
 
                 RequestUpdate();
             }
