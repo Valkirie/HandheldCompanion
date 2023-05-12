@@ -1209,7 +1209,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Wanted FPS</value>
   </data>
   <data name="ProfilesPage_AutoTDPFPSDesc" xml:space="preserve">
-    <value>Desired FPS target value for automatic TDP controller.</value>
+    <value>Desired FPS target value for automatic TDP controller</value>
+  </data>
+  <data name="ProfilesPage_GPUMhz" xml:space="preserve">
+    <value>GPU Clock Max Frequency</value>
+  </data>
+  <data name="ProfilesPage_GPUMhzDesc" xml:space="preserve">
+    <value>Maximum clock speed of the GPU in Mhz</value>
   </data>
   <data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
     <value>FPS</value>

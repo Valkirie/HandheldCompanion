@@ -123,6 +123,10 @@ namespace HandheldCompanion.Views.Pages
 
             // auto-sort
             cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
+
+            // device settings
+            GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
+            GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
         }
 
         private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
@@ -413,13 +417,7 @@ namespace HandheldCompanion.Views.Pages
                 // Sustained TDP settings (slow, stapm, long)
                 TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
                 double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
-                TDPSlider.Value = TDP[(int)PowerType.Slow];               
-
-                AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
-                AutoTDPSlider.Value = (int)currentProfile.AutoTDPRequestedFPS;
-
-                // Layout settings
-                Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
+                TDPSlider.Value = TDP[(int)PowerType.Slow];
 
                 // define slider(s) min and max values based on device specifications
                 var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
@@ -428,6 +426,16 @@ namespace HandheldCompanion.Views.Pages
                 TDPSlider.Minimum = TDPdown;
                 TDPSlider.Maximum = TDPup;
 
+                AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
+                AutoTDPSlider.Value = (int)currentProfile.AutoTDPRequestedFPS;
+
+                // GPU
+                GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
+                GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : (255 * 50);
+
+                // Layout settings
+                Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
+                
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
                 cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
@@ -523,6 +531,9 @@ namespace HandheldCompanion.Views.Pages
 
             currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
             currentProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
+
+            currentProfile.GPUOverrideEnabled = (bool)GPUToggle.IsOn;
+            currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
 
             // Layout settings
             currentProfile.LayoutEnabled = (bool)Toggle_ControllerLayout.IsOn;
@@ -630,6 +641,15 @@ namespace HandheldCompanion.Views.Pages
         {
             if (!AutoTDPSlider.IsInitialized)
                 return;
+        }
+        private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // Do something
+        }
+
+        private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // Do something
         }
 
         private void TriggerCreated(Hotkey hotkey)

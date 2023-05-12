@@ -1594,7 +1594,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Desired FPS target value for automatic TDP controller..
+        ///   Looks up a localized string similar to Desired FPS target value for automatic TDP controller.
         /// </summary>
         public static string ProfilesPage_AutoTDPFPSDesc {
             get {
@@ -1716,6 +1716,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_GlobalSettingsDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_GlobalSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPU Clock Max Frequency.
+        /// </summary>
+        public static string ProfilesPage_GPUMhz {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPUMhz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum clock speed of the GPU in Mhz.
+        /// </summary>
+        public static string ProfilesPage_GPUMhzDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPUMhzDesc", resourceCulture);
             }
         }
         

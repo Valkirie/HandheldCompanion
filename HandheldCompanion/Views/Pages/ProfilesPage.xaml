@@ -490,6 +490,88 @@
                                             ValueChanged="AutoTDPSlider_ValueChanged" />
                                     </DockPanel>
                                 </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  GPU  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch
+                                        Name="GPUToggle"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                        Toggled="GPUToggle_Toggled" />
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  GPU Mhz Slider  -->
+                                <Grid IsEnabled="{Binding ElementName=GPUToggle, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_GPUMhzDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <DockPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        ScrollViewer.PanningMode="HorizontalOnly">
+                                        <TextBlock
+                                            Width="35"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Value, StringFormat=N0, ElementName=GPUSlider, Mode=OneWay}"
+                                            TextAlignment="Center" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
+                                        <Slider
+                                            x:Name="GPUSlider"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPlacement="TopLeft"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="500"
+                                            SmallChange="100"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="100"
+                                            TickPlacement="BottomRight"
+                                            ValueChanged="GPUSlider_ValueChanged" />
+                                    </DockPanel>
+                                </Grid>
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
