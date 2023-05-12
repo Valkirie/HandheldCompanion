@@ -498,6 +498,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (!isDrawing)
             {
+                if (AutoTDPRequestedFPSSlider.Value > FramerateSlider.Value && FramerateToggle.IsOn == true) { AutoTDPRequestedFPSSlider.Value = (int)FramerateSlider.Value; }
                 currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
                 RequestUpdate();
             }
