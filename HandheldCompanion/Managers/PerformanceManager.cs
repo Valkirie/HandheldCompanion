@@ -322,7 +322,7 @@ namespace HandheldCompanion.Managers
                         var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
                         RequestTDP(values, true);
 
-                        // LogManager.LodDebug("TDPSet\t{0:0.0};{1:0.000};{2:0.0000};{3:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS);
+                        //LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
                     }
                 }
 
