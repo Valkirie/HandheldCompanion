@@ -106,6 +106,7 @@ namespace HandheldCompanion.Managers
         private double AutoTDPTargetFPS;
         private double AutoTDPMin;
         private double AutoTDPMax;
+        private int AutoTDPFPSSetpointMetCounter;
 
         public PerformanceManager() : base()
         {
@@ -254,8 +255,26 @@ namespace HandheldCompanion.Managers
                         // Be realistic with expectd proces value
                         ProcessValueFPS = Math.Clamp(ProcessValueFPS, 5, 500);
 
-                        // If actual and target FPS are very similar, add a small amount of positive "error" make controller always try to reduce
-                        double ProcessValueFPSModifier = AutoTDPTargetFPS - 0.2 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1 ? 0.5 : 0.0;
+                        // If actual and target FPS are very similar for a certain duration,
+                        // add a small amount of positive "error" make controller always try to reduce
+                        // range is intentionally a bit wide for framerate limiter margin of error
+                        double ProcessValueFPSModifier = 0.0;
+                        if (AutoTDPTargetFPS - 0.5 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1)
+                        {
+                            AutoTDPFPSSetpointMetCounter += 1;
+                            if (AutoTDPFPSSetpointMetCounter >= 3)
+                            { 
+                                // Calculate modifier to get target + 0.5 controller error
+                                ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
+
+                                AutoTDPFPSSetpointMetCounter = 3;
+                            }
+                        }    
+                        else 
+                        { 
+                            ProcessValueFPSModifier = 0.0;
+                            AutoTDPFPSSetpointMetCounter = 0;
+                        }
 
                         // Determine error amount
                         double ControllerError = AutoTDPTargetFPS - ProcessValueFPS - ProcessValueFPSModifier;
