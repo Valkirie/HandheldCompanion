@@ -98,9 +98,6 @@
     <Setting Name="QuickToolsTop" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="QuickToolsPowerModeValue" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
     <Setting Name="ConfigurableTDPOverride" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

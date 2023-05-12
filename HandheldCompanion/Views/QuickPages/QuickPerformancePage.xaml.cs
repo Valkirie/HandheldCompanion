@@ -5,7 +5,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
 using System;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -17,10 +17,15 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickPerformancePage : Page
     {
+        private readonly object powerModeLock = new();
+
         public QuickPerformancePage()
         {
             InitializeComponent();
-
+			
+            MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
+            MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
+			
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
@@ -44,6 +49,20 @@ namespace HandheldCompanion.Views.QuickPages
             ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
         }
 
+        private void PerformanceManager_PowerModeChanged(int idx)
+        {
+            if (Monitor.TryEnter(powerModeLock))
+            {
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    PowerModeSlider.Value = idx;
+                });
+
+                Monitor.Exit(powerModeLock);
+            }
+        }
+
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread (async)
@@ -51,9 +70,6 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 switch (name)
                 {
-                    case "QuickToolsPowerModeValue":
-                        PowerModeSlider.Value = Convert.ToDouble(value);
-                        break;
                     case "QuietModeToggled":
                         QuietModeToggle.IsOn = Convert.ToBoolean(value);
                         break;
@@ -73,7 +89,7 @@ namespace HandheldCompanion.Views.QuickPages
         private void PowerModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // update settings
-            int value = (int)PowerModeSlider.Value;
+            int idx = (int)PowerModeSlider.Value;
 
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
@@ -81,14 +97,18 @@ namespace HandheldCompanion.Views.QuickPages
                 foreach (TextBlock tb in PowerModeGrid.Children)
                     tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
 
-                TextBlock TextBlock = (TextBlock)PowerModeGrid.Children[value];
+                TextBlock TextBlock = (TextBlock)PowerModeGrid.Children[idx];
                 TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
             });
 
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("QuickToolsPowerModeValue", value);
+            if (Monitor.TryEnter(powerModeLock))
+            {
+                MainWindow.performanceManager.RequestPowerMode(idx);
+                Monitor.Exit(powerModeLock);
+            }
         }
 
         private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)

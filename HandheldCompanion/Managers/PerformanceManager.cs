@@ -17,20 +17,18 @@ namespace HandheldCompanion.Managers
         /// <summary>
         /// Better Battery mode.
         /// </summary>
-        public static Guid BetterBattery = new Guid("961cc777-2547-4f9d-8174-7d86181b8a7a");
+        public static Guid BetterBattery = new("961cc777-2547-4f9d-8174-7d86181b8a7a");
 
         /// <summary>
         /// Better Performance mode.
         /// </summary>
         // public static Guid BetterPerformance = new Guid("3af9B8d9-7c97-431d-ad78-34a8bfea439f");
-        public static Guid BetterPerformance = new Guid("00000000-0000-0000-0000-000000000000");
+        public static Guid BetterPerformance = new("00000000-0000-0000-0000-000000000000");
 
         /// <summary>
         /// Best Performance mode.
         /// </summary>
-        public static Guid BestPerformance = new Guid("ded574b5-45a0-4f42-8737-46345c09c238");
-
-        public static Guid[] PowerModes = new Guid[3] { BetterBattery, BetterPerformance, BestPerformance };
+        public static Guid BestPerformance = new("ded574b5-45a0-4f42-8737-46345c09c238");
     }
 
     public class PerformanceManager : Manager
@@ -52,7 +50,7 @@ namespace HandheldCompanion.Managers
         [DllImportAttribute("powrprof.dll", EntryPoint = "PowerSetActiveOverlayScheme")]
         private static extern uint PowerSetActiveOverlayScheme(Guid OverlaySchemeGuid);
         #endregion
-
+		
         #region events
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
@@ -62,13 +60,16 @@ namespace HandheldCompanion.Managers
 
         public event StatusChangedHandler ProcessorStatusChanged;
         public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
-        #endregion
+
+        public event PowerModeChangedEventHandler PowerModeChanged;
+        public delegate void PowerModeChangedEventHandler(int idx);
 
         private Processor processor;
         public static int MaxDegreeOfParallelism = 4;
 
-        // timers
-        private Timer powerWatchdog;
+        private static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
+        private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+        private readonly Timer powerWatchdog;
 
         private Timer cpuWatchdog;
         protected object cpuLock = new();
@@ -94,9 +95,6 @@ namespace HandheldCompanion.Managers
         private double StoredGfxClock;
         private double CurrentGfxClock;
 
-        // Power modes
-        private Guid RequestedPowerMode;
-
         // AutoTDP
         private bool AutoTDPFirstRun = true;
         private int AutoTDPProcessId;
@@ -108,7 +106,7 @@ namespace HandheldCompanion.Managers
         private double AutoTDPMax;
         private int AutoTDPFPSSetpointMetCounter;
         private double ProcessValueFPSPrevious;
-
+		
         public PerformanceManager() : base()
         {
             // initialize timer(s)
@@ -332,10 +330,17 @@ namespace HandheldCompanion.Managers
 
         private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // Checking if active power shceme has changed
+            // Checking if active power shceme has changed to reflect that
             if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
-                if (activeScheme != RequestedPowerMode)
-                    PowerSetActiveOverlayScheme(RequestedPowerMode);
+            {
+                if (activeScheme == currentPowerMode)
+                    return;
+
+                currentPowerMode = activeScheme;
+                int idx = Array.IndexOf(PowerModes, activeScheme);
+                if (idx != -1)
+                    PowerModeChanged?.Invoke(idx);
+            }
         }
 
         private void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
@@ -524,10 +529,10 @@ namespace HandheldCompanion.Managers
 
         public void RequestPowerMode(int idx)
         {
-            RequestedPowerMode = PowerMode.PowerModes[idx];
-            LogManager.LogInformation("User requested power scheme: {0}", RequestedPowerMode);
-
-            PowerSetActiveOverlayScheme(RequestedPowerMode);
+            currentPowerMode = PowerModes[idx];
+            LogManager.LogInformation("User requested power scheme: {0}", currentPowerMode);
+            if (PowerSetActiveOverlayScheme(currentPowerMode) != 0)
+                LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
         }
 
         #region events

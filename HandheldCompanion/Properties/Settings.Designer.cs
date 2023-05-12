@@ -409,18 +409,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int QuickToolsPowerModeValue {
-            get {
-                return ((int)(this["QuickToolsPowerModeValue"]));
-            }
-            set {
-                this["QuickToolsPowerModeValue"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ConfigurableTDPOverride {
             get {
