@@ -193,7 +193,7 @@ namespace HandheldCompanion.Managers
         private void ProfileManager_Applied(Profile profile)
         {
             // apply profile defined TDP
-            if (profile.TDPOverrideEnabled || profile.AutoTDPEnabled)
+            if (profile.TDPOverrideEnabled)
             {
                 RequestTDP(profile.TDPOverrideValues);
                 StartTDPWatchdog();
