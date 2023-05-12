@@ -14,6 +14,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
@@ -410,10 +411,12 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
 
                 // Sustained TDP settings (slow, stapm, long)
-                double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
-                TDPSlider.Value = TDP[(int)PowerType.Slow];
-
                 TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
+                double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
+                TDPSlider.Value = TDP[(int)PowerType.Slow];               
+
+                AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
+                AutoTDPSlider.Value = (int)currentProfile.AutoTDPRequestedFPS;
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
@@ -518,6 +521,9 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
 
+            currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
+            currentProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
+
             // Layout settings
             currentProfile.LayoutEnabled = (bool)Toggle_ControllerLayout.IsOn;
 
@@ -598,15 +604,32 @@ namespace HandheldCompanion.Views.Pages
                 return;
         }
 
+        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // TDP and AutoTDP are mutually exclusive
+            bool toggled = TDPToggle.IsOn;
+            if (toggled)
+                AutoTDPToggle.IsOn = false;
+        }
+
         private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!TDPSlider.IsInitialized)
                 return;
         }
 
-        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            // do something
+            // TDP and AutoTDP are mutually exclusive
+            bool toggled = AutoTDPToggle.IsOn;
+            if (toggled)
+                TDPToggle.IsOn = false;            
+        }
+
+        private void AutoTDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!AutoTDPSlider.IsInitialized)
+                return;
         }
 
         private void TriggerCreated(Hotkey hotkey)

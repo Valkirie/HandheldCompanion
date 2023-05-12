@@ -359,7 +359,7 @@
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
 
-                                <!--  TDP Sustained  -->
+                                <!--  TDP  -->
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200" />
@@ -404,6 +404,90 @@
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ValueChanged="TDPSlider_ValueChanged" />
+                                    </DockPanel>
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  Auto TDP  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch
+                                        Name="AutoTDPToggle"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                        Toggled="AutoTDPToggle_Toggled" />
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  Auto TDP FPS Slider  -->
+                                <Grid IsEnabled="{Binding ElementName=AutoTDPToggle, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPS}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPSDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <DockPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        ScrollViewer.PanningMode="HorizontalOnly">
+                                        <TextBlock
+                                            Width="35"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Value, StringFormat=N0, ElementName=AutoTDPSlider, Mode=OneWay}"
+                                            TextAlignment="Center" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Static resx:Resources.QuickPerformancePage_AutoTDPUnitFPS}" />
+                                        <Slider
+                                            x:Name="AutoTDPSlider"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPlacement="TopLeft"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="10"
+                                            Maximum="60"
+                                            Minimum="30"
+                                            SmallChange="5"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="5"
+                                            TickPlacement="BottomRight"
+                                            ValueChanged="AutoTDPSlider_ValueChanged" />
                                     </DockPanel>
                                 </Grid>
                             </ui:SimpleStackPanel>

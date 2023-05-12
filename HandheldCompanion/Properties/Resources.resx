@@ -1199,4 +1199,19 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
     <value>Increase the system volume by 5%</value>
   </data>
+  <data name="ProfilesPage_AutoTDP" xml:space="preserve">
+    <value>AutoTDP</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
+    <value>Automatic adjustement of TDP based on measured FPS and requested FPS target</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
+    <value>Wanted FPS</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPFPSDesc" xml:space="preserve">
+    <value>Desired FPS target value for automatic TDP controller.</value>
+  </data>
+  <data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
+    <value>FPS</value>
+  </data>
 </root>

@@ -1567,6 +1567,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AutoTDP.
+        /// </summary>
+        public static string ProfilesPage_AutoTDP {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AutoTDP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatic adjustement of TDP based on measured FPS and requested FPS target.
+        /// </summary>
+        public static string ProfilesPage_AutoTDPDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AutoTDPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wanted FPS.
+        /// </summary>
+        public static string ProfilesPage_AutoTDPFPS {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AutoTDPFPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desired FPS target value for automatic TDP controller..
+        /// </summary>
+        public static string ProfilesPage_AutoTDPFPSDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AutoTDPFPSDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Boost power limit.
         /// </summary>
         public static string ProfilesPage_BoostPower {
@@ -2203,6 +2239,15 @@ namespace HandheldCompanion.Properties {
         public static string Properties_Resources_ControllerPage_Disconnect {
             get {
                 return ResourceManager.GetString("Properties.Resources.ControllerPage_Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FPS.
+        /// </summary>
+        public static string QuickPerformancePage_AutoTDPUnitFPS {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_AutoTDPUnitFPS", resourceCulture);
             }
         }
         
