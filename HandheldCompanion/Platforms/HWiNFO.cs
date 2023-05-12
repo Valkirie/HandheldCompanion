@@ -246,7 +246,7 @@ namespace HandheldCompanion.Platforms
             }
         }
         
-        public SortedDictionary<SensorElementType, SensorElement> MonitoredSensors = new()
+        public Dictionary<SensorElementType, SensorElement> MonitoredSensors = new()
         {
             // those are used for computes
             { SensorElementType.PL1, new SensorElement() },
