@@ -262,12 +262,19 @@ namespace HandheldCompanion.Managers
                         if (AutoTDPTargetFPS - 0.5 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1)
                         {
                             AutoTDPFPSSetpointMetCounter += 1;
+                            
                             if (AutoTDPFPSSetpointMetCounter >= 3)
                             { 
                                 // Calculate modifier to get target + 0.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
+                            }
+                            else if (AutoTDPFPSSetpointMetCounter >= 6)
+                            {
+                                // Calculate modifier to get target + 1.5 controller error
+                                ProcessValueFPSModifier = AutoTDPTargetFPS + 1.5 - ProcessValueFPS;
 
-                                AutoTDPFPSSetpointMetCounter = 3;
+                                // Prevent overflow
+                                AutoTDPFPSSetpointMetCounter = 6;
                             }
                         }    
                         else 
