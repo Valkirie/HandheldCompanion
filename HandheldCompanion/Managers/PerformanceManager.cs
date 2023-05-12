@@ -106,6 +106,8 @@ namespace HandheldCompanion.Managers
         private double AutoTDPTargetFPS;
         private double AutoTDPMin;
         private double AutoTDPMax;
+        private int AutoTDPFPSSetpointMetCounter;
+        private double ProcessValueFPSPrevious;
 
         public PerformanceManager() : base()
         {
@@ -192,7 +194,7 @@ namespace HandheldCompanion.Managers
         private void ProfileManager_Applied(Profile profile)
         {
             // apply profile defined TDP
-            if (profile.TDPOverrideEnabled || profile.AutoTDPEnabled)
+            if (profile.TDPOverrideEnabled)
             {
                 RequestTDP(profile.TDPOverrideValues);
                 StartTDPWatchdog();
@@ -254,8 +256,33 @@ namespace HandheldCompanion.Managers
                         // Be realistic with expectd proces value
                         ProcessValueFPS = Math.Clamp(ProcessValueFPS, 5, 500);
 
-                        // If actual and target FPS are very similar, add a small amount of positive "error" make controller always try to reduce
-                        double ProcessValueFPSModifier = AutoTDPTargetFPS - 0.2 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1 ? 0.5 : 0.0;
+                        // If actual and target FPS are very similar for a certain duration,
+                        // add a small amount of positive "error" make controller always try to reduce
+                        // range is intentionally a bit wide for framerate limiter margin of error
+                        double ProcessValueFPSModifier = 0.0;
+                        if (AutoTDPTargetFPS - 0.5 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1)
+                        {
+                            AutoTDPFPSSetpointMetCounter += 1;
+                            
+                            if (AutoTDPFPSSetpointMetCounter >= 3)
+                            { 
+                                // Calculate modifier to get target + 0.5 controller error
+                                ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
+                            }
+                            else if (AutoTDPFPSSetpointMetCounter >= 6)
+                            {
+                                // Calculate modifier to get target + 1.5 controller error
+                                ProcessValueFPSModifier = AutoTDPTargetFPS + 1.5 - ProcessValueFPS;
+
+                                // Prevent overflow
+                                AutoTDPFPSSetpointMetCounter = 6;
+                            }
+                        }    
+                        else 
+                        { 
+                            ProcessValueFPSModifier = 0.0;
+                            AutoTDPFPSSetpointMetCounter = 0;
+                        }
 
                         // Determine error amount
                         double ControllerError = AutoTDPTargetFPS - ProcessValueFPS - ProcessValueFPSModifier;
@@ -270,23 +297,22 @@ namespace HandheldCompanion.Managers
 
                         // Based on TDP/FPS ratio, determine how much adjustment is needed
                         double TDPAdjustment = ControllerError * AutoTDP / ProcessValueFPS;
-                        // Going lower or higher, we need to reduce the amount of TDP by a factor.
-                        if (ControllerError < 0.0)
-                        {
-                            // Going to lower TDP and thus FPS
-                            TDPAdjustment *= 0.9;
-                        }
-                        else
-                        {
-                            // Going to higher TDP and thus FPS
-                            TDPAdjustment *= 0.7;
-                        }
+                        // Always have a little bit of undershoot
+                        TDPAdjustment *= 0.9;
+
+                        // (PI)D derivate control component to dampen
+                        if (ProcessValueFPSPrevious == float.NaN) { ProcessValueFPSPrevious = ProcessValueFPS; } // First time around, initialise previous
+                        double DFactor = -0.25;
+                        double DeltaError = ProcessValueFPS - ProcessValueFPSPrevious;
+                        double DTerm = DeltaError / ((double)INTERVAL_AUTO / 1000.0); // Perhaps improve with actual timer?
+                        double TDPDamping = AutoTDP / ProcessValueFPS * DFactor * DTerm;
+                        ProcessValueFPSPrevious = ProcessValueFPS; // For next loop
 
                         // Determine final setpoint
                         // Skip calculating TDP the very first run, first need to set to determine values next round
                         if (!AutoTDPFirstRun)
                         {
-                            AutoTDP += TDPAdjustment;
+                            AutoTDP += TDPAdjustment + TDPDamping;
                         }
                         else { AutoTDPFirstRun = false; }
 
@@ -296,7 +322,7 @@ namespace HandheldCompanion.Managers
                         var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
                         RequestTDP(values, true);
 
-                        // LogManager.LodDebug("TDPSet\t{0:0.0};{1:0.000};{2:0.0000};{3:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS);
+                        //LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
                     }
                 }
 

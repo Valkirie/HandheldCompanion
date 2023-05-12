@@ -487,6 +487,7 @@ namespace HandheldCompanion.Views.QuickPages
 
                 currentProfile.AutoTDPEnabled = toggled;
                 AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
+
                 RequestUpdate();
             }
         }
@@ -497,7 +498,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             if (!isDrawing)
-            {
+            {                 
                 currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
                 RequestUpdate();
             }
@@ -618,6 +619,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isDrawing)
             {
                 currentProfile.FramerateEnabled = (bool)FramerateToggle.IsOn;
+
                 RequestUpdate();
             }
         }
