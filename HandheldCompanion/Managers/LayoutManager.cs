@@ -260,7 +260,8 @@ namespace HandheldCompanion.Managers
             currentOrientation = rotation;
 
             // apply orientation
-            UpdateOrientation();
+            if (currentLayout is not null)
+                UpdateOrientation();
         }
 
         private static void UpdateOrientation()
@@ -285,7 +286,7 @@ namespace HandheldCompanion.Managers
 
             currentLayout = layout;
 
-            // restore orientation
+            // (re)apply orientation
             UpdateOrientation();
         }
 
