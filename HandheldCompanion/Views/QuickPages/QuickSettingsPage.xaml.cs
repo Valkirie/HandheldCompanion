@@ -11,8 +11,8 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickSettingsPage : Page
     {
-        private object volumeLock = new();
-        private object brightnessLock = new();
+        private readonly object volumeLock = new();
+        private readonly object brightnessLock = new();
 
         public QuickSettingsPage()
         {
@@ -28,23 +28,21 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SystemManager_Initialized()
         {
-            // get current system brightness
-            switch (SystemManager.HasBrightnessSupport())
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                case true:
+                if (SystemManager.HasBrightnessSupport())
+                {
                     SliderBrightness.IsEnabled = true;
                     SliderBrightness.Value = SystemManager.GetBrightness();
-                    break;
-            }
+                }
 
-            // get current system volume
-            switch (SystemManager.HasVolumeSupport())
-            {
-                case true:
+                if (SystemManager.HasVolumeSupport())
+                {
                     SliderVolume.IsEnabled = true;
                     SliderVolume.Value = SystemManager.GetVolume();
-                    break;
-            }
+                }
+            });
         }
 
         private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
@@ -97,6 +95,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!IsLoaded)
+                return;
+
             if (Monitor.TryEnter(brightnessLock))
             {
                 SystemManager.SetBrightness(SliderBrightness.Value);
@@ -107,6 +108,9 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (!IsLoaded)
+                return;
+
             if (Monitor.TryEnter(volumeLock))
             {
                 // update volume
