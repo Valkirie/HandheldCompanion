@@ -152,7 +152,7 @@ namespace HandheldCompanion.Platforms
             base.PlatformWatchdog = new(3000);
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
-            // start HWiNFO if not running
+            // start HWiNFO if not running or Shared Memory is disabled
             if (!IsRunning())
             {
                 Start();
@@ -509,6 +509,19 @@ namespace HandheldCompanion.Platforms
                 settings.Write(propertyName, Convert.ToString(value), "Settings");
 
                 return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool GetProperty(string propertyName)
+        {
+            try
+            {
+                IniFile settings = new(SettingsPath);
+                return Convert.ToBoolean(settings.Read(propertyName, "Settings"));
             }
             catch
             {
