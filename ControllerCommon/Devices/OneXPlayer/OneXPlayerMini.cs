@@ -40,11 +40,10 @@ namespace ControllerCommon.Devices
                 ValueMax = 255
             };
 
-            // unused
-            OEMChords.Add(new DeviceChord("Fan",
-                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
-                new List<KeyCode>() { KeyCode.LButton | KeyCode.XButton2 },
-                false, ButtonFlags.OEM5
+            OEMChords.Add(new DeviceChord("Orange",
+                new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+                new List<KeyCode>() { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+                false, ButtonFlags.OEM1
                 ));
 
             OEMChords.Add(new DeviceChord("Keyboard",
@@ -53,34 +52,10 @@ namespace ControllerCommon.Devices
                 false, ButtonFlags.OEM2
                 ));
 
-            // dirty implementation from OneX...
-            OEMChords.Add(new DeviceChord("Function",
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.D, KeyCode.LWin },
-                false, ButtonFlags.OEM3
-                ));
             OEMChords.Add(new DeviceChord("Function",
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
                 false, ButtonFlags.OEM3
-                ));
-
-            OEMChords.Add(new DeviceChord("Function + Volume Up",
-                new List<KeyCode>() { KeyCode.F1 },
-                new List<KeyCode>() { KeyCode.F1, KeyCode.F1 },
-                false, ButtonFlags.OEM4
-                ));
-
-            // dirty implementation from OneX...
-            OEMChords.Add(new DeviceChord("Function + Fan",
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
-                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.LWin },
-                false, ButtonFlags.OEM1
-                ));
-            OEMChords.Add(new DeviceChord("Function + Fan",
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.Snapshot },
-                new List<KeyCode>() { KeyCode.Snapshot, KeyCode.Snapshot, KeyCode.LWin },
-                false, ButtonFlags.OEM1
                 ));
         }
 
@@ -91,13 +66,13 @@ namespace ControllerCommon.Devices
                 return false;
 
             // allow OneX button to pass key inputs
-            LogManager.LogInformation("Unlocked {0} OEM button", "");
+            LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
             return ECRamDirectWrite(0xF1, ECDetails, 0x40);
         }
 
         public override void Close()
         {
-            LogManager.LogInformation("Locked {0} OEM button", "");
+            LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
             ECRamDirectWrite(0xF1, ECDetails, 0x00);
             base.Close();
         }
