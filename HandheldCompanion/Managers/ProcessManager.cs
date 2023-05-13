@@ -68,14 +68,14 @@ namespace HandheldCompanion.Managers
         #endregion
 
         // process vars
-        private static Timer MonitorTimer;
+        private static readonly Timer MonitorTimer;
 
         private static ConcurrentDictionary<int, ProcessEx> Processes = new();
 
         private static ProcessEx currentProcess;
         private static ProcessEx previousProcess;
 
-        private static object updateLock = new();
+        private static readonly object updateLock = new();
         private static bool IsInitialized;
 
         static ProcessManager()

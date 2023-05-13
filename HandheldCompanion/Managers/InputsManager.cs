@@ -38,13 +38,13 @@ namespace HandheldCompanion.Managers
         private static InputsChord storedChord = new();
         private static string SpecialKey;
 
-        private static Timer InputsChordHoldTimer;
-        private static Timer InputsChordInputTimer;
+        private static readonly Timer InputsChordHoldTimer;
+        private static readonly Timer InputsChordInputTimer;
 
         private static Dictionary<KeyValuePair<KeyCode, bool>, int> prevKeys = new();
 
         // Global variables
-        private static Timer ListenerTimer;
+        private static readonly Timer ListenerTimer;
 
         private const short TIME_FLUSH = 5;             // default interval between buffer flush
         private const short TIME_SPAM = 50;             // default interval between two allowed inputs

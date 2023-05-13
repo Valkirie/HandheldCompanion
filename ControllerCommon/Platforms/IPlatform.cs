@@ -32,8 +32,8 @@ namespace ControllerCommon.Platforms
         protected bool KeepAlive;
         protected bool IsStarting;
 
-        protected Timer PlatformWatchdog;
-        protected object updateLock = new();
+        protected readonly Timer PlatformWatchdog;
+        protected readonly object updateLock = new();
 
         protected Process? Process
         {

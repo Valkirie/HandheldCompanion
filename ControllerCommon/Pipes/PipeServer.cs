@@ -23,7 +23,7 @@ namespace ControllerCommon.Pipes
         public delegate void ClientMessageEventHandler(PipeMessage e);
 
         private static ConcurrentQueue<PipeMessage> m_queue = new();
-        private static Timer m_timer;
+        private static readonly Timer m_timer;
 
         public static bool IsConnected;
         private const string PipeName = "HandheldCompanion";

@@ -34,7 +34,7 @@ namespace ControllerService.Sensors
 
         protected static SensorSpec sensorSpec;
 
-        protected Timer centerTimer;
+        protected readonly Timer centerTimer;
         protected int updateInterval;
         protected SensorFamily sensorFamily;
 

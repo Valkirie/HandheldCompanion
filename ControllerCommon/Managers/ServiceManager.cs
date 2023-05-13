@@ -37,8 +37,8 @@ namespace ControllerCommon.Managers
 
         private Process process;
 
-        private Timer MonitorTimer;
-        private object updateLock = new();
+        private readonly Timer MonitorTimer;
+        private readonly object updateLock = new();
 
         public event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(ServiceControllerStatus status, int mode);

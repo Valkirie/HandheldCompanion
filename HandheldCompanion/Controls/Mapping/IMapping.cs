@@ -11,7 +11,7 @@ namespace HandheldCompanion.Controls
         protected IActions Actions;
         protected IActions prevActions;
 
-        protected object updateLock = new();
+        protected readonly object updateLock = new();
 
         #region events
         public event DeletedEventHandler Deleted;

@@ -41,7 +41,7 @@ namespace HandheldCompanion.Views.Pages
         private LayoutTemplate currentTemplate = new();
         private Layout currentLayout = new();
 
-        protected object updateLock = new();
+        protected readonly object updateLock = new();
 
         public LayoutPage()
         {

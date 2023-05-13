@@ -110,7 +110,7 @@ namespace HandheldCompanion.Platforms
 
         public ConcurrentDictionary<SensorElementType, SensorElement> MonitoredSensors = new();
 
-        private Timer MemoryTimer;
+        private readonly Timer MemoryTimer;
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;

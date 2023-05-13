@@ -30,7 +30,7 @@ namespace HandheldCompanion.Views.QuickPages
         private Hotkey ProfilesPageHotkey = new(61);
 
         private const int UpdateInterval = 500;
-        private Timer UpdateTimer;
+        private readonly Timer UpdateTimer;
 
         private bool isDrawing;
 

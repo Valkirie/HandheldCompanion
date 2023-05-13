@@ -36,7 +36,7 @@ namespace ControllerService
         public static event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler();
 
-        private static object updateLock = new();
+        private static readonly object updateLock = new();
 
         public static bool IsInitialized;
 

@@ -19,7 +19,7 @@ namespace HandheldCompanion.Views.Windows
     /// </summary>
     public partial class OverlayModel : OverlayWindow
     {
-        private Timer UpdateTimer;
+        private readonly Timer UpdateTimer;
 
         private ControllerState Inputs = new();
 

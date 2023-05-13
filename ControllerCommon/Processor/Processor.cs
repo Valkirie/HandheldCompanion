@@ -33,7 +33,7 @@ namespace ControllerCommon.Processor
         protected object IsBusy = new();
         public bool IsInitialized;
 
-        protected Timer updateTimer = new Timer() { Interval = 3000, AutoReset = true };
+        protected readonly Timer updateTimer = new Timer() { Interval = 3000, AutoReset = true };
 
         protected Dictionary<PowerType, int> m_Limits = new();
         protected Dictionary<PowerType, int> m_PrevLimits = new();

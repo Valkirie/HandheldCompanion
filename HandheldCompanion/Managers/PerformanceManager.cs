@@ -73,15 +73,15 @@ namespace HandheldCompanion.Managers
         private readonly Timer powerWatchdog;
 
         private readonly Timer cpuWatchdog;
-        protected object cpuLock = new();
+        protected readonly object cpuLock = new();
         private bool cpuWatchdogPendingStop;
 
         private readonly Timer gfxWatchdog;
-        protected object gfxLock = new();
+        protected readonly object gfxLock = new();
         private bool gfxWatchdogPendingStop;
 
         private readonly Timer AutoTDPWatchdog;
-        protected object AutoTDPWatchdogLock = new();
+        protected readonly object AutoTDPWatchdogLock = new();
 
         private const short INTERVAL_DEFAULT = 1000;            // default interval between value scans
         private const short INTERVAL_AUTO = 1000;               // default interval between value scans
