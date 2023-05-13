@@ -37,7 +37,7 @@ namespace ControllerCommon.Managers
 
         private Process process;
 
-        private readonly Timer MonitorTimer;
+        private readonly Timer MonitorTimer = new Timer(2000) { Enabled = true, AutoReset = true };
         private readonly object updateLock = new();
 
         public event UpdatedEventHandler Updated;
@@ -69,9 +69,6 @@ namespace ControllerCommon.Managers
                     Verb = "runas"
                 }
             };
-
-            // monitor service
-            MonitorTimer = new Timer(2000) { Enabled = true, AutoReset = true };
         }
 
         public override void Start()
@@ -85,7 +82,7 @@ namespace ControllerCommon.Managers
                 return;
 
             MonitorTimer.Elapsed -= MonitorHelper;
-            MonitorTimer = null;
+            MonitorTimer.Dispose();
 
             base.Stop();
         }

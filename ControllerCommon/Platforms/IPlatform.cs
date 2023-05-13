@@ -32,7 +32,7 @@ namespace ControllerCommon.Platforms
         protected bool KeepAlive;
         protected bool IsStarting;
 
-        protected readonly Timer PlatformWatchdog;
+        protected Timer PlatformWatchdog;
         protected readonly object updateLock = new();
 
         protected Process? Process

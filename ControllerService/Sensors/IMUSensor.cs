@@ -82,7 +82,6 @@ namespace ControllerService.Sensors
 
             this.centerTimer.Stop();
             this.centerTimer.Dispose();
-            this.centerTimer = null;
         }
 
         public override string ToString()
