@@ -356,23 +356,9 @@
 
                                 <!--  Content  -->
                                 <Grid IsEnabled="{Binding ElementName=FramerateToggle, Path=IsOn}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                        <ColumnDefinition Width="5*" MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_SustainedPower}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_SustainedPowerDesc}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
 
                                     <StackPanel
-                                        Grid.Column="1"
-                                        Margin="12,0,0,0"
+                                        Grid.Column="0"
                                         VerticalAlignment="Center"
                                         Orientation="Vertical"
                                         ScrollViewer.PanningMode="HorizontalOnly">
@@ -403,25 +389,25 @@
                                             <TextBlock
                                                 Name="FramerateQuarter"
                                                 Grid.Column="0"
-                                                Margin="0,0,89,0"
+                                                Margin="0,0,192,0"
                                                 HorizontalAlignment="Center"
                                                 Text="|" />
                                             <TextBlock
                                                 Name="FramerateThird"
                                                 Grid.Column="1"
-                                                Margin="0,0,29,0"
+                                                Margin="0,0,64,0"
                                                 HorizontalAlignment="Center"
                                                 Text="|" />
                                             <TextBlock
                                                 Name="FramerateHalf"
                                                 Grid.Column="2"
-                                                Margin="29,0,0,0"
+                                                Margin="64,0,0,0"
                                                 HorizontalAlignment="Center"
                                                 Text="|" />
                                             <TextBlock
                                                 Name="FramerateFull"
                                                 Grid.Column="3"
-                                                Margin="89,0,0,0"
+                                                Margin="192,0,0,0"
                                                 HorizontalAlignment="Center"
                                                 Text="|" />
                                         </Grid>
