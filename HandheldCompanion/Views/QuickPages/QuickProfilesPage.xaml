@@ -433,11 +433,11 @@
                                 Glyph="&#xF119;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Framerate limit" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Limits framerate for 3D applications"
+                                    Text="{x:Static resx:Resources.ProfilesPage_FramerateLimitDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -631,11 +631,11 @@
                                 Glyph="&#xE9D9;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="Automatic TDP" />
+                                <TextBlock Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Automatic TDP adjustment to meet requested FPS"
+                                    Text="{x:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -660,7 +660,7 @@
                         <TextBlock
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
-                            Text="Desired FPS" />
+                            Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPS}" />
 
                         <DockPanel
                             Grid.Column="1"
