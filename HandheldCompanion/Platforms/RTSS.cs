@@ -189,6 +189,8 @@ namespace HandheldCompanion.Platforms
                 var BackProcessId = backgroundEx.GetProcessId();
                 if (BackProcessId != ProcessId)
                     Unhooked?.Invoke(backgroundEx.GetProcessId());
+                else
+                    return;
             }
 
             Hooked?.Invoke(ProcessId);
@@ -221,7 +223,8 @@ namespace HandheldCompanion.Platforms
 
                 return (double)appE.StatFrameTimeBufFramerate / 10;
             }
-            catch (FileNotFoundException ex) { }
+            catch (InvalidDataException) { }
+            catch (FileNotFoundException) { }
 
             return 0.0d;
         }

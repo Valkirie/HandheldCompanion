@@ -4,6 +4,7 @@ using ControllerCommon.Platforms;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
+using System.Windows;
 using static HandheldCompanion.Platforms.HWiNFO;
 using Timer = System.Timers.Timer;
 
@@ -143,6 +145,8 @@ namespace HandheldCompanion.Platforms
                 return;
             }
 
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
             // those are used for computes
             MonitoredSensors[SensorElementType.PL1] = new SensorElement();
             MonitoredSensors[SensorElementType.PL2] = new SensorElement();
@@ -153,18 +157,36 @@ namespace HandheldCompanion.Platforms
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
             // start HWiNFO if not running or Shared Memory is disabled
-            if (!IsRunning())
+            if (!IsRunning() || !GetProperty("SensorsSM"))
             {
+                Stop();
                 Start();
             }
             else
             {
                 // start watchdog
                 PlatformWatchdog.Start();
+
+                // hook into current process
+                Process.Exited += Process_Exited;
             }
 
             MemoryTimer = new(MemoryInterval);
             MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (name)
+                {
+                    case "OnScreenDisplayRefreshRate":
+                        SetProperty("SensorInterval", Convert.ToInt32(value));
+                        break;
+                }
+            });
         }
 
         private void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
@@ -179,18 +201,16 @@ namespace HandheldCompanion.Platforms
                 // shared memory is disabled, halt process
                 if (prevPoll_time != -1)
                     Stop();
+
+                // HWiNFO is loading
                 return;
             }
 
             // we couldn't poll HWiNFO, halt process
             if (HWiNFOMemory.poll_time == prevPoll_time)
             {
-                prevPoll_attempt++;
-                if (prevPoll_attempt == 2)
-                {
-                    Stop();
-                    return;
-                }
+                Stop();
+                return;
             }
 
             // update poll time
@@ -300,22 +320,6 @@ namespace HandheldCompanion.Platforms
                             sensor.Elements[element.dwSensorID] = element;
                         else
                             continue;
-
-                        // Level one
-                        // FPS
-
-                        // Level two
-                        // Battery % and W, GPU and CPU usage and W, RAM usage, FPS
-
-                        // Level three
-                        // GPU and CPU usage and temp and W
-                        // VRAM usage
-                        // RAM usage
-                        // Battery % and W
-                        // FPS and latency
-
-                        // Level four
-                        // Level three + per CPU % and Mhz + Gamescope + FSR
 
                         switch (element.tReading)
                         {

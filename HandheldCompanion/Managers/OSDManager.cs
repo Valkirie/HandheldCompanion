@@ -62,7 +62,7 @@ namespace HandheldCompanion.Managers
             // clear previous display
             if (OnScreenDisplay.TryGetValue(processId, out var OSD))
             {
-                OSD.Update(string.Empty);
+                OSD.Update("");
                 OSD.Dispose();
             }
 
@@ -273,9 +273,10 @@ namespace HandheldCompanion.Managers
                     {
                         OverlayLevel = Convert.ToInt16(value);
 
-                        if (OverlayLevel >= 0)
+                        if (OverlayLevel != 0)
                         {
-                            RefreshTimer.Start();
+                            if (!RefreshTimer.IsRunning())
+                                RefreshTimer.Start();
                         }
                         else
                         {
@@ -285,7 +286,7 @@ namespace HandheldCompanion.Managers
                             foreach (var pair in OnScreenDisplay)
                             {
                                 OSD processOSD = pair.Value;
-                                processOSD.Update(string.Empty);
+                                processOSD.Update("");
                             }
                         }
                     }
