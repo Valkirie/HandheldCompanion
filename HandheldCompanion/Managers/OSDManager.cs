@@ -31,7 +31,13 @@ namespace HandheldCompanion.Managers
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
 
-        private const string Header = "<C0=008040><C1=0080C0><C2=C08080><C3=FF0000><C4=FFFFFF><C250=FF8000><A0=-4><A1=5><A2=-2><A3=-3><A4=-4><A5=-5><S0=-50><S1=50>";
+        // C1: GPU
+        // C2: CPU
+        // C3: RAM
+        // C4: VRAM
+        // C5: BATT
+        // C6: FPS
+        private const string Header = "<C0=FFFFFF><C1=458A6E><C2=4C8DB2><C3=AD7B95><C4=A369A6><C5=F19F86><C6=D76D76><A0=-4><A1=5><A2=-2><A3=-3><A4=-4><A5=-5><S0=-50><S1=50>";
         private static List<string> Content;
 
         static OSDManager()
@@ -117,7 +123,7 @@ namespace HandheldCompanion.Managers
                     {
                         OverlayRow row1 = new();
 
-                        OverlayEntry FPSentry = new("FPS");
+                        OverlayEntry FPSentry = new("FPS", "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
                             Value = PlatformManager.RTSS.GetFramerate(processId),
@@ -133,33 +139,33 @@ namespace HandheldCompanion.Managers
                     {
                         OverlayRow row1 = new();
 
-                        OverlayEntry BATTentry = new("BATT");
+                        OverlayEntry BATTentry = new("BATT", "C5");
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.BatteryChargeLevel, out sensor))
                             BATTentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.BatteryRemainingCapacity, out sensor))
                             BATTentry.elements.Add(sensor);
                         row1.entries.Add(BATTentry);
 
-                        OverlayEntry GPUentry = new("GPU");
+                        OverlayEntry GPUentry = new("GPU", "C1");
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.GPUUsage, out sensor))
                             GPUentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.GPUPower, out sensor))
                             GPUentry.elements.Add(sensor);
                         row1.entries.Add(GPUentry);
 
-                        OverlayEntry CPUentry = new("CPU");
+                        OverlayEntry CPUentry = new("CPU", "C2");
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.CPUUsage, out sensor))
                             CPUentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.CPUPower, out sensor))
                             CPUentry.elements.Add(sensor);
                         row1.entries.Add(CPUentry);
 
-                        OverlayEntry RAMentry = new("RAM");
+                        OverlayEntry RAMentry = new("RAM", "C3");
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.PhysicalMemoryUsage, out sensor))
                             RAMentry.elements.Add(sensor);
                         row1.entries.Add(RAMentry);
 
-                        OverlayEntry FPSentry = new("FPS");
+                        OverlayEntry FPSentry = new("FPS", "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
                             Value = PlatformManager.RTSS.GetFramerate(processId),
@@ -180,7 +186,7 @@ namespace HandheldCompanion.Managers
                         OverlayRow row5 = new();
                         OverlayRow row6 = new();
 
-                        OverlayEntry GPUentry = new("GPU", true);
+                        OverlayEntry GPUentry = new("GPU", "C1", true);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.GPUUsage, out sensor))
                             GPUentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.GPUPower, out sensor))
@@ -189,7 +195,7 @@ namespace HandheldCompanion.Managers
                             GPUentry.elements.Add(sensor);
                         row1.entries.Add(GPUentry);
 
-                        OverlayEntry CPUentry = new("CPU", true);
+                        OverlayEntry CPUentry = new("CPU", "C2", true);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.CPUUsage, out sensor))
                             CPUentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.CPUPower, out sensor))
@@ -198,17 +204,17 @@ namespace HandheldCompanion.Managers
                             CPUentry.elements.Add(sensor);
                         row2.entries.Add(CPUentry);
 
-                        OverlayEntry RAMentry = new("RAM", true);
+                        OverlayEntry RAMentry = new("RAM", "C3", true);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.PhysicalMemoryUsage, out sensor))
                             RAMentry.elements.Add(sensor);
                         row3.entries.Add(RAMentry);
 
-                        OverlayEntry VRAMentry = new("VRAM", true);
+                        OverlayEntry VRAMentry = new("VRAM", "C4", true);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.GPUMemoryUsage, out sensor))
                             VRAMentry.elements.Add(sensor);
                         row4.entries.Add(VRAMentry);
 
-                        OverlayEntry BATTentry = new("BATT", true);
+                        OverlayEntry BATTentry = new("BATT", "C5", true);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.BatteryChargeLevel, out sensor))
                             BATTentry.elements.Add(sensor);
                         if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.BatteryRemainingCapacity, out sensor))
@@ -217,7 +223,7 @@ namespace HandheldCompanion.Managers
                             BATTentry.elements.Add(sensor);
                         row5.entries.Add(BATTentry);
 
-                        OverlayEntry FPSentry = new("FPS", true);
+                        OverlayEntry FPSentry = new("FPS", "C6", true);
                         FPSentry.elements.Add(new SensorElement()
                         {
                             Value = PlatformManager.RTSS.GetFramerate(processId),
@@ -306,9 +312,12 @@ namespace HandheldCompanion.Managers
         public List<SensorElement> elements = new();
         public string Name { get; set; }
 
-        public OverlayEntry(string name, bool indent = false)
+        public OverlayEntry(string name, string colorScheme = "", bool indent = false)
         {
             this.Name = indent ? name + "\t" : name;
+            
+            if (!string.IsNullOrEmpty(colorScheme))
+                this.Name = "<" + colorScheme + ">" + this.Name + "<C>";
         }
 
         public void Dispose()
