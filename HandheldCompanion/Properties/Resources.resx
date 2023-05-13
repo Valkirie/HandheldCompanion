@@ -1220,6 +1220,18 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
     <value>FPS</value>
   </data>
+  <data name="OverlayPage_OverlayDisplayLevel" xml:space="preserve">
+    <value>Overlay display level</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevelDesc" xml:space="preserve">
+    <value>Change the on-screen display level of information</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayUpdateRate" xml:space="preserve">
+    <value>Update rate</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayUpdateRateDesc" xml:space="preserve">
+    <value>Change the on-screen display update rate</value>
+  </data>
   <data name="ProfilesPage_FramerateLimit" xml:space="preserve">
     <value>Framerate limit</value>
   </data>

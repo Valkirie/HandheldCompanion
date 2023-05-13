@@ -1306,6 +1306,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Overlay display level.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the on-screen display level of information.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Update rate.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayUpdateRate {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayUpdateRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Change the on-screen display update rate.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayUpdateRateDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayUpdateRateDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Overlay model.
         /// </summary>
         public static string OverlayPage_OverlayModel {
