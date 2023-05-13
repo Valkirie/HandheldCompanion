@@ -113,9 +113,8 @@ namespace HandheldCompanion.Platforms
             }
 
             // start RTSS if not running
-            if (IsRunning())
-                Stop();
-            Start();
+            if (!IsRunning())
+                Start();
 
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
