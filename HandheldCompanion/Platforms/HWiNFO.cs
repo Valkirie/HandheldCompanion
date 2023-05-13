@@ -66,7 +66,7 @@ namespace HandheldCompanion.Platforms
 
             public override string ToString()
             {
-                return string.Format("<C4>{0:00}<S1>{1}<S><C>", Value, szUnit);
+                return string.Format("<C0>{0:00}<S1>{1}<S><C>", Value, szUnit);
             }
         }
 
@@ -108,12 +108,14 @@ namespace HandheldCompanion.Platforms
         private MemoryMappedFile MemoryMapped;
         private MemoryMappedViewAccessor MemoryAccessor;
 
+        public ConcurrentDictionary<SensorElementType, SensorElement> MonitoredSensors = new();
+
         private Timer MemoryTimer;
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;
 
-        private ConcurrentDictionary<uint, Sensor> HWiNFOSensors = new();
+        private ConcurrentDictionary<uint, Sensor> HWiNFOSensors;
 
         public HWiNFO()
         {
@@ -141,20 +143,28 @@ namespace HandheldCompanion.Platforms
                 return;
             }
 
+            // those are used for computes
+            MonitoredSensors[SensorElementType.PL1] = new SensorElement();
+            MonitoredSensors[SensorElementType.PL2] = new SensorElement();
+            MonitoredSensors[SensorElementType.CPUFrequency] = new SensorElement();
+
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(3000);
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
             // start HWiNFO if not running
-            if (IsRunning())
-                Stop();
-            Start();
+            if (!IsRunning())
+            {
+                Start();
+            }
+            else
+            {
+                // start watchdog
+                PlatformWatchdog.Start();
+            }
 
             MemoryTimer = new(MemoryInterval);
             MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
-
-            // initialize variables
-            HWiNFOMemory = new();
         }
 
         private void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
@@ -211,8 +221,6 @@ namespace HandheldCompanion.Platforms
 
         private void Process_Exited(object? sender, EventArgs e)
         {
-            DisposeMemory();
-
             if (KeepAlive)
                 Start();
         }
@@ -245,14 +253,6 @@ namespace HandheldCompanion.Platforms
                 // do something
             }
         }
-        
-        public Dictionary<SensorElementType, SensorElement> MonitoredSensors = new()
-        {
-            // those are used for computes
-            { SensorElementType.PL1, new SensorElement() },
-            { SensorElementType.PL2, new SensorElement() },
-            { SensorElementType.CPUFrequency, new SensorElement() },
-        };
 
         public enum SensorElementType
         {
@@ -328,6 +328,7 @@ namespace HandheldCompanion.Platforms
                                             MonitoredSensors[SensorElementType.CPUTemperature] = element;
                                             break;
 
+                                        case "CPU GT Cores (Graphics)":
                                         case "GPU Temperature":
                                             MonitoredSensors[SensorElementType.GPUTemperature] = element;
                                             break;
@@ -369,6 +370,7 @@ namespace HandheldCompanion.Platforms
                                             }
                                             break;
 
+                                        case "GT Cores Power":
                                         case "GPU SoC Power (VDDCR_SOC)":
                                         case "GPU PPT":
                                             MonitoredSensors[SensorElementType.GPUPower] = element;
@@ -409,10 +411,6 @@ namespace HandheldCompanion.Platforms
                                                 element.Value = reading;
                                                 MonitoredSensors[SensorElementType.PL2] = element;
                                             }
-                                            break;
-
-                                        case "Charge Level":
-                                            MonitoredSensors[SensorElementType.BatteryChargeLevel] = element;
                                             break;
                                     }
                                 }
@@ -473,6 +471,9 @@ namespace HandheldCompanion.Platforms
                             case "Remaining Capacity":
                                 MonitoredSensors[SensorElementType.BatteryRemainingCapacity] = element;
                                 break;
+                            case "Charge Level":
+                                MonitoredSensors[SensorElementType.BatteryChargeLevel] = element;
+                                break;
                             case "Estimated Remaining Time":
                                 MonitoredSensors[SensorElementType.BatteryRemainingTime] = element;
                                 break;
@@ -484,6 +485,7 @@ namespace HandheldCompanion.Platforms
                                 MonitoredSensors[SensorElementType.VirtualMemoryUsage] = element;
                                 break;
 
+                            case "GPU D3D Memory Dynamic":
                             case "GPU Memory Usage":
                                 MonitoredSensors[SensorElementType.GPUMemoryUsage] = element;
                                 break;
@@ -521,6 +523,9 @@ namespace HandheldCompanion.Platforms
             if (IsRunning())
                 return false;
 
+            // Force dispose elements
+            DisposeMemory();
+
             // Shared Memory Support [12-HOUR LIMIT]
             SetProperty("SensorsSM", 1);
 
@@ -553,7 +558,6 @@ namespace HandheldCompanion.Platforms
                     IsStarting = false;
 
                     // start watchdog
-                    PlatformWatchdog.Enabled = true;
                     PlatformWatchdog.Start();
                 }
 
@@ -601,8 +605,11 @@ namespace HandheldCompanion.Platforms
             if (HWiNFOSensors is not null)
                 HWiNFOSensors = null;
 
-            MemoryTimer.Stop();
-            PlatformWatchdog.Stop();
+            if (MemoryTimer is not null)
+                MemoryTimer.Stop();
+
+            if (PlatformWatchdog is not null)
+                PlatformWatchdog.Stop();
 
             prevPoll_time = -1;
             prevPoll_attempt = 0;
