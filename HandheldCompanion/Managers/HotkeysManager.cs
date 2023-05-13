@@ -342,13 +342,6 @@ namespace HandheldCompanion.Managers
                             fProcess.Process.Kill();
                         }
                         break;
-                    case "SteamDeckLizardMouse":
-                    case "SteamDeckLizardButtons":
-                        {
-                            bool SteamDeckLizardMode = SettingsManager.GetBoolean(listener);
-                            SettingsManager.SetProperty(listener, !SteamDeckLizardMode);
-                        }
-                        break;
                     case "QuietModeToggled":
                         {
                             bool value = !SettingsManager.GetBoolean(listener);

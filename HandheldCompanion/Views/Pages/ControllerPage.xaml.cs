@@ -86,13 +86,6 @@ namespace HandheldCompanion.Views.Pages
                     case "shortcutDesktopLayout":
                         Toggle_DesktopLayout.IsOn = Convert.ToBoolean(value);
                         break;
-
-                    case "SteamDeckLizardMouse":
-                        Toggle_SDLizardMouse.IsOn = Convert.ToBoolean(value);
-                        break;
-                    case "SteamDeckLizardButtons":
-                        Toggle_SDLizardButtons.IsOn = Convert.ToBoolean(value);
-                        break;
                     case "SteamDeckMuteController":
                         Toggle_SDMuteController.IsOn = Convert.ToBoolean(value);
                         break;
@@ -345,22 +338,6 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("HIDstrength", value);
-        }
-
-        private void Toggle_SDLizardButtons_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (!IsLoaded)
-                return;
-
-            SettingsManager.SetProperty("SteamDeckLizardButtons", Toggle_SDLizardButtons.IsOn);
-        }
-
-        private void Toggle_SDLizardMouse_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (!IsLoaded)
-                return;
-
-            SettingsManager.SetProperty("SteamDeckLizardMouse", Toggle_SDLizardMouse.IsOn);
         }
 
         private void Toggle_SDMuteController_Toggled(object sender, RoutedEventArgs e)
