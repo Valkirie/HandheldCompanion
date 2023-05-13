@@ -185,7 +185,11 @@ namespace HandheldCompanion.Platforms
 
             // unhook previous process
             if (backgroundEx is not null)
-                Unhooked?.Invoke(backgroundEx.GetProcessId());
+            {
+                var BackProcessId = backgroundEx.GetProcessId();
+                if (BackProcessId != ProcessId)
+                    Unhooked?.Invoke(backgroundEx.GetProcessId());
+            }
 
             Hooked?.Invoke(ProcessId);
         }
