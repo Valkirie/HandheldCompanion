@@ -330,6 +330,111 @@
                         <Expander.Content>
                             <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
 
+                                <!--  Framerate limit  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_FramerateLimitDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch
+                                        Name="FramerateToggle"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                        Toggled="FramerateToggle_Toggled" />
+                                </Grid>
+
+                                <!--  Content  -->
+                                <Grid IsEnabled="{Binding ElementName=FramerateToggle, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_SustainedPower}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_SustainedPowerDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Orientation="Vertical"
+                                        ScrollViewer.PanningMode="HorizontalOnly">
+
+                                        <Slider
+                                            x:Name="FramerateSlider"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPlacement="TopLeft"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            Maximum="3"
+                                            Minimum="0"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="1"
+                                            TickPlacement="BottomRight"
+                                            ValueChanged="FramerateSlider_ValueChanged" />
+
+                                        <Grid Name="FramerateModeGrid">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock
+                                                Name="FramerateQuarter"
+                                                Grid.Column="0"
+                                                Margin="0,0,89,0"
+                                                HorizontalAlignment="Center"
+                                                Text="|" />
+                                            <TextBlock
+                                                Name="FramerateThird"
+                                                Grid.Column="1"
+                                                Margin="0,0,29,0"
+                                                HorizontalAlignment="Center"
+                                                Text="|" />
+                                            <TextBlock
+                                                Name="FramerateHalf"
+                                                Grid.Column="2"
+                                                Margin="29,0,0,0"
+                                                HorizontalAlignment="Center"
+                                                Text="|" />
+                                            <TextBlock
+                                                Name="FramerateFull"
+                                                Grid.Column="3"
+                                                Margin="89,0,0,0"
+                                                HorizontalAlignment="Center"
+                                                Text="|" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  Thermal Power (TDP) limit  -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="9*" MinWidth="200" />
@@ -353,13 +458,7 @@
                                         Toggled="TDPToggle_Toggled" />
                                 </Grid>
 
-                                <!--  Separator  -->
-                                <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
-
-                                <!--  TDP Sustained  -->
+                                <!--  Content  -->
                                 <Grid IsEnabled="{Binding ElementName=TDPToggle, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="5*" MinWidth="200" />
@@ -404,6 +503,160 @@
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
                                             ValueChanged="TDPSlider_ValueChanged" />
+                                    </DockPanel>
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  Auto TDP  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch
+                                        Name="AutoTDPToggle"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                        Toggled="AutoTDPToggle_Toggled" />
+                                </Grid>
+
+                                <!--  Auto TDP FPS Slider  -->
+                                <Grid IsEnabled="{Binding ElementName=AutoTDPToggle, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPS}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPSDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <DockPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        ScrollViewer.PanningMode="HorizontalOnly">
+                                        <TextBlock
+                                            Width="35"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Value, StringFormat=N0, ElementName=AutoTDPSlider, Mode=OneWay}"
+                                            TextAlignment="Center" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Static resx:Resources.QuickPerformancePage_AutoTDPUnitFPS}" />
+                                        <Slider
+                                            x:Name="AutoTDPSlider"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPlacement="TopLeft"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="10"
+                                            Maximum="60"
+                                            Minimum="30"
+                                            SmallChange="5"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="5"
+                                            TickPlacement="BottomRight"
+                                            ValueChanged="AutoTDPSlider_ValueChanged" />
+                                    </DockPanel>
+                                </Grid>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  GPU  -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="9*" MinWidth="200" />
+                                        <ColumnDefinition MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <ui:ToggleSwitch
+                                        Name="GPUToggle"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                        Toggled="GPUToggle_Toggled" />
+                                </Grid>
+
+                                <!--  GPU Mhz Slider  -->
+                                <Grid IsEnabled="{Binding ElementName=GPUToggle, Path=IsOn}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_GPUMhzDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+
+                                    <DockPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        ScrollViewer.PanningMode="HorizontalOnly">
+                                        <TextBlock
+                                            Width="35"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Value, StringFormat=N0, ElementName=GPUSlider, Mode=OneWay}"
+                                            TextAlignment="Center" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
+                                        <Slider
+                                            x:Name="GPUSlider"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPlacement="TopLeft"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="500"
+                                            SmallChange="100"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="100"
+                                            TickPlacement="BottomRight"
+                                            ValueChanged="GPUSlider_ValueChanged" />
                                     </DockPanel>
                                 </Grid>
                             </ui:SimpleStackPanel>

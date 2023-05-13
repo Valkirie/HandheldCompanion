@@ -5,6 +5,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using ModernWpf.Controls;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
@@ -45,7 +47,10 @@ namespace HandheldCompanion.Views.Pages
             ProfileManager.Applied += ProfileApplied;
 
             ProfileManager.Initialized += ProfileManagerLoaded;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
 
             HotkeysManager.HotkeyCreated += TriggerCreated;
             InputsManager.TriggerUpdated += TriggerUpdated;
@@ -122,6 +127,10 @@ namespace HandheldCompanion.Views.Pages
 
             // auto-sort
             cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
+
+            // device settings
+            GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
+            GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
         }
 
         private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
@@ -148,6 +157,20 @@ namespace HandheldCompanion.Views.Pages
                         TDPSlider.Maximum = (double)value;
                         break;
                 }
+            });
+        }
+
+        private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ScreenFrequency screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
+
+                FramerateQuarter.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Quarter));
+                FramerateThird.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Third));
+                FramerateHalf.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Half));
+                FramerateFull.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Full));
             });
         }
 
@@ -410,21 +433,29 @@ namespace HandheldCompanion.Views.Pages
                 cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
 
                 // Sustained TDP settings (slow, stapm, long)
+                TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
                 double[] TDP = currentProfile.TDPOverrideValues is not null ? currentProfile.TDPOverrideValues : MainWindow.CurrentDevice.nTDP;
                 TDPSlider.Value = TDP[(int)PowerType.Slow];
 
-                TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
+                // define slider(s) min and max values based on device specifications
+                TDPSlider.Minimum = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
+                TDPSlider.Maximum = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
+
+                // Automatic TDP
+                AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
+                AutoTDPSlider.Value = (int)currentProfile.AutoTDPRequestedFPS;
+
+                // GPU Clock control
+                GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
+                GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : (255 * 50);
+
+                // Framerate limit
+                FramerateToggle.IsOn = currentProfile.FramerateEnabled;
+                FramerateSlider.Value = currentProfile.FramerateValue;
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
-
-                // define slider(s) min and max values based on device specifications
-                var TDPdown = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
-                var TDPup = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
-
-                TDPSlider.Minimum = TDPdown;
-                TDPSlider.Maximum = TDPup;
-
+                
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
                 cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
@@ -518,6 +549,15 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideEnabled = (bool)TDPToggle.IsOn;
 
+            currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
+            currentProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
+
+            currentProfile.GPUOverrideEnabled = (bool)GPUToggle.IsOn;
+            currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
+
+            currentProfile.FramerateEnabled = (bool)FramerateToggle.IsOn;
+            currentProfile.FramerateValue = (int)FramerateSlider.Value;
+
             // Layout settings
             currentProfile.LayoutEnabled = (bool)Toggle_ControllerLayout.IsOn;
 
@@ -598,15 +638,65 @@ namespace HandheldCompanion.Views.Pages
                 return;
         }
 
+        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // TDP and AutoTDP are mutually exclusive
+            bool toggled = TDPToggle.IsOn;
+            if (toggled)
+                AutoTDPToggle.IsOn = false;
+        }
+
         private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!TDPSlider.IsInitialized)
                 return;
         }
 
-        private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+        private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            // do something
+            // Do something
+        }
+
+        private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!FramerateSlider.IsInitialized)
+                return;
+
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                int value = (int)FramerateSlider.Value;
+
+                foreach (TextBlock tb in FramerateModeGrid.Children)
+                    tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                TextBlock TextBlock = (TextBlock)FramerateModeGrid.Children[value];
+                TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+            });
+        }
+
+        private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // TDP and AutoTDP are mutually exclusive
+            bool toggled = AutoTDPToggle.IsOn;
+            if (toggled)
+                TDPToggle.IsOn = false;            
+        }
+
+        private void AutoTDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!AutoTDPSlider.IsInitialized)
+                return;
+        }
+
+        private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // Do something
+        }
+
+        private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // Do something
         }
 
         private void TriggerCreated(Hotkey hotkey)
@@ -661,6 +751,11 @@ namespace HandheldCompanion.Views.Pages
         private void Layout_Updated(Layout layout)
         {
             currentProfile.Layout = layout;
+        }
+
+        private void FramerateRadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

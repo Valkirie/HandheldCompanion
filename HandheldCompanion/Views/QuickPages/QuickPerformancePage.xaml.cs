@@ -63,6 +63,9 @@ namespace HandheldCompanion.Views.QuickPages
                     case "QuietModeDuty":
                         QuietModeSlider.Value = Convert.ToDouble(value);
                         break;
+                    case "OnScreenDisplayLevel":
+                        ComboBoxOverlayDisplayLevel.SelectedIndex = Convert.ToInt32(value);
+                        break;
                 }
             });
         }
@@ -170,6 +173,14 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             SettingsManager.SetProperty("QuietModeDuty", value);
+        }
+
+        private void ComboBoxOverlayDisplayLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("OnScreenDisplayLevel", ComboBoxOverlayDisplayLevel.SelectedIndex);
         }
     }
 }

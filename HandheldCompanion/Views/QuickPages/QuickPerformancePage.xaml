@@ -18,6 +18,57 @@
 
     <ui:SimpleStackPanel Margin="12,0,0,0" Spacing="6">
 
+        <ui:SimpleStackPanel Spacing="6">
+            <!--  Header  -->
+            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="370" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE78B;" />
+
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevelDesc}"
+                                TextWrapping="Wrap" />
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+
+            <!--  Content  -->
+            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <ComboBox
+                    Name="ComboBoxOverlayDisplayLevel"
+                    HorizontalAlignment="Stretch"
+                    IsReadOnly="True"
+                    SelectionChanged="ComboBoxOverlayDisplayLevel_SelectionChanged">
+
+                    <Label Content="Disabled" />
+                    <Label Content="Minimal" />
+                    <Label Content="Extended" />
+                    <Label Content="Full" />
+                </ComboBox>
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <!--  Separator  -->
+        <Separator
+            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+            BorderThickness="0,1,0,0"
+            Opacity="0.25" />
+
         <!--  Refresh rate  -->
         <ui:SimpleStackPanel Spacing="6">
             <!--  Header  -->
