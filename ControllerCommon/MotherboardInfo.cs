@@ -11,18 +11,14 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in motherboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in motherboardSearcher.Get())
-                    {
-                        return GetAvailability(int.Parse(queryObj["Availability"].ToString()));
-                    }
-                    return string.Empty;
+                    var query = queryObj["Availability"];
+                    if (query is not null)
+                        if (int.TryParse(query.ToString(), out int value))
+                            return GetAvailability(value);
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -30,21 +26,14 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        if (queryObj["HostingBoard"].ToString() == "True")
+                    var query = queryObj["HostingBoard"];
+                    if (query is not null)
+                        if (query.ToString() == "True")
                             return true;
-                        else
-                            return false;
-                    }
-                    return false;
                 }
-                catch
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -52,18 +41,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return ConvertToDateTime(queryObj["InstallDate"].ToString());
-                    }
-                    return string.Empty;
+                    var query = queryObj["InstallDate"];
+                    if (query is not null)
+                        return ConvertToDateTime(query.ToString());
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -71,18 +55,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return queryObj["Manufacturer"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["Manufacturer"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -90,18 +69,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return queryObj["Model"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["Model"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -109,18 +83,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return queryObj["PartNumber"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["PartNumber"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -128,18 +97,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in motherboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in motherboardSearcher.Get())
-                    {
-                        return queryObj["PNPDeviceID"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["PNPDeviceID"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -147,18 +111,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in motherboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in motherboardSearcher.Get())
-                    {
-                        return queryObj["PrimaryBusType"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["PrimaryBusType"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -166,18 +125,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return queryObj["Product"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["Product"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -185,21 +139,14 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        if (queryObj["Removable"].ToString() == "True")
+                    var query = queryObj["Removable"];
+                    if (query is not null)
+                        if (query.ToString() == "True")
                             return true;
-                        else
-                            return false;
-                    }
-                    return false;
                 }
-                catch
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -207,21 +154,14 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        if (queryObj["Replaceable"].ToString() == "True")
+                    var query = queryObj["Replaceable"];
+                    if (query is not null)
+                        if (query.ToString() == "True")
                             return true;
-                        else
-                            return false;
-                    }
-                    return false;
                 }
-                catch
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -229,18 +169,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in motherboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in motherboardSearcher.Get())
-                    {
-                        return queryObj["RevisionNumber"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["RevisionNumber"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -248,18 +183,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in motherboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in motherboardSearcher.Get())
-                    {
-                        return queryObj["SecondaryBusType"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["SecondaryBusType"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -267,18 +197,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return queryObj["SerialNumber"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["SerialNumber"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -286,18 +211,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject querObj in baseboardSearcher.Get())
-                    {
-                        return querObj["Status"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["Status"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -305,18 +225,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in motherboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in motherboardSearcher.Get())
-                    {
-                        return queryObj["SystemName"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["SystemName"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
@@ -324,18 +239,13 @@ namespace ControllerCommon
         {
             get
             {
-                try
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
                 {
-                    foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                    {
-                        return queryObj["Version"].ToString();
-                    }
-                    return string.Empty;
+                    var query = queryObj["Version"];
+                    if (query is not null)
+                        return query.ToString();
                 }
-                catch
-                {
-                    return string.Empty;
-                }
+                return string.Empty;
             }
         }
 
