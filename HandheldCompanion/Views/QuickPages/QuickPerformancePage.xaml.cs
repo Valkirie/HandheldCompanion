@@ -6,6 +6,7 @@ using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -23,7 +24,6 @@ namespace HandheldCompanion.Views.QuickPages
         {
             InitializeComponent();
 			
-            MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
             MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
 			
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;

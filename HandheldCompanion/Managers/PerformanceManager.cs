@@ -63,6 +63,7 @@ namespace HandheldCompanion.Managers
 
         public event PowerModeChangedEventHandler PowerModeChanged;
         public delegate void PowerModeChangedEventHandler(int idx);
+        #endregion
 
         private Processor processor;
         public static int MaxDegreeOfParallelism = 4;
@@ -71,15 +72,15 @@ namespace HandheldCompanion.Managers
         private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
         private readonly Timer powerWatchdog;
 
-        private Timer cpuWatchdog;
+        private readonly Timer cpuWatchdog;
         protected object cpuLock = new();
         private bool cpuWatchdogPendingStop;
 
-        private Timer gfxWatchdog;
+        private readonly Timer gfxWatchdog;
         protected object gfxLock = new();
         private bool gfxWatchdogPendingStop;
 
-        private Timer AutoTDPWatchdog;
+        private readonly Timer AutoTDPWatchdog;
         protected object AutoTDPWatchdogLock = new();
 
         private const short INTERVAL_DEFAULT = 1000;            // default interval between value scans
@@ -367,7 +368,7 @@ namespace HandheldCompanion.Managers
                     if (processor.GetType() == typeof(AMDProcessor))
                     {
                         // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
-                        if (RequestedPowerMode == PowerMode.BetterBattery)
+                        if (currentPowerMode == PowerMode.BetterBattery)
                             TDP = (int)Math.Truncate(TDP * 0.9);
                     }
                     else if (processor.GetType() == typeof(IntelProcessor))
