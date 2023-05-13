@@ -86,7 +86,7 @@ namespace neptune_hidapi.net
             haptic.unsure3 = 0x4;
             haptic.intensity = intensity;
 
-            var ts = new Random().Next();
+            var ts = Environment.TickCount;
             haptic.tsA = ts;
             haptic.tsB = ts;
 
