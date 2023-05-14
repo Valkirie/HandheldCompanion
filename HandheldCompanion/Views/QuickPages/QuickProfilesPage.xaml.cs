@@ -349,6 +349,8 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void ProfileToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            // update real profile
+            realProfile = ProfileManager.GetProfileFromPath(realProfile.Path, true);
             if (realProfile is null)
                 return;
 

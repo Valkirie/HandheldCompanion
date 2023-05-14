@@ -147,6 +147,11 @@ namespace HandheldCompanion.Managers
             // might not be the same anymore if disabled
             profile = GetProfileFromPath(profile.Path, false);
 
+            // we've already announced this profile
+            if (currentProfile is not null)
+                if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
+                    announce = false;
+
             // raise event
             Applied?.Invoke(profile);
 
@@ -398,18 +403,21 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateOrCreateProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background)
         {
+            bool isCurrent = false;
             switch (source)
             {
                 // update current profile on creation
                 case ProfileUpdateSource.Creation:
                 case ProfileUpdateSource.QuickProfilesPage:
-                    currentProfile = profile;
+                    isCurrent = true;
+                    break;
+                default:
+                    // check if this is current profile
+                    isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
                     break;
             }
 
-            // check if this is current profile
-            bool isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
-
+            
             // refresh error code
             SanitizeProfile(profile);
 
@@ -427,7 +435,7 @@ namespace HandheldCompanion.Managers
 
             // apply profile (silently)
             if (isCurrent)
-                ApplyProfile(profile, false);
+                ApplyProfile(profile);
 
             // do not update wrapper and cloaking from default profile
             if (profile.Default)
