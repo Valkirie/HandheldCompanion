@@ -312,11 +312,11 @@ namespace HandheldCompanion.Managers
             // only buttons/axes mapped from the layout should be passed on
             ControllerState outputState = new();
 
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
+            foreach (var buttonState in controllerState.ButtonState.State)
             {
-                ButtonFlags button = (ButtonFlags)i;
-                bool value = controllerState.ButtonState.State[i];
-                
+                ButtonFlags button = buttonState.Key;
+                bool value = buttonState.Value;
+
                 // skip, if not mapped
                 if (!currentLayout.ButtonLayout.TryGetValue(button, out IActions action))
                     continue;

@@ -8,42 +8,37 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public class ButtonState : ICloneable
     {
-        public bool[] State = new bool[(int)ButtonFlags.MaxValue];
+        public SortedDictionary<ButtonFlags, bool> State = new();
 
         public bool this[ButtonFlags button]
         {
             get
             {
-                return State[(int)button];
+                if (!State.ContainsKey(button))
+                {
+                    return false;
+                }
+
+                return State[button];
             }
 
             set
             {
-                State[(int)button] = value;
+                State[button] = value;
             }
         }
 
         [JsonIgnore]
-        public IEnumerable<ButtonFlags> Buttons => GetButtons();
+        public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value is true).Select(a => a.Key).ToList();
 
-        public ButtonState(bool[] buttonState)
+        public ButtonState(SortedDictionary<ButtonFlags, bool> buttonState)
         {
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-                State[i] = buttonState[i];
+            foreach (var state in buttonState)
+                this[state.Key] = state.Value;
         }
 
         public ButtonState()
         {
-        }
-
-        private List<ButtonFlags> GetButtons()
-        {
-            List<ButtonFlags > buttons = new();
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-                if (State[i])
-                    buttons.Add((ButtonFlags)i);
-
-            return buttons;
         }
 
         public bool IsEmpty()
@@ -53,14 +48,13 @@ namespace ControllerCommon.Inputs
 
         public void Clear()
         {
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-                State[i] = false;
+            State.Clear();
         }
 
         public bool Contains(ButtonState buttonState)
         {
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-                if (State[i] != buttonState.State[i])
+            foreach (var state in buttonState.State)
+                if (this[state.Key] != state.Value)
                     return false;
 
             return true;
@@ -71,10 +65,9 @@ namespace ControllerCommon.Inputs
             if (this.IsEmpty() || buttonState.IsEmpty())
                 return false;
 
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-                if (buttonState.State[i])
-                    if (State[i] != buttonState.State[i])
-                        return false;
+            foreach (var state in buttonState.State.Where(a => a.Value is true))
+                if (this[state.Key] != state.Value)
+                    return false;
 
             return true;
         }
@@ -82,26 +75,17 @@ namespace ControllerCommon.Inputs
         public void AddRange(ButtonState buttonState)
         {
             // only add pressed button
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-                if (buttonState.State[i])
-                    State[i] = buttonState.State[i];
+            foreach (var state in buttonState.State.Where(a => a.Value))
+                this[state.Key] = state.Value;
         }
 
         public override bool Equals(object obj)
         {
             ButtonState buttonState = obj as ButtonState;
-            if (buttonState is null)
-                return false;
+            if (buttonState != null)
+                return buttonState.Buttons.SequenceEqual(Buttons);
 
-            for (int i = 0; i < (int)ButtonFlags.MaxValue; i++)
-            {
-                if (State[i] == buttonState.State[i])
-                    continue;
-
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
         public object Clone()

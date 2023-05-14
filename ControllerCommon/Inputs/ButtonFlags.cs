@@ -105,6 +105,5 @@ namespace ControllerCommon.Inputs
         [Description("Volume Down")]
         VolumeDown = 61,
 
-        MaxValue = 62
     }
 }
