@@ -122,7 +122,6 @@
 
   <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.6" />
-    <PackageReference Include="FluentWPF" Version="0.10.2" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.23.0" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
@@ -134,7 +133,6 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -2123,9 +2121,6 @@
     <None Update="Resources\inpoutx64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Intel\KX\KX.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -2165,20 +2160,11 @@
     <Reference Include="ModernWpf.Controls">
       <HintPath>..\Resources\ModernWpf.Controls.dll</HintPath>
     </Reference>
-    <Reference Include="ModernWpf.MahApps">
-      <HintPath>..\Resources\ModernWpf.MahApps.dll</HintPath>
-    </Reference>
-    <Reference Include="MouseKeyHook.Rx">
-      <HintPath>..\Resources\MouseKeyHook.Rx.dll</HintPath>
-    </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>
     </Reference>
     <Reference Include="RTSSSharedMemoryNET">
       <HintPath>Resources\RTSSSharedMemoryNET.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive">
-      <HintPath>..\Resources\System.Reactive.dll</HintPath>
     </Reference>
   </ItemGroup>
 
