@@ -3,7 +3,10 @@ using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Views;
+using PowerCfg;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
@@ -63,6 +66,9 @@ namespace HandheldCompanion.Managers
 
         public event PowerModeChangedEventHandler PowerModeChanged;
         public delegate void PowerModeChangedEventHandler(int idx);
+
+        public event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
+        public delegate void PerfBoostModeChangedEventHandler(bool value);
         #endregion
 
         private Processor processor;
@@ -71,6 +77,10 @@ namespace HandheldCompanion.Managers
         private static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
         private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
         private readonly Timer powerWatchdog;
+        private readonly object powerLock = new();
+
+        // powercfg
+        private bool currentPerfBoostMode = false;
 
         private readonly Timer cpuWatchdog;
         protected readonly object cpuLock = new();
@@ -152,11 +162,6 @@ namespace HandheldCompanion.Managers
                         AutoTDPMax = Convert.ToDouble(value);
                         AutoTDP = (AutoTDPMax + AutoTDPMin) / 2.0d;
                     }
-                    break;
-
-                case "QuickToolsPowerModeValue":
-                    int power = Convert.ToInt32(value);
-                    RequestPowerMode(power);
                     break;
             }
         }
@@ -331,16 +336,31 @@ namespace HandheldCompanion.Managers
 
         private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // Checking if active power shceme has changed to reflect that
-            if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
+            if (Monitor.TryEnter(powerLock))
             {
-                if (activeScheme == currentPowerMode)
-                    return;
+                // Checking if active power shceme has changed to reflect that
+                if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
+                {
+                    if (activeScheme != currentPowerMode)
+                    {
+                        currentPowerMode = activeScheme;
+                        int idx = Array.IndexOf(PowerModes, activeScheme);
+                        if (idx != -1)
+                            PowerModeChanged?.Invoke(idx);
+                    }
+                }
 
-                currentPowerMode = activeScheme;
-                int idx = Array.IndexOf(PowerModes, activeScheme);
-                if (idx != -1)
-                    PowerModeChanged?.Invoke(idx);
+                // read perfboostmode
+                int[] result = ReadPowerCfg("scheme_current", "sub_processor", "perfboostmode");
+                bool perfboostmode = result[(int)ValueIndex.AC] == 2 && result[(int)ValueIndex.DC] == 2;
+
+                if (perfboostmode != currentPerfBoostMode)
+                {
+                    currentPerfBoostMode = perfboostmode;
+                    PerfBoostModeChanged?.Invoke(perfboostmode);
+                }
+
+                Monitor.Exit(powerLock);
             }
         }
 
@@ -534,6 +554,42 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("User requested power scheme: {0}", currentPowerMode);
             if (PowerSetActiveOverlayScheme(currentPowerMode) != 0)
                 LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
+        }
+
+        public void RequestPerfBoostMode(bool value)
+        {
+            currentPerfBoostMode = value;
+            WritePowerCfg("scheme_current", "sub_processor", "perfboostmode", value ? "1": "0");
+            LogManager.LogInformation("User requested perboostmode: {0}", value);
+        }
+
+        private int[] ReadPowerCfg(string Scheme, string SubGroup, string Settings)
+        {
+            int[] results = new int[2];
+
+            // unhide attributes
+            PowerCfgBroker.SetAttribute(SubGroup, Settings, "attrib_hide", false);
+
+            // read AC/DC values
+            try
+            {
+                QueryValue? qv = PowerCfgBroker.Query(Scheme, SubGroup, Settings);
+                if (qv.HasValue)
+                {
+                    results[(int)ValueIndex.AC] = qv.Value.SubGroups[0].Settings[0].ACSetting;
+                    results[(int)ValueIndex.DC] = qv.Value.SubGroups[0].Settings[0].DCSetting;
+                }
+            }
+            catch {}
+
+            return results;
+        }
+
+        private void WritePowerCfg(string Scheme, string SubGroup, string Settings, string Value)
+        {
+            PowerCfgBroker.SetValueIndex(ValueIndex.AC, Scheme, SubGroup, Settings, Value);
+            PowerCfgBroker.SetValueIndex(ValueIndex.DC, Scheme, SubGroup, Settings, Value);
+            PowerCfgBroker.SetActive(Scheme);
         }
 
         #region events
