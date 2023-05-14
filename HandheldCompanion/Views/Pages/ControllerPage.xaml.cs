@@ -3,6 +3,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
@@ -358,8 +359,16 @@ namespace HandheldCompanion.Views.Pages
 
         private void Button_Layout_Click(object sender, RoutedEventArgs e)
         {
-            // update layout page with current layout
-            MainWindow.layoutPage.UpdateLayout(LayoutManager.desktopLayout);
+            // prepare layout editor, desktopLayout gets saved automatically
+            LayoutTemplate desktopTemplate = new(LayoutManager.GetDesktop())
+            {
+                Name = LayoutTemplate.DesktopLayout.Name,
+                Description = LayoutTemplate.DesktopLayout.Description,
+                Author = Environment.UserName,
+                Executable = string.Empty,
+                Product = string.Empty,  // UI might've set something here, nullify
+            };
+            MainWindow.layoutPage.UpdateLayout(desktopTemplate);
             MainWindow.NavView_Navigate(MainWindow.layoutPage);
         }
 
