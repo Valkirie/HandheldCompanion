@@ -126,6 +126,8 @@ namespace HandheldCompanion.Views.QuickPages
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
 
+            FramerateToggle.IsEnabled = PlatformManager.RTSS.IsInstalled;
+
             UpdateTimer = new Timer(UpdateInterval);
             UpdateTimer.AutoReset = false;
             UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
@@ -204,9 +206,6 @@ namespace HandheldCompanion.Views.QuickPages
                         break;
                     case "ConfigurableTDPOverrideDown":
                         TDPSlider.Minimum = Convert.ToInt32(value);
-                        break;
-                    case "QuickToolsPerformanceFramerateEnabled":
-                        FramerateToggle.IsEnabled = Convert.ToBoolean(value);
                         break;
                 }
             });
