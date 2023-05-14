@@ -309,6 +309,7 @@ namespace HandheldCompanion.Views.QuickPages
                 // set lock
                 isDrawing = true;
 
+                ProfileToggle.IsEnabled = true;
                 ProfileToggle.IsOn = realProfile.Enabled;
                 ProfileIcon.Source = processEx.imgSource;
 
@@ -336,6 +337,8 @@ namespace HandheldCompanion.Views.QuickPages
 
                     ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
                     ProcessPath.Text = string.Empty;
+
+                    ProfileToggle.IsEnabled = false;
                 }
             });
         }

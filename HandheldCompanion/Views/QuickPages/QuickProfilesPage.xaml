@@ -81,6 +81,7 @@
                         Name="ProfileToggle"
                         Grid.Column="1"
                         HorizontalAlignment="Right"
+                        IsEnabled="False"
                         Style="{DynamicResource InvertedToggleSwitchStyle}"
                         Toggled="ProfileToggle_Toggled" />
                 </Grid>
