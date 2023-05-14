@@ -54,14 +54,14 @@
                                 <lvc:AngularSection
                                     Fill="{DynamicResource SystemControlHighlightListMediumBrush}"
                                     FromValue="-80"
-                                    ToValue="{Binding Value, ElementName=SliderSteeringAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" />
+                                    ToValue="{Binding Value, Source={x:Reference SliderSteeringAngle}, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}" />
                                 <lvc:AngularSection
                                     Fill="#94221C"
-                                    FromValue="{Binding Value, ElementName=SliderDeadzoneAngle, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}"
-                                    ToValue="{Binding Value, ElementName=SliderDeadzoneAngle}" />
+                                    FromValue="{Binding Value, Source={x:Reference SliderDeadzoneAngle}, Converter={ikriv:MathConverter}, ConverterParameter=x*-1}"
+                                    ToValue="{Binding Value, Source={x:Reference SliderDeadzoneAngle}}" />
                                 <lvc:AngularSection
                                     Fill="{DynamicResource SystemControlHighlightListMediumBrush}"
-                                    FromValue="{Binding Value, ElementName=SliderSteeringAngle}"
+                                    FromValue="{Binding Value, Source={x:Reference SliderSteeringAngle}}"
                                     ToValue="80" />
                             </lvc:AngularGauge.Sections>
                         </lvc:AngularGauge>
