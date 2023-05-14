@@ -18,13 +18,12 @@ namespace HandheldCompanion.Views.QuickPages
     /// </summary>
     public partial class QuickPerformancePage : Page
     {
-        private readonly object powerModeLock = new();
-
         public QuickPerformancePage()
         {
             InitializeComponent();
 			
             MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
+            MainWindow.performanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
 			
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -33,7 +32,6 @@ namespace HandheldCompanion.Views.QuickPages
 
             // todo: move me ?
             SettingsManager.SetProperty("QuietModeEnabled", MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl));
-            SettingsManager.SetProperty("QuickToolsPerformanceFramerateEnabled", PlatformManager.RTSS.IsInstalled);
         }
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -51,16 +49,20 @@ namespace HandheldCompanion.Views.QuickPages
 
         private void PerformanceManager_PowerModeChanged(int idx)
         {
-            if (Monitor.TryEnter(powerModeLock))
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    PowerModeSlider.Value = idx;
-                });
+                PowerModeSlider.Value = idx;
+            });
+        }
 
-                Monitor.Exit(powerModeLock);
-            }
+        private void PerformanceManager_PerfBoostModeChanged(bool value)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                CPUBoostToggle.IsOn = value;
+            });
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -104,11 +106,7 @@ namespace HandheldCompanion.Views.QuickPages
             if (!IsLoaded)
                 return;
 
-            if (Monitor.TryEnter(powerModeLock))
-            {
-                MainWindow.performanceManager.RequestPowerMode(idx);
-                Monitor.Exit(powerModeLock);
-            }
+            MainWindow.performanceManager.RequestPowerMode(idx);
         }
 
         private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -201,6 +199,15 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             SettingsManager.SetProperty("OnScreenDisplayLevel", ComboBoxOverlayDisplayLevel.SelectedIndex);
+        }
+
+        private void CPUBoostToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            bool value = CPUBoostToggle.IsOn;
+            MainWindow.performanceManager.RequestPerfBoostMode(value);
         }
     }
 }
