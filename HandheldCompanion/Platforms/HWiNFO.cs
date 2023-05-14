@@ -157,7 +157,8 @@ namespace HandheldCompanion.Platforms
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
             // start HWiNFO if not running or Shared Memory is disabled
-            if (!IsRunning() || !GetProperty("SensorsSM"))
+            bool hasSensorsSM = GetProperty("SensorsSM");
+            if (!IsRunning() || !hasSensorsSM)
             {
                 Stop();
                 Start();
@@ -525,7 +526,7 @@ namespace HandheldCompanion.Platforms
             try
             {
                 IniFile settings = new(SettingsPath);
-                return Convert.ToBoolean(settings.Read(propertyName, "Settings"));
+                return Convert.ToBoolean(Convert.ToInt16(settings.Read(propertyName, "Settings")));
             }
             catch
             {
