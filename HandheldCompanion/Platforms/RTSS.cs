@@ -116,6 +116,9 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 Start();
 
+            // load default profile
+            LoadProfile();
+
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
@@ -300,7 +303,7 @@ namespace HandheldCompanion.Platforms
 
             try
             {
-                LoadProfile();
+                // LoadProfile();
 
                 if (SetProfileProperty("FramerateLimit", Limit))
                 {
@@ -335,7 +338,7 @@ namespace HandheldCompanion.Platforms
 
             try
             {
-                LoadProfile();
+                // LoadProfile();
 
                 if (GetProfileProperty("FramerateLimit", out int fpsLimit))
                     return fpsLimit;

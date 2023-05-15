@@ -35,29 +35,40 @@ namespace ControllerCommon.Platforms
         protected Timer PlatformWatchdog;
         protected readonly object updateLock = new();
 
+        private Process _Process;
         protected Process? Process
         {
             get
             {
                 try
                 {
+                    if (_Process is not null && !_Process.HasExited)
+                        return _Process;
+
                     var processes = Process.GetProcessesByName(Name);
                     if (processes.Length == 0)
                         return null;
 
-                    var process = processes.FirstOrDefault();
-                    if (process.HasExited)
+                    _Process = processes.FirstOrDefault();
+                    if (_Process.HasExited)
                         return null;
 
-                    process.EnableRaisingEvents = true;
+                    _Process.EnableRaisingEvents = true;
+                    _Process.Exited += _Process_Exited;
 
-                    return process;
+                    return _Process;
                 }
                 catch
                 {
                     return null;
                 }
             }
+        }
+
+        private void _Process_Exited(object sender, EventArgs e)
+        {
+            _Process.Dispose();
+            _Process = null;
         }
 
         public bool IsInstalled;
@@ -122,7 +133,7 @@ namespace ControllerCommon.Platforms
 
         public virtual bool IsRunning()
         {
-            return Process is not null;
+            return Process is not null && !Process.HasExited;
         }
 
         public virtual bool Start()
