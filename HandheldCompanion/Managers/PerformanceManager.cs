@@ -3,7 +3,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Views;
-using PowerCfg;
+using PowerProfileUtils;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace HandheldCompanion.Managers
         [DllImportAttribute("powrprof.dll", EntryPoint = "PowerSetActiveOverlayScheme")]
         private static extern uint PowerSetActiveOverlayScheme(Guid OverlaySchemeGuid);
         #endregion
-		
+
         #region events
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
@@ -351,8 +351,8 @@ namespace HandheldCompanion.Managers
                 }
 
                 // read perfboostmode
-                int[] result = ReadPowerCfg("scheme_current", "sub_processor", "perfboostmode");
-                bool perfboostmode = result[(int)ValueIndex.AC] == 2 && result[(int)ValueIndex.DC] == 2;
+                uint[] result = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
+                bool perfboostmode = result[(int)PowerIndexType.AC] == (uint)PerfBoostMode.Aggressive && result[(int)PowerIndexType.DC] == (uint)PerfBoostMode.Aggressive;
 
                 if (perfboostmode != currentPerfBoostMode)
                 {
@@ -559,37 +559,32 @@ namespace HandheldCompanion.Managers
         public void RequestPerfBoostMode(bool value)
         {
             currentPerfBoostMode = value;
-            WritePowerCfg("scheme_current", "sub_processor", "perfboostmode", value ? "1": "0");
-            LogManager.LogInformation("User requested perboostmode: {0}", value);
+            WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Disabled);
+            LogManager.LogInformation("User requested perfboostmode: {0}", value);
         }
 
-        private int[] ReadPowerCfg(string Scheme, string SubGroup, string Settings)
+        private uint[] ReadPowerCfg(Guid SubGroup, Guid Settings)
         {
-            int[] results = new int[2];
+            uint[] results = new uint[2];
 
-            // unhide attributes
-            PowerCfgBroker.SetAttribute(SubGroup, Settings, "attrib_hide", false);
-
-            // read AC/DC values
-            try
+            if (PowerProfile.GetActiveScheme(out Guid currentScheme))
             {
-                QueryValue? qv = PowerCfgBroker.Query(Scheme, SubGroup, Settings);
-                if (qv.HasValue)
-                {
-                    results[(int)ValueIndex.AC] = qv.Value.SubGroups[0].Settings[0].ACSetting;
-                    results[(int)ValueIndex.DC] = qv.Value.SubGroups[0].Settings[0].DCSetting;
-                }
+                // read AC/DC values
+                PowerProfile.GetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, out results[(int)PowerIndexType.AC]);
+                PowerProfile.GetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings, out results[(int)PowerIndexType.DC]);
             }
-            catch {}
 
             return results;
         }
 
-        private void WritePowerCfg(string Scheme, string SubGroup, string Settings, string Value)
+        private void WritePowerCfg(Guid SubGroup, Guid Settings, uint Value)
         {
-            PowerCfgBroker.SetValueIndex(ValueIndex.AC, Scheme, SubGroup, Settings, Value);
-            PowerCfgBroker.SetValueIndex(ValueIndex.DC, Scheme, SubGroup, Settings, Value);
-            PowerCfgBroker.SetActive(Scheme);
+            if (PowerProfile.GetActiveScheme(out Guid currentScheme))
+            {
+                PowerProfile.SetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, Value);
+                PowerProfile.SetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings, Value);
+                PowerProfile.SetActiveScheme(currentScheme);
+            }
         }
 
         #region events
