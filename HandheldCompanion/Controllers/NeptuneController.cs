@@ -35,8 +35,8 @@ namespace HandheldCompanion.Controllers
         private Thread thread;
         private bool ThreadRunning;
 
-        private Task<bool> lastLeftHapticOn;
-        private Task<bool> lastRightHapticOn;
+        private Task<byte[]> lastLeftHapticOn;
+        private Task<byte[]> lastRightHapticOn;
 
         public NeptuneController(PnPDetails details)
         {
@@ -91,20 +91,18 @@ namespace HandheldCompanion.Controllers
         {
             while(ThreadRunning)
             {
-                if (lastLeftHapticOn is not null && lastLeftHapticOn.IsCompleted || lastLeftHapticOn is null)
-                    if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
-                        lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
+                if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
+                    lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
 
-                if (lastRightHapticOn is not null && lastRightHapticOn.IsCompleted || lastRightHapticOn is null)
-                    if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
-                        lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+                if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
+                    lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+
+                Thread.Sleep(TimerManager.GetPeriod() * 2);
 
                 if (lastLeftHapticOn is not null)
                     await lastLeftHapticOn;
                 if (lastRightHapticOn is not null)
                     await lastRightHapticOn;
-
-                Thread.Sleep(TimerManager.GetPeriod());
             }
         }
 
