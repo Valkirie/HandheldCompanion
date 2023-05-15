@@ -117,7 +117,8 @@ namespace HandheldCompanion.Managers
         private double AutoTDPMax;
         private int AutoTDPFPSSetpointMetCounter;
         private double ProcessValueFPSPrevious;
-		
+        double[] FPSHistory = new double[6];
+
         public PerformanceManager() : base()
         {
             // initialize timer(s)
@@ -260,20 +261,27 @@ namespace HandheldCompanion.Managers
                         // Be realistic with expectd proces value
                         ProcessValueFPS = Math.Clamp(ProcessValueFPS, 5, 500);
 
+                        // Dipper
                         // If actual and target FPS are very similar for a certain duration,
                         // add a small amount of positive "error" make controller always try to reduce
                         // range is intentionally a bit wide for framerate limiter margin of error
+                        // The within target range is 1 FPS as games can fluctuate quite a bit
+                        // The reduction is only actually done if the average FPS is on target or slightly below
                         double ProcessValueFPSModifier = 0.0;
-                        if (AutoTDPTargetFPS - 0.5 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 0.1)
+                        // Keep track of previous FPS values for determining average, use rolling array
+                        Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
+                        // Add current FPS at the start
+                        FPSHistory[0] = ProcessValueFPS;
+                        if (AutoTDPTargetFPS - 1 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 1)
                         {
                             AutoTDPFPSSetpointMetCounter += 1;
                             
-                            if (AutoTDPFPSSetpointMetCounter >= 3)
+                            if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
                             { 
                                 // Calculate modifier to get target + 0.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
                             }
-                            else if (AutoTDPFPSSetpointMetCounter >= 6)
+                            else if (AutoTDPFPSSetpointMetCounter >= 6 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1);
                             {
                                 // Calculate modifier to get target + 1.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 1.5 - ProcessValueFPS;
