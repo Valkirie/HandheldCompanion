@@ -94,8 +94,7 @@
                 <ui:SimpleStackPanel
                     Name="LayoutPickerPanel"
                     d:Visibility="Visible"
-                    Spacing="12"
-                    Visibility="Collapsed">
+                    Spacing="12">
 
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Layout picker" />
                     <ComboBox
@@ -160,7 +159,8 @@
                                                     HorizontalAlignment="Stretch"
                                                     ui:ControlHelper.Header="Layout author" />
                                                 <CheckBox x:Name="ExportForCurrent" Content="Export for current controller" />
-                                                <CheckBox x:Name="SaveGameInfo" Content="Save game information with the layout" IsChecked="True" />
+                                                <CheckBox x:Name="SaveGameInfo" Content="Save game information with the layout"
+                                                          IsChecked="True" Click="SaveGameInfo_Toggled" />
 
                                                 <!--  Separator  -->
                                                 <Separator

@@ -687,18 +687,18 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Desktop layout.
         /// </summary>
-        public static string InputsHotkey_shortcutDesktopLayout {
+        public static string InputsHotkey_DesktopLayoutEnabled {
             get {
-                return ResourceManager.GetString("InputsHotkey_shortcutDesktopLayout", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabled", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Toggle Desktop controller layout.
         /// </summary>
-        public static string InputsHotkey_shortcutDesktopLayoutDesc {
+        public static string InputsHotkey_DesktopLayoutEnabledDesc {
             get {
-                return ResourceManager.GetString("InputsHotkey_shortcutDesktopLayoutDesc", resourceCulture);
+                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabledDesc", resourceCulture);
             }
         }
         

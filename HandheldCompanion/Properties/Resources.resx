@@ -1136,10 +1136,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>Vibrate physical controller when connected</value>
   </data>
-  <data name="InputsHotkey_shortcutDesktopLayout" xml:space="preserve">
+  <data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
     <value>Desktop layout</value>
   </data>
-  <data name="InputsHotkey_shortcutDesktopLayoutDesc" xml:space="preserve">
+  <data name="InputsHotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
     <value>Toggle Desktop controller layout</value>
   </data>
   <data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
