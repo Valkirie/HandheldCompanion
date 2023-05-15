@@ -359,7 +359,7 @@ namespace HandheldCompanion.Managers
                         break;
 
                     // temporary settings
-                    case "shortcutDesktopLayout":
+                    case "DesktopLayoutEnabled":
                         {
                             bool value = !SettingsManager.GetBoolean(listener, true);
                             SettingsManager.SetProperty(listener, value, false, true);

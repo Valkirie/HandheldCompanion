@@ -125,7 +125,6 @@ namespace HandheldCompanion.Managers
         private static Layout? ProcessLayout(string fileName)
         {
             // UI thread (synchronous)
-            // We need to wait for each controller to initialize and take (or not) its slot in the array
             return Application.Current.Dispatcher.Invoke(() =>
             {
                 Layout layout = null;
@@ -154,7 +153,6 @@ namespace HandheldCompanion.Managers
         private static void ProcessLayoutTemplate(string fileName)
         {
             // UI thread (synchronous)
-            // We need to wait for each controller to initialize and take (or not) its slot in the array
             Application.Current.Dispatcher.Invoke(() =>
             {
                 LayoutTemplate layoutTemplate = null;
@@ -267,7 +265,7 @@ namespace HandheldCompanion.Managers
         {
             switch (name)
             {
-                case "shortcutDesktopLayout":
+                case "DesktopLayoutEnabled":
                     {
                         case true:
                             SetActiveLayout(desktopLayout);

@@ -239,7 +239,7 @@ namespace HandheldCompanion.Views
                         break;
 
                     bool DesktopLayout = Convert.ToBoolean(value);
-                    SettingsManager.SetProperty("shortcutDesktopLayout", DesktopLayout, false, true);
+                    SettingsManager.SetProperty("DesktopLayoutEnabled", DesktopLayout, false, true);
                     break;
             }
 
