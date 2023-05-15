@@ -267,12 +267,15 @@ namespace HandheldCompanion.Managers
             {
                 case "DesktopLayoutEnabled":
                     {
-                        case true:
-                            SetActiveLayout(desktopLayout);
-                            break;
-                        case false:
-                            SetActiveLayout(profileLayout);
-                            break;
+                        switch (Convert.ToBoolean(value))
+                        {
+                            case true:
+                                SetActiveLayout(desktopLayout);
+                                break;
+                            case false:
+                                SetActiveLayout(profileLayout);
+                                break;
+                        }
                     }
                     break;
             }
