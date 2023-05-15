@@ -9,6 +9,9 @@ namespace PowerProfileUtils
         DC
     }
 
+    // For a reference on additional subgroup and setting GUIDs, run the command powercfg.exe /qh
+    // This will list all hidden settings with both the names and GUIDs, descriptions, current values, and allowed values.
+
     public static class PowerSubGroup
     {
         public static Guid SUB_PROCESSOR = new("54533251-82be-4824-96c1-47b60b740d00");
