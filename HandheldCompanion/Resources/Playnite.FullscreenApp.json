@@ -1,7 +1,0 @@
-{
-  "name": "Playnite.FullscreenApp",
-  "path": "Playnite.FullscreenApp.exe",
-  "executable": "Playnite.FullscreenApp.exe",
-  "isEnabled": true,
-  "use_wrapper": true
-}

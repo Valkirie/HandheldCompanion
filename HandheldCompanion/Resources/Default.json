@@ -1,9 +1,0 @@
-{
-  "name": "Default",
-  "path": "",
-  "executable": "Default.exe",
-  "isDefault": true,
-  "isEnabled": true,
-  "whitelisted": false,
-  "umc_enabled": false
-}
