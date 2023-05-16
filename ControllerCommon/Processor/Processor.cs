@@ -1,10 +1,6 @@
 ﻿using ControllerCommon.Managers;
-using ControllerCommon.Processor.AMD;
-using ControllerCommon.Processor.Intel;
-using System;
 using System.Collections.Generic;
 using System.Management;
-using System.Threading;
 using System.Timers;
 using Timer = System.Timers.Timer;
 

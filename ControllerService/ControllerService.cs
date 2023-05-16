@@ -563,7 +563,7 @@ namespace ControllerService
                         if (vTarget is not null)
                             return;
 
-                        while(vTarget is null || !vTarget.IsConnected)
+                        while (vTarget is null || !vTarget.IsConnected)
                         {
                             // reset vigem
                             ResetViGEm();

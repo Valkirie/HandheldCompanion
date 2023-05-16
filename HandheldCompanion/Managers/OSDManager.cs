@@ -4,17 +4,8 @@ using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using WinRT;
-using static ControllerCommon.WinAPI;
 using static HandheldCompanion.Platforms.HWiNFO;
-using static PInvoke.Kernel32;
 
 namespace HandheldCompanion.Managers
 {
@@ -316,7 +307,7 @@ namespace HandheldCompanion.Managers
         public OverlayEntry(string name, string colorScheme = "", bool indent = false)
         {
             this.Name = indent ? name + "\t" : name;
-            
+
             if (!string.IsNullOrEmpty(colorScheme))
                 this.Name = "<" + colorScheme + ">" + this.Name + "<C>";
         }
@@ -343,7 +334,7 @@ namespace HandheldCompanion.Managers
 
                 List<string> entriesStr = new() { entry.Name };
 
-                foreach(SensorElement element in entry.elements)
+                foreach (SensorElement element in entry.elements)
                     entriesStr.Add(element.ToString());
 
                 var ItemStr = string.Join(" ", entriesStr);

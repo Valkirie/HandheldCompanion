@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System.Numerics;
 using Windows.Devices.Sensors;
 using static ControllerCommon.Utils.DeviceUtils;

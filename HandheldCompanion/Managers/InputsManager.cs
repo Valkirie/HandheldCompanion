@@ -7,7 +7,6 @@ using HandheldCompanion.Views;
 using PrecisionTiming;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Events;
@@ -210,7 +209,7 @@ namespace HandheldCompanion.Managers
                             InputsChordHoldTimer.Stop();
                         }
                         // else if (IsKeyUp)
-                            KeyboardSimulator.KeyUp(chords.ToArray());
+                        KeyboardSimulator.KeyUp(chords.ToArray());
 
                         return true;
                     }

@@ -257,7 +257,7 @@ namespace HandheldCompanion.Managers
             });
 
             // These are special shortcut keys with no related events
-            switch(type)
+            switch (type)
             {
                 case InputsHotkeyType.Embedded:
                     return;

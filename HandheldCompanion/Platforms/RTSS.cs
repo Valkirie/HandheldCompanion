@@ -1,25 +1,19 @@
 ﻿using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
-using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Properties;
-using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static HandheldCompanion.Platforms.RTSS;
 
 namespace HandheldCompanion.Platforms
 {
@@ -314,7 +308,7 @@ namespace HandheldCompanion.Platforms
                     return true;
                 }
             }
-            catch {}
+            catch { }
 
             /*
             if (File.Exists(SettingsPath))
@@ -394,7 +388,7 @@ namespace HandheldCompanion.Platforms
 
                 return true;
             }
-            catch {}
+            catch { }
 
             return false;
         }

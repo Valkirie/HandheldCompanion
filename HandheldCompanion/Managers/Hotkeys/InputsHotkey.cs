@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Devices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FontFamily = System.Windows.Media.FontFamily;
 

@@ -1,10 +1,6 @@
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;

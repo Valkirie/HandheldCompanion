@@ -15,7 +15,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Xml;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
@@ -455,7 +454,7 @@ namespace HandheldCompanion.Views.Pages
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
-                
+
                 // UMC settings
                 Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
                 cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
@@ -680,7 +679,7 @@ namespace HandheldCompanion.Views.Pages
             // TDP and AutoTDP are mutually exclusive
             bool toggled = AutoTDPToggle.IsOn;
             if (toggled)
-                TDPToggle.IsOn = false;            
+                TDPToggle.IsOn = false;
         }
 
         private void AutoTDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -733,7 +732,7 @@ namespace HandheldCompanion.Views.Pages
         {
             // prepare layout editor
             LayoutTemplate layoutTemplate = new(currentProfile.Layout)
-			{
+            {
                 Name = currentProfile.LayoutTitle,
                 Description = "Your modified layout for this executable.",
                 Author = Environment.UserName,

@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -417,7 +416,7 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            
+
             // refresh error code
             SanitizeProfile(profile);
 

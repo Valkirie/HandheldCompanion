@@ -3,19 +3,15 @@ using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
-using static HandheldCompanion.Platforms.HWiNFO;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms
@@ -298,7 +294,7 @@ namespace HandheldCompanion.Platforms
             PhysicalMemoryUsage,
             VirtualMemoryUsage
         }
-        
+
         public void PopulateSensors()
         {
             if (MemoryMapped is null)
@@ -326,7 +322,7 @@ namespace HandheldCompanion.Platforms
                         {
                             case SENSOR_READING_TYPE.SENSOR_TYPE_TEMP:
                                 {
-                                    switch(element.szLabelOrig)
+                                    switch (element.szLabelOrig)
                                     {
                                         case "CPU Package":
                                         case "CPU (Tctl/Tdie)":
@@ -343,7 +339,7 @@ namespace HandheldCompanion.Platforms
 
                             case SENSOR_READING_TYPE.SENSOR_TYPE_POWER:
                                 {
-                                    switch(element.szLabelOrig)
+                                    switch (element.szLabelOrig)
                                     {
                                         case "CPU Package Power":
                                         case "CPU PPT":
@@ -386,7 +382,7 @@ namespace HandheldCompanion.Platforms
 
                             case SENSOR_READING_TYPE.SENSOR_TYPE_USAGE:
                                 {
-                                    switch(element.szLabelOrig)
+                                    switch (element.szLabelOrig)
                                     {
                                         case "GPU Utilization":
                                         case "GPU D3D Usage":
@@ -423,7 +419,7 @@ namespace HandheldCompanion.Platforms
 
                             case SENSOR_READING_TYPE.SENSOR_TYPE_CLOCK:
                                 {
-                                    switch(element.szLabelOrig)
+                                    switch (element.szLabelOrig)
                                     {
                                         case "GPU Clock":
                                         case "GPU SoC Clock": // keep me ?
@@ -471,7 +467,7 @@ namespace HandheldCompanion.Platforms
                         }
 
                         // move me !
-                        switch(element.szLabelOrig)
+                        switch (element.szLabelOrig)
                         {
                             case "Remaining Capacity":
                                 MonitoredSensors[SensorElementType.BatteryRemainingCapacity] = element;

@@ -5,12 +5,10 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Views;
 using PowerProfileUtils;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
@@ -275,13 +273,13 @@ namespace HandheldCompanion.Managers
                         if (AutoTDPTargetFPS - 1 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 1)
                         {
                             AutoTDPFPSSetpointMetCounter += 1;
-                            
+
                             if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
-                            { 
+                            {
                                 // Calculate modifier to get target + 0.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
                             }
-                            else if (AutoTDPFPSSetpointMetCounter >= 6 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1);
+                            else if (AutoTDPFPSSetpointMetCounter >= 6 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1) ;
                             {
                                 // Calculate modifier to get target + 1.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 1.5 - ProcessValueFPS;
@@ -289,9 +287,9 @@ namespace HandheldCompanion.Managers
                                 // Prevent overflow
                                 AutoTDPFPSSetpointMetCounter = 6;
                             }
-                        }    
-                        else 
-                        { 
+                        }
+                        else
+                        {
                             ProcessValueFPSModifier = 0.0;
                             AutoTDPFPSSetpointMetCounter = 0;
                         }
@@ -535,7 +533,7 @@ namespace HandheldCompanion.Managers
 
         public void RequestTDP(double[] values, bool immediate = false)
         {
-            for(int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+            for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
             {
                 // update value read by timer
                 StoredTDP[idx] = values[idx];

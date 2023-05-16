@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace neptune_hidapi.net.Hid
 {
@@ -44,52 +40,52 @@ namespace neptune_hidapi.net.Hid
 
     internal enum SDCButton0
     {
-        BTN_L5              = 0b1000000000000000,
-        BTN_OPTIONS         = 0b0100000000000000,
-        BTN_STEAM           = 0b0010000000000000,
-        BTN_MENU            = 0b0001000000000000,
-        BTN_DPAD_DOWN       = 0b0000100000000000,
-        BTN_DPAD_LEFT       = 0b0000010000000000,
-        BTN_DPAD_RIGHT      = 0b0000001000000000,
-        BTN_DPAD_UP         = 0b0000000100000000,
-        BTN_A               = 0b0000000010000000,
-        BTN_X               = 0b0000000001000000,
-        BTN_B               = 0b0000000000100000,
-        BTN_Y               = 0b0000000000010000,
-        BTN_L1              = 0b0000000000001000,
-        BTN_R1              = 0b0000000000000100,
-        BTN_L2              = 0b0000000000000010,
-        BTN_R2              = 0b0000000000000001,
+        BTN_L5 = 0b1000000000000000,
+        BTN_OPTIONS = 0b0100000000000000,
+        BTN_STEAM = 0b0010000000000000,
+        BTN_MENU = 0b0001000000000000,
+        BTN_DPAD_DOWN = 0b0000100000000000,
+        BTN_DPAD_LEFT = 0b0000010000000000,
+        BTN_DPAD_RIGHT = 0b0000001000000000,
+        BTN_DPAD_UP = 0b0000000100000000,
+        BTN_A = 0b0000000010000000,
+        BTN_X = 0b0000000001000000,
+        BTN_B = 0b0000000000100000,
+        BTN_Y = 0b0000000000010000,
+        BTN_L1 = 0b0000000000001000,
+        BTN_R1 = 0b0000000000000100,
+        BTN_L2 = 0b0000000000000010,
+        BTN_R2 = 0b0000000000000001,
     }
 
     internal enum SDCButton1
     {
-        BTN_LSTICK_PRESS    = 0b01000000,
-        BTN_LPAD_TOUCH      = 0b00001000,
-        BTN_LPAD_PRESS      = 0b00000010,
-        BTN_RPAD_PRESS      = 0b00010000,
-        BTN_RPAD_TOUCH      = 0b00000100,
-        BTN_R5              = 0b00000001,
+        BTN_LSTICK_PRESS = 0b01000000,
+        BTN_LPAD_TOUCH = 0b00001000,
+        BTN_LPAD_PRESS = 0b00000010,
+        BTN_RPAD_PRESS = 0b00010000,
+        BTN_RPAD_TOUCH = 0b00000100,
+        BTN_R5 = 0b00000001,
     }
 
     internal enum SDCButton2
     {
         BTN_RSTICK_PRESS = 0b00000100,
-    }   
+    }
 
     internal enum SDCButton4
     {
-        BTN_LSTICK_TOUCH    = 0b01000000,
-        BTN_RSTICK_TOUCH    = 0b10000000,
-        BTN_R4              = 0b00000100,
-        BTN_L4              = 0b00000010,
+        BTN_LSTICK_TOUCH = 0b01000000,
+        BTN_RSTICK_TOUCH = 0b10000000,
+        BTN_R4 = 0b00000100,
+        BTN_L4 = 0b00000010,
     }
 
     internal enum SDCButton5
     {
         BTN_QUICK_ACCESS = 0b00000100,
     }
-    
+
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct SDCInput

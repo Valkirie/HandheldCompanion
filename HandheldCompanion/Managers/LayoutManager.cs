@@ -212,15 +212,15 @@ namespace HandheldCompanion.Managers
             Profile defaultProfile = ProfileManager.GetDefault();
 
             if (profile.LayoutEnabled)
-			{
-				// use profile layout if enabled
+            {
+                // use profile layout if enabled
                 profileLayout = profile.Layout.Clone() as Layout;
-			}
+            }
             else if (defaultProfile.LayoutEnabled)
-			{
-				// fallback to default profile layout if enabled
+            {
+                // fallback to default profile layout if enabled
                 profileLayout = defaultProfile.Layout.Clone() as Layout;
-			}
+            }
             else
                 profileLayout = null;
 
@@ -304,7 +304,7 @@ namespace HandheldCompanion.Managers
                     action.SetOrientation(currentOrientation);
             }
         }
-          
+
         private static async void SetActiveLayout(Layout layout)
         {
             while (updateLock)

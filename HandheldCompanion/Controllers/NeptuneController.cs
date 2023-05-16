@@ -89,7 +89,7 @@ namespace HandheldCompanion.Controllers
 
         private async void ThreadLoop(object? obj)
         {
-            while(ThreadRunning)
+            while (ThreadRunning)
             {
                 if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
                     lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);

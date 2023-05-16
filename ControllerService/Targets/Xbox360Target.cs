@@ -6,7 +6,6 @@ using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using System;
-using System.Threading;
 
 namespace ControllerService.Targets
 {

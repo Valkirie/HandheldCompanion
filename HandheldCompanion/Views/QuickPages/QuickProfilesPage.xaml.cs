@@ -6,10 +6,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
-using SharpDX.Multimedia;
 using System;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Layout = ControllerCommon.Layout;
@@ -502,7 +499,7 @@ namespace HandheldCompanion.Views.QuickPages
                 return;
 
             if (!isDrawing)
-            {                 
+            {
                 currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
                 RequestUpdate();
             }

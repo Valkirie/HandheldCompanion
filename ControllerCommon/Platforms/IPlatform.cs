@@ -76,7 +76,7 @@ namespace ControllerCommon.Platforms
         {
             get
             {
-                foreach(var file in Modules)
+                foreach (var file in Modules)
                 {
                     var filename = Path.Combine(InstallPath, file);
                     if (File.Exists(filename))

@@ -2,8 +2,6 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using ModernWpf.Controls;
-using Nefarius.Utilities.DeviceManagement.Extensions;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;

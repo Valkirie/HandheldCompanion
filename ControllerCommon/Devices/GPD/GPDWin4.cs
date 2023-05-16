@@ -3,7 +3,6 @@ using ControllerCommon.Managers;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Windows.Documents;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices
@@ -71,7 +70,7 @@ namespace ControllerCommon.Devices
 
         public override void SetFanControl(bool enable)
         {
-            switch(enable)
+            switch (enable)
             {
                 case false:
                     base.SetFanDuty(0);

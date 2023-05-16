@@ -1,11 +1,8 @@
-﻿using ControllerCommon;
-using ControllerCommon.Devices;
-using ControllerCommon.Processor;
+﻿using ControllerCommon.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,10 +18,10 @@ namespace HandheldCompanion.Views.QuickPages
         public QuickPerformancePage()
         {
             InitializeComponent();
-			
+
             MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
             MainWindow.performanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
-			
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
