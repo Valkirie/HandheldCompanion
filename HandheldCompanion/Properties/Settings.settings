@@ -150,7 +150,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HIDcloakonconnect" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HIDvibrateonconnect" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
