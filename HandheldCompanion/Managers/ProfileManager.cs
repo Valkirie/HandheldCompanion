@@ -40,15 +40,15 @@ namespace HandheldCompanion.Managers
 
         private static Profile currentProfile;
 
-        public static string InstallPath;
+        public static string ProfilesPath;
         private static bool IsInitialized;
 
         static ProfileManager()
         {
             // initialiaze path
-            InstallPath = Path.Combine(MainWindow.SettingsPath, "profiles");
-            if (!Directory.Exists(InstallPath))
-                Directory.CreateDirectory(InstallPath);
+            ProfilesPath = Path.Combine(MainWindow.SettingsPath, "profiles");
+            if (!Directory.Exists(ProfilesPath))
+                Directory.CreateDirectory(ProfilesPath);
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
@@ -62,7 +62,7 @@ namespace HandheldCompanion.Managers
             // monitor profile files
             profileWatcher = new FileSystemWatcher()
             {
-                Path = InstallPath,
+                Path = ProfilesPath,
                 EnableRaisingEvents = true,
                 IncludeSubdirectories = true,
                 Filter = "*.json",
@@ -71,7 +71,7 @@ namespace HandheldCompanion.Managers
             profileWatcher.Deleted += ProfileDeleted;
 
             // process existing profiles
-            string[] fileEntries = Directory.GetFiles(InstallPath, "*.json", SearchOption.AllDirectories);
+            string[] fileEntries = Directory.GetFiles(ProfilesPath, "*.json", SearchOption.AllDirectories);
             foreach (string fileName in fileEntries)
                 ProcessProfile(fileName);
 
@@ -333,7 +333,7 @@ namespace HandheldCompanion.Managers
 
         public static void DeleteProfile(Profile profile)
         {
-            string settingsPath = Path.Combine(InstallPath, profile.GetFileName());
+            string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
 
             if (profiles.ContainsKey(profile.Path))
             {
@@ -353,14 +353,14 @@ namespace HandheldCompanion.Managers
                 // todo: localize me
                 ToastManager.SendToast($"Profile {profile.Name} deleted");
 
-                LogManager.LogInformation("Deleted profile {0}", settingsPath);
+                LogManager.LogInformation("Deleted profile {0}", profilePath);
 
                 // restore default profile
                 if (isCurrent)
                     ApplyProfile(GetDefault());
             }
 
-            File.Delete(settingsPath);
+            File.Delete(profilePath);
         }
 
         public static void SerializeProfile(Profile profile)
@@ -373,8 +373,8 @@ namespace HandheldCompanion.Managers
                 TypeNameHandling = TypeNameHandling.All
             });
 
-            string settingsPath = Path.Combine(InstallPath, profile.GetFileName());
-            File.WriteAllText(settingsPath, jsonString);
+            string profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
+            File.WriteAllText(profilePath, jsonString);
         }
 
         private static void SanitizeProfile(Profile profile)
@@ -426,7 +426,7 @@ namespace HandheldCompanion.Managers
 
             // raise event(s)
             Updated?.Invoke(profile, source, isCurrent);
-			
+
             if (source == ProfileUpdateSource.Serializer)
                 return;
 

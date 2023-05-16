@@ -13,82 +13,47 @@ namespace HandheldCompanion.Controls
     /// <summary>
     /// Logique d'interaction pour LayoutTemplate.xaml
     /// </summary>
-    /// 
+    ///
     [JsonObject(MemberSerialization.OptIn)]
     public partial class LayoutTemplate : UserControl, IComparable
     {
         [JsonProperty]
         public string Author
         {
-            get
-            {
-                return _Author.Text;
-            }
-
-            set
-            {
-                _Author.Text = value;
-            }
+            get { return _Author.Text; }
+            set { _Author.Text = value; }
         }
-
         [JsonProperty]
         public string Name
         {
-            get
-            {
-                return _Name.Text;
-            }
-
-            set
-            {
-                _Name.Text = value;
-            }
+            get { return _Name.Text; }
+            set { _Name.Text = value; }
         }
-
         [JsonProperty]
         public string Description
         {
-            get
-            {
-                return _Description.Text;
-            }
-
-            set
-            {
-                _Description.Text = value;
-            }
+            get { return _Description.Text; }
+            set { _Description.Text = value; }
         }
-
         [JsonProperty]
         public string Product
         {
-            get
-            {
-                return _Product.Text;
-            }
-
+            get { return _Product.Text; }
             set
             {
                 _Product.Text = value;
-
-                if (!string.IsNullOrEmpty(value))
-                    _Product.Visibility = System.Windows.Visibility.Visible;
+                _Product.Visibility = string.IsNullOrEmpty(value) ?
+                    System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
             }
         }
-
         [JsonProperty]
         public Guid Guid { get; set; } = Guid.NewGuid();
         [JsonProperty]
         public string Executable { get; set; } = string.Empty;
-
         [JsonProperty]
-        public bool IsTemplate { get; set; } = false;
-        [JsonProperty]
-        public bool IsCommunity { get; set; } = false;
-
+        public bool IsInternal { get; set; } = false;
         [JsonProperty]
         public Layout Layout { get; set; } = new();
-
         [JsonProperty]
         public Type ControllerType { get; set; }
 
@@ -100,19 +65,22 @@ namespace HandheldCompanion.Controls
         public LayoutTemplate()
         {
             InitializeComponent();
+        }
 
+        public LayoutTemplate(Layout layout) : this()
+        {
+            this.Layout = layout;
             this.Layout.Updated += Layout_Updated;
         }
 
-        public LayoutTemplate(string name, string description, string author, bool isTemplate, bool isCommunity, Type deviceType = null) : this()
+        private LayoutTemplate(string name, string description, string author, bool isInternal, Type deviceType = null) : this()
         {
             this.Name = name;
             this.Description = description;
             this.Author = author;
+            this.Product = string.Empty;
 
-            this.IsTemplate = isTemplate;
-            this.IsCommunity = isCommunity;
-
+            this.IsInternal = isInternal;
             this.ControllerType = deviceType;
 
             this.Layout = new(true);
@@ -132,15 +100,15 @@ namespace HandheldCompanion.Controls
                         this.Layout.ButtonLayout = new()
                         {
                             { ButtonFlags.B1, new KeyboardActions() { Key = VirtualKeyCode.RETURN } },
-                            { ButtonFlags.B2, new KeyboardActions() { Key = VirtualKeyCode.SPACE } },
+                            { ButtonFlags.B2, new KeyboardActions() { Key = VirtualKeyCode.ESCAPE } },
                             { ButtonFlags.B3, new KeyboardActions() { Key = VirtualKeyCode.PRIOR } },
                             { ButtonFlags.B4, new KeyboardActions() { Key = VirtualKeyCode.NEXT } },
 
-                            { ButtonFlags.L1, new KeyboardActions() { Key = VirtualKeyCode.LCONTROL } },
-                            { ButtonFlags.R1, new KeyboardActions() { Key = VirtualKeyCode.LMENU } },
+                            { ButtonFlags.L1, new KeyboardActions() { Key = VirtualKeyCode.BACK } },
+                            { ButtonFlags.R1, new KeyboardActions() { Key = VirtualKeyCode.SPACE } },
 
-                            { ButtonFlags.Back, new KeyboardActions() { Key = VirtualKeyCode.TAB } },
-                            { ButtonFlags.Start, new KeyboardActions() { Key = VirtualKeyCode.ESCAPE } },
+                            { ButtonFlags.Back, new KeyboardActions() { Key = VirtualKeyCode.MENU } },
+                            { ButtonFlags.Start, new KeyboardActions() { Key = VirtualKeyCode.TAB } },
 
                             { ButtonFlags.DPadUp, new KeyboardActions() { Key = VirtualKeyCode.UP } },
                             { ButtonFlags.DPadDown, new KeyboardActions() { Key = VirtualKeyCode.DOWN } },
@@ -149,9 +117,6 @@ namespace HandheldCompanion.Controls
 
                             { ButtonFlags.L2, new MouseActions() { MouseType = MouseActionsType.RightButton } },
                             { ButtonFlags.R2, new MouseActions() { MouseType = MouseActionsType.LeftButton } },
-
-                            { ButtonFlags.LeftThumb, new KeyboardActions() { Key = VirtualKeyCode.LWIN } },
-                            { ButtonFlags.RightThumb, new KeyboardActions() { Key = VirtualKeyCode.LSHIFT } },
 
                             { ButtonFlags.LeftPadClick, new MouseActions() { MouseType = MouseActionsType.RightButton } },
                             { ButtonFlags.RightPadClick, new MouseActions() { MouseType = MouseActionsType.LeftButton } },
@@ -242,11 +207,11 @@ namespace HandheldCompanion.Controls
             return profile.Name.CompareTo(Name);
         }
 
-        public static LayoutTemplate DesktopLayout = new LayoutTemplate("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true, false);
-        public static LayoutTemplate DefaultLayout = new LayoutTemplate("Gamepad (XBOX)", "This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc.", "HandheldCompanion", true, false);
-        public static LayoutTemplate NintendoLayout = new LayoutTemplate("Gamepad (Nintendo)", "This template is for games that already have built-in gamepad support. Intended for games that are designed with a Nintendo gamepad in mind.", "HandheldCompanion", true, false);
-        public static LayoutTemplate KeyboardLayout = new LayoutTemplate("Keyboard (WASD) and Mouse", "This template works great for the games that were designed with a keyboard and mouse in mind, without gamepad support. The controller will drive the game's keyboard based events with buttons, but will make assumptions about which buttons move you around (WASD for movement, space for jump, etc.). The right pad will emulate the movement of a mouse.", "HandheldCompanion", true, false);
-        public static LayoutTemplate GamepadMouseLayout = new LayoutTemplate("Gamepad with Mouse Trackpad", "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.", "HandheldCompanion", true, false, typeof(NeptuneController));
-        public static LayoutTemplate GamepadJoystickLayout = new LayoutTemplate("Gamepad with Joystick Trackpad", "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.", "HandheldCompanion", true, false, typeof(NeptuneController));
+        public static readonly LayoutTemplate DesktopLayout = new("Desktop", "Layout for Desktop Browsing", "HandheldCompanion", true);
+        public static readonly LayoutTemplate DefaultLayout = new("Gamepad (XBOX)", "This template is for games that already have built-in gamepad support. Intended for dual stick games such as twin-stick shooters, side-scrollers, etc.", "HandheldCompanion", true);
+        public static readonly LayoutTemplate NintendoLayout = new("Gamepad (Nintendo)", "This template is for games that already have built-in gamepad support. Intended for games that are designed with a Nintendo gamepad in mind.", "HandheldCompanion", true);
+        public static readonly LayoutTemplate KeyboardLayout = new("Keyboard (WASD) and Mouse", "This template works great for the games that were designed with a keyboard and mouse in mind, without gamepad support. The controller will drive the game's keyboard based events with buttons, but will make assumptions about which buttons move you around (WASD for movement, space for jump, etc.). The right pad will emulate the movement of a mouse.", "HandheldCompanion", true);
+        public static readonly LayoutTemplate GamepadMouseLayout = new("Gamepad with Mouse Trackpad", "This template is for games that already have built-in gamepad support. The right trackpad will be bound to mouse emulation which may not work in all games.", "HandheldCompanion", true, typeof(NeptuneController));
+        public static readonly LayoutTemplate GamepadJoystickLayout = new("Gamepad with Joystick Trackpad", "This template is for games that already have built-in gamepad support and have a third person controlled camera. FPS or Third Person Adventure games, etc.", "HandheldCompanion", true, typeof(NeptuneController));
     }
 }

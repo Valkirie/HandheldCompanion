@@ -2,8 +2,6 @@ using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
@@ -39,7 +37,6 @@ namespace HandheldCompanion.Views.Pages
         private string preNavItemTag;
 
         private LayoutTemplate currentTemplate = new();
-        private Layout currentLayout = new();
 
         protected readonly object updateLock = new();
 
@@ -152,7 +149,7 @@ namespace HandheldCompanion.Views.Pages
                 else
                 {
                     // new entry
-                    if (layoutTemplate.IsTemplate)
+                    if (layoutTemplate.IsInternal)
                         idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterTemplates) + 1;
                     else
                         idx = cB_Layouts.Items.IndexOf(cB_LayoutsSplitterCommunity) + 1;
@@ -213,7 +210,7 @@ namespace HandheldCompanion.Views.Pages
             if (Monitor.IsEntered(updateLock))
                 return;
 
-            currentLayout.RemoveLayout(button);
+            currentTemplate.Layout.RemoveLayout(button);
         }
 
         private void ButtonMapping_Updated(ButtonFlags button, IActions action)
@@ -221,7 +218,7 @@ namespace HandheldCompanion.Views.Pages
             if (Monitor.IsEntered(updateLock))
                 return;
 
-            currentLayout.UpdateLayout(button, action);
+            currentTemplate.Layout.UpdateLayout(button, action);
         }
 
         private void AxisMapping_Deleted(AxisLayoutFlags axis)
@@ -229,7 +226,7 @@ namespace HandheldCompanion.Views.Pages
             if (Monitor.IsEntered(updateLock))
                 return;
 
-            currentLayout.RemoveLayout(axis);
+            currentTemplate.Layout.RemoveLayout(axis);
         }
 
         private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
@@ -237,7 +234,7 @@ namespace HandheldCompanion.Views.Pages
             if (Monitor.IsEntered(updateLock))
                 return;
 
-            currentLayout.UpdateLayout(axis, action);
+            currentTemplate.Layout.UpdateLayout(axis, action);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -255,12 +252,7 @@ namespace HandheldCompanion.Views.Pages
 
         public void UpdateLayout(LayoutTemplate layoutTemplate)
         {
-            // update current layout
             currentTemplate = layoutTemplate;
-            currentLayout = layoutTemplate.Layout;
-
-            LayoutPickerPanel.Visibility = currentTemplate.IsTemplate ? Visibility.Collapsed : Visibility.Visible;
-
             UpdatePages();
         }
 
@@ -271,7 +263,7 @@ namespace HandheldCompanion.Views.Pages
                 // cascade update to (sub)pages (async)
                 Parallel.ForEach(_pages.Values, new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, page =>
                 {
-                    page.Refresh(currentLayout.ButtonLayout, currentLayout.AxisLayout);
+                    page.Refresh(currentTemplate.Layout.ButtonLayout, currentTemplate.Layout.AxisLayout);
                 });
 
                 // clear layout selection
@@ -279,7 +271,7 @@ namespace HandheldCompanion.Views.Pages
 
                 Monitor.Exit(updateLock);
 
-                currentLayout.UpdateLayout();
+                currentTemplate.Layout.UpdateLayout();
             }
         }
 
@@ -401,17 +393,14 @@ namespace HandheldCompanion.Views.Pages
             {
                 case ContentDialogResult.Primary:
                     {
-                        // update layout
+                        // do not overwrite currentTemplate and currentTemplate.Layout as a whole
+                        // because they both have important Update notifitications set
                         var newLayout = layoutTemplate.Layout.Clone() as Layout;
-                        currentLayout.AxisLayout = newLayout.AxisLayout;
-                        currentLayout.ButtonLayout = newLayout.ButtonLayout;
-
-                        // update template
+                        currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
+                        currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
                         currentTemplate.Name = layoutTemplate.Name;
                         currentTemplate.Description = layoutTemplate.Description;
                         currentTemplate.Guid = layoutTemplate.Guid; // not needed
-
-                        ProfilesPage.currentProfile.LayoutTitle = currentTemplate.Name;
 
                         UpdatePages();
                     }
@@ -436,37 +425,60 @@ namespace HandheldCompanion.Views.Pages
         {
             LayoutTemplate newLayout = new()
             {
-                Layout = currentLayout,
+                Layout = currentTemplate.Layout,
                 Name = LayoutTitle.Text,
                 Description = LayoutDescription.Text,
                 Author = LayoutAuthor.Text,
                 Executable = SaveGameInfo.IsChecked == true ? currentTemplate.Executable : "",
-                Product = SaveGameInfo.IsChecked == true ? ProfilesPage.currentProfile.Name : "",
-                IsCommunity = true,
-                IsTemplate = false
+                Product = SaveGameInfo.IsChecked == true ? currentTemplate.Product : "",
+                IsInternal = false
             };
+
+            if (newLayout.Name == string.Empty)
+            {
+                LayoutFlyout.Hide();
+                _ = Dialog.ShowAsync("Layout template name cannot be empty",
+                        $"Layout was not exported.",
+                        ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                return;
+            }
 
             if (ExportForCurrent.IsChecked == true)
                 newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
 
             LayoutManager.SerializeLayoutTemplate(newLayout);
 
-            // close flyout
             LayoutFlyout.Hide();
-
-            // display message
-            // todo: localize me
             _ = Dialog.ShowAsync("Layout template exported",
-                             $"{newLayout.Name} was exported.",
-                             ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                    $"{newLayout.Name} was exported.",
+                    ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
         }
 
         private void Flyout_Opening(object sender, object e)
         {
+            if (currentTemplate.Executable == string.Empty && currentTemplate.Product == string.Empty)
+                SaveGameInfo.IsChecked = SaveGameInfo.IsEnabled = false;
+            else
+                SaveGameInfo.IsChecked = SaveGameInfo.IsEnabled = true;
+
             string separator = (currentTemplate.Name.Length > 0 && currentTemplate.Product.Length > 0) ? " - " : "";
+
             LayoutTitle.Text = $"{currentTemplate.Name}{separator}{currentTemplate.Product}";
             LayoutDescription.Text = currentTemplate.Description;
             LayoutAuthor.Text = currentTemplate.Author;
+        }
+
+        private void SaveGameInfo_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (SaveGameInfo.IsChecked == true)
+            {
+                string separator = (currentTemplate.Name.Length > 0 && currentTemplate.Product.Length > 0) ? " - " : "";
+                LayoutTitle.Text = $"{currentTemplate.Name}{separator}{currentTemplate.Product}";
+            }
+            else
+            {
+                LayoutTitle.Text = $"{currentTemplate.Name}";
+            }
         }
 
         private void LayoutCancelButton_Click(object sender, RoutedEventArgs e)
