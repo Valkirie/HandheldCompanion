@@ -108,7 +108,7 @@ namespace HandheldCompanion.Platforms
 
         public ConcurrentDictionary<SensorElementType, SensorElement> MonitoredSensors = new();
 
-        private readonly Timer MemoryTimer;
+        private readonly Timer MemoryTimer = new(MemoryInterval);
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;
@@ -140,9 +140,10 @@ namespace HandheldCompanion.Platforms
                 LogManager.LogWarning("HWiNFO is missing. Please get it from: {0}", "https://www.hwinfo.com/files/hwi_742.exe");
                 return;
             }
+        }
 
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
+        public override bool Start()
+        {
             // those are used for computes
             MonitoredSensors[SensorElementType.PL1] = new SensorElement();
             MonitoredSensors[SensorElementType.PL2] = new SensorElement();
@@ -156,8 +157,8 @@ namespace HandheldCompanion.Platforms
             bool hasSensorsSM = GetProperty("SensorsSM");
             if (!IsRunning() || !hasSensorsSM)
             {
-                Stop();
-                Start();
+                StopProcess();
+                StartProcess();
             }
             else
             {
@@ -168,8 +169,11 @@ namespace HandheldCompanion.Platforms
                 Process.Exited += Process_Exited;
             }
 
-            MemoryTimer = new(MemoryInterval);
             MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            return base.Start();
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -197,7 +201,7 @@ namespace HandheldCompanion.Platforms
             {
                 // shared memory is disabled, halt process
                 if (prevPoll_time != -1)
-                    Stop();
+                    StopProcess();
 
                 // HWiNFO is loading
                 return;
@@ -206,7 +210,7 @@ namespace HandheldCompanion.Platforms
             // we couldn't poll HWiNFO, halt process
             if (HWiNFOMemory.poll_time == prevPoll_time)
             {
-                Stop();
+                StopProcess();
                 return;
             }
 
@@ -239,7 +243,7 @@ namespace HandheldCompanion.Platforms
         private void Process_Exited(object? sender, EventArgs e)
         {
             if (KeepAlive)
-                Start();
+                StartProcess();
         }
 
         public void GetSensors()
@@ -530,7 +534,7 @@ namespace HandheldCompanion.Platforms
             }
         }
 
-        public override bool Start()
+        public override bool StartProcess()
         {
             if (!IsInstalled)
                 return false;
@@ -582,7 +586,7 @@ namespace HandheldCompanion.Platforms
             return false;
         }
 
-        public override bool Stop()
+        public override bool StopProcess()
         {
             if (IsStarting)
                 return false;
@@ -591,7 +595,7 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 return false;
 
-            Kill();
+            KillProcess();
 
             return true;
         }

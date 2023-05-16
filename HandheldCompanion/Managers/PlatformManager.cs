@@ -2,6 +2,7 @@
 using ControllerCommon.Platforms;
 using HandheldCompanion.Platforms;
 using System.Diagnostics;
+using System.Threading;
 
 namespace HandheldCompanion.Managers
 {
@@ -39,12 +40,18 @@ namespace HandheldCompanion.Managers
 
             if (RTSS.IsInstalled)
             {
-                // do something
+                new Thread(() =>
+                {
+                    RTSS.Start();
+                }).Start();
             }
 
             if (HWiNFO.IsInstalled)
             {
-                // do something
+                new Thread(() =>
+                {
+                    HWiNFO.Start();
+                }).Start();
             }
 
             IsInitialized = true;
@@ -75,11 +82,13 @@ namespace HandheldCompanion.Managers
 
             if (RTSS.IsInstalled)
             {
+                RTSS.Stop();
                 RTSS.Dispose();
             }
 
             if (HWiNFO.IsInstalled)
             {
+                HWiNFO.Stop();
                 HWiNFO.Dispose();
             }
 

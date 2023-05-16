@@ -106,10 +106,13 @@ namespace HandheldCompanion.Platforms
                 LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
+        }
 
+        public override bool Start()
+        {
             // start RTSS if not running
             if (!IsRunning())
-                Start();
+                StartProcess();
 
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
@@ -121,6 +124,8 @@ namespace HandheldCompanion.Platforms
             ProfileManager.Updated += ProfileManager_Updated;
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
+
+            return base.Start();
         }
 
         private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
@@ -205,7 +210,7 @@ namespace HandheldCompanion.Platforms
         private void Process_Exited(object? sender, EventArgs e)
         {
             if (KeepAlive)
-                Start();
+                StartProcess();
         }
 
         public double GetFramerate(int processId)
@@ -356,7 +361,7 @@ namespace HandheldCompanion.Platforms
             RequestedFramerate = (int)framerate;
         }
 
-        public override bool Start()
+        public override bool StartProcess()
         {
             if (!IsInstalled)
                 return false;
@@ -394,7 +399,7 @@ namespace HandheldCompanion.Platforms
             return false;
         }
 
-        public override bool Stop()
+        public override bool StopProcess()
         {
             if (IsStarting)
                 return false;
@@ -403,7 +408,7 @@ namespace HandheldCompanion.Platforms
             if (!IsRunning())
                 return false;
 
-            Kill();
+            KillProcess();
 
             return true;
         }

@@ -154,7 +154,7 @@ namespace HandheldCompanion.Platforms
             return controllers.Contains(id);
         }
 
-        public override bool Start()
+        public override bool StartProcess()
         {
             if (!IsInstalled)
                 return false;
@@ -174,7 +174,7 @@ namespace HandheldCompanion.Platforms
             return process is not null;
         }
 
-        public override bool Stop()
+        public override bool StopProcess()
         {
             if (!IsInstalled)
                 return false;

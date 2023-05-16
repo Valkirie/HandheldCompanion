@@ -146,7 +146,17 @@ namespace ControllerCommon.Platforms
             return false;
         }
 
-        public bool Kill()
+        public virtual bool StartProcess()
+        {
+            return false;
+        }
+
+        public virtual bool StopProcess()
+        {
+            return false;
+        }
+
+        public bool KillProcess()
         {
             var process = Process;
             if (process is null)
