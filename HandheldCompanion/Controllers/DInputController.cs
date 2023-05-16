@@ -61,7 +61,8 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
-            joystick.Acquire();
+            if (joystick is not null)
+                joystick.Acquire();
 
             base.Plug();
         }
@@ -69,7 +70,8 @@ namespace HandheldCompanion.Controllers
         public override void Unplug()
         {
             // Unacquire the joystick
-            joystick.Unacquire();
+            if (joystick is not null)
+                joystick.Unacquire();
 
             base.Unplug();
         }
