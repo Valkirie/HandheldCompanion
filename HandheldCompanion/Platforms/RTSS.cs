@@ -61,6 +61,7 @@ namespace HandheldCompanion.Platforms
         private const string GLOBAL_PROFILE = "";
 
         private int RequestedFramerate = 0;
+        private bool ProfileLoaded;
 
         public event HookedEventHandler Hooked;
         public delegate void HookedEventHandler(int processId);
@@ -109,9 +110,6 @@ namespace HandheldCompanion.Platforms
             // start RTSS if not running
             if (!IsRunning())
                 Start();
-
-            // load default profile
-            LoadProfile();
 
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(2000) { Enabled = true };
@@ -297,8 +295,6 @@ namespace HandheldCompanion.Platforms
 
             try
             {
-                // LoadProfile();
-
                 if (SetProfileProperty("FramerateLimit", Limit))
                 {
                     SaveProfile();
@@ -332,7 +328,12 @@ namespace HandheldCompanion.Platforms
 
             try
             {
-                // LoadProfile();
+                // load default profile
+                if (!ProfileLoaded)
+                {
+                    LoadProfile();
+                    ProfileLoaded = true;
+                }
 
                 if (GetProfileProperty("FramerateLimit", out int fpsLimit))
                     return fpsLimit;
