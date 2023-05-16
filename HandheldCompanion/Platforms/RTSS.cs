@@ -162,6 +162,8 @@ namespace HandheldCompanion.Platforms
             ProfileManager_Applied(profile);
         }
 
+        private List<int> HookedProcessIds = new();
+
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             // hook new process
@@ -183,16 +185,29 @@ namespace HandheldCompanion.Platforms
             }
             while (appEntry is null);
 
-            // unhook previous process
+            // unhook previous process (if was hooked)
             if (backgroundEx is not null)
             {
-                var BackProcessId = backgroundEx.GetProcessId();
-                if (BackProcessId != ProcessId)
-                    Unhooked?.Invoke(backgroundEx.GetProcessId());
-                else
-                    return;
+                var backgroundProcessId = backgroundEx.GetProcessId();
+
+                // search if process was once hooked
+                if (HookedProcessIds.Contains(backgroundProcessId))
+                {
+                    if (backgroundProcessId != ProcessId)
+                    {
+                        // remove from array
+                        HookedProcessIds.Remove(backgroundProcessId);
+
+                        // raise event
+                        Unhooked?.Invoke(backgroundProcessId);
+                    }
+                }
             }
 
+            // store into array
+            HookedProcessIds.Add(ProcessId);
+
+            // raise event
             Hooked?.Invoke(ProcessId);
         }
 
