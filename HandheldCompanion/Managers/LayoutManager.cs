@@ -91,7 +91,8 @@ namespace HandheldCompanion.Managers
             foreach (LayoutTemplate layoutTemplate in Templates)
                 Updated?.Invoke(layoutTemplate);
 
-            desktopLayout = ProcessLayout(desktopLayoutFile);
+            string desktopFile = Path.Combine(LayoutsPath, $"{desktopLayoutFile}.json");
+            desktopLayout = ProcessLayout(desktopFile);
             if (desktopLayout is null)
             {
                 desktopLayout = LayoutTemplate.DesktopLayout.Layout.Clone() as Layout;
