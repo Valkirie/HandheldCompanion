@@ -97,10 +97,10 @@ namespace ControllerCommon.Devices
                 return false;
 
             // allow fan manipulation
-            byte EC_Chip_ID1 = ECRamReadByte(0x2000);
+            byte EC_Chip_ID1 = ECRamReadByte(0x2000, ECDetails);
             if (EC_Chip_ID1 == 0x55)
             {
-                byte EC_Chip_Ver = ECRamReadByte(0x1060);
+                byte EC_Chip_Ver = ECRamReadByte(0x1060, ECDetails);
                 EC_Chip_Ver = (byte)(EC_Chip_Ver | 0x80);
 
                 LogManager.LogInformation("Unlocked GPD WIN 4 ({0}) fan control", EC_Chip_Ver);

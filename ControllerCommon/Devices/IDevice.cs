@@ -354,6 +354,7 @@ namespace ControllerCommon.Devices
             ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
         }
 
+        [Obsolete("ECRamReadByte is deprecated, please use ECRamReadByte with ECDetails instead.")]
         public static byte ECRamReadByte(ushort address)
         {
             try
@@ -367,27 +368,26 @@ namespace ControllerCommon.Devices
             }
         }
 
-        public static byte ECRamReadByte(ushort address, ECDetails details, byte data)
+        public static byte ECRamReadByte(ushort address, ECDetails details)
         {
             byte addr_upper = ((byte)(address >> 8 & byte.MaxValue));
             byte addr_lower = ((byte)(address & byte.MaxValue));
 
             try
             {
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
-                openLibSys.WriteIoPortByte(details.AddressData, (byte)17);
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
+                openLibSys.WriteIoPortByte(details.AddressData, 0x11);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
                 openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
 
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
-                openLibSys.WriteIoPortByte(details.AddressData, (byte)16);
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
+                openLibSys.WriteIoPortByte(details.AddressData, 0x10);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
                 openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
 
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
-                openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
-                openLibSys.WriteIoPortByte(details.AddressData, data);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
+                openLibSys.WriteIoPortByte(details.AddressData, 0x12);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
 
                 return openLibSys.ReadIoPortByte(details.AddressData);
             }
@@ -405,19 +405,19 @@ namespace ControllerCommon.Devices
 
             try
             {
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
-                openLibSys.WriteIoPortByte(details.AddressData, (byte)17);
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
+                openLibSys.WriteIoPortByte(details.AddressData, 0x11);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
                 openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
 
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
-                openLibSys.WriteIoPortByte(details.AddressData, (byte)16);
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
+                openLibSys.WriteIoPortByte(details.AddressData, 0x10);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
                 openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
 
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)46);
-                openLibSys.WriteIoPortByte(details.AddressData, (byte)18);
-                openLibSys.WriteIoPortByte(details.AddressRegistry, (byte)47);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
+                openLibSys.WriteIoPortByte(details.AddressData, 0x12);
+                openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
                 openLibSys.WriteIoPortByte(details.AddressData, data);
                 return true;
             }
