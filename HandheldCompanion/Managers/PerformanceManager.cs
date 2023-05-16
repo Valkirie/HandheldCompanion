@@ -114,6 +114,7 @@ namespace HandheldCompanion.Managers
         private double AutoTDPMin;
         private double AutoTDPMax;
         private int AutoTDPFPSSetpointMetCounter;
+        private int AutoTDPFPSSmallDipCounter;
         private double ProcessValueFPSPrevious;
         double[] FPSHistory = new double[6];
 
@@ -274,17 +275,16 @@ namespace HandheldCompanion.Managers
                         {
                             AutoTDPFPSSetpointMetCounter += 1;
 
-                            if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
+                            if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
                             {
+                                AutoTDPFPSSmallDipCounter += 1;
                                 // Calculate modifier to get target + 0.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
                             }
-                            else if (AutoTDPFPSSetpointMetCounter >= 6 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1) ;
+                            else if (AutoTDPFPSSmallDipCounter >= 3 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1) ;
                             {
                                 // Calculate modifier to get target + 1.5 controller error
                                 ProcessValueFPSModifier = AutoTDPTargetFPS + 1.5 - ProcessValueFPS;
-
-                                // Prevent overflow
                                 AutoTDPFPSSetpointMetCounter = 6;
                             }
                         }
@@ -292,6 +292,7 @@ namespace HandheldCompanion.Managers
                         {
                             ProcessValueFPSModifier = 0.0;
                             AutoTDPFPSSetpointMetCounter = 0;
+                            AutoTDPFPSSmallDipCounter = 0;
                         }
 
                         // Determine error amount
