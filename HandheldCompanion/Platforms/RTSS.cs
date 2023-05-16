@@ -63,6 +63,8 @@ namespace HandheldCompanion.Platforms
         private int RequestedFramerate = 0;
         private bool ProfileLoaded;
 
+        private List<int> HookedProcessIds = new();
+
         public event HookedEventHandler Hooked;
         public delegate void HookedEventHandler(int processId);
 
@@ -106,6 +108,10 @@ namespace HandheldCompanion.Platforms
                 LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
+
+            // our main watchdog to (re)apply requested settings
+            base.PlatformWatchdog = new(2000) { Enabled = false };
+            base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
         }
 
         public override bool Start()
@@ -113,12 +119,15 @@ namespace HandheldCompanion.Platforms
             // start RTSS if not running
             if (!IsRunning())
                 StartProcess();
+            else
+            {
+                // start watchdog
+                PlatformWatchdog.Start();
 
-            // our main watchdog to (re)apply requested settings
-            base.PlatformWatchdog = new(2000) { Enabled = true };
-            base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
+                // hook into current process
+                Process.Exited += Process_Exited;
+            }
 
-            // hook into process manager
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
             ProfileManager.Updated += ProfileManager_Updated;
@@ -162,8 +171,6 @@ namespace HandheldCompanion.Platforms
             ProfileManager_Applied(profile);
         }
 
-        private List<int> HookedProcessIds = new();
-
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             // hook new process
@@ -203,6 +210,10 @@ namespace HandheldCompanion.Platforms
                     }
                 }
             }
+
+            // we're already hooked into this process
+            if (HookedProcessIds.Contains(ProcessId))
+                return;
 
             // store into array
             HookedProcessIds.Add(ProcessId);
@@ -405,6 +416,9 @@ namespace HandheldCompanion.Platforms
 
                     // release lock
                     IsStarting = false;
+
+                    // start watchdog
+                    PlatformWatchdog.Start();
                 }
 
                 return true;

@@ -108,7 +108,7 @@ namespace HandheldCompanion.Platforms
 
         public ConcurrentDictionary<SensorElementType, SensorElement> MonitoredSensors = new();
 
-        private readonly Timer MemoryTimer = new(MemoryInterval);
+        private readonly Timer MemoryTimer;
         private const int MemoryInterval = 1000;
 
         private SharedMemory HWiNFOMemory;
@@ -140,19 +140,23 @@ namespace HandheldCompanion.Platforms
                 LogManager.LogWarning("HWiNFO is missing. Please get it from: {0}", "https://www.hwinfo.com/files/hwi_742.exe");
                 return;
             }
-        }
 
-        public override bool Start()
-        {
             // those are used for computes
             MonitoredSensors[SensorElementType.PL1] = new SensorElement();
             MonitoredSensors[SensorElementType.PL2] = new SensorElement();
             MonitoredSensors[SensorElementType.CPUFrequency] = new SensorElement();
 
             // our main watchdog to (re)apply requested settings
-            base.PlatformWatchdog = new(3000);
+            base.PlatformWatchdog = new(3000) { Enabled = false };
             base.PlatformWatchdog.Elapsed += Watchdog_Elapsed;
 
+            // secondary watchdog to (re)populate sensors
+            this.MemoryTimer = new(MemoryInterval) { Enabled = false };
+            this.MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
+        }
+
+        public override bool Start()
+        {
             // start HWiNFO if not running or Shared Memory is disabled
             bool hasSensorsSM = GetProperty("SensorsSM");
             if (!IsRunning() || !hasSensorsSM)
@@ -168,8 +172,6 @@ namespace HandheldCompanion.Platforms
                 // hook into current process
                 Process.Exited += Process_Exited;
             }
-
-            MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
