@@ -287,12 +287,16 @@ namespace HandheldCompanion.Managers
             currentOrientation = rotation;
 
             // apply orientation
-            if (currentLayout is not null)
-                UpdateOrientation();
+            UpdateOrientation();
         }
 
         private static void UpdateOrientation()
         {
+            // this should not happen!
+            // default profile layout should never be disabled
+            if (currentLayout is not null)
+                return;
+
             foreach (var axisLayout in currentLayout.AxisLayout)
             {
                 // pull action

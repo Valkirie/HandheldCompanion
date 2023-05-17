@@ -558,7 +558,15 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.FramerateValue = (int)FramerateSlider.Value;
 
             // Layout settings
-            currentProfile.LayoutEnabled = (bool)Toggle_ControllerLayout.IsOn;
+            switch(currentProfile.Default)
+            {
+                case true:
+                    currentProfile.LayoutEnabled = true;
+                    break;
+                case false:
+                    currentProfile.LayoutEnabled = (bool)Toggle_ControllerLayout.IsOn;
+                    break;
+            }
 
             ProfileManager.UpdateOrCreateProfile(currentProfile, ProfileUpdateSource.ProfilesPage);
         }
