@@ -53,6 +53,9 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 
+            Toggle_RTSS.IsEnabled = PlatformManager.RTSS.IsInstalled;
+            Toggle_HWiNFO.IsEnabled = PlatformManager.HWiNFO.IsInstalled;
+
             // call function
             UpdateDevice();
 
@@ -178,6 +181,13 @@ namespace HandheldCompanion.Views.Pages
                     case "ServiceStartMode":
                         cB_StartupType.SelectedIndex = Convert.ToInt32(value);
                         cB_StartupType_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+                        break;
+
+                    case "PlatformRTSSEnabled":
+                        Toggle_RTSS.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "PlatformHWiNFOEnabled":
+                        Toggle_HWiNFO.IsOn = Convert.ToBoolean(value);
                         break;
                 }
             });
@@ -663,5 +673,21 @@ namespace HandheldCompanion.Views.Pages
             });
         }
         #endregion
+
+        private void Toggle_RTSS_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("PlatformRTSSEnabled", Toggle_RTSS.IsOn);
+        }
+
+        private void Toggle_HWiNFO_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("PlatformHWiNFOEnabled", Toggle_HWiNFO.IsOn);
+        }
     }
 }

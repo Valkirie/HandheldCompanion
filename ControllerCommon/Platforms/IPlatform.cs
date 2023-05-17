@@ -138,12 +138,26 @@ namespace ControllerCommon.Platforms
 
         public virtual bool Start()
         {
-            return false;
+            KeepAlive = true;
+
+            // start watchdog
+            if (PlatformWatchdog is not null)
+                PlatformWatchdog.Start();
+
+            return true;
         }
 
         public virtual bool Stop()
         {
-            return false;
+            KeepAlive = false;
+
+            // stop watchdog
+            if (PlatformWatchdog is not null)
+                PlatformWatchdog.Stop();
+
+            KillProcess();
+
+            return true;
         }
 
         public virtual bool StartProcess()
@@ -282,6 +296,8 @@ namespace ControllerCommon.Platforms
         {
             if (PlatformWatchdog is not null)
                 PlatformWatchdog.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

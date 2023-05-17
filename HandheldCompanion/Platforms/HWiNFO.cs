@@ -118,7 +118,6 @@ namespace HandheldCompanion.Platforms
         public HWiNFO()
         {
             base.PlatformType = PlatformType.HWiNFO;
-            base.KeepAlive = true;
 
             Name = "HWiNFO64";
             ExecutableName = "HWiNFO64.exe";
@@ -166,9 +165,6 @@ namespace HandheldCompanion.Platforms
             }
             else
             {
-                // start watchdog
-                PlatformWatchdog.Start();
-
                 // hook into current process
                 Process.Exited += Process_Exited;
             }
@@ -176,6 +172,16 @@ namespace HandheldCompanion.Platforms
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             return base.Start();
+        }
+
+        public override bool Stop()
+        {
+            if (MemoryTimer is not null)
+                MemoryTimer.Stop();
+
+            base.Stop();
+
+            return true;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -543,7 +549,7 @@ namespace HandheldCompanion.Platforms
             if (IsRunning())
                 return false;
 
-            // Force dispose elements
+            // (re)set elements
             DisposeMemory();
 
             // Shared Memory Support [12-HOUR LIMIT]
@@ -558,6 +564,9 @@ namespace HandheldCompanion.Platforms
             {
                 // set lock
                 IsStarting = true;
+
+                // stop watchdog
+                PlatformWatchdog.Stop();
 
                 var process = Process.Start(new ProcessStartInfo()
                 {
@@ -574,11 +583,11 @@ namespace HandheldCompanion.Platforms
 
                     process.WaitForInputIdle();
 
+                    // (re)start watchdog
+                    PlatformWatchdog.Start();
+
                     // release lock
                     IsStarting = false;
-
-                    // start watchdog
-                    PlatformWatchdog.Start();
                 }
 
                 return true;
@@ -602,12 +611,6 @@ namespace HandheldCompanion.Platforms
             return true;
         }
 
-        public override void Dispose()
-        {
-            DisposeMemory();
-            base.Dispose();
-        }
-
         private void DisposeMemory()
         {
             if (MemoryMapped is not null)
@@ -625,14 +628,13 @@ namespace HandheldCompanion.Platforms
             if (HWiNFOSensors is not null)
                 HWiNFOSensors = null;
 
-            if (MemoryTimer is not null)
-                MemoryTimer.Stop();
-
-            if (PlatformWatchdog is not null)
-                PlatformWatchdog.Stop();
-
             prevPoll_time = -1;
-            prevPoll_attempt = 0;
+        }
+
+        public override void Dispose()
+        {
+            DisposeMemory();
+            base.Dispose();
         }
     }
 }

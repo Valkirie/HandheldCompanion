@@ -282,16 +282,22 @@
                         <DockPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
-                            ScrollViewer.PanningMode="HorizontalOnly" HorizontalAlignment="Right">
-                            <TextBlock x:Name="Text_NativeDisplayOrientation" Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" Text="Not set" />
+                            HorizontalAlignment="Right"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                x:Name="Text_NativeDisplayOrientation"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="Not set" />
                             <Button
                                 Name="Button_DetectNativeDisplayOrientation"
                                 Grid.Column="1"
                                 Width="120"
                                 Height="40"
+                                Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 Click="Button_DetectNativeDisplayOrientation_Click"
-                                Content="Detect" Margin="12,0,0,0" />
+                                Content="Detect" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -772,6 +778,87 @@
                             IsEnabled="False"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_SensorPlacementUpsideDown_Toggled" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Third-party applications  -->
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Third-pary applications" />
+
+                <!--  RTSS  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xEA6C;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="RivaTuner Statistics Server" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Enable or disable RTSS support.&#x0a;RTSS is used by the following features: Automatic TDP and On-screen display"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_RTSS"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_RTSS_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  HWiNFO  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE870;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="HWiNFO" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Enable or disable HWiNFO support.&#x0a;HWiNFO is used by the following features: On-screen display"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_HWiNFO"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_HWiNFO_Toggled" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
