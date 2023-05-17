@@ -247,95 +247,97 @@ namespace HandheldCompanion.Managers
 
         private void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
+            // Auto TDP needs to be activated
+            if (!AutoTDPEnabled)
+            {
+                return;
+            }
+
             if (Monitor.TryEnter(AutoTDPWatchdogLock))
             {
-                // Auto TDP
-                if (AutoTDPEnabled)
+                // todo: Store fps for data gathering from multiple points (OSD, Performance)
+                double processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
+
+                // Ensure realistic process values, prevent divide by 0
+                processValueFPS = Math.Clamp(processValueFPS, 5, 500);
+
+                // Dipper
+                // Add small positive "error" if actual and target FPS are similar for a duration
+                double processValueFPSModifier = 0.0;
+
+                // Track previous FPS values for average calculation using a rolling array
+                Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
+                FPSHistory[0] = processValueFPS; // Add current FPS at the start
+
+                // Activate around target range of 1 FPS as games can fluctuate
+                if (AutoTDPTargetFPS - 1 <= processValueFPS && processValueFPS <= AutoTDPTargetFPS + 1)
                 {
-                    // todo: we need to store fps somewhere if we are about to gather the data from more than a single point (OSD, Performance)
-                    double ProcessValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
+                    AutoTDPFPSSetpointMetCounter++;
 
-                    if (ProcessValueFPS != 0)
+                    // First wait for three seconds of stable FPS arount target, then perform small dip
+                    // Reduction only happens if average FPS is on target or slightly below
+                    if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 &&
+                        AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
                     {
-                        // Be realistic with expectd proces value
-                        ProcessValueFPS = Math.Clamp(ProcessValueFPS, 5, 500);
-
-                        // Dipper
-                        // If actual and target FPS are very similar for a certain duration,
-                        // add a small amount of positive "error" make controller always try to reduce
-                        // range is intentionally a bit wide for framerate limiter margin of error
-                        // The within target range is 1 FPS as games can fluctuate quite a bit
-                        // The reduction is only actually done if the average FPS is on target or slightly below
-                        double ProcessValueFPSModifier = 0.0;
-                        // Keep track of previous FPS values for determining average, use rolling array
-                        Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
-                        // Add current FPS at the start
-                        FPSHistory[0] = ProcessValueFPS;
-                        if (AutoTDPTargetFPS - 1 <= ProcessValueFPS && ProcessValueFPS <= AutoTDPTargetFPS + 1)
-                        {
-                            AutoTDPFPSSetpointMetCounter += 1;
-
-                            if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
-                            {
-                                AutoTDPFPSSmallDipCounter += 1;
-                                // Calculate modifier to get target + 0.5 controller error
-                                ProcessValueFPSModifier = AutoTDPTargetFPS + 0.5 - ProcessValueFPS;
-                            }
-                            else if (AutoTDPFPSSmallDipCounter >= 3 && AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1) ;
-                            {
-                                // Calculate modifier to get target + 1.5 controller error
-                                ProcessValueFPSModifier = AutoTDPTargetFPS + 1.5 - ProcessValueFPS;
-                                AutoTDPFPSSetpointMetCounter = 6;
-                            }
-                        }
-                        else
-                        {
-                            ProcessValueFPSModifier = 0.0;
-                            AutoTDPFPSSetpointMetCounter = 0;
-                            AutoTDPFPSSmallDipCounter = 0;
-                        }
-
-                        // Determine error amount
-                        double ControllerError = AutoTDPTargetFPS - ProcessValueFPS - ProcessValueFPSModifier;
-
-                        // Clamp error amount that is corrected within a single cycle
-                        // Adjust clamp in case of actual FPS being 2.5x requested FPS, for example, menu's going to 300+ fps.
-                        double ClampLowerLimit = ProcessValueFPS >= 2.5 * AutoTDPTargetFPS ? -100 : -5;
-                        // -5 +15, going lower always overshoots (not safe, leads to instability), going higher always undershoots (which is safe)
-                        ControllerError = Math.Clamp(ControllerError, ClampLowerLimit, 15);
-
-                        // Todo, use TDP from profile or some average device range value for the initial setpoint to allow continuation from last time?
-
-                        // Based on TDP/FPS ratio, determine how much adjustment is needed
-                        double TDPAdjustment = ControllerError * AutoTDP / ProcessValueFPS;
-                        // Always have a little bit of undershoot
-                        TDPAdjustment *= 0.9;
-
-                        // (PI)D derivate control component to dampen
-                        if (ProcessValueFPSPrevious == float.NaN) { ProcessValueFPSPrevious = ProcessValueFPS; } // First time around, initialise previous
-                        double DFactor = -0.25;
-                        double DeltaError = ProcessValueFPS - ProcessValueFPSPrevious;
-                        double DTerm = DeltaError / ((double)INTERVAL_AUTO / 1000.0); // Perhaps improve with actual timer?
-                        double TDPDamping = AutoTDP / ProcessValueFPS * DFactor * DTerm;
-                        ProcessValueFPSPrevious = ProcessValueFPS; // For next loop
-
-                        // Determine final setpoint
-                        // Skip calculating TDP the very first run, first need to set to determine values next round
-                        if (!AutoTDPFirstRun)
-                        {
-                            AutoTDP += TDPAdjustment + TDPDamping;
-                        }
-                        else { AutoTDPFirstRun = false; }
-
-                        // Prevent run away of TDP setpoint value
-                        AutoTDP = Math.Clamp(AutoTDP, AutoTDPMin, AutoTDPMax);
-
-                        var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
-                        RequestTDP(values, true);
-
-                        //LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
+                        AutoTDPFPSSmallDipCounter++;
+                        processValueFPSModifier = AutoTDPTargetFPS + 0.5 - processValueFPS;
+                    }
+                    // After three small dips, perform larger dip 
+                    // Reduction only happens if average FPS is on target or slightly below
+                    else if (AutoTDPFPSSmallDipCounter >= 3 && 
+                        AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1)
+                    {
+                        processValueFPSModifier = AutoTDPTargetFPS + 1.5 - processValueFPS;
+                        AutoTDPFPSSetpointMetCounter = 6;
                     }
                 }
+                // Perform dips until FPS is outside of limits around target
+                else
+                {
+                    processValueFPSModifier = 0.0;
+                    AutoTDPFPSSetpointMetCounter = 0;
+                    AutoTDPFPSSmallDipCounter = 0;
+                }
+
+                // Determine error amount
+                double controllerError = AutoTDPTargetFPS - processValueFPS - processValueFPSModifier;
+
+                // Clamp error amount corrected within a single cycle
+                // Adjust clamp if actual FPS is 2.5x requested FPS
+                double clampLowerLimit = processValueFPS >= 2.5 * AutoTDPTargetFPS ? -100 : -5;
+                controllerError = Math.Clamp(controllerError, clampLowerLimit, 15);
+
+                double TDPAdjustment = controllerError * AutoTDP / processValueFPS;
+                TDPAdjustment *= 0.9; // Always have a little undershoot
+
+                // (PI)D derivative control component to dampen
+                if (double.IsNaN(ProcessValueFPSPrevious))
+                {
+                    ProcessValueFPSPrevious = processValueFPS;
+                }
+
+                double DFactor = -0.25;
+                double deltaError = processValueFPS - ProcessValueFPSPrevious;
+                double DTerm = deltaError / ((double)INTERVAL_AUTO / 1000.0);
+                double TDPDamping = AutoTDP / processValueFPS * DFactor * DTerm;
+                ProcessValueFPSPrevious = processValueFPS;
+
+                // Determine final setpoint
+                if (!AutoTDPFirstRun)
+                {
+                    AutoTDP += TDPAdjustment + TDPDamping;
+                }
+                else
+                {
+                    AutoTDPFirstRun = false;
+                }
+
+                AutoTDP = Math.Clamp(AutoTDP, AutoTDPMin, AutoTDPMax);
+
+                var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                RequestTDP(values, true);
+
+                // LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
 
                 Monitor.Exit(AutoTDPWatchdogLock);
             }
