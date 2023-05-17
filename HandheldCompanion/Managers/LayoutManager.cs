@@ -294,7 +294,7 @@ namespace HandheldCompanion.Managers
         {
             // this should not happen!
             // default profile layout should never be disabled
-            if (currentLayout is not null)
+            if (currentLayout is null)
                 return;
 
             foreach (var axisLayout in currentLayout.AxisLayout)
