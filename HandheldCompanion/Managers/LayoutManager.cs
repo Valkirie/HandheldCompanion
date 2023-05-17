@@ -223,7 +223,10 @@ namespace HandheldCompanion.Managers
                 profileLayout = defaultProfile.Layout.Clone() as Layout;
             }
             else
+            {
+                // this should not happen, defaultProfile LayoutEnabled should always be true 
                 profileLayout = null;
+            }
 
             // only update current layout if we're not into desktop layout mode
             if (!SettingsManager.GetBoolean("DesktopLayoutEnabled", true))
@@ -292,9 +295,7 @@ namespace HandheldCompanion.Managers
 
         private static void UpdateOrientation()
         {
-            // this should not happen!
-            // default profile layout should never be disabled
-            if (currentLayout is not null)
+            if (currentLayout is null)
                 return;
 
             foreach (var axisLayout in currentLayout.AxisLayout)
