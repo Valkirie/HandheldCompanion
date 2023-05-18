@@ -177,10 +177,6 @@
   <data name="Administrator" xml:space="preserve">
     <value>Administrator</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ControllerCompanion.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ControllerCompanion.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="ControllerPage_CloakDevice" xml:space="preserve">
     <value>Physikalische Steuerung verdecken</value>
   </data>
@@ -217,9 +213,7 @@
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>Vibrationsstärke des Controllers ändern</value>
   </data>
-  <data name="Default.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Default.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -336,9 +330,6 @@
   </data>
   <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
     <value>Unterbrechen oder Fortsetzen der Vordergrundanwendung</value>
-  </data>
-  <data name="JoyXOff.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\JoyXOff.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>Handheld Companion</value>
@@ -525,12 +516,6 @@
   </data>
   <data name="Overlay_Overlay" xml:space="preserve">
     <value>Overlay</value>
-  </data>
-  <data name="Playnite.FullscreenApp.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Playnite.FullscreenApp.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="PowerControlPanel.json" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PowerControlPanel.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="ProcessEx_processResume" xml:space="preserve">
     <value>Resume</value>
