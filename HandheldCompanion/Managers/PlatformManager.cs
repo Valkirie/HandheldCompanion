@@ -1,8 +1,10 @@
 ﻿using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Platforms;
+using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Windows;
 
 namespace HandheldCompanion.Managers
 {
@@ -35,28 +37,77 @@ namespace HandheldCompanion.Managers
 
             if (UbisoftConnect.IsInstalled)
             {
-                // do something
             }
 
             if (RTSS.IsInstalled)
             {
-                new Thread(() =>
-                {
-                    RTSS.Start();
-                }).Start();
+                // do something
             }
 
             if (HWiNFO.IsInstalled)
             {
-                new Thread(() =>
-                {
-                    HWiNFO.Start();
-                }).Start();
+                // do something
             }
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             IsInitialized = true;
 
             LogManager.LogInformation("{0} has started", "PlatformManager");
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (name)
+                {
+                    case "PlatformRTSSEnabled":
+                        {
+                            if (!RTSS.IsInstalled)
+                                return;
+
+                            bool toggle = Convert.ToBoolean(value);
+
+                            new Thread(() =>
+                            {
+                                switch (toggle)
+                                {
+                                    case true:
+                                        RTSS.Start();
+                                        break;
+                                    case false:
+                                        RTSS.Stop();
+                                        break;
+                                }
+                            }).Start();
+                        }
+                        break;
+
+                    case "PlatformHWiNFOEnabled":
+                        {
+                            if (!HWiNFO.IsInstalled)
+                                return;
+
+                            bool toggle = Convert.ToBoolean(value);
+
+                            new Thread(() =>
+                            {
+                                switch (toggle)
+                                {
+                                    case true:
+                                        HWiNFO.Start();
+                                        break;
+                                    case false:
+                                        HWiNFO.Stop();
+                                        break;
+                                }
+                            }).Start();
+                        }
+                        break;
+                }
+            });
         }
 
         public static void Stop()

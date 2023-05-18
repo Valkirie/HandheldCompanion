@@ -1,5 +1,6 @@
 ﻿using ControllerCommon.Managers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
@@ -100,7 +101,7 @@ namespace HandheldCompanion.Managers
                     string content = Draw(processId);
                     processOSD.Update(content);
                 }
-                catch (FileNotFoundException) { }
+                catch { }
             }
         }
 

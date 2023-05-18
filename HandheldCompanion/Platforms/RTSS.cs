@@ -74,7 +74,6 @@ namespace HandheldCompanion.Platforms
         public RTSS()
         {
             base.PlatformType = PlatformType.RTSS;
-            base.KeepAlive = true;
 
             Name = "RTSS";
             ExecutableName = "RTSS.exe";
@@ -121,9 +120,6 @@ namespace HandheldCompanion.Platforms
                 StartProcess();
             else
             {
-                // start watchdog
-                PlatformWatchdog.Start();
-
                 // hook into current process
                 Process.Exited += Process_Exited;
             }
@@ -135,6 +131,12 @@ namespace HandheldCompanion.Platforms
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             return base.Start();
+        }
+
+        public override bool Stop()
+        {
+            base.Stop();
+            return true;
         }
 
         private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
@@ -414,11 +416,11 @@ namespace HandheldCompanion.Platforms
 
                     process.WaitForInputIdle();
 
+                    // (re)start watchdog
+                    PlatformWatchdog.Start();
+
                     // release lock
                     IsStarting = false;
-
-                    // start watchdog
-                    PlatformWatchdog.Start();
                 }
 
                 return true;
@@ -444,8 +446,7 @@ namespace HandheldCompanion.Platforms
 
         public override void Dispose()
         {
-            PlatformWatchdog.Stop();
-
+            this.Stop();
             base.Dispose();
         }
     }
