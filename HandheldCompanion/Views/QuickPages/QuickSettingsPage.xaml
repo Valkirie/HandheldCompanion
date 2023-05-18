@@ -34,10 +34,7 @@
             </UniformGrid.Resources>
         </UniformGrid>
 
-        <ui:SimpleStackPanel
-            Grid.Row="1"
-            Margin="0,28,0,0"
-            VerticalAlignment="Top">
+        <ui:SimpleStackPanel Grid.Row="1" VerticalAlignment="Top">
             <!--  Separator  -->
             <Separator
                 BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"

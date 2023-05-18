@@ -189,6 +189,10 @@ namespace HandheldCompanion.Views.Pages
                     case "PlatformHWiNFOEnabled":
                         Toggle_HWiNFO.IsOn = Convert.ToBoolean(value);
                         break;
+
+                    case "QuickToolsLocation":
+                        cB_QuicktoolsPosition.SelectedIndex = Convert.ToInt32(value);
+                        break;
                 }
             });
         }
@@ -688,6 +692,14 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("PlatformHWiNFOEnabled", Toggle_HWiNFO.IsOn);
+        }
+
+        private void cB_QuicktoolsPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("QuickToolsLocation", cB_QuicktoolsPosition.SelectedIndex);
         }
     }
 }

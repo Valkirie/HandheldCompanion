@@ -342,7 +342,7 @@
                     </Grid>
                 </Border>
 
-                <!--  Application theme  -->
+                <!--  Application backdrop  -->
                 <Border
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
@@ -420,6 +420,53 @@
                             HorizontalAlignment="Stretch"
                             MaxColumns="2"
                             SelectionChanged="cB_Language_SelectionChanged" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Quicktools options  -->
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quicktools options" />
+
+                <!--  Quicktools position  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE8A7;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Window location" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Define quicktools window location"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="cB_QuicktoolsPosition"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
+                            <Label Content="Top left" />
+                            <Label Content="Top right" />
+                            <Label Content="Bottom left" />
+                            <Label Content="Bottom right" />
+                        </ComboBox>
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

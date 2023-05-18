@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
+using SharpDX.Multimedia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +45,9 @@ namespace HandheldCompanion.Views.Windows
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
             PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
 
+            SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
             // create pages
             performancePage = new QuickPerformancePage();
             settingsPage = new QuickSettingsPage();
@@ -55,10 +60,73 @@ namespace HandheldCompanion.Views.Windows
             _pages.Add("QuickSuspenderPage", suspenderPage);
 
             // update Position and Size
-            Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("QuickToolsLeft"));
-            Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("QuickToolsTop"));
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
             navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (name)
+                {
+                    case "QuickToolsLocation":
+                        {
+                            int QuickToolsLocation = Convert.ToInt32(value);
+                            UpdateLocation(QuickToolsLocation);
+                        }
+                        break;
+                }
+            });
+        }
+
+        private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
+        {
+            int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
+            UpdateLocation(QuickToolsLocation);
+        }
+
+        private void UpdateLocation(int QuickToolsLocation)
+        {
+            var desktopWorkingArea = SystemParameters.WorkArea;
+
+            switch (QuickToolsLocation)
+            {
+                // top, left
+                case 0:
+                    {
+                        this.Left = this.Margin.Right;
+                        this.Top = this.Margin.Bottom;
+                    }
+                    break;
+
+                // top, right
+                case 1:
+                    {
+                        this.Left = desktopWorkingArea.Right - this.Width - this.Margin.Right;
+                        this.Top = this.Margin.Bottom;
+
+                    }
+                    break;
+
+                // bottom, left
+                case 2:
+                    {
+                        this.Left = this.Margin.Right;
+                        this.Top = desktopWorkingArea.Bottom - this.Height - this.Margin.Bottom;
+                    }
+                    break;
+
+                // bottom, right
+                default:
+                case 3:
+                    {
+                        this.Left = desktopWorkingArea.Right - this.Width - this.Margin.Right;
+                        this.Top = desktopWorkingArea.Bottom - this.Height - this.Margin.Bottom;
+                    }
+                    break;
+            }
         }
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
@@ -125,6 +193,26 @@ namespace HandheldCompanion.Views.Windows
         private void Window_SourceInitialized(object sender, EventArgs e)
         {
             // do something
+        }
+
+        const int WM_SYSCOMMAND = 0x0112;
+        const int SC_MOVE = 0xF010;
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case WM_SYSCOMMAND:
+                    int command = wParam.ToInt32() & 0xfff0;
+                    if (command == SC_MOVE)
+                    {
+                        handled = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return IntPtr.Zero;
         }
 
         private void HandleEsc(object sender, Input.KeyEventArgs e)
@@ -262,8 +350,6 @@ namespace HandheldCompanion.Views.Windows
             {
                 case WindowState.Normal:
                 case WindowState.Maximized:
-                    SettingsManager.SetProperty("QuickToolsLeft", Left);
-                    SettingsManager.SetProperty("QuickToolsTop", Top);
                     SettingsManager.SetProperty("QuickToolsHeight", Height);
                     break;
             }
@@ -284,16 +370,20 @@ namespace HandheldCompanion.Views.Windows
         private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+
+            if (hwndSource is null)
+                return;
+
+            hwndSource.AddHook(WndProc);
+
             switch (Visibility)
             {
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
-                    if (hwndSource is not null)
-                        hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+                    hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
                     break;
-                case Visibility.Visible:
-                    if (hwndSource is not null)
-                        hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+                case Visibility.Visible:                    
+                    hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
                     break;
             }
         }
