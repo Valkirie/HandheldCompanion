@@ -385,30 +385,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsLeft {
-            get {
-                return ((double)(this["QuickToolsLeft"]));
-            }
-            set {
-                this["QuickToolsLeft"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double QuickToolsTop {
-            get {
-                return ((double)(this["QuickToolsTop"]));
-            }
-            set {
-                this["QuickToolsTop"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ConfigurableTDPOverride {
             get {
@@ -788,6 +764,18 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["PlatformHWiNFOEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int QuickToolsLocation {
+            get {
+                return ((int)(this["QuickToolsLocation"]));
+            }
+            set {
+                this["QuickToolsLocation"] = value;
             }
         }
     }

@@ -15,6 +15,8 @@
     MinHeight="500"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"
+    ui:WindowHelper.UseAcrylicBackdrop="True"
+    ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     Closed="Window_Closed"
     Closing="Window_Closing"
