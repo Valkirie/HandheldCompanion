@@ -113,10 +113,7 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <ui:SimpleStackPanel
-                    Name="ProfileDetails"
-                    IsEnabled="False"
-                    Spacing="6">
+                <ui:SimpleStackPanel Name="ProfileDetails" Spacing="6">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileDetails}" />
 
                     <!--  Profile details  -->
@@ -214,8 +211,10 @@
                     <!--  Enable profile  -->
                     <Border
                         Padding="15,12,12,12"
+                        d:Visibility="Visible"
                         Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Visibility="Collapsed">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -258,8 +257,7 @@
                     <Expander
                         Name="GlobalSettings"
                         HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded"
-                        IsEnabled="false">
+                        Expanded="Expander_Expanded">
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
@@ -306,8 +304,7 @@
                     <Expander
                         Name="PowerSettings"
                         HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded"
-                        IsEnabled="false">
+                        Expanded="Expander_Expanded">
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
@@ -653,8 +650,7 @@
                     <Expander
                         Name="MotionSettings"
                         HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded"
-                        IsEnabled="false">
+                        Expanded="Expander_Expanded">
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
@@ -830,8 +826,7 @@
                     <Expander
                         Name="UniversalSettings"
                         HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded"
-                        IsEnabled="false">
+                        Expanded="Expander_Expanded">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>

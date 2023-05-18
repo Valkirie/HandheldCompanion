@@ -137,8 +137,10 @@ namespace HandheldCompanion.Views.Pages
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                PowerSettings.IsEnabled = CanChangeTDP;
-                // StackProfileGPU.IsEnabled = CanChangeGPU;
+                TDPToggle.IsEnabled = CanChangeTDP;
+                AutoTDPToggle.IsEnabled = CanChangeGPU;
+
+                GPUToggle.IsEnabled = CanChangeGPU;
             });
         }
 
@@ -396,19 +398,11 @@ namespace HandheldCompanion.Views.Pages
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                // enable all expanders
-                // todo: move me to XAML ?
-                ProfileDetails.IsEnabled = true;
-                MotionSettings.IsEnabled = true;
-                UniversalSettings.IsEnabled = true;
-
                 // disable button if is default profile or application is running
                 b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
 
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
-                // disable global settings on default profile
-                GlobalSettings.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile
                 Toggle_EnableProfile.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile layout
