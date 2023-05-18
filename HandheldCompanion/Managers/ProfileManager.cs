@@ -231,14 +231,10 @@ namespace HandheldCompanion.Managers
                 // update profile executable path
                 if (!profile.Default)
                 {
-                    if (!profile.Path.Equals(proc.Path))
-                    {
-                        profile.Path = proc.Path;
-                        UpdateOrCreateProfile(profile);
-                    }
+                    profile.Path = proc.Path;
                 }
 
-                ApplyProfile(profile);
+                UpdateOrCreateProfile(profile);
             }
             catch { }
         }
@@ -415,7 +411,6 @@ namespace HandheldCompanion.Managers
                     isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
                     break;
             }
-
 
             // refresh error code
             SanitizeProfile(profile);
