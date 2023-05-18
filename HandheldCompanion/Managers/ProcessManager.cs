@@ -451,7 +451,6 @@ namespace HandheldCompanion.Managers
                 case "searchhost.exe":
                 case "explorer.exe":
                 case "hwinfo64.exe":
-                case "searchapp.exe":
                     return ProcessFilter.Desktop;
 
                 default:
