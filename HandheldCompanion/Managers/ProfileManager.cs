@@ -232,9 +232,9 @@ namespace HandheldCompanion.Managers
                 if (!profile.Default)
                 {
                     profile.Path = proc.Path;
+                    UpdateOrCreateProfile(profile);
                 }
-
-                UpdateOrCreateProfile(profile);
+                ApplyProfile(profile);
             }
             catch { }
         }
