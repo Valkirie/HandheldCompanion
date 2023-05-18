@@ -9,14 +9,14 @@
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="Settings"
-    Margin="0,0,0,12"
+    Margin="15,0,0,0"
     d:Background="White"
     d:DesignHeight="1200"
     d:DesignWidth="500"
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <Grid Margin="12,0,0,0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="9*" />
             <RowDefinition Height="1*" />
@@ -35,11 +35,6 @@
         </UniformGrid>
 
         <ui:SimpleStackPanel Grid.Row="1" VerticalAlignment="Top">
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
 
             <!--  Brightness  -->
             <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">

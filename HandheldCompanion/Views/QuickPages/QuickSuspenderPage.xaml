@@ -8,15 +8,12 @@
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="Suspender"
-    Margin="0,0,0,12"
+    Margin="15,0,0,0"
     d:Background="White"
     d:DesignHeight="1200"
     d:DesignWidth="500"
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel
-        Name="CurrentProcesses"
-        Margin="12,0,0,0"
-        Spacing="6" />
+    <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6" />
 </Page>

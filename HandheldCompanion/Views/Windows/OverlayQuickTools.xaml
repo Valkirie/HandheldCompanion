@@ -42,10 +42,8 @@
             IsSettingsVisible="False"
             ItemInvoked="navView_ItemInvoked"
             Loaded="navView_Loaded"
-            OpenPaneLength="160"
             PaneDisplayMode="Top"
             SelectionFollowsFocus="Enabled"
-            ShoulderNavigationEnabled="Always"
             Style="{DynamicResource NavigationViewStyle1}">
 
             <ui:NavigationView.MenuItems>

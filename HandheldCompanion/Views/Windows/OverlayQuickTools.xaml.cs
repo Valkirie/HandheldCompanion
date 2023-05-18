@@ -96,8 +96,8 @@ namespace HandheldCompanion.Views.Windows
                 // top, left
                 case 0:
                     {
-                        this.Left = this.Margin.Right;
-                        this.Top = this.Margin.Bottom;
+                        this.Left = this.Margin.Left;
+                        this.Top = this.Margin.Top;
                     }
                     break;
 
@@ -105,7 +105,7 @@ namespace HandheldCompanion.Views.Windows
                 case 1:
                     {
                         this.Left = desktopWorkingArea.Right - this.Width - this.Margin.Right;
-                        this.Top = this.Margin.Bottom;
+                        this.Top = this.Margin.Top;
 
                     }
                     break;
@@ -113,7 +113,7 @@ namespace HandheldCompanion.Views.Windows
                 // bottom, left
                 case 2:
                     {
-                        this.Left = this.Margin.Right;
+                        this.Left = this.Margin.Left;
                         this.Top = desktopWorkingArea.Bottom - this.Height - this.Margin.Bottom;
                     }
                     break;
