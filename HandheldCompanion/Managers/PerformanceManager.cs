@@ -261,46 +261,8 @@ namespace HandheldCompanion.Managers
                 // Ensure realistic process values, prevent divide by 0
                 processValueFPS = Math.Clamp(processValueFPS, 5, 500);
 
-                // Dipper
-                // Add small positive "error" if actual and target FPS are similar for a duration
-                double processValueFPSModifier = 0.0;
-
-                // Track previous FPS values for average calculation using a rolling array
-                Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
-                FPSHistory[0] = processValueFPS; // Add current FPS at the start
-
-                // Activate around target range of 1 FPS as games can fluctuate
-                if (AutoTDPTargetFPS - 1 <= processValueFPS && processValueFPS <= AutoTDPTargetFPS + 1)
-                {
-                    AutoTDPFPSSetpointMetCounter++;
-
-                    // First wait for three seconds of stable FPS arount target, then perform small dip
-                    // Reduction only happens if average FPS is on target or slightly below
-                    if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 &&
-                        AutoTDPTargetFPS - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= AutoTDPTargetFPS + 0.1)
-                    {
-                        AutoTDPFPSSmallDipCounter++;
-                        processValueFPSModifier = AutoTDPTargetFPS + 0.5 - processValueFPS;
-                    }
-                    // After three small dips, perform larger dip 
-                    // Reduction only happens if average FPS is on target or slightly below
-                    else if (AutoTDPFPSSmallDipCounter >= 3 && 
-                        AutoTDPTargetFPS - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= AutoTDPTargetFPS + 0.1)
-                    {
-                        processValueFPSModifier = AutoTDPTargetFPS + 1.5 - processValueFPS;
-                        AutoTDPFPSSetpointMetCounter = 6;
-                    }
-                }
-                // Perform dips until FPS is outside of limits around target
-                else
-                {
-                    processValueFPSModifier = 0.0;
-                    AutoTDPFPSSetpointMetCounter = 0;
-                    AutoTDPFPSSmallDipCounter = 0;
-                }
-
-                // Determine error amount
-                double controllerError = AutoTDPTargetFPS - processValueFPS - processValueFPSModifier;
+                // Determine error amount, include target, actual and dipper modifier
+                double controllerError = AutoTDPTargetFPS - processValueFPS - AutoTDPDipper(processValueFPS, AutoTDPTargetFPS);
 
                 // Clamp error amount corrected within a single cycle
                 // Adjust clamp if actual FPS is 2.5x requested FPS
@@ -310,22 +272,10 @@ namespace HandheldCompanion.Managers
                 double TDPAdjustment = controllerError * AutoTDP / processValueFPS;
                 TDPAdjustment *= 0.9; // Always have a little undershoot
 
-                // (PI)D derivative control component to dampen
-                if (double.IsNaN(ProcessValueFPSPrevious))
-                {
-                    ProcessValueFPSPrevious = processValueFPS;
-                }
-
-                double DFactor = -0.25;
-                double deltaError = processValueFPS - ProcessValueFPSPrevious;
-                double DTerm = deltaError / ((double)INTERVAL_AUTO / 1000.0);
-                double TDPDamping = AutoTDP / processValueFPS * DFactor * DTerm;
-                ProcessValueFPSPrevious = processValueFPS;
-
                 // Determine final setpoint
                 if (!AutoTDPFirstRun)
                 {
-                    AutoTDP += TDPAdjustment + TDPDamping;
+                    AutoTDP += TDPAdjustment + AutoTDPDamper(processValueFPS);
                 }
                 else
                 {
@@ -341,6 +291,65 @@ namespace HandheldCompanion.Managers
 
                 Monitor.Exit(AutoTDPWatchdogLock);
             }
+        }
+
+        private double AutoTDPDipper(double FPSActual, double FPSSetpoint)
+        {
+            // Dipper
+            // Add small positive "error" if actual and target FPS are similar for a duration
+            double Modifier = 0.0;
+
+            // Track previous FPS values for average calculation using a rolling array
+            Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
+            FPSHistory[0] = FPSActual; // Add current FPS at the start
+
+            // Activate around target range of 1 FPS as games can fluctuate
+            if (FPSSetpoint - 1 <= FPSActual && FPSActual <= FPSSetpoint + 1)
+            {
+                AutoTDPFPSSetpointMetCounter++;
+
+                // First wait for three seconds of stable FPS arount target, then perform small dip
+                // Reduction only happens if average FPS is on target or slightly below
+                if (AutoTDPFPSSetpointMetCounter >= 3 && AutoTDPFPSSetpointMetCounter < 6 &&
+                    FPSSetpoint - 0.5 <= FPSHistory.Take(3).Average() && FPSHistory.Take(3).Average() <= FPSSetpoint + 0.1)
+                {
+                    AutoTDPFPSSmallDipCounter++;
+                    Modifier = FPSSetpoint + 0.5 - FPSActual;
+                }
+                // After three small dips, perform larger dip 
+                // Reduction only happens if average FPS is on target or slightly below
+                else if (AutoTDPFPSSmallDipCounter >= 3 &&
+                    FPSSetpoint - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= FPSSetpoint + 0.1)
+                {
+                    Modifier = FPSSetpoint + 1.5 - FPSActual;
+                    AutoTDPFPSSetpointMetCounter = 6;
+                }
+            }
+            // Perform dips until FPS is outside of limits around target
+            else
+            {
+                Modifier = 0.0;
+                AutoTDPFPSSetpointMetCounter = 0;
+                AutoTDPFPSSmallDipCounter = 0;
+            }
+
+            return Modifier;
+        }
+
+        private double AutoTDPDamper(double FPSActual)
+        {
+            // (PI)D derivative control component to dampen FPS fluctuations
+            if (double.IsNaN(ProcessValueFPSPrevious)) { ProcessValueFPSPrevious = FPSActual; }
+            double DFactor = -0.25;
+
+            // Calculation
+            double deltaError = FPSActual - ProcessValueFPSPrevious;
+            double DTerm = deltaError / ((double)INTERVAL_AUTO / 1000.0);
+            double TDPDamping = AutoTDP / FPSActual * DFactor * DTerm;
+            
+            ProcessValueFPSPrevious = FPSActual;
+
+            return TDPDamping;
         }
 
         private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
