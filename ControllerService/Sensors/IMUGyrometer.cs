@@ -33,11 +33,6 @@ namespace ControllerService.Sensors
             {
                 case SensorFamily.Windows:
                     sensor = Gyrometer.GetDefault();
-
-                    // workaround Bosch BMI323
-                    string path = ((Gyrometer)sensor).DeviceId;
-                    using (PnPDetails details = DeviceManager.GetDeviceByInterfaceId(path))
-                        details.CyclePort();
                     break;
                 case SensorFamily.SerialUSBIMU:
                     sensor = SerialUSBIMU.GetDefault();
@@ -57,6 +52,11 @@ namespace ControllerService.Sensors
             {
                 case SensorFamily.Windows:
                     {
+                        // workaround Bosch BMI323
+                        string path = ((Gyrometer)sensor).DeviceId;
+                        using (PnPDetails details = DeviceManager.GetDeviceByInterfaceId(path))
+                            details.CyclePort();
+
                         ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
 
                         LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
