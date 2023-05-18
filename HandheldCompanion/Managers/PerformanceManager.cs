@@ -116,7 +116,7 @@ namespace HandheldCompanion.Managers
         private int AutoTDPFPSSetpointMetCounter;
         private int AutoTDPFPSSmallDipCounter;
         private double ProcessValueFPSPrevious;
-        double[] FPSHistory = new double[6];
+        private double[] FPSHistory = new double[6];
 
         public PerformanceManager() : base()
         {
@@ -340,7 +340,7 @@ namespace HandheldCompanion.Managers
         {
             // (PI)D derivative control component to dampen FPS fluctuations
             if (double.IsNaN(ProcessValueFPSPrevious)) { ProcessValueFPSPrevious = FPSActual; }
-            double DFactor = -0.25;
+            double DFactor = -0.1;
 
             // Calculation
             double deltaError = FPSActual - ProcessValueFPSPrevious;
