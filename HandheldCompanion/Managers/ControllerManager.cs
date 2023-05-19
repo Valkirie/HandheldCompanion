@@ -471,27 +471,14 @@ namespace HandheldCompanion.Managers
             controllerState = LayoutManager.MapController(controllerState);
 
             // Controller specific scenarios
-            if (targetController is not null)
+            if (targetController?.GetType() == typeof(NeptuneController))
             {
-                // Neptune controller
-                if (targetController.GetType() == typeof(NeptuneController))
-                {
-                    NeptuneController neptuneController = (NeptuneController)targetController;
+                NeptuneController neptuneController = (NeptuneController)targetController;
 
-                    // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-                    if (foregroundProcess is not null)
-                    {
-                        switch (foregroundProcess.Platform)
-                        {
-                            case PlatformType.Steam:
-                                {
-                                    if (neptuneController.IsVirtualMuted())
-                                        return;
-                                }
-                                break;
-                        }
-                    }
-                }
+                // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
+                if (foregroundProcess?.Platform == PlatformType.Steam)
+                    if (neptuneController.IsVirtualMuted())
+                        return;
             }
 
             // check if motion trigger is pressed
