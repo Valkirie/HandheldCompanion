@@ -176,7 +176,7 @@ namespace HandheldCompanion.Controls
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // refresh title
-                if (!string.IsNullOrEmpty(MainWindowTitle) && MainWindowTitle.Equals(Title))
+                if (!string.IsNullOrEmpty(MainWindowTitle) && !MainWindowTitle.Equals(Title))
                 {
                     Title = MainWindowTitle;
 
