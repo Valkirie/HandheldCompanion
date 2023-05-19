@@ -336,8 +336,8 @@
                             Grid.Column="1"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_Theme_SelectionChanged">
-                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeLight}" />
-                            <Label Content="{x:Static resx:Resources.SettingsPage_ThemeDark}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeLight}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeDark}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -676,19 +676,19 @@
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_SensorSelection_SelectionChanged">
 
-                            <Label
+                            <ComboBoxItem
                                 Name="SensorNone"
                                 Content="None"
                                 IsEnabled="True" />
-                            <Label
+                            <ComboBoxItem
                                 Name="SensorInternal"
                                 Content="{x:Static resx:Resources.SettingsPage_SensorInternal}"
                                 IsEnabled="False" />
-                            <Label
+                            <ComboBoxItem
                                 Name="SensorExternal"
                                 Content="{x:Static resx:Resources.SettingsPage_SensorExternal}"
                                 IsEnabled="False" />
-                            <Label
+                            <ComboBoxItem
                                 Name="SensorController"
                                 Content="{x:Static resx:Resources.MainWindow_navController}"
                                 IsEnabled="False" />
