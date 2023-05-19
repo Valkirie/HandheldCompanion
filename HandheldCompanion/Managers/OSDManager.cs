@@ -1,11 +1,14 @@
 ﻿using ControllerCommon.Managers;
+using ControllerCommon.Processor;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using static HandheldCompanion.Platforms.HWiNFO;
 
 namespace HandheldCompanion.Managers
@@ -18,7 +21,8 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer RefreshTimer;
         private static int RefreshInterval = 100;
 
-        private static Dictionary<int, OSD> OnScreenDisplay = new();
+        private static OSD OnScreenDisplay;
+        private static int OnScreenId;
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -51,18 +55,11 @@ namespace HandheldCompanion.Managers
 
         private static void RTSS_Unhooked(int processId)
         {
-            try
-            {
-                // clear previous display
-                if (OnScreenDisplay.TryGetValue(processId, out var OSD))
-                {
-                    OSD.Update("");
-                    OSD.Dispose();
-                }
+            OnScreenDisplay.Update("");
+            OnScreenDisplay.Dispose();
 
-                OnScreenDisplay.Remove(processId);
-            }
-            catch { }
+            // reset OSD id
+            OnScreenId = 0;
         }
 
         private static void RTSS_Hooked(int processId)
@@ -73,7 +70,8 @@ namespace HandheldCompanion.Managers
                 if (processEx is null)
                     return;
 
-                OnScreenDisplay[processId] = new(processEx.Title);
+                OnScreenId = processId;
+                OnScreenDisplay = new("PerformanceOverlay");
             }
             catch { }
         }
@@ -86,26 +84,57 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "OSDManager");
         }
 
+        private static uint OSDIndex(this OSD? osd)
+        {
+            if (osd is null)
+                return uint.MaxValue;
+
+            var osdSlot = typeof(OSD).GetField("m_osdSlot",
+                   System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var value = osdSlot.GetValue(osd);
+            if (value is null)
+                return uint.MaxValue;
+
+            return (uint)value;
+        }
+
+        private static uint OSDIndex(String name)
+        {
+            var entries = OSD.GetOSDEntries().ToList();
+            for (int i = 0; i < entries.Count(); i++)
+            {
+                if (entries[i].Owner == name)
+                    return (uint)i;
+            }
+            return 0;
+        }
+
         private static void UpdateOSD(object? sender, EventArgs e)
         {
             if (OverlayLevel == 0)
                 return;
 
-            foreach (var pair in OnScreenDisplay)
+            // recreate OSD if not index 0
+            var idx = OSDIndex(OnScreenDisplay);
+            if (idx != 1)
             {
-                int processId = pair.Key;
-                OSD processOSD = pair.Value;
-
-                try
+                if (OnScreenDisplay is not null)
                 {
-                    string content = Draw(processId);
-                    processOSD.Update(content);
+                    OnScreenDisplay.Dispose();
+                    OnScreenDisplay = null;
                 }
-                catch { }
+
+                OnScreenDisplay = new("PerformanceOverlay");
             }
+
+            try
+            {
+                OnScreenDisplay.Update(Draw());
+            }
+            catch { }
         }
 
-        public static string Draw(int processId)
+        public static string Draw()
         {
             SensorElement sensor;
             Content = new()
@@ -126,7 +155,7 @@ namespace HandheldCompanion.Managers
                         OverlayEntry FPSentry = new("FPS", "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetFramerate(processId),
+                            Value = PlatformManager.RTSS.GetFramerate(OnScreenId),
                             szUnit = "FPS"
                         });
                         row1.entries.Add(FPSentry);
@@ -168,7 +197,7 @@ namespace HandheldCompanion.Managers
                         OverlayEntry FPSentry = new("FPS", "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetFramerate(processId),
+                            Value = PlatformManager.RTSS.GetFramerate(OnScreenId),
                             szUnit = "FPS"
                         });
                         row1.entries.Add(FPSentry);
@@ -226,7 +255,7 @@ namespace HandheldCompanion.Managers
                         OverlayEntry FPSentry = new("FPS", "C6", true);
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetFramerate(processId),
+                            Value = PlatformManager.RTSS.GetFramerate(OnScreenId),
                             szUnit = "FPS"
                         });
                         row6.entries.Add(FPSentry);
@@ -256,9 +285,8 @@ namespace HandheldCompanion.Managers
 
             RefreshTimer.Stop();
 
-            // unhook all processes
-            foreach (int processId in OnScreenDisplay.Keys)
-                RTSS_Unhooked(processId);
+            // unhook processe
+            RTSS_Unhooked(OnScreenId);
 
             IsInitialized = false;
 
@@ -283,11 +311,8 @@ namespace HandheldCompanion.Managers
                             RefreshTimer.Stop();
 
                             // clear UI on stop
-                            foreach (var pair in OnScreenDisplay)
-                            {
-                                OSD processOSD = pair.Value;
-                                processOSD.Update("");
-                            }
+                            OnScreenDisplay.Update("");
+                            OnScreenId = 0;
                         }
                     }
                     break;
