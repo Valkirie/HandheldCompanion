@@ -71,11 +71,19 @@ namespace HandheldCompanion.Managers
 
         private static ConcurrentDictionary<int, ProcessEx> Processes = new();
 
-        private static ProcessEx currentProcess;
+        private static ProcessEx foregroundProcess;
         private static ProcessEx previousProcess;
 
         private static readonly object updateLock = new();
         private static bool IsInitialized;
+
+        public static readonly ProcessEx Empty = new()
+        {
+            Path = string.Empty,
+            Executable = string.Empty,
+            Platform = PlatformType.Windows,
+            Filter = ProcessFilter.Ignored
+        };
 
         static ProcessManager()
         {
@@ -134,7 +142,7 @@ namespace HandheldCompanion.Managers
 
         public static ProcessEx GetForegroundProcess()
         {
-            return currentProcess;
+            return foregroundProcess;
         }
 
         public static ProcessEx GetLastSuspendedProcess()
@@ -218,7 +226,7 @@ namespace HandheldCompanion.Managers
                 ProcessEx process = Processes[processId];
 
                 // save previous process (can be null)
-                previousProcess = currentProcess;
+                previousProcess = foregroundProcess;
 
                 switch (iEvent)
                 {
@@ -238,29 +246,23 @@ namespace HandheldCompanion.Managers
                             }
 
                             // update foreground process
-                            currentProcess = process;
+                            foregroundProcess = process;
 
                             // update main window handle
-                            currentProcess.MainWindowHandle = hWnd;
+                            foregroundProcess.MainWindowHandle = hWnd;
 
-                            LogManager.LogDebug("{0} executable {1} now has the foreground", currentProcess.Platform, currentProcess.Executable);
+                            LogManager.LogDebug("{0} executable {1} now has the foreground", foregroundProcess.Platform, foregroundProcess.Executable);
                         }
                         break;
 
                     case EVENT_SYSTEM_MINIMIZESTART:
                         {
                             // ignore if not foreground window
-                            if (currentProcess is null || currentProcess.MainWindowHandle != hWnd)
+                            if (foregroundProcess is null || foregroundProcess.MainWindowHandle != hWnd)
                                 return;
 
                             // update foreground process
-                            currentProcess = new()
-                            {
-                                Path = string.Empty,
-                                Executable = string.Empty,
-                                Platform = PlatformType.Windows,
-                                Filter = ProcessFilter.Ignored
-                            };
+                            foregroundProcess = Empty;
 
                             LogManager.LogDebug("{0} executable {1} was minimized or destroyed", previousProcess.Platform, previousProcess.Executable);
                         }
@@ -268,10 +270,10 @@ namespace HandheldCompanion.Managers
                 }
 
                 // inform service
-                PipeClient.SendMessage(new PipeClientProcess { executable = currentProcess.Executable, platform = currentProcess.Platform });
+                PipeClient.SendMessage(new PipeClientProcess { executable = foregroundProcess.Executable, platform = foregroundProcess.Platform });
 
                 // raise event
-                ForegroundChanged?.Invoke(currentProcess, previousProcess);
+                ForegroundChanged?.Invoke(foregroundProcess, previousProcess);
             }
             catch
             {
@@ -297,14 +299,17 @@ namespace HandheldCompanion.Managers
         private static void ProcessHalted(object? sender, EventArgs e)
         {
             int processId = ((Process)sender).Id;
-            ProcessHalted(processId);
-        }
 
-        private static void ProcessHalted(int processId)
-        {
             if (Processes.ContainsKey(processId))
             {
                 ProcessEx processEx = Processes[processId];
+
+                // stopped process can't have foreground
+                if (foregroundProcess == processEx)
+                {
+                    ForegroundChanged?.Invoke(Empty, foregroundProcess);
+                    foregroundProcess = null;
+                }
 
                 Processes.TryRemove(new KeyValuePair<int, ProcessEx>(processId, processEx));
 

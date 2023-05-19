@@ -36,7 +36,6 @@ namespace HandheldCompanion.Views.QuickPages
             InitializeComponent();
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
 
             ProfileManager.Updated += ProfileUpdated;
             ProfileManager.Deleted += ProfileDeleted;
@@ -306,7 +305,6 @@ namespace HandheldCompanion.Views.QuickPages
                 // set lock
                 isDrawing = true;
 
-                ProfileToggle.IsEnabled = true;
                 ProfileToggle.IsOn = realProfile.Enabled;
                 ProfileIcon.Source = processEx.imgSource;
 
@@ -314,29 +312,21 @@ namespace HandheldCompanion.Views.QuickPages
                 {
                     string MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
 
+                    ProfileToggle.IsEnabled = true;
                     ProcessName.Text = currentProcess.Executable;
                     ProcessPath.Text = currentProcess.Path;
+                }
+                else
+                {
+                    ProfileIcon.Source = null;
+
+                    ProfileToggle.IsEnabled = false;
+                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
+                    ProcessPath.Text = string.Empty;
                 }
 
                 // release lock
                 isDrawing = false;
-            });
-        }
-
-        private void ProcessManager_ProcessStopped(ProcessEx processEx)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                if (currentProcess == processEx)
-                {
-                    ProfileIcon.Source = null;
-
-                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
-                    ProcessPath.Text = string.Empty;
-
-                    ProfileToggle.IsEnabled = false;
-                }
             });
         }
 

@@ -111,7 +111,6 @@ namespace HandheldCompanion.Views.Windows
                         WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopRight, Screen.PrimaryScreen);
                         this.Top += this.Margin.Top;
                         this.Left -= this.Margin.Left;
-
                     }
                     break;
 
