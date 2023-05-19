@@ -79,11 +79,17 @@ namespace HandheldCompanion.Views.Pages
                 {
                     case "MainWindowTheme":
                         cB_Theme.SelectedIndex = Convert.ToInt32(value);
-                        cB_Theme_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Theme_SelectionChanged(this, null);
                         break;
                     case "MainWindowBackdrop":
                         cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
-                        cB_Backdrop_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Backdrop_SelectionChanged(this, null);
                         break;
                     case "SensorSelection":
                         {
@@ -109,7 +115,10 @@ namespace HandheldCompanion.Views.Pages
                             }
 
                             cB_SensorSelection.SelectedIndex = idx;
-                            cB_SensorSelection_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+
+                            // bug: SelectionChanged not triggered when control isn't loaded
+                            if (!IsLoaded)
+                                cB_SensorSelection_SelectionChanged(this, null);
                         }
                         break;
                     case "RunAtStartup":
@@ -170,7 +179,10 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "CurrentCulture":
                         cB_Language.SelectedItem = new CultureInfo((string)value);
-                        cB_Language_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Language_SelectionChanged(this, null);
                         break;
                     case "SensorPlacement":
                         UpdateUI_SensorPlacement(Convert.ToInt32(value));
@@ -180,7 +192,10 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "ServiceStartMode":
                         cB_StartupType.SelectedIndex = Convert.ToInt32(value);
-                        cB_StartupType_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_StartupType_SelectionChanged(this, null);
                         break;
 
                     case "PlatformRTSSEnabled":
