@@ -264,27 +264,26 @@ namespace HandheldCompanion.Managers
             if (HasInput())
             {
                 IController controller = ControllerManager.GetTargetController();
+                if (controller is null)
+                    controller = ControllerManager.GetEmulatedController();
                 IDevice device = MainWindow.CurrentDevice;
 
                 foreach (ButtonFlags button in inputsChord.State.Buttons)
                 {
                     UIElement? label = null;
 
-                    if (controller is not null)
+                    FontIcon fontIcon = controller.GetFontIcon(button);
+                    // we display only one label, default one is not enough
+                    if (fontIcon.Glyph != IController.defaultGlyph)
                     {
-                        FontIcon fontIcon = controller.GetFontIcon(button);
-                        // we display only one label, default one is not enough
-                        if (fontIcon.Glyph != IController.defaultGlyph)
-                        {
-                            if (fontIcon.Foreground is null)
-                                fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                        if (fontIcon.Foreground is null)
+                            fontIcon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
 
-                            label = fontIcon;
-                        }
+                        label = fontIcon;
                     }
                     if (label is null && device is not null)
                     {
-                        Label buttonLabel = new Label() { Content = device.GetButtonName(button) };
+                        Label buttonLabel = new() { Content = device.GetButtonName(button) };
                         label = buttonLabel;
                     }
 
@@ -292,7 +291,7 @@ namespace HandheldCompanion.Managers
                         inputContent.Children.Add(label);
                 }
 
-                TextBlock type = new TextBlock()
+                TextBlock type = new()
                 {
                     Text = inputsChord.InputsType.ToString(),
                     VerticalAlignment = VerticalAlignment.Center
@@ -303,7 +302,7 @@ namespace HandheldCompanion.Managers
             }
             else
             {
-                TextBlock fallback = new TextBlock()
+                TextBlock fallback = new()
                 {
                     Text = Properties.Resources.ResourceManager.GetString("InputsHotkey_fallbackInput")
                 };
@@ -380,6 +379,8 @@ namespace HandheldCompanion.Managers
         public void ControllerSelected(IController controller)
         {
             // (re)draw inputs based on IController type
+            // todo: make this persistent/based on the parameter, just like LayoutPage
+            // currently DrawInput() checks for the controller by itself
             DrawInput();
         }
     }

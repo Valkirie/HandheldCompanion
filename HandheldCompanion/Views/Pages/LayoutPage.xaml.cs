@@ -194,7 +194,7 @@ namespace HandheldCompanion.Views.Pages
 
                 if (layoutTemplate.ControllerType is not null && FilterOnDevice)
                 {
-                    if (layoutTemplate.ControllerType != controller.GetType())
+                    if (layoutTemplate.ControllerType != controller?.GetType())
                     {
                         parent.Visibility = Visibility.Collapsed;
                         continue;
@@ -444,7 +444,7 @@ namespace HandheldCompanion.Views.Pages
             }
 
             if (ExportForCurrent.IsChecked == true)
-                newLayout.ControllerType = ControllerManager.GetTargetController().GetType();
+                newLayout.ControllerType = ControllerManager.GetTargetController()?.GetType();
 
             LayoutManager.SerializeLayoutTemplate(newLayout);
 

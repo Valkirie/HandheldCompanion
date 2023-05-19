@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
@@ -363,7 +364,7 @@ namespace HandheldCompanion.Managers
                             return;
 
                         // calls current controller (if connected)
-                        var controller = ControllerManager.GetTargetController();
+                        IController controller = ControllerManager.GetTargetController();
                         controller?.InjectButton(chord.state, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
