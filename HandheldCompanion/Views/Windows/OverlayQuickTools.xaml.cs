@@ -11,10 +11,13 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Navigation;
 using Windows.System.Power;
+using WpfScreenHelper;
 using Application = System.Windows.Application;
 using Input = System.Windows.Input;
 using Page = System.Windows.Controls.Page;
 using PowerManager = ControllerCommon.Managers.PowerManager;
+using Screen = WpfScreenHelper.Screen;
+using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 
 namespace HandheldCompanion.Views.Windows
@@ -96,16 +99,18 @@ namespace HandheldCompanion.Views.Windows
                 // top, left
                 case 0:
                     {
-                        this.Left = this.Margin.Left;
-                        this.Top = this.Margin.Top;
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopLeft, Screen.PrimaryScreen);
+                        this.Top += this.Margin.Top;
+                        this.Left += this.Margin.Left;
                     }
                     break;
 
                 // top, right
                 case 1:
                     {
-                        this.Left = desktopWorkingArea.Right - this.Width - this.Margin.Right;
-                        this.Top = this.Margin.Top;
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopRight, Screen.PrimaryScreen);
+                        this.Top += this.Margin.Top;
+                        this.Left -= this.Margin.Left;
 
                     }
                     break;
@@ -113,8 +118,9 @@ namespace HandheldCompanion.Views.Windows
                 // bottom, left
                 case 2:
                     {
-                        this.Left = this.Margin.Left;
-                        this.Top = desktopWorkingArea.Bottom - this.Height - this.Margin.Bottom;
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.BottomLeft, Screen.PrimaryScreen);
+                        this.Top -= this.Margin.Top;
+                        this.Left += this.Margin.Left;
                     }
                     break;
 
@@ -122,8 +128,9 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case 3:
                     {
-                        this.Left = desktopWorkingArea.Right - this.Width - this.Margin.Right;
-                        this.Top = desktopWorkingArea.Bottom - this.Height - this.Margin.Bottom;
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.BottomRight, Screen.PrimaryScreen);
+                        this.Top -= this.Margin.Top;
+                        this.Left -= this.Margin.Left;
                     }
                     break;
             }
