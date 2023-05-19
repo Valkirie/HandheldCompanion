@@ -34,7 +34,10 @@ namespace HandheldCompanion.Views.Pages
                 {
                     case "OverlayModel":
                         OverlayModel.SelectedIndex = Convert.ToInt32(value);
-                        OverlayModel_SelectionChanged(this, null); // bug: SelectionChanged not triggered when control isn't loaded
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            OverlayModel_SelectionChanged(this, null);
                         break;
                     case "OverlayControllerAlignment":
                         UpdateUI_ControllerPosition(Convert.ToInt32(value));
