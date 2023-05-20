@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static HandheldCompanion.Platforms.HWiNFO;
+using static HandheldCompanion.Platforms.RTSS;
 
 namespace HandheldCompanion.Managers
 {
@@ -21,6 +22,7 @@ namespace HandheldCompanion.Managers
         private static int RefreshInterval = 100;
 
         private static ConcurrentDictionary<int, OSD> OnScreenDisplay = new();
+        private static AppEntry OnScreenAppEntry;
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -67,12 +69,18 @@ namespace HandheldCompanion.Managers
             catch { }
         }
 
-        private static void RTSS_Hooked(int processId)
+        private static void RTSS_Hooked(AppEntry appEntry)
         {
             try
             {
-                ProcessEx processEx = ProcessManager.GetProcess(processId);
-                OnScreenDisplay[processId] = new(processEx.Title);
+                // update foreground id
+                OnScreenAppEntry = appEntry;
+
+                // only create a new OSD if needed
+                if (OnScreenDisplay.ContainsKey(appEntry.ProcessId))
+                    return;
+
+                OnScreenDisplay[OnScreenAppEntry.ProcessId] = new(OnScreenAppEntry.Name);
             }
             catch { }
         }
@@ -122,21 +130,15 @@ namespace HandheldCompanion.Managers
 
                 try
                 {
-                    // recreate OSD if not index 0
-                    var idx = OSDIndex(processOSD);
-                    if (idx > 110)
+                    if (processId == OnScreenAppEntry.ProcessId)
                     {
-                        processOSD.Dispose();
-                        processOSD = null;
-
-                        ProcessEx processEx = ProcessManager.GetProcess(processId);
-                        if (processEx is null)
-                            continue;
-                        processOSD = new(processEx.Title);
+                        string content = Draw(processId);
+                        processOSD.Update(content);
                     }
-
-                    string content = Draw(processId);
-                    processOSD.Update(content);
+                    else
+                    {
+                        processOSD.Update("");
+                    }
                 }
                 catch { }
             }
@@ -146,6 +148,9 @@ namespace HandheldCompanion.Managers
         {
             SensorElement sensor;
             Content = new();
+
+            // get current rendering engine
+            string AppFlag = string.Join(',', (AppFlagsEx)OnScreenAppEntry.Flags);
 
             switch (OverlayLevel)
             {
@@ -157,7 +162,7 @@ namespace HandheldCompanion.Managers
                     {
                         OverlayRow row1 = new();
 
-                        OverlayEntry FPSentry = new("FPS", "C6");
+                        OverlayEntry FPSentry = new(AppFlag, "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
                             Value = PlatformManager.RTSS.GetFramerate(processId),
@@ -200,7 +205,7 @@ namespace HandheldCompanion.Managers
                             RAMentry.elements.Add(sensor);
                         row1.entries.Add(RAMentry);
 
-                        OverlayEntry FPSentry = new("FPS", "C6");
+                        OverlayEntry FPSentry = new(AppFlag, "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
                             Value = PlatformManager.RTSS.GetFramerate(processId),
@@ -259,7 +264,7 @@ namespace HandheldCompanion.Managers
                             BATTentry.elements.Add(sensor);
                         row5.entries.Add(BATTentry);
 
-                        OverlayEntry FPSentry = new("FPS", "C6", true);
+                        OverlayEntry FPSentry = new(AppFlag, "C6", true);
                         FPSentry.elements.Add(new SensorElement()
                         {
                             Value = PlatformManager.RTSS.GetFramerate(processId),

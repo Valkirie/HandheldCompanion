@@ -64,12 +64,33 @@ namespace HandheldCompanion.Platforms
         private bool ProfileLoaded;
 
         private ConcurrentList<int> HookedProcessIds = new();
+        private const int MaxTentative = 10;
 
+        [Flags]
+        public enum AppFlagsEx
+        {
+            None = 0x0,
+            OpenGL = 0x1,
+            DDraw = 0x2,
+            D3D8 = 0x3,
+            D3D9 = 0x4,
+            D3D9Ex = 0x5,
+            D3D10 = 0x6,
+            D3D11 = 0x7,
+            D3D12 = 0x8,
+            D3D12AFR = 0x9,
+            Vulkan = 0xA,
+            ProfileUpdateRequested = 0x10000000,
+            MASK = 0xF
+        }
+
+        #region events
         public event HookedEventHandler Hooked;
-        public delegate void HookedEventHandler(int processId);
+        public delegate void HookedEventHandler(AppEntry appEntry);
 
         public event UnhookedEventHandler Unhooked;
         public delegate void UnhookedEventHandler(int processId);
+        #endregion
 
         public RTSS()
         {
@@ -183,6 +204,7 @@ namespace HandheldCompanion.Platforms
             if (ProcessId == 0)
                 return;
 
+            int HookTentative = 0;
             do
             {
                 try
@@ -191,9 +213,18 @@ namespace HandheldCompanion.Platforms
                 }
                 catch (Exception) { }
 
+                HookTentative++;
+
+                // RTSS couldn't hook into process
+                if (HookTentative == MaxTentative)
+                    return;
+
                 await Task.Delay(250);
             }
             while (appEntry is null);
+
+            // raise event
+            Hooked?.Invoke(appEntry);
 
             // we're already hooked into this process
             if (HookedProcessIds.Contains(ProcessId))
@@ -201,9 +232,6 @@ namespace HandheldCompanion.Platforms
 
             // store into array
             HookedProcessIds.Add(ProcessId);
-
-            // raise event
-            Hooked?.Invoke(ProcessId);
         }
 
         private void ProcessManager_ProcessStopped(ProcessEx processEx)
