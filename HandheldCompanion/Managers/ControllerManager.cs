@@ -108,8 +108,7 @@ namespace HandheldCompanion.Managers
 
             // unplug on close
             IController target = GetTargetController();
-            if (target is not null)
-                target.Unplug();
+            target?.Unplug();
 
             LogManager.LogInformation("{0} has stopped", "ControllerManager");
         }
@@ -163,10 +162,7 @@ namespace HandheldCompanion.Managers
         private static void SetHIDStrength(double value)
         {
             IController target = GetTargetController();
-            if (target is null)
-                return;
-
-            target.SetVibrationStrength(value, SettingsManager.IsInitialized);
+            target?.SetVibrationStrength(value);
         }
 
         private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -443,7 +439,7 @@ namespace HandheldCompanion.Managers
 
         public static IController GetTargetController()
         {
-            return targetController is not null ? targetController : GetEmulatedController();
+            return targetController;
         }
 
         public static bool HasController()
@@ -475,27 +471,14 @@ namespace HandheldCompanion.Managers
             controllerState = LayoutManager.MapController(controllerState);
 
             // Controller specific scenarios
-            if (targetController is not null)
+            if (targetController?.GetType() == typeof(NeptuneController))
             {
-                // Neptune controller
-                if (targetController.GetType() == typeof(NeptuneController))
-                {
-                    NeptuneController neptuneController = (NeptuneController)targetController;
+                NeptuneController neptuneController = (NeptuneController)targetController;
 
-                    // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-                    if (foregroundProcess is not null)
-                    {
-                        switch (foregroundProcess.Platform)
-                        {
-                            case PlatformType.Steam:
-                                {
-                                    if (neptuneController.IsVirtualMuted())
-                                        return;
-                                }
-                                break;
-                        }
-                    }
-                }
+                // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
+                if (foregroundProcess?.Platform == PlatformType.Steam)
+                    if (neptuneController.IsVirtualMuted())
+                        return;
             }
 
             // check if motion trigger is pressed
