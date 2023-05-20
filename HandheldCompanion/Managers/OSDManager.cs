@@ -4,8 +4,10 @@ using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using static HandheldCompanion.Platforms.HWiNFO;
 
 namespace HandheldCompanion.Managers
@@ -18,7 +20,7 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer RefreshTimer;
         private static int RefreshInterval = 100;
 
-        private static Dictionary<int, OSD> OnScreenDisplay = new();
+        private static ConcurrentDictionary<int, OSD> OnScreenDisplay = new();
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -58,9 +60,9 @@ namespace HandheldCompanion.Managers
                 {
                     OSD.Update("");
                     OSD.Dispose();
-                }
 
-                OnScreenDisplay.Remove(processId);
+                    OnScreenDisplay.TryRemove(new KeyValuePair<int, OSD>(processId, OSD));
+                }
             }
             catch { }
         }
@@ -70,9 +72,6 @@ namespace HandheldCompanion.Managers
             try
             {
                 ProcessEx processEx = ProcessManager.GetProcess(processId);
-                if (processEx is null)
-                    return;
-
                 OnScreenDisplay[processId] = new(processEx.Title);
             }
             catch { }
@@ -84,6 +83,31 @@ namespace HandheldCompanion.Managers
             Initialized?.Invoke();
 
             LogManager.LogInformation("{0} has started", "OSDManager");
+        }
+
+        private static uint OSDIndex(this OSD? osd)
+        {
+            if (osd is null)
+                return uint.MaxValue;
+
+            var osdSlot = typeof(OSD).GetField("m_osdSlot",
+                   System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var value = osdSlot.GetValue(osd);
+            if (value is null)
+                return uint.MaxValue;
+
+            return (uint)value;
+        }
+
+        private static uint OSDIndex(String name)
+        {
+            var entries = OSD.GetOSDEntries().ToList();
+            for (int i = 0; i < entries.Count(); i++)
+            {
+                if (entries[i].Owner == name)
+                    return (uint)i;
+            }
+            return 0;
         }
 
         private static void UpdateOSD(object? sender, EventArgs e)
@@ -98,6 +122,19 @@ namespace HandheldCompanion.Managers
 
                 try
                 {
+                    // recreate OSD if not index 0
+                    var idx = OSDIndex(processOSD);
+                    if (idx > 110)
+                    {
+                        processOSD.Dispose();
+                        processOSD = null;
+
+                        ProcessEx processEx = ProcessManager.GetProcess(processId);
+                        if (processEx is null)
+                            continue;
+                        processOSD = new(processEx.Title);
+                    }
+
                     string content = Draw(processId);
                     processOSD.Update(content);
                 }
@@ -108,10 +145,7 @@ namespace HandheldCompanion.Managers
         public static string Draw(int processId)
         {
             SensorElement sensor;
-            Content = new()
-            {
-                Header
-            };
+            Content = new();
 
             switch (OverlayLevel)
             {
@@ -131,7 +165,8 @@ namespace HandheldCompanion.Managers
                         });
                         row1.entries.Add(FPSentry);
 
-                        Content.Add(row1.ToString());
+                        // add header to row1
+                        Content.Add(Header + row1.ToString());
                     }
                     break;
 
@@ -173,7 +208,8 @@ namespace HandheldCompanion.Managers
                         });
                         row1.entries.Add(FPSentry);
 
-                        Content.Add(row1.ToString());
+                        // add header to row1
+                        Content.Add(Header + row1.ToString());
                     }
                     break;
 
@@ -231,16 +267,12 @@ namespace HandheldCompanion.Managers
                         });
                         row6.entries.Add(FPSentry);
 
-                        Content.Add(row1.ToString());
+                        // add header to row1
+                        Content.Add(Header + row1.ToString());
                         Content.Add(row2.ToString());
                         Content.Add(row3.ToString());
                         Content.Add(row4.ToString());
-
-                        // not all devices have a battery
-                        string row5str = row5.ToString();
-                        if (!string.IsNullOrEmpty(row5str))
-                            Content.Add(row5.ToString());
-
+                        Content.Add(row5.ToString());
                         Content.Add(row6.ToString());
                     }
                     break;

@@ -152,8 +152,9 @@ namespace HandheldCompanion.Managers
 
         public static ProcessEx GetProcess(int processId)
         {
-            Processes.TryGetValue(processId, out var process);
-            return process;
+            if (Processes.TryGetValue(processId, out var process))
+                return process;
+            return null;
         }
 
         public static List<ProcessEx> GetProcesses()

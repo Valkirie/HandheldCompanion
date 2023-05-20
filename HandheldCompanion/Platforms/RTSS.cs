@@ -63,7 +63,7 @@ namespace HandheldCompanion.Platforms
         private int RequestedFramerate = 0;
         private bool ProfileLoaded;
 
-        private List<int> HookedProcessIds = new();
+        private ConcurrentList<int> HookedProcessIds = new();
 
         public event HookedEventHandler Hooked;
         public delegate void HookedEventHandler(int processId);
@@ -125,6 +125,7 @@ namespace HandheldCompanion.Platforms
             }
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
 
             ProfileManager.Updated += ProfileManager_Updated;
             ProfileManager.Applied += ProfileManager_Applied;
@@ -194,25 +195,6 @@ namespace HandheldCompanion.Platforms
             }
             while (appEntry is null);
 
-            // unhook previous process (if was hooked)
-            if (backgroundEx is not null)
-            {
-                var backgroundProcessId = backgroundEx.GetProcessId();
-
-                // search if process was once hooked
-                if (HookedProcessIds.Contains(backgroundProcessId))
-                {
-                    if (backgroundProcessId != ProcessId)
-                    {
-                        // remove from array
-                        HookedProcessIds.Remove(backgroundProcessId);
-
-                        // raise event
-                        Unhooked?.Invoke(backgroundProcessId);
-                    }
-                }
-            }
-
             // we're already hooked into this process
             if (HookedProcessIds.Contains(ProcessId))
                 return;
@@ -222,6 +204,23 @@ namespace HandheldCompanion.Platforms
 
             // raise event
             Hooked?.Invoke(ProcessId);
+        }
+
+        private void ProcessManager_ProcessStopped(ProcessEx processEx)
+        {
+            var ProcessId = processEx.GetProcessId();
+            if (ProcessId == 0)
+                return;
+
+            // we're not hooked into this process
+            if (!HookedProcessIds.Contains(ProcessId))
+                return;
+
+            // remove from array
+            HookedProcessIds.Remove(ProcessId);
+
+            // raise event
+            Unhooked?.Invoke(ProcessId);
         }
 
         private void Watchdog_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
