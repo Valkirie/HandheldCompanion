@@ -162,7 +162,7 @@ namespace HandheldCompanion.Managers
         private static void SetHIDStrength(double value)
         {
             IController target = GetTargetController();
-            target?.SetVibrationStrength(value, true);
+            target?.SetVibrationStrength(value, SettingsManager.IsInitialized);
         }
 
         private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
