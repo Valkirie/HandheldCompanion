@@ -469,6 +469,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Desktop layout.
+        /// </summary>
+        public static string InputsHotkey_DesktopLayoutEnabled {
+            get {
+                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Toggle Desktop controller layout.
+        /// </summary>
+        public static string InputsHotkey_DesktopLayoutEnabledDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabledDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Press to define hotkey input.
         /// </summary>
         public static string InputsHotkey_fallbackInput {
@@ -685,24 +703,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Desktop layout.
-        /// </summary>
-        public static string InputsHotkey_DesktopLayoutEnabled {
-            get {
-                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabled", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Toggle Desktop controller layout.
-        /// </summary>
-        public static string InputsHotkey_DesktopLayoutEnabledDesc {
-            get {
-                return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabledDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Escape.
         /// </summary>
         public static string InputsHotkey_shortcutESC {
@@ -807,6 +807,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_shortcutMainwindowDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_shortcutMainwindowDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Open Snipping tool.
+        /// </summary>
+        public static string InputsHotkey_shortcutPrintScreen {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutPrintScreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Press this key: Windows + Shift + S.
+        /// </summary>
+        public static string InputsHotkey_shortcutPrintScreenDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutPrintScreenDesc", resourceCulture);
             }
         }
         
