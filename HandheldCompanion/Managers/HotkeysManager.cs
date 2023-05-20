@@ -323,6 +323,9 @@ namespace HandheldCompanion.Managers
                             var success = Windows.System.Launcher.LaunchUriAsync(uri);
                         }
                         break;
+                    case "shortcutPrintScreen":
+                        KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.LWIN, VirtualKeyCode.LSHIFT, VirtualKeyCode.VK_S });
+                        break;
                     case "suspendResumeTask":
                         {
                             var sProcess = ProcessManager.GetLastSuspendedProcess();

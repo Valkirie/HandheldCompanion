@@ -39,6 +39,7 @@ namespace HandheldCompanion.Managers
             { 25, new InputsHotkey(InputsHotkeyType.Windows,    "\uE71D",   "shortcutTaskManager",              "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
             { 26, new InputsHotkey(InputsHotkeyType.Windows,    "\uE8BB",   "shortcutKillApp",                  "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
             { 27, new InputsHotkey(InputsHotkeyType.Windows,    "\uE7E7",   "shortcutControlCenter",            "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   false) },
+            { 28, new InputsHotkey(InputsHotkeyType.Windows,    "\uF7ED",   "shortcutPrintScreen",              "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           false,  false) },
 
             // Handheld Companion hotkeys
             { 30, new InputsHotkey(InputsHotkeyType.HC,         "\uE7C4",   "shortcutMainwindow",               "Segoe Fluent Icons",   20, false,  true,   null,                   string.Empty,           true,   false) },

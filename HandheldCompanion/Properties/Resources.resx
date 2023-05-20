@@ -1226,4 +1226,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
     <value>Limits framerate for 3D applications</value>
   </data>
+  <data name="InputsHotkey_shortcutPrintScreen" xml:space="preserve">
+    <value>Open Snipping tool</value>
+  </data>
+  <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
+    <value>Press this key: Windows + Shift + S</value>
+  </data>
 </root>
