@@ -1,15 +1,15 @@
 ﻿using ControllerCommon.Managers;
-using ControllerCommon.Processor;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using static HandheldCompanion.Platforms.HWiNFO;
+using static HandheldCompanion.Platforms.RTSS;
 
 namespace HandheldCompanion.Managers
 {
@@ -21,8 +21,8 @@ namespace HandheldCompanion.Managers
         private static PrecisionTimer RefreshTimer;
         private static int RefreshInterval = 100;
 
-        private static OSD OnScreenDisplay;
-        private static int OnScreenId;
+        private static ConcurrentDictionary<int, OSD> OnScreenDisplay = new();
+        private static AppEntry OnScreenAppEntry;
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -55,23 +55,32 @@ namespace HandheldCompanion.Managers
 
         private static void RTSS_Unhooked(int processId)
         {
-            OnScreenDisplay.Update("");
-            OnScreenDisplay.Dispose();
+            try
+            {
+                // clear previous display
+                if (OnScreenDisplay.TryGetValue(processId, out var OSD))
+                {
+                    OSD.Update("");
+                    OSD.Dispose();
 
-            // reset OSD id
-            OnScreenId = 0;
+                    OnScreenDisplay.TryRemove(new KeyValuePair<int, OSD>(processId, OSD));
+                }
+            }
+            catch { }
         }
 
-        private static void RTSS_Hooked(int processId)
+        private static void RTSS_Hooked(AppEntry appEntry)
         {
             try
             {
-                ProcessEx processEx = ProcessManager.GetProcess(processId);
-                if (processEx is null)
+                // update foreground id
+                OnScreenAppEntry = appEntry;
+
+                // only create a new OSD if needed
+                if (OnScreenDisplay.ContainsKey(appEntry.ProcessId))
                     return;
 
-                OnScreenId = processId;
-                OnScreenDisplay = new("PerformanceOverlay");
+                OnScreenDisplay[OnScreenAppEntry.ProcessId] = new(OnScreenAppEntry.Name);
             }
             catch { }
         }
@@ -114,33 +123,34 @@ namespace HandheldCompanion.Managers
             if (OverlayLevel == 0)
                 return;
 
-            // recreate OSD if not index 0
-            var idx = OSDIndex(OnScreenDisplay);
-            if (idx != 1)
+            foreach (var pair in OnScreenDisplay)
             {
-                if (OnScreenDisplay is not null)
+                int processId = pair.Key;
+                OSD processOSD = pair.Value;
+
+                try
                 {
-                    OnScreenDisplay.Dispose();
-                    OnScreenDisplay = null;
+                    if (processId == OnScreenAppEntry.ProcessId)
+                    {
+                        string content = Draw(processId);
+                        processOSD.Update(content);
+                    }
+                    else
+                    {
+                        processOSD.Update("");
+                    }
                 }
-
-                OnScreenDisplay = new("PerformanceOverlay");
+                catch { }
             }
-
-            try
-            {
-                OnScreenDisplay.Update(Draw());
-            }
-            catch { }
         }
 
-        public static string Draw()
+        public static string Draw(int processId)
         {
             SensorElement sensor;
-            Content = new()
-            {
-                Header
-            };
+            Content = new();
+
+            // get current rendering engine
+            string AppFlag = string.Join(',', (AppFlagsEx)OnScreenAppEntry.Flags);
 
             switch (OverlayLevel)
             {
@@ -152,15 +162,16 @@ namespace HandheldCompanion.Managers
                     {
                         OverlayRow row1 = new();
 
-                        OverlayEntry FPSentry = new("FPS", "C6");
+                        OverlayEntry FPSentry = new(AppFlag, "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetFramerate(OnScreenId),
+                            Value = PlatformManager.RTSS.GetFramerate(processId),
                             szUnit = "FPS"
                         });
                         row1.entries.Add(FPSentry);
 
-                        Content.Add(row1.ToString());
+                        // add header to row1
+                        Content.Add(Header + row1.ToString());
                     }
                     break;
 
@@ -194,15 +205,16 @@ namespace HandheldCompanion.Managers
                             RAMentry.elements.Add(sensor);
                         row1.entries.Add(RAMentry);
 
-                        OverlayEntry FPSentry = new("FPS", "C6");
+                        OverlayEntry FPSentry = new(AppFlag, "C6");
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetFramerate(OnScreenId),
+                            Value = PlatformManager.RTSS.GetFramerate(processId),
                             szUnit = "FPS"
                         });
                         row1.entries.Add(FPSentry);
 
-                        Content.Add(row1.ToString());
+                        // add header to row1
+                        Content.Add(Header + row1.ToString());
                     }
                     break;
 
@@ -252,24 +264,20 @@ namespace HandheldCompanion.Managers
                             BATTentry.elements.Add(sensor);
                         row5.entries.Add(BATTentry);
 
-                        OverlayEntry FPSentry = new("FPS", "C6", true);
+                        OverlayEntry FPSentry = new(AppFlag, "C6", true);
                         FPSentry.elements.Add(new SensorElement()
                         {
-                            Value = PlatformManager.RTSS.GetFramerate(OnScreenId),
+                            Value = PlatformManager.RTSS.GetFramerate(processId),
                             szUnit = "FPS"
                         });
                         row6.entries.Add(FPSentry);
 
-                        Content.Add(row1.ToString());
+                        // add header to row1
+                        Content.Add(Header + row1.ToString());
                         Content.Add(row2.ToString());
                         Content.Add(row3.ToString());
                         Content.Add(row4.ToString());
-
-                        // not all devices have a battery
-                        string row5str = row5.ToString();
-                        if (!string.IsNullOrEmpty(row5str))
-                            Content.Add(row5.ToString());
-
+                        Content.Add(row5.ToString());
                         Content.Add(row6.ToString());
                     }
                     break;
@@ -285,8 +293,9 @@ namespace HandheldCompanion.Managers
 
             RefreshTimer.Stop();
 
-            // unhook processe
-            RTSS_Unhooked(OnScreenId);
+            // unhook all processes
+            foreach (int processId in OnScreenDisplay.Keys)
+                RTSS_Unhooked(processId);
 
             IsInitialized = false;
 
@@ -311,8 +320,11 @@ namespace HandheldCompanion.Managers
                             RefreshTimer.Stop();
 
                             // clear UI on stop
-                            OnScreenDisplay.Update("");
-                            OnScreenId = 0;
+                            foreach (var pair in OnScreenDisplay)
+                            {
+                                OSD processOSD = pair.Value;
+                                processOSD.Update("");
+                            }
                         }
                     }
                     break;

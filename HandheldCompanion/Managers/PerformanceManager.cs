@@ -4,6 +4,7 @@ using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Views;
 using PowerProfileUtils;
+using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -233,9 +234,9 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void RTSS_Hooked(int processId)
+        private void RTSS_Hooked(AppEntry appEntry)
         {
-            AutoTDPProcessId = processId;
+            AutoTDPProcessId = appEntry.ProcessId;
             AutoTDPWatchdog.Start();
         }
 
