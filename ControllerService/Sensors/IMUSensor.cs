@@ -34,7 +34,7 @@ namespace ControllerService.Sensors
 
         protected static SensorSpec sensorSpec;
 
-        protected readonly Timer centerTimer;
+        protected Timer centerTimer;
         protected int updateInterval;
         protected SensorFamily sensorFamily;
 
@@ -82,6 +82,7 @@ namespace ControllerService.Sensors
 
             this.centerTimer.Stop();
             this.centerTimer.Dispose();
+            this.centerTimer = null;
         }
 
         public override string ToString()
