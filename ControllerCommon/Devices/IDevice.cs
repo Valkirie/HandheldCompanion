@@ -212,7 +212,17 @@ namespace ControllerCommon.Devices
                         }
                     }
                     break;
-
+                case "ASUSTEK COMPUTER INC.":
+                    {
+                        switch (ProductName)
+                        {
+                            // Todo, figure out if theres a diff between Z1 and Z1 extreme versions
+                            case "RC71L":
+                                device = new ROGAlly();
+                                break;
+                        }
+                    }
+                    break;
                 case "VALVE":
                     {
                         switch (ProductName)
