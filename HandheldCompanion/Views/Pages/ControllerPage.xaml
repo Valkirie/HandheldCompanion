@@ -69,8 +69,9 @@
                         Spacing="6"
                         Visibility="Collapsed" />
 
+                    <!--  WARNING: No physical controller detected  -->
                     <Border
-                        Name="NoDevices"
+                        Name="WarningNoPhysical"
                         Padding="15,12,12,12"
                         ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
@@ -94,11 +95,48 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="No controller detected" />
+                                        Text="No physical controller detected" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Please make sure you connected a compatible XInput or DIpunt device"
+                                        Text="Please make sure you connected a compatible XInput or DIpunt device."
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+
+                    <!--  WARNING: Physical controller is hidden, yet not virtual controller detected  -->
+                    <Border
+                        Name="WarningNoVirtual"
+                        Padding="15,12,12,12"
+                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Visibility="Collapsed">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    Glyph="&#xE99A;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="No virtual controller detected" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Your physical controller is hidden, yet you have no virtual controller available. Make sure service is running."
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>

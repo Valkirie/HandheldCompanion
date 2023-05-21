@@ -271,8 +271,10 @@ namespace HandheldCompanion.Managers
                 if (!controller.IsConnected())
                     return;
 
+                /*
                 if (controller.IsVirtual())
                     return;
+                */
 
                 // update or create controller
                 string path = controller.GetInstancePath();
@@ -296,8 +298,10 @@ namespace HandheldCompanion.Managers
             if (!controller.IsConnected())
                 return;
 
+            /*
             if (controller.IsVirtual())
                 return;
+            */
 
             // XInput controller are handled elsewhere
             if (controller.GetType() == typeof(XInputController))
@@ -342,8 +346,10 @@ namespace HandheldCompanion.Managers
                 // slot is now busy
                 XUsbControllers[slot] = false;
 
+                /*
                 if (controller.IsVirtual())
                     return;
+                */
 
                 // update or create controller
                 string path = controller.GetInstancePath();
@@ -371,8 +377,10 @@ namespace HandheldCompanion.Managers
             UserIndex slot = (UserIndex)controller.GetUserIndex();
             XUsbControllers[slot] = true;
 
+            /*
             if (controller.IsVirtual())
                 return;
+            */
 
             // controller was unplugged
             Controllers.Remove(details.deviceInstanceId);
@@ -401,8 +409,10 @@ namespace HandheldCompanion.Managers
             if (controller is null)
                 return;
 
+            /*
             if (controller.IsVirtual())
                 return;
+            */
 
             // update target controller
             targetController = controller;
@@ -442,9 +452,14 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        public static bool HasController()
+        public static bool HasPhysicalController()
         {
-            return Controllers.Count != 0;
+            return Controllers.Where(a => !a.Value.IsVirtual()).Count() != 0;
+        }
+
+        public static bool HasVirtualController()
+        {
+            return Controllers.Where(a => a.Value.IsVirtual()).Count() != 0;
         }
 
         public static int GetControllerCount()

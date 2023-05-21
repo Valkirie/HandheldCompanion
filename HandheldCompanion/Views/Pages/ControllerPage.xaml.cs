@@ -53,6 +53,7 @@ namespace HandheldCompanion.Views.Pages
 
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
+            ControllerManager.Initialized += ControllerManager_Initialized;
 
             // device specific settings
             Type DeviceType = MainWindow.CurrentDevice.GetType();
@@ -131,6 +132,8 @@ namespace HandheldCompanion.Views.Pages
 
                         isLoading = false;
                         isConnected = true;
+
+                        ControllerRefresh();
                     }
                     break;
                 default:
@@ -193,10 +196,17 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
+        private void ControllerManager_Initialized()
+        {
+            ControllerRefresh();
+        }
+
         private void ControllerHookClicked(IController Controller)
         {
             string path = Controller.GetInstancePath();
             ControllerManager.SetTargetController(path);
+
+            ControllerRefresh();
         }
 
         private void ControllerHideClicked(IController Controller)
@@ -205,17 +215,23 @@ namespace HandheldCompanion.Views.Pages
                 Controller.Unhide();
             else
                 Controller.Hide();
+
+            ControllerRefresh();
         }
 
         private void ControllerRefresh()
         {
-            bool hascontroller = InputDevices.Children.Count != 0;
-
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+                // check: do we have any plugged physical controller
+                bool hascontroller = ControllerManager.HasPhysicalController();
+                bool hiddenbutnovirtual = ControllerManager.GetTargetController().IsHidden() && !ControllerManager.HasVirtualController();
+
                 InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
-                NoDevices.Visibility = hascontroller ? Visibility.Collapsed : Visibility.Visible;
+                WarningNoPhysical.Visibility = !hascontroller ? Visibility.Visible : Visibility.Collapsed;
+
+                WarningNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 

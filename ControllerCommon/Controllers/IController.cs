@@ -178,7 +178,7 @@ namespace ControllerCommon.Controllers
         protected void DrawControls()
         {
             // update name
-            ui_name.Text = this.ToString();
+            ui_name.Text = (IsVirtual() ? "Virtual " : string.Empty) + this.ToString();
 
             // Define columns
             ColumnDefinition colDef0 = new ColumnDefinition() { Width = new GridLength(9, GridUnitType.Star), MinWidth = 200 };
@@ -207,6 +207,10 @@ namespace ControllerCommon.Controllers
             Grid.SetColumn(ui_dock_buttons, 1);
 
             ui_border.Child = ui_grid;
+
+            // virtual controller shouldn't be visible
+            if (this.IsVirtual())
+                ui_border.Visibility = Visibility.Collapsed;
         }
 
         protected void RefreshControls()
