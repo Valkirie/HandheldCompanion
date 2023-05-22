@@ -78,18 +78,31 @@ namespace HandheldCompanion.Views.Pages
                 switch (name)
                 {
                     case "MainWindowTheme":
-                        cB_Theme.SelectedIndex = Convert.ToInt32(value);
+                        {
+                            cB_Theme.SelectedIndex = Convert.ToInt32(value);
 
-                        // bug: SelectionChanged not triggered when control isn't loaded
-                        if (!IsLoaded)
-                            cB_Theme_SelectionChanged(this, null);
+                            // bug: SelectionChanged not triggered when control isn't loaded
+                            if (!IsLoaded)
+                                cB_Theme_SelectionChanged(this, null);
+                        }
                         break;
                     case "MainWindowBackdrop":
-                        cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
+                        {
+                            cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
 
-                        // bug: SelectionChanged not triggered when control isn't loaded
-                        if (!IsLoaded)
-                            cB_Backdrop_SelectionChanged(this, null);
+                            // bug: SelectionChanged not triggered when control isn't loaded
+                            if (!IsLoaded)
+                                cB_Backdrop_SelectionChanged(this, null);
+                        }
+                        break;
+                    case "QuicktoolsBackdrop":
+                        {
+                            cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
+
+                            // bug: SelectionChanged not triggered when control isn't loaded
+                            if (!IsLoaded)
+                                cB_QuickToolsBackdrop_SelectionChanged(this, null);
+                        }
                         break;
                     case "SensorSelection":
                         {
@@ -477,39 +490,59 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("MainWindowTheme", cB_Theme.SelectedIndex);
         }
 
+        private void cB_QuickToolsBackdrop_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
+        {
+            if (cB_QuickToolsBackdrop.SelectedIndex == -1)
+                return;
+
+            var targetWindow = MainWindow.overlayquickTools;
+            SwitchBackdrop(targetWindow, cB_QuickToolsBackdrop.SelectedIndex);
+
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("QuicktoolsBackdrop", cB_QuickToolsBackdrop.SelectedIndex);
+        }
+
         private void cB_Backdrop_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             if (cB_Backdrop.SelectedIndex == -1)
                 return;
 
-            switch (cB_Backdrop.SelectedIndex)
-            {
-                case 0: // "None":
-                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.None);
-                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
-                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
-                    break;
-                case 1: // "Mica":
-                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Mica);
-                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
-                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
-                    break;
-                case 2: // "Tabbed":
-                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Tabbed);
-                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), false);
-                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), false);
-                    break;
-                case 3: // "Acrylic":
-                    WindowHelper.SetSystemBackdropType(MainWindow.GetCurrent(), BackdropType.Acrylic);
-                    WindowHelper.SetUseAcrylicBackdrop(MainWindow.GetCurrent(), true);
-                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
-                    break;
-            }
+            var targetWindow = MainWindow.GetCurrent();
+            SwitchBackdrop(targetWindow, cB_Backdrop.SelectedIndex);
 
             if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("MainWindowBackdrop", cB_Backdrop.SelectedIndex);
+        }
+
+        private void SwitchBackdrop(Window targetWindow, int idx)
+        {
+            switch (idx)
+            {
+                case 0: // "None":
+                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.None);
+                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
+                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
+                    break;
+                case 1: // "Mica":
+                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Mica);
+                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
+                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
+                    break;
+                case 2: // "Tabbed":
+                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Tabbed);
+                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
+                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
+                    break;
+                case 3: // "Acrylic":
+                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Acrylic);
+                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, true);
+                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
+                    break;
+            }
         }
 
         private async void Toggle_EnergyStar_Toggled(object? sender, RoutedEventArgs? e)

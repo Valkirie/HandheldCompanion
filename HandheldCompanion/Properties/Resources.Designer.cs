@@ -2873,7 +2873,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Use Acrylic backdrop.
+        ///   Recherche une chaîne localisée semblable à Application backdrop.
         /// </summary>
         public static string SettingsPage_Backdrop {
             get {
@@ -2891,7 +2891,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à The application will use acrylic backdrop.
+        ///   Recherche une chaîne localisée semblable à The application backdrop, none, mica, tabbed, acrylic.
         /// </summary>
         public static string SettingsPage_BackdropDesc {
             get {
