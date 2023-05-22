@@ -253,7 +253,8 @@
                     <Expander
                         Name="GlobalSettings"
                         HorizontalAlignment="Stretch"
-                        Expanded="Expander_Expanded">
+                        Expanded="Expander_Expanded"
+                        IsExpanded="{Binding ElementName=Toggle_DesktopLayout, Path=IsOn, UpdateSourceTrigger=Explicit}">
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
