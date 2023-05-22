@@ -778,5 +778,17 @@ namespace HandheldCompanion.Properties {
                 this["QuickToolsLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int QuicktoolsBackdrop {
+            get {
+                return ((int)(this["QuicktoolsBackdrop"]));
+            }
+            set {
+                this["QuicktoolsBackdrop"] = value;
+            }
+        }
     }
 }

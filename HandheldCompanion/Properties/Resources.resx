@@ -897,13 +897,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>The application will start automatically when I sign in to Windows</value>
   </data>
   <data name="SettingsPage_Backdrop" xml:space="preserve">
-    <value>Use Acrylic backdrop</value>
+    <value>Application backdrop</value>
   </data>
   <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
     <value>Acrylic</value>
   </data>
   <data name="SettingsPage_BackdropDesc" xml:space="preserve">
-    <value>The application will use acrylic backdrop</value>
+    <value>The application backdrop, none, mica, tabbed, acrylic</value>
   </data>
   <data name="SettingsPage_BackdropMica" xml:space="preserve">
     <value>Mica</value>

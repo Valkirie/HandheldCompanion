@@ -345,9 +345,10 @@
                 <!--  Application backdrop  -->
                 <Border
                     Padding="15,12,12,12"
+                    d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Collapsed">
+                    Visibility="Visible">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -466,6 +467,50 @@
                             <Label Content="Top right" />
                             <Label Content="Bottom left" />
                             <Label Content="Bottom right" />
+                        </ComboBox>
+                    </Grid>
+                </Border>
+
+                <!--  Application backdrop  -->
+                <Border
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Visible">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE790;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="cB_QuickToolsBackdrop"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropNone}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropMica}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}" />
+                            <Label Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                         </ComboBox>
                     </Grid>
                 </Border>
