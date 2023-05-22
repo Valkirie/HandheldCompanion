@@ -39,7 +39,7 @@ namespace HandheldCompanion.Managers
         public delegate void InitializedEventHandler();
 
         public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
-        private const short PIN_LIMIT = 9;
+        private const short PIN_LIMIT = 18;
 
         private static bool IsInitialized;
 
