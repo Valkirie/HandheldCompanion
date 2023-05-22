@@ -232,6 +232,9 @@ namespace HandheldCompanion.Views.Pages
                 bool isPlugged = hasPhysiscal && ControllerManager.GetTargetController().IsPlugged();
                 bool isHidden = hasPhysiscal && ControllerManager.GetTargetController().IsHidden();
 
+                bool isNeptune = ControllerManager.GetTargetController().GetType() == typeof(NeptuneController);
+                bool isMuted = SettingsManager.GetBoolean("SteamDeckMuteController");
+
                 InputDevices.Visibility = hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
                 WarningNoPhysical.Visibility = !hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
 
@@ -243,7 +246,7 @@ namespace HandheldCompanion.Views.Pages
                 HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
                 // hint: Has hidden Neptune controller but virtual controller is muted
-                bool neptunehidden = isHidden && ControllerManager.GetTargetController().GetType() == typeof(NeptuneController) && SettingsManager.GetBoolean("SteamDeckMuteController");
+                bool neptunehidden = isHidden && isNeptune && isMuted;
                 HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
                 // hint: Physical controller is not hidden and virtual controller detected
