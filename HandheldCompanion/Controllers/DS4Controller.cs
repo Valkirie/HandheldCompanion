@@ -120,7 +120,7 @@ namespace HandheldCompanion.Controllers
 
         public override bool IsConnected()
         {
-            return joystick is null ? false : joystick.IsDisposed;
+            return joystick is null ? false : !joystick.IsDisposed;
         }
 
         public override void Plug()

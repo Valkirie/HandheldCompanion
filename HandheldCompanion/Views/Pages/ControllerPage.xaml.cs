@@ -5,6 +5,7 @@ using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using neptune_hidapi.net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,7 @@ namespace HandheldCompanion.Views.Pages
 
             ControllerManager.ControllerPlugged += ControllerPlugged;
             ControllerManager.ControllerUnplugged += ControllerUnplugged;
+            ControllerManager.Initialized += ControllerManager_Initialized;
 
             // device specific settings
             Type DeviceType = MainWindow.CurrentDevice.GetType();
@@ -131,6 +133,8 @@ namespace HandheldCompanion.Views.Pages
 
                         isLoading = false;
                         isConnected = true;
+
+                        ControllerRefresh();
                     }
                     break;
                 default:
@@ -193,10 +197,17 @@ namespace HandheldCompanion.Views.Pages
             });
         }
 
+        private void ControllerManager_Initialized()
+        {
+            ControllerRefresh();
+        }
+
         private void ControllerHookClicked(IController Controller)
         {
             string path = Controller.GetInstancePath();
             ControllerManager.SetTargetController(path);
+
+            ControllerRefresh();
         }
 
         private void ControllerHideClicked(IController Controller)
@@ -205,17 +216,42 @@ namespace HandheldCompanion.Views.Pages
                 Controller.Unhide();
             else
                 Controller.Hide();
+
+            ControllerRefresh();
         }
 
         private void ControllerRefresh()
         {
-            bool hascontroller = InputDevices.Children.Count != 0;
-
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                InputDevices.Visibility = hascontroller ? Visibility.Visible : Visibility.Collapsed;
-                NoDevices.Visibility = hascontroller ? Visibility.Collapsed : Visibility.Visible;
+                // check: do we have any plugged physical controller
+                bool hasPhysiscal = ControllerManager.HasPhysicalController();
+                bool hasVirtual = ControllerManager.HasVirtualController();
+
+                bool isPlugged = hasPhysiscal && ControllerManager.GetTargetController().IsPlugged();
+                bool isHidden = hasPhysiscal && ControllerManager.GetTargetController().IsHidden();
+
+                bool isNeptune = ControllerManager.GetTargetController().GetType() == typeof(NeptuneController);
+                bool isMuted = SettingsManager.GetBoolean("SteamDeckMuteController");
+
+                InputDevices.Visibility = hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
+                WarningNoPhysical.Visibility = !hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
+
+                // hint: Has physical controller but none are connected
+                HintsNoPhysicalConnected.Visibility = !isPlugged ? Visibility.Visible : Visibility.Collapsed;
+
+                // hint: Has hidden physical controller but no virtual controller
+                bool hiddenbutnovirtual = isHidden && !hasVirtual;
+                HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
+
+                // hint: Has hidden Neptune controller but virtual controller is muted
+                bool neptunehidden = isHidden && isNeptune && isMuted;
+                HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
+
+                // hint: Physical controller is not hidden and virtual controller detected
+                bool notmuted = !isHidden && hasVirtual;
+                HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 

@@ -158,6 +158,12 @@ namespace ControllerService
 
             switch (mode)
             {
+                case HIDmode.Xbox360Controller:
+                    vTarget = new Xbox360Target();
+                    break;
+                case HIDmode.DualShock4Controller:
+                    vTarget = new DualShock4Target();
+                    break;
                 default:
                 case HIDmode.NoController:
                     if (vTarget is not null)
@@ -165,12 +171,6 @@ namespace ControllerService
                         vTarget.Dispose();
                         vTarget = null;
                     }
-                    break;
-                case HIDmode.DualShock4Controller:
-                    vTarget = new DualShock4Target();
-                    break;
-                case HIDmode.Xbox360Controller:
-                    vTarget = new Xbox360Target();
                     break;
             }
 

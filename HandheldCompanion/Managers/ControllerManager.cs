@@ -151,10 +151,10 @@ namespace HandheldCompanion.Managers
             {
                 SetTargetController(path);
             }
-            else if (Controllers.Count != 0)
+            else if (HasPhysicalController())
             {
                 // no known controller, connect to the first available
-                path = Controllers.Keys.FirstOrDefault();
+                path = GetPhysicalControllers().FirstOrDefault().GetInstancePath();
                 SetTargetController(path);
             }
         }
@@ -271,8 +271,10 @@ namespace HandheldCompanion.Managers
                 if (!controller.IsConnected())
                     return;
 
+                /*
                 if (controller.IsVirtual())
                     return;
+                */
 
                 // update or create controller
                 string path = controller.GetInstancePath();
@@ -281,10 +283,6 @@ namespace HandheldCompanion.Managers
                 // raise event
                 ControllerPlugged?.Invoke(controller);
                 ToastManager.SendToast(controller.ToString(), "detected");
-
-                // automatically connect DInput controller if only available
-                if (GetControllerCount() == 1 && SystemManager.IsInitialized)
-                    SetTargetController(path);
             });
         }
 
@@ -296,8 +294,10 @@ namespace HandheldCompanion.Managers
             if (!controller.IsConnected())
                 return;
 
+            /*
             if (controller.IsVirtual())
                 return;
+            */
 
             // XInput controller are handled elsewhere
             if (controller.GetType() == typeof(XInputController))
@@ -342,8 +342,10 @@ namespace HandheldCompanion.Managers
                 // slot is now busy
                 XUsbControllers[slot] = false;
 
+                /*
                 if (controller.IsVirtual())
                     return;
+                */
 
                 // update or create controller
                 string path = controller.GetInstancePath();
@@ -352,10 +354,6 @@ namespace HandheldCompanion.Managers
                 // raise event
                 ControllerPlugged?.Invoke(controller);
                 ToastManager.SendToast(controller.ToString(), "detected");
-
-                // automatically connect XInput controller if only available
-                if (GetControllerCount() == 1 && SystemManager.IsInitialized)
-                    SetTargetController(path);
             });
         }
 
@@ -371,8 +369,10 @@ namespace HandheldCompanion.Managers
             UserIndex slot = (UserIndex)controller.GetUserIndex();
             XUsbControllers[slot] = true;
 
+            /*
             if (controller.IsVirtual())
                 return;
+            */
 
             // controller was unplugged
             Controllers.Remove(details.deviceInstanceId);
@@ -401,8 +401,10 @@ namespace HandheldCompanion.Managers
             if (controller is null)
                 return;
 
+            /*
             if (controller.IsVirtual())
                 return;
+            */
 
             // update target controller
             targetController = controller;
@@ -442,14 +444,24 @@ namespace HandheldCompanion.Managers
             return targetController;
         }
 
-        public static bool HasController()
+        public static bool HasPhysicalController()
         {
-            return Controllers.Count != 0;
+            return GetPhysicalControllers().Count() != 0;
         }
 
-        public static int GetControllerCount()
+        public static bool HasVirtualController()
         {
-            return Controllers.Count;
+            return GetVirtualControllers().Count() != 0;
+        }
+
+        public static IEnumerable<IController> GetPhysicalControllers()
+        {
+            return Controllers.Values.Where(a => !a.IsVirtual()).ToList();
+        }
+
+        public static IEnumerable<IController> GetVirtualControllers()
+        {
+            return Controllers.Values.Where(a => a.IsVirtual()).ToList();
         }
 
         public static List<IController> GetControllers()
