@@ -151,10 +151,10 @@ namespace HandheldCompanion.Managers
             {
                 SetTargetController(path);
             }
-            else if (Controllers.Count != 0)
+            else if (HasPhysicalController())
             {
                 // no known controller, connect to the first available
-                path = Controllers.Keys.FirstOrDefault();
+                path = GetPhysicalControllers().FirstOrDefault().GetInstancePath();
                 SetTargetController(path);
             }
         }
@@ -283,10 +283,6 @@ namespace HandheldCompanion.Managers
                 // raise event
                 ControllerPlugged?.Invoke(controller);
                 ToastManager.SendToast(controller.ToString(), "detected");
-
-                // automatically connect DInput controller if only available
-                if (GetControllerCount() == 1 && SystemManager.IsInitialized)
-                    SetTargetController(path);
             });
         }
 
@@ -358,10 +354,6 @@ namespace HandheldCompanion.Managers
                 // raise event
                 ControllerPlugged?.Invoke(controller);
                 ToastManager.SendToast(controller.ToString(), "detected");
-
-                // automatically connect XInput controller if only available
-                if (GetControllerCount() == 1 && SystemManager.IsInitialized)
-                    SetTargetController(path);
             });
         }
 
@@ -454,17 +446,22 @@ namespace HandheldCompanion.Managers
 
         public static bool HasPhysicalController()
         {
-            return Controllers.Where(a => !a.Value.IsVirtual()).Count() != 0;
+            return GetPhysicalControllers().Count() != 0;
         }
 
         public static bool HasVirtualController()
         {
-            return Controllers.Where(a => a.Value.IsVirtual()).Count() != 0;
+            return GetVirtualControllers().Count() != 0;
         }
 
-        public static int GetControllerCount()
+        public static IEnumerable<IController> GetPhysicalControllers()
         {
-            return Controllers.Count;
+            return Controllers.Values.Where(a => !a.IsVirtual()).ToList();
+        }
+
+        public static IEnumerable<IController> GetVirtualControllers()
+        {
+            return Controllers.Values.Where(a => a.IsVirtual()).ToList();
         }
 
         public static List<IController> GetControllers()
