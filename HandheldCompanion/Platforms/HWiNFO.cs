@@ -383,6 +383,7 @@ namespace HandheldCompanion.Platforms
                                             }
                                             break;
 
+                                        case "GPU ASIC Power":
                                         case "GT Cores Power":
                                         case "GPU SoC Power (VDDCR_SOC)":
                                         case "GPU PPT":
