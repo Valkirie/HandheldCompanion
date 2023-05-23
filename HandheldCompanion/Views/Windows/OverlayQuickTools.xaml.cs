@@ -37,6 +37,7 @@ namespace HandheldCompanion.Views.Windows
         public QuickSuspenderPage suspenderPage;
 
         private HwndSource hwndSource;
+        private Screen currentScreen;
 
         public OverlayQuickTools()
         {
@@ -65,6 +66,8 @@ namespace HandheldCompanion.Views.Windows
             // update Position and Size
             Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
             navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
+
+            currentScreen = Screen.PrimaryScreen;
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -92,14 +95,12 @@ namespace HandheldCompanion.Views.Windows
 
         private void UpdateLocation(int QuickToolsLocation)
         {
-            var desktopWorkingArea = SystemParameters.WorkArea;
-
             switch (QuickToolsLocation)
             {
                 // top, left
                 case 0:
                     {
-                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopLeft, Screen.PrimaryScreen);
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopLeft, currentScreen);
                         this.Top += this.Margin.Top;
                         this.Left += this.Margin.Left;
                     }
@@ -108,7 +109,7 @@ namespace HandheldCompanion.Views.Windows
                 // top, right
                 case 1:
                     {
-                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopRight, Screen.PrimaryScreen);
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.TopRight, currentScreen);
                         this.Top += this.Margin.Top;
                         this.Left -= this.Margin.Left;
                     }
@@ -117,7 +118,7 @@ namespace HandheldCompanion.Views.Windows
                 // bottom, left
                 case 2:
                     {
-                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.BottomLeft, Screen.PrimaryScreen);
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.BottomLeft, currentScreen);
                         this.Top -= this.Margin.Top;
                         this.Left += this.Margin.Left;
                     }
@@ -127,7 +128,7 @@ namespace HandheldCompanion.Views.Windows
                 default:
                 case 3:
                     {
-                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.BottomRight, Screen.PrimaryScreen);
+                        WindowHelper.SetWindowPosition(this, WpfScreenHelper.Enum.WindowPositions.BottomRight, currentScreen);
                         this.Top -= this.Margin.Top;
                         this.Left -= this.Margin.Left;
                     }
