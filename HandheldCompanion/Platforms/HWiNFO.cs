@@ -94,6 +94,9 @@ namespace HandheldCompanion.Platforms
         #region events
         public event LimitChangedHandler PowerLimitChanged;
         public delegate void LimitChangedHandler(PowerType type, int limit);
+
+        public event GPUFrequencyChangedHandler GPUFrequencyChanged;
+        public delegate void GPUFrequencyChangedHandler(double value);
         #endregion
 
         private const string HWiNFO_SHARED_MEM_FILE_NAME = "Global\\HWiNFO_SENS_SM2";
@@ -141,9 +144,10 @@ namespace HandheldCompanion.Platforms
             }
 
             // those are used for computes
-            MonitoredSensors[SensorElementType.PL1] = new SensorElement();
-            MonitoredSensors[SensorElementType.PL2] = new SensorElement();
-            MonitoredSensors[SensorElementType.CPUFrequency] = new SensorElement();
+            MonitoredSensors[SensorElementType.PL1] = new();
+            MonitoredSensors[SensorElementType.PL2] = new();
+            MonitoredSensors[SensorElementType.CPUFrequency] = new();
+            MonitoredSensors[SensorElementType.GPUFrequency] = new();
 
             // our main watchdog to (re)apply requested settings
             base.PlatformWatchdog = new(3000) { Enabled = false };
@@ -430,7 +434,13 @@ namespace HandheldCompanion.Platforms
                                     {
                                         case "GPU Clock":
                                         case "GPU SoC Clock": // keep me ?
-                                            MonitoredSensors[SensorElementType.GPUFrequency] = element;
+                                            {
+                                                double reading = element.Value;
+                                                if (reading != MonitoredSensors[SensorElementType.GPUFrequency].Value)
+                                                    GPUFrequencyChanged?.Invoke(reading);
+
+                                                MonitoredSensors[SensorElementType.GPUFrequency] = element;
+                                            }
                                             break;
 
                                         case "Core 0 Clock":

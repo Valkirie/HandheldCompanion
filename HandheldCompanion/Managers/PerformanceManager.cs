@@ -139,6 +139,8 @@ namespace HandheldCompanion.Managers
             ProfileManager.Discarded += ProfileManager_Discarded;
 
             PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
+            PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
+
             PlatformManager.RTSS.Hooked += RTSS_Hooked;
             PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
@@ -498,7 +500,13 @@ namespace HandheldCompanion.Managers
 
                 // only request an update if current gfx clock is different than stored
                 if (CurrentGfxClock != StoredGfxClock)
-                    processor.SetGPUClock(StoredGfxClock);
+                {
+                    // disabling
+                    if (StoredGfxClock == 12750)
+                        GPUdone = true;
+                    else
+                        processor.SetGPUClock(StoredGfxClock);
+                }
                 else
                     GPUdone = true;
 
@@ -628,6 +636,13 @@ namespace HandheldCompanion.Managers
             PowerLimitChanged?.Invoke(type, limit);
 
             LogManager.LogDebug("PowerLimitChanged: {0}\t{1} W", type, limit);
+        }
+
+        private void HWiNFO_GPUFrequencyChanged(double value)
+        {
+            CurrentGfxClock = value;
+
+            LogManager.LogDebug("GPUFrequencyChanged: {0} Mhz", value);
         }
 
         private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
