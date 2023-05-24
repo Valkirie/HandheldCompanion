@@ -3,9 +3,9 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using neptune_hidapi.net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,6 +91,7 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "SteamDeckMuteController":
                         Toggle_SDMuteController.IsOn = Convert.ToBoolean(value);
+                        ControllerRefresh();
                         break;
                 }
             });
@@ -233,19 +234,20 @@ namespace HandheldCompanion.Views.Pages
                 InputDevices.Visibility = hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
                 WarningNoPhysical.Visibility = !hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
 
-                bool isPlugged = hasTarget && ControllerManager.GetTargetController().IsPlugged();
-                bool isHidden = hasTarget && ControllerManager.GetTargetController().IsHidden();
-                bool isNeptune = hasTarget && ControllerManager.GetTargetController().GetType() == typeof(NeptuneController);
+                IController target = ControllerManager.GetTargetController();
+                bool isPlugged = hasTarget && target.IsPlugged();
+                bool isHidden = hasTarget && target.IsHidden();
+                bool isNeptune = hasTarget && target.GetType().Equals(typeof(NeptuneController));
                 bool isMuted = SettingsManager.GetBoolean("SteamDeckMuteController");
 
                 // hint: Has physical controller, but is not connected
                 HintsNoPhysicalConnected.Visibility = hasPhysiscal && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
 
-                // hint: Has physical controller hidden, but no virtual controller
-                bool hiddenbutnovirtual = isHidden && !hasVirtual;
+                // hint: Has physical controller (not Neptune) hidden, but no virtual controller
+                bool hiddenbutnovirtual = isHidden && !isNeptune && !hasVirtual;
                 HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
-                // hint: Has physical controller (Neptine) hidden, but virtual controller is muted
+                // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
                 bool neptunehidden = isHidden && isNeptune && isMuted;
                 HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
