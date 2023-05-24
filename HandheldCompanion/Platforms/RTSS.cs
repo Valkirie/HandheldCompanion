@@ -420,41 +420,11 @@ namespace HandheldCompanion.Platforms
         {
             if (!IsInstalled)
                 return false;
+
             if (IsRunning())
-                return false;
+                KillProcess();
 
-            try
-            {
-                // set lock
-                IsStarting = true;
-
-                var process = Process.Start(new ProcessStartInfo()
-                {
-                    FileName = ExecutablePath,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                });
-
-                if (process is not null)
-                {
-                    process.EnableRaisingEvents = true;
-                    process.Exited += Process_Exited;
-
-                    process.WaitForInputIdle();
-
-                    // (re)start watchdog
-                    PlatformWatchdog.Start();
-
-                    // release lock
-                    IsStarting = false;
-                }
-
-                return true;
-            }
-            catch { }
-
-            return false;
+            return base.StartProcess();
         }
 
         public override bool StopProcess()

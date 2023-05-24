@@ -248,12 +248,6 @@ namespace HandheldCompanion.Platforms
             MemoryTimer.Start();
         }
 
-        private void Process_Exited(object? sender, EventArgs e)
-        {
-            if (KeepAlive)
-                StartProcess();
-        }
-
         public void GetSensors()
         {
             try
@@ -547,8 +541,9 @@ namespace HandheldCompanion.Platforms
         {
             if (!IsInstalled)
                 return false;
+
             if (IsRunning())
-                return false;
+                KillProcess();
 
             // (re)set elements
             DisposeMemory();
@@ -560,51 +555,19 @@ namespace HandheldCompanion.Platforms
             // Todo: make this configurable ?
             SetProperty("OpenSensors", 1);
             SetProperty("MinimalizeSensors", 1);
+            SetProperty("OpenSystemSummary", 0);
+            SetProperty("AutoUpdate", 0);
+            SetProperty("ShowWelcomeAndProgress", 0);
 
-            try
-            {
-                // set lock
-                IsStarting = true;
+            // stop watchdog
+            PlatformWatchdog.Stop();
 
-                // stop watchdog
-                PlatformWatchdog.Stop();
-
-                var process = Process.Start(new ProcessStartInfo()
-                {
-                    FileName = ExecutablePath,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                });
-
-                if (process is not null)
-                {
-                    process.EnableRaisingEvents = true;
-                    process.Exited += Process_Exited;
-
-                    process.WaitForInputIdle();
-
-                    // (re)start watchdog
-                    PlatformWatchdog.Start();
-
-                    // release lock
-                    IsStarting = false;
-                }
-
-                return true;
-            }
-            catch { }
-
-            return false;
+            return base.StartProcess();
         }
 
         public override bool StopProcess()
         {
             if (IsStarting)
-                return false;
-            if (!IsInstalled)
-                return false;
-            if (!IsRunning())
                 return false;
 
             KillProcess();

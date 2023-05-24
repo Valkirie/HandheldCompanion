@@ -5,7 +5,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Platforms
 {
@@ -160,8 +162,53 @@ namespace ControllerCommon.Platforms
             return true;
         }
 
+        protected virtual void Process_Exited(object? sender, EventArgs e)
+        {
+            if (KeepAlive)
+                StartProcess();
+        }
+
         public virtual bool StartProcess()
         {
+            try
+            {
+                // set lock
+                IsStarting = true;
+
+                Process process = null;
+                while (process is null)
+                {
+                    process = Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = ExecutablePath,
+                        WindowStyle = ProcessWindowStyle.Minimized,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    });
+
+                    Thread.Sleep(500);
+
+                    if (process is not null)
+                    {
+                        process.EnableRaisingEvents = true;
+                        process.Exited += Process_Exited;
+
+                        process.WaitForInputIdle();
+
+                        // (re)start watchdog
+                        PlatformWatchdog.Start();
+
+                        // release lock
+                        IsStarting = false;
+
+                        return true;
+                    }
+
+                    Thread.Sleep(500);
+                }
+            }
+            catch { }
+
             return false;
         }
 
@@ -172,16 +219,15 @@ namespace ControllerCommon.Platforms
 
         public bool KillProcess()
         {
-            var process = Process;
-            if (process is null)
-                return true;
+            if (Process is null)
+                return false;
 
             try
             {
-                using (process) { process.Kill(); }
+                Process.Kill();
                 return true;
             }
-            catch (Win32Exception)
+            catch
             {
                 return false;
             }
