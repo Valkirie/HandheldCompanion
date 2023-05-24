@@ -151,8 +151,8 @@ namespace HandheldCompanion.Managers
 
             // get current rendering engine
             int intFlag = (int)OnScreenAppEntry.Flags;
-            if (intFlag > 0xFFFF)
-                intFlag -= 0x10000;
+            intFlag &= 0xFFFF; // use bitwise AND to clear the bits above 0xFFFF
+            intFlag = intFlag > (int)AppFlagsEx.Vulkan ? (int)AppFlagsEx.Vulkan : intFlag;
 
             string AppFlag = "FPS";
             if (Enum.IsDefined(typeof(AppFlagsEx), intFlag))
