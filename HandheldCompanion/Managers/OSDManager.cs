@@ -150,7 +150,13 @@ namespace HandheldCompanion.Managers
             Content = new();
 
             // get current rendering engine
-            string AppFlag = string.Join(',', (AppFlagsEx)OnScreenAppEntry.Flags);
+            int intFlag = (int)OnScreenAppEntry.Flags;
+            if (intFlag > 0xFFFF)
+                intFlag -= 0x10000;
+
+            string AppFlag = "FPS";
+            if (Enum.IsDefined(typeof(AppFlagsEx), intFlag))
+                AppFlag = Convert.ToString((AppFlagsEx)intFlag);
 
             switch (OverlayLevel)
             {
