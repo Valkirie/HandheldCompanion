@@ -129,14 +129,23 @@ namespace HandheldCompanion.Controls
 
             try
             {
+                if (process.Threads is null || process.Threads.Count == 0)
+                    return null;
+
                 foreach (ProcessThread thread in process.Threads)
                 {
+                    if (thread.ThreadState != ThreadState.Running)
+                        continue;
+
                     if (thread.StartTime < startTime)
                     {
                         startTime = thread.StartTime;
                         mainThread = thread;
                     }
                 }
+
+                if (mainThread is null)
+                    mainThread = process.Threads[0];
             }
             catch (Win32Exception)
             {
@@ -146,9 +155,6 @@ namespace HandheldCompanion.Controls
             {
                 // thread has exited
             }
-
-            if (mainThread is null)
-                mainThread = process.Threads[0];
 
             return mainThread;
         }
