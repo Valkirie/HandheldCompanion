@@ -92,8 +92,6 @@ namespace HandheldCompanion.Views.Windows
 
         private void UpdateLocation(int QuickToolsLocation)
         {
-            var desktopWorkingArea = SystemParameters.WorkArea;
-
             switch (QuickToolsLocation)
             {
                 // top, left
@@ -133,6 +131,11 @@ namespace HandheldCompanion.Views.Windows
                     }
                     break;
             }
+
+            // prevent window's from being too tall
+            int maxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - this.Margin.Top);
+            if (this.Height > maxHeight)
+                this.Height = maxHeight;
         }
 
         private void PowerManager_PowerStatusChanged(PowerStatus status)
