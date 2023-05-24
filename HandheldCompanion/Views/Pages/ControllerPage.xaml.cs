@@ -244,7 +244,7 @@ namespace HandheldCompanion.Views.Pages
                 HintsNoPhysicalConnected.Visibility = hasPhysiscal && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
 
                 // hint: Has physical controller (not Neptune) hidden, but no virtual controller
-                bool hiddenbutnovirtual = isHidden && !isNeptune && !hasVirtual;
+                bool hiddenbutnovirtual = isHidden && !hasVirtual;
                 HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
                 // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
@@ -252,7 +252,7 @@ namespace HandheldCompanion.Views.Pages
                 HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
                 // hint: Has physical controller not hidden, and virtual controller
-                bool notmuted = !isHidden && hasVirtual;
+                bool notmuted = !isHidden && !isNeptune && hasVirtual;
                 HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
             });
         }
