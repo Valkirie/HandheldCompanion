@@ -8,6 +8,7 @@ using HandheldCompanion.Managers.Desktop;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -66,7 +67,6 @@ namespace HandheldCompanion.Platforms
         private ConcurrentList<int> HookedProcessIds = new();
         private const int MaxTentative = 10;
 
-        [Flags]
         public enum AppFlagsEx
         {
             None = 0x0,
@@ -214,10 +214,6 @@ namespace HandheldCompanion.Platforms
                 catch (Exception) { }
 
                 HookTentative++;
-
-                // RTSS couldn't hook into process
-                if (HookTentative == MaxTentative)
-                    return;
 
                 await Task.Delay(250);
             }
