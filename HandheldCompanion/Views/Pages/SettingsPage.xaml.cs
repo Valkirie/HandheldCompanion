@@ -520,6 +520,8 @@ namespace HandheldCompanion.Views.Pages
 
         private void SwitchBackdrop(Window targetWindow, int idx)
         {
+            targetWindow.ApplyTemplate();
+
             switch (idx)
             {
                 case 0: // "None":
