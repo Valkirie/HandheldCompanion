@@ -21,7 +21,6 @@ namespace ControllerCommon.Sensors
 
     public class SerialUSBIMU
     {
-        // Global variables that can be updated or output etc
         private Vector3 AccelerationG = new Vector3();      // accelerometer
         private Vector3 AngularVelocityDeg = new Vector3(); // gyrometer
 
@@ -31,8 +30,8 @@ namespace ControllerCommon.Sensors
 
         public static Dictionary<KeyValuePair<string, string>, SerialPortEx> vendors = new()
         {
-			// USB Gyro v2
-			{
+		// USB Gyro v2
+		{
                 new KeyValuePair<string, string>("1A86", "7523"),
                 new SerialPortEx() {
                     BaudRate = 115200, DataBits = 8, Parity = Parity.None, StopBits = StopBits.One,
