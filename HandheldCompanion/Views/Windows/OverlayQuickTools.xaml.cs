@@ -132,8 +132,8 @@ namespace HandheldCompanion.Views.Windows
                     break;
             }
 
-            // prevent window's from being too tall
-            int maxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - this.Margin.Top);
+            // prevent window's from being too tall, add margin for top and bottom
+            int maxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - 2 * this.Margin.Top);
             if (this.Height > maxHeight)
                 this.Height = maxHeight;
         }
