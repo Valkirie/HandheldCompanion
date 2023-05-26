@@ -554,11 +554,11 @@
                                     Glyph="&#xE877;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Rumble engine" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use old rumble engine" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Use old rumble engine (reduce CPU usage, has worst rumble feeling)"
+                                        Text="The rumble experience may be poorer, but processor usage is reduced"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>

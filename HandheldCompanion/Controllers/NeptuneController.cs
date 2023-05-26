@@ -71,6 +71,12 @@ namespace HandheldCompanion.Controllers
             SetLizardMouse(false);
             SetLizardButtons(false);
 
+            bool Muted = SettingsManager.GetBoolean("SteamDeckMuteController");
+            SetVirtualMuted(Muted);
+
+            bool RumbleEngine = SettingsManager.GetBoolean("SteamDeckRumbleEngine");
+            SetRumbleEngine(RumbleEngine);
+
             // UI
             DrawControls();
             RefreshControls();
@@ -83,10 +89,6 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.LeftPad);
             SourceAxis.Add(AxisLayoutFlags.RightPad);
-
-            // Create Haptic2 rumble thread
-            RumbleThread = new Thread(ThreadLoop);
-            RumbleThread.IsBackground = true;
 
             RumblePeriod = (ushort)(TimerManager.GetPeriod() * 2);
         }
@@ -306,10 +308,9 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick += UpdateInputs;
             TimerManager.Tick += UpdateMovements;
 
-            if (!OldRumbleEngine)
-                RumbleThread.Start();
-
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+
+            SetRumbleEngine(OldRumbleEngine);
 
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
@@ -375,11 +376,12 @@ namespace HandheldCompanion.Controllers
 
         public void SetHaptic()
         {
-            if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
-                _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, RumblePeriod, 0);
+            ushort testPeriod = (ushort)(RumblePeriod * 5);
+            GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity);
+            _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, testPeriod, 10);
 
-            if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
-                _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, RumblePeriod, 0);
+            GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity);
+            _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, testPeriod, 10);
         }
 
         private void OnServerMessage(PipeMessage message)
@@ -414,28 +416,37 @@ namespace HandheldCompanion.Controllers
         {
             OldRumbleEngine = rumbleEngine;
 
+            if (!IsPlugged())
+                return;
+
             switch(OldRumbleEngine)
             {
                 // new engine
                 default:
                 case false:
                     {
-                        if (IsPlugged())
+                        if (RumbleThreadRunning)
+                            return;
+
+                        RumbleThreadRunning = true;
+
+                        // Create Haptic2 rumble thread
+                        RumbleThread = new Thread(ThreadLoop)
                         {
-                            RumbleThreadRunning = true;
-                            RumbleThread.Start();
-                        }
+                            IsBackground = true
+                        };
+
+                        RumbleThread.Start();
                     }
                     break;
 
                 // old engine
                 case true:
                     {
-                        if (IsPlugged())
-                        {
-                            RumbleThreadRunning = false;
-                            RumbleThread.Suspend();
-                        }
+                        if (!RumbleThreadRunning)
+                            return;
+
+                        RumbleThreadRunning = false;
                     }
                     break;
             }
