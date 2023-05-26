@@ -32,8 +32,8 @@ namespace HandheldCompanion.Controllers
         public const sbyte MinIntensity = -2;
         public const sbyte MaxIntensity = 10;
 
-        private int RumbleEngine = 0;
-        private int RumblePeriod = 8;
+        private bool OldRumbleEngine = false;
+        private ushort RumblePeriod = 8;
 
         private Thread RumbleThread;
         private bool RumbleThreadRunning;
@@ -88,7 +88,7 @@ namespace HandheldCompanion.Controllers
             RumbleThread = new Thread(ThreadLoop);
             RumbleThread.IsBackground = true;
 
-            RumblePeriod = TimerManager.GetPeriod() * 2;
+            RumblePeriod = (ushort)(TimerManager.GetPeriod() * 2);
         }
 
         private async void ThreadLoop(object? obj)
@@ -306,7 +306,7 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick += UpdateInputs;
             TimerManager.Tick += UpdateMovements;
 
-            if (RumbleEngine == 0)
+            if (!OldRumbleEngine)
                 RumbleThread.Start();
 
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
@@ -369,17 +369,17 @@ namespace HandheldCompanion.Controllers
             this.FeedbackLargeMotor = LargeMotor;
             this.FeedbackSmallMotor = SmallMotor;
 
-            if (RumbleEngine == 1)
+            if (OldRumbleEngine)
                 SetHaptic();
         }
 
         public void SetHaptic()
         {
             if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
-                _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, (ushort)RumblePeriod, 0);
+                _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, RumblePeriod, 0);
 
             if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
-                _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, (ushort)RumblePeriod, 0);
+                _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, RumblePeriod, 0);
         }
 
         private void OnServerMessage(PipeMessage message)
@@ -410,29 +410,31 @@ namespace HandheldCompanion.Controllers
             isVirtualMuted = mute;
         }
 
-        public void SetRumbleEngine(int rumbleEngine)
+        public void SetRumbleEngine(bool rumbleEngine)
         {
-            RumbleEngine = rumbleEngine;
+            OldRumbleEngine = rumbleEngine;
 
-            switch(RumbleEngine)
+            switch(OldRumbleEngine)
             {
                 // new engine
                 default:
-                case 0:
+                case false:
                     {
-                        RumbleThreadRunning = true;
-
                         if (IsPlugged())
+                        {
+                            RumbleThreadRunning = true;
                             RumbleThread.Start();
+                        }
                     }
                     break;
 
                 // old engine
-                case 1:
+                case true:
                     {
                         if (IsPlugged())
                         {
                             RumbleThreadRunning = false;
+                            RumbleThread.Suspend();
                         }
                     }
                     break;

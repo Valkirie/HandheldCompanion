@@ -148,7 +148,7 @@ namespace HandheldCompanion.Managers
                             if (typeof(NeptuneController) != target.GetType())
                                 return;
 
-                            int RumbleEngine = Convert.ToInt32(value);
+                            bool RumbleEngine = Convert.ToBoolean(value);
                             ((NeptuneController)target).SetRumbleEngine(RumbleEngine);
                         }
                         break;

@@ -793,10 +793,10 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SteamDeckRumbleEngine {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SteamDeckRumbleEngine {
             get {
-                return ((int)(this["SteamDeckRumbleEngine"]));
+                return ((bool)(this["SteamDeckRumbleEngine"]));
             }
             set {
                 this["SteamDeckRumbleEngine"] = value;
