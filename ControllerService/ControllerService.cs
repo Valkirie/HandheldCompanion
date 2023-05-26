@@ -49,6 +49,7 @@ namespace ControllerService
         private static SensorFamily SensorSelection;
         private static int SensorPlacement;
         private static bool SensorPlacementUpsideDown;
+        private SerialUSBIMU sensor;
 
         // profile vars
         public static Profile currentProfile = new();
@@ -98,10 +99,8 @@ namespace ControllerService
             PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            DeviceManager.UsbDeviceArrived += GenericDeviceArrived;
             DeviceManager.UsbDeviceRemoved += GenericDeviceRemoved;
             DeviceManager.Start();
-            GenericDeviceArrived(null, null);
 
             // initialize device
             handheldDevice = IDevice.GetDefault();
@@ -112,38 +111,13 @@ namespace ControllerService
             DSUServer.Stopped += OnDSUStopped;
         }
 
-        private SerialUSBIMU sensor;
-        private void GenericDeviceArrived(PnPDevice device, DeviceEventArgs obj)
-        {
-            switch (SensorSelection)
-            {
-                case SensorFamily.SerialUSBIMU:
-                    {
-                        sensor = SerialUSBIMU.GetDefault();
-
-                        if (sensor is null)
-                            break;
-
-                        sensor.Open();
-                        sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-                    }
-                    break;
-            }
-        }
-
         private void GenericDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
         {
-            switch (SensorSelection)
-            {
-                case SensorFamily.SerialUSBIMU:
-                    {
-                        if (sensor is null)
-                            break;
+            // If the USB Gyro is unplugged, close serial connection
+            if (sensor is null)
+                return;
 
-                        sensor.Close();
-                    }
-                    break;
-            }
+            sensor.Close();
         }
 
         private void SetControllerMode(HIDmode mode)
@@ -484,8 +458,32 @@ namespace ControllerService
                         SensorSelection = value;
 
                         IMU.Stop();
+
+                        // In case selection is antyhing other then the USG Gyro, close serial connection
+                        // Todo, possible improvement, use a previous selected variable
+                        if (SensorSelection != SensorFamily.SerialUSBIMU)
+                        {
+                            if (sensor is null)
+                                break;
+                            
+                            sensor.Close();
+                        }
+
                         IMU.SetSensorFamily(SensorSelection);
                         IMU.Start();
+
+                        // Establish serial port connection on selection change to USG Gyro
+                        if (SensorSelection == SensorFamily.SerialUSBIMU)
+                        {
+                            sensor = SerialUSBIMU.GetDefault();
+
+                            if (sensor is null)
+                                break;
+
+                            sensor.Open();
+                            sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                        }
+
                     }
                     break;
             }
