@@ -113,6 +113,7 @@ namespace HandheldCompanion.Managers
                                     break;
                                 case 2:
                                 case 3:
+                                    CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                                     CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
                                     break;
                             }
