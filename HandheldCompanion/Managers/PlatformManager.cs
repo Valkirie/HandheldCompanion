@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
@@ -20,6 +21,9 @@ namespace HandheldCompanion.Managers
         // misc platforms
         public static RTSS RTSS = new();
         public static HWiNFO HWiNFO = new();
+
+        private const int UpdateInterval = 1000;
+        private static Timer UpdateTimer;
 
         private static bool IsInitialized;
 
@@ -54,6 +58,10 @@ namespace HandheldCompanion.Managers
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             ProfileManager.Applied += ProfileManager_Applied;
 
+            UpdateTimer = new Timer(UpdateInterval);
+            UpdateTimer.AutoReset = false;
+            UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
+
             IsInitialized = true;
 
             LogManager.LogInformation("{0} has started", "PlatformManager");
@@ -73,7 +81,8 @@ namespace HandheldCompanion.Managers
             else
                 CurrentNeeds &= ~PlatformNeeds.FramerateLimiter;
 
-            MonitorPlatforms();
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
         }
 
         [Flags]
@@ -113,59 +122,15 @@ namespace HandheldCompanion.Managers
                                     break;
                                 case 2:
                                 case 3:
+                                    CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                                     CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
                                     break;
                             }
 
-                            MonitorPlatforms();
+                            UpdateTimer.Stop();
+                            UpdateTimer.Start();
                         }
                         break;
-
-                    /*
-                     case "PlatformRTSSEnabled":
-                        {
-                            if (!RTSS.IsInstalled)
-                                return;
-
-                            bool toggle = Convert.ToBoolean(value);
-
-                            new Thread(() =>
-                            {
-                                switch (toggle)
-                                {
-                                    case true:
-                                        RTSS.Start();
-                                        break;
-                                    case false:
-                                        RTSS.Stop();
-                                        break;
-                                }
-                            }).Start();
-                        }
-                        break;
-
-                    case "PlatformHWiNFOEnabled":
-                        {
-                            if (!HWiNFO.IsInstalled)
-                                return;
-
-                            bool toggle = Convert.ToBoolean(value);
-
-                            new Thread(() =>
-                            {
-                                switch (toggle)
-                                {
-                                    case true:
-                                        HWiNFO.Start();
-                                        break;
-                                    case false:
-                                        HWiNFO.Stop();
-                                        break;
-                                }
-                            }).Start();
-                        }
-                        break;
-                    */
                 }
             });
         }
@@ -282,16 +247,16 @@ namespace HandheldCompanion.Managers
                 UbisoftConnect.Dispose();
             }
 
-            bool killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
             if (RTSS.IsInstalled)
             {
+                bool killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
                 RTSS.Stop(killRTSS);
                 RTSS.Dispose();
             }
 
-            bool killHWiNFO = SettingsManager.GetBoolean("PlatformHWiNFOEnabled");
             if (HWiNFO.IsInstalled)
             {
+                bool killHWiNFO = SettingsManager.GetBoolean("PlatformHWiNFOEnabled");
                 HWiNFO.Stop(killHWiNFO);
                 HWiNFO.Dispose();
             }
