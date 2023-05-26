@@ -282,15 +282,17 @@ namespace HandheldCompanion.Managers
                 UbisoftConnect.Dispose();
             }
 
+            bool killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
             if (RTSS.IsInstalled)
             {
-                RTSS.Stop();
+                RTSS.Stop(killRTSS);
                 RTSS.Dispose();
             }
 
+            bool killHWiNFO = SettingsManager.GetBoolean("PlatformHWiNFOEnabled");
             if (HWiNFO.IsInstalled)
             {
-                HWiNFO.Stop();
+                HWiNFO.Stop(killHWiNFO);
                 HWiNFO.Dispose();
             }
 

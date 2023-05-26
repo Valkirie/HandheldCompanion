@@ -875,10 +875,7 @@
             </ui:SimpleStackPanel>
 
             <!--  Third-party applications  -->
-            <ui:SimpleStackPanel
-                d:Visibility="Visible"
-                Spacing="6"
-                Visibility="Collapsed">
+            <ui:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Third-pary applications" />
 
                 <!--  RTSS  -->
@@ -905,7 +902,7 @@
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Enable or disable RTSS support.&#x0a;RTSS is used by the following features: Automatic TDP and On-screen display"
+                                    Text="Automatically turn RTSS off when companion is closed"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -943,7 +940,7 @@
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Enable or disable HWiNFO support.&#x0a;HWiNFO is used by the following features: On-screen display"
+                                    Text="Automatically turn HWiNFO off when companion is closed"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
