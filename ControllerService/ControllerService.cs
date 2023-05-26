@@ -118,6 +118,14 @@ namespace ControllerService
                 return;
 
             sensor.Close();
+
+            // Stop IMU is USB Gyro was our motion source
+            switch (SensorSelection)
+            {
+                case SensorFamily.SerialUSBIMU:
+                    IMU.Stop();
+                    break;
+            }
         }
 
         private void SetControllerMode(HIDmode mode)
@@ -455,22 +463,14 @@ namespace ControllerService
                         if (SensorSelection == value)
                             return;
 
-                        SensorSelection = value;
-
-                        IMU.Stop();
-
-                        // In case selection is antyhing other then the USG Gyro, close serial connection
-                        // Todo, possible improvement, use a previous selected variable
-                        if (SensorSelection != SensorFamily.SerialUSBIMU)
+                        // In case current selection is USG Gyro, close serial connection
+                        if (SensorSelection == SensorFamily.SerialUSBIMU)
                         {
-                            if (sensor is null)
-                                break;
-                            
-                            sensor.Close();
+                            if (sensor is not null)
+                                sensor.Close();
                         }
 
-                        IMU.SetSensorFamily(SensorSelection);
-                        IMU.Start();
+                        SensorSelection = value;
 
                         // Establish serial port connection on selection change to USG Gyro
                         if (SensorSelection == SensorFamily.SerialUSBIMU)
@@ -484,6 +484,9 @@ namespace ControllerService
                             sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
                         }
 
+                        IMU.Stop();
+                        IMU.SetSensorFamily(SensorSelection);
+                        IMU.Start();
                     }
                     break;
             }
