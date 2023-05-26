@@ -138,7 +138,10 @@ namespace ControllerCommon.Platforms
 
         public virtual bool IsRunning()
         {
-            return Process is not null && !Process.HasExited;
+            if (Process is null)
+                return false;
+
+            return !Process.HasExited;
         }
 
         public virtual bool Start()
@@ -152,7 +155,7 @@ namespace ControllerCommon.Platforms
             return true;
         }
 
-        public virtual bool Stop()
+        public virtual bool Stop(bool kill = false)
         {
             KeepAlive = false;
 
@@ -160,7 +163,8 @@ namespace ControllerCommon.Platforms
             if (PlatformWatchdog is not null)
                 PlatformWatchdog.Stop();
 
-            KillProcess();
+            if (kill)
+                KillProcess();
 
             return true;
         }

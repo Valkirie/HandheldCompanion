@@ -142,7 +142,7 @@ namespace HandheldCompanion.Views.QuickPages
             ScreenFrequency frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
 
             // update current screen resolution
-            SystemManager.SetResolution(resolution.width, resolution.height, (int)frequency.GetFrequency(Frequency.Full));
+            SystemManager.SetResolution(resolution.width, resolution.height, (int)frequency.GetValue(Frequency.Full));
         }
 
         private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)

@@ -147,29 +147,9 @@ namespace HandheldCompanion.Platforms
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
             ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
-
-            ProfileManager.Updated += ProfileManager_Updated;
             ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
 
             return base.Start();
-        }
-
-        public override bool Stop()
-        {
-            base.Stop();
-            return true;
-        }
-
-        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
-        {
-            // skip if part of a profile swap
-            if (isUpdate)
-                return;
-
-            // restore default framerate
-            if (profile.FramerateEnabled)
-                RequestFPS(0);
         }
 
         private void ProfileManager_Applied(Profile profile)
@@ -177,7 +157,7 @@ namespace HandheldCompanion.Platforms
             // apply profile defined framerate
             if (profile.FramerateEnabled)
             {
-                double frequency = SystemManager.GetDesktopScreen().GetFrequency().GetFrequency((Frequency)profile.FramerateValue);
+                int frequency = (int)Math.Floor(SystemManager.GetDesktopScreen().GetFrequency().GetValue((Frequency)profile.FramerateValue));
                 RequestFPS(frequency);
             }
             else
@@ -185,14 +165,6 @@ namespace HandheldCompanion.Platforms
                 // restore default framerate
                 RequestFPS(0);
             }
-        }
-
-        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
-        {
-            if (!isCurrent)
-                return;
-
-            ProfileManager_Applied(profile);
         }
 
         private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
@@ -215,9 +187,12 @@ namespace HandheldCompanion.Platforms
 
                 HookTentative++;
 
-                await Task.Delay(250);
+                await Task.Delay(1000);
             }
-            while (appEntry is null);
+            while (appEntry is null && KeepAlive);
+
+            if (appEntry is null)
+                return;
 
             // raise event
             Hooked?.Invoke(appEntry);
@@ -407,9 +382,13 @@ namespace HandheldCompanion.Platforms
             */
         }
 
-        public void RequestFPS(double framerate)
+        public void RequestFPS(int framerate)
         {
-            RequestedFramerate = (int)framerate;
+            if (RequestedFramerate == framerate)
+                return;
+
+            RequestedFramerate = framerate;
+            SetTargetFPS(framerate);
         }
 
         public override bool StartProcess()

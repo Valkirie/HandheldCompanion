@@ -109,7 +109,6 @@ namespace HandheldCompanion.Managers
         private bool AutoTDPFirstRun = true;
         private int AutoTDPProcessId;
 
-        private bool AutoTDPEnabled;
         private double AutoTDP;
         private double AutoTDPTargetFPS;
         private double AutoTDPMin;
@@ -135,8 +134,6 @@ namespace HandheldCompanion.Managers
             AutoTDPWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
             ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Updated += ProfileManager_Updated;
-            ProfileManager.Discarded += ProfileManager_Discarded;
 
             PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
             PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
@@ -166,35 +163,6 @@ namespace HandheldCompanion.Managers
                         AutoTDP = (AutoTDPMax + AutoTDPMin) / 2.0d;
                     }
                     break;
-            }
-        }
-
-        private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
-        {
-            if (!isCurrent)
-                return;
-
-            ProfileManager_Applied(profile);
-        }
-
-        private void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
-        {
-            // skip if part of a profile swap
-            if (isUpdate)
-                return;
-
-            // restore default TDP and halt watchdog
-            if (profile.TDPOverrideEnabled || profile.AutoTDPEnabled)
-            {
-                RequestTDP(MainWindow.CurrentDevice.nTDP);
-                StopTDPWatchdog();
-            }
-
-            // restore default GPU and halt watchdog
-            if (profile.GPUOverrideEnabled)
-            {
-                RequestGPUClock(255 * 50);
-                StopGPUWatchdog();
             }
         }
 
@@ -228,33 +196,29 @@ namespace HandheldCompanion.Managers
             if (profile.AutoTDPEnabled)
             {
                 AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
-                AutoTDPEnabled = true;
+                AutoTDPWatchdog.Start();
             }
             else
             {
-                AutoTDPEnabled = false;
+                AutoTDPWatchdog.Stop();
             }
         }
 
         private void RTSS_Hooked(AppEntry appEntry)
         {
             AutoTDPProcessId = appEntry.ProcessId;
-            AutoTDPWatchdog.Start();
         }
 
         private void RTSS_Unhooked(int processId)
         {
             AutoTDPProcessId = 0;
-            AutoTDPWatchdog.Stop();
         }
 
         private void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            // Auto TDP needs to be activated
-            if (!AutoTDPEnabled)
-            {
+            // We don't have any hooked process
+            if (AutoTDPProcessId == 0)
                 return;
-            }
 
             if (Monitor.TryEnter(AutoTDPWatchdogLock))
             {

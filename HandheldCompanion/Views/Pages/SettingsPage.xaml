@@ -875,7 +875,10 @@
             </ui:SimpleStackPanel>
 
             <!--  Third-party applications  -->
-            <ui:SimpleStackPanel Spacing="6">
+            <ui:SimpleStackPanel
+                d:Visibility="Visible"
+                Spacing="6"
+                Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Third-pary applications" />
 
                 <!--  RTSS  -->

@@ -46,7 +46,7 @@ namespace HandheldCompanion.Managers.Desktop
             this.frequencies[Frequency.Full] = frequency;
         }
 
-        public double GetFrequency(Frequency frequency)
+        public double GetValue(Frequency frequency)
         {
             return this.frequencies[frequency];
         }

@@ -73,8 +73,6 @@ namespace HandheldCompanion.Managers
             };
 
             ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Updated += ProfileManager_Updated;
-            ProfileManager.Discarded += ProfileManager_Discarded;
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -192,20 +190,6 @@ namespace HandheldCompanion.Managers
         private static void ProfileManager_Applied(Profile profile)
         {
             SetProfileLayout(profile);
-        }
-
-        private static void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
-        {
-            // ignore profile update if not current or not running
-            if (isCurrent && (profile.ErrorCode.HasFlag(ProfileErrorCode.Running & ProfileErrorCode.Default)))
-                SetProfileLayout(profile);
-        }
-
-        private static void ProfileManager_Discarded(Profile profile, bool isCurrent, bool isUpdate)
-        {
-            // ignore discard signal if part of a profile switch
-            if (!isUpdate)
-                SetProfileLayout();
         }
 
         private static void SetProfileLayout(Profile profile = null)

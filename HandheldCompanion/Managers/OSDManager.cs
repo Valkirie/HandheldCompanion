@@ -16,7 +16,7 @@ namespace HandheldCompanion.Managers
     public static class OSDManager
     {
         private static bool IsInitialized;
-        private static short OverlayLevel;
+        public static short OverlayLevel;
 
         private static PrecisionTimer RefreshTimer;
         private static int RefreshInterval = 100;

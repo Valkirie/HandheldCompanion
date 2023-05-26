@@ -27,14 +27,11 @@ namespace HandheldCompanion.Managers
         public delegate void DeletedEventHandler(Profile profile);
         public static event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile, ProfileUpdateSource source, bool isCurrent);
-        public static event InitializedEventHandler Initialized;
-        public delegate void InitializedEventHandler();
-
         public static event AppliedEventHandler Applied;
         public delegate void AppliedEventHandler(Profile profile);
 
-        public static event DiscardedEventHandler Discarded;
-        public delegate void DiscardedEventHandler(Profile profile, bool isCurrent, bool isUpdate);
+        public static event InitializedEventHandler Initialized;
+        public delegate void InitializedEventHandler();
         #endregion
 
         private static Profile currentProfile;
@@ -181,12 +178,6 @@ namespace HandheldCompanion.Managers
 
                 if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
                 {
-                    // warn owner
-                    bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
-
-                    // raise event
-                    Discarded?.Invoke(profile, isCurrent, true);
-
                     // update profile
                     UpdateOrCreateProfile(profile);
 
@@ -220,13 +211,6 @@ namespace HandheldCompanion.Managers
             try
             {
                 Profile profile = GetProfileFromPath(proc.Path, false);
-
-                // skip if is current profile
-                if (profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase))
-                    return;
-
-                // raise event
-                Discarded?.Invoke(currentProfile, true, true);
 
                 // update profile executable path
                 if (!profile.Default)
@@ -342,7 +326,6 @@ namespace HandheldCompanion.Managers
 
                 // raise event(s)
                 Deleted?.Invoke(profile);
-                Discarded?.Invoke(profile, isCurrent, true);
 
                 // send toast
                 // todo: localize me
