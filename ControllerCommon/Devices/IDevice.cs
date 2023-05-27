@@ -61,6 +61,9 @@ namespace ControllerCommon.Devices
         // device GfxClock frequency limits
         public double[] GfxClock = { 100, 1800 };
 
+        // mininum delay before trying to emulate a virtual controller on system resume (milliseconds)
+        public short ResumeDelay = 6000;
+
         public Vector3 AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
         public SortedDictionary<char, char> AngularVelocityAxisSwap = new()
         {
