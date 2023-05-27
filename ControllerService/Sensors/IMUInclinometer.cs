@@ -51,7 +51,7 @@ namespace ControllerService.Sensors
             {
                 case SensorFamily.Windows:
                     ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
-                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
+                    filter.SetFilterAttrs(ControllerService.CurrentDevice.oneEuroSettings.minCutoff, ControllerService.CurrentDevice.oneEuroSettings.beta);
 
                     LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
