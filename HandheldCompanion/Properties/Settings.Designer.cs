@@ -790,5 +790,17 @@ namespace HandheldCompanion.Properties {
                 this["QuicktoolsBackdrop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SteamDeckHDRumble {
+            get {
+                return ((bool)(this["SteamDeckHDRumble"]));
+            }
+            set {
+                this["SteamDeckHDRumble"] = value;
+            }
+        }
     }
 }

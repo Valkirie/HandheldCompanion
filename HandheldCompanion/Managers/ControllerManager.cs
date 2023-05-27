@@ -138,6 +138,20 @@ namespace HandheldCompanion.Managers
                             ((NeptuneController)target).SetVirtualMuted(Muted);
                         }
                         break;
+
+                    case "SteamDeckHDRumble":
+                        {
+                            IController target = GetTargetController();
+                            if (target is null)
+                                return;
+
+                            if (typeof(NeptuneController) != target.GetType())
+                                return;
+
+                            bool HDRumble = Convert.ToBoolean(value);
+                            ((NeptuneController)target).SetHDRumble(HDRumble);
+                        }
+                        break;
                 }
             });
         }
