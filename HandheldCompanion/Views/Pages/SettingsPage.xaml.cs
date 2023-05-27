@@ -521,30 +521,35 @@ namespace HandheldCompanion.Views.Pages
         private void SwitchBackdrop(Window targetWindow, int idx)
         {
             targetWindow.ApplyTemplate();
+            targetWindow.UpdateLayout();
 
-            switch (idx)
+            try
             {
-                case 0: // "None":
-                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.None);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
-                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
-                    break;
-                case 1: // "Mica":
-                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Mica);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
-                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
-                    break;
-                case 2: // "Tabbed":
-                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Tabbed);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
-                    WindowHelper.SetUseAeroBackdrop(targetWindow, false);
-                    break;
-                case 3: // "Acrylic":
-                    WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Acrylic);
-                    WindowHelper.SetUseAcrylicBackdrop(targetWindow, true);
-                    WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
-                    break;
+                switch (idx)
+                {
+                    case 0: // "None":
+                        WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.None);
+                        WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
+                        WindowHelper.SetUseAeroBackdrop(targetWindow, false);
+                        break;
+                    case 1: // "Mica":
+                        WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Mica);
+                        WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
+                        WindowHelper.SetUseAeroBackdrop(targetWindow, false);
+                        break;
+                    case 2: // "Tabbed":
+                        WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Tabbed);
+                        WindowHelper.SetUseAcrylicBackdrop(targetWindow, false);
+                        WindowHelper.SetUseAeroBackdrop(targetWindow, false);
+                        break;
+                    case 3: // "Acrylic":
+                        WindowHelper.SetSystemBackdropType(targetWindow, BackdropType.Acrylic);
+                        WindowHelper.SetUseAcrylicBackdrop(targetWindow, true);
+                        WindowHelper.SetUseAeroBackdrop(MainWindow.GetCurrent(), true);
+                        break;
+                }
             }
+            catch { }
         }
 
         private async void Toggle_EnergyStar_Toggled(object? sender, RoutedEventArgs? e)
