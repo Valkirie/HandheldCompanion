@@ -49,6 +49,7 @@ namespace ControllerService
         private static SensorFamily SensorSelection;
         private static int SensorPlacement;
         private static bool SensorPlacementUpsideDown;
+        private SerialUSBIMU sensor;
 
         // profile vars
         public static Profile currentProfile = new();
@@ -98,10 +99,8 @@ namespace ControllerService
             PipeServer.ClientMessage += OnClientMessage;
 
             // initialize manager(s)
-            DeviceManager.UsbDeviceArrived += GenericDeviceArrived;
             DeviceManager.UsbDeviceRemoved += GenericDeviceRemoved;
             DeviceManager.Start();
-            GenericDeviceArrived(null, null);
 
             // initialize device
             CurrentDevice = IDevice.GetDefault();
@@ -112,36 +111,19 @@ namespace ControllerService
             DSUServer.Stopped += OnDSUStopped;
         }
 
-        private SerialUSBIMU sensor;
-        private void GenericDeviceArrived(PnPDevice device, DeviceEventArgs obj)
-        {
-            switch (SensorSelection)
-            {
-                case SensorFamily.SerialUSBIMU:
-                    {
-                        sensor = SerialUSBIMU.GetDefault();
-
-                        if (sensor is null)
-                            break;
-
-                        sensor.Open();
-                        sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
-                    }
-                    break;
-            }
-        }
-
         private void GenericDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
         {
+            // If the USB Gyro is unplugged, close serial connection
+            if (sensor is null)
+                return;
+
+            sensor.Close();
+
+            // Stop IMU is USB Gyro was our motion source
             switch (SensorSelection)
             {
                 case SensorFamily.SerialUSBIMU:
-                    {
-                        if (sensor is null)
-                            break;
-
-                        sensor.Close();
-                    }
+                    IMU.Stop();
                     break;
             }
         }
@@ -481,7 +463,26 @@ namespace ControllerService
                         if (SensorSelection == value)
                             return;
 
+                        // In case current selection is USG Gyro, close serial connection
+                        if (SensorSelection == SensorFamily.SerialUSBIMU)
+                        {
+                            if (sensor is not null)
+                                sensor.Close();
+                        }
+
                         SensorSelection = value;
+
+                        // Establish serial port connection on selection change to USG Gyro
+                        if (SensorSelection == SensorFamily.SerialUSBIMU)
+                        {
+                            sensor = SerialUSBIMU.GetDefault();
+
+                            if (sensor is null)
+                                break;
+
+                            sensor.Open();
+                            sensor.SetSensorPlacement((SerialPlacement)SensorPlacement, SensorPlacementUpsideDown);
+                        }
 
                         IMU.Stop();
                         IMU.SetSensorFamily(SensorSelection);

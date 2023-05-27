@@ -51,13 +51,11 @@ namespace ControllerService.Sensors
             {
                 case SensorFamily.Windows:
                     ((Accelerometer)sensor).ReportInterval = (uint)updateInterval;
-                    ((Accelerometer)sensor).ReadingChanged += ReadingChanged;
-                    filter.SetFilterAttrs(ControllerService.CurrentDevice.oneEuroSettings.minCutoff, ControllerService.CurrentDevice.oneEuroSettings.beta);
+                    filter.SetFilterAttrs(ControllerService.handheldDevice.oneEuroSettings.minCutoff, ControllerService.handheldDevice.oneEuroSettings.beta);
 
                     LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", this.ToString(), sensorFamily.ToString(), updateInterval);
                     break;
                 case SensorFamily.SerialUSBIMU:
-                    ((SerialUSBIMU)sensor).ReadingChanged += ReadingChanged;
                     filter.SetFilterAttrs(((SerialUSBIMU)sensor).GetFilterCutoff(), ((SerialUSBIMU)sensor).GetFilterBeta());
 
                     LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", this.ToString(), sensorFamily.ToString(), ((SerialUSBIMU)sensor).GetInterval());
