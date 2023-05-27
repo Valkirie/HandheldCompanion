@@ -93,6 +93,9 @@ namespace HandheldCompanion.Views.Pages
                         Toggle_SDMuteController.IsOn = Convert.ToBoolean(value);
                         ControllerRefresh();
                         break;
+                    case "SteamDeckHDRumble":
+                        Toggle_SDHDRumble.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -385,6 +388,15 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
+        }
+
+        private void Toggle_SDHDRumble_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            // temporary settings
+            SettingsManager.SetProperty("SteamDeckHDRumble", Toggle_SDHDRumble.IsOn);
         }
 
         private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)

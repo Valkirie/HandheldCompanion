@@ -136,10 +136,10 @@ namespace HandheldCompanion.Views.QuickPages
             {
                 ScreenFrequency screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
 
-                FramerateQuarter.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Quarter));
-                FramerateThird.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Third));
-                FramerateHalf.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Half));
-                FramerateFull.Text = Convert.ToString(screenFrequency.GetFrequency(Frequency.Full));
+                FramerateQuarter.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
+                FramerateThird.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
+                FramerateHalf.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
+                FramerateFull.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
             });
         }
 

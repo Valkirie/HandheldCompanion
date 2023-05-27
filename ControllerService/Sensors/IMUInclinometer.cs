@@ -133,7 +133,7 @@ namespace ControllerService.Sensors
 
             foreach (char axis in reading_axis.Keys)
             {
-                switch (ControllerService.handheldDevice.AccelerationAxisSwap[axis])
+                switch (ControllerService.CurrentDevice.AccelerationAxisSwap[axis])
                 {
                     default:
                     case 'X':
@@ -148,9 +148,9 @@ namespace ControllerService.Sensors
                 }
             }
 
-            this.reading.X = this.reading_fixed.X = (float)reading_axis['X'] * ControllerService.handheldDevice.AccelerationAxis.X;
-            this.reading.Y = this.reading_fixed.Y = (float)reading_axis['Y'] * ControllerService.handheldDevice.AccelerationAxis.Y;
-            this.reading.Z = this.reading_fixed.Z = (float)reading_axis['Z'] * ControllerService.handheldDevice.AccelerationAxis.Z;
+            this.reading.X = this.reading_fixed.X = (float)reading_axis['X'] * ControllerService.CurrentDevice.AccelerationAxis.X;
+            this.reading.Y = this.reading_fixed.Y = (float)reading_axis['Y'] * ControllerService.CurrentDevice.AccelerationAxis.Y;
+            this.reading.Z = this.reading_fixed.Z = (float)reading_axis['Z'] * ControllerService.CurrentDevice.AccelerationAxis.Z;
 
             base.ReadingChanged();
         }

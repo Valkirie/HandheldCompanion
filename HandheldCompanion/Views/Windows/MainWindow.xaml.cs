@@ -657,9 +657,9 @@ namespace HandheldCompanion.Views
             OSDManager.Stop();
             ProfileManager.Stop();
             LayoutManager.Stop();
-            ProcessManager.Stop();
             EnergyManager.Stop();
             PowerManager.Stop();
+            ProcessManager.Stop();
             ToastManager.Stop();
 
             // closing page(s)

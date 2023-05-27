@@ -1,10 +1,13 @@
-﻿using ControllerCommon.Managers;
+﻿using ControllerCommon;
+using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Views;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
@@ -18,6 +21,9 @@ namespace HandheldCompanion.Managers
         // misc platforms
         public static RTSS RTSS = new();
         public static HWiNFO HWiNFO = new();
+
+        private const int UpdateInterval = 1000;
+        private static Timer UpdateTimer;
 
         private static bool IsInitialized;
 
@@ -50,11 +56,47 @@ namespace HandheldCompanion.Managers
             }
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            ProfileManager.Applied += ProfileManager_Applied;
+
+            UpdateTimer = new Timer(UpdateInterval);
+            UpdateTimer.AutoReset = false;
+            UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
 
             IsInitialized = true;
 
             LogManager.LogInformation("{0} has started", "PlatformManager");
         }
+
+        private static void ProfileManager_Applied(Profile profile)
+        {
+            // AutoTDP
+            if (profile.AutoTDPEnabled)
+                CurrentNeeds |= PlatformNeeds.AutoTDP;
+            else
+                CurrentNeeds &= ~PlatformNeeds.AutoTDP;
+
+            // Framerate limiter
+            if (profile.FramerateEnabled)
+                CurrentNeeds |= PlatformNeeds.FramerateLimiter;
+            else
+                CurrentNeeds &= ~PlatformNeeds.FramerateLimiter;
+
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
+        }
+
+        [Flags]
+        private enum PlatformNeeds
+        {
+            None = 0,
+            AutoTDP = 1,
+            FramerateLimiter = 2,
+            OnScreenDisplay = 4,
+            OnScreenDisplayComplex = 8,
+        }
+
+        private static PlatformNeeds CurrentNeeds = PlatformNeeds.None;
+        private static PlatformNeeds PreviousNeeds = PlatformNeeds.None;
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
         {
@@ -63,51 +105,125 @@ namespace HandheldCompanion.Managers
             {
                 switch (name)
                 {
-                    case "PlatformRTSSEnabled":
+                    case "OnScreenDisplayLevel":
                         {
-                            if (!RTSS.IsInstalled)
-                                return;
+                            short level = Convert.ToInt16(value);
 
-                            bool toggle = Convert.ToBoolean(value);
-
-                            new Thread(() =>
+                            switch(level)
                             {
-                                switch (toggle)
-                                {
-                                    case true:
-                                        RTSS.Start();
-                                        break;
-                                    case false:
-                                        RTSS.Stop();
-                                        break;
-                                }
-                            }).Start();
-                        }
-                        break;
+                                case 0:
+                                    CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
+                                    CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                                    break;
+                                default:
+                                case 1:
+                                    CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                                    CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                                    break;
+                                case 2:
+                                case 3:
+                                    CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                                    CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
+                                    break;
+                            }
 
-                    case "PlatformHWiNFOEnabled":
-                        {
-                            if (!HWiNFO.IsInstalled)
-                                return;
-
-                            bool toggle = Convert.ToBoolean(value);
-
-                            new Thread(() =>
-                            {
-                                switch (toggle)
-                                {
-                                    case true:
-                                        HWiNFO.Start();
-                                        break;
-                                    case false:
-                                        HWiNFO.Stop();
-                                        break;
-                                }
-                            }).Start();
+                            UpdateTimer.Stop();
+                            UpdateTimer.Start();
                         }
                         break;
                 }
             });
+        }
+
+        private static void MonitorPlatforms()
+        {
+            /* 
+             * Dependencies: 
+             * HWInfo: OSD 
+             * RTSS: AutoTDP, framerate limiter, OSD 
+             */
+
+            // Check if the current needs are the same as the previous needs
+            if (CurrentNeeds == PreviousNeeds) return;
+
+            // Start or stop HWiNFO and RTSS based on the current and previous needs
+            if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
+            {
+                // If OSD is needed, start RTSS and start HWiNFO only if OnScreenDisplayComplex is true
+                if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
+                {
+                    // Only start RTSS if it was not running before and if it is installed
+                    if (RTSS.IsInstalled)
+                    {
+                        RTSS.Start();
+                    }
+                }
+                if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
+                {
+                    // This condition checks if OnScreenDisplayComplex is true
+                    // OnScreenDisplayComplex is a new flag that indicates if the OSD needs more information from HWiNFO
+                    if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) || !PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
+                    {
+                        // Only start HWiNFO if it was not running before or if OnScreenDisplayComplex was false and if it is installed
+                        if (HWiNFO.IsInstalled)
+                        {
+                            HWiNFO.Start();
+                        }
+                    }
+                }
+                else
+                {
+                    // If OnScreenDisplayComplex is false, stop HWiNFO if it was running before
+                    if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) && PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
+                    {
+                        // Only stop HWiNFO if it is installed
+                        if (HWiNFO.IsInstalled)
+                        {
+                            HWiNFO.Stop(true);
+                        }
+                    }
+                }
+            }
+            else if (CurrentNeeds.HasFlag(PlatformNeeds.AutoTDP) || CurrentNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
+            {
+                // If AutoTDP or framerate limiter is needed, start only RTSS and stop HWiNFO
+                if (!PreviousNeeds.HasFlag(PlatformNeeds.AutoTDP) && !PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
+                {
+                    // Only start RTSS if it was not running before and if it is installed
+                    if (RTSS.IsInstalled)
+                    {
+                        RTSS.Start();
+                    }
+                }
+                if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
+                {
+                    // Only stop HWiNFO if it was running before
+                    // Only stop HWiNFO if it is installed
+                    if (HWiNFO.IsInstalled)
+                    {
+                        HWiNFO.Stop(true);
+                    }
+                }
+            }
+            else
+            {
+                // If none of the needs are present, stop both HWiNFO and RTSS
+                if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) || PreviousNeeds.HasFlag(PlatformNeeds.AutoTDP) || PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
+                {
+                    // Only stop HWiNFO and RTSS if they were running before and if they are installed
+                    if (HWiNFO.IsInstalled)
+                    {
+                        HWiNFO.Stop(true);
+                    }
+                    if (RTSS.IsInstalled)
+                    {
+                        RTSS.Stop();
+                    }
+                }
+            }
+
+            // Store the current needs in the previous needs variable
+            PreviousNeeds = CurrentNeeds;
         }
 
         public static void Stop()
@@ -133,13 +249,15 @@ namespace HandheldCompanion.Managers
 
             if (RTSS.IsInstalled)
             {
-                RTSS.Stop();
+                bool killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
+                RTSS.Stop(killRTSS);
                 RTSS.Dispose();
             }
 
             if (HWiNFO.IsInstalled)
             {
-                HWiNFO.Stop();
+                bool killHWiNFO = SettingsManager.GetBoolean("PlatformHWiNFOEnabled");
+                HWiNFO.Stop(killHWiNFO);
                 HWiNFO.Dispose();
             }
 

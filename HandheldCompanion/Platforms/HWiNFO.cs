@@ -178,14 +178,12 @@ namespace HandheldCompanion.Platforms
             return base.Start();
         }
 
-        public override bool Stop()
+        public override bool Stop(bool kill = false)
         {
             if (MemoryTimer is not null)
                 MemoryTimer.Stop();
 
-            base.Stop();
-
-            return true;
+            return base.Stop(kill);
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)

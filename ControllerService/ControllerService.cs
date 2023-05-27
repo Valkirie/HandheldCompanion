@@ -31,7 +31,7 @@ namespace ControllerService
         private DSUServer DSUServer;
 
         // devices vars
-        public static IDevice handheldDevice;
+        public static IDevice CurrentDevice;
 
         public static string CurrentPath, CurrentPathDep;
         public static string CurrentTag;
@@ -103,7 +103,7 @@ namespace ControllerService
             DeviceManager.Start();
 
             // initialize device
-            handheldDevice = IDevice.GetDefault();
+            CurrentDevice = IDevice.GetDefault();
 
             // initialize DSUClient
             DSUServer = new DSUServer(DSUip, DSUport);
@@ -555,7 +555,7 @@ namespace ControllerService
                                 break;
                             case SystemStatus.SystemPending:
                                 // resume from sleep
-                                Thread.Sleep(6000);
+                                Thread.Sleep(CurrentDevice.ResumeDelay);
                                 IMU.Restart(true);
                                 break;
                         }

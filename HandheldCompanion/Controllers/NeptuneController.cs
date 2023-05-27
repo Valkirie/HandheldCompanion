@@ -29,14 +29,24 @@ namespace HandheldCompanion.Controllers
         public byte FeedbackLargeMotor;
         public byte FeedbackSmallMotor;
 
-        public const sbyte MinIntensity = -2;
-        public const sbyte MaxIntensity = 10;
+        public const sbyte HDRumbleMinIntensity = -2;
+        public const sbyte HDRumbleMaxIntensity = 10;
+        private ushort HDRumblePeriod = 8;
 
-        private Thread thread;
-        private bool ThreadRunning;
+        public const sbyte SDRumbleMinIntensity = 6;
+        public const sbyte SDRumbleMaxIntensity = 10;
+        private ushort SDRumblePeriod = 8;
 
-        private Task<byte[]> lastLeftHapticOn;
-        private Task<byte[]> lastRightHapticOn;
+        private bool UseHDRumble = false;
+
+        private Thread RumbleThread;
+        private bool RumbleThreadRunning;
+
+        private bool lastLeftHaptic;
+        private bool lastRightHaptic;
+
+        private Task<byte[]> lastLeftHaptic2;
+        private Task<byte[]> lastRightHaptic2;
 
         public NeptuneController(PnPDetails details)
         {
@@ -61,17 +71,15 @@ namespace HandheldCompanion.Controllers
                 return;
             }
 
-            // manage rumble thread
-            ThreadRunning = true;
-            thread = new Thread(ThreadLoop);
-            thread.IsBackground = true;
-
             // disable lizard state
             SetLizardMouse(false);
             SetLizardButtons(false);
 
             bool Muted = SettingsManager.GetBoolean("SteamDeckMuteController");
             SetVirtualMuted(Muted);
+
+            bool HDRumble = SettingsManager.GetBoolean("SteamDeckHDRumble");
+            SetHDRumble(HDRumble);
 
             // UI
             DrawControls();
@@ -85,24 +93,27 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.LeftPad);
             SourceAxis.Add(AxisLayoutFlags.RightPad);
+
+            HDRumblePeriod = (ushort)(TimerManager.GetPeriod() * 2);
+            SDRumblePeriod = (ushort)(TimerManager.GetPeriod() * 10);
         }
 
         private async void ThreadLoop(object? obj)
         {
-            while (ThreadRunning)
+            while (RumbleThreadRunning)
             {
-                if (GetHapticIntensity(FeedbackLargeMotor, MaxIntensity, out var leftIntensity))
-                    lastLeftHapticOn = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
+                if (GetHapticIntensity(FeedbackLargeMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity, out var leftIntensity))
+                    lastLeftHaptic2 = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
 
-                if (GetHapticIntensity(FeedbackSmallMotor, MaxIntensity, out var rightIntensity))
-                    lastRightHapticOn = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
+                if (GetHapticIntensity(FeedbackSmallMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity, out var rightIntensity))
+                    lastRightHaptic2 = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
 
-                Thread.Sleep(TimerManager.GetPeriod() * 2);
+                Thread.Sleep(HDRumblePeriod);
 
-                if (lastLeftHapticOn is not null)
-                    await lastLeftHapticOn;
-                if (lastRightHapticOn is not null)
-                    await lastRightHapticOn;
+                if (lastLeftHaptic2 is not null)
+                    await lastLeftHaptic2;
+                if (lastRightHaptic2 is not null)
+                    await lastRightHaptic2;
             }
         }
 
@@ -302,9 +313,9 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick += UpdateInputs;
             TimerManager.Tick += UpdateMovements;
 
-            thread.Start();
-
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+
+            SetHDRumble(UseHDRumble);
 
             PipeClient.ServerMessage += OnServerMessage;
             base.Plug();
@@ -335,19 +346,19 @@ namespace HandheldCompanion.Controllers
             TimerManager.Tick -= UpdateMovements;
 
             // kill rumble thread
-            ThreadRunning = false;
+            RumbleThreadRunning = false;
 
             PipeClient.ServerMessage -= OnServerMessage;
             base.Unplug();
         }
 
-        public bool GetHapticIntensity(byte? input, sbyte maxIntensity, out sbyte output)
+        public bool GetHapticIntensity(byte? input, sbyte minIntensity, sbyte maxIntensity, out sbyte output)
         {
             output = default;
             if (input is null || input.Value == 0)
                 return false;
 
-            double value = MinIntensity + (maxIntensity - MinIntensity) * input.Value * VibrationStrength / 255;
+            double value = minIntensity + (maxIntensity - minIntensity) * input.Value * VibrationStrength / 255;
             output = (sbyte)(value - 5); // convert from dB to values
             return true;
         }
@@ -363,6 +374,18 @@ namespace HandheldCompanion.Controllers
         {
             this.FeedbackLargeMotor = LargeMotor;
             this.FeedbackSmallMotor = SmallMotor;
+
+            if (!UseHDRumble)
+                SetHaptic();
+        }
+
+        public void SetHaptic()
+        {
+            GetHapticIntensity(FeedbackLargeMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var leftIntensity);
+            _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, SDRumblePeriod, 10);
+
+            GetHapticIntensity(FeedbackSmallMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var rightIntensity);
+            _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, SDRumblePeriod, 10);
         }
 
         private void OnServerMessage(PipeMessage message)
@@ -391,6 +414,46 @@ namespace HandheldCompanion.Controllers
         public void SetVirtualMuted(bool mute)
         {
             isVirtualMuted = mute;
+        }
+
+        public void SetHDRumble(bool HDRumble)
+        {
+            this.UseHDRumble = HDRumble;
+
+            if (!IsPlugged())
+                return;
+
+            switch(this.UseHDRumble)
+            {
+                // new engine
+                default:
+                case true:
+                    {
+                        if (RumbleThreadRunning)
+                            return;
+
+                        RumbleThreadRunning = true;
+
+                        // Create Haptic2 rumble thread
+                        RumbleThread = new Thread(ThreadLoop)
+                        {
+                            IsBackground = true
+                        };
+
+                        RumbleThread.Start();
+                    }
+                    break;
+
+                // old engine
+                case false:
+                    {
+                        if (!RumbleThreadRunning)
+                            return;
+
+                        RumbleThreadRunning = false;
+                    }
+                    break;
+            }
         }
 
         public override string GetGlyph(ButtonFlags button)
