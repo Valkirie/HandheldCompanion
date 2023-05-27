@@ -794,12 +794,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SteamDeckRumbleEngine {
+        public bool SteamDeckHDRumble {
             get {
-                return ((bool)(this["SteamDeckRumbleEngine"]));
+                return ((bool)(this["SteamDeckHDRumble"]));
             }
             set {
-                this["SteamDeckRumbleEngine"] = value;
+                this["SteamDeckHDRumble"] = value;
             }
         }
     }

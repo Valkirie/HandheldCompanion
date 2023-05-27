@@ -139,7 +139,7 @@ namespace HandheldCompanion.Managers
                         }
                         break;
 
-                    case "SteamDeckRumbleEngine":
+                    case "SteamDeckHDRumble":
                         {
                             IController target = GetTargetController();
                             if (target is null)
@@ -148,8 +148,8 @@ namespace HandheldCompanion.Managers
                             if (typeof(NeptuneController) != target.GetType())
                                 return;
 
-                            bool RumbleEngine = Convert.ToBoolean(value);
-                            ((NeptuneController)target).SetRumbleEngine(RumbleEngine);
+                            bool HDRumble = Convert.ToBoolean(value);
+                            ((NeptuneController)target).SetHDRumble(HDRumble);
                         }
                         break;
                 }
