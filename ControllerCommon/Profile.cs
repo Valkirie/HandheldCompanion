@@ -106,6 +106,9 @@ namespace ControllerCommon
         public bool FramerateEnabled { get; set; }
         public int FramerateValue { get; set; } = 0;
 
+        public bool EPPOverrideEnabled { get; set; }
+        public int EPPOverrideValue { get; set; } = 50;
+
         public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 
         public Profile()
