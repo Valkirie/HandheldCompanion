@@ -322,6 +322,9 @@
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
+  <data name="MainWindow_MainWindow_navHotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
     <value>About</value>
   </data>
@@ -922,6 +925,12 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>The application will be minimized instead of closed</value>
+  </data>
+  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+    <value>Enable desktop profile on start</value>
+  </data>
+  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+    <value>The desktop profile will be automatically enabled on application start</value>
   </data>
   <data name="SettingsPage_Download" xml:space="preserve">
     <value>Download</value>

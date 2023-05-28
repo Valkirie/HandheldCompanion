@@ -121,7 +121,7 @@
     <value>關於</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion，「掌機伴侶」通過模擬DualShock 4（DS4）手柄為AYA NEO 2020和2021版本提供6軸體感支持。如果啟用該服務，物理手柄將不會被白名單外的程序識別到。如果服務被關閉，物理手柄將會再次被啟用，虛擬DS4也將被關閉。掌機伴侶依賴於ViGEmBus驅動和ViGEmClient庫，以及內核態的HidHide過濾驅動。體感算法基於Jibbsmart的研究成果和GyroWiki上公開的信息。</value>
+    <value>Handheld Companion，「掌機伴侶」通過模擬DualShock 4（DS4）控制器為AYA NEO 2020和2021版本提供6軸體感支持。如果啟用該服務，物理控制器將不會被白名單外的程序識別到。如果服務被關閉，物理控制器將會再次被啟用，虛擬DS4也將被關閉。掌機伴侶依賴於ViGEmBus驅動和ViGEmClient庫，以及內核態的HidHide過濾驅動。體感算法基於Jibbsmart的研究成果和GyroWiki上公開的信息。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速計</value>
@@ -181,13 +181,13 @@
     <value>隱藏設備</value>
   </data>
   <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
-    <value>更改物理手柄對其他軟件的可見性</value>
+    <value>更改物理控制器對其他軟件的可見性</value>
   </data>
   <data name="ControllerPage_Connect" xml:space="preserve">
     <value>連接</value>
   </data>
   <data name="ControllerPage_Controller" xml:space="preserve">
-    <value>手柄</value>
+    <value>控制器</value>
   </data>
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>設備隱藏中</value>
@@ -202,13 +202,13 @@
     <value>關閉時結束隱藏</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
-    <value>在服務退出時恢復物理手柄對其他應用程序的可見性</value>
+    <value>在服務退出時恢復物理控制器對其他應用程序的可見性</value>
   </data>
   <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>震動強度</value>
   </data>
   <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
-    <value>改變手柄震動強度</value>
+    <value>改變控制器震動強度</value>
   </data>
   <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
     <value>降低TDP</value>
@@ -309,11 +309,14 @@
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>掌機伴侶</value>
   </data>
+  <data name="MainWindow_MainWindow_navHotkeys" xml:space="preserve">
+    <value>快捷鍵</value>
+  </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
     <value>關於</value>
   </data>
   <data name="MainWindow_navController" xml:space="preserve">
-    <value>手柄</value>
+    <value>控制器</value>
   </data>
   <data name="MainWindow_navOverlay" xml:space="preserve">
     <value>展示</value>
@@ -364,7 +367,7 @@
     <value>永遠在上方</value>
   </data>
   <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
-    <value>當開啟，3D手柄將覆蓋其他窗口</value>
+    <value>當開啟，3D控制器將覆蓋其他窗口</value>
   </data>
   <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>返回</value>
@@ -373,7 +376,7 @@
     <value>面向相機</value>
   </data>
   <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
-    <value>改變3D手柄面向相機的行為</value>
+    <value>改變3D控制器面向相機的行為</value>
   </data>
   <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
     <value>靜態俯仰</value>
@@ -385,19 +388,19 @@
     <value>背景顏色</value>
   </data>
   <data name="OverlayPage_ColorDesc" xml:space="preserve">
-    <value>改變3D手柄的背景顏色</value>
+    <value>改變3D控制器的背景顏色</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
-    <value>手柄選項</value>
+    <value>控制器選項</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
-    <value>模擬手柄</value>
+    <value>模擬控制器</value>
   </data>
   <data name="OverlayPage_FaceCamera" xml:space="preserve">
     <value>面向相機</value>
   </data>
   <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
-    <value>3D手柄將慢慢面向相機</value>
+    <value>3D控制器將慢慢面向相機</value>
   </data>
   <data name="OverlayPage_Listening" xml:space="preserve">
     <value>偵聽中...</value>
@@ -415,13 +418,13 @@
     <value>N64</value>
   </data>
   <data name="OverlayPage_OEMController" xml:space="preserve">
-    <value>原裝手柄</value>
+    <value>原裝控制器</value>
   </data>
   <data name="OverlayPage_Opacity" xml:space="preserve">
     <value>透明度</value>
   </data>
   <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
-    <value>修改3D手柄透明度</value>
+    <value>修改3D控制器透明度</value>
   </data>
   <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
     <value>修改虛擬觸摸板透明度</value>
@@ -448,7 +451,7 @@
     <value>修改抗鋸齒狀態</value>
   </data>
   <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
-    <value>更改靜態3D手柄模型的渲染設置</value>
+    <value>更改靜態3D控制器模型的渲染設置</value>
   </data>
   <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
     <value>刷效率</value>
@@ -469,7 +472,7 @@
     <value>開始</value>
   </data>
   <data name="OverlayPage_ToyController" xml:space="preserve">
-    <value>費雪手柄</value>
+    <value>費雪控制器</value>
   </data>
   <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>觸摸板選項</value>
@@ -616,10 +619,10 @@
     <value>此項將會被覆蓋，你將無法撤回此操作。</value>
   </data>
   <data name="ProfilesPage_BoostPower" xml:space="preserve">
-    <value>增幅限製</value>
+    <value>增幅限制</value>
   </data>
   <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
-    <value>更改增幅限製</value>
+    <value>更改增幅限制</value>
   </data>
   <data name="ProfilesPage_Cancel" xml:space="preserve">
     <value>取消</value>
@@ -676,7 +679,7 @@
     <value>功耗設置</value>
   </data>
   <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
-    <value>更改功耗限製</value>
+    <value>更改功耗限制</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>配置詳情</value>
@@ -712,7 +715,7 @@
     <value>輸入形式</value>
   </data>
   <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
-    <value>手柄的物理輸入可以被編程成類似於不同類型的設備</value>
+    <value>控制器的物理輸入可以被編程成類似於不同類型的設備</value>
   </data>
   <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
     <value>輸出形式</value>
@@ -721,10 +724,10 @@
     <value>當向遊戲發送模擬搖桿命令時，這些命令應該是左搖桿還是右搖桿</value>
   </data>
   <data name="ProfilesPage_SustainedPower" xml:space="preserve">
-    <value>持續功率限製</value>
+    <value>持續功率限制</value>
   </data>
   <data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
-    <value>更改持續功率限製</value>
+    <value>更改持續功率限制</value>
   </data>
   <data name="ProfilesPage_TDPOverride" xml:space="preserve">
     <value>更改TDP</value>
@@ -733,7 +736,7 @@
     <value>更改處理器TDP</value>
   </data>
   <data name="ProfilesPage_UMCEnable" xml:space="preserve">
-    <value>啟動全局體感手柄</value>
+    <value>啟動全局體感控制器</value>
   </data>
   <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
     <value>關閉，使用按鍵啟動</value>
@@ -754,13 +757,13 @@
     <value>全局體感設置</value>
   </data>
   <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
-    <value>將設備體感轉換為手柄體感</value>
+    <value>將設備體感轉換為控制器體感</value>
   </data>
   <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>更新配置</value>
   </data>
   <data name="ProfilesPage_Whitelist" xml:space="preserve">
-    <value>允許程序使用物理手柄</value>
+    <value>允許程序使用物理控制器</value>
   </data>
   <data name="ProfilesPage_Wrapper" xml:space="preserve">
     <value>將DInput轉換為XInput輸入</value>
@@ -770,9 +773,6 @@
   </data>
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>確認</value>
-  </data>
-  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
-    <value>Properties.Resources.ControllerPage_Disconnect</value>
   </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
     <value>手動設置GPU頻率</value>
@@ -799,16 +799,22 @@
     <value>性能</value>
   </data>
   <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
-    <value>TDP限製</value>
+    <value>TDP限制</value>
   </data>
   <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
-    <value>限製處理器功率以減少總功率</value>
+    <value>限制處理器功率以減少總功率</value>
   </data>
   <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
-    <value>熱功率限製被配置文件覆蓋</value>
+    <value>熱功率限制被配置文件覆蓋</value>
   </data>
   <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
     <value> W</value>
+  </data>
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+    <value>額定功耗</value>
+  </data>
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+    <value>加速</value>
   </data>
   <data name="QuickProfilesPage_Create" xml:space="preserve">
     <value>創建配置</value>
@@ -817,10 +823,10 @@
     <value>等待前臺進程…</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
-    <value>通過虛擬的DS4手柄，為Windows掌機提供體感支持。如果啟用該服務，物理手柄將不會被白名單外的程序識別到。如果服務被關閉，物理手柄將會再次被啟用，虛擬DS4也將被關閉。</value>
+    <value>通過虛擬的DS4控制器，為Windows掌機提供體感支持。如果啟用該服務，物理控制器將不會被白名單外的程序識別到。如果服務被關閉，物理控制器將會再次被啟用，虛擬DS4也將被關閉。</value>
   </data>
   <data name="ServiceName" xml:space="preserve">
-    <value>手柄服務</value>
+    <value>控制器服務</value>
   </data>
   <data name="SettingsPage_AppLanguage" xml:space="preserve">
     <value>語言</value>
@@ -835,10 +841,10 @@
     <value>更改將在重啟App後生效</value>
   </data>
   <data name="SettingsPage_AppTheme" xml:space="preserve">
-    <value>應用主題</value>
+    <value>主題</value>
   </data>
   <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
-    <value>暗夜或者白色主題</value>
+    <value>變更應用程式主題為深色或者淺色主題</value>
   </data>
   <data name="SettingsPage_AutoStartApp" xml:space="preserve">
     <value>自動啟動程序</value>
@@ -883,7 +889,7 @@
     <value>EcoQoS</value>
   </data>
   <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
-    <value>限製不活躍或後臺進程和應用程序，以提高能源效率</value>
+    <value>限制不活躍或後臺進程和應用程序，以提高能源效率</value>
   </data>
   <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>通用設置</value>
@@ -979,7 +985,7 @@
     <value>白色</value>
   </data>
   <data name="SettingsPage_ToastNotification" xml:space="preserve">
-    <value>烤面包通知</value>
+    <value>快顯通知</value>
   </data>
   <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
     <value>從Windows操作中心的應用程序獲取通知</value>
@@ -1006,7 +1012,7 @@
     <value>版本以是最新</value>
   </data>
   <data name="ToastNewControllerEx" xml:space="preserve">
-    <value>物理手柄已被隱藏，輸入被映射到虛擬手柄</value>
+    <value>物理控制器已被隱藏，輸入被映射到虛擬控制器</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>用戶</value>
@@ -1015,13 +1021,16 @@
     <value>以管理員身份運行此工具以解鎖這些設置</value>
   </data>
   <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
-    <value>Force application shutdown</value>
+    <value>強制關閉應用程式</value>
+  </data>
+  <data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
+    <value>開啟快速設定面板(控制中心)</value>
+  </data>
+  <data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
+    <value>桌面鍵盤配置</value>
   </data>
   <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
-    <value>Change hotkey by pressing a button or a special key</value>
-  </data>
-  <data name="OverlayPage_DualSenseController" xml:space="preserve">
-    <value>Playstation DualSense</value>
+    <value>按下按鍵或特殊按鍵來變更快捷鍵</value>
   </data>
   <data name="OverlayPage_MotionActivated" xml:space="preserve">
     <value>Motion</value>
@@ -1040,20 +1049,5 @@
   </data>
   <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
     <value>Change the motion sensitivity of the vertical axis</value>
-  </data>
-  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
-    <value> %</value>
-  </data>
-  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
-    <value>Y</value>
-  </data>
-  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
-    <value>Boost</value>
-  </data>
-  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
-    <value>Sustained</value>
   </data>
 </root>
