@@ -23,6 +23,8 @@ namespace PowerProfileUtils
         public static Guid PROCFREQMAX = new("75b0ae3f-bce0-45a7-8c89-c9611c25e100"); // Maximum processor frequency in MHz, 0 for no limit (default)
         public static Guid CPMINCORES = new("0cc5b647-c1df-4637-891a-dec35c318583"); // Processor performance core parking min cores, expressed as a percent from 0 - 100
         public static Guid CPMAXCORES = new("ea062031-0e34-4ff1-9b6d-eb1059334028"); // Processor performance core parking max cores, expressed as a percent from 0 - 100
+        public static Guid PERFEPP = new("36687f9e-e3a5-4dbf-b1dc-15eb381c6863"); // Processor energy performance preference policy, expressed as a percent from 0 - 100
+        public static Guid PERFEPP1 = new("36687f9e-e3a5-4dbf-b1dc-15eb381c6864"); // Processor energy performance preference policy for Processor Power Efficiency Class 1, expressed as a percent from 0 - 100
     }
 
     public enum PerfBoostMode

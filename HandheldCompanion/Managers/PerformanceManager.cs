@@ -2,6 +2,7 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
 using PowerProfileUtils;
 using RTSSSharedMemoryNET;
@@ -201,6 +202,21 @@ namespace HandheldCompanion.Managers
             else
             {
                 AutoTDPWatchdog.Stop();
+            }
+
+            // EPP
+            if (profile.EPPOverrideEnabled)
+            {
+                uint ACValue = (uint)Math.Max(0, profile.EPPOverrideValue - 17);
+                uint DCValue = (uint)Math.Max(0, profile.EPPOverrideValue);
+                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, ACValue, DCValue);
+                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, ACValue, DCValue);
+            }
+            else
+            {
+                // restore default EPP
+                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, 0x00000021, 0x00000032);
+                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, 0x00000021, 0x00000032);
             }
         }
 
@@ -550,7 +566,10 @@ namespace HandheldCompanion.Managers
         public void RequestPerfBoostMode(bool value)
         {
             currentPerfBoostMode = value;
-            WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Disabled);
+
+            uint perfboostmode = value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Disabled;
+            WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, perfboostmode, perfboostmode);
+
             LogManager.LogInformation("User requested perfboostmode: {0}", value);
         }
 
@@ -568,12 +587,12 @@ namespace HandheldCompanion.Managers
             return results;
         }
 
-        private void WritePowerCfg(Guid SubGroup, Guid Settings, uint Value)
+        private void WritePowerCfg(Guid SubGroup, Guid Settings, uint ACValue, uint DCValue)
         {
             if (PowerProfile.GetActiveScheme(out Guid currentScheme))
             {
-                PowerProfile.SetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, Value);
-                PowerProfile.SetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings, Value);
+                PowerProfile.SetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, ACValue);
+                PowerProfile.SetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings, DCValue);
                 PowerProfile.SetActiveScheme(currentScheme);
             }
         }

@@ -281,6 +281,10 @@ namespace HandheldCompanion.Views.QuickPages
                     SliderSensitivityX.Value = currentProfile.MotionSensivityX;
                     SliderSensitivityY.Value = currentProfile.MotionSensivityY;
 
+                    // EPP
+                    EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
+                    EPPSlider.Value = currentProfile.EPPOverrideValue;
+
                     // todo: improve me ?
                     ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
                     ProfilesPageHotkey.DrawInput();
@@ -635,6 +639,31 @@ namespace HandheldCompanion.Views.QuickPages
             if (!isDrawing)
             {
                 currentProfile.FramerateValue = (int)FramerateSlider.Value;
+                RequestUpdate();
+            }
+        }
+
+        private void EPPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (!isDrawing)
+            {
+                currentProfile.EPPOverrideEnabled = (bool)EPPToggle.IsOn;
+
+                RequestUpdate();
+            }
+        }
+
+        private void EPPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (currentProfile is null)
+                return;
+
+            if (!isDrawing)
+            {
+                currentProfile.EPPOverrideValue = (int)EPPSlider.Value;
                 RequestUpdate();
             }
         }

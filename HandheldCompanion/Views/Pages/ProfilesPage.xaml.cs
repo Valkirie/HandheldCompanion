@@ -438,6 +438,10 @@ namespace HandheldCompanion.Views.Pages
                 AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
                 AutoTDPSlider.Value = (int)currentProfile.AutoTDPRequestedFPS;
 
+                // EPP
+                EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
+                EPPSlider.Value = currentProfile.EPPOverrideValue;
+
                 // GPU Clock control
                 GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
                 GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : (255 * 50);
@@ -544,6 +548,9 @@ namespace HandheldCompanion.Views.Pages
 
             currentProfile.AutoTDPEnabled = (bool)AutoTDPToggle.IsOn;
             currentProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
+
+            currentProfile.EPPOverrideEnabled = (bool)EPPToggle.IsOn;
+            currentProfile.EPPOverrideValue = (int)EPPSlider.Value;
 
             currentProfile.GPUOverrideEnabled = (bool)GPUToggle.IsOn;
             currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
@@ -753,6 +760,16 @@ namespace HandheldCompanion.Views.Pages
         }
 
         private void FramerateRadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void EPPToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EPPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
         }
