@@ -238,6 +238,7 @@ end;
 #define UseHideHide
 #define UseViGem
 #define UseRTSS
+#define UseHWiNFO
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
@@ -321,6 +322,7 @@ Source: "{#SourcePath}\redist\PromptFont.otf"; DestDir: "{autofonts}"; FontInsta
 Source: "{#SourcePath}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\HidHide_1.2.98_x64.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#SourcePath}\redist\RTSSSetup734.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourcePath}\redist\hwi_746.exe"; DestDir: "{app}\redist\"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"
@@ -347,6 +349,7 @@ Filename: "{tmp}\dotnet-runtime-7.0.0-win-x64"; StatusMsg: "Installing .NET Runt
 Filename: "{app}\redist\ViGEmBus_1.21.442_x64_x86_arm64.exe"; StatusMsg: "Installing ViGEmBus"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 Filename: "{app}\redist\HidHide_1.2.98_x64.exe"; StatusMsg: "Installing HidHide"; Parameters: "/quiet /norestart"; Flags: runascurrentuser
 Filename: "{app}\redist\RTSSSetup734.exe"; StatusMsg: "Installing RTSS"; Parameters: "/S"; Flags: runascurrentuser
+Filename: "{app}\redist\hwi_746.exe"; StatusMsg: "Installing HWiNFO"; Parameters: "/silent"; Flags: runascurrentuser
 
 [UninstallRun]
 Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
@@ -504,6 +507,10 @@ begin
 
 #ifdef UseRTSS
   ExtractTemporaryFile('RTSSSetup734.exe');
+#endif
+
+#ifdef UseHWiNFO
+  ExtractTemporaryFile('hwi_746.exe');
 #endif
 
   Result := True;
