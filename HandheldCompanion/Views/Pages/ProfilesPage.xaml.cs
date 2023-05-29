@@ -54,7 +54,8 @@ namespace HandheldCompanion.Views.Pages
             HotkeysManager.HotkeyCreated += TriggerCreated;
             InputsManager.TriggerUpdated += TriggerUpdated;
 
-            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
+            MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+            MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
 
             // draw input modes
             foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
@@ -132,7 +133,7 @@ namespace HandheldCompanion.Views.Pages
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
         }
 
-        private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+        private void PerformanceManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
@@ -141,6 +142,15 @@ namespace HandheldCompanion.Views.Pages
                 AutoTDPToggle.IsEnabled = CanChangeGPU;
 
                 GPUToggle.IsEnabled = CanChangeGPU;
+            });
+        }
+
+        private void PerformanceManager_EPPChanged(uint EPP)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                EPPSlider.Value = EPP;
             });
         }
 
@@ -550,7 +560,7 @@ namespace HandheldCompanion.Views.Pages
             currentProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
 
             currentProfile.EPPOverrideEnabled = (bool)EPPToggle.IsOn;
-            currentProfile.EPPOverrideValue = (int)EPPSlider.Value;
+            currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
 
             currentProfile.GPUOverrideEnabled = (bool)GPUToggle.IsOn;
             currentProfile.GPUOverrideValue = (int)GPUSlider.Value;

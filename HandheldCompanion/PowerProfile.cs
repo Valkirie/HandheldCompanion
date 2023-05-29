@@ -114,6 +114,9 @@ namespace PowerProfileUtils
         /// <returns>If the function succeeds, the return value is zero, and if the function fails, the return value is equal to a handle to the local memory object.</returns>
         [DllImportAttribute("kernel32.dll", EntryPoint = "LocalFree")]
         private static extern nint LocalFree(nint hMem);
+        
+        [DllImportAttribute("powrprof.dll", EntryPoint = "PowerWriteSettingAttributes")]
+        private static extern uint PowerWriteSettingAttributes(in Guid SubGroupOfPowerSettingsGuid, in Guid PowerSettingGuid, uint Attributes);
         #endregion
 
         // Wrapper for the actual PowerGetActiveScheme. Converts GUID to the built-in type on output and handles the LocalFree call.
@@ -174,6 +177,11 @@ namespace PowerProfileUtils
             }
 
             return false;
+        }
+
+        public static bool SetAttribute(Guid SubGroupOfPowerSettingsGuid, Guid PowerSettingGuid, bool hide)
+        {
+            return PowerWriteSettingAttributes(SubGroupOfPowerSettingsGuid, PowerSettingGuid, (uint)(hide ? 1 : 0)) == 0;
         }
     }
 }

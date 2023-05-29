@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
@@ -69,6 +70,9 @@ namespace HandheldCompanion.Managers
 
         public event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
         public delegate void PerfBoostModeChangedEventHandler(bool value);
+
+        public event EPPChangedEventHandler EPPChanged;
+        public delegate void EPPChangedEventHandler(uint EPP);
         #endregion
 
         private Processor processor;
@@ -76,6 +80,7 @@ namespace HandheldCompanion.Managers
 
         private static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
         private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+        private uint currentEPP = 50;
         private readonly Timer powerWatchdog;
         private readonly object powerLock = new();
 
@@ -207,16 +212,12 @@ namespace HandheldCompanion.Managers
             // EPP
             if (profile.EPPOverrideEnabled)
             {
-                uint ACValue = (uint)Math.Max(0, profile.EPPOverrideValue - 17);
-                uint DCValue = (uint)Math.Max(0, profile.EPPOverrideValue);
-                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, ACValue, DCValue);
-                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, ACValue, DCValue);
+                RequestEPP(profile.EPPOverrideValue);
             }
             else
             {
                 // restore default EPP
-                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, 0x00000021, 0x00000032);
-                WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, 0x00000021, 0x00000032);
+                RequestEPP(0x00000032);
             }
         }
 
@@ -359,6 +360,16 @@ namespace HandheldCompanion.Managers
                 {
                     currentPerfBoostMode = perfboostmode;
                     PerfBoostModeChanged?.Invoke(perfboostmode);
+                }
+
+                // Checking if current EPP value has changed to reflect that
+                uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
+                uint DCvalue = EPP[(int)PowerIndexType.DC];
+
+                if (DCvalue != currentEPP)
+                {
+                    currentEPP = DCvalue;
+                    EPPChanged?.Invoke(DCvalue);
                 }
 
                 Monitor.Exit(powerLock);
@@ -563,6 +574,27 @@ namespace HandheldCompanion.Managers
                 LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
         }
 
+        public void RequestEPP(uint EPPOverrideValue)
+        {
+            currentEPP = EPPOverrideValue;
+
+            uint[] requestedEPP = new uint[2]
+            {
+                (uint)Math.Max(0, EPPOverrideValue - 17),
+                (uint)Math.Max(0, EPPOverrideValue)
+            };
+
+            LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
+
+            // set profile EPP
+            WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, requestedEPP[0], requestedEPP[1]);
+            WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, requestedEPP[0], requestedEPP[1]);
+
+            uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
+            if (EPP[0] != requestedEPP[0] || EPP[1] != requestedEPP[1])
+                LogManager.LogWarning("Failed to set requested EPP");
+        }
+
         public void RequestPerfBoostMode(bool value)
         {
             currentPerfBoostMode = value;
@@ -591,8 +623,14 @@ namespace HandheldCompanion.Managers
         {
             if (PowerProfile.GetActiveScheme(out Guid currentScheme))
             {
+                // unhide attribute
+                PowerProfile.SetAttribute(SubGroup, Settings, false);
+
+                // set value(s)
                 PowerProfile.SetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, ACValue);
                 PowerProfile.SetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings, DCValue);
+
+                // activate scheme
                 PowerProfile.SetActiveScheme(currentScheme);
             }
         }

@@ -50,7 +50,8 @@ namespace HandheldCompanion.Views.QuickPages
 
             InputsManager.TriggerUpdated += TriggerUpdated;
 
-            MainWindow.performanceManager.ProcessorStatusChanged += PowerManager_StatusChanged;
+            MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+            MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
 
             foreach (MotionInput mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
             {
@@ -143,7 +144,7 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void PowerManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+        private void PerformanceManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
@@ -152,6 +153,15 @@ namespace HandheldCompanion.Views.QuickPages
                 StackProfileAutoTDP.IsEnabled = CanChangeTDP;
 
                 StackProfileGPU.IsEnabled = CanChangeGPU;
+            });
+        }
+
+        private void PerformanceManager_EPPChanged(uint EPP)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                EPPSlider.Value = EPP;
             });
         }
 
@@ -663,7 +673,7 @@ namespace HandheldCompanion.Views.QuickPages
 
             if (!isDrawing)
             {
-                currentProfile.EPPOverrideValue = (int)EPPSlider.Value;
+                currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
                 RequestUpdate();
             }
         }
