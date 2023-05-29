@@ -319,6 +319,9 @@ namespace HandheldCompanion.Managers
                 // Unregister application from HidHide
                 HidHide.UnregisterApplication(profile.Path);
 
+                // Remove XInputPlus (extended compatibility)
+                XInputPlus.UnregisterApplication(profile);
+
                 profiles.Remove(profile.Path);
 
                 // warn owner
