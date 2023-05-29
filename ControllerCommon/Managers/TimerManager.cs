@@ -9,7 +9,7 @@ namespace ControllerCommon.Managers
         private static PrecisionTimer MasterTimer;
         public static Stopwatch Stopwatch;
 
-        private const int MasterInterval = 8;   // 125Hz
+        private const int MasterInterval = 10;   // 100Hz
 
         public static event TickEventHandler Tick;
         public delegate void TickEventHandler(long ticks);
