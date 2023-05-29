@@ -347,7 +347,7 @@ namespace HandheldCompanion.Managers
         public static void SerializeProfile(Profile profile)
         {
             // update profile version to current build
-            profile.Version = new(MainWindow.fileVersionInfo.ProductVersion);
+            profile.Version = new(MainWindow.fileVersionInfo.FileVersion);
 
             string jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
             {
