@@ -348,7 +348,7 @@
                     d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Visible">
+                    Visibility="Collapsed">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -477,7 +477,7 @@
                     d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="Visible">
+                    Visibility="Collapsed">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
