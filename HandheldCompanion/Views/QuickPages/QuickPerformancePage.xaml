@@ -162,12 +162,13 @@
                 Margin="0,0,0,0"
                 ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock
-                    Width="30"
+                    Width="35"
                     VerticalAlignment="Center"
                     Text="{Binding Value, ElementName=QuietModeSlider, Mode=OneWay}"
                     TextAlignment="Center" />
                 <TextBlock
-                    HorizontalAlignment="Center"
+                    Width="30"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Text="%" />
                 <Slider
@@ -182,7 +183,7 @@
                     Maximum="100"
                     Minimum="10"
                     Style="{DynamicResource SliderStyle1}"
-                    TickFrequency="5"
+                    TickFrequency="2"
                     TickPlacement="BottomRight"
                     ValueChanged="QuietModeSlider_ValueChanged" />
             </DockPanel>
