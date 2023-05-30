@@ -110,19 +110,6 @@ namespace HandheldCompanion.Views.Pages
                 else
                     button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
             }
-
-            switch (trackpadsAlignment)
-            {
-                case 0:
-                    MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Top;
-                    break;
-                case 1:
-                    MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Center;
-                    break;
-                case 2:
-                    MainWindow.overlayTrackpad.VerticalAlignment = VerticalAlignment.Bottom;
-                    break;
-            }
         }
 
         private void UpdateUI_ControllerPosition(int controllerAlignment)
@@ -188,11 +175,6 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderTrackpadsSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            MainWindow.overlayTrackpad.LeftTrackpad.Width = SliderTrackpadsSize.Value;
-            MainWindow.overlayTrackpad.RightTrackpad.Width = SliderTrackpadsSize.Value;
-            MainWindow.overlayTrackpad.Height = SliderTrackpadsSize.Value;
-            MainWindow.overlayTrackpad.HorizontalAlignment = HorizontalAlignment.Stretch;
-
             if (!IsLoaded)
                 return;
 
@@ -234,9 +216,6 @@ namespace HandheldCompanion.Views.Pages
 
         private void SliderTrackpadsOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            MainWindow.overlayTrackpad.LeftTrackpad.Opacity = SliderTrackpadsOpacity.Value;
-            MainWindow.overlayTrackpad.RightTrackpad.Opacity = SliderTrackpadsOpacity.Value;
-
             if (!IsLoaded)
                 return;
 

@@ -283,22 +283,20 @@ namespace HandheldCompanion.Controllers
             Controller.SetVibration(vibration);
         }
 
-        public override void Rumble(int loop)
+        public override void Rumble(int Loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue, byte Duration = 125)
         {
             Task.Factory.StartNew(async () =>
             {
-                for (int i = 0; i < loop * 2; i++)
+                for (int i = 0; i < Loop * 2; i++)
                 {
                     if (i % 2 == 0)
-                        SetVibration(byte.MaxValue, byte.MaxValue);
+                        SetVibration(LeftValue, RightValue);
                     else
                         SetVibration(0, 0);
 
-                    await Task.Delay(125);
+                    await Task.Delay(Duration);
                 }
             });
-
-            base.Rumble(loop);
         }
 
         public override void Plug()
