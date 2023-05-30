@@ -21,7 +21,8 @@
             CornerRadius="10"
             PreviewTouchDown="Trackpad_PreviewTouchDown"
             PreviewTouchMove="Trackpad_PreviewTouchMove"
-            PreviewTouchUp="Trackpad_PreviewTouchUp" />
+            PreviewTouchUp="Trackpad_PreviewTouchUp"
+            TouchLeave="Trackpad_PreviewTouchUp" />
 
         <!--  Right Trackpad  -->
         <Border
@@ -33,6 +34,7 @@
             CornerRadius="10"
             PreviewTouchDown="Trackpad_PreviewTouchDown"
             PreviewTouchMove="Trackpad_PreviewTouchMove"
-            PreviewTouchUp="Trackpad_PreviewTouchUp" />
+            PreviewTouchUp="Trackpad_PreviewTouchUp"
+            TouchLeave="Trackpad_PreviewTouchUp" />
     </Grid>
 </common:OverlayWindow>
