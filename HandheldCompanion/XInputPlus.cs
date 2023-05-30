@@ -35,6 +35,9 @@ namespace HandheldCompanion
 
             // we need to define Controller index overwrite
             IController controller = ControllerManager.GetTargetController();
+            if (controller is null)
+                return;
+
             if (controller.GetType() == typeof(XInputController))
             {
                 XInputController XController = (XInputController)controller;
