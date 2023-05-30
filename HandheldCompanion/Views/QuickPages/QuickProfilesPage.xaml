@@ -144,7 +144,6 @@
 
                     <Border.IsEnabled>
                         <MultiBinding Converter="{StaticResource IsEnabledConverter}">
-                            <Binding ElementName="ProfileToggle" Path="IsOn" />
                             <Binding ElementName="UMCToggle" Path="IsOn" />
                         </MultiBinding>
                     </Border.IsEnabled>
