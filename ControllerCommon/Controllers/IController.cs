@@ -259,7 +259,7 @@ namespace ControllerCommon.Controllers
             return false;
         }
 
-        public virtual void Rumble(int loop)
+        public virtual void Rumble(int loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue)
         { }
 
         public virtual bool IsPlugged()

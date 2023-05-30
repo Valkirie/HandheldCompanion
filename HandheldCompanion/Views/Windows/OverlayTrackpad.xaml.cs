@@ -178,7 +178,7 @@ namespace HandheldCompanion.Views.Windows
                         LeftTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
                         // send vibration (todo: make it a setting)
-                        ControllerManager.GetTargetController()?.SetVibration(125, 0);
+                        ControllerManager.GetTargetController()?.Rumble(1, 125, 0);
                     }
                     break;
                 case "RightTrackpad":
@@ -192,7 +192,7 @@ namespace HandheldCompanion.Views.Windows
                         RightTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
                         // send vibration (todo: make it a setting)
-                        ControllerManager.GetTargetController()?.SetVibration(0, 125);
+                        ControllerManager.GetTargetController()?.Rumble(1, 0, 125);
                     }
                     break;
             }

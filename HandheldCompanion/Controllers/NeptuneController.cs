@@ -290,14 +290,14 @@ namespace HandheldCompanion.Controllers
             return isVirtualMuted;
         }
 
-        public override void Rumble(int loop)
+        public override void Rumble(int loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue)
         {
             Task.Factory.StartNew(async () =>
             {
                 for (int i = 0; i < loop * 2; i++)
                 {
                     if (i % 2 == 0)
-                        SetVibration(byte.MaxValue, byte.MaxValue);
+                        SetVibration(LeftValue, RightValue);
                     else
                         SetVibration(0, 0);
 
