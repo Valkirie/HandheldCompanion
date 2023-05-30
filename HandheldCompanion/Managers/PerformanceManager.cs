@@ -412,7 +412,7 @@ namespace HandheldCompanion.Managers
 
                     double ReadTDP = CurrentTDP[idx];
 
-                    if (ReadTDP > byte.MinValue && ReadTDP < byte.MaxValue)
+                    if (ReadTDP != 0)
                         cpuWatchdog.Interval = INTERVAL_DEFAULT;
                     else
                         cpuWatchdog.Interval = INTERVAL_DEGRADED;
@@ -428,13 +428,6 @@ namespace HandheldCompanion.Managers
                 // processor specific
                 if (processor.GetType() == typeof(IntelProcessor))
                 {
-                    // not ready yet
-                    if (CurrentTDP[(int)PowerType.MsrSlow] == 0 || CurrentTDP[(int)PowerType.MsrFast] == 0)
-                    {
-                        Monitor.Exit(cpuLock);
-                        return;
-                    }
-
                     int TDPslow = (int)StoredTDP[(int)PowerType.Slow];
                     int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
 
@@ -463,24 +456,10 @@ namespace HandheldCompanion.Managers
             {
                 bool GPUdone = false;
 
-                if (processor.GetType() == typeof(AMDProcessor))
-                {
-                    // not ready yet
-                    if (CurrentGfxClock == 0)
-                    {
-                        Monitor.Exit(gfxLock);
-                        return;
-                    }
-                }
-                else if (processor.GetType() == typeof(IntelProcessor))
-                {
-                    // not ready yet
-                    if (CurrentGfxClock == 0)
-                    {
-                        Monitor.Exit(gfxLock);
-                        return;
-                    }
-                }
+                if (CurrentGfxClock != 0)
+                    gfxWatchdog.Interval = INTERVAL_DEFAULT;
+                else
+                    gfxWatchdog.Interval = INTERVAL_DEGRADED;
 
                 // not ready yet
                 if (StoredGfxClock == 0)
