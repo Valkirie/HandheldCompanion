@@ -72,7 +72,7 @@
             <!--  Hotkeys icon  -->
             <ui:NavigationViewItem
                 Name="navHotkeys"
-                Content="Hotkeys"
+                Content="{x:Static resx:Resources.MainWindow_navHotkeys}"
                 Tag="HotkeysPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF26B;" />

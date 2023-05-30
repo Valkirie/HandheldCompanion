@@ -232,11 +232,11 @@
                                 Glyph="&#xEA6C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Enable desktop profile on start" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStart}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="The desktop profile will be automatically enabled on application start"
+                                    Text="{x:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStartDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
