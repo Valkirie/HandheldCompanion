@@ -38,13 +38,13 @@ namespace ControllerCommon.Platforms
         protected readonly object updateLock = new();
 
         private Process _Process;
-        protected Process? Process
+        protected Process Process
         {
             get
             {
                 try
                 {
-                    if (_Process is not null && !_Process.HasExited)
+                    if (_Process is not null)
                         return _Process;
 
                     var processes = Process.GetProcessesByName(Name);
@@ -57,6 +57,7 @@ namespace ControllerCommon.Platforms
 
                     _Process.EnableRaisingEvents = true;
                     _Process.Exited += _Process_Exited;
+                    _Process.Disposed += _Process_Disposed;
 
                     return _Process;
                 }
@@ -67,13 +68,14 @@ namespace ControllerCommon.Platforms
             }
         }
 
+        private void _Process_Disposed(object sender, EventArgs e)
+        {
+            _Process = null;
+        }
+
         private void _Process_Exited(object sender, EventArgs e)
         {
-            if (_Process is null)
-                return;
-
             _Process.Dispose();
-            _Process = null;
         }
 
         public bool IsInstalled;
@@ -138,10 +140,16 @@ namespace ControllerCommon.Platforms
 
         public virtual bool IsRunning()
         {
-            if (Process is null)
-                return false;
+            try
+            {
+                if (Process is null)
+                    return false;
 
-            return !Process.HasExited;
+                return !Process.HasExited;
+            }
+            catch { }
+
+            return false;
         }
 
         public virtual bool Start()

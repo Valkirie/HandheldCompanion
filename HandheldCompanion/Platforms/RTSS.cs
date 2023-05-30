@@ -149,6 +149,15 @@ namespace HandheldCompanion.Platforms
             ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
             ProfileManager.Applied += ProfileManager_Applied;
 
+            // If RTSS was started while HC was fully initialized, we need to pass both current profile and foreground process
+            if (SettingsManager.IsInitialized)
+            {
+                var foregroundProcess = ProcessManager.GetForegroundProcess();
+                if (foregroundProcess is not null)
+                    ProcessManager_ForegroundChanged(foregroundProcess, null);
+                ProfileManager_Applied(ProfileManager.GetCurrent());
+            }
+            
             return base.Start();
         }
 
