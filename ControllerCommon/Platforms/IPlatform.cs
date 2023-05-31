@@ -227,12 +227,12 @@ namespace ControllerCommon.Platforms
 
         public bool KillProcess()
         {
-            if (Process is null)
+            if (_Process is null)
                 return false;
 
             try
             {
-                Process.Kill();
+                _Process.Kill();
                 return true;
             }
             catch
