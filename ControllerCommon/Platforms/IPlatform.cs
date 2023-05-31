@@ -52,12 +52,9 @@ namespace ControllerCommon.Platforms
                         return null;
 
                     _Process = processes.FirstOrDefault();
-                    if (_Process.HasExited)
-                        return null;
-
                     _Process.EnableRaisingEvents = true;
+
                     _Process.Exited += _Process_Exited;
-                    _Process.Disposed += _Process_Disposed;
 
                     return _Process;
                 }
@@ -68,14 +65,10 @@ namespace ControllerCommon.Platforms
             }
         }
 
-        private void _Process_Disposed(object sender, EventArgs e)
-        {
-            _Process = null;
-        }
-
         private void _Process_Exited(object sender, EventArgs e)
         {
             _Process.Dispose();
+            _Process = null;
         }
 
         public bool IsInstalled;
@@ -142,10 +135,10 @@ namespace ControllerCommon.Platforms
         {
             try
             {
-                if (Process is null)
+                if (_Process is null)
                     return false;
 
-                return !Process.HasExited;
+                return !_Process.HasExited;
             }
             catch { }
 
