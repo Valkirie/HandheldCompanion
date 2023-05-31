@@ -6,6 +6,7 @@ using SharpDX.Multimedia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -38,11 +39,14 @@ namespace HandheldCompanion.Views.Windows
 
         private HwndSource hwndSource;
 
+        private bool AutoHide;
+
         public OverlayQuickTools()
         {
             InitializeComponent();
 
             this.PreviewKeyDown += new Input.KeyEventHandler(HandleEsc);
+            this.Deactivated += OverlayQuickTools_Deactivated;
 
             // create manager(s)
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -67,6 +71,12 @@ namespace HandheldCompanion.Views.Windows
             navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
         }
 
+        private void OverlayQuickTools_Deactivated(object? sender, EventArgs e)
+        {
+            if (AutoHide)
+                this.Hide();
+        }
+
         private void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread (async)
@@ -78,6 +88,11 @@ namespace HandheldCompanion.Views.Windows
                         {
                             int QuickToolsLocation = Convert.ToInt32(value);
                             UpdateLocation(QuickToolsLocation);
+                        }
+                        break;
+                    case "QuickToolsAutoHide":
+                        {
+                            AutoHide = Convert.ToBoolean(value);
                         }
                         break;
                 }
@@ -233,15 +248,15 @@ namespace HandheldCompanion.Views.Windows
         public void UpdateVisibility()
         {
             // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(async () =>
             {
                 switch (Visibility)
                 {
                     case Visibility.Collapsed:
                     case Visibility.Hidden:
                         this.Show();
+                        await Task.Delay(250);
                         this.Activate();
-                        this.Focus();
                         break;
                     case Visibility.Visible:
                         this.Hide();

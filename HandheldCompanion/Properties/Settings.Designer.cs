@@ -802,5 +802,17 @@ namespace HandheldCompanion.Properties {
                 this["SteamDeckHDRumble"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QuickToolsAutoHide {
+            get {
+                return ((bool)(this["QuickToolsAutoHide"]));
+            }
+            set {
+                this["QuickToolsAutoHide"] = value;
+            }
+        }
     }
 }

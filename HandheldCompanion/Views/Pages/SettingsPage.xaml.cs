@@ -221,6 +221,9 @@ namespace HandheldCompanion.Views.Pages
                     case "QuickToolsLocation":
                         cB_QuicktoolsPosition.SelectedIndex = Convert.ToInt32(value);
                         break;
+                    case "QuickToolsAutoHide":
+                        Toggle_QuicktoolsAutoHide.IsOn = Convert.ToBoolean(value);
+                        break;
                 }
             });
         }
@@ -755,6 +758,14 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("QuickToolsLocation", cB_QuicktoolsPosition.SelectedIndex);
+        }
+
+        private void Toggle_QuicktoolsAutoHide_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("QuickToolsAutoHide", Toggle_QuicktoolsAutoHide.IsOn);
         }
     }
 }

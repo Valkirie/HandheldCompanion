@@ -497,7 +497,7 @@
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_BackdropDesc}"
+                                    Text="Quicktools backdrop, none, mica, tabbed, acrylic"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -512,6 +512,44 @@
                             <Label Content="{x:Static resx:Resources.SettingsPage_BackdropTabbed}" />
                             <Label Content="{x:Static resx:Resources.SettingsPage_BackdropAcrylic}" />
                         </ComboBox>
+                    </Grid>
+                </Border>
+
+                <!--  Quicktools autohide  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xED1A;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Hide when loses focus" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Automatically hide quick tools when the user clicks outside of window"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_QuicktoolsAutoHide"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_QuicktoolsAutoHide_Toggled" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
