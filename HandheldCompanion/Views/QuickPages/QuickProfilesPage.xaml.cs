@@ -319,7 +319,7 @@ namespace HandheldCompanion.Views.QuickPages
                 // set lock
                 isDrawing = true;
 
-                ProfileToggle.IsOn = realProfile.Enabled;
+                ProfileToggle.IsOn = realProfile.Default ? false : realProfile.Enabled;
                 ProfileIcon.Source = processEx.imgSource;
 
                 if (processEx.MainWindowHandle != IntPtr.Zero)
