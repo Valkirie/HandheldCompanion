@@ -222,7 +222,8 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (source)
                 {
                     // self update, unlock and exit
-                    case ProfileUpdateSource.QuickProfilesPage:
+                    // case ProfileUpdateSource.QuickProfilesPage:
+                    case ProfileUpdateSource.Serializer:
                         return;
                 }
 
