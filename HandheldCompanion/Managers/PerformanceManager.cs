@@ -172,7 +172,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private void ProfileManager_Applied(Profile profile)
+        private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
         {
             // apply profile defined TDP
             if (profile.TDPOverrideEnabled)

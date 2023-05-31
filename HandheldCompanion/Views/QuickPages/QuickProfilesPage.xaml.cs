@@ -37,8 +37,6 @@ namespace HandheldCompanion.Views.QuickPages
 
             ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
-            ProfileManager.Updated += ProfileUpdated;
-            ProfileManager.Deleted += ProfileDeleted;
             ProfileManager.Applied += ProfileApplied;
 
             SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
@@ -217,28 +215,8 @@ namespace HandheldCompanion.Views.QuickPages
             });
         }
 
-        private void ProfileApplied(Profile profile)
+        private void ProfileApplied(Profile profile, ProfileUpdateSource source)
         {
-            ProfileUpdated(profile, ProfileUpdateSource.Background, true);
-        }
-
-        private void ProfileDeleted(Profile profile)
-        {
-            if (currentProfile is null)
-                return;
-
-            bool isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
-            if (isCurrent)
-                ProcessManager_ForegroundChanged(currentProcess, null);
-
-            currentProfile = null;
-        }
-
-        private void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
-        {
-            if (!isCurrent)
-                return;
-
             if (true)
             {
                 switch (source)

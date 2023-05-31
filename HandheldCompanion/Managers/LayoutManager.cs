@@ -187,7 +187,7 @@ namespace HandheldCompanion.Managers
             SerializeLayout(layout, desktopLayoutFile);
         }
 
-        private static void ProfileManager_Applied(Profile profile)
+        private static void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
         {
             SetProfileLayout(profile);
         }

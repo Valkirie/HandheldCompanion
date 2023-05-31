@@ -155,13 +155,13 @@ namespace HandheldCompanion.Platforms
                 var foregroundProcess = ProcessManager.GetForegroundProcess();
                 if (foregroundProcess is not null)
                     ProcessManager_ForegroundChanged(foregroundProcess, null);
-                ProfileManager_Applied(ProfileManager.GetCurrent());
+                ProfileManager_Applied(ProfileManager.GetCurrent(), ProfileUpdateSource.Background);
             }
             
             return base.Start();
         }
 
-        private void ProfileManager_Applied(Profile profile)
+        private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
         {
             // apply profile defined framerate
             if (profile.FramerateEnabled)

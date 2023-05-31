@@ -67,7 +67,7 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "PlatformManager");
         }
 
-        private static void ProfileManager_Applied(Profile profile)
+        private static void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
         {
             // AutoTDP
             if (profile.AutoTDPEnabled)

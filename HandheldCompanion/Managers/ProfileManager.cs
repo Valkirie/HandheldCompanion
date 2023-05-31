@@ -28,7 +28,7 @@ namespace HandheldCompanion.Managers
         public static event UpdatedEventHandler Updated;
         public delegate void UpdatedEventHandler(Profile profile, ProfileUpdateSource source, bool isCurrent);
         public static event AppliedEventHandler Applied;
-        public delegate void AppliedEventHandler(Profile profile);
+        public delegate void AppliedEventHandler(Profile profile, ProfileUpdateSource source);
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -138,7 +138,7 @@ namespace HandheldCompanion.Managers
                 return profile.Enabled ? profile : GetDefault();
         }
 
-        private static void ApplyProfile(Profile profile, bool announce = true)
+        private static void ApplyProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background, bool announce = true)
         {
             // might not be the same anymore if disabled
             profile = GetProfileFromPath(profile.Path, false);
@@ -149,7 +149,7 @@ namespace HandheldCompanion.Managers
                     announce = false;
 
             // raise event
-            Applied?.Invoke(profile);
+            Applied?.Invoke(profile, source);
 
             // update current profile
             currentProfile = profile;
@@ -307,7 +307,7 @@ namespace HandheldCompanion.Managers
 
             // default specific
             if (profile.Default)
-                ApplyProfile(profile);
+                ApplyProfile(profile, ProfileUpdateSource.Serializer);
         }
 
         public static void DeleteProfile(Profile profile)
@@ -415,7 +415,7 @@ namespace HandheldCompanion.Managers
 
             // apply profile (silently)
             if (isCurrent)
-                ApplyProfile(profile);
+                ApplyProfile(profile, source);
 
             // do not update wrapper and cloaking from default profile
             if (profile.Default)

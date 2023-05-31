@@ -194,12 +194,12 @@ namespace HandheldCompanion.Views.Pages
         }
 
         #region UI
-        private void ProfileApplied(Profile profile)
+        private void ProfileApplied(Profile profile, ProfileUpdateSource source)
         {
             if (profile.Default)
                 return;
 
-            ProfileUpdated(profile, ProfileUpdateSource.Background, true);
+            ProfileUpdated(profile, source, true);
         }
 
         public void ProfileUpdated(Profile profile, ProfileUpdateSource source, bool isCurrent)
