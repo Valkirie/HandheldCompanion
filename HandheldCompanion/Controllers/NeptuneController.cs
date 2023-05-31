@@ -33,8 +33,8 @@ namespace HandheldCompanion.Controllers
         public const sbyte HDRumbleMaxIntensity = 10;
         private ushort HDRumblePeriod = 8;
 
-        public const sbyte SDRumbleMinIntensity = 6;
-        public const sbyte SDRumbleMaxIntensity = 10;
+        public const sbyte SDRumbleMinIntensity = 8;
+        public const sbyte SDRumbleMaxIntensity = 12;
         private ushort SDRumblePeriod = 8;
 
         private bool UseHDRumble = false;
@@ -380,10 +380,10 @@ namespace HandheldCompanion.Controllers
         public void SetHaptic()
         {
             GetHapticIntensity(FeedbackLargeMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var leftIntensity);
-            _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, SDRumblePeriod, 10);
+            _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, SDRumblePeriod, 0);
 
             GetHapticIntensity(FeedbackSmallMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var rightIntensity);
-            _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, SDRumblePeriod, 10);
+            _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, SDRumblePeriod, 0);
         }
 
         private void OnServerMessage(PipeMessage message)
