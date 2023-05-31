@@ -8,7 +8,7 @@
 
 A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include:
 - Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor. Settings availible for racing, 1st and 3rd person gaming and emulator support.
-- Quicktools overlay, with easy access to various settings and informatio such as TDP, GPU, Screen Hz, Resolution, Brightness, Volume, Powermode control and battery level.
+- Quicktools overlay, with easy access to various settings and informatio such as TDP, Auto TDP, GPU, Screen Hz, Framelimiter, Resolution, Brightness, Volume, Powermode control and battery level.
 - Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4).
 - Profile settings system, automatic detection of active game and applying of settings.
 - PS Remote Play support with DS4 controller, including motion and touchpad.
@@ -35,8 +35,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - AYA Neo 2
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (Intel and AMD)
-- GPD Win 2
-- GPD Win 3
+- GPD Win 2, 3 and 4
 - Steam Deck
 
 ## Supported Sensors
