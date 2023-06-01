@@ -126,6 +126,8 @@ namespace HandheldCompanion.Platforms
 
             if (!HasModules)
             {
+                IsInstalled = false;
+
                 LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
