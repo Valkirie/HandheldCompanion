@@ -33,6 +33,7 @@ namespace ControllerCommon.Platforms
 
         protected bool KeepAlive;
         protected bool IsStarting;
+        protected Version ExpectedVersion;
 
         protected Timer PlatformWatchdog;
         protected readonly object updateLock = new();

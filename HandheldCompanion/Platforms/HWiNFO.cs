@@ -121,6 +121,7 @@ namespace HandheldCompanion.Platforms
         public HWiNFO()
         {
             base.PlatformType = PlatformType.HWiNFO;
+            base.ExpectedVersion = new Version(7, 42, 5030);
 
             Name = "HWiNFO64";
             ExecutableName = "HWiNFO64.exe";
@@ -133,13 +134,25 @@ namespace HandheldCompanion.Platforms
                 SettingsPath = Path.Combine(InstallPath, "HWiNFO64.ini");
                 ExecutablePath = Path.Combine(InstallPath, ExecutableName);
 
-                // check executable
+                // check executable path
                 IsInstalled = File.Exists(ExecutablePath);
             }
 
             if (!IsInstalled)
             {
                 LogManager.LogWarning("HWiNFO is missing. Please get it from: {0}", "https://www.hwinfo.com/files/hwi_742.exe");
+                return;
+            }
+
+            // check executable version
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);
+            Version CurrentVersion = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart);
+
+            if (CurrentVersion < ExpectedVersion)
+            {
+                IsInstalled = false;
+
+                LogManager.LogWarning("HWiNFO is outdated. Please get it from: {0}", "https://www.hwinfo.com/files/hwi_742.exe");
                 return;
             }
 

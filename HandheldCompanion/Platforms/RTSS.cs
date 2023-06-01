@@ -95,6 +95,7 @@ namespace HandheldCompanion.Platforms
         public RTSS()
         {
             base.PlatformType = PlatformType.RTSS;
+            base.ExpectedVersion = new Version(7, 3, 4);
 
             Name = "RTSS";
             ExecutableName = "RTSS.exe";
@@ -126,6 +127,18 @@ namespace HandheldCompanion.Platforms
             if (!HasModules)
             {
                 LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
+                return;
+            }
+
+            // check executable version
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);
+            Version CurrentVersion = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart);
+
+            if (CurrentVersion < ExpectedVersion)
+            {
+                IsInstalled = false;
+
+                LogManager.LogWarning("Rivatuner Statistics Server is outdated. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
