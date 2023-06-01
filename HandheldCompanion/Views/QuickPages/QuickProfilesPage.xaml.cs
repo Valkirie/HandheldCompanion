@@ -1,5 +1,6 @@
 using ControllerCommon;
 using ControllerCommon.Inputs;
+using ControllerCommon.Platforms;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
@@ -121,11 +122,35 @@ namespace HandheldCompanion.Views.QuickPages
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
 
-            FramerateToggle.IsEnabled = PlatformManager.RTSS.IsInstalled;
-
             UpdateTimer = new Timer(UpdateInterval);
             UpdateTimer.AutoReset = false;
             UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
+
+            PlatformManager.RTSS.Updated += RTSS_Updated;
+
+            // force call
+            // todo: make PlatformManager static
+            RTSS_Updated(PlatformManager.RTSS.Status);
+        }
+
+        private void RTSS_Updated(PlatformStatus status)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (status)
+                {
+                    case PlatformStatus.Ready:
+                        var Processor = MainWindow.performanceManager.GetProcessor();
+                        StackProfileFramerate.IsEnabled = true;
+                        StackProfileAutoTDP.IsEnabled = true && Processor is not null ? Processor.CanChangeTDP : false;
+                        break;
+                    case PlatformStatus.Stalled:
+                        StackProfileFramerate.IsEnabled = false;
+                        StackProfileAutoTDP.IsEnabled = false;
+                        break;
+                }
+            });
         }
 
         private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
@@ -148,7 +173,7 @@ namespace HandheldCompanion.Views.QuickPages
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 StackProfileTDP.IsEnabled = CanChangeTDP;
-                StackProfileAutoTDP.IsEnabled = CanChangeTDP;
+                StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.RTSS.IsInstalled;
 
                 StackProfileGPU.IsEnabled = CanChangeGPU;
             });

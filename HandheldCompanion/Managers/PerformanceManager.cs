@@ -729,5 +729,10 @@ namespace HandheldCompanion.Managers
 
             base.Stop();
         }
+
+        public Processor GetProcessor()
+        {
+            return processor;
+        }
     }
 }

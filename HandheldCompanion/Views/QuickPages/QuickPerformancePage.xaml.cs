@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Devices;
+using ControllerCommon.Platforms;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using ModernWpf.Controls;
@@ -27,8 +28,52 @@ namespace HandheldCompanion.Views.QuickPages
             SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
             SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
 
+            PlatformManager.RTSS.Updated += RTSS_Updated;
+            PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
+
+            // force call
+            // todo: make PlatformManager static
+            RTSS_Updated(PlatformManager.RTSS.Status);
+            HWiNFO_Updated(PlatformManager.HWiNFO.Status);
+
             // todo: move me ?
             SettingsManager.SetProperty("QuietModeEnabled", MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl));
+        }
+
+        private void HWiNFO_Updated(PlatformStatus status)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (status)
+                {
+                    case PlatformStatus.Ready:
+                        OverlayDisplayLevelExtended.IsEnabled = true;
+                        OverlayDisplayLevelFull.IsEnabled = true;
+                        break;
+                    case PlatformStatus.Stalled:
+                        OverlayDisplayLevelExtended.IsEnabled = false;
+                        OverlayDisplayLevelFull.IsEnabled = false;
+                        break;
+                }
+            });
+        }
+
+        private void RTSS_Updated(PlatformStatus status)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (status)
+                {
+                    case PlatformStatus.Ready:
+                        ComboBoxOverlayDisplayLevel.IsEnabled = true;
+                        break;
+                    case PlatformStatus.Stalled:
+                        ComboBoxOverlayDisplayLevel.IsEnabled = false;
+                        break;
+                }
+            });
         }
 
         private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)

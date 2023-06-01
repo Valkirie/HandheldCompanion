@@ -418,7 +418,10 @@
                 Opacity="0.25" />
 
             <!--  Framerate Limit  -->
-            <ui:SimpleStackPanel Name="StackProfileFramerate" Spacing="2">
+            <ui:SimpleStackPanel
+                Name="StackProfileFramerate"
+                IsEnabled="False"
+                Spacing="2">
 
                 <!--  Header  -->
                 <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -712,206 +715,205 @@
                         </DockPanel>
                     </StackPanel>
                 </Border>
+            </ui:SimpleStackPanel>
 
-                <!--  Separator  -->
-                <Separator
-                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                    BorderThickness="0,1,0,0"
-                    Opacity="0.25" />
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
 
-                <!--  Processor energy performance preference policy  -->
-                <ui:SimpleStackPanel Name="StackProfileEPP" Spacing="2">
+            <!--  Processor energy performance preference policy  -->
+            <ui:SimpleStackPanel Name="StackProfileEPP" Spacing="2">
 
-                    <!--  Header  -->
-                    <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <!--  Header  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="0.2*" MinWidth="80" />
-                            </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
 
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xf57c;" />
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xf57c;" />
 
-                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Energy performance preference (EPP)" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Specifies power distribution policy between CPU and GPU"
-                                        TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
-                            </DockPanel>
-
-                            <ui:ToggleSwitch
-                                Name="EPPToggle"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="EPPToggle_Toggled" />
-                        </Grid>
-                    </Border>
-
-                    <!--  Content  -->
-                    <Border
-                        Padding="15,6,15,6"
-                        d:Visibility="Visible"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                        <StackPanel>
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Text="CPU/GPU power balance" />
-                            <DockPanel
-                                Grid.Column="1"
-                                Margin="0,0,0,0"
-                                ScrollViewer.PanningMode="HorizontalOnly">
-
-                                <ui:SimpleStackPanel
-                                    Margin="0,0,0,0"
-                                    VerticalAlignment="Center"
-                                    ScrollViewer.PanningMode="HorizontalOnly">
-                                    <Slider
-                                        x:Name="EPPSlider"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPlacement="TopLeft"
-                                        AutoToolTipPrecision="0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="10"
-                                        Maximum="100"
-                                        Minimum="0"
-                                        SmallChange="1"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="10"
-                                        TickPlacement="BottomRight"
-                                        ValueChanged="EPPSlider_ValueChanged" />
-
-                                    <Grid Name="EPPGrid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            HorizontalAlignment="Left"
-                                            Text="CPU" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            HorizontalAlignment="Right"
-                                            Text="GPU" />
-                                    </Grid>
-                                </ui:SimpleStackPanel>
-                            </DockPanel>
-                        </StackPanel>
-                    </Border>
-                </ui:SimpleStackPanel>
-
-                <!--  Separator  -->
-                <Separator
-                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                    BorderThickness="0,1,0,0"
-                    Opacity="0.25" />
-
-                <!--  Manual GPU Clock Control  -->
-                <ui:SimpleStackPanel
-                    Name="StackProfileGPU"
-                    IsEnabled="False"
-                    Spacing="2">
-
-                    <!--  Header  -->
-                    <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="0.2*" MinWidth="80" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE950;" />
-
-                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
-                                        TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
-                            </DockPanel>
-
-                            <ui:ToggleSwitch
-                                Name="GPUToggle"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="GPUToggle_Toggled" />
-                        </Grid>
-                    </Border>
-
-                    <!--  Content  -->
-                    <Border
-                        Padding="15,6,15,6"
-                        d:Visibility="Visible"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                        <StackPanel>
-                            <TextBlock
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
-                            <DockPanel
-                                Grid.Column="1"
-                                Margin="0,0,0,0"
-                                ScrollViewer.PanningMode="HorizontalOnly">
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Energy performance preference (EPP)" />
                                 <TextBlock
-                                    Width="35"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}"
-                                    TextAlignment="Center" />
-                                <TextBlock
-                                    Width="30"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Specifies power distribution policy between CPU and GPU"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="EPPToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="EPPToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Content  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="CPU/GPU power balance" />
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="0,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+
+                            <ui:SimpleStackPanel
+                                Margin="0,0,0,0"
+                                VerticalAlignment="Center"
+                                ScrollViewer.PanningMode="HorizontalOnly">
                                 <Slider
-                                    x:Name="GPUSlider"
-                                    Margin="8,0,0,0"
+                                    x:Name="EPPSlider"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     AutoToolTipPlacement="TopLeft"
                                     AutoToolTipPrecision="0"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
-                                    LargeChange="500"
-                                    SmallChange="100"
+                                    LargeChange="10"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    SmallChange="1"
                                     Style="{DynamicResource SliderStyle1}"
-                                    TickFrequency="100"
+                                    TickFrequency="10"
                                     TickPlacement="BottomRight"
-                                    ValueChanged="GPUSlider_ValueChanged" />
-                            </DockPanel>
-                        </StackPanel>
-                    </Border>
-                </ui:SimpleStackPanel>
+                                    ValueChanged="EPPSlider_ValueChanged" />
+
+                                <Grid Name="EPPGrid">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Left"
+                                        Text="CPU" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Right"
+                                        Text="GPU" />
+                                </Grid>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
             </ui:SimpleStackPanel>
 
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
+
+            <!--  Manual GPU Clock Control  -->
+            <ui:SimpleStackPanel
+                Name="StackProfileGPU"
+                IsEnabled="False"
+                Spacing="2">
+
+                <!--  Header  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE950;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="GPUToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="GPUToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Content  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="0,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                Width="35"
+                                VerticalAlignment="Center"
+                                Text="{Binding Value, ElementName=GPUSlider, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Width="30"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
+                            <Slider
+                                x:Name="GPUSlider"
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                AutoToolTipPlacement="TopLeft"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="500"
+                                SmallChange="100"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="100"
+                                TickPlacement="BottomRight"
+                                ValueChanged="GPUSlider_ValueChanged" />
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+            </ui:SimpleStackPanel>
         </ui:SimpleStackPanel>
 
     </ui:SimpleStackPanel>

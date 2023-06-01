@@ -96,6 +96,7 @@ namespace HandheldCompanion.Platforms
         {
             base.PlatformType = PlatformType.RTSS;
             base.ExpectedVersion = new Version(7, 3, 4);
+            base.Url = "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html";
 
             Name = "RTSS";
             ExecutableName = "RTSS.exe";
@@ -115,32 +116,31 @@ namespace HandheldCompanion.Platforms
                 ExecutablePath = Path.Combine(InstallPath, ExecutableName);
 
                 // check executable
-                IsInstalled = File.Exists(ExecutablePath);
+                if (File.Exists(ExecutablePath))
+                {
+                    if (!HasModules)
+                    {
+                        LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", Url);
+                        return;
+                    }
+
+                    // check executable version
+                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);
+                    Version CurrentVersion = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart);
+
+                    if (CurrentVersion < ExpectedVersion)
+                    {
+                        LogManager.LogWarning("Rivatuner Statistics Server is outdated. Please get it from: {0}", Url);
+                        return;
+                    }
+
+                    IsInstalled = true;
+                }
             }
 
             if (!IsInstalled)
             {
                 LogManager.LogWarning("Rivatuner Statistics Server is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
-                return;
-            }
-
-            if (!HasModules)
-            {
-                IsInstalled = false;
-
-                LogManager.LogWarning("Rivatuner Statistics Server RTSSHooks64.dll is missing. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
-                return;
-            }
-
-            // check executable version
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);
-            Version CurrentVersion = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart);
-
-            if (CurrentVersion < ExpectedVersion)
-            {
-                IsInstalled = false;
-
-                LogManager.LogWarning("Rivatuner Statistics Server is outdated. Please get it from: {0}", "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html");
                 return;
             }
 
@@ -170,10 +170,20 @@ namespace HandheldCompanion.Platforms
                 var foregroundProcess = ProcessManager.GetForegroundProcess();
                 if (foregroundProcess is not null)
                     ProcessManager_ForegroundChanged(foregroundProcess, null);
+
                 ProfileManager_Applied(ProfileManager.GetCurrent(), ProfileUpdateSource.Background);
             }
             
             return base.Start();
+        }
+
+        public override bool Stop(bool kill = false)
+        {
+            ProcessManager.ForegroundChanged -= ProcessManager_ForegroundChanged;
+            ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
+            ProfileManager.Applied -= ProfileManager_Applied;
+
+            return base.Stop(kill);
         }
 
         private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)

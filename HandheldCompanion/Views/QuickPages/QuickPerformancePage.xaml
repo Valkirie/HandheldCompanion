@@ -46,13 +46,20 @@
                 <ComboBox
                     Name="ComboBoxOverlayDisplayLevel"
                     HorizontalAlignment="Stretch"
+                    IsEnabled="False"
                     IsReadOnly="True"
                     SelectionChanged="ComboBoxOverlayDisplayLevel_SelectionChanged">
 
-                    <Label Content="Disabled" />
-                    <Label Content="Minimal" />
-                    <Label Content="Extended" />
-                    <Label Content="Full" />
+                    <ComboBoxItem Name="OverlayDisplayLevelDisabled" Content="Disabled" />
+                    <ComboBoxItem Name="OverlayDisplayLevelMinimal" Content="Minimal" />
+                    <ComboBoxItem
+                        Name="OverlayDisplayLevelExtended"
+                        Content="Extended"
+                        IsEnabled="False" />
+                    <ComboBoxItem
+                        Name="OverlayDisplayLevelFull"
+                        Content="Full"
+                        IsEnabled="False" />
                 </ComboBox>
             </Border>
         </ui:SimpleStackPanel>

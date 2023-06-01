@@ -1,4 +1,5 @@
 using ControllerCommon.Devices;
+using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -53,9 +54,6 @@ namespace HandheldCompanion.Views.Pages
             cB_Language.Items.Add(new CultureInfo("zh-CN"));
             cB_Language.Items.Add(new CultureInfo("zh-Hant"));
 
-            Toggle_RTSS.IsEnabled = PlatformManager.RTSS.IsInstalled;
-            Toggle_HWiNFO.IsEnabled = PlatformManager.HWiNFO.IsInstalled;
-
             // call function
             UpdateDevice();
 
@@ -63,6 +61,48 @@ namespace HandheldCompanion.Views.Pages
             MainWindow.serviceManager.Updated += OnServiceUpdate;
             MainWindow.updateManager.Updated += UpdateManager_Updated;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+            PlatformManager.RTSS.Updated += RTSS_Updated;
+            PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
+
+            // force call
+            // todo: make PlatformManager static
+            RTSS_Updated(PlatformManager.RTSS.Status);
+            HWiNFO_Updated(PlatformManager.HWiNFO.Status);
+        }
+
+        private void HWiNFO_Updated(PlatformStatus status)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (status)
+                {
+                    case PlatformStatus.Ready:
+                        Toggle_HWiNFO.IsEnabled = true;
+                        break;
+                    case PlatformStatus.Stalled:
+                        Toggle_HWiNFO.IsEnabled = false;
+                        break;
+                }
+            });
+        }
+
+        private void RTSS_Updated(PlatformStatus status)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (status)
+                {
+                    case PlatformStatus.Ready:
+                        Toggle_RTSS.IsEnabled = true;
+                        break;
+                    case PlatformStatus.Stalled:
+                        Toggle_RTSS.IsEnabled = false;
+                        break;
+                }
+            });
         }
 
         public SettingsPage(string? Tag) : this()

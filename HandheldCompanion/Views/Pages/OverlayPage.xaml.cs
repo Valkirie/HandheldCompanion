@@ -1,4 +1,5 @@
-﻿using ControllerCommon.Utils;
+﻿using ControllerCommon.Platforms;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
 using System;
@@ -21,8 +22,28 @@ namespace HandheldCompanion.Views.Pages
             InitializeComponent();
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            PlatformManager.RTSS.Updated += RTSS_Updated;
 
-            OnScreenDisplayLevel.IsEnabled = PlatformManager.RTSS.IsInstalled;
+            // force call
+            // todo: make PlatformManager static
+            RTSS_Updated(PlatformManager.RTSS.Status);
+        }
+
+        private void RTSS_Updated(PlatformStatus status)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (status)
+                {
+                    case PlatformStatus.Ready:
+                        OnScreenDisplayLevel.IsEnabled = true;
+                        break;
+                    case PlatformStatus.Stalled:
+                        OnScreenDisplayLevel.IsEnabled = false;
+                        break;
+                }
+            });
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)

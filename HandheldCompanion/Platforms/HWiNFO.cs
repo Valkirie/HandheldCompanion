@@ -104,7 +104,6 @@ namespace HandheldCompanion.Platforms
         private const int HWiNFO_UNIT_STRING_LEN = 16;
 
         private long prevPoll_time = -1;
-        private byte prevPoll_attempt;
 
         private MemoryMappedFile MemoryMapped;
         private MemoryMappedViewAccessor MemoryAccessor;
@@ -122,6 +121,7 @@ namespace HandheldCompanion.Platforms
         {
             base.PlatformType = PlatformType.HWiNFO;
             base.ExpectedVersion = new Version(7, 42, 5030);
+            base.Url = "https://www.hwinfo.com/files/hwi_742.exe";
 
             Name = "HWiNFO64";
             ExecutableName = "HWiNFO64.exe";
@@ -134,25 +134,26 @@ namespace HandheldCompanion.Platforms
                 SettingsPath = Path.Combine(InstallPath, "HWiNFO64.ini");
                 ExecutablePath = Path.Combine(InstallPath, ExecutableName);
 
-                // check executable path
-                IsInstalled = File.Exists(ExecutablePath);
+                // check executable
+                if (File.Exists(ExecutablePath))
+                {
+                    // check executable version
+                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);
+                    Version CurrentVersion = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart);
+
+                    if (CurrentVersion < ExpectedVersion)
+                    {
+                        LogManager.LogWarning("HWiNFO is outdated. Please get it from: {0}", Url);
+                        return;
+                    }
+
+                    IsInstalled = true;
+                }
             }
 
             if (!IsInstalled)
             {
-                LogManager.LogWarning("HWiNFO is missing. Please get it from: {0}", "https://www.hwinfo.com/files/hwi_742.exe");
-                return;
-            }
-
-            // check executable version
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(ExecutablePath);
-            Version CurrentVersion = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart);
-
-            if (CurrentVersion < ExpectedVersion)
-            {
-                IsInstalled = false;
-
-                LogManager.LogWarning("HWiNFO is outdated. Please get it from: {0}", "https://www.hwinfo.com/files/hwi_742.exe");
+                LogManager.LogWarning("HWiNFO is missing. Please get it from: {0}", Url);
                 return;
             }
 
@@ -196,6 +197,8 @@ namespace HandheldCompanion.Platforms
             if (MemoryTimer is not null)
                 MemoryTimer.Stop();
 
+            SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
             return base.Stop(kill);
         }
 
@@ -236,6 +239,9 @@ namespace HandheldCompanion.Platforms
                 StopProcess();
                 return;
             }
+
+            // reset tentative counter
+            Tentative = 0;
 
             // update poll time
             if (HWiNFOMemory.poll_time != 0)

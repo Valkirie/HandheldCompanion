@@ -25,7 +25,7 @@ namespace ControllerCommon.Processor
 
         protected string Name, ProcessorID;
 
-        protected bool CanChangeTDP, CanChangeGPU;
+        public bool CanChangeTDP, CanChangeGPU;
         protected object IsBusy = new();
         public bool IsInitialized;
 

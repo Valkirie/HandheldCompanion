@@ -5,8 +5,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Threading;
 using System.Timers;
+using Windows.Security.EnterpriseData;
+using static ControllerCommon.Platforms.IPlatform;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Platforms
@@ -22,6 +26,15 @@ namespace ControllerCommon.Platforms
         HWiNFO = 6
     }
 
+    public enum PlatformStatus
+    {
+        None = 0,
+        Ready = 1,
+        Started = 2,
+        Stopped = 3,
+        Stalled = 4,
+    }
+
     public abstract class IPlatform : IDisposable
     {
         protected string Name;
@@ -30,13 +43,23 @@ namespace ControllerCommon.Platforms
         protected string InstallPath;
         protected string SettingsPath;
         protected string ExecutablePath;
+        protected string Url;
 
         protected bool KeepAlive;
         protected bool IsStarting;
         protected Version ExpectedVersion;
 
+        protected int Tentative = 0;
+        protected int MaxTentative = 3;
+        public PlatformStatus Status;
+
         protected Timer PlatformWatchdog;
         protected readonly object updateLock = new();
+
+        #region events
+        public event StartedEventHandler Updated;
+        public delegate void StartedEventHandler(PlatformStatus status);
+        #endregion
 
         private Process _Process;
         protected Process Process
@@ -72,7 +95,31 @@ namespace ControllerCommon.Platforms
             _Process = null;
         }
 
-        public bool IsInstalled;
+        private bool _IsInstalled;
+        public bool IsInstalled
+        {
+            get
+            {
+                return _IsInstalled;
+            }
+
+            set
+            {
+                _IsInstalled = value;
+
+                if (value)
+                {
+                    // raise event
+                    SetStatus(PlatformStatus.Ready);
+                }
+                else
+                {
+                    // raise event
+                    SetStatus(PlatformStatus.Stalled);
+                }
+            }
+        }
+
         public bool HasModules
         {
             get
@@ -93,6 +140,12 @@ namespace ControllerCommon.Platforms
         public PlatformType PlatformType;
 
         protected List<string> Modules = new();
+
+        protected void SetStatus(PlatformStatus status)
+        {
+            Status = status;
+            Updated?.Invoke(status);
+        }
 
         public string GetName()
         {
@@ -154,6 +207,9 @@ namespace ControllerCommon.Platforms
             if (PlatformWatchdog is not null)
                 PlatformWatchdog.Start();
 
+            // raise event
+            SetStatus(PlatformStatus.Started);
+
             return true;
         }
 
@@ -168,19 +224,36 @@ namespace ControllerCommon.Platforms
             if (kill)
                 KillProcess();
 
+            // raise event
+            SetStatus(PlatformStatus.Stopped);
+
             return true;
         }
 
         protected virtual void Process_Exited(object? sender, EventArgs e)
         {
             if (KeepAlive)
-                StartProcess();
+            {
+                if (Tentative < MaxTentative)
+                    StartProcess();
+                else
+                {
+                    LogManager.LogError("Something wen't wrong while trying to start {0}", this.GetType());
+                    Stop();
+
+                    // raise event
+                    IsInstalled = false;
+                }
+            }
         }
 
         public virtual bool StartProcess()
         {
             try
             {
+                Tentative++;
+                LogManager.LogDebug("Starting {0}, tentative: {1}/{2}", this.GetType(), Tentative, MaxTentative);
+
                 // set lock
                 IsStarting = true;
 
