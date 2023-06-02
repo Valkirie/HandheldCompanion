@@ -21,33 +21,21 @@ namespace ControllerCommon.Devices
             this.cTDP = new double[] { 5, 53 };
             this.GfxClock = new double[] { 100, 2700 };
 
-            // device specific capacities
+            this.AngularVelocityAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+            this.AngularVelocityAxisSwap = new()
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' },
+            };
 
-            /*
-            OEMChords.Add(new DeviceChord("Special Left",
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                false, ButtonFlags.OEM1
-                ));
-
-            OEMChords.Add(new DeviceChord("Special Right",
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                false, ButtonFlags.OEM3
-                ));
-
-            OEMChords.Add(new DeviceChord("Back Left",
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                false, ButtonFlags.OEM3
-                ));
-
-            OEMChords.Add(new DeviceChord("Back Right",
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                new List<KeyCode>() { KeyCode.F11, KeyCode.L },
-                false, ButtonFlags.OEM4
-                ));
-            */
+            this.AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
+            this.AccelerationAxisSwap = new()
+            {
+                { 'X', 'X' },
+                { 'Y', 'Z' },
+                { 'Z', 'Y' },
+            };
         }
     }
 }
