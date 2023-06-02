@@ -32,6 +32,8 @@ namespace ControllerCommon.Processor
                     case RyzenFamily.FAM_CEZANNE:
                     case RyzenFamily.FAM_VANGOGH:
                     case RyzenFamily.FAM_REMBRANDT:
+                    case RyzenFamily.FAM_MENDOCINO:
+                    case RyzenFamily.FAM_PHEONIX:
                         CanChangeGPU = true;
                         break;
                 }
@@ -50,6 +52,8 @@ namespace ControllerCommon.Processor
                     case RyzenFamily.FAM_CEZANNE:
                     case RyzenFamily.FAM_VANGOGH:
                     case RyzenFamily.FAM_REMBRANDT:
+                    case RyzenFamily.FAM_MENDOCINO:
+                    case RyzenFamily.FAM_PHEONIX:
                         CanChangeTDP = true;
                         break;
                 }

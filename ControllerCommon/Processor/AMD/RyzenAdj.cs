@@ -7,13 +7,15 @@ namespace ControllerCommon.Processor.AMD
     {
         FAM_UNKNOWN = -1,
         FAM_RAVEN = 0,
-        FAM_PICASSO,
-        FAM_RENOIR,
-        FAM_CEZANNE,
-        FAM_DALI,
-        FAM_LUCIENNE,
-        FAM_VANGOGH,
-        FAM_REMBRANDT,
+        FAM_PICASSO = 1,
+        FAM_RENOIR = 2,
+        FAM_CEZANNE = 3,
+        FAM_DALI = 4,
+        FAM_LUCIENNE = 5,
+        FAM_VANGOGH = 6,
+        FAM_REMBRANDT = 7,
+        FAM_MENDOCINO = 8,
+        FAM_PHEONIX = 9,
         FAM_END
     };
 
