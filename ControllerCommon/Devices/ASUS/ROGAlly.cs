@@ -104,6 +104,7 @@ namespace ControllerCommon.Devices
         {
             { 0, ButtonFlags.None },
             { 56, ButtonFlags.OEM2 },
+            { 162, ButtonFlags.None },
             { 166, ButtonFlags.OEM1 },
             { 165, ButtonFlags.OEM3 },
             { 167, ButtonFlags.OEM4 },
@@ -113,7 +114,8 @@ namespace ControllerCommon.Devices
 
         private void InputReportReciever_Received(object sender, EventArgs e)
         {
-            var inputReportBuffer = new byte[_hidDevice.GetMaxInputReportLength()];
+            byte[] inputReportBuffer = new byte[_hidDevice.GetMaxInputReportLength()];
+
             while (_hidDeviceInputReceiver.TryRead(inputReportBuffer, 0, out Report report))
             {
                 // Parse the report if possible.
@@ -152,7 +154,7 @@ namespace ControllerCommon.Devices
                                 Task.Factory.StartNew(async () =>
                                 {
                                     KeyPress(button);
-                                    await Task.Delay(125);
+                                    await Task.Delay(20);
                                     KeyRelease(button);
                                 });
                             }
