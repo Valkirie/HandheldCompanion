@@ -365,7 +365,7 @@ namespace HandheldCompanion.Managers
 
                         // calls current controller (if connected)
                         IController controller = ControllerManager.GetTargetController();
-                        controller?.InjectButton(chord.state, args.IsKeyDown, args.IsKeyUp);
+                        controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
 
                         if (args.IsKeyDown)
                             SpecialKey = chord.name;

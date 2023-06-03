@@ -3,6 +3,8 @@ using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using HandheldCompanion;
+using HidSharp;
+using HidSharp.Reports.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +41,12 @@ namespace ControllerCommon.Devices
 
     public abstract class IDevice
     {
+        public event KeyPressedEventHandler KeyPressed;
+        public delegate void KeyPressedEventHandler(ButtonFlags button);
+
+        public event KeyReleasedEventHandler KeyReleased;
+        public delegate void KeyReleasedEventHandler(ButtonFlags button);
+
         protected USBDeviceInfo sensor = new USBDeviceInfo();
         public string InternalSensorName = string.Empty;
         public string ExternalSensorName = string.Empty;
@@ -53,6 +61,11 @@ namespace ControllerCommon.Devices
 
         public ECDetails ECDetails;
         private static OpenLibSys openLibSys;
+
+        protected HidDevice _hidDevice;
+        protected DeviceItemInputParser _hiddeviceInputParser;
+        protected HidDeviceInputReceiver _hidDeviceInputReceiver;
+        protected ushort _vid, _pid;
 
         // device nominal TDP (slow, fast)
         public double[] nTDP = { 15, 15, 20 };
@@ -439,6 +452,16 @@ namespace ControllerCommon.Devices
                 LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
                 return false;
             }
+        }
+
+        protected void KeyPress(ButtonFlags button)
+        {
+            KeyPressed?.Invoke(button);
+        }
+
+        protected void KeyRelease(ButtonFlags button)
+        {
+            KeyReleased?.Invoke(button);
         }
     }
 }
