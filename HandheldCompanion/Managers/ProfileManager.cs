@@ -279,10 +279,17 @@ namespace HandheldCompanion.Managers
                 switch (version.ToString())
                 {
                     case "0.15.0.4":
-                        outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"", "Generic.SortedDictionary$1System.Collections\"");
-                        jObject = JObject.Parse(outputraw);
-                        jObject.Remove("MotionSensivityArray");
-                        outputraw = jObject.ToString();
+                        {
+                            outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"", "Generic.SortedDictionary$1System.Collections\"");
+                            jObject = JObject.Parse(outputraw);
+                            jObject.Remove("MotionSensivityArray");
+                            outputraw = jObject.ToString();
+                        }
+                        break;
+                    case "0.16.0.5":
+                        {
+                            outputraw = outputraw.Replace("\"System.Collections.Generic.SortedDictionary`2[[ControllerCommon.Inputs.ButtonFlags, ControllerCommon],[System.Boolean, System.Private.CoreLib]], System.Collections\"", "\"System.Collections.Concurrent.ConcurrentDictionary`2[[ControllerCommon.Inputs.ButtonFlags, ControllerCommon],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+                        }
                         break;
                 }
 

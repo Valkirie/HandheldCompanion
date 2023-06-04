@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public class AxisState : ICloneable
     {
-        public SortedDictionary<AxisFlags, short> State = new();
+        public ConcurrentDictionary<AxisFlags, short> State = new();
 
         public short this[AxisFlags axis]
         {
@@ -31,7 +32,7 @@ namespace ControllerCommon.Inputs
         [JsonIgnore]
         public IEnumerable<AxisFlags> Axis => State.Where(a => a.Value != 0).Select(a => a.Key).ToList();
 
-        public AxisState(SortedDictionary<AxisFlags, short> axisState)
+        public AxisState(ConcurrentDictionary<AxisFlags, short> axisState)
         {
             foreach (var state in axisState)
                 this[state.Key] = state.Value;
@@ -87,7 +88,7 @@ namespace ControllerCommon.Inputs
             return false;
         }
 
-        public static bool EqualsWithValues(SortedDictionary<AxisFlags, short> obj1, SortedDictionary<AxisFlags, short> obj2)
+        public static bool EqualsWithValues(ConcurrentDictionary<AxisFlags, short> obj1, ConcurrentDictionary<AxisFlags, short> obj2)
         {
             bool result = false;
             if (obj1.Count == obj2.Count)

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,7 @@ namespace ControllerCommon.Inputs
     [Serializable]
     public class ButtonState : ICloneable
     {
-        public SortedDictionary<ButtonFlags, bool> State = new();
+        public ConcurrentDictionary<ButtonFlags, bool> State = new();
 
         public bool this[ButtonFlags button]
         {
@@ -31,7 +32,7 @@ namespace ControllerCommon.Inputs
         [JsonIgnore]
         public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value is true).Select(a => a.Key).ToList();
 
-        public ButtonState(SortedDictionary<ButtonFlags, bool> buttonState)
+        public ButtonState(ConcurrentDictionary<ButtonFlags, bool> buttonState)
         {
             foreach (var state in buttonState)
                 this[state.Key] = state.Value;
