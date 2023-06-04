@@ -247,7 +247,7 @@ namespace HandheldCompanion.Views.QuickPages
                 switch (source)
                 {
                     // self update, unlock and exit
-                    // case ProfileUpdateSource.QuickProfilesPage:
+                    case ProfileUpdateSource.QuickProfilesPage:
                     case ProfileUpdateSource.Serializer:
                         return;
                 }
@@ -370,7 +370,7 @@ namespace HandheldCompanion.Views.QuickPages
                 else
                 {
                     realProfile.Enabled = ProfileToggle.IsOn;
-                    ProfileManager.UpdateOrCreateProfile(realProfile, ProfileUpdateSource.QuickProfilesPage);
+                    ProfileManager.UpdateOrCreateProfile(realProfile, ProfileUpdateSource.Creation);
                 }
             }
         }
