@@ -189,10 +189,10 @@ namespace ControllerCommon.Platforms
         {
             try
             {
-                if (_Process is null)
+                if (Process is null)
                     return false;
 
-                return !_Process.HasExited;
+                return !Process.HasExited;
             }
             catch { }
 
@@ -251,7 +251,9 @@ namespace ControllerCommon.Platforms
         {
             try
             {
+                // increase tentative counter
                 Tentative++;
+
                 LogManager.LogDebug("Starting {0}, tentative: {1}/{2}", this.GetType(), Tentative, MaxTentative);
 
                 // set lock

@@ -401,7 +401,12 @@ namespace HandheldCompanion.Platforms
                 }
 
                 if (GetProfileProperty("FramerateLimit", out int fpsLimit))
+                {
+                    // reset tentative counter
+                    Tentative = 0;
+
                     return fpsLimit;
+                }
             }
             catch { }
 

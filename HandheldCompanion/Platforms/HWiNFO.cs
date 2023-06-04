@@ -240,9 +240,6 @@ namespace HandheldCompanion.Platforms
                 return;
             }
 
-            // reset tentative counter
-            Tentative = 0;
-
             // update poll time
             if (HWiNFOMemory.poll_time != 0)
                 prevPoll_time = HWiNFOMemory.poll_time;
