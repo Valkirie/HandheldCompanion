@@ -62,9 +62,6 @@ namespace ControllerCommon.Devices
         public ECDetails ECDetails;
         private static OpenLibSys openLibSys;
 
-        protected HidDevice _hidDevice;
-        protected DeviceItemInputParser _hiddeviceInputParser;
-        protected HidDeviceInputReceiver _hidDeviceInputReceiver;
         protected ushort _vid, _pid;
 
         // device nominal TDP (slow, fast)

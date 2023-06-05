@@ -1,4 +1,5 @@
 ﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using HidSharp;
 using HidSharp.Reports;
 using HidSharp.Reports.Input;
@@ -18,6 +19,10 @@ namespace ControllerCommon.Devices
         {
             // device specific settings
             this.ProductIllustration = "device_rog_ally";
+
+            // used to monitor OEM specific inputs
+            this._vid = 0x0B05;
+            this._pid = 0x1ABE;
 
             // https://www.amd.com/en/products/apu/amd-ryzen-z1
             // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
@@ -56,35 +61,30 @@ namespace ControllerCommon.Devices
                 new(), new(),
                 false, ButtonFlags.OEM3
                 ));
-
-            // hid specific
-            _vid = 0x0B05;
-            _pid = 0x1ABE;
-
-            // todo: improve me
-            _hidDevice = DeviceList.Local.GetHidDevices().Where(d => d.ProductID == _pid && d.VendorID == _vid && d.DevicePath.Contains("mi_02&col01")).First();
         }
 
         public override bool Open()
         {
-            if (_hidDevice is not null)
+            // prepare configuration
+            OpenConfiguration deviceConfiguration = new OpenConfiguration();
+            deviceConfiguration.SetOption(OpenOption.Exclusive, true);
+            deviceConfiguration.SetOption(OpenOption.Transient, true);
+
+            foreach (var _hidDevice in DeviceList.Local.GetHidDevices().Where(d => d.ProductID == _pid && d.VendorID == _vid))
             {
                 // get descriptor
                 var deviceDescriptor = _hidDevice.GetReportDescriptor();
 
-                // prepare configuration
-                OpenConfiguration deviceConfiguration = new OpenConfiguration();
-                deviceConfiguration.SetOption(OpenOption.Exclusive, true);
-                deviceConfiguration.SetOption(OpenOption.Transient, true);
-
                 if (_hidDevice.TryOpen(deviceConfiguration, out var inputStream))
                 {
-                    var inputReport = deviceDescriptor.InputReports.First();
-                    _hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
-                    _hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
+                    foreach (var inputReport in deviceDescriptor.InputReports)
+                    {
+                        DeviceItemInputParser hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
+                        HidDeviceInputReceiver hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
 
-                    _hidDeviceInputReceiver.Received += InputReportReciever_Received;
-                    _hidDeviceInputReceiver.Start(inputStream);
+                        hidDeviceInputReceiver.Received += (sender, e) => InputReportReciever_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
+                        hidDeviceInputReceiver.Start(inputStream);
+                    }
                 }
             }
 
@@ -93,9 +93,6 @@ namespace ControllerCommon.Devices
 
         public override void Close()
         {
-            if (_hidDeviceInputReceiver is not null)
-                _hidDeviceInputReceiver.Received -= InputReportReciever_Received;
-
             base.Close();
         }
 
@@ -112,17 +109,28 @@ namespace ControllerCommon.Devices
             { 236, ButtonFlags.None },
         };
 
-        private void InputReportReciever_Received(object sender, EventArgs e)
+        private void InputReportReciever_Received(HidDevice hidDevice, DeviceItemInputParser hiddeviceInputParser, HidDeviceInputReceiver hidDeviceInputReceiver)
         {
-            byte[] inputReportBuffer = new byte[_hidDevice.GetMaxInputReportLength()];
+            byte[] inputReportBuffer = new byte[hidDevice.GetMaxInputReportLength()];
 
-            while (_hidDeviceInputReceiver.TryRead(inputReportBuffer, 0, out Report report))
+            while (hidDeviceInputReceiver.TryRead(inputReportBuffer, 0, out Report report))
             {
-                // Parse the report if possible.
-                // This will return false if (for example) the report applies to a different DeviceItem.
-                if (_hiddeviceInputParser.TryParseReport(inputReportBuffer, 0, report))
+                switch(report.ReportID)
+                {
+                    case 90:
+                        break;
+                    default:
+                        return;
+                }
+
+                if (hiddeviceInputParser.TryParseReport(inputReportBuffer, 0, report))
                 {
                     byte key = inputReportBuffer[1];
+
+                    if (!keyMapping.ContainsKey(key))
+                        return;
+
+                    // get button
                     ButtonFlags button = keyMapping[key];
 
                     switch (key)
