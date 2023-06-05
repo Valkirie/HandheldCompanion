@@ -91,6 +91,9 @@ namespace ControllerCommon.Platforms
 
         private void _Process_Exited(object sender, EventArgs e)
         {
+            if (_Process is null)
+                return;
+
             _Process.Dispose();
             _Process = null;
         }
@@ -303,7 +306,7 @@ namespace ControllerCommon.Platforms
 
         public bool KillProcess()
         {
-            if (_Process is null)
+            if (Process is null)
                 return false;
 
             try
