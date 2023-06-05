@@ -28,7 +28,7 @@ namespace ControllerCommon.Devices
             // https://www.amd.com/en/products/apu/amd-ryzen-z1-extreme
             // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
             this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 5, 53 };
+            this.cTDP = new double[] { 5, 30 };
             this.GfxClock = new double[] { 100, 2700 };
 
             this.AngularVelocityAxis = new Vector3(-1.0f, 1.0f, 1.0f);
