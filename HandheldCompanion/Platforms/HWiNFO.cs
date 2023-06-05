@@ -244,6 +244,9 @@ namespace HandheldCompanion.Platforms
             if (HWiNFOMemory.poll_time != 0)
                 prevPoll_time = HWiNFOMemory.poll_time;
 
+            // reset tentative counter
+            Tentative = 0;
+
             // connect to shared memory
             if (MemoryMapped is null)
                 MemoryMapped = MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
@@ -570,18 +573,19 @@ namespace HandheldCompanion.Platforms
                 KillProcess();
 
             // (re)set elements
-            DisposeMemory();
-
-            // Shared Memory Support [12-HOUR LIMIT]
-            SetProperty("SensorsSM", 1);
+            DisposeMemory();            
 
             // Quiet startup
-            // Todo: make this configurable ?
-            SetProperty("OpenSensors", 1);
-            SetProperty("MinimalizeSensors", 1);
             SetProperty("OpenSystemSummary", 0);
-            SetProperty("AutoUpdate", 0);
+            SetProperty("OpenSensors", 1);
+            SetProperty("MinimalizeMainWnd", 1);
+            SetProperty("MinimalizeSensors", 1);
+            SetProperty("MinimalizeSensorsClose", 1);
+            SetProperty("SensorsSM", 1);    // Shared Memory Support [12-HOUR LIMIT]
             SetProperty("ShowWelcomeAndProgress", 0);
+            SetProperty("SensorsOnly", 1);
+            SetProperty("AutoUpdateBetaDisable", 1);
+            SetProperty("AutoUpdate", 0);
 
             // stop watchdog
             PlatformWatchdog.Stop();
