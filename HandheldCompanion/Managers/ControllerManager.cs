@@ -68,6 +68,9 @@ namespace HandheldCompanion.Managers
 
             PipeClient.Connected += OnClientConnected;
 
+            MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
+            MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
+
             // enable HidHide
             HidHide.SetCloaking(true);
 
@@ -79,6 +82,20 @@ namespace HandheldCompanion.Managers
             ControllerSelected?.Invoke(GetEmulatedController());
 
             LogManager.LogInformation("{0} has started", "ControllerManager");
+        }
+
+        private static void CurrentDevice_KeyReleased(ButtonFlags button)
+        {
+            // calls current controller (if connected)
+            IController controller = ControllerManager.GetTargetController();
+            controller?.InjectButton(button, false, true);
+        }
+
+        private static void CurrentDevice_KeyPressed(ButtonFlags button)
+        {
+            // calls current controller (if connected)
+            IController controller = ControllerManager.GetTargetController();
+            controller?.InjectButton(button, true, false);
         }
 
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
