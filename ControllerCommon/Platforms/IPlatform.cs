@@ -311,7 +311,7 @@ namespace ControllerCommon.Platforms
 
             try
             {
-                _Process.Kill();
+                Process.Kill();
                 return true;
             }
             catch
