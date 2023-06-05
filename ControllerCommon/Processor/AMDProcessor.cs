@@ -30,7 +30,6 @@ namespace ControllerCommon.Processor
                     case RyzenFamily.FAM_RENOIR:
                     case RyzenFamily.FAM_LUCIENNE:
                     case RyzenFamily.FAM_CEZANNE:
-                    case RyzenFamily.FAM_VANGOGH:
                     case RyzenFamily.FAM_REMBRANDT:
                     case RyzenFamily.FAM_MENDOCINO:
                     case RyzenFamily.FAM_PHEONIX:

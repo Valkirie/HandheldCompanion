@@ -5,6 +5,7 @@ namespace ControllerCommon.Processor.AMD
 {
     public enum RyzenFamily
     {
+        WAIT_FOR_LOAD = -2,
         FAM_UNKNOWN = -1,
         FAM_RAVEN = 0,
         FAM_PICASSO = 1,
