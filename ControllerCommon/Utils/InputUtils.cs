@@ -160,20 +160,20 @@ namespace ControllerCommon.Utils
             return (StickInput + Deadzone) * short.MaxValue;
         }
 
-        public static Vector2 ImproveCircularity(Vector2 ThumbValue)
+        public static Vector2 ImproveCircularity(Vector2 thumbValue)
         {
-            // Convert short value input to -1 to 1
-            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+            // Convert short value input to -1 to 1 range
+            Vector2 stickInput = thumbValue / short.MaxValue;
 
-            // Return if length is not longer then 1
-            if (StickInput.Length() <= 1.0f)
-                return ThumbValue;
+            // Return thumbValue if length is not longer than 1
+            if (stickInput.LengthSquared() <= 1.0f)
+                return thumbValue;
 
-            // Cap vector length to 1 by determining the multiplier
-            float Multiplier = 1 / StickInput.Length();
+            // Cap vector length to 1 by normalizing it
+            Vector2 normalizedInput = Vector2.Normalize(stickInput);
 
             // Convert -1 to 1 back to short value and return
-            return StickInput * Multiplier * short.MaxValue;
+            return normalizedInput * short.MaxValue;
         }
 
         // Triggers, inner and outer deadzone
