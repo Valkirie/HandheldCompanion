@@ -68,9 +68,15 @@ namespace ControllerCommon.Utils
             return (float)(rad * (180 / Math.PI));
         }
 
-        public static float MapRange(float Value, float OldMin, float OldMax, float NewMin, float NewMax)
+        public static float MapRange(float value, float oldMin, float oldMax, float newMin, float newMax)
         {
-            return (NewMin + (NewMax - NewMin) * (Value - OldMin) / (OldMax - OldMin));
+            if (oldMin == oldMax)
+            {
+                // Prevent division by zero
+                return newMin;
+            }
+
+            return newMin + (newMax - newMin) * (value - oldMin) / (oldMax - oldMin);
         }
 
         public static byte NormalizeXboxInput(float input)
