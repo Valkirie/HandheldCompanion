@@ -96,6 +96,11 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="You have no physical controller connected. No inputs will be sent to HC or its service."
                                         TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="You might want to click on Connect next to your plugged controller."
+                                        TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
                         </Grid>
@@ -132,7 +137,12 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games. You might want to start companion service."
+                                        Text="Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="You might want to start companion service or make sure your virtual controller status is set to: Connected"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -166,11 +176,16 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Neptune controller is hidden" />
+                                        Text="Physical controller is hidden" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Your physical controller is hidden, yet you have muted your virtual controller. You might want to unmute your virtual controller or unhide your physical controller."
+                                        Text="Your physical controller is hidden, yet you have muted your virtual controller."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="You might want to unmute your virtual controller or unhide your physical controller."
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -208,7 +223,12 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Your physical controller is not hidden, yet you have a connected virtual controller. You might encounter double inputs in games. You might want to hide your physical controller."
+                                        Text="Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games."
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="You might want to hide your physical controller or mute your virtual controller."
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
