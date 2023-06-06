@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ControllerCommon.Pipes
 {
@@ -57,8 +58,15 @@ namespace ControllerCommon.Pipes
     [Serializable]
     public partial class PipeClientProfile : PipeMessage
     {
-        // public Profile profile;
-        public string jsonString;
+        private string jsonString;
+
+        public Profile GetValue()
+        {
+            return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
 
         public PipeClientProfile()
         {
@@ -71,21 +79,6 @@ namespace ControllerCommon.Pipes
             {
                 TypeNameHandling = TypeNameHandling.All
             });
-        }
-
-        public Profile GetProfile()
-        {
-            try
-            {
-                return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception)
-            {
-                return new Profile();
-            }
         }
     }
 
@@ -151,7 +144,15 @@ namespace ControllerCommon.Pipes
     [Serializable]
     public partial class PipeClientInputs : PipeMessage
     {
-        public ControllerState Inputs;
+        private string jsonString;
+
+        public ControllerState GetValue()
+        {
+            return JsonConvert.DeserializeObject<ControllerState>(jsonString, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
 
         public PipeClientInputs()
         {
@@ -160,7 +161,10 @@ namespace ControllerCommon.Pipes
 
         public PipeClientInputs(ControllerState inputs) : this()
         {
-            Inputs = inputs;
+            jsonString = JsonConvert.SerializeObject(inputs, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
         }
     }
 
