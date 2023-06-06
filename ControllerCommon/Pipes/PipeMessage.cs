@@ -59,11 +59,14 @@ namespace ControllerCommon.Pipes
     public partial class PipeClientProfile : PipeMessage
     {
         private string jsonString;
+
+        private Profile _profile;
         public Profile profile
         {
             set
             {
-                jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+                _profile = value;
+                jsonString = JsonConvert.SerializeObject(_profile, Formatting.Indented, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
@@ -151,11 +154,14 @@ namespace ControllerCommon.Pipes
     public partial class PipeClientInputs : PipeMessage
     {
         private string jsonString;
+
+        private ControllerState _Inputs;
         public ControllerState Inputs
         {
             set
             {
-                jsonString = JsonConvert.SerializeObject(Inputs, Formatting.Indented, new JsonSerializerSettings
+                _Inputs = value;
+                jsonString = JsonConvert.SerializeObject(_Inputs, Formatting.Indented, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
