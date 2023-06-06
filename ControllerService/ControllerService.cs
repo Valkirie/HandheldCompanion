@@ -1,4 +1,5 @@
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Platforms;
@@ -242,8 +243,9 @@ namespace ControllerService
             {
                 case PipeCode.CLIENT_PROFILE:
                     {
-                        PipeClientProfile profile = (PipeClientProfile)message;
-                        UpdateProfile(profile.profile);
+                        PipeClientProfile profileMsg = (PipeClientProfile)message;
+                        Profile profile = profileMsg.GetValue();
+                        UpdateProfile(profile);
                     }
                     break;
 
@@ -308,11 +310,12 @@ namespace ControllerService
 
                 case PipeCode.CLIENT_INPUT:
                     {
-                        PipeClientInputs input = (PipeClientInputs)message;
+                        PipeClientInputs inputMsg = (PipeClientInputs)message;
+                        ControllerState input = inputMsg.GetValue();
 
-                        vTarget?.UpdateInputs(input.Inputs);
-                        DSUServer.UpdateInputs(input.Inputs);
-                        DS4Touch.UpdateInputs(input.Inputs);
+                        vTarget?.UpdateInputs(input);
+                        DSUServer.UpdateInputs(input);
+                        DS4Touch.UpdateInputs(input);
                     }
                     break;
 

@@ -60,24 +60,12 @@ namespace ControllerCommon.Pipes
     {
         private string jsonString;
 
-        private Profile _profile;
-        public Profile profile
+        public Profile GetValue()
         {
-            set
+            return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings
             {
-                _profile = value;
-                jsonString = JsonConvert.SerializeObject(_profile, Formatting.Indented, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            get
-            {
-                return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
+                TypeNameHandling = TypeNameHandling.All
+            });
         }
 
         public PipeClientProfile()
@@ -87,7 +75,10 @@ namespace ControllerCommon.Pipes
 
         public PipeClientProfile(Profile profile) : this()
         {
-            this.profile = profile;
+            this.jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
         }
     }
 
@@ -155,24 +146,12 @@ namespace ControllerCommon.Pipes
     {
         private string jsonString;
 
-        private ControllerState _Inputs;
-        public ControllerState Inputs
+        public ControllerState GetValue()
         {
-            set
+            return JsonConvert.DeserializeObject<ControllerState>(jsonString, new JsonSerializerSettings
             {
-                _Inputs = value;
-                jsonString = JsonConvert.SerializeObject(_Inputs, Formatting.Indented, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            get
-            {
-                return JsonConvert.DeserializeObject<ControllerState>(jsonString, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
+                TypeNameHandling = TypeNameHandling.All
+            });
         }
 
         public PipeClientInputs()
@@ -182,7 +161,10 @@ namespace ControllerCommon.Pipes
 
         public PipeClientInputs(ControllerState inputs) : this()
         {
-            Inputs = inputs;
+            jsonString = JsonConvert.SerializeObject(inputs, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            });
         }
     }
 
