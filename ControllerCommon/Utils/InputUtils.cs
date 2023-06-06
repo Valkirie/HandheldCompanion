@@ -1,3 +1,4 @@
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,12 +116,12 @@ namespace ControllerCommon.Utils
         }
 
         // Apply power of to -1 to 1 joystick position while respecting direction
-        public static float DirectionRespectingPowerOf(float JoystickPos, float Power)
+        public static float DirectionRespectingPowerOf(float joystickPos, float power)
         {
-            float Result = (float)Math.Pow(Math.Abs(JoystickPos), Power);
+            float result = (float)Math.Pow(Math.Abs(joystickPos), power);
 
-            // Apply direction again
-            return (JoystickPos < 0.0) ? -Result : Result;
+            // Apply direction based on the the original joystick position
+            return (joystickPos < 0.0) ? -result : result;
         }
 
         // Compensation for in game deadzone
