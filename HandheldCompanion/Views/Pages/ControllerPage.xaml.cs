@@ -255,7 +255,7 @@ namespace HandheldCompanion.Views.Pages
                 HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
                 // hint: Has physical controller not hidden, and virtual controller
-                bool notmuted = !isHidden && !isNeptune && hasVirtual;
+                bool notmuted = !isHidden && hasVirtual && !isMuted;
                 HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
             });
         }
