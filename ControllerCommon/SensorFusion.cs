@@ -51,7 +51,7 @@ namespace ControllerCommon
             // http://gyrowiki.jibbsmart.com/blog:finding-gravity-with-sensor-fusion
 
             // Convert to radian as per library spec
-            Vector3 AngularVelocityRad = new Vector3(InputUtils.deg2rad(AngularVelocity.X), InputUtils.deg2rad(AngularVelocity.Y), InputUtils.deg2rad(AngularVelocity.Z));
+            Vector3 AngularVelocityRad = new Vector3(InputUtils.Deg2Rad(AngularVelocity.X), InputUtils.Deg2Rad(AngularVelocity.Y), InputUtils.Deg2Rad(AngularVelocity.Z));
 
             // Normalize before creating quat from axis angle as per library spec
             AngularVelocityRad = Vector3.Normalize(AngularVelocityRad);
@@ -102,7 +102,7 @@ namespace ControllerCommon
             // Isn't this always true with the default settings? if (ShakinessMaxThreshold > ShakinessMinThreshold)
 
             // Convert to radian as per library spec
-            Vector3 AngularVelocityRad = new Vector3(InputUtils.deg2rad(AngularVelocity.X), InputUtils.deg2rad(AngularVelocity.Y), InputUtils.deg2rad(AngularVelocity.Z));
+            Vector3 AngularVelocityRad = new Vector3(InputUtils.Deg2Rad(AngularVelocity.X), InputUtils.Deg2Rad(AngularVelocity.Y), InputUtils.Deg2Rad(AngularVelocity.Z));
             // Normalize before creating quat from axis angle as per library spec
             AngularVelocityRad = Vector3.Normalize(AngularVelocityRad);
 

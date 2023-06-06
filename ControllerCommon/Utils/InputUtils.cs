@@ -58,14 +58,14 @@ namespace ControllerCommon.Utils
             return spec.minOut + outRange * ((value - spec.minIn) / inRange);
         }
 
-        public static float deg2rad(float degrees)
+        public static float Deg2Rad(float degrees)
         {
             return (float)((Math.PI / 180) * degrees);
         }
 
-        public static float rad2deg(float rad)
+        public static float Rad2Deg(float rad)
         {
-            return rad * (180 / (float)Math.PI);
+            return (float)(rad * (180 / Math.PI));
         }
 
         public static float MapRange(float Value, float OldMin, float OldMax, float NewMin, float NewMax)
