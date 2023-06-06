@@ -86,19 +86,16 @@ namespace ControllerCommon.Utils
             return (byte)Math.Round(output);
         }
 
-        public static float Steering(float DeviceAngle,
-                                     float DeviceAngleMax,
-                                     float ToThePowerOf,
-                                     float DeadzoneAngle)
+        public static float Steering(float deviceAngle, float deviceAngleMax, float toThePowerOf, float deadzoneAngle)
         {
             // Range angle y value (0 to user defined angle) into -1.0 to 1.0 position value taking into account deadzone angle
-            float Result = AngleToJoystickPos(DeviceAngle, DeviceAngleMax, DeadzoneAngle);
+            float result = AngleToJoystickPos(deviceAngle, deviceAngleMax, deadzoneAngle);
 
-            // Apply user defined to the power of to joystick pos
-            Result = DirectionRespectingPowerOf(Result, ToThePowerOf);
+            // Apply user-defined to the power of to joystick position
+            result = DirectionRespectingPowerOf(result, toThePowerOf);
 
-            // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
-            return (float)-(Result * short.MaxValue);
+            // Scale joystick x position -1 to 1 to joystick range
+            return -result * short.MaxValue;
         }
 
         // Determine -1 to 1 joystick position given user defined max input angle and dead zone
