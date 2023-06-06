@@ -177,37 +177,35 @@ namespace ControllerCommon.Utils
         }
 
         // Triggers, inner and outer deadzone
-        public static float InnerOuterDeadzone(float TriggerInput, int InnerDeadzonePercentage, int OuterDeadzonePercentage, int MaxValue)
+        public static float InnerOuterDeadzone(float triggerInput, int innerDeadzonePercentage, int outerDeadzonePercentage, int maxValue)
         {
-            // Return if thumbstick or deadzone is not used
-            if ((InnerDeadzonePercentage.Equals(0) && OuterDeadzonePercentage.Equals(0)) || TriggerInput.Equals(float.NaN) || TriggerInput.Equals(0.0f))
-                return TriggerInput;
+            // Return triggerInput if both inner and outer deadzones are 0 or if triggerInput is NaN or 0
+            if ((innerDeadzonePercentage == 0 && outerDeadzonePercentage == 0) || float.IsNaN(triggerInput) || triggerInput == 0.0f)
+                return triggerInput;
 
-            // Convert deadzone percentage to 0 - 1 range
-            float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
-            float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+            // Convert deadzone percentages to the 0-1 range
+            float innerDeadzone = (float)innerDeadzonePercentage / 100.0f;
+            float outerDeadzone = (float)outerDeadzonePercentage / 100.0f;
 
-            // Convert 0 - MaxValue range value input to -1 to 1
-            float Trigger = Math.Abs(TriggerInput / MaxValue);
+            // Convert 0-MaxValue range input to -1 to 1
+            float trigger = Math.Abs(triggerInput / maxValue);
 
             // Trigger is either:
             // - Within inner deadzone, return 0
             // - Within outer deadzone, return max
             // - In between deadzone values, map accordingly
-            if (Trigger <= InnerDeadZone)
+            if (trigger <= innerDeadzone)
             {
                 return 0.0f;
             }
-            else if (Trigger >= 1 - OuterDeadZone)
+            else if (trigger >= 1.0f - outerDeadzone)
             {
-                return MaxValue * Math.Sign(TriggerInput);
+                return triggerInput > 0 ? maxValue : -maxValue;
             }
             else
             {
-                // Map to new range
-                // Convert back to 0 - MaxValue range
-                // Cut off float remains
-                return (int)(MapRange(Trigger, InnerDeadZone, (1 - OuterDeadZone), 0, 1) * MaxValue * Math.Sign(TriggerInput));
+                // Map trigger to the new range and convert back to 0-MaxValue range
+                return MapRange(trigger, innerDeadzone, 1.0f - outerDeadzone, 0, 1) * maxValue * Math.Sign(triggerInput);
             }
         }
 
