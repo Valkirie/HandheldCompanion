@@ -50,11 +50,6 @@ namespace ControllerCommon.Utils
 
     public static class InputUtils
     {
-        public static float Clamp(float value, float min, float max)
-        {
-            return Math.Min(max, Math.Max(min, value));
-        }
-
         public static float rangeMap(float value, SensorSpec spec)
         {
             float inRange = spec.maxIn - spec.minIn;
