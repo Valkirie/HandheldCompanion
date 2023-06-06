@@ -243,7 +243,7 @@ namespace ControllerService
                 case PipeCode.CLIENT_PROFILE:
                     {
                         PipeClientProfile profile = (PipeClientProfile)message;
-                        UpdateProfile(profile.GetProfile());
+                        UpdateProfile(profile.profile);
                     }
                     break;
 
