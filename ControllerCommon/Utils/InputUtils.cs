@@ -124,29 +124,29 @@ namespace ControllerCommon.Utils
             return (joystickPos < 0.0) ? -result : result;
         }
 
-        // Compensation for in game deadzone
+        // Compensation for in-game deadzone
         // Inputs: raw ThumbValue and deadzone 0-100%
-        // Should not be used under normal circumstances, in game should be set to 0% if possible. Results in loss of resolution.
+        // Should not be used under normal circumstances, in-game deadzone should be set to 0% if possible. Results in loss of resolution.
         // Use cases foreseen:
-        // - Game has deadzone, but no way to configure or change it
-        // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
-        public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzonePercentage)
+        // - Game has a deadzone but no way to configure or change it
+        // - User does not want to change general emulator deadzone setting but wants it removed for a specific game and use UMC Steering
+        public static Vector2 ApplyAntiDeadzone(Vector2 thumbValue, float deadzonePercentage)
         {
-            // Return if thumbstick or anti deadzone is not used
-            if (DeadzonePercentage.Equals(0.0f) || ThumbValue == Vector2.Zero)
-                return ThumbValue;
+            // Return thumbValue if deadzone percentage is 0 or thumbValue is already zero
+            if (deadzonePercentage.Equals(0.0f) || thumbValue == Vector2.Zero)
+                return thumbValue;
 
-            // Convert short value input to -1 to 1
-            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+            // Convert short value input to -1 to 1 range
+            Vector2 stickInput = thumbValue / short.MaxValue;
 
-            // Convert 0-100% to 0 to 1
-            float Deadzone = DeadzonePercentage / 100;
+            // Convert 0-100% deadzone to 0-1 range
+            float deadzone = deadzonePercentage / 100f;
 
-            // Map vector to new range by determining the multiplier
-            float Multiplier = ((1 - Deadzone) * StickInput.Length() + Deadzone) / StickInput.Length();
+            // Map vector to new range by determining the multiplier 
+            float multiplier = ((1f - deadzone) * stickInput.Length() + deadzone) / stickInput.Length();
 
             // Convert -1 to 1 back to short value and return
-            return StickInput * Multiplier * short.MaxValue;
+            return stickInput * multiplier * short.MaxValue;
         }
 
         public static float ApplyAntiDeadzone(float ThumbValue, float DeadzonePercentage)
