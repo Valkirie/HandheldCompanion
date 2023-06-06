@@ -49,6 +49,7 @@ namespace HandheldCompanion.Managers
 
         private static IController? targetController;
         private static ProcessEx? foregroundProcess;
+        private static bool ControllerMuted;
 
         private static bool IsInitialized;
 
@@ -98,9 +99,33 @@ namespace HandheldCompanion.Managers
             controller?.InjectButton(button, true, false);
         }
 
+        private static void CheckControllerScenario()
+        {
+            ControllerMuted = false;
+
+            // controller specific scenarios
+            if (targetController?.GetType() == typeof(NeptuneController))
+            {
+                NeptuneController neptuneController = (NeptuneController)targetController;
+
+                // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
+                if (foregroundProcess?.Platform == PlatformType.Steam)
+                {
+                    if (neptuneController.IsVirtualMuted())
+                    {
+                        ControllerMuted = true;
+                        return;
+                    }
+                }
+            }
+        }
+
         private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
         {
             foregroundProcess = processEx;
+
+            // check applicable scenarios
+            CheckControllerScenario();
         }
 
         public static void Stop()
@@ -457,6 +482,9 @@ namespace HandheldCompanion.Managers
             // warn service a new controller has arrived
             PipeClient.SendMessage(new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
 
+            // check applicable scenarios
+            CheckControllerScenario();
+
             // raise event
             ControllerSelected?.Invoke(targetController);
         }
@@ -513,16 +541,9 @@ namespace HandheldCompanion.Managers
             // pass inputs to Layout manager
             controllerState = LayoutManager.MapController(controllerState);
 
-            // Controller specific scenarios
-            if (targetController?.GetType() == typeof(NeptuneController))
-            {
-                NeptuneController neptuneController = (NeptuneController)targetController;
-
-                // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-                if (foregroundProcess?.Platform == PlatformType.Steam)
-                    if (neptuneController.IsVirtualMuted())
-                        return;
-            }
+            // controller is muted
+            if (ControllerMuted)
+                return;
 
             // check if motion trigger is pressed
             Profile currentProfile = ProfileManager.GetCurrent();
