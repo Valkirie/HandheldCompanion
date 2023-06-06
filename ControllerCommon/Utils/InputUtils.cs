@@ -100,18 +100,18 @@ namespace ControllerCommon.Utils
 
         // Determine -1 to 1 joystick position given user defined max input angle and dead zone
         // Angles in degrees
-        public static float AngleToJoystickPos(float Angle, float DeviceAngleMax, float DeadzoneAngle)
+        public static float AngleToJoystickPos(float angle, float deviceAngleMax, float deadzoneAngle)
         {
             // Deadzone remapped angle, note this angle is no longer correct with device angle
-            float Result = ((Math.Abs(Angle) - DeadzoneAngle) / (DeviceAngleMax - DeadzoneAngle)) * DeviceAngleMax;
+            float result = ((Math.Abs(angle) - deadzoneAngle) / (deviceAngleMax - deadzoneAngle)) * deviceAngleMax;
 
             // Clamp deadzone remapped angle, prevents negative values when
             // actual device angle is below dead zone angle
             // Divide by max angle, angle to joystick position with user max
-            Result = Math.Clamp(Result, 0, DeviceAngleMax) / DeviceAngleMax;
+            result = Math.Clamp(result, 0, deviceAngleMax) / deviceAngleMax;
 
-            // Apply direction again
-            return (Angle < 0.0) ? -Result : Result;
+            // Apply the direction based on the original angle
+            return (angle < 0f) ? -result : result;
         }
 
         // Apply power of to -1 to 1 joystick position while respecting direction
