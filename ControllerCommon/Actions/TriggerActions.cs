@@ -1,36 +1,35 @@
-﻿using ControllerCommon.Inputs;
-using System;
+﻿using System;
+using ControllerCommon.Inputs;
 
-namespace ControllerCommon.Actions
+namespace ControllerCommon.Actions;
+
+[Serializable]
+public class TriggerActions : IActions
 {
-    [Serializable]
-    public class TriggerActions : IActions
+    public TriggerActions()
     {
-        public AxisLayoutFlags Axis { get; set; }
+        ActionType = ActionType.Trigger;
+        Value = (short)0;
+    }
 
-        public TriggerActions()
-        {
-            this.ActionType = ActionType.Trigger;
-            this.Value = (short)0;
-        }
+    public TriggerActions(AxisLayoutFlags axis) : this()
+    {
+        Axis = axis;
+    }
 
-        public TriggerActions(AxisLayoutFlags axis) : this()
-        {
-            this.Axis = axis;
-        }
+    public AxisLayoutFlags Axis { get; set; }
 
-        public override void Execute(AxisFlags axis, short value)
-        {
-            // Apply inner and outer deadzone adjustments
-            // value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
-            // value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
+    public override void Execute(AxisFlags axis, short value)
+    {
+        // Apply inner and outer deadzone adjustments
+        // value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
+        // value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
 
-            this.Value = (short)(value);
-        }
+        Value = value;
+    }
 
-        public short GetValue()
-        {
-            return (short)this.Value;
-        }
+    public short GetValue()
+    {
+        return (short)Value;
     }
 }

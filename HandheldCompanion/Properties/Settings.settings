@@ -102,7 +102,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="OverlayControllerOpacity" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">0.25</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="OverlayControllerBackgroundColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#00000000</Value>

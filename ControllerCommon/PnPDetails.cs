@@ -1,69 +1,67 @@
-﻿using ControllerCommon.Managers.Hid;
+﻿using System;
+using System.Runtime.InteropServices;
+using ControllerCommon.Managers.Hid;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
-using System.Runtime.InteropServices;
 
-namespace ControllerCommon
+namespace ControllerCommon;
+
+[StructLayout(LayoutKind.Sequential)]
+public class PnPDetails : IDisposable
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public class PnPDetails : IDisposable
+    public DateTimeOffset arrivalDate;
+
+    public Attributes attributes;
+    public string baseContainerDeviceInstanceId;
+    public Capabilities capabilities;
+
+    public string deviceInstanceId;
+    public bool isGaming;
+    public bool isHooked;
+
+    public bool isVirtual;
+    public bool isXInput;
+    public string Name;
+    public string Path;
+    public string SymLink;
+
+    public void Dispose()
     {
-        public string Name;
-        public string Path;
-        public string SymLink;
+        GC.SuppressFinalize(this);
+    }
 
-        public bool isVirtual;
-        public bool isGaming;
-        public bool isHooked;
-        public bool isXInput;
+    public string GetProductID()
+    {
+        return "0x" + attributes.ProductID.ToString("X4");
+    }
 
-        public DateTimeOffset arrivalDate;
+    public string GetVendorID()
+    {
+        return "0x" + attributes.VendorID.ToString("X4");
+    }
 
-        public string deviceInstanceId;
-        public string baseContainerDeviceInstanceId;
+    public UsbPnPDevice GetUsbPnPDevice()
+    {
+        var pnpDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+        if (pnpDevice is null)
+            return null;
 
-        public Attributes attributes;
-        public Capabilities capabilities;
+        // is this a USB device
+        var enumerator = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+        if (!Equals(enumerator, "USB"))
+            return null;
 
-        public string GetProductID()
-        {
-            return "0x" + attributes.ProductID.ToString("X4");
-        }
+        return pnpDevice.ToUsbPnPDevice();
+    }
 
-        public string GetVendorID()
-        {
-            return "0x" + attributes.VendorID.ToString("X4");
-        }
+    public bool CyclePort()
+    {
+        var usbDevice = GetUsbPnPDevice();
 
-        public UsbPnPDevice GetUsbPnPDevice()
-        {
-            var pnpDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-            if (pnpDevice is null)
-                return null;
+        if (usbDevice is null)
+            return false;
 
-            // is this a USB device
-            string enumerator = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-            if (!Equals(enumerator, "USB"))
-                return null;
-
-            return pnpDevice.ToUsbPnPDevice();
-        }
-
-        public bool CyclePort()
-        {
-            UsbPnPDevice usbDevice = GetUsbPnPDevice();
-
-            if (usbDevice is null)
-                return false;
-
-            usbDevice.CyclePort();
-            return true;
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
+        usbDevice.CyclePort();
+        return true;
     }
 }

@@ -1,80 +1,80 @@
-﻿using ControllerCommon.Actions;
+﻿using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
+using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
 
-namespace HandheldCompanion.Views.Pages
+namespace HandheldCompanion.Views.Pages;
+
+public class ILayoutPage : Page
 {
-    public class ILayoutPage : Page
+    public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
+    public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
+    public Dictionary<AxisLayoutFlags, TriggerMapping> MappingTriggers = new();
+
+    public virtual void UpdateController(IController controller)
     {
-        public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-        public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
-        public Dictionary<AxisLayoutFlags, TriggerMapping> MappingTriggers = new();
+    }
 
-        public virtual void UpdateController(IController controller)
+    public void Refresh(SortedDictionary<ButtonFlags, IActions> buttonMapping,
+        SortedDictionary<AxisLayoutFlags, IActions> axisMapping)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-        }
-
-        public void Refresh(SortedDictionary<ButtonFlags, IActions> buttonMapping, SortedDictionary<AxisLayoutFlags, IActions> axisMapping)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            foreach (var pair in MappingButtons)
             {
-                foreach (var pair in MappingButtons)
+                var button = pair.Key;
+                var mapping = pair.Value;
+
+                if (buttonMapping.TryGetValue(button, out var actions))
                 {
-                    ButtonFlags button = pair.Key;
-                    ButtonMapping mapping = pair.Value;
+                    if (actions is null)
+                        actions = new EmptyActions();
 
-                    if (buttonMapping.TryGetValue(button, out IActions actions))
-                    {
-                        if (actions is null)
-                            actions = new EmptyActions();
-
-                        mapping.SetIActions(actions);
-                        continue;
-                    }
-
-                    mapping.Reset();
+                    mapping.SetIActions(actions);
+                    continue;
                 }
 
-                foreach (var pair in MappingAxis)
+                mapping.Reset();
+            }
+
+            foreach (var pair in MappingAxis)
+            {
+                var axis = pair.Key;
+                var mapping = pair.Value;
+
+                if (axisMapping.TryGetValue(axis, out var actions))
                 {
-                    AxisLayoutFlags axis = pair.Key;
-                    AxisMapping mapping = pair.Value;
+                    if (actions is null)
+                        actions = new EmptyActions();
 
-                    if (axisMapping.TryGetValue(axis, out IActions actions))
-                    {
-                        if (actions is null)
-                            actions = new EmptyActions();
-
-                        mapping.SetIActions(actions);
-                        continue;
-                    }
-
-                    mapping.Reset();
+                    mapping.SetIActions(actions);
+                    continue;
                 }
 
-                foreach (var pair in MappingTriggers)
+                mapping.Reset();
+            }
+
+            foreach (var pair in MappingTriggers)
+            {
+                var axis = pair.Key;
+                var mapping = pair.Value;
+
+                if (axisMapping.TryGetValue(axis, out var actions))
                 {
-                    AxisLayoutFlags axis = pair.Key;
-                    TriggerMapping mapping = pair.Value;
+                    if (actions is null)
+                        actions = new EmptyActions();
 
-                    if (axisMapping.TryGetValue(axis, out IActions actions))
-                    {
-                        if (actions is null)
-                            actions = new EmptyActions();
-
-                        mapping.SetIActions(actions);
-                        continue;
-                    }
-
-                    mapping.Reset();
+                    mapping.SetIActions(actions);
+                    continue;
                 }
-            });
-        }
+
+                mapping.Reset();
+            }
+        });
     }
 }

@@ -3,9 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="{x:Static resx:Resources.AboutPage_About}"
@@ -94,7 +92,8 @@
                             Glyph="&#xE950;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -109,8 +108,10 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorInternal}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorExternal}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.AboutPage_SensorInternal}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.AboutPage_SensorExternal}" />
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
@@ -145,7 +146,8 @@
                             Glyph="&#xE74C;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Service}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       Text="{x:Static resx:Resources.AboutPage_Service}" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -161,10 +163,14 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Version}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Author}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Contributors}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Description}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.AboutPage_Version}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.AboutPage_Author}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.AboutPage_Contributors}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.AboutPage_Description}" />
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
@@ -197,9 +203,24 @@
 
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                                 <TextBlock Text="{x:Static resx:Resources.AboutPage_RelatedLinks}" />
-                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion" RequestNavigate="Hyperlink_RequestNavigate">SourceCode</Hyperlink></TextBlock>
-                                <TextBlock><Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki" RequestNavigate="Hyperlink_RequestNavigate">Wiki</Hyperlink></TextBlock>
-                                <TextBlock><Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">Donate</Hyperlink></TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion"
+                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                        SourceCode
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki"
+                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                        Wiki
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR"
+                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                        Donate
+                                    </Hyperlink>
+                                </TextBlock>
                             </ui:SimpleStackPanel>
 
                         </ui:SimpleStackPanel>

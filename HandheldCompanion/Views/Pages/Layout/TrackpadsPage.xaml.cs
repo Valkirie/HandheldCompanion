@@ -1,122 +1,135 @@
+using System.Collections.Generic;
+using System.Windows;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
-using ModernWpf.Controls;
-using System.Collections.Generic;
-using System.Windows;
 
-namespace HandheldCompanion.Views.Pages
+namespace HandheldCompanion.Views.Pages;
+
+/// <summary>
+///     Interaction logic for TrackpadsPage.xaml
+/// </summary>
+public partial class TrackpadsPage : ILayoutPage
 {
-    /// <summary>
-    /// Interaction logic for TrackpadsPage.xaml
-    /// </summary>
-    public partial class TrackpadsPage : ILayoutPage
+    public static List<ButtonFlags> LeftButtons = new()
     {
-        public static List<ButtonFlags> LeftButtons = new() { ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClick, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight };
-        public static List<AxisLayoutFlags> LeftAxis = new() { AxisLayoutFlags.LeftPad };
-        public static List<ButtonFlags> RightButtons = new() { ButtonFlags.RightPadTouch, ButtonFlags.RightPadClick, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight };
-        public static List<AxisLayoutFlags> RightAxis = new() { AxisLayoutFlags.RightPad };
+        ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClick, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown,
+        ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight
+    };
 
-        public TrackpadsPage()
+    public static List<AxisLayoutFlags> LeftAxis = new() { AxisLayoutFlags.LeftPad };
+
+    public static List<ButtonFlags> RightButtons = new()
+    {
+        ButtonFlags.RightPadTouch, ButtonFlags.RightPadClick, ButtonFlags.RightPadClickUp,
+        ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight
+    };
+
+    public static List<AxisLayoutFlags> RightAxis = new() { AxisLayoutFlags.RightPad };
+
+    public TrackpadsPage()
+    {
+        InitializeComponent();
+
+        // draw UI
+        foreach (var button in LeftButtons)
         {
-            InitializeComponent();
+            var buttonMapping = new ButtonMapping(button);
+            LeftTrackpadButtonsPanel.Children.Add(buttonMapping);
 
-            // draw UI
-            foreach (ButtonFlags button in LeftButtons)
-            {
-                ButtonMapping buttonMapping = new ButtonMapping(button);
-                LeftTrackpadButtonsPanel.Children.Add(buttonMapping);
-
-                MappingButtons.Add(button, buttonMapping);
-            }
-
-            foreach (AxisLayoutFlags axis in LeftAxis)
-            {
-                AxisMapping axisMapping = new AxisMapping(axis);
-                LeftTrackpadPanel.Children.Add(axisMapping);
-
-                MappingAxis.Add(axis, axisMapping);
-            }
-
-            foreach (ButtonFlags button in RightButtons)
-            {
-                ButtonMapping buttonMapping = new ButtonMapping(button);
-                RightTrackpadButtonsPanel.Children.Add(buttonMapping);
-
-                MappingButtons.Add(button, buttonMapping);
-            }
-
-            foreach (AxisLayoutFlags axis in RightAxis)
-            {
-                AxisMapping axisMapping = new AxisMapping(axis);
-                RightTrackpadPanel.Children.Add(axisMapping);
-
-                MappingAxis.Add(axis, axisMapping);
-            }
+            MappingButtons.Add(button, buttonMapping);
         }
 
-        public TrackpadsPage(string Tag) : this()
+        foreach (var axis in LeftAxis)
         {
-            this.Tag = Tag;
+            var axisMapping = new AxisMapping(axis);
+            LeftTrackpadPanel.Children.Add(axisMapping);
+
+            MappingAxis.Add(axis, axisMapping);
         }
 
-        public override void UpdateController(IController Controller)
+        foreach (var button in RightButtons)
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            var buttonMapping = new ButtonMapping(button);
+            RightTrackpadButtonsPanel.Children.Add(buttonMapping);
+
+            MappingButtons.Add(button, buttonMapping);
+        }
+
+        foreach (var axis in RightAxis)
+        {
+            var axisMapping = new AxisMapping(axis);
+            RightTrackpadPanel.Children.Add(axisMapping);
+
+            MappingAxis.Add(axis, axisMapping);
+        }
+    }
+
+    public TrackpadsPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
+    public override void UpdateController(IController Controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // controller based
+            foreach (var mapping in MappingButtons)
             {
-                // controller based
-                foreach (var mapping in MappingButtons)
+                var button = mapping.Key;
+                var buttonMapping = mapping.Value;
+
+                // update mapping visibility
+                if (!Controller.HasSourceButton(button))
                 {
-                    ButtonFlags button = mapping.Key;
-                    ButtonMapping buttonMapping = mapping.Value;
-
-                    // update mapping visibility
-                    if (!Controller.HasSourceButton(button))
-                        buttonMapping.Visibility = Visibility.Collapsed;
-                    else
-                    {
-                        buttonMapping.Visibility = Visibility.Visible;
-
-                        // update icon
-                        FontIcon newIcon = Controller.GetFontIcon(button);
-                        string newLabel = Controller.GetButtonName(button);
-
-                        buttonMapping.UpdateIcon(newIcon, newLabel);
-                    }
+                    buttonMapping.Visibility = Visibility.Collapsed;
                 }
-
-                foreach (var mapping in MappingAxis)
+                else
                 {
-                    AxisLayoutFlags flags = mapping.Key;
-                    AxisLayout layout = AxisLayout.Layouts[flags];
+                    buttonMapping.Visibility = Visibility.Visible;
 
-                    AxisMapping axisMapping = mapping.Value;
+                    // update icon
+                    var newIcon = Controller.GetFontIcon(button);
+                    var newLabel = Controller.GetButtonName(button);
 
-                    // update mapping visibility
-                    if (!Controller.HasSourceAxis(flags))
-                        axisMapping.Visibility = Visibility.Collapsed;
-                    else
-                    {
-                        axisMapping.Visibility = Visibility.Visible;
-
-                        // update icon
-                        FontIcon newIcon = Controller.GetFontIcon(flags);
-                        string newLabel = Controller.GetAxisName(flags);
-                        axisMapping.UpdateIcon(newIcon, newLabel);
-                    }
+                    buttonMapping.UpdateIcon(newIcon, newLabel);
                 }
-            });
-        }
+            }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
+            foreach (var mapping in MappingAxis)
+            {
+                var flags = mapping.Key;
+                var layout = AxisLayout.Layouts[flags];
 
-        public void Page_Closed()
-        {
-            // do something
-        }
+                var axisMapping = mapping.Value;
+
+                // update mapping visibility
+                if (!Controller.HasSourceAxis(flags))
+                {
+                    axisMapping.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    axisMapping.Visibility = Visibility.Visible;
+
+                    // update icon
+                    var newIcon = Controller.GetFontIcon(flags);
+                    var newLabel = Controller.GetAxisName(flags);
+                    axisMapping.UpdateIcon(newIcon, newLabel);
+                }
+            }
+        });
+    }
+
+    private void Page_Loaded(object sender, RoutedEventArgs e)
+    {
+        // do something
+    }
+
+    public void Page_Closed()
+    {
+        // do something
     }
 }

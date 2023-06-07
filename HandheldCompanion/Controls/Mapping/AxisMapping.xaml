@@ -2,11 +2,9 @@
     x:Class="HandheldCompanion.Controls.AxisMapping"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     d:Background="White"
     d:DesignHeight="1000"
@@ -128,7 +126,8 @@
                                 Opacity="0.25" />
 
                             <!--  Axis rotation  -->
-                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2AxisAutoRotate}">
+                            <Grid
+                                IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2AxisAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock
@@ -311,7 +310,8 @@
                                 Opacity="0.25" />
 
                             <!--  Axis rotation  -->
-                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2MouseAutoRotate}">
+                            <Grid
+                                IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2MouseAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock

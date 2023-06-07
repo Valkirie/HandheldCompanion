@@ -1,30 +1,33 @@
-﻿using ModernWpf.Controls;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ModernWpf.Controls;
 
-namespace HandheldCompanion
+namespace HandheldCompanion;
+
+internal class Dialog
 {
-    internal class Dialog
+    public static async Task<ContentDialogResult> ShowAsync(string Title, string Content,
+        ContentDialogButton DefaultButton = ContentDialogButton.Primary, string CloseButtonText = null,
+        string PrimaryButtonText = null, string SecondaryButtonText = null)
     {
-        public static async Task<ContentDialogResult> ShowAsync(string Title, string Content, ContentDialogButton DefaultButton = ContentDialogButton.Primary, string CloseButtonText = null, string PrimaryButtonText = null, string SecondaryButtonText = null)
+        try
         {
-            try
+            var dialog = new ContentDialog
             {
-                ContentDialog dialog = new ContentDialog
-                {
-                    Title = Title,
-                    Content = Content,
-                    CloseButtonText = CloseButtonText,
-                    PrimaryButtonText = PrimaryButtonText,
-                    SecondaryButtonText = SecondaryButtonText,
-                    DefaultButton = DefaultButton
-                };
+                Title = Title,
+                Content = Content,
+                CloseButtonText = CloseButtonText,
+                PrimaryButtonText = PrimaryButtonText,
+                SecondaryButtonText = SecondaryButtonText,
+                DefaultButton = DefaultButton
+            };
 
-                ContentDialogResult result = await dialog.ShowAsync();
-                return result;
-            }
-            catch { }
-
-            return ContentDialogResult.None;
+            var result = await dialog.ShowAsync();
+            return result;
         }
+        catch
+        {
+        }
+
+        return ContentDialogResult.None;
     }
 }

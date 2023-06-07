@@ -1,15 +1,14 @@
-﻿using neptune_hidapi.net.Hid;
-using System;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
+using neptune_hidapi.net.Hid;
 
 namespace neptune_hidapi.net
 {
     internal static class Extensions
     {
-        public static bool EqualsWithValues<TKey, TValue>(this Dictionary<TKey, TValue> obj1, Dictionary<TKey, TValue> obj2)
+        public static bool EqualsWithValues<TKey, TValue>(this Dictionary<TKey, TValue> obj1,
+            Dictionary<TKey, TValue> obj2)
         {
-            bool equal = false;
+            var equal = false;
             if (obj1.Count == obj2.Count) // Require equal count.
             {
                 equal = true;
@@ -37,73 +36,99 @@ namespace neptune_hidapi.net
             return equal;
         }
     }
+
     public class NeptuneControllerInputState
     {
-        public NeptuneControllerButtonState ButtonState { get; private set; }
-        public NeptuneControllerAxesState AxesState { get; private set; }
         internal NeptuneControllerInputState(SDCInput input)
         {
             ButtonState = new NeptuneControllerButtonState(input);
             AxesState = new NeptuneControllerAxesState(input);
         }
+
+        public NeptuneControllerButtonState ButtonState { get; private set; }
+        public NeptuneControllerAxesState AxesState { get; private set; }
     }
 
     public class NeptuneControllerButtonState
     {
-        private Dictionary<NeptuneControllerButton, bool> _buttonState;
+        private readonly Dictionary<NeptuneControllerButton, bool> _buttonState;
 
         public NeptuneControllerButtonState(Dictionary<NeptuneControllerButton, bool> buttonState)
         {
             _buttonState = buttonState;
         }
+
         internal NeptuneControllerButtonState(SDCInput input)
         {
             _buttonState = new Dictionary<NeptuneControllerButton, bool>();
 
-            _buttonState[NeptuneControllerButton.BtnA] = (input.buttons0 & (ushort)SDCButton0.BTN_A) == (ushort)SDCButton0.BTN_A;
-            _buttonState[NeptuneControllerButton.BtnB] = (input.buttons0 & (ushort)SDCButton0.BTN_B) == (ushort)SDCButton0.BTN_B;
-            _buttonState[NeptuneControllerButton.BtnX] = (input.buttons0 & (ushort)SDCButton0.BTN_X) == (ushort)SDCButton0.BTN_X;
-            _buttonState[NeptuneControllerButton.BtnY] = (input.buttons0 & (ushort)SDCButton0.BTN_Y) == (ushort)SDCButton0.BTN_Y;
+            _buttonState[NeptuneControllerButton.BtnA] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_A) == (ushort)SDCButton0.BTN_A;
+            _buttonState[NeptuneControllerButton.BtnB] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_B) == (ushort)SDCButton0.BTN_B;
+            _buttonState[NeptuneControllerButton.BtnX] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_X) == (ushort)SDCButton0.BTN_X;
+            _buttonState[NeptuneControllerButton.BtnY] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_Y) == (ushort)SDCButton0.BTN_Y;
 
-            _buttonState[NeptuneControllerButton.BtnDpadDown] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_DOWN) == (ushort)SDCButton0.BTN_DPAD_DOWN;
-            _buttonState[NeptuneControllerButton.BtnDpadUp] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_UP) == (ushort)SDCButton0.BTN_DPAD_UP;
-            _buttonState[NeptuneControllerButton.BtnDpadLeft] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_LEFT) == (ushort)SDCButton0.BTN_DPAD_LEFT;
-            _buttonState[NeptuneControllerButton.BtnDpadRight] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_RIGHT) == (ushort)SDCButton0.BTN_DPAD_RIGHT;
+            _buttonState[NeptuneControllerButton.BtnDpadDown] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_DOWN) ==
+                                                                (ushort)SDCButton0.BTN_DPAD_DOWN;
+            _buttonState[NeptuneControllerButton.BtnDpadUp] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_UP) ==
+                                                              (ushort)SDCButton0.BTN_DPAD_UP;
+            _buttonState[NeptuneControllerButton.BtnDpadLeft] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_LEFT) ==
+                                                                (ushort)SDCButton0.BTN_DPAD_LEFT;
+            _buttonState[NeptuneControllerButton.BtnDpadRight] = (input.buttons0 & (ushort)SDCButton0.BTN_DPAD_RIGHT) ==
+                                                                 (ushort)SDCButton0.BTN_DPAD_RIGHT;
 
-            _buttonState[NeptuneControllerButton.BtnMenu] = (input.buttons0 & (ushort)SDCButton0.BTN_MENU) == (ushort)SDCButton0.BTN_MENU;
-            _buttonState[NeptuneControllerButton.BtnSteam] = (input.buttons0 & (ushort)SDCButton0.BTN_STEAM) == (ushort)SDCButton0.BTN_STEAM;
-            _buttonState[NeptuneControllerButton.BtnOptions] = (input.buttons0 & (ushort)SDCButton0.BTN_OPTIONS) == (ushort)SDCButton0.BTN_OPTIONS;
-            _buttonState[NeptuneControllerButton.BtnL5] = (input.buttons0 & (ushort)SDCButton0.BTN_L5) == (ushort)SDCButton0.BTN_L5;
+            _buttonState[NeptuneControllerButton.BtnMenu] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_MENU) == (ushort)SDCButton0.BTN_MENU;
+            _buttonState[NeptuneControllerButton.BtnSteam] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_STEAM) == (ushort)SDCButton0.BTN_STEAM;
+            _buttonState[NeptuneControllerButton.BtnOptions] = (input.buttons0 & (ushort)SDCButton0.BTN_OPTIONS) ==
+                                                               (ushort)SDCButton0.BTN_OPTIONS;
+            _buttonState[NeptuneControllerButton.BtnL5] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_L5) == (ushort)SDCButton0.BTN_L5;
 
-            _buttonState[NeptuneControllerButton.BtnL1] = (input.buttons0 & (ushort)SDCButton0.BTN_L1) == (ushort)SDCButton0.BTN_L1;
-            _buttonState[NeptuneControllerButton.BtnL2] = (input.buttons0 & (ushort)SDCButton0.BTN_L2) == (ushort)SDCButton0.BTN_L2;
-            _buttonState[NeptuneControllerButton.BtnR1] = (input.buttons0 & (ushort)SDCButton0.BTN_R1) == (ushort)SDCButton0.BTN_R1;
-            _buttonState[NeptuneControllerButton.BtnR2] = (input.buttons0 & (ushort)SDCButton0.BTN_R2) == (ushort)SDCButton0.BTN_R2;
+            _buttonState[NeptuneControllerButton.BtnL1] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_L1) == (ushort)SDCButton0.BTN_L1;
+            _buttonState[NeptuneControllerButton.BtnL2] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_L2) == (ushort)SDCButton0.BTN_L2;
+            _buttonState[NeptuneControllerButton.BtnR1] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_R1) == (ushort)SDCButton0.BTN_R1;
+            _buttonState[NeptuneControllerButton.BtnR2] =
+                (input.buttons0 & (ushort)SDCButton0.BTN_R2) == (ushort)SDCButton0.BTN_R2;
 
-            _buttonState[NeptuneControllerButton.BtnLStickPress] = (input.buttons1 & (ushort)SDCButton1.BTN_LSTICK_PRESS) == (ushort)SDCButton1.BTN_LSTICK_PRESS;
-            _buttonState[NeptuneControllerButton.BtnLPadTouch] = (input.buttons1 & (ushort)SDCButton1.BTN_LPAD_TOUCH) == (ushort)SDCButton1.BTN_LPAD_TOUCH;
-            _buttonState[NeptuneControllerButton.BtnLPadPress] = (input.buttons1 & (ushort)SDCButton1.BTN_LPAD_PRESS) == (ushort)SDCButton1.BTN_LPAD_PRESS;
-            _buttonState[NeptuneControllerButton.BtnRPadPress] = (input.buttons1 & (ushort)SDCButton1.BTN_RPAD_TOUCH) == (ushort)SDCButton1.BTN_RPAD_TOUCH;
-            _buttonState[NeptuneControllerButton.BtnRPadTouch] = (input.buttons1 & (ushort)SDCButton1.BTN_RPAD_PRESS) == (ushort)SDCButton1.BTN_RPAD_PRESS;
-            _buttonState[NeptuneControllerButton.BtnR5] = (input.buttons1 & (ushort)SDCButton1.BTN_R5) == (ushort)SDCButton1.BTN_R5;
+            _buttonState[NeptuneControllerButton.BtnLStickPress] =
+                (input.buttons1 & (ushort)SDCButton1.BTN_LSTICK_PRESS) == (ushort)SDCButton1.BTN_LSTICK_PRESS;
+            _buttonState[NeptuneControllerButton.BtnLPadTouch] = (input.buttons1 & (ushort)SDCButton1.BTN_LPAD_TOUCH) ==
+                                                                 (ushort)SDCButton1.BTN_LPAD_TOUCH;
+            _buttonState[NeptuneControllerButton.BtnLPadPress] = (input.buttons1 & (ushort)SDCButton1.BTN_LPAD_PRESS) ==
+                                                                 (ushort)SDCButton1.BTN_LPAD_PRESS;
+            _buttonState[NeptuneControllerButton.BtnRPadPress] = (input.buttons1 & (ushort)SDCButton1.BTN_RPAD_TOUCH) ==
+                                                                 (ushort)SDCButton1.BTN_RPAD_TOUCH;
+            _buttonState[NeptuneControllerButton.BtnRPadTouch] = (input.buttons1 & (ushort)SDCButton1.BTN_RPAD_PRESS) ==
+                                                                 (ushort)SDCButton1.BTN_RPAD_PRESS;
+            _buttonState[NeptuneControllerButton.BtnR5] =
+                (input.buttons1 & (ushort)SDCButton1.BTN_R5) == (ushort)SDCButton1.BTN_R5;
 
-            _buttonState[NeptuneControllerButton.BtnRStickPress] = (input.buttons2 & (ushort)SDCButton2.BTN_RSTICK_PRESS) == (ushort)SDCButton2.BTN_RSTICK_PRESS;
+            _buttonState[NeptuneControllerButton.BtnRStickPress] =
+                (input.buttons2 & (ushort)SDCButton2.BTN_RSTICK_PRESS) == (ushort)SDCButton2.BTN_RSTICK_PRESS;
 
-            _buttonState[NeptuneControllerButton.BtnLStickTouch] = (input.buttons4 & (ushort)SDCButton4.BTN_LSTICK_TOUCH) == (ushort)SDCButton4.BTN_LSTICK_TOUCH;
-            _buttonState[NeptuneControllerButton.BtnRStickTouch] = (input.buttons4 & (ushort)SDCButton4.BTN_RSTICK_TOUCH) == (ushort)SDCButton4.BTN_RSTICK_TOUCH;
-            _buttonState[NeptuneControllerButton.BtnR4] = (input.buttons4 & (ushort)SDCButton4.BTN_R4) == (ushort)SDCButton4.BTN_R4;
-            _buttonState[NeptuneControllerButton.BtnL4] = (input.buttons4 & (ushort)SDCButton4.BTN_L4) == (ushort)SDCButton4.BTN_L4;
+            _buttonState[NeptuneControllerButton.BtnLStickTouch] =
+                (input.buttons4 & (ushort)SDCButton4.BTN_LSTICK_TOUCH) == (ushort)SDCButton4.BTN_LSTICK_TOUCH;
+            _buttonState[NeptuneControllerButton.BtnRStickTouch] =
+                (input.buttons4 & (ushort)SDCButton4.BTN_RSTICK_TOUCH) == (ushort)SDCButton4.BTN_RSTICK_TOUCH;
+            _buttonState[NeptuneControllerButton.BtnR4] =
+                (input.buttons4 & (ushort)SDCButton4.BTN_R4) == (ushort)SDCButton4.BTN_R4;
+            _buttonState[NeptuneControllerButton.BtnL4] =
+                (input.buttons4 & (ushort)SDCButton4.BTN_L4) == (ushort)SDCButton4.BTN_L4;
 
-            _buttonState[NeptuneControllerButton.BtnQuickAccess] = (input.buttons5 & (ushort)SDCButton5.BTN_QUICK_ACCESS) == (ushort)SDCButton5.BTN_QUICK_ACCESS;
+            _buttonState[NeptuneControllerButton.BtnQuickAccess] =
+                (input.buttons5 & (ushort)SDCButton5.BTN_QUICK_ACCESS) == (ushort)SDCButton5.BTN_QUICK_ACCESS;
         }
 
-        public bool this[NeptuneControllerButton button]
-        {
-            get
-            {
-                return _buttonState.ContainsKey(button) ? _buttonState[button] : false;
-            }
-        }
+        public bool this[NeptuneControllerButton button] =>
+            _buttonState.ContainsKey(button) && _buttonState[button];
 
         public IEnumerable<NeptuneControllerButton> Buttons => _buttonState.Keys;
 
@@ -113,18 +138,19 @@ namespace neptune_hidapi.net
                    _buttonState.EqualsWithValues(state._buttonState);
         }
     }
+
     public class NeptuneControllerAxesState
     {
-        private Dictionary<NeptuneControllerAxis, Int16> _axisState;
+        private readonly Dictionary<NeptuneControllerAxis, short> _axisState;
 
-        public NeptuneControllerAxesState(Dictionary<NeptuneControllerAxis, Int16> axisState)
+        public NeptuneControllerAxesState(Dictionary<NeptuneControllerAxis, short> axisState)
         {
             _axisState = axisState;
         }
 
         internal NeptuneControllerAxesState(SDCInput input)
         {
-            _axisState = new Dictionary<NeptuneControllerAxis, Int16>();
+            _axisState = new Dictionary<NeptuneControllerAxis, short>();
 
             _axisState[NeptuneControllerAxis.LeftStickX] = input.lthumb_x;
             _axisState[NeptuneControllerAxis.LeftStickY] = input.lthumb_y;
@@ -156,13 +182,7 @@ namespace neptune_hidapi.net
             _axisState[NeptuneControllerAxis.Q4] = input.q4;
         }
 
-        public Int16 this[NeptuneControllerAxis axis]
-        {
-            get
-            {
-                return _axisState.ContainsKey(axis) ? _axisState[axis] : (Int16)0;
-            }
-        }
+        public short this[NeptuneControllerAxis axis] => _axisState.ContainsKey(axis) ? _axisState[axis] : (short)0;
 
         public IEnumerable<NeptuneControllerAxis> Axes => _axisState.Keys;
     }

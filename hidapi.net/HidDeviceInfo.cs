@@ -1,12 +1,12 @@
-﻿using hidapi.Native;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
+using hidapi.Native;
 
 namespace hidapi
 {
     public class HidDeviceInfo
     {
-        private HidDeviceInfoStruct _infoStruct;
+        private readonly HidDeviceInfoStruct _infoStruct;
 
         public HidDeviceInfo(IntPtr deviceInfo)
         {
@@ -24,6 +24,5 @@ namespace hidapi
 
         public IntPtr NextDevicePtr => _infoStruct.next;
         public HidDeviceInfo NextDevice => _infoStruct.next != IntPtr.Zero ? new HidDeviceInfo(_infoStruct.next) : null;
-
     }
 }

@@ -2,11 +2,8 @@
     x:Class="HandheldCompanion.Views.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="{x:Static resx:Resources.SettingsPage_Settings}"
@@ -96,7 +93,8 @@
 
             <!--  General options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_GeneralOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           Text="{x:Static resx:Resources.SettingsPage_GeneralOptions}" />
 
                 <!--  Auto-start application  -->
                 <Border
@@ -118,7 +116,8 @@
                                 Glyph="&#xED35;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_AutoStartApp}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -156,7 +155,8 @@
                                 Glyph="&#xEE40;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_OpenAppBackground}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -194,7 +194,8 @@
                                 Glyph="&#xE921;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_CloseMinimizes}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -232,7 +233,8 @@
                                 Glyph="&#xEA6C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStart}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_EnableDesktopProfileOnStart}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -270,7 +272,8 @@
                                 Glyph="&#xE1CA;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Native display orientation" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="Native display orientation" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -291,7 +294,6 @@
                                 Text="Not set" />
                             <Button
                                 Name="Button_DetectNativeDisplayOrientation"
-                                Grid.Column="1"
                                 Width="120"
                                 Height="40"
                                 Margin="12,0,0,0"
@@ -322,7 +324,8 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AppTheme}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_AppTheme}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -364,7 +367,8 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -406,7 +410,8 @@
                                 Glyph="&#xF2B7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_AppLanguage}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -493,7 +498,8 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_Backdrop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -556,7 +562,8 @@
 
             <!--  Notification options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_NotificationOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           Text="{x:Static resx:Resources.SettingsPage_NotificationOptions}" />
 
                 <!--  Toast notification  -->
                 <Border
@@ -578,7 +585,8 @@
                                 Glyph="&#xE7E7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_ToastNotification}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -599,7 +607,8 @@
 
             <!--  Service options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ServiceOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           Text="{x:Static resx:Resources.SettingsPage_ServiceOptions}" />
 
                 <!--  Toast notification  -->
                 <Border
@@ -621,7 +630,8 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_StartupType}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_StartupType}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -659,7 +669,8 @@
                                 Glyph="&#xEDB5;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -699,7 +710,8 @@
                                 Glyph="&#xE71A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -722,7 +734,8 @@
 
             <!--  Sensor options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           Text="{x:Static resx:Resources.SettingsPage_SensorOptions}" />
 
                 <!--  Sensor Selection  -->
                 <Border
@@ -744,7 +757,8 @@
                                 Glyph="&#xE950;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_SensorSelection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -800,7 +814,8 @@
                                 Glyph="&#xE80A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_SensorPlacementDirection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -892,7 +907,8 @@
                                 Glyph="&#xE1CA;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_SensorPlacementUpsideDown}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -936,7 +952,8 @@
                                 Glyph="&#xEA6C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="RivaTuner Statistics Server" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="RivaTuner Statistics Server" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -1017,7 +1034,8 @@
                                 Glyph="&#xEA95;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -1055,7 +1073,8 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -1094,7 +1113,8 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMin}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_TDPMin}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -1134,7 +1154,8 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMax}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsPage_TDPMax}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"

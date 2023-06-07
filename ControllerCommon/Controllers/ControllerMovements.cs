@@ -1,27 +1,27 @@
 ﻿using System;
 
-namespace ControllerCommon.Controllers
+namespace ControllerCommon.Controllers;
+
+[Serializable]
+public class ControllerMovements
 {
-    [Serializable]
-    public class ControllerMovements
+    public float GyroAccelX, GyroAccelY, GyroAccelZ;
+    public float GyroRoll, GyroPitch, GyroYaw;
+
+    public long TickCount;
+
+    public ControllerMovements()
     {
-        public float GyroAccelX, GyroAccelY, GyroAccelZ;
-        public float GyroRoll, GyroPitch, GyroYaw;
+    }
 
-        public long TickCount;
+    public ControllerMovements(ControllerMovements Inputs)
+    {
+        GyroAccelX = Inputs.GyroAccelX;
+        GyroAccelY = Inputs.GyroAccelY;
+        GyroAccelZ = Inputs.GyroAccelZ;
 
-        public ControllerMovements()
-        { }
-
-        public ControllerMovements(ControllerMovements Inputs)
-        {
-            GyroAccelX = Inputs.GyroAccelX;
-            GyroAccelY = Inputs.GyroAccelY;
-            GyroAccelZ = Inputs.GyroAccelZ;
-
-            GyroRoll = Inputs.GyroRoll;
-            GyroPitch = Inputs.GyroPitch;
-            GyroYaw = Inputs.GyroYaw;
-        }
+        GyroRoll = Inputs.GyroRoll;
+        GyroPitch = Inputs.GyroPitch;
+        GyroYaw = Inputs.GyroYaw;
     }
 }

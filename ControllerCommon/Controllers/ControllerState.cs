@@ -1,47 +1,46 @@
-﻿using ControllerCommon.Inputs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using ControllerCommon.Inputs;
 
-namespace ControllerCommon.Controllers
+namespace ControllerCommon.Controllers;
+
+[Serializable]
+public class ControllerState : ICloneable
 {
-    [Serializable]
-    public class ControllerState : ICloneable
+    [JsonIgnore] public static readonly SortedDictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
     {
-        public ButtonState ButtonState = new();
-        public AxisState AxisState = new();
+        { AxisLayoutFlags.RightThumb, ButtonFlags.RightThumbTouch },
+        { AxisLayoutFlags.LeftThumb, ButtonFlags.LeftThumbTouch },
+        { AxisLayoutFlags.RightPad, ButtonFlags.RightPadTouch },
+        { AxisLayoutFlags.LeftPad, ButtonFlags.LeftPadTouch }
+    };
 
-        public int Timestamp { get; set; }
-        public bool MotionTriggered { get; set; }
+    public AxisState AxisState = new();
+    public ButtonState ButtonState = new();
 
-        [JsonIgnore]
-        public static readonly SortedDictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
+    public ControllerState()
+    {
+    }
+
+    public ControllerState(ControllerState Inputs)
+    {
+        ButtonState = Inputs.ButtonState;
+        AxisState = Inputs.AxisState;
+
+        Timestamp = Inputs.Timestamp;
+    }
+
+    public int Timestamp { get; set; }
+    public bool MotionTriggered { get; set; }
+
+    public object Clone()
+    {
+        return new ControllerState
         {
-            { AxisLayoutFlags.RightThumb, ButtonFlags.RightThumbTouch },
-            { AxisLayoutFlags.LeftThumb, ButtonFlags.LeftThumbTouch },
-            { AxisLayoutFlags.RightPad, ButtonFlags.RightPadTouch },
-            { AxisLayoutFlags.LeftPad, ButtonFlags.LeftPadTouch },
+            ButtonState = ButtonState.Clone() as ButtonState,
+            AxisState = AxisState.Clone() as AxisState,
+            Timestamp = Timestamp
         };
-
-        public ControllerState()
-        { }
-
-        public ControllerState(ControllerState Inputs)
-        {
-            ButtonState = Inputs.ButtonState;
-            AxisState = Inputs.AxisState;
-
-            Timestamp = Inputs.Timestamp;
-        }
-
-        public object Clone()
-        {
-            return new ControllerState()
-            {
-                ButtonState = this.ButtonState.Clone() as ButtonState,
-                AxisState = this.AxisState.Clone() as AxisState,
-                Timestamp = this.Timestamp
-            };
-        }
     }
 }

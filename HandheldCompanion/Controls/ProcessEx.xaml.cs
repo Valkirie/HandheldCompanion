@@ -1,9 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,293 +6,296 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ControllerCommon;
+using ControllerCommon.Platforms;
+using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using static HandheldCompanion.Managers.EnergyManager;
 
-namespace HandheldCompanion.Controls
+namespace HandheldCompanion.Controls;
+
+/// <summary>
+///     Logique d'interaction pour ProcessEx.xaml
+/// </summary>
+public partial class ProcessEx : UserControl, IDisposable
 {
-    /// <summary>
-    /// Logique d'interaction pour ProcessEx.xaml
-    /// </summary>
-    public partial class ProcessEx : UserControl, IDisposable
+    public delegate void ChildProcessCreatedEventHandler(ProcessEx parent, int Id);
+
+    public delegate void MainThreadChangedEventHandler(ProcessEx process);
+
+    public delegate void TitleChangedEventHandler(ProcessEx process);
+
+    public enum ProcessFilter
     {
-        public enum ProcessFilter
+        Allowed = 0,
+        Restricted = 1,
+        Ignored = 2,
+        HandheldCompanion = 3,
+        Desktop = 4
+    }
+
+    public string _Executable;
+
+    private string _Title;
+
+    public ConcurrentList<int> Children = new();
+    private EfficiencyMode EfficiencyMode;
+
+    public ProcessFilter Filter;
+
+    public ImageSource imgSource;
+
+    public ProcessThread MainThread;
+
+    public IntPtr MainWindowHandle;
+
+    public string Path;
+
+    private ThreadState prevThreadState = ThreadState.Terminated;
+    private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
+
+    public Process Process;
+    private readonly int ProcessId;
+
+    public ProcessEx()
+    {
+        InitializeComponent();
+    }
+
+    public ProcessEx(Process process, string path, string executable, ProcessFilter filter) : this()
+    {
+        Process = process;
+        ProcessId = process.Id;
+
+        Path = path;
+
+        Executable = executable;
+        Title = executable; // temporary, will be overwritten by ProcessManager
+
+        Filter = filter;
+        Platform = PlatformManager.GetPlatform(Process);
+
+        if (!string.IsNullOrEmpty(path) && File.Exists(path))
         {
-            Allowed = 0,
-            Restricted = 1,
-            Ignored = 2,
-            HandheldCompanion = 3,
-            Desktop = 4,
-        }
-
-        public Process Process;
-        private int ProcessId;
-
-        public ProcessThread MainThread;
-
-        public ConcurrentList<int> Children = new();
-
-        public IntPtr MainWindowHandle;
-        private EfficiencyMode EfficiencyMode;
-
-        public ImageSource imgSource;
-
-        public string Path;
-
-        private string _Title;
-        public string Title
-        {
-            get
+            var icon = Icon.ExtractAssociatedIcon(Path);
+            if (icon is not null)
             {
-                return _Title;
+                imgSource = icon.ToImageSource();
+                ProcessIcon.Source = imgSource;
             }
-
-            set
-            {
-                _Title = value;
-                TitleTextBlock.Text = value;
-            }
         }
+    }
 
-        public string _Executable;
-        public string Executable
+    public string Title
+    {
+        get => _Title;
+
+        set
         {
-            get
-            {
-                return _Executable;
-            }
-
-            set
-            {
-                _Executable = value;
-                ExecutableTextBlock.Text = value;
-            }
+            _Title = value;
+            TitleTextBlock.Text = value;
         }
+    }
 
-        public ProcessFilter Filter;
-        public PlatformType Platform { get; set; }
+    public string Executable
+    {
+        get => _Executable;
 
-        private ThreadState prevThreadState = ThreadState.Terminated;
-        private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
-
-        public event MainThreadChangedEventHandler MainThreadChanged;
-        public delegate void MainThreadChangedEventHandler(ProcessEx process);
-
-        public event TitleChangedEventHandler TitleChanged;
-        public delegate void TitleChangedEventHandler(ProcessEx process);
-
-        public event ChildProcessCreatedEventHandler ChildProcessCreated;
-        public delegate void ChildProcessCreatedEventHandler(ProcessEx parent, int Id);
-
-        public ProcessEx()
+        set
         {
-            InitializeComponent();
+            _Executable = value;
+            ExecutableTextBlock.Text = value;
         }
+    }
 
-        public ProcessEx(Process process, string path, string executable, ProcessFilter filter) : this()
+    public PlatformType Platform { get; set; }
+
+    public void Dispose()
+    {
+        if (Process is not null)
+            Process.Dispose();
+        if (MainThread is not null)
+            MainThread.Dispose();
+        Children.Dispose();
+
+        GC.SuppressFinalize(this); //now, the finalizer won't be called
+    }
+
+    public event MainThreadChangedEventHandler MainThreadChanged;
+
+    public event TitleChangedEventHandler TitleChanged;
+
+    public event ChildProcessCreatedEventHandler ChildProcessCreated;
+
+    public int GetProcessId()
+    {
+        return ProcessId;
+    }
+
+    private static ProcessThread GetMainThread(Process process)
+    {
+        ProcessThread mainThread = null;
+        var startTime = DateTime.MaxValue;
+
+        try
         {
-            this.Process = process;
-            this.ProcessId = process.Id;
+            if (process.Threads is null || process.Threads.Count == 0)
+                return null;
 
-            this.Path = path;
-
-            this.Executable = executable;
-            this.Title = executable;    // temporary, will be overwritten by ProcessManager
-
-            this.Filter = filter;
-            this.Platform = PlatformManager.GetPlatform(Process);
-
-            if (!string.IsNullOrEmpty(path) && File.Exists(path))
+            foreach (ProcessThread thread in process.Threads)
             {
-                var icon = Icon.ExtractAssociatedIcon(Path);
-                if (icon is not null)
+                if (thread.ThreadState != ThreadState.Running)
+                    continue;
+
+                if (thread.StartTime < startTime)
                 {
-                    imgSource = icon.ToImageSource();
-                    ProcessIcon.Source = imgSource;
+                    startTime = thread.StartTime;
+                    mainThread = thread;
                 }
             }
+
+            if (mainThread is null)
+                mainThread = process.Threads[0];
+        }
+        catch (Win32Exception)
+        {
+            // Access if denied
+        }
+        catch (InvalidOperationException)
+        {
+            // thread has exited
         }
 
-        public int GetProcessId()
+        return mainThread;
+    }
+
+    public void Refresh()
+    {
+        if (Process.HasExited)
+            return;
+
+        if (MainThread is null)
         {
-            return ProcessId;
+            // refresh main thread
+            MainThread = GetMainThread(Process);
+
+            // raise event
+            MainThreadChanged?.Invoke(this);
+
+            // prevents null mainthread from passing
+            return;
         }
 
-        private static ProcessThread GetMainThread(Process process)
+        var MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            ProcessThread mainThread = null;
-            var startTime = DateTime.MaxValue;
-
-            try
+            // refresh title
+            if (!string.IsNullOrEmpty(MainWindowTitle) && !MainWindowTitle.Equals(Title))
             {
-                if (process.Threads is null || process.Threads.Count == 0)
-                    return null;
-
-                foreach (ProcessThread thread in process.Threads)
-                {
-                    if (thread.ThreadState != ThreadState.Running)
-                        continue;
-
-                    if (thread.StartTime < startTime)
-                    {
-                        startTime = thread.StartTime;
-                        mainThread = thread;
-                    }
-                }
-
-                if (mainThread is null)
-                    mainThread = process.Threads[0];
-            }
-            catch (Win32Exception)
-            {
-                // Access if denied
-            }
-            catch (InvalidOperationException)
-            {
-                // thread has exited
-            }
-
-            return mainThread;
-        }
-
-        public void Refresh()
-        {
-            if (Process.HasExited)
-                return;
-
-            if (MainThread is null)
-            {
-                // refresh main thread
-                MainThread = GetMainThread(Process);
+                Title = MainWindowTitle;
 
                 // raise event
-                MainThreadChanged?.Invoke(this);
-
-                // prevents null mainthread from passing
-                return;
+                TitleChanged?.Invoke(this);
             }
 
-            string MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
-
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            switch (EfficiencyMode)
             {
-                // refresh title
-                if (!string.IsNullOrEmpty(MainWindowTitle) && !MainWindowTitle.Equals(Title))
-                {
-                    Title = MainWindowTitle;
+                default:
+                case EfficiencyMode.Default:
+                    QoSCheckBox.IsChecked = false;
+                    break;
 
-                    // raise event
-                    TitleChanged?.Invoke(this);
-                }
-
-                switch (EfficiencyMode)
-                {
-                    default:
-                    case EfficiencyMode.Default:
-                        QoSCheckBox.IsChecked = false;
-                        break;
-
-                    case EfficiencyMode.Eco:
-                        QoSCheckBox.IsChecked = true;
-                        break;
-                }
-
-                switch (MainThread.ThreadState)
-                {
-                    case ThreadState.Wait:
-                        {
-                            // monitor if the process main thread was suspended or resumed
-                            if (MainThread.WaitReason != prevThreadWaitReason)
-                            {
-                                prevThreadWaitReason = MainThread.WaitReason;
-
-                                switch (prevThreadWaitReason)
-                                {
-                                    case ThreadWaitReason.Suspended:
-                                        SuspendToggle.IsOn = true;
-                                        break;
-
-                                    default:
-                                        SuspendToggle.IsOn = false;
-                                        break;
-                                }
-                            }
-                        }
-                        break;
-
-                    case ThreadState.Terminated:
-                        {
-                            // dispose from MainThread
-                            MainThread.Dispose();
-                            MainThread = null;
-                        }
-                        break;
-                }
-
-                // update previous state
-                prevThreadState = MainThread.ThreadState;
-            });
-        }
-
-        public bool IsSuspended()
-        {
-            return prevThreadWaitReason == ThreadWaitReason.Suspended;
-        }
-
-        public EfficiencyMode GetEfficiencyMode()
-        {
-            return EfficiencyMode;
-        }
-
-        public void RefreshChildProcesses()
-        {
-            // refresh all child processes
-            List<int> childs = ProcessUtils.GetChildIds(Process);
-
-            // remove exited children
-            foreach (int pid in childs)
-                Children.Remove(pid);
-
-            // raise event on new children
-            foreach (int pid in childs)
-            {
-                Children.Add(pid);
-                ChildProcessCreated?.Invoke(this, pid);
+                case EfficiencyMode.Eco:
+                    QoSCheckBox.IsChecked = true;
+                    break;
             }
-        }
 
-        public void SetEfficiencyMode(EfficiencyMode mode)
-        {
-            EfficiencyMode = mode;
-        }
-
-        private void SuspendToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            switch (SuspendToggle.IsOn)
+            switch (MainThread.ThreadState)
             {
-                case true:
+                case ThreadState.Wait:
+                {
+                    // monitor if the process main thread was suspended or resumed
+                    if (MainThread.WaitReason != prevThreadWaitReason)
                     {
-                        if (prevThreadWaitReason == ThreadWaitReason.Suspended)
-                            return;
+                        prevThreadWaitReason = MainThread.WaitReason;
 
-                        ProcessManager.SuspendProcess(this);
+                        switch (prevThreadWaitReason)
+                        {
+                            case ThreadWaitReason.Suspended:
+                                SuspendToggle.IsOn = true;
+                                break;
+
+                            default:
+                                SuspendToggle.IsOn = false;
+                                break;
+                        }
                     }
+                }
                     break;
-                case false:
-                    ProcessManager.ResumeProcess(this);
+
+                case ThreadState.Terminated:
+                {
+                    // dispose from MainThread
+                    MainThread.Dispose();
+                    MainThread = null;
+                }
                     break;
             }
-        }
 
-        public void Dispose()
+            // update previous state
+            prevThreadState = MainThread.ThreadState;
+        });
+    }
+
+    public bool IsSuspended()
+    {
+        return prevThreadWaitReason == ThreadWaitReason.Suspended;
+    }
+
+    public EfficiencyMode GetEfficiencyMode()
+    {
+        return EfficiencyMode;
+    }
+
+    public void RefreshChildProcesses()
+    {
+        // refresh all child processes
+        var childs = ProcessUtils.GetChildIds(Process);
+
+        // remove exited children
+        foreach (var pid in childs)
+            Children.Remove(pid);
+
+        // raise event on new children
+        foreach (var pid in childs)
         {
-            if (Process is not null)
-                Process.Dispose();
-            if (MainThread is not null)
-                MainThread.Dispose();
-            Children.Dispose();
+            Children.Add(pid);
+            ChildProcessCreated?.Invoke(this, pid);
+        }
+    }
 
-            GC.SuppressFinalize(this); //now, the finalizer won't be called
+    public void SetEfficiencyMode(EfficiencyMode mode)
+    {
+        EfficiencyMode = mode;
+    }
+
+    private void SuspendToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        switch (SuspendToggle.IsOn)
+        {
+            case true:
+            {
+                if (prevThreadWaitReason == ThreadWaitReason.Suspended)
+                    return;
+
+                ProcessManager.SuspendProcess(this);
+            }
+                break;
+            case false:
+                ProcessManager.ResumeProcess(this);
+                break;
         }
     }
 }

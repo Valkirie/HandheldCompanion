@@ -1,54 +1,53 @@
-﻿using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
 
-namespace HandheldCompanion.Views.QuickPages
+namespace HandheldCompanion.Views.QuickPages;
+
+/// <summary>
+///     Interaction logic for QuickSuspenderPage.xaml
+/// </summary>
+public partial class QuickSuspenderPage : Page
 {
-    /// <summary>
-    /// Interaction logic for QuickSuspenderPage.xaml
-    /// </summary>
-    public partial class QuickSuspenderPage : Page
+    public QuickSuspenderPage()
     {
-        public QuickSuspenderPage()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            ProcessManager.ProcessStarted += ProcessStarted;
-            ProcessManager.ProcessStopped += ProcessStopped;
+        ProcessManager.ProcessStarted += ProcessStarted;
+        ProcessManager.ProcessStopped += ProcessStopped;
+    }
+
+    private void ProcessStopped(ProcessEx processEx)
+    {
+        try
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                if (CurrentProcesses.Children.Contains(processEx))
+                    CurrentProcesses.Children.Remove(processEx);
+            });
         }
-
-        private void ProcessStopped(ProcessEx processEx)
+        catch
         {
-            try
-            {
-                // UI thread (async)
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    if (CurrentProcesses.Children.Contains(processEx))
-                        CurrentProcesses.Children.Remove(processEx);
-                });
-            }
-            catch
-            {
-            }
         }
+    }
 
-        private void ProcessStarted(ProcessEx processEx, bool OnStartup)
+    private void ProcessStarted(ProcessEx processEx, bool OnStartup)
+    {
+        try
         {
-            try
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                // UI thread (async)
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    if (!CurrentProcesses.Children.Contains(processEx))
-                        CurrentProcesses.Children.Add(processEx);
-                });
-            }
-            catch
-            {
-                // process might have exited already
-            }
+                if (!CurrentProcesses.Children.Contains(processEx))
+                    CurrentProcesses.Children.Add(processEx);
+            });
+        }
+        catch
+        {
+            // process might have exited already
         }
     }
 }

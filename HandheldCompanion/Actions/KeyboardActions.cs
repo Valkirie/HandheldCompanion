@@ -1,97 +1,100 @@
-﻿using ControllerCommon.Actions;
+﻿using System;
+using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Simulators;
-using System;
 
-namespace HandheldCompanion.Actions
+namespace HandheldCompanion.Actions;
+
+[Serializable]
+public class KeyboardActions : IActions
 {
-    [Serializable]
-    public class KeyboardActions : IActions
+    public KeyboardActions()
     {
-        public VirtualKeyCode Key { get; set; }
-        private bool IsKeyDown { get; set; }
-        private bool IsKeyUp { get; set; }
+        ActionType = ActionType.Keyboard;
+        IsKeyDown = false;
+        IsKeyUp = true;
 
-        public KeyboardActions()
+        Value = false;
+        prevValue = false;
+    }
+
+    public KeyboardActions(VirtualKeyCode key) : this()
+    {
+        Key = key;
+    }
+
+    public VirtualKeyCode Key { get; set; }
+    private bool IsKeyDown { get; set; }
+    private bool IsKeyUp { get; set; }
+
+    public override void Execute(ButtonFlags button, bool value)
+    {
+        if (Toggle)
         {
-            this.ActionType = ActionType.Keyboard;
-            this.IsKeyDown = false;
-            this.IsKeyUp = true;
-
-            this.Value = false;
-            this.prevValue = false;
+            if ((bool)prevValue != value && value)
+                IsToggled = !IsToggled;
+        }
+        else
+        {
+            IsToggled = false;
         }
 
-        public KeyboardActions(VirtualKeyCode key) : this()
+        if (Turbo)
         {
-            this.Key = key;
-        }
-
-        public override void Execute(ButtonFlags button, bool value)
-        {
-            if (Toggle)
+            if (value || IsToggled)
             {
-                if ((bool)prevValue != value && value)
-                    IsToggled = !IsToggled;
+                if (TurboIdx % TurboDelay == 0)
+                    IsTurboed = !IsTurboed;
+
+                TurboIdx += Period;
             }
             else
-                IsToggled = false;
-
-            if (Turbo)
             {
-                if (value || IsToggled)
-                {
-                    if (TurboIdx % TurboDelay == 0)
-                        IsTurboed = !IsTurboed;
-
-                    TurboIdx += Period;
-                }
-                else
-                {
-                    IsTurboed = false;
-                    TurboIdx = 0;
-                }
-            }
-            else
                 IsTurboed = false;
-
-            // update previous value
-            prevValue = value;
-
-            // update value
-            if (Toggle && Turbo)
-                this.Value = IsToggled && IsTurboed;
-            else if (Toggle)
-                this.Value = IsToggled;
-            else if (Turbo)
-                this.Value = IsTurboed;
-            else
-                this.Value = value;
-
-            switch (this.Value)
-            {
-                case true:
-                    {
-                        if (IsKeyDown || !IsKeyUp)
-                            return;
-
-                        IsKeyDown = true;
-                        IsKeyUp = false;
-                        KeyboardSimulator.KeyDown(Key);
-                    }
-                    break;
-                case false:
-                    {
-                        if (IsKeyUp || !IsKeyDown)
-                            return;
-
-                        IsKeyUp = true;
-                        IsKeyDown = false;
-                        KeyboardSimulator.KeyUp(Key);
-                    }
-                    break;
+                TurboIdx = 0;
             }
+        }
+        else
+        {
+            IsTurboed = false;
+        }
+
+        // update previous value
+        prevValue = value;
+
+        // update value
+        if (Toggle && Turbo)
+            Value = IsToggled && IsTurboed;
+        else if (Toggle)
+            Value = IsToggled;
+        else if (Turbo)
+            Value = IsTurboed;
+        else
+            Value = value;
+
+        switch (Value)
+        {
+            case true:
+            {
+                if (IsKeyDown || !IsKeyUp)
+                    return;
+
+                IsKeyDown = true;
+                IsKeyUp = false;
+                KeyboardSimulator.KeyDown(Key);
+            }
+                break;
+            case false:
+            {
+                if (IsKeyUp || !IsKeyDown)
+                    return;
+
+                IsKeyUp = true;
+                IsKeyDown = false;
+                KeyboardSimulator.KeyUp(Key);
+            }
+                break;
         }
     }
 }

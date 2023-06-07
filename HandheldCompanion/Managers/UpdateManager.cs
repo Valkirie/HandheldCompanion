@@ -1,301 +1,303 @@
-﻿using ControllerCommon.Managers;
-using HandheldCompanion.Views;
-using ModernWpf.Controls;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
+using ControllerCommon.Managers;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Views;
+using ModernWpf.Controls;
+using Newtonsoft.Json;
 
-namespace HandheldCompanion.Managers
+namespace HandheldCompanion.Managers;
+
+public class UpdateManager : Manager
 {
-    public class UpdateManager : Manager
+    public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
+
+    public enum UpdateStatus
     {
-        private DateTime lastchecked;
-        private Assembly assembly;
-        private WebClient webClient;
+        Initialized,
+        Updated,
+        Checking,
+        Changelog,
+        Ready,
+        Download,
+        Downloading,
+        Downloaded,
+        Failed
+    }
 
-        private Version build;
-        private Dictionary<string, UpdateFile> updateFiles = new();
+    private readonly Assembly assembly;
 
-        private UpdateStatus status;
-        private string url;
+    private readonly Version build;
+    private DateTime lastchecked;
 
-        public event UpdatedEventHandler Updated;
-        public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
+    private UpdateStatus status;
+    private readonly Dictionary<string, UpdateFile> updateFiles = new();
+    private string url;
+    private readonly WebClient webClient;
 
-        public enum UpdateStatus
+    public UpdateManager()
+    {
+        // check assembly
+        assembly = Assembly.GetExecutingAssembly();
+        build = assembly.GetName().Version;
+
+        InstallPath = Path.Combine(MainWindow.SettingsPath, "cache");
+
+        // initialize folder
+        if (!Directory.Exists(InstallPath))
+            Directory.CreateDirectory(InstallPath);
+
+        webClient = new WebClient();
+        webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+        ServicePointManager.Expect100Continue = true;
+        webClient.Headers.Add("user-agent", "request");
+
+        webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
+        webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
+        webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
+
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+    }
+
+    public event UpdatedEventHandler Updated;
+
+    private void SettingsManager_SettingValueChanged(string name, object value)
+    {
+        switch (name)
         {
-            Initialized,
-            Updated,
-            Checking,
-            Changelog,
-            Ready,
-            Download,
-            Downloading,
-            Downloaded,
-            Failed
+            case "UpdateUrl":
+                url = Convert.ToString(value);
+                break;
         }
+    }
 
-        public UpdateManager() : base()
+    private int GetFileSize(Uri uriPath)
+    {
+        try
         {
-            // check assembly
-            assembly = Assembly.GetExecutingAssembly();
-            build = assembly.GetName().Version;
+            var webRequest = WebRequest.Create(uriPath);
+            webRequest.Method = "HEAD";
 
-            InstallPath = Path.Combine(MainWindow.SettingsPath, "cache");
-
-            // initialize folder
-            if (!Directory.Exists(InstallPath))
-                Directory.CreateDirectory(InstallPath);
-
-            webClient = new WebClient();
-            webClient.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-            ServicePointManager.Expect100Continue = true;
-            webClient.Headers.Add("user-agent", "request");
-
-            webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
-            webClient.DownloadProgressChanged += WebClient_DownloadProgressChanged;
-            webClient.DownloadFileCompleted += WebClient_DownloadFileCompleted;
-
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        }
-
-        private void SettingsManager_SettingValueChanged(string name, object value)
-        {
-            switch (name)
+            using (var webResponse = webRequest.GetResponse())
             {
-                case "UpdateUrl":
-                    url = Convert.ToString(value);
-                    break;
+                var fileSize = webResponse.Headers.Get("Content-Length");
+                return Convert.ToInt32(fileSize);
             }
         }
-
-        private int GetFileSize(Uri uriPath)
+        catch
         {
-            try
-            {
-                var webRequest = WebRequest.Create(uriPath);
-                webRequest.Method = "HEAD";
+            return 0;
+        }
+    }
 
-                using (var webResponse = webRequest.GetResponse())
-                {
-                    var fileSize = webResponse.Headers.Get("Content-Length");
-                    return Convert.ToInt32(fileSize);
-                }
+    private void WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
+    {
+        if (status != UpdateStatus.Downloading)
+            return;
+
+        var filename = (string)e.UserState;
+
+        if (!updateFiles.ContainsKey(filename))
+            return;
+
+        var update = updateFiles[filename];
+
+        status = UpdateStatus.Downloaded;
+        Updated?.Invoke(status, update, null);
+    }
+
+    private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    {
+        if (status != UpdateStatus.Download && status != UpdateStatus.Downloading)
+            return;
+
+        var filename = (string)e.UserState;
+
+        if (updateFiles.TryGetValue(filename, out var file))
+        {
+            status = UpdateStatus.Downloading;
+            Updated?.Invoke(status, file, e.ProgressPercentage);
+        }
+    }
+
+    private void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+    {
+        // something went wrong with the connection
+        if (e.Error is not null)
+        {
+            UpdateFile update = null;
+
+            if (e.UserState is not null)
+            {
+                var filename = (string)e.UserState;
+                if (updateFiles.TryGetValue(filename, out var file))
+                    update = file;
+
+                _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
+                    Resources.SettingsPage_UpdateFailedDownload,
+                    ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
             }
-            catch { return 0; }
+            else
+            {
+                _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
+                    Resources.SettingsPage_UpdateFailedGithub,
+                    ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+            }
+
+            status = UpdateStatus.Failed;
+            Updated?.Invoke(status, update, e.Error);
+            return;
         }
 
-        private void WebClient_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        switch (status)
         {
-            if (status != UpdateStatus.Downloading)
+            case UpdateStatus.Checking:
+                ParseLatest(e.Result);
+                break;
+        }
+    }
+
+    public void DownloadUpdateFile(UpdateFile update)
+    {
+        if (webClient.IsBusy)
+            return; // lazy
+
+        status = UpdateStatus.Download;
+        Updated?.Invoke(status, update, null);
+
+        // download release
+        var filename = Path.Combine(InstallPath, update.filename);
+        webClient.DownloadFileAsync(update.uri, filename, update.filename);
+    }
+
+    private void ParseLatest(string contentsJson)
+    {
+        try
+        {
+            var latestRelease = JsonConvert.DeserializeObject<GitRelease>(contentsJson);
+
+            // get latest build version
+            var latestBuild = new Version(latestRelease.tag_name);
+
+            // update latest check time
+            UpdateTime();
+
+            // skip if user is already running latest build
+            if (latestBuild <= build)
+            {
+                status = UpdateStatus.Updated;
+                Updated?.Invoke(status, null, null);
                 return;
-
-            var filename = (string)e.UserState;
-
-            if (!updateFiles.ContainsKey(filename))
-                return;
-
-            UpdateFile update = updateFiles[filename];
-
-            status = UpdateStatus.Downloaded;
-            Updated?.Invoke(status, update, null);
-        }
-
-        private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            if (status != UpdateStatus.Download && status != UpdateStatus.Downloading)
-                return;
-
-            var filename = (string)e.UserState;
-
-            if (updateFiles.ContainsKey(filename))
-            {
-                UpdateFile update = updateFiles[filename];
-
-                status = UpdateStatus.Downloading;
-                Updated?.Invoke(status, update, e.ProgressPercentage);
             }
-        }
 
-        private void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            // something went wrong with the connection
-            if (e.Error is not null)
+            // send changelog
+            status = UpdateStatus.Changelog;
+            Updated?.Invoke(status, null, latestRelease.body);
+
+            // skip if no assets are currently linked to the release
+            if (latestRelease.assets.Count == 0)
             {
-                UpdateFile update = null;
-
-                if (e.UserState is not null)
-                {
-                    var filename = (string)e.UserState;
-                    if (updateFiles.ContainsKey(filename))
-                        update = updateFiles[filename];
-
-                    _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
-                        Properties.Resources.SettingsPage_UpdateFailedDownload,
-                        ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
-                }
-                else
-                {
-                    _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
-                        Properties.Resources.SettingsPage_UpdateFailedGithub,
-                        ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
-                }
-
-                status = UpdateStatus.Failed;
-                Updated?.Invoke(status, update, e.Error);
+                status = UpdateStatus.Updated;
+                Updated?.Invoke(status, null, null);
                 return;
             }
 
-            switch (status)
+            foreach (var asset in latestRelease.assets)
             {
-                case UpdateStatus.Checking:
-                    ParseLatest(e.Result);
-                    break;
+                var uri = new Uri(asset.browser_download_url);
+                var update = new UpdateFile
+                {
+                    idx = (short)asset.id,
+                    filename = asset.name,
+                    uri = uri,
+                    filesize = GetFileSize(uri),
+                    debug = asset.name.Contains("Debug", StringComparison.InvariantCultureIgnoreCase)
+                };
+
+                // making sure there was no corruption
+                if (update.filesize == asset.size)
+                    updateFiles.Add(update.filename, update);
             }
-        }
 
-        public void DownloadUpdateFile(UpdateFile update)
-        {
-            if (webClient.IsBusy)
-                return; // lazy
-
-            status = UpdateStatus.Download;
-            Updated?.Invoke(status, update, null);
-
-            // download release
-            string filename = System.IO.Path.Combine(InstallPath, update.filename);
-            webClient.DownloadFileAsync(update.uri, filename, update.filename);
-        }
-
-        private void ParseLatest(string contentsJson)
-        {
-            try
+            // skip if we failed to parse updates
+            if (updateFiles.Count == 0)
             {
-                GitRelease latestRelease = JsonConvert.DeserializeObject<GitRelease>(contentsJson);
-
-                // get latest build version
-                Version latestBuild = new Version(latestRelease.tag_name);
-
-                // update latest check time
-                UpdateTime();
-
-                // skip if user is already running latest build
-                if (latestBuild <= build)
-                {
-                    status = UpdateStatus.Updated;
-                    Updated?.Invoke(status, null, null);
-                    return;
-                }
-
-                // send changelog
-                status = UpdateStatus.Changelog;
-                Updated?.Invoke(status, null, latestRelease.body);
-
-                // skip if no assets are currently linked to the release
-                if (latestRelease.assets.Count == 0)
-                {
-                    status = UpdateStatus.Updated;
-                    Updated?.Invoke(status, null, null);
-                    return;
-                }
-
-                foreach (Asset asset in latestRelease.assets)
-                {
-                    Uri uri = new Uri(asset.browser_download_url);
-                    UpdateFile update = new UpdateFile()
-                    {
-                        idx = (short)asset.id,
-                        filename = asset.name,
-                        uri = uri,
-                        filesize = GetFileSize(uri),
-                        debug = asset.name.Contains("Debug", StringComparison.InvariantCultureIgnoreCase)
-                    };
-
-                    // making sure there was no corruption
-                    if (update.filesize == asset.size)
-                        updateFiles.Add(update.filename, update);
-                }
-
-                // skip if we failed to parse updates
-                if (updateFiles.Count == 0)
-                {
-                    status = UpdateStatus.Failed;
-                    Updated?.Invoke(status, null, null);
-                    return;
-                }
-
-                status = UpdateStatus.Ready;
-                Updated?.Invoke(status, null, updateFiles);
-            }
-            catch
-            {
-                // failed to parse Json
                 status = UpdateStatus.Failed;
                 Updated?.Invoke(status, null, null);
                 return;
             }
+
+            status = UpdateStatus.Ready;
+            Updated?.Invoke(status, null, updateFiles);
         }
-
-        public override void Start()
+        catch
         {
-            DateTime dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
-
-            lastchecked = dateTime;
-
-            status = UpdateStatus.Initialized;
+            // failed to parse Json
+            status = UpdateStatus.Failed;
             Updated?.Invoke(status, null, null);
-
-            base.Start();
         }
+    }
 
-        public override void Stop()
+    public override void Start()
+    {
+        var dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
+
+        lastchecked = dateTime;
+
+        status = UpdateStatus.Initialized;
+        Updated?.Invoke(status, null, null);
+
+        base.Start();
+    }
+
+    public override void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        base.Stop();
+    }
+
+    public DateTime GetTime()
+    {
+        return lastchecked;
+    }
+
+    public void UpdateTime()
+    {
+        lastchecked = DateTime.Now;
+        SettingsManager.SetProperty("UpdateLastChecked", lastchecked);
+    }
+
+    public void StartProcess()
+    {
+        // Update UI
+        status = UpdateStatus.Checking;
+        Updated?.Invoke(status, null, null);
+
+        // download github
+        webClient.DownloadStringAsync(new Uri($"{url}/releases/latest"));
+    }
+
+    public void InstallUpdate(UpdateFile updateFile)
+    {
+        var filename = Path.Combine(InstallPath, updateFile.filename);
+
+        if (!File.Exists(filename))
         {
-            if (!IsInitialized)
-                return;
-
-            base.Stop();
+            _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
+                Resources.SettingsPage_UpdateFailedInstall,
+                ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+            return;
         }
 
-        public DateTime GetTime()
-        {
-            return lastchecked;
-        }
-
-        public void UpdateTime()
-        {
-            lastchecked = DateTime.Now;
-            SettingsManager.SetProperty("UpdateLastChecked", lastchecked);
-        }
-
-        public void StartProcess()
-        {
-            // Update UI
-            status = UpdateStatus.Checking;
-            Updated?.Invoke(status, null, null);
-
-            // download github
-            webClient.DownloadStringAsync(new Uri($"{url}/releases/latest"));
-        }
-
-        public void InstallUpdate(UpdateFile updateFile)
-        {
-            string filename = System.IO.Path.Combine(InstallPath, updateFile.filename);
-
-            if (!File.Exists(filename))
-            {
-                _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
-                    Properties.Resources.SettingsPage_UpdateFailedInstall,
-                    ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
-                return;
-            }
-
-            Process.Start(filename);
-            Process.GetCurrentProcess().Kill();
-        }
+        Process.Start(filename);
+        Process.GetCurrentProcess().Kill();
     }
 }

@@ -1,51 +1,51 @@
-﻿using hidapi;
-using neptune_hidapi.net.Hid;
-using neptune_hidapi.net.Util;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using hidapi;
+using neptune_hidapi.net.Hid;
+using neptune_hidapi.net.Util;
 
 namespace neptune_hidapi.net
 {
     public class NeptuneController
     {
-        private HidDevice _hidDevice;
-        private ushort _vid = 0x28de, _pid = 0x1205;
+        private bool _active;
         private Task _configureTask;
-        private bool _active = false;
-
-        public bool LizardMouseEnabled { get; set; }
-        public bool LizardButtonsEnabled { get; set; }
-        public string SerialNumber { get; private set; }
+        private readonly HidDevice _hidDevice;
+        private readonly ushort _vid = 0x28de;
+        private readonly ushort _pid = 0x1205;
         public Func<NeptuneControllerInputEventArgs, Task> OnControllerInputReceived;
 
         public NeptuneController()
         {
-            _hidDevice = new HidDevice(_vid, _pid, 64);
+            _hidDevice = new HidDevice(_vid, _pid);
             _hidDevice.OnInputReceived = input => Task.Run(() => OnInputReceived(input));
         }
+
+        public bool LizardMouseEnabled { get; set; }
+        public bool LizardButtonsEnabled { get; set; }
+        public string SerialNumber { get; private set; }
 
         private void OnInputReceived(HidDeviceInputReceivedEventArgs e)
         {
             if (e.Buffer[0] == 1)
             {
-                SDCInput input = e.Buffer.ToStructure<SDCInput>();
-                NeptuneControllerInputState state = new NeptuneControllerInputState(input);
+                var input = e.Buffer.ToStructure<SDCInput>();
+                var state = new NeptuneControllerInputState(input);
                 if (OnControllerInputReceived != null)
                     OnControllerInputReceived(new NeptuneControllerInputEventArgs(state));
             }
-            else
-            {
-
-            }
         }
 
-        private double MapValue(double a, double b, double c) => a / b * c;
+        private double MapValue(double a, double b, double c)
+        {
+            return a / b * c;
+        }
 
         public async Task<bool> SetHaptic(byte position, ushort amplitude, ushort period, ushort count)
         {
-            SDCHapticPacket haptic = new SDCHapticPacket();
+            var haptic = new SDCHapticPacket();
 
             haptic.packet_type = 0x8f;
             haptic.len = 0x07;
@@ -54,7 +54,7 @@ namespace neptune_hidapi.net
             haptic.period = period;
             haptic.count = count;
 
-            byte[] data = GetHapticDataBytes(haptic);
+            var data = GetHapticDataBytes(haptic);
 
             await _hidDevice.RequestFeatureReportAsync(data);
 
@@ -63,9 +63,9 @@ namespace neptune_hidapi.net
 
         private byte[] GetHapticDataBytes(SDCHapticPacket packet)
         {
-            int size = Marshal.SizeOf(packet);
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var size = Marshal.SizeOf(packet);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(packet, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);
@@ -74,7 +74,7 @@ namespace neptune_hidapi.net
 
         public Task<byte[]> SetHaptic2(HapticPad position, HapticStyle style, sbyte intensity)
         {
-            SDCHapticPacket2 haptic = new SDCHapticPacket2();
+            var haptic = new SDCHapticPacket2();
 
             haptic.packet_type = 0xea;
             haptic.len = 0xd;
@@ -87,16 +87,16 @@ namespace neptune_hidapi.net
             haptic.tsA = ts;
             haptic.tsB = ts;
 
-            byte[] data = GetHapticDataBytes(haptic);
+            var data = GetHapticDataBytes(haptic);
 
             return _hidDevice.RequestFeatureReportAsync(data);
         }
 
         private byte[] GetHapticDataBytes(SDCHapticPacket2 packet)
         {
-            int size = Marshal.SizeOf(packet);
-            byte[] arr = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
+            var size = Marshal.SizeOf(packet);
+            var arr = new byte[size];
+            var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(packet, ptr, false);
             Marshal.Copy(ptr, arr, 0, size);
             Marshal.FreeHGlobal(ptr);
@@ -110,27 +110,26 @@ namespace neptune_hidapi.net
                 if (!mouse)
                 {
                     //Disable mouse emulation
-                    byte[] data = new byte[] { 0x87, 0x03, 0x08, 0x07 };
+                    byte[] data = { 0x87, 0x03, 0x08, 0x07 };
                     await _hidDevice.RequestFeatureReportAsync(data);
                 }
                 else
                 {
                     //Enable mouse emulation
-                    byte[] data = new byte[] { 0x8e, 0x00 };
+                    byte[] data = { 0x8e, 0x00 };
                     await _hidDevice.RequestFeatureReportAsync(data);
                 }
 
                 if (!buttons)
                 {
                     //Disable keyboard/mouse button emulation
-                    byte[] data = new byte[] { 0x81, 0x00 };
+                    byte[] data = { 0x81, 0x00 };
                     await _hidDevice.RequestFeatureReportAsync(data);
-
                 }
                 else
                 {
                     //Enable keyboard/mouse button emulation
-                    byte[] data = new byte[] { 0x85, 0x00 };
+                    byte[] data = { 0x85, 0x00 };
                     await _hidDevice.RequestFeatureReportAsync(data);
                 }
             }
@@ -138,6 +137,7 @@ namespace neptune_hidapi.net
             {
                 return false;
             }
+
             return true;
         }
 
@@ -152,21 +152,22 @@ namespace neptune_hidapi.net
 
         public async Task<string> ReadSerialNumberAsync()
         {
-            byte[] request = new byte[] { 0xAE, 0x15, 0x01 };
-            byte[] response = await _hidDevice.RequestFeatureReportAsync(request);
-            byte[] serial = new byte[response.Length - 5];
+            byte[] request = { 0xAE, 0x15, 0x01 };
+            var response = await _hidDevice.RequestFeatureReportAsync(request);
+            var serial = new byte[response.Length - 5];
             Array.Copy(response, 4, serial, 0, serial.Length);
 
-            return Encoding.ASCII.GetString(serial).TrimEnd((Char)0);
+            return Encoding.ASCII.GetString(serial).TrimEnd((char)0);
         }
+
         public string ReadSerialNumber()
         {
-            byte[] request = new byte[] { 0xAE, 0x15, 0x01 };
-            byte[] response = _hidDevice.RequestFeatureReport(request);
-            byte[] serial = new byte[response.Length - 5];
+            byte[] request = { 0xAE, 0x15, 0x01 };
+            var response = _hidDevice.RequestFeatureReport(request);
+            var serial = new byte[response.Length - 5];
             Array.Copy(response, 4, serial, 0, serial.Length);
 
-            return Encoding.ASCII.GetString(serial).TrimEnd((Char)0);
+            return Encoding.ASCII.GetString(serial).TrimEnd((char)0);
         }
 
         public async Task OpenAsync()
@@ -178,6 +179,7 @@ namespace neptune_hidapi.net
             _active = true;
             _configureTask = ConfigureLoop();
         }
+
         public void Open()
         {
             if (!_hidDevice.OpenDevice())
@@ -188,7 +190,11 @@ namespace neptune_hidapi.net
             _configureTask = ConfigureLoop();
         }
 
-        public Task CloseAsync() => Task.Run(() => Close());
+        public Task CloseAsync()
+        {
+            return Task.Run(() => Close());
+        }
+
         public void Close()
         {
             if (_hidDevice.IsDeviceValid)

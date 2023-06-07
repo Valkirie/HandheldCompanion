@@ -1,151 +1,150 @@
-﻿using ControllerCommon.Actions;
+﻿using System.Threading;
+using System.Windows.Controls;
+using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Managers;
 using ModernWpf.Controls;
-using System.Threading;
-using System.Windows.Controls;
 
-namespace HandheldCompanion.Controls
+namespace HandheldCompanion.Controls;
+
+/// <summary>
+///     Interaction logic for TriggerMapping.xaml
+/// </summary>
+public partial class TriggerMapping : IMapping
 {
-    /// <summary>
-    /// Interaction logic for TriggerMapping.xaml
-    /// </summary>
-    public partial class TriggerMapping : IMapping
+    public TriggerMapping()
     {
-        public TriggerMapping()
+        InitializeComponent();
+    }
+
+    public TriggerMapping(AxisLayoutFlags axis) : this()
+    {
+        Value = axis;
+        prevValue = axis;
+
+        Icon.Glyph = axis.ToString();
+    }
+
+    public void UpdateIcon(FontIcon newIcon, string newLabel)
+    {
+        Name.Text = newLabel;
+
+        Icon.Glyph = newIcon.Glyph;
+        Icon.FontFamily = newIcon.FontFamily;
+        Icon.FontSize = newIcon.FontSize;
+
+        if (newIcon.Foreground is not null)
+            Icon.Foreground = newIcon.Foreground;
+        else
+            Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+        Update();
+    }
+
+    internal void SetIActions(IActions actions)
+    {
+        // reset and update mapping IActions
+        Reset();
+        base.SetIActions(actions);
+
+        // update UI
+        ActionComboBox.SelectedIndex = (int)actions.ActionType;
+    }
+
+    private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ActionComboBox.SelectedItem is null)
+            return;
+
+        // we're not ready yet
+        if (TargetComboBox is null)
+            return;
+
+        // we're busy
+        if (!Monitor.TryEnter(updateLock))
+            return;
+
+        // clear current dropdown values
+        TargetComboBox.Items.Clear();
+        TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
+
+        // get current controller
+        var controller = ControllerManager.GetEmulatedController();
+
+        // populate target dropdown based on action type
+        var type = (ActionType)ActionComboBox.SelectedIndex;
+
+        if (type == ActionType.Disabled)
         {
-            InitializeComponent();
+            if (Actions is not null)
+                Delete();
+            return;
         }
 
-        public TriggerMapping(AxisLayoutFlags axis) : this()
+        if (type == ActionType.Trigger)
         {
-            this.Value = axis;
-            this.prevValue = axis;
+            if (Actions is null || Actions is not TriggerActions)
+                Actions = new TriggerActions();
 
-            this.Icon.Glyph = axis.ToString();
-        }
-
-        public void UpdateIcon(FontIcon newIcon, string newLabel)
-        {
-            this.Name.Text = newLabel;
-
-            this.Icon.Glyph = newIcon.Glyph;
-            this.Icon.FontFamily = newIcon.FontFamily;
-            this.Icon.FontSize = newIcon.FontSize;
-
-            if (newIcon.Foreground is not null)
-                this.Icon.Foreground = newIcon.Foreground;
-            else
-                this.Icon.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-            this.Update();
-        }
-
-        internal void SetIActions(IActions actions)
-        {
-            // reset and update mapping IActions
-            Reset();
-            base.SetIActions(actions);
-
-            // update UI
-            this.ActionComboBox.SelectedIndex = (int)actions.ActionType;
-        }
-
-        private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ActionComboBox.SelectedItem is null)
+            // we need a controller to get compatible buttons
+            if (controller is null)
                 return;
 
-            // we're not ready yet
-            if (TargetComboBox is null)
-                return;
-
-            // we're busy
-            if (!Monitor.TryEnter(updateLock))
-                return;
-
-            // clear current dropdown values
-            TargetComboBox.Items.Clear();
-            TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
-
-            // get current controller
-            IController controller = ControllerManager.GetEmulatedController();
-
-            // populate target dropdown based on action type
-            ActionType type = (ActionType)ActionComboBox.SelectedIndex;
-
-            if (type == ActionType.Disabled)
+            foreach (var axis in IController.GetTargetTriggers())
             {
-                if (this.Actions is not null)
-                    base.Delete();
-                return;
+                // create a label, store AxisLayoutFlags as Tag and Label as controller specific string
+                var buttonLabel = new Label { Tag = axis, Content = controller.GetAxisName(axis) };
+                TargetComboBox.Items.Add(buttonLabel);
+
+                if (axis.Equals(((TriggerActions)Actions).Axis))
+                    TargetComboBox.SelectedItem = buttonLabel;
             }
-
-            if (type == ActionType.Trigger)
-            {
-                if (this.Actions is null || this.Actions is not TriggerActions)
-                    this.Actions = new TriggerActions();
-
-                // we need a controller to get compatible buttons
-                if (controller is null)
-                    return;
-
-                foreach (AxisLayoutFlags axis in IController.GetTargetTriggers())
-                {
-                    // create a label, store AxisLayoutFlags as Tag and Label as controller specific string
-                    Label buttonLabel = new Label() { Tag = axis, Content = controller.GetAxisName(axis) };
-                    TargetComboBox.Items.Add(buttonLabel);
-
-                    if (axis.Equals(((TriggerActions)this.Actions).Axis))
-                        TargetComboBox.SelectedItem = buttonLabel;
-                }
-            }
-
-            base.Update();
         }
 
-        private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        base.Update();
+    }
+
+    private void Target_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Actions is null)
+            return;
+
+        if (TargetComboBox.SelectedItem is null)
+            return;
+
+        // we're busy
+        if (!Monitor.TryEnter(updateLock))
+            return;
+
+        // generate IActions based on settings
+        switch (Actions.ActionType)
         {
-            if (this.Actions is null)
-                return;
-
-            if (TargetComboBox.SelectedItem is null)
-                return;
-
-            // we're busy
-            if (!Monitor.TryEnter(updateLock))
-                return;
-
-            // generate IActions based on settings
-            switch (this.Actions.ActionType)
+            case ActionType.Trigger:
             {
-                case ActionType.Trigger:
-                    {
-                        Label buttonLabel = TargetComboBox.SelectedItem as Label;
-                        ((TriggerActions)this.Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
-                    }
-                    break;
+                var buttonLabel = TargetComboBox.SelectedItem as Label;
+                ((TriggerActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
             }
-
-            base.Update();
+                break;
         }
 
-        private void Update()
-        {
-            // force full update
-            Action_SelectionChanged(null, null);
-            Target_SelectionChanged(null, null);
-        }
+        base.Update();
+    }
 
-        public void Reset()
+    private void Update()
+    {
+        // force full update
+        Action_SelectionChanged(null, null);
+        Target_SelectionChanged(null, null);
+    }
+
+    public void Reset()
+    {
+        if (Monitor.TryEnter(updateLock))
         {
-            if (Monitor.TryEnter(updateLock))
-            {
-                ActionComboBox.SelectedIndex = 0;
-                TargetComboBox.SelectedItem = null;
-                Monitor.Exit(updateLock);
-            }
+            ActionComboBox.SelectedIndex = 0;
+            TargetComboBox.SelectedItem = null;
+            Monitor.Exit(updateLock);
         }
     }
 }
