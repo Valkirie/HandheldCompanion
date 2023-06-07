@@ -2,10 +2,8 @@
 using ControllerCommon.Managers;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Views;
 using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Windows;
 using Timer = System.Timers.Timer;
 

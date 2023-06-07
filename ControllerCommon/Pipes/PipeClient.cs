@@ -2,7 +2,6 @@
 using NamedPipeWrapper;
 using System;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -85,25 +84,24 @@ namespace ControllerCommon.Pipes
             LogManager.LogError("{0} failed. {1}", "PipeClient", exception.Message);
         }
 
-        public static async void SendMessage(PipeMessage message)
+        public static void SendMessage(PipeMessage message)
         {
-            await Task.Run(() =>
+            if (!IsConnected)
             {
-                if (!IsConnected)
-                {
-                    Type nodeType = message.GetType();
-                    if (nodeType == typeof(PipeClientCursor))
-                        return;
-                    else if (nodeType == typeof(PipeClientInputs))
-                        return;
-
-                    m_queue.Enqueue(message);
-                    m_timer.Start();
+                Type nodeType = message.GetType();
+                if (nodeType == typeof(PipeClientCursor))
                     return;
-                }
+                else if (nodeType == typeof(PipeClientInputs))
+                    return;
+                else if (nodeType == typeof(PipeClientMovements))
+                    return;
 
-                client?.PushMessage(message);
-            });
+                m_queue.Enqueue(message);
+                m_timer.Start();
+                return;
+            }
+
+            client?.PushMessage(message);
         }
 
         private static void SendMessageQueue(object sender, ElapsedEventArgs e)

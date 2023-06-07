@@ -5,12 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Threading;
-using System.Timers;
-using Windows.Security.EnterpriseData;
-using static ControllerCommon.Platforms.IPlatform;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Platforms

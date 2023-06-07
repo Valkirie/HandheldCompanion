@@ -1,15 +1,11 @@
 ﻿using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
 using HidSharp;
 using HidSharp.Reports;
 using HidSharp.Reports.Input;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace ControllerCommon.Devices
 {
