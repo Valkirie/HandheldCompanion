@@ -29,7 +29,7 @@
         BtnRStickPress = 25,
         BtnLStickPress = 26,
         BtnRStickTouch = 27,
-        BtnLStickTouch = 28,
+        BtnLStickTouch = 28
     }
 
     public enum NeptuneControllerAxis
@@ -55,6 +55,6 @@
         Q1 = 19,
         Q2 = 20,
         Q3 = 21,
-        Q4 = 22,
+        Q4 = 22
     }
 }

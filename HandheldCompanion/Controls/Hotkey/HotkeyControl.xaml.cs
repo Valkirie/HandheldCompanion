@@ -1,15 +1,14 @@
 ﻿using System.Windows.Controls;
 
-namespace HandheldCompanion.Controls
+namespace HandheldCompanion.Controls;
+
+/// <summary>
+///     Interaction logic for HotkeyControl.xaml
+/// </summary>
+public partial class HotkeyControl : UserControl
 {
-    /// <summary>
-    /// Interaction logic for HotkeyControl.xaml
-    /// </summary>
-    public partial class HotkeyControl : UserControl
+    public HotkeyControl()
     {
-        public HotkeyControl()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

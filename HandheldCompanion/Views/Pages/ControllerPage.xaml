@@ -2,12 +2,9 @@
     x:Class="HandheldCompanion.Views.Pages.ControllerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
@@ -238,7 +235,8 @@
 
                 <!--  Input devices  -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_InputDevices}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="{x:Static resx:Resources.ControllerPage_InputDevices}" />
 
                     <ui:SimpleStackPanel
                         Name="InputDevices"
@@ -286,7 +284,8 @@
 
                 <!--  Controller settings  -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
 
                     <!--  Vibration Strength  -->
                     <Border
@@ -308,7 +307,8 @@
                                     Glyph="&#xE877;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_VibrationStrength}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ControllerPage_VibrationStrength}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -331,7 +331,6 @@
                                     x:Name="SliderStrength"
                                     Margin="6,0,0,0"
                                     VerticalAlignment="Center"
-                                    AutoToolTipPlacement="TopLeft"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
                                     LargeChange="10"
@@ -367,7 +366,8 @@
                                     Glyph="&#xE877;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_VibrateDevice}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ControllerPage_VibrateDevice}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -467,7 +467,8 @@
 
                 <!--  Controller cloaking  -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="{x:Static resx:Resources.ControllerPage_DeviceCloaking}" />
 
                     <!--  Clock on connect  -->
                     <Border
@@ -489,7 +490,8 @@
                                     Glyph="&#xE793;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_CloakDevice}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ControllerPage_CloakDevice}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -527,7 +529,8 @@
                                     Glyph="&#xE7B3;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_UncloakOnClose}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ControllerPage_UncloakOnClose}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -612,7 +615,8 @@
                                     Glyph="&#xE789;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteController}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteController}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"

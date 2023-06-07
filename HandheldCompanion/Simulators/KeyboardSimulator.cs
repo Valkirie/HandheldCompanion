@@ -1,117 +1,114 @@
-﻿using GregsStack.InputSimulatorStandard;
+﻿using System;
+using System.Runtime.InteropServices;
+using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers;
-using System;
-using System.Runtime.InteropServices;
 using WindowsInput.Events;
 
-namespace HandheldCompanion.Simulators
+namespace HandheldCompanion.Simulators;
+
+public static class KeyboardSimulator
 {
-    public static class KeyboardSimulator
+    private static readonly InputSimulator InputSimulator;
+
+    static KeyboardSimulator()
     {
-        private static InputSimulator InputSimulator;
+        InputSimulator = new InputSimulator();
+    }
 
-        [DllImport("user32.dll")]
-        static extern int MapVirtualKey(int uCode, uint uMapType);
+    [DllImport("user32.dll")]
+    private static extern int MapVirtualKey(int uCode, uint uMapType);
 
-        static KeyboardSimulator()
+    public static void KeyDown(VirtualKeyCode key)
+    {
+        try
         {
-            InputSimulator = new InputSimulator();
+            InputSimulator.Keyboard.KeyDown(key);
         }
-
-        public static void KeyDown(VirtualKeyCode key)
+        catch (Exception)
         {
-            try
-            {
-                InputSimulator.Keyboard.KeyDown(key);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            // Some simulated input commands were not sent successfully.
         }
+    }
 
-        public static void KeyDown(KeyCode[] keys)
+    public static void KeyDown(KeyCode[] keys)
+    {
+        foreach (var key in keys)
+            KeyDown((VirtualKeyCode)key);
+    }
+
+    public static void KeyUp(VirtualKeyCode key)
+    {
+        try
         {
-            foreach (KeyCode key in keys)
-                KeyDown((VirtualKeyCode)key);
+            InputSimulator.Keyboard.KeyUp(key);
         }
-
-        public static void KeyUp(VirtualKeyCode key)
+        catch (Exception)
         {
-            try
-            {
-                InputSimulator.Keyboard.KeyUp(key);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            // Some simulated input commands were not sent successfully.
         }
+    }
 
-        public static void KeyUp(KeyCode[] keys)
+    public static void KeyUp(KeyCode[] keys)
+    {
+        foreach (var key in keys)
+            KeyUp((VirtualKeyCode)key);
+    }
+
+    public static void KeyPress(VirtualKeyCode key)
+    {
+        try
         {
-            foreach (KeyCode key in keys)
-                KeyUp((VirtualKeyCode)key);
+            InputSimulator.Keyboard.KeyPress(key);
         }
-
-        public static void KeyPress(VirtualKeyCode key)
+        catch (Exception)
         {
-            try
-            {
-                InputSimulator.Keyboard.KeyPress(key);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            // Some simulated input commands were not sent successfully.
         }
+    }
 
-        public static void KeyPress(VirtualKeyCode[] keys)
+    public static void KeyPress(VirtualKeyCode[] keys)
+    {
+        foreach (var key in keys)
+            KeyDown(key);
+
+        foreach (var key in keys)
+            KeyUp(key);
+    }
+
+    public static void KeyPress(KeyCode[] keys)
+    {
+        foreach (var key in keys)
+            KeyPress((VirtualKeyCode)key);
+    }
+
+    public static void KeyPress(OutputKey[] keys)
+    {
+        foreach (var key in keys)
+            if (key.IsKeyDown)
+                KeyDown((VirtualKeyCode)key.KeyValue);
+            else
+                KeyUp((VirtualKeyCode)key.KeyValue);
+    }
+
+    public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
+    {
+        try
         {
-            foreach (VirtualKeyCode key in keys)
-                KeyDown(key);
-
-            foreach (VirtualKeyCode key in keys)
-                KeyUp(key);
+            InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
         }
-
-        public static void KeyPress(KeyCode[] keys)
+        catch (Exception)
         {
-            foreach (KeyCode key in keys)
-                KeyPress((VirtualKeyCode)key);
+            // Some simulated input commands were not sent successfully.
         }
+    }
 
-        public static void KeyPress(OutputKey[] keys)
-        {
-            foreach (OutputKey key in keys)
-            {
-                if (key.IsKeyDown)
-                    KeyDown((VirtualKeyCode)key.KeyValue);
-                else
-                    KeyUp((VirtualKeyCode)key.KeyValue);
-            }
-        }
+    public static string GetVirtualKey(VirtualKeyCode key)
+    {
+        var c = (char)MapVirtualKey((int)key, 2);
+        if (char.IsControl(c))
+            return key.ToString();
 
-        public static void KeyStroke(VirtualKeyCode mod, VirtualKeyCode key)
-        {
-            try
-            {
-                InputSimulator.Keyboard.ModifiedKeyStroke(mod, key);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
-        }
-
-        public static string GetVirtualKey(VirtualKeyCode key)
-        {
-            char c = (char)MapVirtualKey((int)key, (uint)2);
-            if (char.IsControl(c))
-                return key.ToString();
-
-            return c.ToString();
-        }
+        return c.ToString();
     }
 }

@@ -2,9 +2,7 @@
     x:Class="HandheldCompanion.Views.QuickPages.QuickProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HandheldCompanion.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
@@ -26,7 +24,6 @@
                     <DockPanel>
                         <Image
                             Name="ProfileIcon"
-                            Grid.Column="0"
                             Width="24"
                             Height="24"
                             HorizontalAlignment="Center" />
@@ -114,7 +111,8 @@
                                     Glyph="&#xE759;" />
 
                                 <StackPanel Margin="12,0,0,0" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -171,7 +169,6 @@
                         <!--  Content  -->
                         <ui:RadioButtons
                             Name="cB_Input"
-                            Grid.Column="1"
                             Margin="6,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
@@ -207,7 +204,6 @@
                         <!--  Content  -->
                         <ui:RadioButtons
                             Name="cB_Output"
-                            Grid.Column="1"
                             Margin="6,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
@@ -243,7 +239,6 @@
                         <!--  Content  -->
                         <ui:RadioButtons
                             Name="cB_UMC_MotionDefaultOffOn"
-                            Grid.Column="1"
                             Margin="6,0,0,0"
                             HorizontalAlignment="Left"
                             MaxColumns="2"
@@ -255,7 +250,6 @@
                         <!--  Content  -->
                         <Grid
                             Name="UMC_Activator"
-                            Grid.Column="1"
                             Width="Auto"
                             Margin="6,0,0,0"
                             HorizontalAlignment="Left"
@@ -275,7 +269,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -286,7 +281,6 @@
 
                             <!--  Content  -->
                             <DockPanel
-                                Grid.Column="1"
                                 Margin="0,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock
@@ -305,7 +299,6 @@
                                     Margin="8,0,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    AutoToolTipPlacement="TopLeft"
                                     AutoToolTipPrecision="0"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
@@ -346,10 +339,10 @@
 
                             <!--  Content  -->
                             <DockPanel
-                                Grid.Column="1"
                                 Margin="0,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityX}" />
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Static resx:Resources.ProfilesPage_SensitivityX}" />
                                 <TextBlock
                                     Width="30"
                                     HorizontalAlignment="Left"
@@ -361,7 +354,6 @@
                                     Margin="8,0,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    AutoToolTipPlacement="TopLeft"
                                     AutoToolTipPrecision="1"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
@@ -377,10 +369,10 @@
                             </DockPanel>
 
                             <DockPanel
-                                Grid.Column="1"
                                 Margin="0,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityY}" />
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{x:Static resx:Resources.ProfilesPage_SensitivityY}" />
                                 <TextBlock
                                     Width="30"
                                     HorizontalAlignment="Left"
@@ -392,7 +384,6 @@
                                     Margin="8,0,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    AutoToolTipPlacement="TopLeft"
                                     AutoToolTipPrecision="1"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
@@ -440,7 +431,8 @@
                                 Glyph="&#xF119;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -466,7 +458,6 @@
                     Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <DockPanel
-                        Grid.Column="1"
                         Margin="0,0,0,0"
                         ScrollViewer.PanningMode="HorizontalOnly">
 
@@ -478,7 +469,6 @@
                                 x:Name="FramerateSlider"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 AutoToolTipPrecision="0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
@@ -556,7 +546,8 @@
                                 Glyph="&#xE713;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -587,7 +578,6 @@
                             VerticalAlignment="Center"
                             Text="Power limit target" />
                         <DockPanel
-                            Grid.Column="1"
                             Margin="8,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
@@ -605,7 +595,6 @@
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 AutoToolTipPrecision="0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
@@ -681,7 +670,6 @@
                             Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPS}" />
 
                         <DockPanel
-                            Grid.Column="1"
                             Margin="8,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
@@ -699,7 +687,6 @@
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 AutoToolTipPrecision="0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
@@ -743,7 +730,8 @@
                                 Glyph="&#xf57c;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Energy performance preference (EPP)" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="Energy performance preference (EPP)" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -774,7 +762,6 @@
                             VerticalAlignment="Center"
                             Text="CPU/GPU power balance" />
                         <DockPanel
-                            Grid.Column="1"
                             Margin="0,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
 
@@ -786,7 +773,6 @@
                                     x:Name="EPPSlider"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
-                                    AutoToolTipPlacement="TopLeft"
                                     AutoToolTipPrecision="0"
                                     IsMoveToPointEnabled="True"
                                     IsSnapToTickEnabled="True"
@@ -851,7 +837,8 @@
                                 Glyph="&#xE950;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -882,7 +869,6 @@
                             VerticalAlignment="Center"
                             Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
                         <DockPanel
-                            Grid.Column="1"
                             Margin="0,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <TextBlock
@@ -900,7 +886,6 @@
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 AutoToolTipPrecision="0"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"

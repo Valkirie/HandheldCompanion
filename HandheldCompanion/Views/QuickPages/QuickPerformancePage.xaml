@@ -2,9 +2,7 @@
     x:Class="HandheldCompanion.Views.QuickPages.QuickPerformancePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HandheldCompanion.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
@@ -30,7 +28,8 @@
                             Glyph="&#xE78B;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -84,7 +83,8 @@
                             Glyph="&#xE2CB;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Display resolution and refresh rate" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       Text="Display resolution and refresh rate" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -98,7 +98,7 @@
             <!--  Content  -->
             <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <Grid Grid.Column="1">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*" />
                         <ColumnDefinition Width="3*" />
@@ -165,7 +165,6 @@
             Visibility="{Binding ElementName=QuietModeToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <DockPanel
-                Grid.Column="1"
                 Margin="0,0,0,0"
                 ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock
@@ -183,7 +182,6 @@
                     Margin="8,0,0,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    AutoToolTipPlacement="TopLeft"
                     AutoToolTipPrecision="0"
                     IsMoveToPointEnabled="True"
                     IsSnapToTickEnabled="True"
@@ -252,7 +250,8 @@
                             Glyph="&#xEC48;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                       Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -266,7 +265,7 @@
             <!--  Content  -->
             <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <DockPanel Grid.Column="1">
+                <DockPanel>
                     <ui:SimpleStackPanel
                         Margin="0,0,0,0"
                         VerticalAlignment="Center"

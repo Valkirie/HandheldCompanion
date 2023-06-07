@@ -1,124 +1,123 @@
-﻿using GregsStack.InputSimulatorStandard;
-using HandheldCompanion.Actions;
-using System;
+﻿using System;
 using System.Drawing;
+using GregsStack.InputSimulatorStandard;
+using HandheldCompanion.Actions;
 
-namespace HandheldCompanion.Simulators
+namespace HandheldCompanion.Simulators;
+
+public static class MouseSimulator
 {
-    public static class MouseSimulator
+    private static readonly InputSimulator InputSimulator;
+
+    static MouseSimulator()
     {
-        private static InputSimulator InputSimulator;
+        InputSimulator = new InputSimulator();
+        InputSimulator.Mouse.MouseWheelClickSize = 6;
+    }
 
-        static MouseSimulator()
+    public static void MouseDown(MouseActionsType type, int scrollAmountInClicks = 0)
+    {
+        try
         {
-            InputSimulator = new InputSimulator();
-            InputSimulator.Mouse.MouseWheelClickSize = 6;
-        }
-
-        public static void MouseDown(MouseActionsType type, int scrollAmountInClicks = 0)
-        {
-            try
+            switch (type)
             {
-                switch (type)
-                {
-                    case MouseActionsType.LeftButton:
-                        InputSimulator.Mouse.LeftButtonDown();
-                        break;
-                    case MouseActionsType.RightButton:
-                        InputSimulator.Mouse.RightButtonDown();
-                        break;
-                    case MouseActionsType.MiddleButton:
-                        InputSimulator.Mouse.MiddleButtonDown();
-                        break;
-                    case MouseActionsType.ScrollUp:
-                        InputSimulator.Mouse.VerticalScroll(scrollAmountInClicks);
-                        break;
-                    case MouseActionsType.ScrollDown:
-                        InputSimulator.Mouse.VerticalScroll(-scrollAmountInClicks);
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
+                case MouseActionsType.LeftButton:
+                    InputSimulator.Mouse.LeftButtonDown();
+                    break;
+                case MouseActionsType.RightButton:
+                    InputSimulator.Mouse.RightButtonDown();
+                    break;
+                case MouseActionsType.MiddleButton:
+                    InputSimulator.Mouse.MiddleButtonDown();
+                    break;
+                case MouseActionsType.ScrollUp:
+                    InputSimulator.Mouse.VerticalScroll(scrollAmountInClicks);
+                    break;
+                case MouseActionsType.ScrollDown:
+                    InputSimulator.Mouse.VerticalScroll(-scrollAmountInClicks);
+                    break;
             }
         }
-
-        public static void MouseUp(MouseActionsType type)
+        catch (Exception)
         {
-            try
+            // Some simulated input commands were not sent successfully.
+        }
+    }
+
+    public static void MouseUp(MouseActionsType type)
+    {
+        try
+        {
+            switch (type)
             {
-                switch (type)
-                {
-                    case MouseActionsType.LeftButton:
-                        InputSimulator.Mouse.LeftButtonUp();
-                        break;
-                    case MouseActionsType.RightButton:
-                        InputSimulator.Mouse.RightButtonUp();
-                        break;
-                    case MouseActionsType.MiddleButton:
-                        InputSimulator.Mouse.MiddleButtonUp();
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
+                case MouseActionsType.LeftButton:
+                    InputSimulator.Mouse.LeftButtonUp();
+                    break;
+                case MouseActionsType.RightButton:
+                    InputSimulator.Mouse.RightButtonUp();
+                    break;
+                case MouseActionsType.MiddleButton:
+                    InputSimulator.Mouse.MiddleButtonUp();
+                    break;
             }
         }
-
-        public static void MoveBy(int x, int y)
+        catch (Exception)
         {
-            try
-            {
-                InputSimulator.Mouse.MoveMouseBy(x, y);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            // Some simulated input commands were not sent successfully.
         }
+    }
 
-        // TODO: unused, remove?
-        public static void MoveTo(double x, double y)
+    public static void MoveBy(int x, int y)
+    {
+        try
         {
-            try
-            {
-                InputSimulator.Mouse.MoveMouseTo(x, y);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            InputSimulator.Mouse.MoveMouseBy(x, y);
         }
+        catch (Exception)
+        {
+            // Some simulated input commands were not sent successfully.
+        }
+    }
 
-        public static void HorizontalScroll(int x)
+    // TODO: unused, remove?
+    public static void MoveTo(double x, double y)
+    {
+        try
         {
-            try
-            {
-                InputSimulator.Mouse.HorizontalScroll(x);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            InputSimulator.Mouse.MoveMouseTo(x, y);
         }
+        catch (Exception)
+        {
+            // Some simulated input commands were not sent successfully.
+        }
+    }
 
-        public static void VerticalScroll(int y)
+    public static void HorizontalScroll(int x)
+    {
+        try
         {
-            try
-            {
-                InputSimulator.Mouse.VerticalScroll(y);
-            }
-            catch (Exception)
-            {
-                // Some simulated input commands were not sent successfully.
-            }
+            InputSimulator.Mouse.HorizontalScroll(x);
         }
+        catch (Exception)
+        {
+            // Some simulated input commands were not sent successfully.
+        }
+    }
 
-        public static Point GetMousePosition()
+    public static void VerticalScroll(int y)
+    {
+        try
         {
-            return InputSimulator.Mouse.Position;
+            InputSimulator.Mouse.VerticalScroll(y);
         }
+        catch (Exception)
+        {
+            // Some simulated input commands were not sent successfully.
+        }
+    }
+
+    public static Point GetMousePosition()
+    {
+        return InputSimulator.Mouse.Position;
     }
 }

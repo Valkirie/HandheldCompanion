@@ -1,48 +1,47 @@
-﻿using ControllerCommon.Inputs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ControllerCommon.Inputs;
 using WindowsInput.Events;
 
-namespace ControllerCommon.Devices
+namespace ControllerCommon.Devices;
+
+public class AYANEONEXT : IDevice
 {
-    public class AYANEONEXT : IDevice
+    public AYANEONEXT()
     {
-        public AYANEONEXT() : base()
+        // device specific settings
+        ProductIllustration = "device_aya_next";
+        ProductModel = "AYANEONext";
+
+        // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
+        // https://www.amd.com/fr/products/apu/amd-ryzen-7-5825u
+        nTDP = new double[] { 15, 15, 20 };
+        cTDP = new double[] { 10, 25 };
+        GfxClock = new double[] { 100, 2000 };
+
+        AngularVelocityAxisSwap = new SortedDictionary<char, char>
         {
-            // device specific settings
-            this.ProductIllustration = "device_aya_next";
-            this.ProductModel = "AYANEONext";
+            { 'X', 'X' },
+            { 'Y', 'Z' },
+            { 'Z', 'Y' }
+        };
 
-            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5800u
-            // https://www.amd.com/fr/products/apu/amd-ryzen-7-5825u
-            this.nTDP = new double[] { 15, 15, 20 };
-            this.cTDP = new double[] { 10, 25 };
-            this.GfxClock = new double[] { 100, 2000 };
+        AccelerationAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'X' },
+            { 'Y', 'Z' },
+            { 'Z', 'Y' }
+        };
 
-            this.AngularVelocityAxisSwap = new()
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' },
-            };
+        OEMChords.Add(new DeviceChord("Custom key BIG",
+            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
+            new List<KeyCode> { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
+            false, ButtonFlags.OEM1
+        ));
 
-            this.AccelerationAxisSwap = new()
-            {
-                { 'X', 'X' },
-                { 'Y', 'Z' },
-                { 'Z', 'Y' },
-            };
-
-            OEMChords.Add(new DeviceChord("Custom key BIG",
-                new List<KeyCode>() { KeyCode.RControlKey, KeyCode.LWin, KeyCode.F12 },
-                new List<KeyCode>() { KeyCode.F12, KeyCode.LWin, KeyCode.RControlKey },
-                false, ButtonFlags.OEM1
-                ));
-
-            OEMChords.Add(new DeviceChord("Custom key Small",
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                new List<KeyCode>() { KeyCode.LWin, KeyCode.D },
-                false, ButtonFlags.OEM2
-                ));
-        }
+        OEMChords.Add(new DeviceChord("Custom key Small",
+            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            false, ButtonFlags.OEM2
+        ));
     }
 }

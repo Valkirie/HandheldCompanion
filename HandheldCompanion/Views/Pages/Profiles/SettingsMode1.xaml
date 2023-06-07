@@ -2,7 +2,6 @@
     x:Class="HandheldCompanion.Views.Pages.Profiles.SettingsMode1"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ikriv="clr-namespace:IKriv.Wpf"
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
@@ -20,7 +19,8 @@
 
             <!--  Joystick steering preview  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_JoystickSteeringPreview}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           Text="{x:Static resx:Resources.SettingsMode1_JoystickSteeringPreview}" />
 
                 <!--  Steering Visuals  -->
                 <Border
@@ -116,7 +116,8 @@
             </ui:SimpleStackPanel>
 
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_JoystickSteeringOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                           Text="{x:Static resx:Resources.SettingsMode1_JoystickSteeringOptions}" />
 
                 <!--  Steering angle  -->
                 <Border
@@ -138,7 +139,8 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_MaxSteeringAngle}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsMode1_MaxSteeringAngle}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -158,10 +160,8 @@
                                 TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderSteeringAngle"
-                                Grid.Column="4"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 LargeChange="10"
@@ -197,7 +197,8 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_SteeringLinearity}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsMode1_SteeringLinearity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -217,10 +218,8 @@
                                 TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderPower"
-                                Grid.Column="4"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 AutoToolTipPrecision="1"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
@@ -256,7 +255,8 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode1_Deadzone}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="{x:Static resx:Resources.SettingsMode1_Deadzone}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -276,10 +276,8 @@
                                 TextAlignment="Center" />
                             <Slider
                                 x:Name="SliderDeadzoneAngle"
-                                Grid.Column="4"
                                 Margin="6,0,0,0"
                                 VerticalAlignment="Center"
-                                AutoToolTipPlacement="TopLeft"
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 LargeChange="2"

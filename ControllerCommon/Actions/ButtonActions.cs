@@ -1,70 +1,73 @@
-﻿using ControllerCommon.Inputs;
-using System;
+﻿using System;
+using ControllerCommon.Inputs;
 
-namespace ControllerCommon.Actions
+namespace ControllerCommon.Actions;
+
+[Serializable]
+public class ButtonActions : IActions
 {
-    [Serializable]
-    public class ButtonActions : IActions
+    public ButtonActions()
     {
-        public ButtonFlags Button { get; set; }
+        ActionType = ActionType.Button;
 
-        public ButtonActions()
+        Value = false;
+        prevValue = false;
+    }
+
+    public ButtonActions(ButtonFlags button) : this()
+    {
+        Button = button;
+    }
+
+    public ButtonFlags Button { get; set; }
+
+    public bool GetValue()
+    {
+        return (bool)Value;
+    }
+
+    public override void Execute(ButtonFlags button, bool value)
+    {
+        if (Toggle)
         {
-            this.ActionType = ActionType.Button;
-
-            this.Value = false;
-            this.prevValue = false;
+            if ((bool)prevValue != value && value)
+                IsToggled = !IsToggled;
+        }
+        else
+        {
+            IsToggled = false;
         }
 
-        public ButtonActions(ButtonFlags button) : this()
+        if (Turbo)
         {
-            this.Button = button;
-        }
-
-        public bool GetValue()
-        {
-            return (bool)this.Value;
-        }
-
-        public override void Execute(ButtonFlags button, bool value)
-        {
-            if (Toggle)
+            if (value || IsToggled)
             {
-                if ((bool)prevValue != value && value)
-                    IsToggled = !IsToggled;
+                if (TurboIdx % TurboDelay == 0)
+                    IsTurboed = !IsTurboed;
+
+                TurboIdx += Period;
             }
             else
-                IsToggled = false;
-
-            if (Turbo)
             {
-                if (value || IsToggled)
-                {
-                    if (TurboIdx % TurboDelay == 0)
-                        IsTurboed = !IsTurboed;
-
-                    TurboIdx += Period;
-                }
-                else
-                {
-                    IsTurboed = false;
-                    TurboIdx = 0;
-                }
-            }
-            else
                 IsTurboed = false;
-
-            // update previous value
-            prevValue = value;
-
-            if (Toggle && Turbo)
-                this.Value = IsToggled && IsTurboed;
-            else if (Toggle)
-                this.Value = IsToggled;
-            else if (Turbo)
-                this.Value = IsTurboed;
-            else
-                this.Value = value;
+                TurboIdx = 0;
+            }
         }
+        else
+        {
+            IsTurboed = false;
+        }
+
+        // update previous value
+        prevValue = value;
+
+        if (Toggle && Turbo)
+            Value = IsToggled && IsTurboed;
+        else if (Toggle)
+            Value = IsToggled;
+        else if (Turbo)
+            Value = IsTurboed;
+        else
+            Value = value;
     }
 }

@@ -1,27 +1,27 @@
-﻿namespace ControllerCommon.Managers
+﻿namespace ControllerCommon.Managers;
+
+public abstract class Manager
 {
-    public abstract class Manager
+    public delegate void InitializedEventHandler();
+
+    public bool IsEnabled { get; set; }
+    public bool IsInitialized { get; set; }
+    protected string InstallPath { get; set; }
+
+    public event InitializedEventHandler Initialized;
+
+    public virtual void Start()
     {
-        public bool IsEnabled { get; set; }
-        public bool IsInitialized { get; set; }
-        protected string InstallPath { get; set; }
+        IsInitialized = true;
+        Initialized?.Invoke();
 
-        public event InitializedEventHandler Initialized;
-        public delegate void InitializedEventHandler();
+        LogManager.LogInformation("{0} has started", ToString());
+    }
 
-        public virtual void Start()
-        {
-            IsInitialized = true;
-            Initialized?.Invoke();
+    public virtual void Stop()
+    {
+        IsInitialized = false;
 
-            LogManager.LogInformation("{0} has started", this.ToString());
-        }
-
-        public virtual void Stop()
-        {
-            IsInitialized = false;
-
-            LogManager.LogInformation("{0} has stopped", this.ToString());
-        }
+        LogManager.LogInformation("{0} has stopped", ToString());
     }
 }

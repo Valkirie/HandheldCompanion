@@ -1,72 +1,72 @@
-﻿using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using ControllerCommon.Platforms;
+using ControllerCommon.Utils;
 
-namespace HandheldCompanion.Platforms
+namespace HandheldCompanion.Platforms;
+
+public class GOGGalaxy : IPlatform
 {
-    public class GOGGalaxy : IPlatform
+    public GOGGalaxy()
     {
-        public GOGGalaxy()
+        Name = "GOG Galaxy";
+        ExecutableName = "GalaxyClient.exe";
+
+        // store specific modules
+        Modules = new List<string>
         {
-            Name = "GOG Galaxy";
-            ExecutableName = "GalaxyClient.exe";
+            "Galaxy.dll",
+            "GalaxyClient.exe",
+            "GalaxyClientService.exe"
+        };
 
-            // store specific modules
-            Modules = new List<string>()
-            {
-                "Galaxy.dll",
-                "GalaxyClient.exe",
-                "GalaxyClientService.exe",
-            };
+        // check if platform is installed
+        InstallPath = RegistryUtils.GetString(@"SOFTWARE\WOW6432Node\GOG.com\GalaxyClient\paths", "client");
+        if (Path.Exists(InstallPath))
+        {
+            // update paths
+            SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                @"GOG.com\Galaxy\Configuration\config.json");
+            ExecutablePath = Path.Combine(InstallPath, ExecutableName);
 
-            // check if platform is installed
-            InstallPath = RegistryUtils.GetString(@"SOFTWARE\WOW6432Node\GOG.com\GalaxyClient\paths", "client");
-            if (Path.Exists(InstallPath))
-            {
-                // update paths
-                SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"GOG.com\Galaxy\Configuration\config.json");
-                ExecutablePath = Path.Combine(InstallPath, ExecutableName);
-
-                // check executable
-                IsInstalled = File.Exists(ExecutablePath);
-            }
-
-            base.PlatformType = PlatformType.GOG;
+            // check executable
+            IsInstalled = File.Exists(ExecutablePath);
         }
 
-        public override bool StartProcess()
+        PlatformType = PlatformType.GOG;
+    }
+
+    public override bool StartProcess()
+    {
+        if (!IsInstalled)
+            return false;
+
+        if (IsRunning())
+            return false;
+
+        var process = Process.Start(new ProcessStartInfo
         {
-            if (!IsInstalled)
-                return false;
+            FileName = ExecutablePath,
+            WindowStyle = ProcessWindowStyle.Hidden,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        });
 
-            if (IsRunning())
-                return false;
+        return process is not null;
+    }
 
-            var process = Process.Start(new ProcessStartInfo()
-            {
-                FileName = ExecutablePath,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            });
+    public override bool StopProcess()
+    {
+        if (!IsInstalled)
+            return false;
 
-            return process is not null;
-        }
+        if (!IsRunning())
+            return false;
 
-        public override bool StopProcess()
-        {
-            if (!IsInstalled)
-                return false;
+        KillProcess();
 
-            if (!IsRunning())
-                return false;
-
-            KillProcess();
-
-            return true;
-        }
+        return true;
     }
 }

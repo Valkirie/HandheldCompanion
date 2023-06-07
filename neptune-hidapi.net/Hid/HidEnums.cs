@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace neptune_hidapi.net.Hid
 {
@@ -20,8 +19,9 @@ namespace neptune_hidapi.net.Hid
         PT_LIZARD_MOUSE = 0x8e,
         PT_FEEDBACK = 0x8f,
         PT_RESET = 0x95,
-        PT_GET_SERIAL = 0xAE,
+        PT_GET_SERIAL = 0xAE
     }
+
     internal enum SDCPacketLength
     {
         PL_LED = 0x03,
@@ -29,13 +29,14 @@ namespace neptune_hidapi.net.Hid
         PL_FEEDBACK = 0x07,
         PL_CONFIGURE = 0x15,
         PL_CONFIGURE_BT = 0x0f,
-        PL_GET_SERIAL = 0x15,
+        PL_GET_SERIAL = 0x15
     }
+
     internal enum SDCConfigType
     {
         CT_LED = 0x2d,
         CT_CONFIGURE = 0x32,
-        CONFIGURE_BT = 0x18,
+        CONFIGURE_BT = 0x18
     }
 
     internal enum SDCButton0
@@ -55,7 +56,7 @@ namespace neptune_hidapi.net.Hid
         BTN_L1 = 0b0000000000001000,
         BTN_R1 = 0b0000000000000100,
         BTN_L2 = 0b0000000000000010,
-        BTN_R2 = 0b0000000000000001,
+        BTN_R2 = 0b0000000000000001
     }
 
     internal enum SDCButton1
@@ -65,12 +66,12 @@ namespace neptune_hidapi.net.Hid
         BTN_LPAD_PRESS = 0b00000010,
         BTN_RPAD_PRESS = 0b00010000,
         BTN_RPAD_TOUCH = 0b00000100,
-        BTN_R5 = 0b00000001,
+        BTN_R5 = 0b00000001
     }
 
     internal enum SDCButton2
     {
-        BTN_RSTICK_PRESS = 0b00000100,
+        BTN_RSTICK_PRESS = 0b00000100
     }
 
     internal enum SDCButton4
@@ -78,51 +79,51 @@ namespace neptune_hidapi.net.Hid
         BTN_LSTICK_TOUCH = 0b01000000,
         BTN_RSTICK_TOUCH = 0b10000000,
         BTN_R4 = 0b00000100,
-        BTN_L4 = 0b00000010,
+        BTN_L4 = 0b00000010
     }
 
     internal enum SDCButton5
     {
-        BTN_QUICK_ACCESS = 0b00000100,
+        BTN_QUICK_ACCESS = 0b00000100
     }
 
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct SDCInput
     {
-        public byte ptype;          //0x00
-        public byte _a1;            //0x01 
-        public byte _a2;            //0x02 
-        public byte _a3;            //0x03
-        public UInt32 seq;          //0x04 
-        public UInt16 buttons0;     //0x09 
-        public byte buttons1;       //0x0A
-        public byte buttons2;       //0x0C
-        public byte buttons3;       //0x0D
-        public byte buttons4;       //0x0E
-        public byte buttons5;       //0x0E
-        public Int16 lpad_x;        //0x10
-        public Int16 lpad_y;        //0x12
-        public Int16 rpad_x;        //0x13
-        public Int16 rpad_y;        //0x16
-        public Int16 accel_x;       //0x18
-        public Int16 accel_y;       //0x1A
-        public Int16 accel_z;       //0x1C
-        public Int16 gpitch;        //0x1E
-        public Int16 gyaw;          //0x20
-        public Int16 groll;         //0x22
-        public Int16 q1;            //0x24
-        public Int16 q2;            //0x26
-        public Int16 q3;            //0x28
-        public Int16 q4;            //0x2A
-        public Int16 ltrig;         //0x2C
-        public Int16 rtrig;         //0x2E
-        public Int16 lthumb_x;      //0x30
-        public Int16 lthumb_y;      //0x32
-        public Int16 rthumb_x;      //0x34
-        public Int16 rthumb_y;      //0x36
-        public Int16 lpad_pressure; //0x38
-        public Int16 rpad_pressure;	//0x3A
+        public byte ptype; //0x00
+        public byte _a1; //0x01 
+        public byte _a2; //0x02 
+        public byte _a3; //0x03
+        public uint seq; //0x04 
+        public ushort buttons0; //0x09 
+        public byte buttons1; //0x0A
+        public byte buttons2; //0x0C
+        public byte buttons3; //0x0D
+        public byte buttons4; //0x0E
+        public byte buttons5; //0x0E
+        public short lpad_x; //0x10
+        public short lpad_y; //0x12
+        public short rpad_x; //0x13
+        public short rpad_y; //0x16
+        public short accel_x; //0x18
+        public short accel_y; //0x1A
+        public short accel_z; //0x1C
+        public short gpitch; //0x1E
+        public short gyaw; //0x20
+        public short groll; //0x22
+        public short q1; //0x24
+        public short q2; //0x26
+        public short q3; //0x28
+        public short q4; //0x2A
+        public short ltrig; //0x2C
+        public short rtrig; //0x2E
+        public short lthumb_x; //0x30
+        public short lthumb_y; //0x32
+        public short rthumb_x; //0x34
+        public short rthumb_y; //0x36
+        public short lpad_pressure; //0x38
+        public short rpad_pressure; //0x3A
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -131,9 +132,9 @@ namespace neptune_hidapi.net.Hid
         public byte packet_type; // = 0x8f;
         public byte len; //  = 0x07;
         public byte position; //  = 1;
-        public UInt16 amplitude;
-        public UInt16 period;
-        public UInt16 count;
+        public ushort amplitude;
+        public ushort period;
+        public ushort count;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -154,12 +155,12 @@ namespace neptune_hidapi.net.Hid
     {
         Left,
         Right
-    };
+    }
 
     public enum HapticStyle : byte
     {
         Disabled = 0,
         Weak = 1,
         Strong = 2
-    };
+    }
 }

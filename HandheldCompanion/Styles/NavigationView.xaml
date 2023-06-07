@@ -11,7 +11,8 @@
             <ui:BindingProxy x:Key="OverlayCornerRadiusProxy" Value="{DynamicResource OverlayCornerRadius}" />
             <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
             <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-            <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+            <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter"
+                                            Filter="BottomRightValue" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
@@ -30,7 +31,8 @@
         </Setter>
     </Style>
 
-    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnLeftPane" TargetType="primitives:NavigationViewItemPresenter">
+    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnLeftPane"
+           TargetType="primitives:NavigationViewItemPresenter">
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
@@ -87,7 +89,8 @@
                                 Margin="0,0,14,0"
                                 HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition x:Name="IconColumn" ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationViewCompactPaneLength}" />
+                                    <ColumnDefinition x:Name="IconColumn"
+                                                      ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationViewCompactPaneLength}" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
@@ -175,10 +178,12 @@
                                 <VisualState x:Name="IconVisible" />
                                 <VisualState x:Name="IconCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconBox" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconBox"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconColumn" Storyboard.TargetProperty="Width">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconColumn"
+                                                                       Storyboard.TargetProperty="Width">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
                                                     <GridLength>8</GridLength>
@@ -193,7 +198,8 @@
                                 <VisualState x:Name="InfoBadgeVisible" />
                                 <VisualState x:Name="InfoBadgeCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InfoBadgePresenter" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InfoBadgePresenter"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -204,14 +210,16 @@
                                 <VisualState x:Name="ChevronHidden" />
                                 <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ChevronVisibleClosed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -230,37 +238,56 @@
 
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Selected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelected}" />
                         </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOverSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPointerOver}" />
+                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName"
+                                 Value="PointerOverSelected">
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelectedPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PressedSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelectedPressed}" />
                         </Trigger>
 
                         <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="LayoutRoot" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
+                            <Setter TargetName="LayoutRoot" Property="Opacity"
+                                    Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
                         </Trigger>
 
-                        <Trigger SourceName="PaneAndTopLevelItemStatesListener" Property="CurrentStateName" Value="ClosedCompactAndTopLevelItem">
-                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource NavigationViewCompactItemContentPresenterMargin}" />
+                        <Trigger SourceName="PaneAndTopLevelItemStatesListener" Property="CurrentStateName"
+                                 Value="ClosedCompactAndTopLevelItem">
+                            <Setter TargetName="ContentPresenter" Property="Margin"
+                                    Value="{DynamicResource NavigationViewCompactItemContentPresenterMargin}" />
                             <Setter TargetName="ContentGrid" Property="Margin" Value="0,0,0,0" />
                             <Setter TargetName="InfoBadgePresenter" Property="Grid.Column" Value="0" />
                             <Setter TargetName="InfoBadgePresenter" Property="Grid.ColumnSpan" Value="4" />
@@ -351,32 +378,49 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Selected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundSelected}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
                         </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOverSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName"
+                                 Value="PointerOverSelected">
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PressedSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -384,7 +428,8 @@
         </Setter>
     </Style>
 
-    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPane" TargetType="primitives:NavigationViewItemPresenter">
+    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPane"
+           TargetType="primitives:NavigationViewItemPresenter">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
@@ -525,7 +570,8 @@
                                 <VisualState x:Name="InfoBadgeVisible" />
                                 <VisualState x:Name="InfoBadgeCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InfoBadgePresenter" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InfoBadgePresenter"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -535,14 +581,16 @@
                                 <VisualState x:Name="ChevronHidden" />
                                 <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ChevronVisibleClosed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -552,53 +600,81 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Selected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundSelected}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
                         </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOverSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPointerOver}" />
+                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName"
+                                 Value="PointerOverSelected">
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelectedPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PressedSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundSelectedPressed}" />
                         </Trigger>
                         <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                         </Trigger>
-                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="IconOnly">
+                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName"
+                                 Value="IconOnly">
                             <Setter TargetName="LayoutRoot" Property="Width" Value="36" />
                             <Setter TargetName="LayoutRoot" Property="Height" Value="36" />
                             <Setter TargetName="LayoutRoot" Property="Margin" Value="2" />
                             <Setter TargetName="IconBox" Property="Margin" Value="10,0" />
                             <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="SelectionIndicatorGrid" Property="Margin" Value="0" />
-                            <Setter TargetName="ExpandCollapseChevron" Property="Margin" Value="{DynamicResource TopNavigationViewItemIconOnlyExpandChevronMargin}" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewItemIconOnlyExpandChevronMargin}" />
                         </Trigger>
-                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="ContentOnly">
+                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName"
+                                 Value="ContentOnly">
                             <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemContentOnlyContentPresenterMargin}" />
+                            <Setter TargetName="ContentPresenter" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewItemContentOnlyContentPresenterMargin}" />
                             <Setter TargetName="SelectionIndicatorGrid" Property="Margin" Value="12,0,12,4" />
-                            <Setter TargetName="ExpandCollapseChevron" Property="Margin" Value="{DynamicResource TopNavigationViewItemContentOnlyExpandChevronMargin}" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewItemContentOnlyExpandChevronMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -606,7 +682,8 @@
         </Setter>
     </Style>
 
-    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow" TargetType="primitives:NavigationViewItemPresenter">
+    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow"
+           TargetType="primitives:NavigationViewItemPresenter">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -743,7 +820,8 @@
                                 <VisualState x:Name="InfoBadgeVisible" />
                                 <VisualState x:Name="InfoBadgeCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InfoBadgePresenter" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="InfoBadgePresenter"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -753,14 +831,16 @@
                                 <VisualState x:Name="ChevronHidden" />
                                 <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ChevronVisibleClosed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -770,37 +850,57 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Selected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundSelected}" />
                         </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOverSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName"
+                                 Value="PointerOverSelected">
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PressedSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background"
+                                    Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource NavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                            <Setter TargetName="Icon" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground"
+                                    Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                         </Trigger>
-                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="ContentOnly">
+                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName"
+                                 Value="ContentOnly">
                             <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemOnOverflowNoIconContentPresenterMargin}" />
+                            <Setter TargetName="ContentPresenter" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewItemOnOverflowNoIconContentPresenterMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -847,7 +947,8 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <Grid x:Name="TogglePaneTopPadding" Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}" />
+                            <Grid x:Name="TogglePaneTopPadding"
+                                  Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}" />
 
                             <Grid
                                 x:Name="ButtonHolderGrid"
@@ -934,12 +1035,14 @@
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPaneVisibility}">
                                     <Grid x:Name="TopNavGrid">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition x:Name="BackButtonPlaceholderOnTopNav" ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationBackButtonWidth}" />
+                                            <ColumnDefinition x:Name="BackButtonPlaceholderOnTopNav"
+                                                              ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationBackButtonWidth}" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" MinWidth="{DynamicResource TopNavigationViewPaneCustomContentMinWidth}" />
+                                            <ColumnDefinition Width="*"
+                                                              MinWidth="{DynamicResource TopNavigationViewPaneCustomContentMinWidth}" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="Auto" />
@@ -969,8 +1072,10 @@
 
                                         <!--  Top nav ItemsRepeater  -->
                                         <local:ItemsRepeaterScrollHost Grid.Column="3">
-                                            <ui:ScrollViewerEx HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                                                <local:ItemsRepeater x:Name="TopNavMenuItemsHost" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}">
+                                            <ui:ScrollViewerEx HorizontalScrollBarVisibility="Hidden"
+                                                               VerticalScrollBarVisibility="Hidden">
+                                                <local:ItemsRepeater x:Name="TopNavMenuItemsHost"
+                                                                     AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}">
                                                     <local:ItemsRepeater.Layout>
                                                         <local:StackLayout Orientation="Horizontal" />
                                                     </local:ItemsRepeater.Layout>
@@ -990,12 +1095,17 @@
                                                 <local:Flyout Placement="BottomEdgeAlignedRight">
                                                     <local:Flyout.FlyoutPresenterStyle>
                                                         <Style TargetType="local:FlyoutPresenter">
-                                                            <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
+                                                            <Setter Property="Padding"
+                                                                    Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                                             <!--  Set negative top margin to make the flyout align exactly with the button  -->
                                                             <Setter Property="Margin" Value="0,-4,0,0" />
-                                                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-                                                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-                                                            <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+                                                            <Setter
+                                                                Property="ScrollViewer.HorizontalScrollBarVisibility"
+                                                                Value="Auto" />
+                                                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                                                                    Value="Auto" />
+                                                            <Setter Property="CornerRadius"
+                                                                    Value="{DynamicResource OverlayCornerRadius}" />
                                                             <Setter Property="Template">
                                                                 <Setter.Value>
                                                                     <ControlTemplate TargetType="local:FlyoutPresenter">
@@ -1068,7 +1178,8 @@
 
                                     </Grid>
                                 </Border>
-                                <Border x:Name="TopNavContentOverlayAreaGrid" ui:DecoratorHelper.Child="{TemplateBinding ContentOverlay}" />
+                                <Border x:Name="TopNavContentOverlayAreaGrid"
+                                        ui:DecoratorHelper.Child="{TemplateBinding ContentOverlay}" />
                             </StackPanel>
 
                             <!--  Displaymode (compact/minimal/normal) left  -->
@@ -1106,7 +1217,8 @@
                                                 <RowDefinition x:Name="ItemsContainerRow" Height="*" />
                                             </Grid.RowDefinitions>
 
-                                            <Grid x:Name="ContentPaneTopPadding" Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}" />
+                                            <Grid x:Name="ContentPaneTopPadding"
+                                                  Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}" />
 
                                             <Grid Grid.Row="2">
                                                 <Grid.RowDefinitions>
@@ -1178,13 +1290,15 @@
                                                 </Grid.RowDefinitions>
 
                                                 <!--  MenuItems  -->
-                                                <local:ItemsRepeaterScrollHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                <local:ItemsRepeaterScrollHost HorizontalAlignment="Stretch"
+                                                                               VerticalAlignment="Stretch">
                                                     <ui:ScrollViewerEx
                                                         x:Name="MenuItemsScrollViewer"
                                                         KeyboardNavigation.TabNavigation="Local"
                                                         VerticalScrollBarVisibility="Auto">
                                                         <!--  Left nav ItemsRepeater  -->
-                                                        <local:ItemsRepeater x:Name="MenuItemsHost" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" />
+                                                        <local:ItemsRepeater x:Name="MenuItemsHost"
+                                                                             AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" />
                                                     </ui:ScrollViewerEx>
                                                 </local:ItemsRepeaterScrollHost>
 
@@ -1292,7 +1406,8 @@
                                 <VisualState x:Name="HeaderVisible" />
                                 <VisualState x:Name="HeaderCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContent" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContent"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1303,10 +1418,12 @@
                                 <VisualState x:Name="AutoSuggestBoxVisible" />
                                 <VisualState x:Name="AutoSuggestBoxCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AutoSuggestArea" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AutoSuggestArea"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopPaneAutoSuggestArea" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopPaneAutoSuggestArea"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1317,10 +1434,13 @@
                                 <VisualState x:Name="NotClosedCompact" />
                                 <VisualState x:Name="ClosedCompact">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneAutoSuggestBoxPresenter" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="PaneAutoSuggestBoxPresenter"
+                                            Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneAutoSuggestButton" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneAutoSuggestButton"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1341,35 +1461,44 @@
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="PaneOverlaying">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCasterTransform" Storyboard.TargetProperty="X">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding Source={StaticResource RootSplitViewProxy}, Path=Value.TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCasterTransform"
+                                                                       Storyboard.TargetProperty="X">
+                                            <DiscreteDoubleKeyFrame KeyTime="0"
+                                                                    Value="{Binding Source={StaticResource RootSplitViewProxy}, Path=Value.TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0.1,0.9 0.2,1.0"
                                                 KeyTime="0:0:0.35"
                                                 Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="Opacity">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster"
+                                                                       Storyboard.TargetProperty="Opacity">
                                             <LinearDoubleKeyFrame KeyTime="0:0:0.35" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="HorizontalAlignment">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static HorizontalAlignment.Left}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster"
+                                                                       Storyboard.TargetProperty="HorizontalAlignment">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{x:Static HorizontalAlignment.Left}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PaneNotOverlaying">
                                     <Storyboard x:Name="ShadowCasterEaseOutStoryboard">
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCasterTransform" Storyboard.TargetProperty="X">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCasterTransform"
+                                                                       Storyboard.TargetProperty="X">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0.1,0.9 0.2,1.0"
                                                 KeyTime="0:0:0.12"
                                                 Value="{Binding Source={StaticResource RootSplitViewProxy}, Path=Value.TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="Opacity">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster"
+                                                                       Storyboard.TargetProperty="Opacity">
                                             <LinearDoubleKeyFrame KeyTime="0:0:0.12" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="HorizontalAlignment">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static HorizontalAlignment.Left}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster"
+                                                                       Storyboard.TargetProperty="HorizontalAlignment">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{x:Static HorizontalAlignment.Left}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -1379,7 +1508,8 @@
                                 <VisualState x:Name="TitleBarVisible" />
                                 <VisualState x:Name="TitleBarCollapsed">
                                     <Storyboard>
-                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="PaneContentBorder" Storyboard.TargetProperty="Margin">
+                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="PaneContentBorder"
+                                                                          Storyboard.TargetProperty="Margin">
                                             <DiscreteThicknessKeyFrame KeyTime="0" Value="0,32,0,0" />
                                         </ThicknessAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1398,7 +1528,9 @@
                                 <VisualState x:Name="BackButtonVisible" />
                                 <VisualState x:Name="BackButtonCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackButtonPlaceholderOnTopNav" Storyboard.TargetProperty="Width">
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="BackButtonPlaceholderOnTopNav"
+                                            Storyboard.TargetProperty="Width">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
                                                     <GridLength>0</GridLength>
@@ -1416,13 +1548,16 @@
                                         <!--  Note that RootSplitView.DisplayMode is set in code so we don't want to  -->
                                         <!--  write it here and interfere. But these values work together to hide  -->
                                         <!--  the left pane.  -->
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootSplitView" Storyboard.TargetProperty="CompactPaneLength">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootSplitView"
+                                                                       Storyboard.TargetProperty="CompactPaneLength">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster" Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ShadowCaster"
+                                                                       Storyboard.TargetProperty="Width">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneToggleButtonGrid" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneToggleButtonGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1433,47 +1568,72 @@
 
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="Minimal">
-                            <Setter TargetName="HeaderContent" Property="Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
-                            <Setter TargetName="NavigationViewBackButton" Property="Style" Value="{DynamicResource NavigationBackButtonSmallStyle}" />
-                            <Setter TargetName="ContentBorder" Property="BorderThickness" Value="{DynamicResource NavigationViewMinimalContentGridBorderThickness}" />
-                            <Setter TargetName="ContentBorder" Property="CornerRadius" Value="{DynamicResource NavigationViewMinimalContentGridCornerRadius}" />
-                            <Setter TargetName="ContentBorder" Property="Margin" Value="{DynamicResource NavigationViewMinimalContentMargin}" />
+                            <Setter TargetName="HeaderContent" Property="Margin"
+                                    Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
+                            <Setter TargetName="NavigationViewBackButton" Property="Style"
+                                    Value="{DynamicResource NavigationBackButtonSmallStyle}" />
+                            <Setter TargetName="ContentBorder" Property="BorderThickness"
+                                    Value="{DynamicResource NavigationViewMinimalContentGridBorderThickness}" />
+                            <Setter TargetName="ContentBorder" Property="CornerRadius"
+                                    Value="{DynamicResource NavigationViewMinimalContentGridCornerRadius}" />
+                            <Setter TargetName="ContentBorder" Property="Margin"
+                                    Value="{DynamicResource NavigationViewMinimalContentMargin}" />
                         </Trigger>
-                        <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="TopNavigationMinimal">
-                            <Setter TargetName="ContentBorder" Property="BorderThickness" Value="{DynamicResource TopNavigationViewContentGridBorderThickness}" />
-                            <Setter TargetName="ContentBorder" Property="CornerRadius" Value="{DynamicResource TopNavigationViewContentGridCornerRadius}" />
-                            <Setter TargetName="ContentBorder" Property="Margin" Value="{DynamicResource TopNavigationViewContentMargin}" />
+                        <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName"
+                                 Value="TopNavigationMinimal">
+                            <Setter TargetName="ContentBorder" Property="BorderThickness"
+                                    Value="{DynamicResource TopNavigationViewContentGridBorderThickness}" />
+                            <Setter TargetName="ContentBorder" Property="CornerRadius"
+                                    Value="{DynamicResource TopNavigationViewContentGridCornerRadius}" />
+                            <Setter TargetName="ContentBorder" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewContentMargin}" />
                         </Trigger>
-                        <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="MinimalWithBackButton">
-                            <Setter TargetName="HeaderContent" Property="Margin" Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
-                            <Setter TargetName="NavigationViewBackButton" Property="Style" Value="{DynamicResource NavigationBackButtonSmallStyle}" />
-                            <Setter TargetName="ContentBorder" Property="BorderThickness" Value="{DynamicResource NavigationViewMinimalContentGridBorderThickness}" />
-                            <Setter TargetName="ContentBorder" Property="CornerRadius" Value="{DynamicResource NavigationViewMinimalContentGridCornerRadius}" />
-                            <Setter TargetName="ContentBorder" Property="Margin" Value="{DynamicResource NavigationViewMinimalContentMargin}" />
+                        <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName"
+                                 Value="MinimalWithBackButton">
+                            <Setter TargetName="HeaderContent" Property="Margin"
+                                    Value="{DynamicResource NavigationViewMinimalHeaderMargin}" />
+                            <Setter TargetName="NavigationViewBackButton" Property="Style"
+                                    Value="{DynamicResource NavigationBackButtonSmallStyle}" />
+                            <Setter TargetName="ContentBorder" Property="BorderThickness"
+                                    Value="{DynamicResource NavigationViewMinimalContentGridBorderThickness}" />
+                            <Setter TargetName="ContentBorder" Property="CornerRadius"
+                                    Value="{DynamicResource NavigationViewMinimalContentGridCornerRadius}" />
+                            <Setter TargetName="ContentBorder" Property="Margin"
+                                    Value="{DynamicResource NavigationViewMinimalContentMargin}" />
                         </Trigger>
 
-                        <Trigger SourceName="TogglePaneGroupListener" Property="CurrentStateName" Value="TogglePaneButtonVisible">
-                            <Setter TargetName="PaneContentGridToggleButtonRow" Property="MinHeight" Value="{DynamicResource NavigationViewPaneHeaderRowMinHeight}" />
-                            <Setter TargetName="PaneTitlePresenter" Property="Margin" Value="{DynamicResource NavigationViewItemInnerHeaderMargin}" />
+                        <Trigger SourceName="TogglePaneGroupListener" Property="CurrentStateName"
+                                 Value="TogglePaneButtonVisible">
+                            <Setter TargetName="PaneContentGridToggleButtonRow" Property="MinHeight"
+                                    Value="{DynamicResource NavigationViewPaneHeaderRowMinHeight}" />
+                            <Setter TargetName="PaneTitlePresenter" Property="Margin"
+                                    Value="{DynamicResource NavigationViewItemInnerHeaderMargin}" />
                         </Trigger>
 
-                        <Trigger SourceName="PaneStateListSizeGroupListener" Property="CurrentStateName" Value="ListSizeCompact">
-                            <Setter TargetName="PaneContentBorder" Property="Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
-                            <Setter TargetName="ShadowCaster" Property="Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
+                        <Trigger SourceName="PaneStateListSizeGroupListener" Property="CurrentStateName"
+                                 Value="ListSizeCompact">
+                            <Setter TargetName="PaneContentBorder" Property="Width"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
+                            <Setter TargetName="ShadowCaster" Property="Width"
+                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CompactPaneLength}" />
                             <Setter TargetName="PaneTitleTextBlock" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PaneHeaderContentBorder" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PaneCustomContentBorder" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="FooterContentBorder" Property="HorizontalAlignment" Value="Left" />
                         </Trigger>
 
-                        <Trigger SourceName="PaneOverlayGroupListener" Property="CurrentStateName" Value="PaneNotOverlaying">
+                        <Trigger SourceName="PaneOverlayGroupListener" Property="CurrentStateName"
+                                 Value="PaneNotOverlaying">
                             <Setter TargetName="RootSplitView" Property="BorderBrush" Value="Transparent" />
                             <Setter TargetName="ShadowCaster" Property="Opacity" Value="0" />
-                            <Setter TargetName="RootSplitView" Property="PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
+                            <Setter TargetName="RootSplitView" Property="PaneBackground"
+                                    Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
                         </Trigger>
 
-                        <Trigger SourceName="OverflowLabelGroupListener" Property="CurrentStateName" Value="OverflowButtonNoLabel">
-                            <Setter TargetName="TopNavOverflowButton" Property="Style" Value="{DynamicResource NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop}" />
+                        <Trigger SourceName="OverflowLabelGroupListener" Property="CurrentStateName"
+                                 Value="OverflowButtonNoLabel">
+                            <Setter TargetName="TopNavOverflowButton" Property="Style"
+                                    Value="{DynamicResource NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop}" />
                         </Trigger>
 
                         <MultiTrigger>
@@ -1482,7 +1642,8 @@
                                 <Condition Property="DisplayMode" Value="Compact" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="TogglePaneButton" Property="HorizontalAlignment" Value="Center" />
-                            <Setter TargetName="TogglePaneButton" Property="Padding" Value="{DynamicResource NavigationViewItemButtonNormalMargin}" />
+                            <Setter TargetName="TogglePaneButton" Property="Padding"
+                                    Value="{DynamicResource NavigationViewItemButtonNormalMargin}" />
                         </MultiTrigger>
 
                         <MultiTrigger>
@@ -1491,7 +1652,8 @@
                                 <Condition Property="DisplayMode" Value="Expanded" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="TogglePaneButton" Property="HorizontalAlignment" Value="Center" />
-                            <Setter TargetName="TogglePaneButton" Property="Padding" Value="{DynamicResource NavigationViewItemButtonNormalMargin}" />
+                            <Setter TargetName="TogglePaneButton" Property="Padding"
+                                    Value="{DynamicResource NavigationViewItemButtonNormalMargin}" />
                         </MultiTrigger>
 
                         <MultiTrigger>
@@ -1572,7 +1734,8 @@
                             <local:Flyout x:Name="ChildrenFlyout" Placement="RightEdgeAlignedTop">
                                 <local:Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="local:FlyoutPresenter">
-                                        <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
+                                        <Setter Property="Padding"
+                                                Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                         <!--  Set negative top margin to make the flyout align exactly with the button  -->
                                         <!--<Setter Property="Margin" Value="0,-4,0,0" />-->
                                         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
@@ -1587,7 +1750,8 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ItemOnNavigationViewListPositionStates">
                                 <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ItemOnNavigationViewListPositionStatesListener" />
+                                    <ui:VisualStateGroupListener
+                                        x:Name="ItemOnNavigationViewListPositionStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="OnLeftNavigation" />
                                 <!--
@@ -1595,8 +1759,10 @@
                                 -->
                                 <VisualState x:Name="OnTopNavigationPrimary">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChildrenFlyout" Storyboard.TargetProperty="Placement">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static primitives:FlyoutPlacementMode.BottomEdgeAlignedLeft}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChildrenFlyout"
+                                                                       Storyboard.TargetProperty="Placement">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{x:Static primitives:FlyoutPlacementMode.BottomEdgeAlignedLeft}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -1616,8 +1782,10 @@
 
                     <ControlTemplate.Triggers>
                         <!--  OnLeftNavigation  -->
-                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener" Property="CurrentStateName" Value="OnLeftNavigation">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPane}" />
+                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener"
+                                 Property="CurrentStateName" Value="OnLeftNavigation">
+                            <Setter TargetName="NavigationViewItemPresenter" Property="Style"
+                                    Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPane}" />
                         </Trigger>
                         <!--  OnLeftNavigationReveal  -->
                         <!--
@@ -1626,9 +1794,12 @@
                              </Trigger>
                         -->
                         <!--  OnTopNavigationPrimary  -->
-                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener" Property="CurrentStateName" Value="OnTopNavigationPrimary">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemMargin}" />
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPane}" />
+                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener"
+                                 Property="CurrentStateName" Value="OnTopNavigationPrimary">
+                            <Setter TargetName="NavigationViewItemPresenter" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewItemMargin}" />
+                            <Setter TargetName="NavigationViewItemPresenter" Property="Style"
+                                    Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPane}" />
                             <!--<Setter TargetName="ChildrenFlyout" Property="Placement" Value="BottomEdgeAlignedLeft" />-->
                         </Trigger>
                         <!--  OnTopNavigationPrimaryReveal  -->
@@ -1639,8 +1810,10 @@
                              </Trigger>
                         -->
                         <!--  OnTopNavigationOverflow  -->
-                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener" Property="CurrentStateName" Value="OnTopNavigationOverflow">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow}" />
+                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener"
+                                 Property="CurrentStateName" Value="OnTopNavigationOverflow">
+                            <Setter TargetName="NavigationViewItemPresenter" Property="Style"
+                                    Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1681,15 +1854,19 @@
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="HeaderTextCollapsed" To="HeaderTextVisible">
                                         <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid" Storyboard.TargetProperty="Height">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid"
+                                                                           Storyboard.TargetProperty="Height">
                                                 <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="40" />
                                             </DoubleAnimationUsingKeyFrames>
 
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText"
+                                                                           Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0"
+                                                                        Value="{x:Static Visibility.Visible}" />
                                             </ObjectAnimationUsingKeyFrames>
 
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText"
+                                                                           Storyboard.TargetProperty="Opacity">
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="0.0" />
                                                 <SplineDoubleKeyFrame
@@ -1702,15 +1879,19 @@
 
                                     <VisualTransition From="HeaderTextVisible" To="HeaderTextCollapsed">
                                         <Storyboard>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid" Storyboard.TargetProperty="Height">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid"
+                                                                           Storyboard.TargetProperty="Height">
                                                 <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                                             </DoubleAnimationUsingKeyFrames>
 
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Collapsed}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText"
+                                                                           Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.2"
+                                                                        Value="{x:Static Visibility.Collapsed}" />
                                             </ObjectAnimationUsingKeyFrames>
 
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText"
+                                                                           Storyboard.TargetProperty="Opacity">
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
                                                 <SplineDoubleKeyFrame
                                                     KeySpline="0.0,0.35 0.15,1.0"
@@ -1724,11 +1905,14 @@
                                 <VisualState x:Name="HeaderTextVisible" />
                                 <VisualState x:Name="HeaderTextCollapsed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0"
+                                                                    Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
 
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid" Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid"
+                                                                       Storyboard.TargetProperty="Height">
                                             <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -1767,16 +1951,22 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!--  HorizontalLineCompact  -->
-                        <Trigger SourceName="NavigationSeparatorLineStatesListener" Property="CurrentStateName" Value="HorizontalLineCompact">
-                            <Setter TargetName="SeparatorLine" Property="Margin" Value="{DynamicResource NavigationViewCompactItemSeparatorMargin}" />
+                        <Trigger SourceName="NavigationSeparatorLineStatesListener" Property="CurrentStateName"
+                                 Value="HorizontalLineCompact">
+                            <Setter TargetName="SeparatorLine" Property="Margin"
+                                    Value="{DynamicResource NavigationViewCompactItemSeparatorMargin}" />
                         </Trigger>
                         <!--  VerticalLine  -->
-                        <Trigger SourceName="NavigationSeparatorLineStatesListener" Property="CurrentStateName" Value="VerticalLine">
+                        <Trigger SourceName="NavigationSeparatorLineStatesListener" Property="CurrentStateName"
+                                 Value="VerticalLine">
                             <Setter TargetName="SeparatorLine" Property="Height" Value="24" />
-                            <Setter TargetName="SeparatorLine" Property="Width" Value="{DynamicResource TopNavigationViewItemSeparatorWidth}" />
-                            <Setter TargetName="SeparatorLine" Property="Margin" Value="{DynamicResource TopNavigationViewItemSeparatorMargin}" />
+                            <Setter TargetName="SeparatorLine" Property="Width"
+                                    Value="{DynamicResource TopNavigationViewItemSeparatorWidth}" />
+                            <Setter TargetName="SeparatorLine" Property="Margin"
+                                    Value="{DynamicResource TopNavigationViewItemSeparatorMargin}" />
                             <Setter TargetName="SeparatorLine" Property="VerticalAlignment" Value="Center" />
-                            <Setter TargetName="SeparatorLine" Property="Fill" Value="{DynamicResource TopNavigationViewItemSeparatorForeground}" />
+                            <Setter TargetName="SeparatorLine" Property="Fill"
+                                    Value="{DynamicResource TopNavigationViewItemSeparatorForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

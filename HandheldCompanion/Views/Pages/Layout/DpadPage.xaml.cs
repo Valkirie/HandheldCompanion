@@ -1,69 +1,68 @@
+using System.Collections.Generic;
+using System.Windows;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
-using ModernWpf.Controls;
-using System.Collections.Generic;
-using System.Windows;
 
-namespace HandheldCompanion.Views.Pages
+namespace HandheldCompanion.Views.Pages;
+
+/// <summary>
+///     Interaction logic for DpadPage.xaml
+/// </summary>
+public partial class DpadPage : ILayoutPage
 {
-    /// <summary>
-    /// Interaction logic for DpadPage.xaml
-    /// </summary>
-    public partial class DpadPage : ILayoutPage
+    public static List<ButtonFlags> DPAD = new()
+        { ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight };
+
+    public DpadPage()
     {
-        public static List<ButtonFlags> DPAD = new() { ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight };
+        InitializeComponent();
 
-        public DpadPage()
+        // draw UI
+        foreach (var button in DPAD)
         {
-            InitializeComponent();
+            var buttonMapping = new ButtonMapping(button);
+            DpadStackPanel.Children.Add(buttonMapping);
 
-            // draw UI
-            foreach (ButtonFlags button in DPAD)
+            MappingButtons.Add(button, buttonMapping);
+        }
+    }
+
+    public DpadPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
+    public override void UpdateController(IController Controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // controller based
+            foreach (var mapping in MappingButtons)
             {
-                ButtonMapping buttonMapping = new ButtonMapping(button);
-                DpadStackPanel.Children.Add(buttonMapping);
+                var button = mapping.Key;
+                var buttonMapping = mapping.Value;
 
-                MappingButtons.Add(button, buttonMapping);
+                // update mapping visibility
+                if (!Controller.HasSourceButton(button))
+                    buttonMapping.Visibility = Visibility.Collapsed;
+                else
+                    buttonMapping.Visibility = Visibility.Visible;
+
+                // update icon
+                var newIcon = Controller.GetFontIcon(button);
+                var newLabel = Controller.GetButtonName(button);
+                buttonMapping.UpdateIcon(newIcon, newLabel);
             }
-        }
+        });
+    }
 
-        public DpadPage(string Tag) : this()
-        {
-            this.Tag = Tag;
-        }
+    private void Page_Loaded(object sender, RoutedEventArgs e)
+    {
+    }
 
-        public override void UpdateController(IController Controller)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                // controller based
-                foreach (var mapping in MappingButtons)
-                {
-                    ButtonFlags button = mapping.Key;
-                    ButtonMapping buttonMapping = mapping.Value;
-
-                    // update mapping visibility
-                    if (!Controller.HasSourceButton(button))
-                        buttonMapping.Visibility = Visibility.Collapsed;
-                    else
-                        buttonMapping.Visibility = Visibility.Visible;
-
-                    // update icon
-                    FontIcon newIcon = Controller.GetFontIcon(button);
-                    string newLabel = Controller.GetButtonName(button);
-                    buttonMapping.UpdateIcon(newIcon, newLabel);
-                }
-            });
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        public void Page_Closed()
-        {
-        }
+    public void Page_Closed()
+    {
     }
 }

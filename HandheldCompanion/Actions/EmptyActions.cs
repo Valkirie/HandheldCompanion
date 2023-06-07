@@ -1,14 +1,13 @@
-﻿using ControllerCommon.Actions;
-using System;
+﻿using System;
+using ControllerCommon.Actions;
 
-namespace HandheldCompanion.Actions
+namespace HandheldCompanion.Actions;
+
+[Serializable]
+public class EmptyActions : IActions
 {
-    [Serializable]
-    public class EmptyActions : IActions
+    public EmptyActions()
     {
-        public EmptyActions()
-        {
-            this.ActionType = ActionType.Disabled;
-        }
+        ActionType = ActionType.Disabled;
     }
 }

@@ -2,11 +2,8 @@
     x:Class="HandheldCompanion.Views.Pages.ProfilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HandheldCompanion"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pages="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="{x:Static resx:Resources.ProfilesPage_Profiles}"
@@ -43,7 +40,8 @@
                                     Glyph="&#xE748;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -68,7 +66,6 @@
                                         Orientation="Horizontal"
                                         Spacing="12">
                                         <ui:FontIcon
-                                            Grid.Column="2"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -114,7 +111,8 @@
                 </ui:SimpleStackPanel>
 
                 <ui:SimpleStackPanel Name="ProfileDetails" Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileDetails}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="{x:Static resx:Resources.ProfilesPage_ProfileDetails}" />
 
                     <!--  Profile details  -->
                     <Border
@@ -146,7 +144,6 @@
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
                                         Name="tB_ProfileName"
-                                        Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
@@ -176,7 +173,6 @@
                                 <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                     <TextBox
                                         Name="tB_ProfilePath"
-                                        Grid.Column="1"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         BorderThickness="1"
@@ -185,7 +181,6 @@
                             </Grid>
 
                             <ui:SimpleStackPanel
-                                Grid.Row="2"
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal"
                                 Spacing="18">
@@ -230,7 +225,8 @@
                                     Glyph="&#xE7EE;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -251,7 +247,8 @@
 
                 <!--  Profile settings  -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSettings}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                               Text="{x:Static resx:Resources.ProfilesPage_ProfileSettings}" />
 
                     <!--  Global settings  -->
                     <Expander
@@ -267,7 +264,8 @@
                                     Glyph="&#xE713;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GlobalSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_GlobalSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -314,7 +312,8 @@
                                     Glyph="&#xE83F;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -335,7 +334,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -364,7 +364,6 @@
                                             x:Name="FramerateSlider"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            AutoToolTipPlacement="TopLeft"
                                             AutoToolTipPrecision="0"
                                             IsMoveToPointEnabled="True"
                                             IsSnapToTickEnabled="True"
@@ -425,7 +424,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -465,7 +465,6 @@
                                                 x:Name="TDPSlider"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
-                                                AutoToolTipPlacement="TopLeft"
                                                 AutoToolTipPrecision="0"
                                                 IsMoveToPointEnabled="True"
                                                 IsSnapToTickEnabled="True"
@@ -495,7 +494,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -534,7 +534,6 @@
                                                 x:Name="AutoTDPSlider"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
-                                                AutoToolTipPlacement="TopLeft"
                                                 AutoToolTipPrecision="0"
                                                 IsMoveToPointEnabled="True"
                                                 IsSnapToTickEnabled="True"
@@ -564,7 +563,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Energy performance preference (EPP)" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="Energy performance preference (EPP)" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -609,7 +609,6 @@
                                                     x:Name="EPPSlider"
                                                     Margin="6,0,0,0"
                                                     VerticalAlignment="Center"
-                                                    AutoToolTipPlacement="TopLeft"
                                                     AutoToolTipPrecision="0"
                                                     IsMoveToPointEnabled="True"
                                                     IsSnapToTickEnabled="True"
@@ -658,7 +657,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -698,7 +698,6 @@
                                                 x:Name="GPUSlider"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
-                                                AutoToolTipPlacement="TopLeft"
                                                 AutoToolTipPrecision="0"
                                                 IsMoveToPointEnabled="True"
                                                 IsSnapToTickEnabled="True"
@@ -729,7 +728,8 @@
                                     Glyph="&#xE8B4;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                               Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -750,7 +750,8 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GyrometerMultiplier}" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                       Text="{x:Static resx:Resources.ProfilesPage_GyrometerMultiplier}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -771,7 +772,6 @@
                                                 x:Name="tb_ProfileGyroValue"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
-                                                AutoToolTipPlacement="TopLeft"
                                                 AutoToolTipPrecision="1"
                                                 IsMoveToPointEnabled="True"
                                                 IsSnapToTickEnabled="True"
@@ -797,7 +797,8 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AccelerometerMultiplier}" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                       Text="{x:Static resx:Resources.ProfilesPage_AccelerometerMultiplier}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -818,7 +819,6 @@
                                                 x:Name="tb_ProfileAcceleroValue"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
-                                                AutoToolTipPlacement="TopLeft"
                                                 AutoToolTipPrecision="1"
                                                 IsMoveToPointEnabled="True"
                                                 IsSnapToTickEnabled="True"
@@ -845,7 +845,8 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GyroSteeringAxis}" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                       Text="{x:Static resx:Resources.ProfilesPage_GyroSteeringAxis}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -856,7 +857,6 @@
                                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                             <ui:RadioButtons
                                                 Name="cB_GyroSteering"
-                                                Grid.Column="1"
                                                 HorizontalAlignment="Right"
                                                 MaxColumns="2">
                                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
@@ -877,7 +877,8 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
 
-                                    <CheckBox Name="cB_InvertHorizontal" Content="{x:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}" />
+                                    <CheckBox Name="cB_InvertHorizontal"
+                                              Content="{x:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}" />
 
                                     <!--  Separator  -->
                                     <Separator
@@ -885,7 +886,8 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
 
-                                    <CheckBox Name="cB_InvertVertical" Content="{x:Static resx:Resources.ProfilesPage_InvertVerticalAxis}" />
+                                    <CheckBox Name="cB_InvertVertical"
+                                              Content="{x:Static resx:Resources.ProfilesPage_InvertVerticalAxis}" />
                                 </ui:SimpleStackPanel>
                             </Grid>
                         </Expander.Content>
@@ -911,7 +913,8 @@
                                         Glyph="&#xE759;" />
 
                                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -1025,7 +1028,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
+                                                   Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -1047,7 +1051,6 @@
                                             x:Name="tb_ProfileUMCAntiDeadzone"
                                             Margin="6,0,0,0"
                                             VerticalAlignment="Center"
-                                            AutoToolTipPlacement="TopLeft"
                                             IsMoveToPointEnabled="True"
                                             IsSnapToTickEnabled="True"
                                             LargeChange="10"
@@ -1090,7 +1093,6 @@
                                         Spacing="6">
                                         <ui:RadioButtons
                                             Name="cB_UMC_MotionDefaultOffOn"
-                                            Grid.Column="1"
                                             HorizontalAlignment="Right"
                                             MaxColumns="1"
                                             SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">

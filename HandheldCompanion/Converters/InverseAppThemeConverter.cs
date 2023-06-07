@@ -1,28 +1,27 @@
-﻿using ModernWpf;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using ModernWpf;
 
-namespace HandheldCompanion.Converters
+namespace HandheldCompanion.Converters;
+
+public class InverseAppThemeConverter : IValueConverter
 {
-    public class InverseAppThemeConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        switch ((ApplicationTheme)value)
         {
-            switch ((ApplicationTheme)value)
-            {
-                case ApplicationTheme.Light:
-                    return ElementTheme.Dark;
-                case ApplicationTheme.Dark:
-                    return ElementTheme.Light;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value));
-            }
+            case ApplicationTheme.Light:
+                return ElementTheme.Dark;
+            case ApplicationTheme.Dark:
+                return ElementTheme.Light;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(value));
         }
+    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }
