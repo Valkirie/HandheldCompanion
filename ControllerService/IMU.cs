@@ -186,9 +186,9 @@ namespace ControllerService
                 {
                     case 0: // Visible
                         var AngularVelocityRad = new Vector3();
-                        AngularVelocityRad.X = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].X);
-                        AngularVelocityRad.Y = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Y);
-                        AngularVelocityRad.Z = -InputUtils.deg2rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Z);
+                        AngularVelocityRad.X = -InputUtils.Deg2Rad(AngularVelocity[XInputSensorFlags.CenteredRaw].X);
+                        AngularVelocityRad.Y = -InputUtils.Deg2Rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Y);
+                        AngularVelocityRad.Z = -InputUtils.Deg2Rad(AngularVelocity[XInputSensorFlags.CenteredRaw].Z);
                         madgwickAHRS.UpdateReport(AngularVelocityRad.X, AngularVelocityRad.Y, AngularVelocityRad.Z, -Acceleration[XInputSensorFlags.RawValue].X, Acceleration[XInputSensorFlags.RawValue].Y, Acceleration[XInputSensorFlags.RawValue].Z, DeltaSeconds);
 
                         PipeServer.SendMessage(new PipeSensor(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion(), SensorType.Quaternion));

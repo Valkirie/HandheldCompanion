@@ -546,9 +546,9 @@ namespace HandheldCompanion.Views.Windows
                 Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
                 // Determine diff angles
-                DiffAngle.X = (InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngleDeg.X;
-                DiffAngle.Y = (InputUtils.rad2deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngleDeg.Y;
-                DiffAngle.Z = (InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngleDeg.Z;
+                DiffAngle.X = (InputUtils.Rad2Deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X) - (float)DesiredAngleDeg.X;
+                DiffAngle.Y = (InputUtils.Rad2Deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y) - (float)DesiredAngleDeg.Y;
+                DiffAngle.Z = (InputUtils.Rad2Deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z) - (float)DesiredAngleDeg.Z;
 
                 // Handle wrap around at -180 +180 position which is horizontal for steering
                 DiffAngle.Y = ((float)DevicePoseRad.Y < 0.0) ? DiffAngle.Y += 180.0f : DiffAngle.Y -= 180.0f;
@@ -591,12 +591,12 @@ namespace HandheldCompanion.Views.Windows
 
                 if (FaceCamera)
                 {
-                    ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X;
+                    ModelPoseXDeg = InputUtils.Rad2Deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X;
                 }
                 else
                 {
                     // Not slowly rotate into view when face camera is off
-                    ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X);
+                    ModelPoseXDeg = InputUtils.Rad2Deg((float)DevicePoseRad.X);
                 }
 
                 float ShoulderButtonsAngleDeg = 0.0f;

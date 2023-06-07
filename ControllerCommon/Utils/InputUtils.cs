@@ -1,3 +1,4 @@
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,11 +51,6 @@ namespace ControllerCommon.Utils
 
     public static class InputUtils
     {
-        public static float Clamp(float value, float min, float max)
-        {
-            return Math.Min(max, Math.Max(min, value));
-        }
-
         public static float rangeMap(float value, SensorSpec spec)
         {
             float inRange = spec.maxIn - spec.minIn;
@@ -63,19 +59,25 @@ namespace ControllerCommon.Utils
             return spec.minOut + outRange * ((value - spec.minIn) / inRange);
         }
 
-        public static float deg2rad(float degrees)
+        public static float Deg2Rad(float degrees)
         {
             return (float)((Math.PI / 180) * degrees);
         }
 
-        public static float rad2deg(float rad)
+        public static float Rad2Deg(float rad)
         {
-            return rad * (180 / (float)Math.PI);
+            return (float)(rad * (180 / Math.PI));
         }
 
-        public static float MapRange(float Value, float OldMin, float OldMax, float NewMin, float NewMax)
+        public static float MapRange(float value, float oldMin, float oldMax, float newMin, float newMax)
         {
-            return (NewMin + (NewMax - NewMin) * (Value - OldMin) / (OldMax - OldMin));
+            if (oldMin == oldMax)
+            {
+                // Prevent division by zero
+                return newMin;
+            }
+
+            return newMin + (newMax - newMin) * (value - oldMin) / (oldMax - oldMin);
         }
 
         public static byte NormalizeXboxInput(float input)
@@ -85,69 +87,66 @@ namespace ControllerCommon.Utils
             return (byte)Math.Round(output);
         }
 
-        public static float Steering(float DeviceAngle,
-                                     float DeviceAngleMax,
-                                     float ToThePowerOf,
-                                     float DeadzoneAngle)
+        public static float Steering(float deviceAngle, float deviceAngleMax, float toThePowerOf, float deadzoneAngle)
         {
             // Range angle y value (0 to user defined angle) into -1.0 to 1.0 position value taking into account deadzone angle
-            float Result = AngleToJoystickPos(DeviceAngle, DeviceAngleMax, DeadzoneAngle);
+            float result = AngleToJoystickPos(deviceAngle, deviceAngleMax, deadzoneAngle);
 
-            // Apply user defined to the power of to joystick pos
-            Result = DirectionRespectingPowerOf(Result, ToThePowerOf);
+            // Apply user-defined to the power of to joystick position
+            result = DirectionRespectingPowerOf(result, toThePowerOf);
 
-            // Scale joystick x pos -1 to 1 to joystick x range, send 0 for y.
-            return (float)-(Result * short.MaxValue);
+            // Scale joystick x position -1 to 1 to joystick range
+            return -result * short.MaxValue;
         }
 
         // Determine -1 to 1 joystick position given user defined max input angle and dead zone
         // Angles in degrees
-        public static float AngleToJoystickPos(float Angle, float DeviceAngleMax, float DeadzoneAngle)
+        public static float AngleToJoystickPos(float angle, float deviceAngleMax, float deadzoneAngle)
         {
             // Deadzone remapped angle, note this angle is no longer correct with device angle
-            float Result = ((Math.Abs(Angle) - DeadzoneAngle) / (DeviceAngleMax - DeadzoneAngle)) * DeviceAngleMax;
+            float result = ((Math.Abs(angle) - deadzoneAngle) / (deviceAngleMax - deadzoneAngle)) * deviceAngleMax;
 
             // Clamp deadzone remapped angle, prevents negative values when
             // actual device angle is below dead zone angle
             // Divide by max angle, angle to joystick position with user max
-            Result = Math.Clamp(Result, 0, DeviceAngleMax) / DeviceAngleMax;
+            result = Math.Clamp(result, 0, deviceAngleMax) / deviceAngleMax;
 
-            // Apply direction again
-            return (Angle < 0.0) ? -Result : Result;
+            // Apply the direction based on the original angle
+            return (angle < 0f) ? -result : result;
         }
 
         // Apply power of to -1 to 1 joystick position while respecting direction
-        public static float DirectionRespectingPowerOf(float JoystickPos, float Power)
+        public static float DirectionRespectingPowerOf(float joystickPos, float power)
         {
-            float Result = (float)Math.Pow(Math.Abs(JoystickPos), Power);
+            float result = (float)Math.Pow(Math.Abs(joystickPos), power);
 
-            // Apply direction again
-            return (JoystickPos < 0.0) ? -Result : Result;
+            // Apply direction based on the the original joystick position
+            return (joystickPos < 0.0) ? -result : result;
         }
 
-        // Compensation for in game deadzone
+        // Compensation for in-game deadzone
         // Inputs: raw ThumbValue and deadzone 0-100%
-        // Should not be used under normal circumstances, in game should be set to 0% if possible. Results in loss of resolution.
+        // Should not be used under normal circumstances, in-game deadzone should be set to 0% if possible. Results in loss of resolution.
         // Use cases foreseen:
-        // - Game has deadzone, but no way to configure or change it
-        // - User does not want to change general emulator deadzone setting but want's it removed for specific game and use UMC Steering
-        public static Vector2 ApplyAntiDeadzone(Vector2 ThumbValue, float DeadzonePercentage)
+        // - Game has a deadzone but no way to configure or change it
+        // - User does not want to change general emulator deadzone setting but wants it removed for a specific game and use UMC Steering
+        public static Vector2 ApplyAntiDeadzone(Vector2 thumbValue, float deadzonePercentage)
         {
-            // Return if thumbstick or anti deadzone is not used
-            if (DeadzonePercentage.Equals(0.0f) || ThumbValue == Vector2.Zero)
-                return ThumbValue;
+            // Return thumbValue if deadzone percentage is 0 or thumbValue is already zero
+            if (deadzonePercentage.Equals(0.0f) || thumbValue == Vector2.Zero)
+                return thumbValue;
 
-            // Convert short value input to -1 to 1
-            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+            // Convert short value input to -1 to 1 range
+            Vector2 stickInput = thumbValue / short.MaxValue;
 
-            // Convert 0-100% to 0 to 1
-            float Deadzone = DeadzonePercentage / 100;
+            // Convert 0-100% deadzone to 0-1 range
+            float deadzone = deadzonePercentage / 100f;
 
-            // Map vector to new range by determining the multiplier
-            float Multiplier = ((1 - Deadzone) * StickInput.Length() + Deadzone) / StickInput.Length();
+            // Map vector to new range by determining the multiplier 
+            float multiplier = ((1f - deadzone) * stickInput.Length() + deadzone) / stickInput.Length();
 
             // Convert -1 to 1 back to short value and return
-            return StickInput * Multiplier * short.MaxValue;
+            return stickInput * multiplier * short.MaxValue;
         }
 
         public static float ApplyAntiDeadzone(float ThumbValue, float DeadzonePercentage)
@@ -161,54 +160,52 @@ namespace ControllerCommon.Utils
             return (StickInput + Deadzone) * short.MaxValue;
         }
 
-        public static Vector2 ImproveCircularity(Vector2 ThumbValue)
+        public static Vector2 ImproveCircularity(Vector2 thumbValue)
         {
-            // Convert short value input to -1 to 1
-            Vector2 StickInput = new Vector2(ThumbValue.X, ThumbValue.Y) / short.MaxValue;
+            // Convert short value input to -1 to 1 range
+            Vector2 stickInput = thumbValue / short.MaxValue;
 
-            // Return if length is not longer then 1
-            if (StickInput.Length() <= 1.0f)
-                return ThumbValue;
+            // Return thumbValue if length is not longer than 1
+            if (stickInput.LengthSquared() <= 1.0f)
+                return thumbValue;
 
-            // Cap vector length to 1 by determining the multiplier
-            float Multiplier = 1 / StickInput.Length();
+            // Cap vector length to 1 by normalizing it
+            Vector2 normalizedInput = Vector2.Normalize(stickInput);
 
             // Convert -1 to 1 back to short value and return
-            return StickInput * Multiplier * short.MaxValue;
+            return normalizedInput * short.MaxValue;
         }
 
         // Triggers, inner and outer deadzone
-        public static float InnerOuterDeadzone(float TriggerInput, int InnerDeadzonePercentage, int OuterDeadzonePercentage, int MaxValue)
+        public static float InnerOuterDeadzone(float triggerInput, int innerDeadzonePercentage, int outerDeadzonePercentage, int maxValue)
         {
-            // Return if thumbstick or deadzone is not used
-            if ((InnerDeadzonePercentage.Equals(0) && OuterDeadzonePercentage.Equals(0)) || TriggerInput.Equals(float.NaN) || TriggerInput.Equals(0.0f))
-                return TriggerInput;
+            // Return triggerInput if both inner and outer deadzones are 0 or if triggerInput is NaN or 0
+            if ((innerDeadzonePercentage == 0 && outerDeadzonePercentage == 0) || float.IsNaN(triggerInput) || triggerInput == 0.0f)
+                return triggerInput;
 
-            // Convert deadzone percentage to 0 - 1 range
-            float InnerDeadZone = (float)InnerDeadzonePercentage / 100.0f;
-            float OuterDeadZone = (float)OuterDeadzonePercentage / 100.0f;
+            // Convert deadzone percentages to the 0-1 range
+            float innerDeadzone = (float)innerDeadzonePercentage / 100.0f;
+            float outerDeadzone = (float)outerDeadzonePercentage / 100.0f;
 
-            // Convert 0 - MaxValue range value input to -1 to 1
-            float Trigger = Math.Abs(TriggerInput / MaxValue);
+            // Convert 0-MaxValue range input to -1 to 1
+            float trigger = Math.Abs(triggerInput / maxValue);
 
             // Trigger is either:
             // - Within inner deadzone, return 0
             // - Within outer deadzone, return max
             // - In between deadzone values, map accordingly
-            if (Trigger <= InnerDeadZone)
+            if (trigger <= innerDeadzone)
             {
                 return 0.0f;
             }
-            else if (Trigger >= 1 - OuterDeadZone)
+            else if (trigger >= 1.0f - outerDeadzone)
             {
-                return MaxValue * Math.Sign(TriggerInput);
+                return triggerInput > 0 ? maxValue : -maxValue;
             }
             else
             {
-                // Map to new range
-                // Convert back to 0 - MaxValue range
-                // Cut off float remains
-                return (int)(MapRange(Trigger, InnerDeadZone, (1 - OuterDeadZone), 0, 1) * MaxValue * Math.Sign(TriggerInput));
+                // Map trigger to the new range and convert back to 0-MaxValue range
+                return MapRange(trigger, innerDeadzone, 1.0f - outerDeadzone, 0, 1) * maxValue * Math.Sign(triggerInput);
             }
         }
 
