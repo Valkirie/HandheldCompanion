@@ -3,8 +3,6 @@ using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using HandheldCompanion;
-using HidSharp;
-using HidSharp.Reports.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;

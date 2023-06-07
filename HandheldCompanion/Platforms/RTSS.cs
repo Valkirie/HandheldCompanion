@@ -8,7 +8,6 @@ using HandheldCompanion.Managers.Desktop;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;

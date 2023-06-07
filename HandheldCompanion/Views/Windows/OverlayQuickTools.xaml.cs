@@ -2,7 +2,6 @@
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.QuickPages;
 using ModernWpf.Controls;
-using SharpDX.Multimedia;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,12 +1,9 @@
 ﻿using ControllerCommon.Managers;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using static HandheldCompanion.Platforms.HWiNFO;
 using static HandheldCompanion.Platforms.RTSS;

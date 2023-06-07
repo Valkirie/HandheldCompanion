@@ -2,7 +2,6 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
 using PowerProfileUtils;
 using RTSSSharedMemoryNET;
@@ -11,7 +10,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers

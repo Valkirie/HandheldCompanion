@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ControllerCommon.Pipes
 {
