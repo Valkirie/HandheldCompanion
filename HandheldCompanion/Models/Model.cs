@@ -14,7 +14,7 @@ namespace HandheldCompanion;
 
 public abstract class IModel
 {
-    public ConcurrentDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
+    public ConcurrentDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new(Environment.ProcessorCount * 2, (int)ButtonFlags.Max);
 
     // Materials
     public Dictionary<Model3DGroup, Material> DefaultMaterials = new();
