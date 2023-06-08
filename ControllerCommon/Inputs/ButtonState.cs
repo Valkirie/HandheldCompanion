@@ -9,7 +9,7 @@ namespace ControllerCommon.Inputs;
 [Serializable]
 public class ButtonState : ICloneable
 {
-    public ConcurrentDictionary<ButtonFlags, bool> State = new();
+    public ConcurrentDictionary<ButtonFlags, bool> State = new(Environment.ProcessorCount * 2, (int)ButtonFlags.Max);
 
     public ButtonState(ConcurrentDictionary<ButtonFlags, bool> buttonState)
     {
@@ -19,22 +19,19 @@ public class ButtonState : ICloneable
 
     public ButtonState()
     {
+        foreach (ButtonFlags flags in Enum.GetValues(typeof(ButtonFlags)))
+            State[flags] = false;
     }
 
     public bool this[ButtonFlags button]
     {
-        get
-        {
-            if (!State.ContainsKey(button)) return false;
-
-            return State[button];
-        }
+        get => State.ContainsKey(button) && State[button];
 
         set => State[button] = value;
     }
 
     [JsonIgnore]
-    public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value is true).Select(a => a.Key).ToList();
+    public IEnumerable<ButtonFlags> Buttons => State.Where(a => a.Value).Select(a => a.Key).ToList();
 
     public object Clone()
     {
@@ -53,11 +50,7 @@ public class ButtonState : ICloneable
 
     public bool Contains(ButtonState buttonState)
     {
-        foreach (var state in buttonState.State)
-            if (this[state.Key] != state.Value)
-                return false;
-
-        return true;
+        return buttonState.State.All(state => this[state.Key] == state.Value);
     }
 
     public bool ContainsTrue(ButtonState buttonState)
@@ -65,11 +58,7 @@ public class ButtonState : ICloneable
         if (IsEmpty() || buttonState.IsEmpty())
             return false;
 
-        foreach (var state in buttonState.State.Where(a => a.Value is true))
-            if (this[state.Key] != state.Value)
-                return false;
-
-        return true;
+        return buttonState.State.Where(a => a.Value).All(state => this[state.Key] == state.Value);
     }
 
     public void AddRange(ButtonState buttonState)
@@ -81,8 +70,7 @@ public class ButtonState : ICloneable
 
     public override bool Equals(object obj)
     {
-        var buttonState = obj as ButtonState;
-        if (buttonState != null)
+        if (obj is ButtonState buttonState)
             return buttonState.Buttons.SequenceEqual(Buttons);
 
         return false;

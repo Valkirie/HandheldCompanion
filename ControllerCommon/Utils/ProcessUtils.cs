@@ -67,9 +67,7 @@ public static class ProcessUtils
             if (shellProperty?.ValueAsObject is null) continue;
             if (AppProperties.ContainsKey(property.Name)) continue;
 
-            var shellPropertyValues = shellProperty.ValueAsObject as string[];
-
-            if (shellPropertyValues is not null && shellPropertyValues.Length > 0)
+            if (shellProperty.ValueAsObject is string[] shellPropertyValues && shellPropertyValues.Length > 0)
                 foreach (var shellPropertyValue in shellPropertyValues)
                     AppProperties[property.Name] = shellPropertyValue;
             else

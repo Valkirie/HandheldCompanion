@@ -9,7 +9,7 @@ namespace ControllerCommon.Inputs;
 [Serializable]
 public class AxisState : ICloneable
 {
-    public ConcurrentDictionary<AxisFlags, short> State = new();
+    public ConcurrentDictionary<AxisFlags, short> State = new(Environment.ProcessorCount * 2, (int)AxisFlags.Max);
 
     public AxisState(ConcurrentDictionary<AxisFlags, short> axisState)
     {
@@ -19,16 +19,13 @@ public class AxisState : ICloneable
 
     public AxisState()
     {
+        foreach (AxisFlags flags in Enum.GetValues(typeof(AxisFlags)))
+            State[flags] = 0;
     }
 
     public short this[AxisFlags axis]
     {
-        get
-        {
-            if (!State.ContainsKey(axis)) return 0;
-
-            return State[axis];
-        }
+        get => !State.ContainsKey(axis) ? (short)0 : State[axis];
 
         set => State[axis] = value;
     }
@@ -64,11 +61,7 @@ public class AxisState : ICloneable
         if (IsEmpty() || axisState.IsEmpty())
             return false;
 
-        foreach (var state in axisState.State.Where(a => a.Value is not 0))
-            if (this[state.Key] != state.Value)
-                return false;
-
-        return true;
+        return axisState.State.Where(a => a.Value is not 0).All(state => this[state.Key] == state.Value);
     }
 
     public void AddRange(AxisState axisState)
@@ -79,8 +72,7 @@ public class AxisState : ICloneable
 
     public override bool Equals(object obj)
     {
-        var axisState = obj as AxisState;
-        if (axisState != null)
+        if (obj is AxisState axisState)
             return EqualsWithValues(State, axisState.State);
 
         return false;
@@ -89,27 +81,15 @@ public class AxisState : ICloneable
     public static bool EqualsWithValues(ConcurrentDictionary<AxisFlags, short> obj1,
         ConcurrentDictionary<AxisFlags, short> obj2)
     {
-        var result = false;
-        if (obj1.Count == obj2.Count)
+        if (obj1.Count != obj2.Count) return false;
         {
-            result = true;
+            foreach (var item in obj1)
             {
-                foreach (var item in obj1)
-                {
-                    if (obj2.TryGetValue(item.Key, out var value))
-                    {
-                        if (!value.Equals(item.Value)) return false;
-
-                        continue;
-                    }
-
-                    return false;
-                }
-
-                return result;
+                if (!obj2.TryGetValue(item.Key, out var value)) return false;
+                if (!value.Equals(item.Value)) return false;
             }
-        }
 
-        return result;
+            return true;
+        }
     }
 }

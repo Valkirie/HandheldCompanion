@@ -20,7 +20,8 @@ public class SteamPlatform : IPlatform
     {
         { @"controller_base\desktop_neptune.vdf", Resources.empty_neptune },
         { @"controller_base\chord_neptune.vdf", Resources.chord_neptune },
-        { @"controller_base\templates\controller_neptune_steamcontroller.vdf", Resources.empty_neptune }
+        // { @"controller_base\bigpicture_neptune.vdf", Resources.chord_neptune },
+        // { @"controller_base\chord_neptune_external.vdf", Resources.chord_neptune },
     };
 
     public SteamPlatform()
