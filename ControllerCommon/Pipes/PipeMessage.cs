@@ -155,18 +155,12 @@ public class PipeClientInputs : PipeMessage
 
     public PipeClientInputs(ControllerState inputs) : this()
     {
-        jsonString = JsonConvert.SerializeObject(inputs, Formatting.Indented, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
+        jsonString = JsonConvert.SerializeObject(inputs);
     }
 
     public ControllerState GetValue()
     {
-        return JsonConvert.DeserializeObject<ControllerState>(jsonString, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
+        return JsonConvert.DeserializeObject<ControllerState>(jsonString);
     }
 }
 

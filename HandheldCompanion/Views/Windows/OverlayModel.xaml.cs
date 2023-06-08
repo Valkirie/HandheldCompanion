@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media;
@@ -33,14 +34,11 @@ public partial class OverlayModel : OverlayWindow
     private HIDmode HIDmode;
 
     private ControllerState Inputs = new();
-
-    private GeometryModel3D model;
+    
     private OverlayModelMode Modelmode;
     public bool MotionActivated = true;
 
     // TODO Dummy variables, placeholder and for testing 
-    private short MotorLeftPlaceholder;
-    private short MotorRightPlaceholder;
     private float ShoulderButtonsAngleDegPrev;
     private Transform3DGroup Transform3DGroupModelPrevious = new();
 
@@ -119,79 +117,79 @@ public partial class OverlayModel : OverlayWindow
         {
             default:
             case OverlayModelMode.OEM:
-            {
-                switch (MainWindow.CurrentDevice.ProductModel)
                 {
-                    case "AYANEO2021":
-                        newModel = new ModelAYANEO2021();
-                        break;
-                    case "AYANEONext":
-                        newModel = new ModelAYANEONext();
-                        break;
-                    case "AYANEOAir":
-                        newModel = new ModelAYANEOAir();
-                        break;
-                    case "ONEXPLAYERMini":
-                        newModel = new ModelOneXPlayerMini();
-                        break;
-                    case "SteamDeck":
-                        newModel = new ModelSteamDeck();
-                        break;
-                    default:
-                        // default model if unsupported OEM
-                        newModel = new ModelXBOX360();
-                        break;
+                    switch (MainWindow.CurrentDevice.ProductModel)
+                    {
+                        case "AYANEO2021":
+                            newModel = new ModelAYANEO2021();
+                            break;
+                        case "AYANEONext":
+                            newModel = new ModelAYANEONext();
+                            break;
+                        case "AYANEOAir":
+                            newModel = new ModelAYANEOAir();
+                            break;
+                        case "ONEXPLAYERMini":
+                            newModel = new ModelOneXPlayerMini();
+                            break;
+                        case "SteamDeck":
+                            newModel = new ModelSteamDeck();
+                            break;
+                        default:
+                            // default model if unsupported OEM
+                            newModel = new ModelXBOX360();
+                            break;
+                    }
                 }
-            }
                 break;
             case OverlayModelMode.Virtual:
-            {
-                switch (HIDmode)
                 {
-                    default:
-                    case HIDmode.DualShock4Controller:
-                        newModel = new ModelDS4();
-                        break;
-                    case HIDmode.Xbox360Controller:
-                        newModel = new ModelXBOX360();
-                        break;
+                    switch (HIDmode)
+                    {
+                        default:
+                        case HIDmode.DualShock4Controller:
+                            newModel = new ModelDS4();
+                            break;
+                        case HIDmode.Xbox360Controller:
+                            newModel = new ModelXBOX360();
+                            break;
+                    }
                 }
-            }
                 break;
             case OverlayModelMode.XboxOne:
-            {
-                newModel = new ModelXBOXOne();
-            }
+                {
+                    newModel = new ModelXBOXOne();
+                }
                 break;
             case OverlayModelMode.ZDOPlus:
-            {
-                newModel = new ModelZDOPlus();
-            }
+                {
+                    newModel = new ModelZDOPlus();
+                }
                 break;
             case OverlayModelMode.EightBitDoLite2:
-            {
-                newModel = new Model8BitDoLite2();
-            }
+                {
+                    newModel = new Model8BitDoLite2();
+                }
                 break;
             case OverlayModelMode.MachenikeHG510:
-            {
-                newModel = new ModelMachenikeHG510();
-            }
+                {
+                    newModel = new ModelMachenikeHG510();
+                }
                 break;
             case OverlayModelMode.Toy:
-            {
-                newModel = new ModelToyController();
-            }
+                {
+                    newModel = new ModelToyController();
+                }
                 break;
             case OverlayModelMode.N64:
-            {
-                newModel = new ModelN64();
-            }
+                {
+                    newModel = new ModelN64();
+                }
                 break;
             case OverlayModelMode.DualSense:
-            {
-                newModel = new ModelDualSense();
-            }
+                {
+                    newModel = new ModelDualSense();
+                }
                 break;
         }
 
@@ -240,24 +238,24 @@ public partial class OverlayModel : OverlayWindow
         switch (message.code)
         {
             case PipeCode.SERVER_SENSOR:
-            {
-                // prevent late PipeMessage to apply
-                if (Visibility != Visibility.Visible)
-                    return;
-
-                // Add return here if motion is not wanted for 3D model
-                if (!MotionActivated)
-                    return;
-
-                var sensor = (PipeSensor)message;
-                switch (sensor.type)
                 {
-                    case SensorType.Quaternion:
-                        DevicePose = new Quaternion(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
-                        DevicePoseRad = new Vector3D(sensor.x, sensor.y, sensor.z);
-                        break;
+                    // prevent late PipeMessage to apply
+                    if (Visibility != Visibility.Visible)
+                        return;
+
+                    // Add return here if motion is not wanted for 3D model
+                    if (!MotionActivated)
+                        return;
+
+                    var sensor = (PipeSensor)message;
+                    switch (sensor.type)
+                    {
+                        case SensorType.Quaternion:
+                            DevicePose = new Quaternion(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
+                            DevicePoseRad = new Vector3D(sensor.x, sensor.y, sensor.z);
+                            break;
+                    }
                 }
-            }
                 break;
         }
     }
@@ -271,283 +269,31 @@ public partial class OverlayModel : OverlayWindow
         if (Visibility != Visibility.Visible)
             return;
 
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            GeometryModel3D model = null;
-            foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
+        Parallel.ForEach((ButtonFlags[])Enum.GetValues(typeof(ButtonFlags)),
+            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, button =>
             {
-                if (!CurrentModel.ButtonMap.ContainsKey(button))
-                    continue;
-
-                foreach (var modelgroup in CurrentModel.ButtonMap[button])
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    model = (GeometryModel3D)modelgroup.Children.FirstOrDefault();
+                    if (!CurrentModel.ButtonMap.ContainsKey(button))
+                        return;
 
-                    if (model.Material.GetType() != typeof(DiffuseMaterial))
-                        continue;
+                    foreach (Model3DGroup model3DGroup in CurrentModel.ButtonMap[button])
+                    {
+                        GeometryModel3D model3D = (GeometryModel3D)model3DGroup.Children.FirstOrDefault();
+                        if (model3D is null || model3D.Material.GetType() != typeof(DiffuseMaterial))
+                            continue;
 
-                    if (Inputs.ButtonState[button])
-                        model.Material = model.BackMaterial = CurrentModel.HighlightMaterials[modelgroup];
-                    else
-                        model.Material = model.BackMaterial = CurrentModel.DefaultMaterials[modelgroup];
-                }
-            }
-        });
-
-        // update model
-        UpdateModelVisual3D();
+                        model3D.Material = Inputs.ButtonState[button]
+                            ? model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup]
+                            : model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
+                    }
+                });
+            });
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            float GradientFactor; // Used for multiple models
-
-            // TODO update motor placeholders!
-            // Motor Left
-            model = CurrentModel.LeftMotor.Children[0] as GeometryModel3D;
-            model.Material = MotorLeftPlaceholder > 0
-                ? CurrentModel.HighlightMaterials[CurrentModel.LeftMotor]
-                : CurrentModel.DefaultMaterials[CurrentModel.LeftMotor];
-
-            // Motor Right
-            model = CurrentModel.RightMotor.Children[0] as GeometryModel3D;
-            model.Material = MotorRightPlaceholder > 0
-                ? CurrentModel.HighlightMaterials[CurrentModel.RightMotor]
-                : CurrentModel.DefaultMaterials[CurrentModel.RightMotor];
-
-            // ShoulderLeftTrigger
-            model = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
-            if (Inputs.AxisState[AxisFlags.L2] > 0)
-            {
-                GradientFactor = 1 * Inputs.AxisState[AxisFlags.L2] / (float)byte.MaxValue;
-                model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger],
-                    CurrentModel.HighlightMaterials[CurrentModel.LeftShoulderTrigger],
-                    GradientFactor);
-            }
-            else
-            {
-                model.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger];
-            }
-
-            TriggerAngleShoulderLeft =
-                -1 * CurrentModel.TriggerMaxAngleDeg * Inputs.AxisState[AxisFlags.L2] / byte.MaxValue;
-
-            // ShoulderRightTrigger
-            model = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
-
-            if (Inputs.AxisState[AxisFlags.R2] > 0)
-            {
-                GradientFactor = 1 * Inputs.AxisState[AxisFlags.R2] / (float)byte.MaxValue;
-                model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
-                    CurrentModel.HighlightMaterials[CurrentModel.RightShoulderTrigger],
-                    GradientFactor);
-            }
-            else
-            {
-                model.Material = CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger];
-            }
-
-            TriggerAngleShoulderRight =
-                -1 * CurrentModel.TriggerMaxAngleDeg * Inputs.AxisState[AxisFlags.R2] / byte.MaxValue;
-
-            // JoystickLeftRing
-            model = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
-            if (Inputs.AxisState[AxisFlags.LeftThumbX] != 0.0f || Inputs.AxisState[AxisFlags.LeftThumbY] != 0.0f)
-            {
-                // Adjust color
-                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbX] / (float)short.MaxValue),
-                    Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbY] / (float)short.MaxValue));
-
-                model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
-                    CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
-                    GradientFactor);
-
-                // Define and compute
-                var Transform3DGroupJoystickLeft = new Transform3DGroup();
-                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbX] / short.MaxValue;
-                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbY] / short.MaxValue;
-
-                // Rotation X
-                var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
-                LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
-                LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
-                LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
-
-                Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
-
-                // Rotation Y
-                ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), y);
-                LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
-                LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
-                LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
-
-                Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
-
-                // Transform joystick group
-                CurrentModel.LeftThumbRing.Transform = CurrentModel.LeftThumb.Transform = Transform3DGroupJoystickLeft;
-            }
-            else
-            {
-                // Default material color, no highlight
-                model.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing];
-
-                // Define and compute, back to default position
-                var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
-                LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
-                LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
-                LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
-
-                // Transform joystick
-                CurrentModel.LeftThumbRing.Transform = CurrentModel.LeftThumb.Transform = LeftJoystickRotateTransform;
-            }
-
-            // JoystickRightRing
-            model = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
-            if (Inputs.AxisState[AxisFlags.RightThumbX] != 0.0f || Inputs.AxisState[AxisFlags.RightThumbY] != 0.0f)
-            {
-                // Adjust color
-                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbX] / (float)short.MaxValue),
-                    Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbY] / (float)short.MaxValue));
-
-                model.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
-                    CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
-                    GradientFactor);
-
-                // Define and compute
-                var Transform3DGroupJoystickRight = new Transform3DGroup();
-                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbX] / short.MaxValue;
-                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbY] /
-                        short.MaxValue;
-
-                // Rotation X
-                var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
-                RightJoystickRotateTransform = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
-                RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
-                RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
-
-                Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
-
-                // Rotation Y
-                ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), y);
-                RightJoystickRotateTransform = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
-                RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
-                RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
-
-                Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
-
-                // Transform joystick group
-                CurrentModel.RightThumbRing.Transform =
-                    CurrentModel.RightThumb.Transform = Transform3DGroupJoystickRight;
-            }
-            else
-            {
-                model.Material = CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing];
-
-                // Define and compute, back to default position
-                var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
-                RightJoystickRotateTransform = new RotateTransform3D(ax3d);
-
-                // Define rotation point
-                RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
-                RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
-                RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
-
-                // Transform joystick
-                CurrentModel.RightThumbRing.Transform =
-                    CurrentModel.RightThumb.Transform = RightJoystickRotateTransform;
-            }
-        });
-    }
-
-    public void UpdateReport(ControllerState Inputs)
-    {
-        this.Inputs = Inputs;
-    }
-
-    private Material GradientHighlight(Material DefaultMaterial, Material HighlightMaterial, float Factor)
-    {
-        // Determine colors from brush from materials
-        var DefaultMaterialBrush = ((DiffuseMaterial)DefaultMaterial).Brush;
-        var StartColor = ((SolidColorBrush)DefaultMaterialBrush).Color;
-        var HighlightMaterialBrush = ((DiffuseMaterial)HighlightMaterial).Brush;
-        var EndColor = ((SolidColorBrush)HighlightMaterialBrush).Color;
-
-        // Linear interpolate color
-        var bk = 1 - Factor;
-        var a = StartColor.A * bk + EndColor.A * Factor;
-        var r = StartColor.R * bk + EndColor.R * Factor;
-        var g = StartColor.G * bk + EndColor.G * Factor;
-        var b = StartColor.B * bk + EndColor.B * Factor;
-
-        // Define color
-        var TransitionColor = Color.FromArgb((byte)a, (byte)r, (byte)g, (byte)b);
-
-        // Return material with transition color
-        return new DiffuseMaterial(new SolidColorBrush(TransitionColor));
-    }
-
-    private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg,
-        Vector3D UpwardVisibilityRotationAxis,
-        Vector3D UpwardVisibilityRotationPoint,
-        float ShoulderTriggerAngleDeg,
-        Vector3D ShoulderTriggerRotationPointCenterMillimeter,
-        ref Model3DGroup ShoulderTrigger,
-        ref Model3DGroup ShoulderButton
-    )
-    {
-        // Define rotation group for trigger button to combine rotations
-        var Transform3DGroupShoulderTrigger = new Transform3DGroup();
-
-        // Upward visibility rotation vector and angle
-        var ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderButtonsAngleDeg);
-        var TransformShoulder = new RotateTransform3D(ax3d);
-
-        // Define rotation point shoulder buttons
-        TransformShoulder.CenterX = UpwardVisibilityRotationPoint.X;
-        TransformShoulder.CenterY = UpwardVisibilityRotationPoint.Y;
-        TransformShoulder.CenterZ = UpwardVisibilityRotationPoint.Z;
-
-        // Trigger vector and angle
-        ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderTriggerAngleDeg);
-        var TransformTriggerPosition = new RotateTransform3D(ax3d);
-
-        // Define rotation point trigger
-        TransformTriggerPosition.CenterX = ShoulderTriggerRotationPointCenterMillimeter.X;
-        TransformTriggerPosition.CenterY = ShoulderTriggerRotationPointCenterMillimeter.Y;
-        TransformTriggerPosition.CenterZ = ShoulderTriggerRotationPointCenterMillimeter.Z;
-
-        // Transform trigger
-        // Trigger first, then visibility transform
-        Transform3DGroupShoulderTrigger.Children.Add(TransformTriggerPosition);
-        Transform3DGroupShoulderTrigger.Children.Add(TransformShoulder);
-
-        // Transform trigger with both upward visibility and trigger position
-        ShoulderTrigger.Transform = Transform3DGroupShoulderTrigger;
-        // Transform shoulder button only with upward visibility
-        ShoulderButton.Transform = TransformShoulder;
-    }
-
-    private void UpdateModelVisual3D()
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
+            // update model
             var Transform3DGroupModel = new Transform3DGroup();
 
             // Device transformation based on pose
@@ -663,7 +409,234 @@ public partial class OverlayModel : OverlayWindow
             }
 
             ShoulderButtonsAngleDegPrev = ShoulderButtonsAngleDeg;
+
+            float GradientFactor; // Used for multiple models
+
+            // ShoulderLeftTrigger
+            var geometryModel3D = CurrentModel.LeftShoulderTrigger.Children[0] as GeometryModel3D;
+            if (Inputs.AxisState[AxisFlags.L2] > 0)
+            {
+                GradientFactor = 1 * Inputs.AxisState[AxisFlags.L2] / (float)byte.MaxValue;
+                geometryModel3D.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger],
+                    CurrentModel.HighlightMaterials[CurrentModel.LeftShoulderTrigger],
+                    GradientFactor);
+            }
+            else
+            {
+                geometryModel3D.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftShoulderTrigger];
+            }
+
+            TriggerAngleShoulderLeft =
+                -1 * CurrentModel.TriggerMaxAngleDeg * Inputs.AxisState[AxisFlags.L2] / byte.MaxValue;
+
+            // ShoulderRightTrigger
+            geometryModel3D = CurrentModel.RightShoulderTrigger.Children[0] as GeometryModel3D;
+
+            if (Inputs.AxisState[AxisFlags.R2] > 0)
+            {
+                GradientFactor = 1 * Inputs.AxisState[AxisFlags.R2] / (float)byte.MaxValue;
+                geometryModel3D.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger],
+                    CurrentModel.HighlightMaterials[CurrentModel.RightShoulderTrigger],
+                    GradientFactor);
+            }
+            else
+            {
+                geometryModel3D.Material = CurrentModel.DefaultMaterials[CurrentModel.RightShoulderTrigger];
+            }
+
+            TriggerAngleShoulderRight =
+                -1 * CurrentModel.TriggerMaxAngleDeg * Inputs.AxisState[AxisFlags.R2] / byte.MaxValue;
+
+            // JoystickLeftRing
+            geometryModel3D = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
+            if (Inputs.AxisState[AxisFlags.LeftThumbX] != 0.0f || Inputs.AxisState[AxisFlags.LeftThumbY] != 0.0f)
+            {
+                // Adjust color
+                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbX] / (float)short.MaxValue),
+                    Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbY] / (float)short.MaxValue));
+
+                geometryModel3D.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
+                    CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
+                    GradientFactor);
+
+                // Define and compute
+                var Transform3DGroupJoystickLeft = new Transform3DGroup();
+                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbX] / short.MaxValue;
+                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbY] / short.MaxValue;
+
+                // Rotation X
+                var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
+                LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
+                LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
+                LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
+
+                Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
+
+                // Rotation Y
+                ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), y);
+                LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
+                LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
+                LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
+
+                Transform3DGroupJoystickLeft.Children.Add(LeftJoystickRotateTransform);
+
+                // Transform joystick group
+                CurrentModel.LeftThumbRing.Transform = CurrentModel.LeftThumb.Transform = Transform3DGroupJoystickLeft;
+            }
+            else
+            {
+                // Default material color, no highlight
+                geometryModel3D.Material = CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing];
+
+                // Define and compute, back to default position
+                var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
+                LeftJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                LeftJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterLeftMillimeter.X;
+                LeftJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Y;
+                LeftJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterLeftMillimeter.Z;
+
+                // Transform joystick
+                CurrentModel.LeftThumbRing.Transform = CurrentModel.LeftThumb.Transform = LeftJoystickRotateTransform;
+            }
+
+            // JoystickRightRing
+            geometryModel3D = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
+            if (Inputs.AxisState[AxisFlags.RightThumbX] != 0.0f || Inputs.AxisState[AxisFlags.RightThumbY] != 0.0f)
+            {
+                // Adjust color
+                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbX] / (float)short.MaxValue),
+                    Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbY] / (float)short.MaxValue));
+
+                geometryModel3D.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
+                    CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
+                    GradientFactor);
+
+                // Define and compute
+                var Transform3DGroupJoystickRight = new Transform3DGroup();
+                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbX] / short.MaxValue;
+                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbY] /
+                        short.MaxValue;
+
+                // Rotation X
+                var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
+                RightJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
+                RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
+                RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
+
+                Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
+
+                // Rotation Y
+                ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), y);
+                RightJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
+                RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
+                RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
+
+                Transform3DGroupJoystickRight.Children.Add(RightJoystickRotateTransform);
+
+                // Transform joystick group
+                CurrentModel.RightThumbRing.Transform =
+                    CurrentModel.RightThumb.Transform = Transform3DGroupJoystickRight;
+            }
+            else
+            {
+                geometryModel3D.Material = CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing];
+
+                // Define and compute, back to default position
+                var ax3d = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
+                RightJoystickRotateTransform = new RotateTransform3D(ax3d);
+
+                // Define rotation point
+                RightJoystickRotateTransform.CenterX = CurrentModel.JoystickRotationPointCenterRightMillimeter.X;
+                RightJoystickRotateTransform.CenterY = CurrentModel.JoystickRotationPointCenterRightMillimeter.Y;
+                RightJoystickRotateTransform.CenterZ = CurrentModel.JoystickRotationPointCenterRightMillimeter.Z;
+
+                // Transform joystick
+                CurrentModel.RightThumbRing.Transform =
+                    CurrentModel.RightThumb.Transform = RightJoystickRotateTransform;
+            }
         });
+    }
+
+    public void UpdateReport(ControllerState Inputs)
+    {
+        this.Inputs = Inputs;
+    }
+
+    private Material GradientHighlight(Material DefaultMaterial, Material HighlightMaterial, float Factor)
+    {
+        // Determine colors from brush from materials
+        var DefaultMaterialBrush = ((DiffuseMaterial)DefaultMaterial).Brush;
+        var StartColor = ((SolidColorBrush)DefaultMaterialBrush).Color;
+        var HighlightMaterialBrush = ((DiffuseMaterial)HighlightMaterial).Brush;
+        var EndColor = ((SolidColorBrush)HighlightMaterialBrush).Color;
+
+        // Linear interpolate color
+        var bk = 1 - Factor;
+        var a = StartColor.A * bk + EndColor.A * Factor;
+        var r = StartColor.R * bk + EndColor.R * Factor;
+        var g = StartColor.G * bk + EndColor.G * Factor;
+        var b = StartColor.B * bk + EndColor.B * Factor;
+
+        // Define color
+        var TransitionColor = Color.FromArgb((byte)a, (byte)r, (byte)g, (byte)b);
+
+        // Return material with transition color
+        return new DiffuseMaterial(new SolidColorBrush(TransitionColor));
+    }
+
+    private void UpwardVisibilityRotationShoulderButtons(float ShoulderButtonsAngleDeg,
+        Vector3D UpwardVisibilityRotationAxis,
+        Vector3D UpwardVisibilityRotationPoint,
+        float ShoulderTriggerAngleDeg,
+        Vector3D ShoulderTriggerRotationPointCenterMillimeter,
+        ref Model3DGroup ShoulderTrigger,
+        ref Model3DGroup ShoulderButton
+    )
+    {
+        // Define rotation group for trigger button to combine rotations
+        var Transform3DGroupShoulderTrigger = new Transform3DGroup();
+
+        // Upward visibility rotation vector and angle
+        var ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderButtonsAngleDeg);
+        var TransformShoulder = new RotateTransform3D(ax3d);
+
+        // Define rotation point shoulder buttons
+        TransformShoulder.CenterX = UpwardVisibilityRotationPoint.X;
+        TransformShoulder.CenterY = UpwardVisibilityRotationPoint.Y;
+        TransformShoulder.CenterZ = UpwardVisibilityRotationPoint.Z;
+
+        // Trigger vector and angle
+        ax3d = new AxisAngleRotation3D(UpwardVisibilityRotationAxis, ShoulderTriggerAngleDeg);
+        var TransformTriggerPosition = new RotateTransform3D(ax3d);
+
+        // Define rotation point trigger
+        TransformTriggerPosition.CenterX = ShoulderTriggerRotationPointCenterMillimeter.X;
+        TransformTriggerPosition.CenterY = ShoulderTriggerRotationPointCenterMillimeter.Y;
+        TransformTriggerPosition.CenterZ = ShoulderTriggerRotationPointCenterMillimeter.Z;
+
+        // Transform trigger
+        // Trigger first, then visibility transform
+        Transform3DGroupShoulderTrigger.Children.Add(TransformTriggerPosition);
+        Transform3DGroupShoulderTrigger.Children.Add(TransformShoulder);
+
+        // Transform trigger with both upward visibility and trigger position
+        ShoulderTrigger.Transform = Transform3DGroupShoulderTrigger;
+        // Transform shoulder button only with upward visibility
+        ShoulderButton.Transform = TransformShoulder;
     }
 
     #endregion

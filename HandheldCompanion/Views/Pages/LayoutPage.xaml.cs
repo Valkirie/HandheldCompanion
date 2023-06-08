@@ -194,8 +194,7 @@ public partial class LayoutPage : Page
         foreach (var layoutTemplate in LayoutManager.Templates)
         {
             // get parent
-            var parent = layoutTemplate.Parent as ComboBoxItem;
-            if (parent is null)
+            if (layoutTemplate.Parent is not ComboBoxItem parent)
                 continue;
 
             if (layoutTemplate.ControllerType is not null && FilterOnDevice)

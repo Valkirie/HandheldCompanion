@@ -85,5 +85,7 @@ public enum ButtonFlags : byte
     [Description("Right")] RightPadClickRight = 59,
 
     [Description("Volume Up")] VolumeUp = 60,
-    [Description("Volume Down")] VolumeDown = 61
+    [Description("Volume Down")] VolumeDown = 61,
+
+    Max = 62
 }

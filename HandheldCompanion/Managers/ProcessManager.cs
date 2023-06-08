@@ -131,8 +131,7 @@ public static class ProcessManager
     {
         try
         {
-            var element = sender as AutomationElement;
-            if (element is not null)
+            if (sender is AutomationElement element)
             {
                 var processInfo = new ProcessUtils.FindHostedProcess(element.Current.NativeWindowHandle)._realProcess;
                 if (processInfo is null)

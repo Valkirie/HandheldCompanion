@@ -57,8 +57,7 @@ public class ScreenFrequency
 
     public override bool Equals(object obj)
     {
-        var frequency = obj as ScreenFrequency;
-        if (frequency != null)
+        if (obj is ScreenFrequency frequency)
             foreach (var freq in (Frequency[])Enum.GetValues(typeof(Frequency)))
                 if (frequencies[freq] != frequency.frequencies[freq])
                     return false;

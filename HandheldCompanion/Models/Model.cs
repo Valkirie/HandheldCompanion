@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -13,7 +14,7 @@ namespace HandheldCompanion;
 
 public abstract class IModel
 {
-    public SortedDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
+    public ConcurrentDictionary<ButtonFlags, List<Model3DGroup>> ButtonMap = new();
 
     // Materials
     public Dictionary<Model3DGroup, Material> DefaultMaterials = new();
@@ -69,7 +70,7 @@ public abstract class IModel
             if (File.Exists(filename))
             {
                 var model = modelImporter.Load(filename);
-                ButtonMap.Add(button, new List<Model3DGroup> { model });
+                ButtonMap.TryAdd(button, new List<Model3DGroup> { model });
 
                 switch (button)
                 {

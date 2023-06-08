@@ -657,9 +657,9 @@ public class DSUServer
                 else //check if this client is totally dead, and remove it if so
                 {
                     var clientOk = false;
-                    for (var i = 0; i < cl.Value.PadIdsTime.Length; i++)
+                    foreach (var t in cl.Value.PadIdsTime)
                     {
-                        var dur = (now - cl.Value.PadIdsTime[i]).TotalSeconds;
+                        var dur = (now - t).TotalSeconds;
                         if (dur < TimeoutLimit)
                         {
                             clientOk = true;

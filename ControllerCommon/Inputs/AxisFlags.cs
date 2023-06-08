@@ -17,5 +17,7 @@ public enum AxisFlags : byte
     LeftPadX = 7,
     RightPadX = 8,
     LeftPadY = 9,
-    RightPadY = 10
+    RightPadY = 10,
+
+    Max = 11
 }
