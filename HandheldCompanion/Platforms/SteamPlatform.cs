@@ -20,6 +20,13 @@ public class SteamPlatform : IPlatform
     {
         { @"controller_base\desktop_neptune.vdf", Resources.empty_neptune },
         { @"controller_base\chord_neptune.vdf", Resources.chord_neptune },
+
+        // Desktop Configuration
+        { @"steamapps\common\Steam Controller Configs\42902745\config\413080\controller_neptune.vdf", Resources.empty_neptune },
+
+        // Steam Button Chord Basic Configuration
+        { @"steamapps\common\Steam Controller Configs\42902745\config\443510\controller_neptune.vdf", Resources.empty_neptune },
+
         // { @"controller_base\bigpicture_neptune.vdf", Resources.chord_neptune },
         // { @"controller_base\chord_neptune_external.vdf", Resources.chord_neptune },
     };
