@@ -54,9 +54,9 @@ public class PerformanceManager : Manager
     private readonly object powerLock = new();
     private readonly Timer powerWatchdog;
 
-    private double AutoTDP;
-
     // AutoTDP
+    private double AutoTDP;
+    private double AutoTDPPrev;
     private bool AutoTDPFirstRun = true;
     private int AutoTDPFPSSetpointMetCounter;
     private int AutoTDPFPSSmallDipCounter;
@@ -64,6 +64,7 @@ public class PerformanceManager : Manager
     private double AutoTDPMin;
     private int AutoTDPProcessId;
     private double AutoTDPTargetFPS;
+    
     private bool cpuWatchdogPendingStop;
     private uint currentEPP = 50;
     private double CurrentGfxClock;
@@ -221,8 +222,13 @@ public class PerformanceManager : Manager
 
             AutoTDP = Math.Clamp(AutoTDP, AutoTDPMin, AutoTDPMax);
 
-            var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
-            RequestTDP(values, true);
+            // Only update if we have a different TDP value to set
+            if (AutoTDP != AutoTDPPrev) 
+                {
+                    var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                    RequestTDP(values, true);
+                }
+            AutoTDPPrev = AutoTDP;
 
             // LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
 
