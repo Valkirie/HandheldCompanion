@@ -175,12 +175,11 @@ public static class IMU
             switch (ControllerService.CurrentTag)
             {
                 case "SettingsMode0":
-                    PipeServer.SendMessage(new PipeSensor(AngularVelocity[XInputSensorFlags.Centered],
-                        SensorType.Girometer));
+                    PipeServer.SendMessage(new PipeSensor(AngularVelocity[XInputSensorFlags.Centered], Quaternion.Zero, SensorType.Girometer));
                     break;
 
                 case "SettingsMode1":
-                    PipeServer.SendMessage(new PipeSensor(IMU_Angle, SensorType.Inclinometer));
+                    PipeServer.SendMessage(new PipeSensor(IMU_Angle, Quaternion.Zero, SensorType.Inclinometer));
                     break;
             }
 

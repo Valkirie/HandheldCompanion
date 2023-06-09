@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using MemoryPack;
 using Newtonsoft.Json;
 
 namespace ControllerCommon;
 
 [Serializable]
-public class Layout : ICloneable, IDisposable
+[MemoryPackable]
+public partial class Layout : ICloneable, IDisposable
 {
+    [JsonIgnore]
+    public bool fill;
+
     public Layout()
     {
     }
 
+    [MemoryPackConstructor]
     public Layout(bool fill) : this()
     {
         // generic button mapping

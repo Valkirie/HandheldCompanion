@@ -292,7 +292,7 @@ public partial class ControllerPage : Page
         {
             case PipeCode.SERVER_SETTINGS:
                 var settings = (PipeServerSettings)message;
-                UpdateSettings(settings.settings);
+                UpdateSettings(settings.Settings);
                 break;
         }
     }
@@ -332,7 +332,9 @@ public partial class ControllerPage : Page
         // raise event
         HIDchanged?.Invoke(controllerMode);
 
-        var settings = new PipeClientSettings("HIDmode", controllerMode);
+        var settings = new PipeClientSettings();
+        settings.Settings.Add("HIDmode", Convert.ToString(controllerMode));
+
         PipeClient.SendMessage(settings);
 
         UpdateController();
@@ -347,7 +349,9 @@ public partial class ControllerPage : Page
 
         controllerStatus = (HIDstatus)cB_ServiceSwitch.SelectedIndex;
 
-        var settings = new PipeClientSettings("HIDstatus", controllerStatus);
+        var settings = new PipeClientSettings();
+        settings.Settings.Add("HIDstatus", Convert.ToString(controllerStatus));
+
         PipeClient.SendMessage(settings);
 
         UpdateController();

@@ -1,14 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Numerics;
 using ControllerCommon.Controllers;
 using ControllerCommon.Platforms;
+using MemoryPack;
 using Newtonsoft.Json;
 
 namespace ControllerCommon.Pipes;
 
 [Serializable]
-public abstract class PipeMessage
+[MemoryPackable]
+[MemoryPackUnion(0, typeof(PipeServerToast))]
+[MemoryPackUnion(1, typeof(PipeServerPing))]
+[MemoryPackUnion(2, typeof(PipeServerSettings))]
+[MemoryPackUnion(3, typeof(PipeClientProfile))]
+[MemoryPackUnion(4, typeof(PipeClientProcess))]
+[MemoryPackUnion(5, typeof(PipeClientSettings))]
+[MemoryPackUnion(6, typeof(PipeClientCursor))]
+[MemoryPackUnion(7, typeof(PipeClientInputs))]
+[MemoryPackUnion(8, typeof(PipeClientVibration))]
+[MemoryPackUnion(9, typeof(PipeClientControllerConnect))]
+[MemoryPackUnion(10, typeof(PipeClientControllerDisconnect))]
+[MemoryPackUnion(11, typeof(PipeSensor))]
+[MemoryPackUnion(12, typeof(PipeNavigation))]
+[MemoryPackUnion(13, typeof(PipeOverlay))]
+public abstract partial class PipeMessage
 {
     public PipeCode code;
 }
@@ -16,7 +33,8 @@ public abstract class PipeMessage
 #region serverpipe
 
 [Serializable]
-public class PipeServerToast : PipeMessage
+[MemoryPackable]
+public partial class PipeServerToast : PipeMessage
 {
     public string content;
     public string image = "Toast";
@@ -29,7 +47,8 @@ public class PipeServerToast : PipeMessage
 }
 
 [Serializable]
-public class PipeServerPing : PipeMessage
+[MemoryPackable]
+public partial class PipeServerPing : PipeMessage
 {
     public PipeServerPing()
     {
@@ -38,18 +57,14 @@ public class PipeServerPing : PipeMessage
 }
 
 [Serializable]
-public class PipeServerSettings : PipeMessage
+[MemoryPackable]
+public partial class PipeServerSettings : PipeMessage
 {
-    public Dictionary<string, string> settings = new();
+    public Dictionary<string, string> Settings { get; set; } = new();
 
     public PipeServerSettings()
     {
         code = PipeCode.SERVER_SETTINGS;
-    }
-
-    public PipeServerSettings(string key, string value) : this()
-    {
-        settings.Add(key, value);
     }
 }
 
@@ -58,34 +73,26 @@ public class PipeServerSettings : PipeMessage
 #region clientpipe
 
 [Serializable]
-public class PipeClientProfile : PipeMessage
+[MemoryPackable]
+public partial class PipeClientProfile : PipeMessage
 {
-    private string jsonString;
+    public Profile profile;
 
     public PipeClientProfile()
     {
         code = PipeCode.CLIENT_PROFILE;
     }
 
+    [MemoryPackConstructor]
     public PipeClientProfile(Profile profile) : this()
     {
-        jsonString = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
-    }
-
-    public Profile GetValue()
-    {
-        return JsonConvert.DeserializeObject<Profile>(jsonString, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
+        this.profile = profile;
     }
 }
 
 [Serializable]
-public class PipeClientProcess : PipeMessage
+[MemoryPackable]
+public partial class PipeClientProcess : PipeMessage
 {
     public string executable;
     public PlatformType platform;
@@ -97,18 +104,14 @@ public class PipeClientProcess : PipeMessage
 }
 
 [Serializable]
-public class PipeClientSettings : PipeMessage
+[MemoryPackable]
+public partial class PipeClientSettings : PipeMessage
 {
-    public Dictionary<string, object> settings = new();
+    public Dictionary<string, string> Settings { get; set; } = new();
 
     public PipeClientSettings()
     {
         code = PipeCode.CLIENT_SETTINGS;
-    }
-
-    public PipeClientSettings(string key, object value) : this()
-    {
-        settings.Add(key, value);
     }
 }
 
@@ -129,7 +132,8 @@ public enum CursorButton
 }
 
 [Serializable]
-public class PipeClientCursor : PipeMessage
+[MemoryPackable]
+public partial class PipeClientCursor : PipeMessage
 {
     public CursorAction action;
     public CursorButton button;
@@ -144,28 +148,26 @@ public class PipeClientCursor : PipeMessage
 }
 
 [Serializable]
-public class PipeClientInputs : PipeMessage
+[MemoryPackable]
+public partial class PipeClientInputs : PipeMessage
 {
-    private string jsonString;
+    public ControllerState controllerState;
 
     public PipeClientInputs()
     {
         code = PipeCode.CLIENT_INPUT;
     }
 
-    public PipeClientInputs(ControllerState inputs) : this()
+    [MemoryPackConstructor]
+    public PipeClientInputs(ControllerState controllerState) : this()
     {
-        jsonString = JsonConvert.SerializeObject(inputs);
-    }
-
-    public ControllerState GetValue()
-    {
-        return JsonConvert.DeserializeObject<ControllerState>(jsonString);
+        this.controllerState = controllerState;
     }
 }
 
 [Serializable]
-public class PipeClientMovements : PipeMessage
+[MemoryPackable]
+public partial class PipeClientMovements : PipeMessage
 {
     public ControllerMovements Movements;
 
@@ -174,6 +176,7 @@ public class PipeClientMovements : PipeMessage
         code = PipeCode.CLIENT_MOVEMENTS;
     }
 
+    [MemoryPackConstructor]
     public PipeClientMovements(ControllerMovements movements) : this()
     {
         Movements = movements;
@@ -181,7 +184,8 @@ public class PipeClientMovements : PipeMessage
 }
 
 [Serializable]
-public class PipeClientVibration : PipeMessage
+[MemoryPackable]
+public partial class PipeClientVibration : PipeMessage
 {
     public byte LargeMotor;
     public byte SmallMotor;
@@ -193,9 +197,10 @@ public class PipeClientVibration : PipeMessage
 }
 
 [Serializable]
-public class PipeClientControllerConnect : PipeMessage
+[MemoryPackable]
+public partial class PipeClientControllerConnect : PipeMessage
 {
-    public ControllerCapacities Capacacities;
+    public ControllerCapacities Capacities;
     public string ControllerName;
 
     public PipeClientControllerConnect()
@@ -203,15 +208,17 @@ public class PipeClientControllerConnect : PipeMessage
         code = PipeCode.CLIENT_CONTROLLER_CONNECT;
     }
 
-    public PipeClientControllerConnect(string name, ControllerCapacities capacities) : this()
+    [MemoryPackConstructor]
+    public PipeClientControllerConnect(string controllerName, ControllerCapacities capacities) : this()
     {
-        ControllerName = name;
-        Capacacities = capacities;
+        ControllerName = controllerName;
+        Capacities = capacities;
     }
 }
 
 [Serializable]
-public class PipeClientControllerDisconnect : PipeMessage
+[MemoryPackable]
+public partial class PipeClientControllerDisconnect : PipeMessage
 {
     public PipeClientControllerDisconnect()
     {
@@ -229,68 +236,49 @@ public enum SensorType
 }
 
 [Serializable]
-public class PipeSensor : PipeMessage
+[MemoryPackable]
+public partial class PipeSensor : PipeMessage
 {
-    public float q_x, q_y, q_z, q_w;
-    public SensorType type;
-    public float x, y, z;
+    public Vector3 reading;
+    public Quaternion quaternion;
+    public SensorType sensorType;
 
-    public PipeSensor(SensorType type)
+    public PipeSensor()
     {
         code = PipeCode.SERVER_SENSOR;
-        this.type = type;
     }
 
-    public PipeSensor(Vector3 reading, SensorType type) : this(type)
+    [MemoryPackConstructor]
+    public PipeSensor(Vector3 reading, Quaternion quaternion, SensorType sensorType)
     {
-        x = reading.X;
-        y = reading.Y;
-        z = reading.Z;
-    }
-
-    public PipeSensor(Quaternion qt, SensorType type) : this(type)
-    {
-        q_x = qt.X;
-        q_y = qt.Y;
-        q_z = qt.Z;
-        q_w = qt.W;
-    }
-
-    public PipeSensor(Vector3 reading, Quaternion qt, SensorType type) : this(type)
-    {
-        x = reading.X;
-        y = reading.Y;
-        z = reading.Z;
-
-        q_x = qt.X;
-        q_y = qt.Y;
-        q_z = qt.Z;
-        q_w = qt.W;
+        this.reading = reading;
+        this.quaternion = quaternion;
+        this.sensorType = sensorType;
     }
 }
 
 [Serializable]
-public class PipeNavigation : PipeMessage
+[MemoryPackable]
+public partial class PipeNavigation : PipeMessage
 {
     public string Tag;
 
     public PipeNavigation(string Tag)
     {
         code = PipeCode.CLIENT_NAVIGATED;
-
         this.Tag = Tag;
     }
 }
 
 [Serializable]
-public class PipeOverlay : PipeMessage
+[MemoryPackable]
+public partial class PipeOverlay : PipeMessage
 {
     public int Visibility;
 
     public PipeOverlay(int Visibility)
     {
         code = PipeCode.CLIENT_OVERLAY;
-
         this.Visibility = Visibility;
     }
 }

@@ -292,8 +292,7 @@ public class ControllerService : IHostedService
             case PipeCode.CLIENT_PROFILE:
             {
                 var profileMsg = (PipeClientProfile)message;
-                var profile = profileMsg.GetValue();
-                UpdateProfile(profile);
+                UpdateProfile(profileMsg.profile);
             }
                 break;
 
@@ -326,7 +325,7 @@ public class ControllerService : IHostedService
             case PipeCode.CLIENT_SETTINGS:
             {
                 var settings = (PipeClientSettings)message;
-                UpdateSettings(settings.settings);
+                UpdateSettings(settings.Settings);
             }
                 break;
 
@@ -357,11 +356,10 @@ public class ControllerService : IHostedService
             case PipeCode.CLIENT_INPUT:
             {
                 var inputMsg = (PipeClientInputs)message;
-                var input = inputMsg.GetValue();
 
-                vTarget?.UpdateInputs(input);
-                DSUServer.UpdateInputs(input);
-                DS4Touch.UpdateInputs(input);
+                vTarget?.UpdateInputs(inputMsg.controllerState);
+                DSUServer.UpdateInputs(inputMsg.controllerState);
+                DS4Touch.UpdateInputs(inputMsg.controllerState);
             }
                 break;
 
@@ -398,7 +396,7 @@ public class ControllerService : IHostedService
     private void OnClientConnected()
     {
         // send server settings to client
-        PipeServer.SendMessage(new PipeServerSettings { settings = GetSettings() });
+        PipeServer.SendMessage(new PipeServerSettings { Settings = GetSettings() });
     }
 
     internal void UpdateProfile(Profile profile)
@@ -427,12 +425,12 @@ public class ControllerService : IHostedService
         LogManager.LogInformation("Platform {0} detected", platform);
     }
 
-    public void UpdateSettings(Dictionary<string, object> args)
+    public void UpdateSettings(Dictionary<string, string> args)
     {
         foreach (var pair in args)
         {
             var name = pair.Key;
-            var property = pair.Value.ToString();
+            var property = pair.Value;
 
             if (configuration.AppSettings.Settings.AllKeys.ToList().Contains(name))
             {

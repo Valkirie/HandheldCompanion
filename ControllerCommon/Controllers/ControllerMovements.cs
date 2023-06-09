@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MemoryPack;
+using System;
 
 namespace ControllerCommon.Controllers;
 
 [Serializable]
-public class ControllerMovements
+[MemoryPackable]
+public partial class ControllerMovements
 {
     public float GyroAccelX, GyroAccelY, GyroAccelZ;
     public float GyroRoll, GyroPitch, GyroYaw;
@@ -14,14 +16,15 @@ public class ControllerMovements
     {
     }
 
-    public ControllerMovements(ControllerMovements Inputs)
+    [MemoryPackConstructor]
+    public ControllerMovements(float gyroAccelX, float gyroAccelY, float gyroAccelZ, float gyroRoll, float gyroPitch, float gyroYaw)
     {
-        GyroAccelX = Inputs.GyroAccelX;
-        GyroAccelY = Inputs.GyroAccelY;
-        GyroAccelZ = Inputs.GyroAccelZ;
+        this.GyroAccelX = gyroAccelX;
+        this.GyroAccelY = gyroAccelY;
+        this.GyroAccelZ = gyroAccelZ;
 
-        GyroRoll = Inputs.GyroRoll;
-        GyroPitch = Inputs.GyroPitch;
-        GyroYaw = Inputs.GyroYaw;
+        this.GyroRoll = gyroRoll;
+        this.GyroPitch = gyroPitch;
+        this.GyroYaw = gyroRoll;
     }
 }
