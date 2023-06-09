@@ -25,6 +25,6 @@ public partial class ControllerMovements
 
         this.GyroRoll = gyroRoll;
         this.GyroPitch = gyroPitch;
-        this.GyroYaw = gyroRoll;
+        this.GyroYaw = gyroYaw;
     }
 }
