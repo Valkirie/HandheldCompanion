@@ -19,12 +19,13 @@ namespace ControllerCommon.Pipes;
 [MemoryPackUnion(5, typeof(PipeClientSettings))]
 [MemoryPackUnion(6, typeof(PipeClientCursor))]
 [MemoryPackUnion(7, typeof(PipeClientInputs))]
-[MemoryPackUnion(8, typeof(PipeClientVibration))]
-[MemoryPackUnion(9, typeof(PipeClientControllerConnect))]
-[MemoryPackUnion(10, typeof(PipeClientControllerDisconnect))]
-[MemoryPackUnion(11, typeof(PipeSensor))]
-[MemoryPackUnion(12, typeof(PipeNavigation))]
-[MemoryPackUnion(13, typeof(PipeOverlay))]
+[MemoryPackUnion(8, typeof(PipeClientMovements))]
+[MemoryPackUnion(9, typeof(PipeClientVibration))]
+[MemoryPackUnion(10, typeof(PipeClientControllerConnect))]
+[MemoryPackUnion(11, typeof(PipeClientControllerDisconnect))]
+[MemoryPackUnion(12, typeof(PipeSensor))]
+[MemoryPackUnion(13, typeof(PipeNavigation))]
+[MemoryPackUnion(14, typeof(PipeOverlay))]
 public abstract partial class PipeMessage
 {
     public PipeCode code;
