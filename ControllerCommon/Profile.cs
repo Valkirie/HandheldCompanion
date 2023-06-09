@@ -61,15 +61,19 @@ public partial class Profile : ICloneable, IComparable
     [MemoryPackConstructor]
     public Profile(string path) : this()
     {
-        var AppProperties = ProcessUtils.GetAppProperties(path);
+        if (!string.IsNullOrEmpty(path))
+        {
 
-        var ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-        // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
-        // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
+            var AppProperties = ProcessUtils.GetAppProperties(path);
 
-        Executable = AppProperties["FileName"];
-        Name = ProductName;
-        Path = path;
+            var ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
+            // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
+            // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
+
+            Executable = AppProperties["FileName"];
+            Name = ProductName;
+            Path = path;
+        }
 
         // enable the below variables when profile is created
         Enabled = true;
