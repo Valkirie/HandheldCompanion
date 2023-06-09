@@ -250,7 +250,7 @@ public partial class PipeSensor : PipeMessage
     }
 
     [MemoryPackConstructor]
-    public PipeSensor(Vector3 reading, Quaternion quaternion, SensorType sensorType)
+    public PipeSensor(Vector3 reading, Quaternion quaternion, SensorType sensorType) : this()
     {
         this.reading = reading;
         this.quaternion = quaternion;
