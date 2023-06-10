@@ -2,18 +2,21 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using MemoryPack;
 using Newtonsoft.Json;
 
 namespace ControllerCommon.Inputs;
 
 [Serializable]
-public class ButtonState : ICloneable
+[MemoryPackable]
+public partial class ButtonState : ICloneable
 {
     public ConcurrentDictionary<ButtonFlags, bool> State = new(Environment.ProcessorCount * 2, (int)ButtonFlags.Max);
 
-    public ButtonState(ConcurrentDictionary<ButtonFlags, bool> buttonState)
+    [MemoryPackConstructor]
+    public ButtonState(ConcurrentDictionary<ButtonFlags, bool> State)
     {
-        foreach (var state in buttonState)
+        foreach (var state in State)
             this[state.Key] = state.Value;
     }
 

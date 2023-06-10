@@ -246,7 +246,9 @@ public partial class MainWindow : Window
 
         if (PipeClient.IsConnected)
         {
-            var settings = new PipeClientSettings(name, value);
+            var settings = new PipeClientSettings();
+            settings.Settings.Add(name, Convert.ToString(value));
+
             PipeClient.SendMessage(settings);
         }
     }
@@ -413,7 +415,7 @@ public partial class MainWindow : Window
         var settings = new PipeClientSettings();
 
         foreach (var values in SettingsManager.GetProperties())
-            settings.settings.Add(values.Key, values.Value);
+            settings.Settings.Add(values.Key, Convert.ToString(values.Value));
 
         PipeClient.SendMessage(settings);
     }
@@ -474,7 +476,7 @@ public partial class MainWindow : Window
 
             case PipeCode.SERVER_SETTINGS:
                 var settings = (PipeServerSettings)message;
-                UpdateSettings(settings.settings);
+                UpdateSettings(settings.Settings);
                 break;
         }
     }

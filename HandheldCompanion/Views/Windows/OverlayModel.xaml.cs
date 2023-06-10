@@ -248,11 +248,11 @@ public partial class OverlayModel : OverlayWindow
                         return;
 
                     var sensor = (PipeSensor)message;
-                    switch (sensor.type)
+                    switch (sensor.sensorType)
                     {
                         case SensorType.Quaternion:
-                            DevicePose = new Quaternion(sensor.q_w, sensor.q_x, sensor.q_y, sensor.q_z);
-                            DevicePoseRad = new Vector3D(sensor.x, sensor.y, sensor.z);
+                            DevicePose = new Quaternion(sensor.quaternion.W, sensor.quaternion.X, sensor.quaternion.Y, sensor.quaternion.Z);
+                            DevicePoseRad = new Vector3D(sensor.reading.X, sensor.reading.Y, sensor.reading.Z);
                             break;
                     }
                 }

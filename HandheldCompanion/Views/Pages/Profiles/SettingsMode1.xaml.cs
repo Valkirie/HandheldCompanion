@@ -61,10 +61,10 @@ public partial class SettingsMode1 : Page
             case PipeCode.SERVER_SENSOR:
                 var sensor = (PipeSensor)message;
 
-                switch (sensor.type)
+                switch (sensor.sensorType)
                 {
                     case SensorType.Inclinometer:
-                        Rotate_Needle(-sensor.y);
+                        Rotate_Needle(-sensor.reading.Y);
                         break;
                 }
 

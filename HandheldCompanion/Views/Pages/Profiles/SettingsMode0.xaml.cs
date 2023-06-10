@@ -89,10 +89,10 @@ public partial class SettingsMode0 : Page
             case PipeCode.SERVER_SENSOR:
                 var sensor = (PipeSensor)message;
 
-                switch (sensor.type)
+                switch (sensor.sensorType)
                 {
                     case SensorType.Girometer:
-                        Highlight_Thumb(Math.Max(Math.Max(Math.Abs(sensor.z), Math.Abs(sensor.x)), Math.Abs(sensor.y)));
+                        Highlight_Thumb(Math.Max(Math.Max(Math.Abs(sensor.reading.Z), Math.Abs(sensor.reading.X)), Math.Abs(sensor.reading.Y)));
                         break;
                 }
 

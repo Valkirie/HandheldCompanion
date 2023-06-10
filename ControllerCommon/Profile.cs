@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using ControllerCommon.Inputs;
 using ControllerCommon.Properties;
 using ControllerCommon.Utils;
+using MemoryPack;
 using Newtonsoft.Json;
 
 namespace ControllerCommon;
@@ -30,7 +31,8 @@ public enum ProfileUpdateSource
 }
 
 [Serializable]
-public class Profile : ICloneable, IComparable
+[MemoryPackable]
+public partial class Profile : ICloneable, IComparable
 {
     [Newtonsoft.Json.JsonIgnore] public const int SensivityArraySize = 49; // x + 1 (hidden)
 
@@ -56,17 +58,22 @@ public class Profile : ICloneable, IComparable
             }
     }
 
+    [MemoryPackConstructor]
     public Profile(string path) : this()
     {
-        var AppProperties = ProcessUtils.GetAppProperties(path);
+        if (!string.IsNullOrEmpty(path))
+        {
 
-        var ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-        // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
-        // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
+            var AppProperties = ProcessUtils.GetAppProperties(path);
 
-        Executable = AppProperties["FileName"];
-        Name = ProductName;
-        Path = path;
+            var ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
+            // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
+            // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
+
+            Executable = AppProperties["FileName"];
+            Name = ProductName;
+            Path = path;
+        }
 
         // enable the below variables when profile is created
         Enabled = true;
@@ -85,7 +92,8 @@ public class Profile : ICloneable, IComparable
 
     public string LayoutTitle { get; set; } = string.Empty;
     public bool LayoutEnabled { get; set; } = false;
-    public Layout Layout { get; set; } = new();
+
+    [MemoryPackIgnore] public Layout Layout { get; set; } = new();
 
     public bool Whitelisted { get; set; } // if true, can see through the HidHide cloak
     public bool XInputPlus { get; set; } // if true, deploy xinput1_3.dll

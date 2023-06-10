@@ -2,18 +2,21 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using MemoryPack;
 using Newtonsoft.Json;
 
 namespace ControllerCommon.Inputs;
 
 [Serializable]
-public class AxisState : ICloneable
+[MemoryPackable]
+public partial class AxisState : ICloneable
 {
     public ConcurrentDictionary<AxisFlags, short> State = new(Environment.ProcessorCount * 2, (int)AxisFlags.Max);
 
-    public AxisState(ConcurrentDictionary<AxisFlags, short> axisState)
+    [MemoryPackConstructor]
+    public AxisState(ConcurrentDictionary<AxisFlags, short> State)
     {
-        foreach (var state in axisState)
+        foreach (var state in State)
             this[state.Key] = state.Value;
     }
 

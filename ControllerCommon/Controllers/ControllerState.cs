@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using ControllerCommon.Inputs;
+using MemoryPack;
 
 namespace ControllerCommon.Controllers;
 
 [Serializable]
-public class ControllerState : ICloneable
+[MemoryPackable]
+public partial class ControllerState : ICloneable
 {
-    [JsonIgnore] public static readonly SortedDictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
+    [JsonIgnore] [MemoryPackIgnore] public static readonly SortedDictionary<AxisLayoutFlags, ButtonFlags> AxisTouchButtons = new()
     {
         { AxisLayoutFlags.RightThumb, ButtonFlags.RightThumbTouch },
         { AxisLayoutFlags.LeftThumb, ButtonFlags.LeftThumbTouch },
@@ -23,12 +25,13 @@ public class ControllerState : ICloneable
     {
     }
 
-    public ControllerState(ControllerState Inputs)
+    [MemoryPackConstructor]
+    public ControllerState(ButtonState buttonState, AxisState axisState, int timestamp)
     {
-        ButtonState = Inputs.ButtonState;
-        AxisState = Inputs.AxisState;
+        ButtonState = buttonState;
+        AxisState = axisState;
 
-        Timestamp = Inputs.Timestamp;
+        Timestamp = timestamp;
     }
 
     public int Timestamp { get; set; }
