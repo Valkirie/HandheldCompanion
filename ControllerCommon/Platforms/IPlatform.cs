@@ -272,7 +272,7 @@ public abstract class IPlatform : IDisposable
 
                 Thread.Sleep(500);
 
-                if (process is not null)
+                if (process is not null && !process.HasExited)
                 {
                     process.EnableRaisingEvents = true;
                     process.Exited += Process_Exited;

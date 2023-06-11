@@ -44,39 +44,28 @@
                                         KeyTime="{StaticResource RepositionDuration}"
                                         Value="20" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="1" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="0" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="1" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="0" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
 
                             <Storyboard x:Key="OnToDraggingTransition">
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds"
-                                                               Storyboard.TargetProperty="Opacity">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Opacity">
                                     <DiscreteDoubleKeyFrame KeyTime="0" Value="1" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                               Storyboard.TargetProperty="Opacity">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Opacity">
                                     <DiscreteDoubleKeyFrame KeyTime="0" Value="1" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                               Storyboard.TargetProperty="Opacity">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Opacity">
                                     <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
@@ -91,20 +80,14 @@
                                         KeyTime="{StaticResource RepositionDuration}"
                                         Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="0" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="0" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                               Storyboard.TargetProperty="Opacity">
-                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                            Value="1" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </Border.Resources>
@@ -136,11 +119,9 @@
                                 VerticalAlignment="Top">
 
                                 <Grid.RowDefinitions>
-                                    <RowDefinition
-                                        ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPreContentMargin}" />
+                                    <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPreContentMargin}" />
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition
-                                        ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPostContentMargin}" />
+                                    <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPostContentMargin}" />
                                 </Grid.RowDefinitions>
 
                                 <Grid.ColumnDefinitions>
@@ -256,29 +237,25 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
@@ -288,29 +265,25 @@
                                 </VisualState>
                                 <VisualState x:Name="MouseOver">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
@@ -320,29 +293,25 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="17" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
                                                 Value="17" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlFasterAnimationDuration}"
@@ -352,29 +321,25 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Width">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Height">
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
                                                 KeyTime="{DynamicResource ControlNormalAnimationDuration}"
@@ -453,29 +418,17 @@
                                                     KeyTime="{StaticResource RepositionDuration}"
                                                     Value="20" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <DiscreteDoubleKeyFrame
-                                                    KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                    Value="1" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <DiscreteDoubleKeyFrame
-                                                    KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                    Value="0" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <DiscreteDoubleKeyFrame
-                                                    KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                    Value="1" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                           Storyboard.TargetProperty="Opacity">
-                                                <DiscreteDoubleKeyFrame
-                                                    KeyTime="{DynamicResource ControlFasterAnimationDuration}"
-                                                    Value="0" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
@@ -483,25 +436,17 @@
                                 <VisualState x:Name="DraggingOff" />
                                 <VisualState x:Name="DraggingOn">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -521,25 +466,17 @@
                                             Storyboard.TargetProperty="X"
                                             To="20"
                                             Duration="0" />
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame
-                                                KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteDoubleKeyFrame KeyTime="{DynamicResource ControlFasterAnimationDuration}" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -552,8 +489,7 @@
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
                                             Duration="0" />
-                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="OffContentPresenter"
-                                                                        Storyboard.TargetProperty="IsHitTestVisible">
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="OffContentPresenter" Storyboard.TargetProperty="IsHitTestVisible">
                                             <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
                                         </BooleanAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -565,8 +501,7 @@
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
                                             Duration="0" />
-                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="OnContentPresenter"
-                                                                        Storyboard.TargetProperty="IsHitTestVisible">
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="OnContentPresenter" Storyboard.TargetProperty="IsHitTestVisible">
                                             <DiscreteBooleanKeyFrame KeyTime="0" Value="True" />
                                         </BooleanAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -577,20 +512,13 @@
                     <ControlTemplate.Triggers>
                         <!--  PointerOver  -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="OuterBorder" Property="Stroke"
-                                    Value="{DynamicResource ToggleSwitchStrokeOffPointerOver}" />
-                            <Setter TargetName="OuterBorder" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchFillOffPointerOver}" />
-                            <Setter TargetName="SwitchKnobOff" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchKnobFillOffPointerOver}" />
-                            <Setter TargetName="SwitchKnobOn" Property="Background"
-                                    Value="{DynamicResource ToggleSwitchKnobFillOnPointerOver}" />
-                            <Setter TargetName="SwitchKnobBounds" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />
-                            <Setter TargetName="SwitchKnobBounds" Property="Stroke"
-                                    Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
-                            <Setter TargetName="SwitchAreaGrid" Property="Background"
-                                    Value="{DynamicResource ToggleSwitchContainerBackgroundPointerOver}" />
+                            <Setter TargetName="OuterBorder" Property="Stroke" Value="{DynamicResource ToggleSwitchStrokeOffPointerOver}" />
+                            <Setter TargetName="OuterBorder" Property="Fill" Value="{DynamicResource ToggleSwitchFillOffPointerOver}" />
+                            <Setter TargetName="SwitchKnobOff" Property="Fill" Value="{DynamicResource ToggleSwitchKnobFillOffPointerOver}" />
+                            <Setter TargetName="SwitchKnobOn" Property="Background" Value="{DynamicResource ToggleSwitchKnobFillOnPointerOver}" />
+                            <Setter TargetName="SwitchKnobBounds" Property="Fill" Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />
+                            <Setter TargetName="SwitchKnobBounds" Property="Stroke" Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
+                            <Setter TargetName="SwitchAreaGrid" Property="Background" Value="{DynamicResource ToggleSwitchContainerBackgroundPointerOver}" />
                         </Trigger>
                         <!--  Pressed  -->
                         <Trigger SourceName="SwitchThumb" Property="IsDragging" Value="true">
@@ -598,43 +526,26 @@
                             <Setter TargetName="SwitchKnobOn" Property="Margin" Value="0,0,3,0" />
                             <Setter TargetName="SwitchKnobOff" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="SwitchKnobOff" Property="Margin" Value="3,0,0,0" />
-                            <Setter TargetName="OuterBorder" Property="Stroke"
-                                    Value="{DynamicResource ToggleSwitchStrokeOffPressed}" />
-                            <Setter TargetName="OuterBorder" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchFillOffPressed}" />
-                            <Setter TargetName="SwitchKnobOff" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchKnobFillOffPressed}" />
-                            <Setter TargetName="SwitchKnobOn" Property="Background"
-                                    Value="{DynamicResource ToggleSwitchKnobFillOnPressed}" />
-                            <Setter TargetName="SwitchKnobBounds" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchFillOnPressed}" />
-                            <Setter TargetName="SwitchKnobBounds" Property="Stroke"
-                                    Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
-                            <Setter TargetName="SwitchAreaGrid" Property="Background"
-                                    Value="{DynamicResource ToggleSwitchContainerBackgroundPressed}" />
+                            <Setter TargetName="OuterBorder" Property="Stroke" Value="{DynamicResource ToggleSwitchStrokeOffPressed}" />
+                            <Setter TargetName="OuterBorder" Property="Fill" Value="{DynamicResource ToggleSwitchFillOffPressed}" />
+                            <Setter TargetName="SwitchKnobOff" Property="Fill" Value="{DynamicResource ToggleSwitchKnobFillOffPressed}" />
+                            <Setter TargetName="SwitchKnobOn" Property="Background" Value="{DynamicResource ToggleSwitchKnobFillOnPressed}" />
+                            <Setter TargetName="SwitchKnobBounds" Property="Fill" Value="{DynamicResource ToggleSwitchFillOnPressed}" />
+                            <Setter TargetName="SwitchKnobBounds" Property="Stroke" Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
+                            <Setter TargetName="SwitchAreaGrid" Property="Background" Value="{DynamicResource ToggleSwitchContainerBackgroundPressed}" />
                         </Trigger>
                         <!--  Disabled  -->
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="HeaderContentPresenter" Property="Foreground"
-                                    Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
-                            <Setter TargetName="OffContentPresenter" Property="TextElement.Foreground"
-                                    Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
-                            <Setter TargetName="OnContentPresenter" Property="TextElement.Foreground"
-                                    Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
-                            <Setter TargetName="OuterBorder" Property="Stroke"
-                                    Value="{DynamicResource ToggleSwitchStrokeOffDisabled}" />
-                            <Setter TargetName="OuterBorder" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchFillOffDisabled}" />
-                            <Setter TargetName="SwitchKnobOff" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchKnobFillOffDisabled}" />
-                            <Setter TargetName="SwitchKnobOn" Property="Background"
-                                    Value="{DynamicResource ToggleSwitchKnobFillOnDisabled}" />
-                            <Setter TargetName="SwitchKnobBounds" Property="Fill"
-                                    Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
-                            <Setter TargetName="SwitchKnobBounds" Property="Stroke"
-                                    Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
-                            <Setter TargetName="SwitchAreaGrid" Property="Background"
-                                    Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
+                            <Setter TargetName="OffContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
+                            <Setter TargetName="OnContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
+                            <Setter TargetName="OuterBorder" Property="Stroke" Value="{DynamicResource ToggleSwitchStrokeOffDisabled}" />
+                            <Setter TargetName="OuterBorder" Property="Fill" Value="{DynamicResource ToggleSwitchFillOffDisabled}" />
+                            <Setter TargetName="SwitchKnobOff" Property="Fill" Value="{DynamicResource ToggleSwitchKnobFillOffDisabled}" />
+                            <Setter TargetName="SwitchKnobOn" Property="Background" Value="{DynamicResource ToggleSwitchKnobFillOnDisabled}" />
+                            <Setter TargetName="SwitchKnobBounds" Property="Fill" Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
+                            <Setter TargetName="SwitchKnobBounds" Property="Stroke" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
+                            <Setter TargetName="SwitchAreaGrid" Property="Background" Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

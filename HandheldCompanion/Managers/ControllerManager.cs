@@ -526,6 +526,9 @@ public static class ControllerManager
         // pass inputs to Inputs manager
         InputsManager.UpdateReport(InputsState);
 
+        // pass inputs to Focus manager
+        GamepadFocusManager.UpdateReport(controllerState);
+
         // pass inputs to Overlay Model
         MainWindow.overlayModel.UpdateReport(controllerState);
 

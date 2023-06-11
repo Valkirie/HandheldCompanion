@@ -7,8 +7,10 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using Windows.System.Power;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.QuickPages;
@@ -23,13 +25,15 @@ using PowerManager = ControllerCommon.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
+using Control = System.Windows.Controls.Control;
+using HandheldCompanion.Views.Classes;
 
 namespace HandheldCompanion.Views.Windows;
 
 /// <summary>
 ///     Interaction logic for QuickTools.xaml
 /// </summary>
-public partial class OverlayQuickTools : Window
+public partial class OverlayQuickTools : GamepadWindow
 {
     private const int WM_SYSCOMMAND = 0x0112;
 
@@ -40,7 +44,7 @@ public partial class OverlayQuickTools : Window
 
     private bool AutoHide;
 
-    private HwndSource hwndSource;
+    public HwndSource hwndSource;
 
     private bool isClosing;
 

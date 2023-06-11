@@ -17,6 +17,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using ModernWpf.Controls;
@@ -31,7 +32,7 @@ namespace HandheldCompanion.Views;
 /// <summary>
 ///     Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : GamepadWindow
 {
     // devices vars
     public static IDevice CurrentDevice;
@@ -186,6 +187,7 @@ public partial class MainWindow : Window
         PowerManager.Start();
 
         SystemManager.Start();
+        GamepadFocusManager.Start();
 
         // start managers asynchroneously
         foreach (var manager in _managers)
