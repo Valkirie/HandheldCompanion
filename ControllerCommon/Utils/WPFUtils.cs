@@ -55,6 +55,36 @@ public static class WPFUtils
         return (short)(word & short.MaxValue);
     }
 
+    // A function that takes a list of controls and returns the top-left control
+    public static Control GetTopLeftControl(List<Control> controls)
+    {
+        // Si la liste est vide, retourner null
+        if (controls == null || controls.Count == 0)
+        {
+            return null;
+        }
+
+        // Initialize the top left control with the first element of the list
+        Control topLeft = controls[0];
+
+        // Browse other list items
+        for (int i = 1; i < controls.Count; i++)
+        {
+            // Get current control
+            Control current = controls[i];
+
+            // Compare the Canvas.Top and Canvas.Left properties of the current control with those of the top-left control
+            // If the current control is farther up or to the left, replace it with the farthest control to the left
+            if (Canvas.GetTop(current) < Canvas.GetTop(topLeft) || (Canvas.GetTop(current) == Canvas.GetTop(topLeft) && Canvas.GetLeft(current) < Canvas.GetLeft(topLeft)))
+            {
+                topLeft = current;
+            }
+        }
+
+        // Return the top left control
+        return topLeft;
+    }
+
     public enum Direction { None, Left, Right, Up, Down }
 
     public static Control GetClosestControl(Control source, List<Control> controls, Direction direction)
@@ -111,11 +141,18 @@ public static class WPFUtils
         for (int i = 0; i < count; i++)
         {
             DependencyObject current = VisualTreeHelper.GetChild(startNode, i);
-            if (current.GetType().Equals(typeof(Button)))
+
+            switch (current.GetType().Name)
             {
-                Control asType = (Control)current;
-                childs.Add(asType);
+                case "Button":
+                case "Slider":
+                case "ToggleSwitch":
+                    Control asType = (Control)current;
+                    if(asType.IsEnabled && asType.Focusable && asType.Visibility == Visibility.Visible)
+                        childs.Add(asType);
+                    break;
             }
+
             foreach (var item in FindChildren(current))
             {
                 childs.Add(item);

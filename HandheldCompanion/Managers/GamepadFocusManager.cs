@@ -13,9 +13,6 @@ namespace HandheldCompanion.Managers
 {
     public static class GamepadFocusManager
     {
-        // used to store current focus control based on window
-        private static Dictionary<Window, Control> focusedElements = new();
-
         static GamepadFocusManager()
         {
         }
@@ -31,9 +28,6 @@ namespace HandheldCompanion.Managers
             // get parent window from control
             Window parentWindow = Window.GetWindow(control);
 
-            // set control border details to focused style
-            focusedElements[parentWindow] = control;
-
             // bring to view
             control.BringIntoView();
         }
@@ -43,15 +37,8 @@ namespace HandheldCompanion.Managers
             Control keyboardFocused = (Control)Keyboard.FocusedElement;
             if (keyboardFocused is not null && window.elements.Contains(keyboardFocused))
                 return keyboardFocused;
-            else if (focusedElements.TryGetValue(window, out Control control))
-                return control;
             else
-                return window.elements.FirstOrDefault();
-        }
-
-        private static bool HasFocusedElement(GamepadWindow window)
-        {
-            return focusedElements.ContainsKey(window);
+                return WPFUtils.GetTopLeftControl(window.elements);
         }
 
         public static void Start()
@@ -84,8 +71,7 @@ namespace HandheldCompanion.Managers
                     direction = WPFUtils.Direction.Left;
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight))
                     direction = WPFUtils.Direction.Right;
-
-                if (direction == WPFUtils.Direction.None)
+                else
                     return;
 
                 // Keyboard
@@ -95,7 +81,10 @@ namespace HandheldCompanion.Managers
                     var test = WPFUtils.GetClosestControl(focusedElement,
                         MainWindow.overlayquickTools.elements, direction);
 
-                    Focus(test);
+                    if (test is not null)
+                        Focus(test);
+                    else
+                        Focus(focusedElement);
                 }
             });
         }
