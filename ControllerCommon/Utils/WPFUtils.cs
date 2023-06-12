@@ -102,20 +102,21 @@ public static class WPFUtils
     // Helper method to check if a control is in a given direction from another control
     private static bool IsInDirection(Control source, Control target, Direction direction)
     {
-        // Get the relative position of the target with respect to the source
-        var transform = target.TransformToVisual(source);
-        var position = transform.Transform(new Point(0, 0));
+        // Get the position of the target on the canvas
+        var p = target.TranslatePoint(new Point(0, 0), source);
+        double x = p.X;
+        double y = p.Y;
 
         switch (direction)
         {
             case Direction.Left:
-                return position.X + target.ActualWidth < 0;
+                return x + target.ActualWidth < 0;
             case Direction.Right:
-                return position.X > source.ActualWidth;
+                return x > source.ActualWidth;
             case Direction.Up:
-                return position.Y + target.ActualHeight < 0;
+                return y + target.ActualHeight < 0;
             case Direction.Down:
-                return position.Y > source.ActualHeight;
+                return y > source.ActualHeight;
             default:
                 return false;
         }
@@ -147,6 +148,7 @@ public static class WPFUtils
                 case "Button":
                 case "Slider":
                 case "ToggleSwitch":
+                case "NavigationViewItem":
                     Control asType = (Control)current;
                     if(asType.IsEnabled && asType.Focusable && asType.Visibility == Visibility.Visible)
                         childs.Add(asType);

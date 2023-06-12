@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
@@ -13,8 +14,27 @@ namespace HandheldCompanion.Managers
 {
     public static class GamepadFocusManager
     {
+        private static GamepadWindow _gamepadWindow;
+
         static GamepadFocusManager()
         {
+            var mainWindow = MainWindow.GetCurrent();
+            mainWindow.Activated += GamepadFocusManager_GotFocus;
+            mainWindow.Deactivated += GamepadFocusManager_LostFocus;
+
+            MainWindow.overlayquickTools.Activated += GamepadFocusManager_GotFocus;
+            MainWindow.overlayquickTools.Deactivated += GamepadFocusManager_LostFocus;
+        }
+
+        private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
+        {
+            if (_gamepadWindow == (GamepadWindow)sender)
+                _gamepadWindow = null;
+        }
+
+        private static void GamepadFocusManager_GotFocus(object? sender, System.EventArgs e)
+        {
+            _gamepadWindow = (GamepadWindow)sender;
         }
 
         public static void Focus(Control control)
@@ -50,7 +70,7 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateReport(ControllerState controllerState)
         {
-            if (MainWindow.overlayquickTools.Visibility == Visibility.Collapsed)
+            if (_gamepadWindow is null)
                 return;
 
             if (controllerState.ButtonState.Equals(prevButtonState))
@@ -61,9 +81,21 @@ namespace HandheldCompanion.Managers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+                // get current focused element
+                Control focusedElement = FocusedElement(_gamepadWindow);
+
                 WPFUtils.Direction direction = WPFUtils.Direction.None;
 
-                if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp))
+                if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1))
+                {
+                    switch(focusedElement.GetType().Name)
+                    {
+                        case "Button":
+                            ((Button)focusedElement).RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                            break;
+                    }
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp))
                     direction = WPFUtils.Direction.Up;
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown))
                     direction = WPFUtils.Direction.Down;
@@ -71,20 +103,18 @@ namespace HandheldCompanion.Managers
                     direction = WPFUtils.Direction.Left;
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight))
                     direction = WPFUtils.Direction.Right;
-                else
-                    return;
 
-                // Keyboard
-                var focusedElement = FocusedElement(MainWindow.overlayquickTools);
-                if (focusedElement != null)
+                // navigation
+                if (direction != WPFUtils.Direction.None)
                 {
-                    var test = WPFUtils.GetClosestControl(focusedElement,
-                        MainWindow.overlayquickTools.elements, direction);
-
-                    if (test is not null)
-                        Focus(test);
-                    else
-                        Focus(focusedElement);
+                    if (focusedElement != null)
+                    {
+                        var test = WPFUtils.GetClosestControl(focusedElement, _gamepadWindow.elements, direction);
+                        if (test is not null)
+                            Focus(test);
+                        else
+                            Focus(focusedElement);
+                    }
                 }
             });
         }
