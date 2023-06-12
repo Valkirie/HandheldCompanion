@@ -475,6 +475,7 @@ public partial class QuickProfilesPage : Page
 
         if (!isDrawing)
         {
+            currentProfile.TDPOverrideValues = new double[3];
             currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideValues[(int)PowerType.Stapm] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;

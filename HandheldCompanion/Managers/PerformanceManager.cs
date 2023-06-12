@@ -136,7 +136,7 @@ public class PerformanceManager : Manager
     private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
     {
         // apply profile defined TDP
-        if (profile.TDPOverrideEnabled)
+        if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
         {
             RequestTDP(profile.TDPOverrideValues);
             StartTDPWatchdog();

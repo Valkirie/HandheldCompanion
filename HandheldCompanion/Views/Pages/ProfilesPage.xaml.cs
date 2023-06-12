@@ -461,6 +461,7 @@ public partial class ProfilesPage : Page
         currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
 
         // Power settings
+        currentProfile.TDPOverrideValues = new double[3];
         currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
         currentProfile.TDPOverrideValues[(int)PowerType.Stapm] = (int)TDPSlider.Value;
         currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
