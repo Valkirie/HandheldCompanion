@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using ControllerCommon;
 using ControllerCommon.Managers;
@@ -36,7 +37,7 @@ public static class PowerMode
 public class PerformanceManager : Manager
 {
     private const short INTERVAL_DEFAULT = 1000; // default interval between value scans
-    private const short INTERVAL_AUTO = 1000; // default interval between value scans
+    private const short INTERVAL_AUTO = 1010; // default interval between value scans
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
     public static int MaxDegreeOfParallelism = 4;
 
@@ -54,9 +55,9 @@ public class PerformanceManager : Manager
     private readonly object powerLock = new();
     private readonly Timer powerWatchdog;
 
-    private double AutoTDP;
-
     // AutoTDP
+    private double AutoTDP;
+    private double AutoTDPPrev;
     private bool AutoTDPFirstRun = true;
     private int AutoTDPFPSSetpointMetCounter;
     private int AutoTDPFPSSmallDipCounter;
@@ -221,8 +222,13 @@ public class PerformanceManager : Manager
 
             AutoTDP = Math.Clamp(AutoTDP, AutoTDPMin, AutoTDPMax);
 
-            var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
-            RequestTDP(values, true);
+            // Only update if we have a different TDP value to set
+            if (AutoTDP != AutoTDPPrev)
+            {
+                var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                RequestTDP(values, true);
+            }
+            AutoTDPPrev = AutoTDP;
 
             // LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
 
@@ -328,7 +334,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private async void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -372,6 +378,8 @@ public class PerformanceManager : Manager
                 // only request an update if current limit is different than stored
                 if (ReadTDP != TDP)
                     processor.SetTDPLimit(type, TDP);
+
+                await Task.Delay(12);
             }
 
             // are we done ?
@@ -476,7 +484,7 @@ public class PerformanceManager : Manager
             processor.SetTDPLimit((PowerType)idx, value);
     }
 
-    public void RequestTDP(double[] values, bool immediate = false)
+    public async void RequestTDP(double[] values, bool immediate = false)
     {
         for (var idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
@@ -485,7 +493,10 @@ public class PerformanceManager : Manager
 
             // immediately apply
             if (immediate)
+            {
                 processor.SetTDPLimit((PowerType)idx, values[idx]);
+                await Task.Delay(12);
+            }
         }
     }
 
