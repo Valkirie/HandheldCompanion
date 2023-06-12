@@ -23,10 +23,22 @@ public static class WPFUtils
     public const int UIS_CLEAR = 2;
     public const int UISF_HIDEFOCUS = 0x1;
 
-    public static void KeyboardFocus(Window window, bool enabled)
+    public static HwndSource GetControlHandle(Control control)
     {
-        var hwndSource = PresentationSource.FromVisual(window) as HwndSource;
-        SendMessage(hwndSource.Handle, WM_CHANGEUISTATE, MakeLong(enabled ? UIS_CLEAR : UIS_SET, UISF_HIDEFOCUS), 0);
+        return PresentationSource.FromVisual(control) as HwndSource;
+    }
+
+    public static void MakeFocusVisible(Control c)
+    {
+        IntPtr hWnd = GetControlHandle(c).Handle;
+        // SendMessage(hWnd, WM_CHANGEUISTATE, (IntPtr)MakeLong((int)UIS_CLEAR, (int)UISF_HIDEFOCUS), IntPtr.Zero);
+        SendMessage(hWnd, 257, (IntPtr)0x0000000000000009, (IntPtr)0x00000000c00f0001);
+    }
+
+    public static void MakeFocusInvisible(Control c)
+    {
+        IntPtr hWnd = GetControlHandle(c).Handle;
+        SendMessage(hWnd, WM_CHANGEUISTATE, (IntPtr)MakeLong((int)UIS_SET, (int)UISF_HIDEFOCUS), IntPtr.Zero);
     }
 
     public static int MakeLong(int wLow, int wHigh)
@@ -43,7 +55,7 @@ public static class WPFUtils
         return (short)(word & short.MaxValue);
     }
 
-    public enum Direction { Left, Right, Up, Down }
+    public enum Direction { None, Left, Right, Up, Down }
 
     public static Control GetClosestControl(Control source, List<Control> controls, Direction direction)
     {
