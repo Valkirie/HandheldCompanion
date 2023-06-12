@@ -23,7 +23,6 @@
     IsVisibleChanged="Window_IsVisibleChanged"
     Loaded="Window_Loaded"
     ResizeMode="NoResize"
-    ShowActivated="True"
     ShowInTaskbar="False"
     SourceInitialized="Window_SourceInitialized"
     Topmost="True"

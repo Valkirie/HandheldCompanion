@@ -257,8 +257,9 @@ public partial class OverlayQuickTools : Window
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
                     Show();
-                    await Task.Delay(250);
+                    // ShowActivated
                     Activate();
+                    Focus();
                     break;
                 case Visibility.Visible:
                     Hide();
