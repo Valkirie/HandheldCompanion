@@ -110,13 +110,13 @@ public static class WPFUtils
         switch (direction)
         {
             case Direction.Left:
-                return x + target.ActualWidth < 0;
+                return x + target.ActualWidth <= 0;
             case Direction.Right:
-                return x > source.ActualWidth;
+                return x >= source.ActualWidth;
             case Direction.Up:
-                return y + target.ActualHeight < 0;
+                return y + target.ActualHeight <= 0;
             case Direction.Down:
-                return y > source.ActualHeight;
+                return y >= source.ActualHeight;
             default:
                 return false;
         }
