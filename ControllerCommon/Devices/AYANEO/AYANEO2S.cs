@@ -13,7 +13,7 @@ public class AYANEO2S : IDevice
         ProductIllustration = "device_aya_2";
         ProductModel = "AYANEO2";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u
+        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840U
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 3, 30 };
         GfxClock = new double[] { 100, 2700 };
