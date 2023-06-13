@@ -44,16 +44,15 @@ public class PerformanceManager : Manager
     private static readonly Guid[] PowerModes = new Guid[3]
         { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
 
-    private readonly Timer AutoTDPWatchdog;
-    protected readonly object AutoTDPWatchdogLock = new();
-    protected readonly object cpuLock = new();
-
+    private readonly Timer autoWatchdog;
     private readonly Timer cpuWatchdog;
-    protected readonly object gfxLock = new();
-
     private readonly Timer gfxWatchdog;
-    private readonly object powerLock = new();
     private readonly Timer powerWatchdog;
+
+    private bool autoLock;
+    private bool cpuLock;
+    private bool gfxLock;
+    private bool powerLock;
 
     // AutoTDP
     private double AutoTDP;
@@ -98,8 +97,8 @@ public class PerformanceManager : Manager
         gfxWatchdog = new Timer { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
         gfxWatchdog.Elapsed += gfxWatchdog_Elapsed;
 
-        AutoTDPWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
-        AutoTDPWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
+        autoWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
+        autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
         ProfileManager.Applied += ProfileManager_Applied;
 
@@ -164,11 +163,11 @@ public class PerformanceManager : Manager
         if (profile.AutoTDPEnabled)
         {
             AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
-            AutoTDPWatchdog.Start();
+            autoWatchdog.Start();
         }
         else
         {
-            AutoTDPWatchdog.Stop();
+            autoWatchdog.Stop();
         }
 
         // EPP
@@ -195,8 +194,11 @@ public class PerformanceManager : Manager
         if (AutoTDPProcessId == 0)
             return;
 
-        if (Monitor.TryEnter(AutoTDPWatchdogLock))
+        if (!autoLock)
         {
+            // set lock
+            autoLock = true;
+
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
             var processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
 
@@ -231,8 +233,9 @@ public class PerformanceManager : Manager
             AutoTDPPrev = AutoTDP;
 
             // LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
-
-            Monitor.Exit(AutoTDPWatchdogLock);
+            
+            // release lock
+            autoLock = false;
         }
     }
 
@@ -297,8 +300,11 @@ public class PerformanceManager : Manager
 
     private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        if (Monitor.TryEnter(powerLock))
+        if (!powerLock)
         {
+            // set lock
+            powerLock = true;
+
             // Checking if active power shceme has changed to reflect that
             if (PowerGetEffectiveOverlayScheme(out var activeScheme) == 0)
                 if (activeScheme != currentPowerMode)
@@ -330,7 +336,8 @@ public class PerformanceManager : Manager
                 EPPChanged?.Invoke(DCvalue);
             }
 
-            Monitor.Exit(powerLock);
+            // release lock
+            powerLock = false;
         }
     }
 
@@ -339,8 +346,11 @@ public class PerformanceManager : Manager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (Monitor.TryEnter(cpuLock))
+        if (!cpuLock)
         {
+            // set lock
+            cpuLock = true;
+
             var TDPdone = false;
             var MSRdone = false;
 
@@ -403,7 +413,8 @@ public class PerformanceManager : Manager
             if (TDPdone && MSRdone && cpuWatchdogPendingStop)
                 cpuWatchdog.Stop();
 
-            Monitor.Exit(cpuLock);
+            // release lock
+            cpuLock = false;
         }
     }
 
@@ -412,8 +423,11 @@ public class PerformanceManager : Manager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (Monitor.TryEnter(gfxLock))
+        if (!gfxLock)
         {
+            // set lock
+            gfxLock = true;
+
             var GPUdone = false;
 
             if (CurrentGfxClock != 0)
@@ -424,7 +438,8 @@ public class PerformanceManager : Manager
             // not ready yet
             if (StoredGfxClock == 0)
             {
-                Monitor.Exit(gfxLock);
+                // release lock
+                gfxLock = false;
                 return;
             }
 
@@ -446,7 +461,8 @@ public class PerformanceManager : Manager
             if (GPUdone && gfxWatchdogPendingStop)
                 gfxWatchdog.Stop();
 
-            Monitor.Exit(gfxLock);
+            // release lock
+            gfxLock = false;
         }
     }
 
@@ -629,7 +645,7 @@ public class PerformanceManager : Manager
         powerWatchdog.Stop();
         cpuWatchdog.Stop();
         gfxWatchdog.Stop();
-        AutoTDPWatchdog.Stop();
+        autoWatchdog.Stop();
 
         base.Stop();
     }
