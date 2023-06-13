@@ -47,6 +47,9 @@
 		<Reference Include="ModernWpf">
 			<HintPath>..\Resources\ModernWpf.dll</HintPath>
 		</Reference>
+		<Reference Include="ModernWpf.Controls">
+		  <HintPath>..\Resources\ModernWpf.Controls.dll</HintPath>
+		</Reference>
 		<Reference Include="NamedPipeWrapper">
 		  <HintPath>..\Resources\NamedPipeWrapper.dll</HintPath>
 		</Reference>

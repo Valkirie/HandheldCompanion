@@ -7,8 +7,11 @@ using System.Windows.Input;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
+using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
+using ModernWpf.Controls;
 
 namespace HandheldCompanion.Managers
 {
@@ -88,10 +91,15 @@ namespace HandheldCompanion.Managers
 
                 if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1))
                 {
+                    // lazy
+                    // todo: implement proper RoutedEvent call
                     switch(focusedElement.GetType().Name)
                     {
                         case "Button":
-                            ((Button)focusedElement).RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                        case "ToggleSwitch":
+                        case "ToggleButton":
+                        case "CheckBox":
+                            KeyboardSimulator.KeyPress(VirtualKeyCode.SPACE);
                             break;
                     }
                 }

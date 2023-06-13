@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModernWpf.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -89,14 +90,22 @@ public static class WPFUtils
 
     public static Control GetClosestControl(Control source, List<Control> controls, Direction direction)
     {
+        if (source.GetType() == typeof(NavigationViewItem))
+            controls = controls.Where(c => c.GetType() == typeof(NavigationViewItem)).ToList();
+        else
+            controls = controls.Where(c => c.GetType() != typeof(NavigationViewItem)).ToList();
+
         // Filter out the controls that are not in the given direction
         controls = controls.Where(c => c != source && IsInDirection(source, c, direction)).ToList();
 
         // If no controls are found, return null
         if (controls.Count == 0) return null;
 
-        // Find the control with the minimum distance to the source
-        return controls.OrderBy(c => GetDistance(source, c)).First();
+        // Find the control with the same parent and the minimum distance to the source
+        // If no control has the same parent, find the control with the minimum distance to the source
+        controls = controls.OrderBy(c => DistanceBetweenControls(source, c)).ToList();
+
+        return controls.First();
     }
 
     // Helper method to check if a control is in a given direction from another control
@@ -134,6 +143,30 @@ public static class WPFUtils
         return Math.Sqrt(dx * dx + dy * dy);
     }
 
+    private static double DistanceBetweenControls(Control c1, Control c2)
+    {
+        // Obtenir les coordonnées des coins supérieurs gauches des contrôles
+        Point p1 = c1.TranslatePoint(new Point(0, 0), null);
+        Point p2 = c2.TranslatePoint(new Point(0, 0), null);
+
+        // Obtenir les largeurs et les hauteurs des contrôles
+        double w1 = c1.ActualWidth;
+        double h1 = c1.ActualHeight;
+        double w2 = c2.ActualWidth;
+        double h2 = c2.ActualHeight;
+
+        // Calculer les coordonnées des coins inférieurs droits des contrôles
+        Point p3 = new Point(p1.X + w1, p1.Y + h1);
+        Point p4 = new Point(p2.X + w2, p2.Y + h2);
+
+        // Calculer la distance horizontale et verticale entre les bords les plus proches des contrôles
+        double dx = Math.Max(Math.Max(p1.X - p4.X, 0), Math.Max(p2.X - p3.X, 0));
+        double dy = Math.Max(Math.Max(p1.Y - p4.Y, 0), Math.Max(p2.Y - p3.Y, 0));
+
+        // Calculer la distance euclidienne entre les bords les plus proches des contrôles
+        return Math.Sqrt(dx * dx + dy * dy);
+    }
+    
     public static List<Control> FindChildren(DependencyObject startNode)
     {
         int count = VisualTreeHelper.GetChildrenCount(startNode);
@@ -143,15 +176,23 @@ public static class WPFUtils
         {
             DependencyObject current = VisualTreeHelper.GetChild(startNode, i);
 
-            switch (current.GetType().Name)
+            string currentType = current.GetType().Name;
+            switch (currentType)
             {
                 case "Button":
                 case "Slider":
                 case "ToggleSwitch":
                 case "NavigationViewItem":
-                    Control asType = (Control)current;
-                    if(asType.IsEnabled && asType.Focusable && asType.Visibility == Visibility.Visible)
-                        childs.Add(asType);
+                case "ComboBox":
+                case "AppBarButton":
+                case "ToggleButton":
+                case "CheckBox":
+                    {
+                        Control asType = (Control)current;
+
+                        if (asType.IsEnabled && asType.Focusable && asType.IsVisible)
+                            childs.Add(asType);
+                    }
                     break;
             }
 
