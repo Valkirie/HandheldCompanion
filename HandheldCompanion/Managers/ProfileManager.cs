@@ -37,7 +37,7 @@ public static class ProfileManager
         ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
         ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
 
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
     }
 
     public static FileSystemWatcher profileWatcher { get; set; }
@@ -483,10 +483,10 @@ public static class ProfileManager
         }
     }
 
-    private static void ControllerManager_ControllerSelected(IController Controller)
+    private static void ControllerManager_ControllerPlugged(IController Controller)
     {
-        // only XInput controllers use XInputPlus
-        if (Controller.GetType() != typeof(XInputController))
+        // we're only interest in virtual, XInput controllers
+        if (Controller.GetType() != typeof(XInputController) || !Controller.IsVirtual())
             return;
 
         foreach (var profile in profiles.Values)
