@@ -14,7 +14,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 

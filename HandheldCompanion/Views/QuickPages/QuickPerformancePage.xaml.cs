@@ -5,7 +5,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Platforms;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;

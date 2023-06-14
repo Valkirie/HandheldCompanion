@@ -19,7 +19,7 @@ using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;

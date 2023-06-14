@@ -4,7 +4,7 @@ using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Managers;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 
 namespace HandheldCompanion.Controls;
 

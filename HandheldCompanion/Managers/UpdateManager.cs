@@ -9,7 +9,7 @@ using System.Reflection;
 using ControllerCommon.Managers;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 
 namespace HandheldCompanion.Managers;

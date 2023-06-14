@@ -10,7 +10,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 

@@ -12,7 +12,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 

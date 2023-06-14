@@ -7,7 +7,7 @@
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.SettingsMode1_AdditionalSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"

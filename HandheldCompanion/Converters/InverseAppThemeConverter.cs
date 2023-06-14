@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using ModernWpf;
+using Inkore.UI.WPF.Modern;
 
 namespace HandheldCompanion.Converters;
 

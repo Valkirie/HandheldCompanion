@@ -10,7 +10,7 @@ using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Simulators;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 
 namespace HandheldCompanion.Controls;
 
