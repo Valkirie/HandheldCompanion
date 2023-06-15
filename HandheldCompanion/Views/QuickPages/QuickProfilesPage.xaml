@@ -691,7 +691,7 @@
                                 IsMoveToPointEnabled="True"
                                 IsSnapToTickEnabled="True"
                                 LargeChange="5"
-                                Maximum="60"
+                                Maximum="120"
                                 Minimum="30"
                                 SmallChange="5"
                                 Style="{DynamicResource SliderStyle1}"
