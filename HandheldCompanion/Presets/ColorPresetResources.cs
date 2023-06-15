@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using ModernWpf;
+using Inkore.UI.WPF.Modern;
 
 namespace HandheldCompanion.Presets;
 

@@ -12,7 +12,7 @@ using Windows.System.Power;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.QuickPages;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using Application = System.Windows.Application;

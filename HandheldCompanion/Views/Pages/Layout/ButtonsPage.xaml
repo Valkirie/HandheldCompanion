@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"

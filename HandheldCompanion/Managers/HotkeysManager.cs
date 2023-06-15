@@ -14,7 +14,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;

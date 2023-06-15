@@ -7,7 +7,7 @@ using System.Windows.Media;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 
 namespace ControllerCommon.Controllers;
 

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:presets="clr-namespace:HandheldCompanion.Presets"
-    xmlns:ui="http://schemas.modernwpf.com/2019">
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -25,10 +25,8 @@
                             <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush"
-                                             Color="{StaticResource SystemAltHighColor}" />
-                            <StaticResource x:Key="ControlExampleDisplayBrush"
-                                            ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+                            <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                         </ResourceDictionary>
 
                         <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
@@ -45,8 +43,7 @@
                             <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
                             <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
-                            <StaticResource x:Key="ControlExampleDisplayBrush"
-                                            ResourceKey="SolidBackgroundFillColorBaseBrush" />
+                            <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
@@ -54,11 +51,9 @@
                 <!--  ModernWPF controls resources  -->
                 <ui:XamlControlsResources />
 
-                <ResourceDictionary
-                    Source="pack://Application:,,,/HandheldCompanion;component/Styles/NavigationView.xaml" />
+                <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/NavigationView.xaml" />
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/Slider.xaml" />
-                <ResourceDictionary
-                    Source="pack://Application:,,,/HandheldCompanion;component/Styles/ToggleSwitch.xaml" />
+                <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/ToggleSwitch.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 

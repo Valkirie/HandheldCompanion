@@ -18,6 +18,7 @@ namespace HandheldCompanion.Views.Pages.Profiles;
 public partial class SettingsMode0 : Page
 {
     private Hotkey ProfilesPageHotkey;
+    private bool profileLock;
 
     public SettingsMode0()
     {
@@ -36,41 +37,51 @@ public partial class SettingsMode0 : Page
 
     public void SetProfile()
     {
-        SliderSensitivityX.Value = ProfilesPage.currentProfile.MotionSensivityX;
-        SliderSensitivityY.Value = ProfilesPage.currentProfile.MotionSensivityY;
-        tb_ProfileAimingDownSightsMultiplier.Value = ProfilesPage.currentProfile.AimingSightsMultiplier;
-        Toggle_FlickStick.IsOn = ProfilesPage.currentProfile.FlickstickEnabled;
-        tb_ProfileFlickDuration.Value = ProfilesPage.currentProfile.FlickstickDuration * 1000;
-        tb_ProfileStickSensitivity.Value = ProfilesPage.currentProfile.FlickstickSensivity;
-
-        // todo: improve me ?
-        ProfilesPageHotkey.inputsChord.State = ProfilesPage.currentProfile.AimingSightsTrigger.Clone() as ButtonState;
-        ProfilesPageHotkey.DrawInput();
-
-        // temp
-        StackCurve.Children.Clear();
-        foreach (var elem in ProfilesPage.currentProfile.MotionSensivityArray)
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // skip first item ?
-            if (elem.Key == 0)
-                continue;
+            // set lock
+            profileLock = true;
 
-            var height = elem.Value * StackCurve.Height;
-            var thumb = new Thumb
+            SliderSensitivityX.Value = ProfilesPage.currentProfile.MotionSensivityX;
+            SliderSensitivityY.Value = ProfilesPage.currentProfile.MotionSensivityY;
+            tb_ProfileAimingDownSightsMultiplier.Value = ProfilesPage.currentProfile.AimingSightsMultiplier;
+            Toggle_FlickStick.IsOn = ProfilesPage.currentProfile.FlickstickEnabled;
+            tb_ProfileFlickDuration.Value = ProfilesPage.currentProfile.FlickstickDuration * 1000;
+            tb_ProfileStickSensitivity.Value = ProfilesPage.currentProfile.FlickstickSensivity;
+
+            // todo: improve me ?
+            ProfilesPageHotkey.inputsChord.State = ProfilesPage.currentProfile.AimingSightsTrigger.Clone() as ButtonState;
+            ProfilesPageHotkey.DrawInput();
+
+            // temp
+            StackCurve.Children.Clear();
+            foreach (var elem in ProfilesPage.currentProfile.MotionSensivityArray)
             {
-                Tag = elem.Key,
-                Width = 8,
-                MaxHeight = StackCurve.Height,
-                Height = height,
-                VerticalAlignment = VerticalAlignment.Bottom,
-                Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
-                BorderThickness = new Thickness(0),
-                BorderBrush = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"],
-                IsEnabled = false // prevent the control from being clickable
-            };
+                // skip first item ?
+                if (elem.Key == 0)
+                    continue;
 
-            StackCurve.Children.Add(thumb);
-        }
+                var height = elem.Value * StackCurve.Height;
+                var thumb = new Thumb
+                {
+                    Tag = elem.Key,
+                    Width = 8,
+                    MaxHeight = StackCurve.Height,
+                    Height = height,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Background = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentLowBrush"],
+                    BorderThickness = new Thickness(0),
+                    BorderBrush = (Brush)Application.Current.Resources["SystemControlHighlightAltListAccentHighBrush"],
+                    IsEnabled = false // prevent the control from being clickable
+                };
+
+                StackCurve.Children.Add(thumb);
+            }
+
+            // release lock
+            profileLock = false;
+        });
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -106,6 +117,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
+        ProfilesPage.RequestUpdate();
     }
 
     private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -114,6 +126,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
+        ProfilesPage.RequestUpdate();
     }
 
     private void Highlight_Thumb(float value)
@@ -168,6 +181,7 @@ public partial class SettingsMode0 : Page
             var x = (double)Thumb.Tag;
             Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
             ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+            ProfilesPage.RequestUpdate();
         }
     }
 
@@ -179,6 +193,7 @@ public partial class SettingsMode0 : Page
             var x = (double)Thumb.Tag;
             Thumb.Height = StackCurve.Height / 2.0f;
             ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+            ProfilesPage.RequestUpdate();
         }
     }
 
@@ -193,6 +208,7 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+            ProfilesPage.RequestUpdate();
         }
     }
 
@@ -207,6 +223,7 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.currentProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+            ProfilesPage.RequestUpdate();
         }
     }
 
@@ -221,6 +238,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.currentProfile.AimingSightsMultiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
+        ProfilesPage.RequestUpdate();
     }
 
     private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
@@ -229,6 +247,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.currentProfile.FlickstickEnabled = Toggle_FlickStick.IsOn;
+        ProfilesPage.RequestUpdate();
     }
 
     private void SliderFlickDuration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -237,6 +256,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.currentProfile.FlickstickDuration = (float)tb_ProfileFlickDuration.Value / 1000;
+        ProfilesPage.RequestUpdate();
     }
 
     private void SliderStickSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -245,6 +265,7 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.currentProfile.FlickstickSensivity = (float)tb_ProfileStickSensitivity.Value;
+        ProfilesPage.RequestUpdate();
     }
 
     private void TriggerCreated(Hotkey hotkey)
@@ -274,6 +295,7 @@ public partial class SettingsMode0 : Page
         {
             case "shortcutProfilesSettingsMode0":
                 ProfilesPage.currentProfile.AimingSightsTrigger = inputs.State.Clone() as ButtonState;
+                ProfilesPage.RequestUpdate();
                 break;
         }
     }
