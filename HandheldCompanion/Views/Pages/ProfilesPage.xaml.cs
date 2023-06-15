@@ -723,6 +723,7 @@ public partial class ProfilesPage : Page
         if (layoutLock)
             return;
 
+        currentProfile.Layout = layoutTemplate.Layout;
         currentProfile.LayoutTitle = layoutTemplate.Name;
         RequestUpdate();
     }
