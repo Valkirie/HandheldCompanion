@@ -84,16 +84,6 @@ public partial class MainWindow : Window
         // get process
         var process = Process.GetCurrentProcess();
 
-        // initialize splash screen on first start only
-        var IsFirstStart = SettingsManager.GetBoolean("FirstStart");
-#if !DEBUG
-            if (IsFirstStart)
-            {
-                SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-                splashScreen.Show(true, true);
-            }
-#endif
-
         // fix touch support
         var tablets = Tablet.TabletDevices;
 
@@ -152,6 +142,23 @@ public partial class MainWindow : Window
         CurrentDevice.PullSensors();
         CurrentDevice.Open();
 
+        if (SettingsManager.GetBoolean("FirstStart"))
+        {
+            // initialize splash screen on first start only
+            SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+            splashScreen.Show(true, true);
+
+            // handle a few edge-cases on first start
+            if (CurrentDevice.GetType() == typeof(SteamDeck))
+            {
+                // we shouldn't hide the steam deck controller by default
+                SettingsManager.SetProperty("HIDcloakonconnect", false);
+            }
+
+            // update FirstStart
+            SettingsManager.SetProperty("FirstStart", false);
+        }
+
         // load manager(s)
         // todo: make me static
         loadManagers();
@@ -206,10 +213,6 @@ public partial class MainWindow : Window
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
-
-        // update FirstStart
-        if (IsFirstStart)
-            SettingsManager.SetProperty("FirstStart", false);
     }
 
     private void AddNotifyIconItem(string name, object tag = null)
