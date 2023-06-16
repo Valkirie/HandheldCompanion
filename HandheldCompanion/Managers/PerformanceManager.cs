@@ -8,6 +8,7 @@ using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
+using GregsStack.InputSimulatorStandard;
 using HandheldCompanion.Views;
 using PowerProfileUtils;
 using RTSSSharedMemoryNET;
@@ -64,14 +65,13 @@ public class PerformanceManager : Manager
     private double AutoTDPMin;
     private int AutoTDPProcessId;
     private double AutoTDPTargetFPS;
-    private bool cpuWatchdogPendingStop;
-    private uint currentEPP = 50;
-    private double CurrentGfxClock;
+    private bool cpuWatchdogPendingStop;   
 
     // powercfg
     private bool currentPerfBoostMode;
     private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
     private readonly double[] CurrentTDP = new double[5]; // used to store current TDP
+    private uint currentEPP = 50;
 
     // GPU limits
     private double FallbackGfxClock;
@@ -81,6 +81,7 @@ public class PerformanceManager : Manager
     private Processor processor;
     private double ProcessValueFPSPrevious;
     private double StoredGfxClock;
+    private double CurrentGfxClock;
 
     // TDP limits
     private readonly double[] StoredTDP = new double[3]; // used to store TDP
@@ -653,6 +654,11 @@ public class PerformanceManager : Manager
     public Processor GetProcessor()
     {
         return processor;
+    }
+
+    public double GetAutoTDPSetpoint()
+    {
+        return AutoTDP;
     }
 
     #region imports

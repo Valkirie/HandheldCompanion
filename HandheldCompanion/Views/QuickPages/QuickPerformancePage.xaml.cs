@@ -55,10 +55,12 @@ public partial class QuickPerformancePage : Page
                 case PlatformStatus.Ready:
                     OverlayDisplayLevelExtended.IsEnabled = true;
                     OverlayDisplayLevelFull.IsEnabled = true;
+                    OverlayDisplayLevelAutoTDP.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:
                     OverlayDisplayLevelExtended.IsEnabled = false;
                     OverlayDisplayLevelFull.IsEnabled = false;
+                    OverlayDisplayLevelAutoTDP.IsEnabled = false;
                     break;
             }
         });
