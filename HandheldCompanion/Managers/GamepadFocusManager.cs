@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
@@ -15,8 +13,7 @@ using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Windows;
-using ModernWpf.Controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Inkore.UI.WPF.Modern.Controls;
 
 namespace HandheldCompanion.Managers
 {

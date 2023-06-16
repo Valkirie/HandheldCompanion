@@ -968,7 +968,6 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Left"
-                                        SelectedIndex="0"
                                         SelectionChanged="cB_Input_SelectionChanged" />
                                 </Grid>
 
@@ -1003,7 +1002,6 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         HorizontalContentAlignment="Left"
-                                        SelectedIndex="0"
                                         SelectionChanged="cB_Output_SelectionChanged" />
                                 </Grid>
 
