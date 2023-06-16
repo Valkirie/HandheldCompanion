@@ -330,6 +330,7 @@
                         <ComboBox
                             Name="cB_Theme"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_Theme_SelectionChanged">
                             <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_ThemeLight}" />
@@ -372,6 +373,7 @@
                         <ComboBox
                             Name="cB_Backdrop"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_Backdrop_SelectionChanged">
                             <Label Content="{x:Static resx:Resources.SettingsPage_BackdropNone}" />
@@ -411,11 +413,11 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons
+                        <ComboBox
                             Name="cB_Language"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
-                            MaxColumns="2"
                             SelectionChanged="cB_Language_SelectionChanged" />
                     </Grid>
                 </Border>
@@ -457,12 +459,13 @@
                         <ComboBox
                             Name="cB_QuicktoolsPosition"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
-                            <Label Content="Top left" />
-                            <Label Content="Top right" />
-                            <Label Content="Bottom left" />
-                            <Label Content="Bottom right" />
+                            <ComboBoxItem Content="Top left" />
+                            <ComboBoxItem Content="Top right" />
+                            <ComboBoxItem Content="Bottom left" />
+                            <ComboBoxItem Content="Bottom right" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -626,11 +629,11 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <ui:RadioButtons
+                        <ComboBox
                             Name="cB_StartupType"
                             Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            MaxColumns="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Stretch"
                             SelectionChanged="cB_StartupType_SelectionChanged" />
                     </Grid>
                 </Border>

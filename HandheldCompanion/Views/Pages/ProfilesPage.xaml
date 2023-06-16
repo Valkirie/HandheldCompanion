@@ -828,8 +828,8 @@
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="6*" MinWidth="200" />
-                                            <ColumnDefinition Width="4*" MinWidth="120" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -841,26 +841,27 @@
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                            <ui:RadioButtons
-                                                Name="cB_GyroSteering"
-                                                HorizontalAlignment="Stretch"
-                                                MaxColumns="2">
-                                                <RadioButton>
-                                                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                        <ui:FontIcon Glyph="&#xE8B4;" />
-                                                        <Label Content="{x:Static resx:Resources.ProfilesPage_Yaw}" />
-                                                    </ui:SimpleStackPanel>
-                                                </RadioButton>
+                                        <ComboBox
+                                            Name="cB_GyroSteering"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Left">
+                                            <ComboBoxItem>
+                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ui:FontIcon Glyph="&#xE8B4;" />
+                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_Yaw}" />
+                                                </ui:SimpleStackPanel>
+                                            </ComboBoxItem>
 
-                                                <RadioButton>
-                                                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                        <ui:FontIcon Glyph="&#xE8B4;" />
-                                                        <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
-                                                    </ui:SimpleStackPanel>
-                                                </RadioButton>
-                                            </ui:RadioButtons>
-                                        </DockPanel>
+                                            <ComboBoxItem>
+                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                    <ui:FontIcon Glyph="&#xE8B4;" />
+                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
+                                                </ui:SimpleStackPanel>
+                                            </ComboBoxItem>
+                                        </ComboBox>
                                     </Grid>
 
                                     <!--  Separator  -->
@@ -949,8 +950,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200" />
-                                        <ColumnDefinition Width="4*" MinWidth="120" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -965,13 +966,13 @@
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
-                                    <ui:RadioButtons
+                                    <ComboBox
                                         Name="cB_Input"
                                         Grid.Column="1"
-                                        Margin="6,0,0,0"
-                                        HorizontalAlignment="Right"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        MaxColumns="2"
+                                        HorizontalContentAlignment="Left"
                                         SelectedIndex="0"
                                         SelectionChanged="cB_Input_SelectionChanged" />
                                 </Grid>
@@ -984,8 +985,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200" />
-                                        <ColumnDefinition Width="4*" MinWidth="120" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -1000,13 +1001,13 @@
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
-                                    <ui:RadioButtons
+                                    <ComboBox
                                         Name="cB_Output"
                                         Grid.Column="1"
-                                        Margin="6,0,0,0"
-                                        HorizontalAlignment="Right"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        MaxColumns="2"
+                                        HorizontalContentAlignment="Left"
                                         SelectedIndex="0" />
                                 </Grid>
 
@@ -1085,15 +1086,16 @@
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
                                         HorizontalAlignment="Stretch"
+                                        Orientation="Vertical"
                                         Spacing="6">
-                                        <ui:RadioButtons
+                                        <ComboBox
                                             Name="cB_UMC_MotionDefaultOffOn"
-                                            HorizontalAlignment="Right"
-                                            MaxColumns="2"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
                                             SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
-                                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
-                                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
-                                        </ui:RadioButtons>
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                                        </ComboBox>
                                     </ui:SimpleStackPanel>
                                 </Grid>
 
