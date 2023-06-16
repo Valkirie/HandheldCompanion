@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using SharpDX.Multimedia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,7 +109,7 @@ public static class WPFUtils
 
         // Find the control with the same parent and the minimum distance to the source
         // If no control has the same parent, find the control with the minimum distance to the source
-        controls = controls.OrderBy(c => GetDistance(source, c, Direction.None)).ToList();
+        controls = controls.OrderBy(c => GetDistanceV2(source, c, Direction.None)).ToList();
 
         return controls.First();
     }
@@ -165,7 +166,21 @@ public static class WPFUtils
 
         return 9999.0d;
     }
-    
+
+    public static double GetDistanceV2(Control c1, Control c2, Direction direction)
+    {
+        // We retrieve the control's bounding box
+        Rect r1 = c1.TransformToVisual(c1).TransformBounds(new Rect(c1.RenderSize));
+        Rect r2 = c2.TransformToVisual(c1).TransformBounds(new Rect(c2.RenderSize));
+
+        // Calculate the horizontal and vertical distances between the edges of the rectangles
+        double dx = Math.Max(0, Math.Max(r1.Left, r2.Left) - Math.Min(r1.Right, r2.Right));
+        double dy = Math.Max(0, Math.Max(r1.Top, r2.Top) - Math.Min(r1.Bottom, r2.Bottom));
+
+        // Return the Euclidean distance between the nearest edges
+        return Math.Sqrt(dx * dx + dy * dy);
+    }
+
     public static List<Control> FindChildren(DependencyObject startNode)
     {
         int count = VisualTreeHelper.GetChildrenCount(startNode);

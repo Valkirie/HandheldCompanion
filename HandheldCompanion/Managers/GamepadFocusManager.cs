@@ -115,7 +115,7 @@ namespace HandheldCompanion.Managers
                 {
                     // lazy
                     // todo: implement proper RoutedEvent call
-                    switch(elementType)
+                    switch (elementType)
                     {
                         case "Button":
                         case "ToggleSwitch":
@@ -141,7 +141,7 @@ namespace HandheldCompanion.Managers
                             break;
 
                         case "ComboBoxItem":
-                            {                                
+                            {
                                 KeyboardSimulator.KeyPress(VirtualKeyCode.RETURN);
                             }
                             break;
@@ -183,14 +183,22 @@ namespace HandheldCompanion.Managers
                             break;
                     }
                 }
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp))
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))
+                {
                     direction = WPFUtils.Direction.Up;
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown))
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickDown))
+                {
                     direction = WPFUtils.Direction.Down;
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft))
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickLeft))
+                {
                     direction = WPFUtils.Direction.Left;
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight))
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
+                {
                     direction = WPFUtils.Direction.Right;
+                }
 
                 // navigation
                 if (direction != WPFUtils.Direction.None)
