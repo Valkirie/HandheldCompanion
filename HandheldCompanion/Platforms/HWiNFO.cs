@@ -606,7 +606,7 @@ public class HWiNFO : IPlatform
 
         public override string ToString()
         {
-            return string.Format("<C0>{0:00}<S1>{1}<S><C>", Value, szUnit);
+            return string.Format("<C0>{0:0.00}<S1>{1}<S><C>", Value, szUnit);
         }
     }
 

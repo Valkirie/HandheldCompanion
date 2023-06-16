@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
+using ControllerCommon;
 using ControllerCommon.Managers;
+using HandheldCompanion.Views;
+using HidSharp.Reports.Units;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using static HandheldCompanion.Platforms.HWiNFO;
@@ -34,12 +38,17 @@ public static class OSDManager
     private static AppEntry OnScreenAppEntry;
     private static List<string> Content;
 
+    private static float autoTDPTargetFPS;
+    private static bool autoTDPEnabled;
+
     static OSDManager()
     {
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
+
+        ProfileManager.Applied += ProfileManager_Applied;
 
         // timer used to monitor foreground application framerate
         RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
@@ -298,6 +307,80 @@ public static class OSDManager
                 Content.Add(row6.ToString());
             }
                 break;
+
+            case 4:
+            {
+                if (autoTDPEnabled)
+                {
+                    // AutoTDP info
+
+                    //      FPS    TDP
+                    // Set 60.0  12.34 
+                    // Act 59.3  12.54
+
+                    OverlayRow row1 = new OverlayRow();
+                    OverlayRow row2 = new OverlayRow();
+                    OverlayRow row3 = new OverlayRow();
+
+                    // Row 1, header
+                    OverlayEntry headerEntry = new OverlayEntry("       FPS    TDP", "C1");
+                    row1.entries.Add(headerEntry);
+
+                    // Row 2, setpoints
+
+                    OverlayEntry setFPSEntry = new OverlayEntry("Set ", "C2");
+                    setFPSEntry.elements.Add(new SensorElement()
+                    {
+                        Value = autoTDPTargetFPS,
+                    });
+                    row2.entries.Add(setFPSEntry);
+
+                    OverlayEntry setTDPEntry = new OverlayEntry("", "C3");
+                    // Add your code here to get the AutoTDP setpoint value from your application
+                    setTDPEntry.elements.Add(new SensorElement()
+                    {
+                        Value = MainWindow.performanceManager.GetAutoTDPSetpoint(),
+                    });
+                    row2.entries.Add(setTDPEntry);
+
+                    // Row 3, actuals
+                    OverlayEntry ActFPSentry = new OverlayEntry("Act ", "C4");
+                    ActFPSentry.elements.Add(new SensorElement()
+                    {
+                        Value = PlatformManager.RTSS.GetFramerate(processId),
+                    });
+                    row3.entries.Add(ActFPSentry);
+
+                    OverlayEntry ActTDPentry = new OverlayEntry("", "C5");
+
+                    if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.CPUPower, out sensor))
+                        ActTDPentry.elements.Add(new SensorElement()
+                        {
+                            Value = sensor.Value,
+                        });
+
+                        //ActTDPentry.elements.Add(sensor);
+                    row3.entries.Add(ActTDPentry);
+
+                    // Add the rows to the content list
+                    Content.Add(row1.ToString());
+                    Content.Add(row2.ToString());
+                    Content.Add(row3.ToString());
+                }
+                else
+                {
+                    // Indicate AutoTDP is off
+
+                    OverlayRow row1 = new();
+
+                    OverlayEntry AutoTDPStatus = new("AutoTDP Off", "C6");
+                    row1.entries.Add(AutoTDPStatus);
+
+                    // add header to row1
+                    Content.Add(Header + row1);
+                }
+                break;
+            }  
         }
 
         return string.Join("\n", Content);
@@ -360,6 +443,13 @@ public static class OSDManager
                 break;
         }
     }
+
+    private static void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
+    {
+        // AutoTDP
+        autoTDPTargetFPS = profile.AutoTDPEnabled ? profile.AutoTDPRequestedFPS : 0f;
+        autoTDPEnabled = profile.AutoTDPEnabled;
+    }
 }
 
 public class OverlayEntry : IDisposable
@@ -399,8 +489,8 @@ public class OverlayRow : IDisposable
 
         foreach (var entry in entries)
         {
-            if (entry.elements is null || entry.elements.Count == 0)
-                continue;
+            //if (entry.elements is null || entry.elements.Count == 0)
+            //    continue;
 
             List<string> entriesStr = new() { entry.Name };
 
@@ -411,6 +501,6 @@ public class OverlayRow : IDisposable
             rowStr.Add(ItemStr);
         }
 
-        return string.Join(" | ", rowStr);
+        return string.Join(" ", rowStr);
     }
 }
