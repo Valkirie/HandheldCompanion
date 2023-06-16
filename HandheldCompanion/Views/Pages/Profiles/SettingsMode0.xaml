@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.SettingsMode0_AdditionalSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"

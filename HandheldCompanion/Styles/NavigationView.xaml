@@ -2,11 +2,11 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="http://schemas.modernwpf.com/2019"
-    xmlns:primitives="http://schemas.modernwpf.com/2019"
-    xmlns:ui="http://schemas.modernwpf.com/2019">
+    xmlns:local="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:primitives="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/ModernWpf;component/Styles/Button.xaml" />
+        <ResourceDictionary Source="/Inkore.UI.WPF.Modern;component/Styles/Button.xaml" />
         <ResourceDictionary>
             <ui:BindingProxy x:Key="OverlayCornerRadiusProxy" Value="{DynamicResource OverlayCornerRadius}" />
             <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -9,8 +12,8 @@ namespace HandheldCompanion.Views.Classes;
 public class OverlayWindow : Window
 {
     public HorizontalAlignment _HorizontalAlignment;
-
     public VerticalAlignment _VerticalAlignment;
+    protected ushort _hotkeyId;
 
     public OverlayWindow()
     {
@@ -27,6 +30,16 @@ public class OverlayWindow : Window
         SizeChanged += (o, e) => { UpdatePosition(); };
 
         SourceInitialized += Overlay_SourceInitialized;
+        IsVisibleChanged += OverlayWindow_IsVisibleChanged;
+    }
+
+    private void OverlayWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (_hotkeyId == 0)
+            return;
+        
+        if (HotkeysManager.Hotkeys.TryGetValue(_hotkeyId, out Hotkey hotkey))
+            hotkey.SetToggle(this.Visibility == Visibility.Visible ? true : false);
     }
 
     public new HorizontalAlignment HorizontalAlignment

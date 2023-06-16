@@ -20,7 +20,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
@@ -85,16 +85,6 @@ public partial class MainWindow : GamepadWindow
         // get process
         var process = Process.GetCurrentProcess();
 
-        // initialize splash screen on first start only
-        var IsFirstStart = SettingsManager.GetBoolean("FirstStart");
-#if !DEBUG
-            if (IsFirstStart)
-            {
-                SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-                splashScreen.Show(true, true);
-            }
-#endif
-
         // fix touch support
         var tablets = Tablet.TabletDevices;
 
@@ -153,6 +143,23 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice.PullSensors();
         CurrentDevice.Open();
 
+        if (SettingsManager.GetBoolean("FirstStart"))
+        {
+            // initialize splash screen on first start only
+            SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
+            splashScreen.Show(true, true);
+
+            // handle a few edge-cases on first start
+            if (CurrentDevice.GetType() == typeof(SteamDeck))
+            {
+                // we shouldn't hide the steam deck controller by default
+                SettingsManager.SetProperty("HIDcloakonconnect", false);
+            }
+
+            // update FirstStart
+            SettingsManager.SetProperty("FirstStart", false);
+        }
+
         // load manager(s)
         // todo: make me static
         loadManagers();
@@ -208,10 +215,6 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
-
-        // update FirstStart
-        if (IsFirstStart)
-            SettingsManager.SetProperty("FirstStart", false);
     }
 
     private void AddNotifyIconItem(string name, object tag = null)

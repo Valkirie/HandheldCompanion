@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.16.0.5</Version>
+    <Version>0.16.1.1</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -2121,14 +2121,14 @@
     <Reference Include="Gma.System.MouseKeyHook">
       <HintPath>..\Resources\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
+    <Reference Include="Inkore.UI.WPF.Modern">
+      <HintPath>..\Resources\Inkore.UI.WPF.Modern.dll</HintPath>
+    </Reference>
+    <Reference Include="Inkore.UI.WPF.Modern.Controls">
+      <HintPath>..\Resources\Inkore.UI.WPF.Modern.Controls.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler">
       <HintPath>..\Resources\Microsoft.Win32.TaskScheduler.dll</HintPath>
-    </Reference>
-    <Reference Include="ModernWpf">
-      <HintPath>..\Resources\ModernWpf.dll</HintPath>
-    </Reference>
-    <Reference Include="ModernWpf.Controls">
-      <HintPath>..\Resources\ModernWpf.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Nefarius.Utilities.DeviceManagement">
       <HintPath>..\Resources\Nefarius.Utilities.DeviceManagement.dll</HintPath>

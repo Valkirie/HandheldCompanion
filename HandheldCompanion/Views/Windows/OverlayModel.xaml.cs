@@ -50,6 +50,7 @@ public partial class OverlayModel : OverlayWindow
     public OverlayModel()
     {
         InitializeComponent();
+        this._hotkeyId = 1;
 
         PipeClient.ServerMessage += OnServerMessage;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;

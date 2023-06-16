@@ -102,17 +102,6 @@ public abstract class IDevice
 
     public IDevice()
     {
-        // We assume all the devices have those keys
-        OEMChords.Add(new DeviceChord("Volume Up",
-            new List<KeyCode> { KeyCode.VolumeUp },
-            new List<KeyCode> { KeyCode.VolumeUp },
-            false, ButtonFlags.VolumeUp
-        ));
-        OEMChords.Add(new DeviceChord("Volume Down",
-            new List<KeyCode> { KeyCode.VolumeDown },
-            new List<KeyCode> { KeyCode.VolumeDown },
-            false, ButtonFlags.VolumeDown
-        ));
     }
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
@@ -180,6 +169,10 @@ public abstract class IDevice
                         break;
                     case "AB05-AMD":
                         device = new AYANEOAIRPlus();
+                        break;
+                    case "AYANEO 2S":
+                    case "GEEK 1S":
+                        device = new AYANEO2S();
                         break;
                 }
             }

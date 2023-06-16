@@ -10,7 +10,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
@@ -26,7 +26,7 @@ public partial class QuickProfilesPage : Page
     private ProcessEx currentProcess;
     private Profile currentProfile;
 
-    private bool isDrawing;
+    private bool profileLock;
 
     private Hotkey ProfilesPageHotkey = new(61);
     private Profile realProfile;
@@ -264,7 +264,7 @@ public partial class QuickProfilesPage : Page
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // set lock
-                isDrawing = true;
+                profileLock = true;
 
                 UMCToggle.IsOn = currentProfile.MotionEnabled;
                 cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
@@ -304,7 +304,7 @@ public partial class QuickProfilesPage : Page
                 ProfilesPageHotkey.DrawInput();
 
                 // release lock
-                isDrawing = false;
+                profileLock = false;
             });
         }
     }
@@ -321,7 +321,7 @@ public partial class QuickProfilesPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // set lock
-            isDrawing = true;
+            profileLock = true;
 
             ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
             ProfileIcon.Source = processEx.imgSource;
@@ -344,7 +344,7 @@ public partial class QuickProfilesPage : Page
             }
 
             // release lock
-            isDrawing = false;
+            profileLock = false;
         });
     }
 
@@ -361,7 +361,7 @@ public partial class QuickProfilesPage : Page
         if (realProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             if (realProfile.Default)
             {
@@ -398,7 +398,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionEnabled = UMCToggle.IsOn;
             RequestUpdate();
@@ -432,7 +432,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
             RequestUpdate();
@@ -444,7 +444,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
             RequestUpdate();
@@ -456,7 +456,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             // TDP and AutoTDP are mutually exclusive
             var toggled = TDPToggle.IsOn;
@@ -473,8 +473,9 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
+            currentProfile.TDPOverrideValues = new double[3];
             currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideValues[(int)PowerType.Stapm] = (int)TDPSlider.Value;
             currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
@@ -487,7 +488,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             // TDP and AutoTDP are mutually exclusive
             var toggled = AutoTDPToggle.IsOn;
@@ -506,7 +507,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
             RequestUpdate();
@@ -518,7 +519,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionAntiDeadzone = (float)SliderUMCAntiDeadzone.Value;
             RequestUpdate();
@@ -530,7 +531,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
             RequestUpdate();
@@ -542,7 +543,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
             RequestUpdate();
@@ -589,7 +590,7 @@ public partial class QuickProfilesPage : Page
         if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1 || currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
             RequestUpdate();
@@ -601,7 +602,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.GPUOverrideEnabled = GPUToggle.IsOn;
             RequestUpdate();
@@ -613,7 +614,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
             RequestUpdate();
@@ -625,7 +626,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.FramerateEnabled = FramerateToggle.IsOn;
 
@@ -650,7 +651,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.FramerateValue = (int)FramerateSlider.Value;
             RequestUpdate();
@@ -662,7 +663,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.EPPOverrideEnabled = EPPToggle.IsOn;
 
@@ -675,7 +676,7 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!isDrawing)
+        if (!profileLock)
         {
             currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
             RequestUpdate();

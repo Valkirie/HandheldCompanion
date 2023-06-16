@@ -5,7 +5,7 @@ using System.Windows.Media;
 using ControllerCommon.Platforms;
 using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

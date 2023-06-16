@@ -132,7 +132,7 @@ public partial class Profile : ICloneable, IComparable
 
     // power
     public bool TDPOverrideEnabled { get; set; }
-    public double[] TDPOverrideValues { get; set; } = new double[3];
+    public double[] TDPOverrideValues { get; set; }
 
     public bool GPUOverrideEnabled { get; set; }
     public double GPUOverrideValue { get; set; }

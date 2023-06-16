@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ControllerCommon;
 using ControllerCommon.Managers;
 using Force.Crc32;
@@ -34,30 +35,29 @@ public static class XInputPlus
             File.WriteAllText(IniPath, IniContent);
 
         // we need to define Controller index overwrite
-        var controller = ControllerManager.GetTargetController();
+        XInputController controller = (XInputController)ControllerManager.GetVirtualControllers().FirstOrDefault(c => c.GetType() == typeof(XInputController));
         if (controller is null)
             return;
 
-        if (controller.GetType() == typeof(XInputController))
+        // get virtual controller index
+        var idx = controller.GetUserIndex() + 1;
+
+        // make virtual controller new 1st controller
+        var IniFile = new IniFile(IniPath);
+        IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
+
+        // prepare index array and remove current index from it
+        var userIndex = new List<int> { 1, 2, 3, 4 };
+        userIndex.Remove(idx);
+
+        for (var i = 0; i < userIndex.Count; i++)
         {
-            var XController = (XInputController)controller;
-            var idx = XController.GetUserIndex() + 1;
-
-            var IniFile = new IniFile(IniPath);
-            IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
-
-            var userIndex = new List<int> { 1, 2, 3, 4 };
-            userIndex.Remove(idx);
-
-            for (var i = 0; i < 3; i++)
-            {
-                var ControllerIdx = userIndex[i];
-                IniFile.Write($"Controller{i + 2}", Convert.ToString(ControllerIdx), "ControllerNumber");
-            }
-
-            LogManager.LogDebug("XInputPlus controller index updated for {0}. Controller1 set to UserIndex: {1}",
-                profile.Name, idx);
+            var ControllerIdx = userIndex[i];
+            IniFile.Write($"Controller{i + 2}", Convert.ToString(ControllerIdx), "ControllerNumber");
         }
+
+        LogManager.LogDebug("XInputPlus controller index updated for {0}. Controller1 set to UserIndex: {1}",
+            profile.Name, idx);
 
         // get binary type (x64, x86)
         BinaryType bt;

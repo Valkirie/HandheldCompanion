@@ -14,7 +14,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.QuickPages;
-using ModernWpf.Controls;
+using Inkore.UI.WPF.Modern.Controls;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using Application = System.Windows.Application;
@@ -261,8 +261,9 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
                     Show();
-                    await Task.Delay(250);
+                    // ShowActivated
                     Activate();
+                    Focus();
                     break;
                 case Visibility.Visible:
                     Hide();

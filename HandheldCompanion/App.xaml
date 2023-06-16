@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:presets="clr-namespace:HandheldCompanion.Presets"
-    xmlns:ui="http://schemas.modernwpf.com/2019">
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern">
 
     <Application.Resources>
         <ResourceDictionary>
