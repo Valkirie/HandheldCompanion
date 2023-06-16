@@ -1,4 +1,4 @@
-﻿<Window
+﻿<common:GamepadWindow
     x:Class="HandheldCompanion.Views.Windows.OverlayQuickTools"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -98,4 +98,4 @@
             </common:TouchScrollViewer>
         </ui:NavigationView>
     </Grid>
-</Window>
+</common:GamepadWindow>

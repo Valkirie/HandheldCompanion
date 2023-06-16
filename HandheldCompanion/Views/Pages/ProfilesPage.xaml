@@ -262,6 +262,7 @@
                             <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                                 <CheckBox
                                     Name="cB_Whitelist"
+                                    HorizontalAlignment="Stretch"
                                     Checked="cB_Whitelist_Checked"
                                     Content="{x:Static resx:Resources.ProfilesPage_Whitelist}"
                                     Unchecked="cB_Whitelist_Checked" />
@@ -274,6 +275,7 @@
 
                                 <CheckBox
                                     Name="cB_Wrapper"
+                                    HorizontalAlignment="Stretch"
                                     Checked="cB_Wrapper_Checked"
                                     Content="{x:Static resx:Resources.ProfilesPage_Wrapper}"
                                     Unchecked="cB_Wrapper_Checked" />
@@ -816,8 +818,8 @@
 
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="6*" MinWidth="200" />
-                                            <ColumnDefinition Width="4*" MinWidth="120" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
@@ -829,22 +831,28 @@
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                            <ui:RadioButtons
-                                                Name="cB_GyroSteering"
-                                                HorizontalAlignment="Right"
-                                                MaxColumns="2"
-                                                SelectionChanged="cB_GyroSteering_SelectionChanged">
+                                        <ComboBox
+                                            Name="cB_GyroSteering"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            HorizontalContentAlignment="Left"
+                                            SelectionChanged="cB_GyroSteering_SelectionChanged">>
+                                            <ComboBoxItem>
                                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                     <ui:FontIcon Glyph="&#xE8B4;" />
                                                     <Label Content="{x:Static resx:Resources.ProfilesPage_Yaw}" />
                                                 </ui:SimpleStackPanel>
+                                            </ComboBoxItem>
+
+                                            <ComboBoxItem>
                                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                     <ui:FontIcon Glyph="&#xE8B4;" />
                                                     <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
                                                 </ui:SimpleStackPanel>
-                                            </ui:RadioButtons>
-                                        </DockPanel>
+                                            </ComboBoxItem>
+                                        </ComboBox>
                                     </Grid>
 
                                     <!--  Separator  -->
@@ -855,6 +863,7 @@
 
                                     <CheckBox
                                         Name="cB_InvertHorizontal"
+                                        HorizontalAlignment="Stretch"
                                         Checked="cB_InvertHorizontal_Checked"
                                         Content="{x:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}"
                                         Unchecked="cB_InvertHorizontal_Checked" />
@@ -867,6 +876,7 @@
 
                                     <CheckBox
                                         Name="cB_InvertVertical"
+                                        HorizontalAlignment="Stretch"
                                         Checked="cB_InvertVertical_Checked"
                                         Content="{x:Static resx:Resources.ProfilesPage_InvertVerticalAxis}"
                                         Unchecked="cB_InvertVertical_Checked" />
@@ -935,8 +945,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200" />
-                                        <ColumnDefinition Width="4*" MinWidth="120" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -951,13 +961,13 @@
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
-                                    <ui:RadioButtons
+                                    <ComboBox
                                         Name="cB_Input"
                                         Grid.Column="1"
-                                        Margin="6,0,0,0"
-                                        HorizontalAlignment="Right"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        MaxColumns="2"
+                                        HorizontalContentAlignment="Left"
                                         SelectedIndex="0"
                                         SelectionChanged="cB_Input_SelectionChanged" />
                                 </Grid>
@@ -970,8 +980,8 @@
 
                                 <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="6*" MinWidth="200" />
-                                        <ColumnDefinition Width="4*" MinWidth="120" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
@@ -986,13 +996,13 @@
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
-                                    <ui:RadioButtons
+                                    <ComboBox
                                         Name="cB_Output"
                                         Grid.Column="1"
-                                        Margin="6,0,0,0"
-                                        HorizontalAlignment="Right"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
-                                        MaxColumns="2"
+                                        HorizontalContentAlignment="Left"
                                         SelectedIndex="0"
                                         SelectionChanged="cB_Output_SelectionChanged" />
                                 </Grid>
@@ -1072,15 +1082,17 @@
                                         Name="UMC_Activator"
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        Orientation="Vertical"
                                         Spacing="6">
-                                        <ui:RadioButtons
+                                        <ComboBox
                                             Name="cB_UMC_MotionDefaultOffOn"
-                                            HorizontalAlignment="Right"
-                                            MaxColumns="1"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
                                             SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
-                                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
-                                            <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
-                                        </ui:RadioButtons>
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                                        </ComboBox>
                                     </ui:SimpleStackPanel>
                                 </Grid>
 
