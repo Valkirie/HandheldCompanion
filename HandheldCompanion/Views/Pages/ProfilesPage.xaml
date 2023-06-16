@@ -40,8 +40,7 @@
                                     Glyph="&#xE748;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -111,8 +110,7 @@
                 </ui:SimpleStackPanel>
 
                 <ui:SimpleStackPanel Name="ProfileDetails" Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                               Text="{x:Static resx:Resources.ProfilesPage_ProfileDetails}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileDetails}" />
 
                     <!--  Profile details  -->
                     <Border
@@ -225,8 +223,7 @@
                                     Glyph="&#xE7EE;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -247,8 +244,7 @@
 
                 <!--  Profile settings  -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                               Text="{x:Static resx:Resources.ProfilesPage_ProfileSettings}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSettings}" />
 
                     <!--  Global settings  -->
                     <Expander
@@ -264,8 +260,7 @@
                                     Glyph="&#xE713;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.ProfilesPage_GlobalSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GlobalSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -279,6 +274,7 @@
                             <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                                 <CheckBox
                                     Name="cB_Whitelist"
+                                    HorizontalAlignment="Stretch"
                                     Checked="cB_Whitelist_Checked"
                                     Content="{x:Static resx:Resources.ProfilesPage_Whitelist}"
                                     Unchecked="cB_Whitelist_Checked" />
@@ -291,6 +287,7 @@
 
                                 <CheckBox
                                     Name="cB_Wrapper"
+                                    HorizontalAlignment="Stretch"
                                     Checked="cB_Wrapper_Checked"
                                     Content="{x:Static resx:Resources.ProfilesPage_Wrapper}"
                                     Unchecked="cB_Wrapper_Checked" />
@@ -312,8 +309,7 @@
                                     Glyph="&#xE83F;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -334,8 +330,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -424,8 +419,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -494,8 +488,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -563,8 +556,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="Energy performance preference (EPP)" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Energy performance preference (EPP)" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -657,8 +649,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -728,8 +719,7 @@
                                     Glyph="&#xE8B4;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -750,8 +740,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                       Text="{x:Static resx:Resources.ProfilesPage_GyrometerMultiplier}" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GyrometerMultiplier}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -797,8 +786,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                       Text="{x:Static resx:Resources.ProfilesPage_AccelerometerMultiplier}" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AccelerometerMultiplier}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -845,8 +833,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Orientation="Vertical">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                       Text="{x:Static resx:Resources.ProfilesPage_GyroSteeringAxis}" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GyroSteeringAxis}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -857,16 +844,21 @@
                                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                             <ui:RadioButtons
                                                 Name="cB_GyroSteering"
-                                                HorizontalAlignment="Right"
+                                                HorizontalAlignment="Stretch"
                                                 MaxColumns="2">
-                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                    <ui:FontIcon Glyph="&#xE8B4;" />
-                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_Yaw}" />
-                                                </ui:SimpleStackPanel>
-                                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                                    <ui:FontIcon Glyph="&#xE8B4;" />
-                                                    <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
-                                                </ui:SimpleStackPanel>
+                                                <RadioButton>
+                                                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                        <ui:FontIcon Glyph="&#xE8B4;" />
+                                                        <Label Content="{x:Static resx:Resources.ProfilesPage_Yaw}" />
+                                                    </ui:SimpleStackPanel>
+                                                </RadioButton>
+
+                                                <RadioButton>
+                                                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                                        <ui:FontIcon Glyph="&#xE8B4;" />
+                                                        <Label Content="{x:Static resx:Resources.ProfilesPage_Roll}" />
+                                                    </ui:SimpleStackPanel>
+                                                </RadioButton>
                                             </ui:RadioButtons>
                                         </DockPanel>
                                     </Grid>
@@ -877,8 +869,10 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
 
-                                    <CheckBox Name="cB_InvertHorizontal"
-                                              Content="{x:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}" />
+                                    <CheckBox
+                                        Name="cB_InvertHorizontal"
+                                        HorizontalAlignment="Stretch"
+                                        Content="{x:Static resx:Resources.ProfilesPage_InvertHorizontalAxis}" />
 
                                     <!--  Separator  -->
                                     <Separator
@@ -886,8 +880,10 @@
                                         BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                         BorderThickness="0,1,0,0" />
 
-                                    <CheckBox Name="cB_InvertVertical"
-                                              Content="{x:Static resx:Resources.ProfilesPage_InvertVerticalAxis}" />
+                                    <CheckBox
+                                        Name="cB_InvertVertical"
+                                        HorizontalAlignment="Stretch"
+                                        Content="{x:Static resx:Resources.ProfilesPage_InvertVerticalAxis}" />
                                 </ui:SimpleStackPanel>
                             </Grid>
                         </Expander.Content>
@@ -913,8 +909,7 @@
                                         Glyph="&#xE759;" />
 
                                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -1028,8 +1023,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                                   Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
@@ -1090,11 +1084,12 @@
                                         Name="UMC_Activator"
                                         Grid.Column="1"
                                         Margin="12,0,0,0"
+                                        HorizontalAlignment="Stretch"
                                         Spacing="6">
                                         <ui:RadioButtons
                                             Name="cB_UMC_MotionDefaultOffOn"
                                             HorizontalAlignment="Right"
-                                            MaxColumns="1"
+                                            MaxColumns="2"
                                             SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
                                             <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
                                             <RadioButton Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />

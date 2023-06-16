@@ -138,12 +138,30 @@
                 ToolTipService.ShowOnDisabled="True" />
         </ui:NavigationView.FooterMenuItems>
 
-        <common:TouchScrollViewer x:Name="scrollViewer" PanningMode="VerticalOnly">
-            <ui:Frame
-                Name="ContentFrame"
-                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
-                MaxWidth="1100"
-                HorizontalAlignment="Left" />
-        </common:TouchScrollViewer>
+        <ui:NavigationView.Content>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <common:TouchScrollViewer
+                    x:Name="scrollViewer"
+                    Grid.Row="0"
+                    VerticalAlignment="Top"
+                    PanningMode="VerticalOnly">
+                    <ui:Frame
+                        Name="ContentFrame"
+                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                        MaxWidth="1100"
+                        HorizontalAlignment="Left" />
+                </common:TouchScrollViewer>
+
+                <Grid
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" />
+            </Grid>
+        </ui:NavigationView.Content>
     </ui:NavigationView>
 </common:GamepadWindow>

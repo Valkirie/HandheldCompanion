@@ -57,9 +57,12 @@ public static class WPFUtils
     }
 
     // A function that takes a list of controls and returns the top-left control
-    public static Control GetTopLeftControl(List<Control> controls)
+    public static Control GetTopLeftControl<T>(List<Control> controls) where T : Control
     {
-        // Si la liste est vide, retourner null
+        // filter list
+        controls = controls.Where(c => c is T).ToList();
+
+        // If no controls are found, return null
         if (controls == null || controls.Count == 0)
         {
             return null;
@@ -88,22 +91,24 @@ public static class WPFUtils
 
     public enum Direction { None, Left, Right, Up, Down }
 
-    public static Control GetClosestControl(Control source, List<Control> controls, Direction direction)
+    public static Control GetClosestControl<T>(Control source, List<Control> controls, Direction direction, List<Type> typesToIgnore = null) where T : Control
     {
-        if (source.GetType() == typeof(NavigationViewItem))
-            controls = controls.Where(c => c.GetType() == typeof(NavigationViewItem)).ToList();
-        else
-            controls = controls.Where(c => c.GetType() != typeof(NavigationViewItem)).ToList();
+        // Filter list based on requested type
+        controls = controls.Where(c => c is T).ToList();
+
+        // Filter based on exclusion type list
+        if (typesToIgnore is not null)
+            controls = controls.Where(c => !typesToIgnore.Contains(c.GetType())).ToList();
 
         // Filter out the controls that are not in the given direction
         controls = controls.Where(c => c != source && IsInDirection(source, c, direction)).ToList();
 
-        // If no controls are found, return null
-        if (controls.Count == 0) return null;
+        // If no controls are found, return source
+        if (controls.Count == 0) return source;
 
         // Find the control with the same parent and the minimum distance to the source
         // If no control has the same parent, find the control with the minimum distance to the source
-        controls = controls.OrderBy(c => DistanceBetweenControls(source, c)).ToList();
+        controls = controls.OrderBy(c => GetDistance(source, c, Direction.None)).ToList();
 
         return controls.First();
     }
@@ -132,39 +137,33 @@ public static class WPFUtils
     }
 
     // Helper method to calculate the distance between the centers of two controls
-    private static double GetDistance(Control source, Control target)
+    private static double GetDistance(Control source, Control target, Direction direction)
     {
-        // Get the relative position of the target with respect to the source
-        var transform = target.TransformToVisual(source);
-        var position = transform.Transform(new Point(0, 0));
+        try
+        {
+            // Get the relative position of the target with respect to the source
+            var transform = target.TransformToVisual(source);
+            var position = transform.Transform(new Point(0, 0));
 
-        double dx = source.ActualWidth / 2 - (position.X + target.ActualWidth / 2);
-        double dy = source.ActualHeight / 2 - (position.Y + target.ActualHeight / 2);
-        return Math.Sqrt(dx * dx + dy * dy);
-    }
+            double dx = source.ActualWidth / 2 - (position.X + target.ActualWidth / 2);
+            double dy = source.ActualHeight / 2 - (position.Y + target.ActualHeight / 2);
 
-    private static double DistanceBetweenControls(Control c1, Control c2)
-    {
-        // Obtenir les coordonnées des coins supérieurs gauches des contrôles
-        Point p1 = c1.TranslatePoint(new Point(0, 0), null);
-        Point p2 = c2.TranslatePoint(new Point(0, 0), null);
+            switch (direction)
+            {
+                case Direction.Up:
+                case Direction.Down:
+                    return Math.Sqrt(dy * dy);
 
-        // Obtenir les largeurs et les hauteurs des contrôles
-        double w1 = c1.ActualWidth;
-        double h1 = c1.ActualHeight;
-        double w2 = c2.ActualWidth;
-        double h2 = c2.ActualHeight;
+                case Direction.Left:
+                case Direction.Right:
+                    return Math.Sqrt(dx * dx);
+            }
 
-        // Calculer les coordonnées des coins inférieurs droits des contrôles
-        Point p3 = new Point(p1.X + w1, p1.Y + h1);
-        Point p4 = new Point(p2.X + w2, p2.Y + h2);
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+        catch { }
 
-        // Calculer la distance horizontale et verticale entre les bords les plus proches des contrôles
-        double dx = Math.Max(Math.Max(p1.X - p4.X, 0), Math.Max(p2.X - p3.X, 0));
-        double dy = Math.Max(Math.Max(p1.Y - p4.Y, 0), Math.Max(p2.Y - p3.Y, 0));
-
-        // Calculer la distance euclidienne entre les bords les plus proches des contrôles
-        return Math.Sqrt(dx * dx + dy * dy);
+        return 9999.0d;
     }
     
     public static List<Control> FindChildren(DependencyObject startNode)
@@ -184,9 +183,11 @@ public static class WPFUtils
                 case "ToggleSwitch":
                 case "NavigationViewItem":
                 case "ComboBox":
+                case "ComboBoxItem":
                 case "AppBarButton":
                 case "ToggleButton":
                 case "CheckBox":
+                case "RadioButton":
                     {
                         Control asType = (Control)current;
 
