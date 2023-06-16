@@ -360,10 +360,11 @@ public static class OSDManager
                     row3.entries.Add(ActTDPentry);
 
                     // Add the rows to the content list
-                    Content.Add(row1.ToString());
+                    Content.Add(Header + row1.ToString());
                     Content.Add(row2.ToString());
                     Content.Add(row3.ToString());
-                }
+
+                    }
                 else
                 {
                     // Indicate AutoTDP is off
@@ -374,7 +375,7 @@ public static class OSDManager
                     row1.entries.Add(AutoTDPStatus);
 
                     // add header to row1
-                    Content.Add(Header + row1);
+                    Content.Add(Header + row1.ToString());
                 }
                 break;
             }  
