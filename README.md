@@ -11,8 +11,10 @@ A combination of a Windows service and a touch interface optimized GUI to increa
 - Quicktools overlay, with easy access to various settings and informatio such as TDP, Auto TDP, GPU, Screen Hz, Framelimiter, Resolution, Brightness, Volume, Powermode control and battery level.
 - Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4).
 - Profile settings system, automatic detection of active game and applying of settings.
+- Gamepad remapping to mouse and keyboard, gamepad joystick and trigger deadzone adjustements.
 - PS Remote Play support with DS4 controller, including motion and touchpad.
 - 3D Controller overlay for stream recordings.
+- Hotkeys for various conveniences. 
 
 ## Use cases
 A few examples of the most common use cases are:
@@ -51,23 +53,24 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - Chinese (Traditional)
 
 ## Visuals
-![image](https://user-images.githubusercontent.com/934757/188308169-abfcc335-39e9-44c5-ac9a-bc0e02ac7cec.png)
-![image](https://user-images.githubusercontent.com/934757/188308173-6fcd01ce-eabf-4340-b2f2-a9f63a5b4072.png)
-![image](https://user-images.githubusercontent.com/934757/188308180-3dc34830-4e5e-4c74-a3cf-33eee5c77cd9.png)
-![image](https://user-images.githubusercontent.com/934757/188308184-e8893451-127a-48b3-be90-6229c614c317.png)
+![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/c6aec83c-cf8e-43bf-a577-1b05aedc55aa)
+![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/dba3ab8a-4b73-4e61-a278-7fe37c66b85d)
+![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/0bacdd65-3d6d-4dd2-a70d-a6871b1f51a9)
 
 ## Overlay
-The software has multiple built-in overlay options. 
+The software has multiple built-in performance metric overlay options. 
+
+![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/b01e757d-3a68-4d8d-b62e-9129b577d022)
 
 ### QuickTools
 
 On the fly adjustment of TDP (global and profile), brightness, screen resolution and frequency, hotkeys and motion control profile settings. Summonable with a user defined button combination (including certaind supported devices mapped special keys). Window can be aligned how the user sees fit (left, right, floating).
 
-![Quicktools-01](https://user-images.githubusercontent.com/14330834/184693435-7df5ad40-ddb1-4359-9335-1a5804441dc3.png)
-Quicktools profile TDP control with Axiom Verge.
+![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/889a1a1c-4775-4261-a173-c275eb4071ad)
+Quicktools power control with Into the Breach.
 
-![Quicktools-02](https://user-images.githubusercontent.com/14330834/184693443-117d8594-f4e5-4400-8341-2fb95b986d01.png)
-Quicktools profile motion settings with Borderlands Pre-Sequel.
+![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/ec35272e-4c9e-4386-9b0f-3b4e3aa0cf6d)
+Quicktools profile settings with Borderlands Pre-Sequel.
 
 ### Virtual touchpad
 
