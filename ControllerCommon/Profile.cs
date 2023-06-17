@@ -107,7 +107,7 @@ public partial class Profile : ICloneable, IComparable
     public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;
     public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;
     public MotionMode MotionMode { get; set; } = MotionMode.Off;
-    public float MotionAntiDeadzone { get; set; } = 0.0f;
+    public float MotionAntiDeadzone { get; set; } = 15.0f;
     public bool MotionInvertHorizontal { get; set; } // if true, invert horizontal axis
     public bool MotionInvertVertical { get; set; } // if false, invert vertical axis
     public float MotionSensivityX { get; set; } = 1.0f;
