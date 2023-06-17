@@ -18,6 +18,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -161,8 +162,11 @@ public static class HotkeysManager
         });
     }
 
-    private static void StartListening(Hotkey hotkey, ListenerType type)
+    private static async void StartListening(Hotkey hotkey, ListenerType type)
     {
+        // workaround for gamepad navigation
+        await Task.Delay(250);
+
         InputsManager.StartListening(hotkey, type);
         hotkey.StartListening(type);
     }
