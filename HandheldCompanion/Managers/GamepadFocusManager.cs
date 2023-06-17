@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml.Linq;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
@@ -151,6 +152,10 @@ namespace HandheldCompanion.Managers
 
                 // set direction
                 WPFUtils.Direction direction = WPFUtils.Direction.None;
+
+                // stop gamepad navigation when InputsManager is listening
+                if (InputsManager.IsListening())
+                    return;
 
                 if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B1))
                 {

@@ -150,7 +150,7 @@ public static class InputsManager
             InputsChordInputTimer.Stop();
         }
 
-        if (string.IsNullOrEmpty(currentHotkey.Listener))
+        if (!IsListening())
         {
             var keys = GetTriggersFromChord(currentChord);
 
@@ -555,10 +555,15 @@ public static class InputsManager
         // GamepadResetTimer.Start();
     }
 
+    public static bool IsListening()
+    {
+        return !string.IsNullOrEmpty(currentHotkey.Listener);
+    }
+
     public static void StartListening(Hotkey hotkey, ListenerType type)
     {
         // force expiration on previous listener, if any
-        if (!string.IsNullOrEmpty(currentHotkey.Listener))
+        if (IsListening())
             ListenerExpired();
 
         // store current hotkey values
