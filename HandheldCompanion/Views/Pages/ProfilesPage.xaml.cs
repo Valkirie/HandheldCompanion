@@ -690,6 +690,7 @@ public partial class ProfilesPage : Page
             case "shortcutProfilesPage@":
             case "shortcutProfilesPage@@":
                 currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
+                RequestUpdate();
                 break;
         }
     }
