@@ -838,7 +838,7 @@
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
                                             HorizontalContentAlignment="Left"
-                                            SelectionChanged="cB_GyroSteering_SelectionChanged">>
+                                            SelectionChanged="cB_GyroSteering_SelectionChanged">
                                             <ComboBoxItem>
                                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                                     <ui:FontIcon Glyph="&#xE8B4;" />
