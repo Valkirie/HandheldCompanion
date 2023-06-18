@@ -42,8 +42,7 @@
                                 Glyph="&#xE78B;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -87,8 +86,7 @@
                                 Glyph="&#xE823;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayUpdateRate}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayUpdateRate}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -127,8 +125,7 @@
 
             <!--  Controller options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                           Text="{x:Static resx:Resources.OverlayPage_ControllerOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_ControllerOptions}" />
 
                 <!--  Controller model  -->
                 <Border
@@ -150,8 +147,7 @@
                                 Glyph="&#xF158;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_OverlayModel}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayModel}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -187,8 +183,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*" MinWidth="200" />
-                            <ColumnDefinition MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -199,8 +195,7 @@
                                 Glyph="&#xE80A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Alignment}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Alignment}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -209,7 +204,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <Grid Grid.Column="1">
+                        <Grid Grid.Column="1" HorizontalAlignment="Left">
                             <ui:SimpleStackPanel
                                 Name="OverlayControllerAlignment"
                                 HorizontalAlignment="Right"
@@ -290,8 +285,7 @@
                                 Glyph="&#xECC6;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Size}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Size}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -344,8 +338,7 @@
                                 Glyph="&#xE75C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Opacity}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Opacity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -399,8 +392,7 @@
                                 Glyph="&#xE790;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Color}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Color}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -438,8 +430,7 @@
                                 Glyph="&#xE11C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_AlwaysOnTop}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_AlwaysOnTop}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -477,8 +468,7 @@
                                 Glyph="&#xE895;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_MotionActivated}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_MotionActivated}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -508,8 +498,7 @@
                                 Glyph="&#xE8B4;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_RenderSettings}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_RenderSettings}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -530,8 +519,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.OverlayPage_RenderSettingsFramerate}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_RenderSettingsFramerate}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -576,8 +564,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.OverlayPage_RenderSettingsAntialiasing}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_RenderSettingsAntialiasing}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -608,8 +595,7 @@
                                 Glyph="&#xE89E;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_CameraAngle}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_CameraAngle}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -631,8 +617,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.OverlayPage_FaceCamera}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_FaceCamera}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -663,8 +648,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitch}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_CameraAnglePitch}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -704,8 +688,7 @@
 
             <!--  Trackpads options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                           Text="{x:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_TrackpadsOptions}" />
 
                 <!--  Controller Alignment  -->
                 <Border
@@ -727,8 +710,7 @@
                                 Glyph="&#xE80A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Alignment}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Alignment}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -782,8 +764,7 @@
                                 Glyph="&#xECC6;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Size}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Size}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -836,8 +817,7 @@
                                 Glyph="&#xE75C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.OverlayPage_Opacity}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_Opacity}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"

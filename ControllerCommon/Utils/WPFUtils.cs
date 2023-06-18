@@ -106,7 +106,7 @@ public static class WPFUtils
 
         // Find the control with the same parent and the minimum distance to the source
         // If no control has the same parent, find the control with the minimum distance to the source
-        controls = controls.OrderBy(c => GetDistanceV3(source, c, Direction.None)).ToList();
+        controls = controls.OrderBy(c => GetDistanceV2(source, c, direction)).ToList();
 
         return controls.First();
     }
@@ -196,6 +196,21 @@ public static class WPFUtils
             // Convert the points to vectors
             Vector3 v1 = new Vector3((float)p1.X, (float)p1.Y, 0f);
             Vector3 v2 = new Vector3((float)p2.X, (float)p2.Y, 0f);
+
+            switch (direction)
+            {
+                case Direction.Up:
+                case Direction.Down:
+                    v1 = new Vector3(0f, (float)p1.Y, 0f);
+                    v2 = new Vector3(0f, (float)p2.Y, 0f);
+                    break;
+
+                case Direction.Left:
+                case Direction.Right:
+                    v1 = new Vector3((float)p1.X, 0f, 0f);
+                    v2 = new Vector3((float)p2.X, 0f, 0f);
+                    break;
+            }
 
             // Calculate and return the distance between the vectors
             return Vector3.Distance(v1, v2);
