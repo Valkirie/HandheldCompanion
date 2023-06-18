@@ -14,6 +14,11 @@ public partial class QuickSettingsPage : Page
     private readonly object brightnessLock = new();
     private readonly object volumeLock = new();
 
+    public QuickSettingsPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
     public QuickSettingsPage()
     {
         InitializeComponent();

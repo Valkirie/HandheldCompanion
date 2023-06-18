@@ -69,10 +69,10 @@ public partial class OverlayQuickTools : GamepadWindow
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // create pages
-        performancePage = new QuickPerformancePage();
-        settingsPage = new QuickSettingsPage();
-        profilesPage = new QuickProfilesPage();
-        suspenderPage = new QuickSuspenderPage();
+        performancePage = new QuickPerformancePage("quickperformance");
+        settingsPage = new QuickSettingsPage("quicksettings");
+        profilesPage = new QuickProfilesPage("quickprofiles");
+        suspenderPage = new QuickSuspenderPage("quicksuspender");
 
         _pages.Add("QuickPerformancePage", performancePage);
         _pages.Add("QuickSettingsPage", settingsPage);

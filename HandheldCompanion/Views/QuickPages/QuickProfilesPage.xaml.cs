@@ -31,6 +31,11 @@ public partial class QuickProfilesPage : Page
     private Hotkey ProfilesPageHotkey = new(61);
     private Profile realProfile;
 
+    public QuickProfilesPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
     public QuickProfilesPage()
     {
         InitializeComponent();

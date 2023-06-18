@@ -10,6 +10,11 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickSuspenderPage : Page
 {
+    public QuickSuspenderPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
     public QuickSuspenderPage()
     {
         InitializeComponent();

@@ -15,6 +15,11 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickPerformancePage : Page
 {
+    public QuickPerformancePage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
     public QuickPerformancePage()
     {
         InitializeComponent();

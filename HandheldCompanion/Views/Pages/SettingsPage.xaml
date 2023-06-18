@@ -502,6 +502,7 @@
                         <ComboBox
                             Name="cB_QuickToolsBackdrop"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuickToolsBackdrop_SelectionChanged">
                             <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_BackdropNone}" />
@@ -753,6 +754,7 @@
                         <ComboBox
                             Name="cB_SensorSelection"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_SensorSelection_SelectionChanged">
 
