@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +20,7 @@ using HandheldCompanion.Views.Windows;
 using Inkore.UI.WPF.Modern.Controls;
 using Frame = Inkore.UI.WPF.Modern.Controls.Frame;
 using Page = System.Windows.Controls.Page;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
@@ -27,6 +29,7 @@ namespace HandheldCompanion.Managers
         private static GamepadWindow _gamepadWindow;
         private static Frame _gamepadFrame;
         private static Page _gamepadPage;
+        private static Timer _gamepadTimer;
 
         private static bool _goingBack;
         private static bool _goingForward;
@@ -51,73 +54,81 @@ namespace HandheldCompanion.Managers
             MainWindow.overlayquickTools.Activated += GamepadFocusManager_GotFocus;
             MainWindow.overlayquickTools.Deactivated += GamepadFocusManager_LostFocus;
             MainWindow.overlayquickTools.ContentFrame.Navigated += ContentFrame_Navigated;
-        }
 
-        private static void _gamepadFrame_ContentRendered(object? sender, EventArgs e)
-        {
-            // set rendering state
-            _rendered = true;
-        }
-
-        private static async void GamepadFocusManager_PageLoaded(object sender, RoutedEventArgs e)
-        {
-            Page currentPage = (Page)sender;
-
-            while (!_rendered)
-                await Task.Delay(250);
-
-            // specific-cases
-            switch (currentPage.Tag)
-            {
-                case "layout":
-                case "SettingsMode0":
-                case "SettingsMode1":
-                    _goingForward = true;
-                    break;
-            }
-
-            if (_goingBack && prevControl.TryGetValue(currentPage.Tag, out Control control))
-            {
-                Focus(control);
-
-                // remove state
-                _goingBack = false;
-            }
-            else if (_goingForward)
-            {
-                if (prevControl.TryGetValue(currentPage.Tag, out control))
-                    Focus(control);
-                else
-                {
-                    control = WPFUtils.GetTopLeftControl<Control>(_gamepadWindow.elements);
-                    Focus(control);
-                }
-
-                // remove state
-                _goingForward = false;
-            }
-            else if (_firstStart)
-            {
-                prevNavigation = WPFUtils.GetTopLeftControl<NavigationViewItem>(_gamepadWindow.elements);
-                Focus(prevNavigation);
-
-                // remove state
-                _firstStart = false;
-            }
+            _gamepadTimer = new Timer(250) { AutoReset = false };
+            _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
         }
 
         private static void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
+            // set rendering state
+            _rendered = false;
+
+            // remove state
+            _goingForward = false;
+
             // store current Frame
             _gamepadFrame = (Frame)sender;
             _gamepadFrame.ContentRendered += _gamepadFrame_ContentRendered;
 
-            // set rendering state
-            _rendered = false;
-
             // store current Page
             _gamepadPage = (Page)_gamepadFrame.Content;
-            _gamepadPage.Loaded += GamepadFocusManager_PageLoaded;
+        }
+
+        private static void _gamepadFrame_ContentRendered(object? sender, EventArgs e)
+        {
+            _gamepadTimer.Stop();
+            _gamepadTimer.Start();
+        }
+
+        private static void _gamepadTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                // specific-cases
+                switch (_gamepadPage.Tag)
+                {
+                    case "layout":
+                    case "SettingsMode0":
+                    case "SettingsMode1":
+                        _goingForward = true;
+                        break;
+                }
+
+                if (_goingBack && prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
+                {
+                    Focus(control);
+
+                    // remove state
+                    _goingBack = false;
+                }
+                else if (_goingForward)
+                {
+                    if (prevControl.TryGetValue(_gamepadPage.Tag, out control))
+                        Focus(control);
+                    else
+                    {
+                        control = WPFUtils.GetTopLeftControl<Control>(_gamepadWindow.elements);
+                        Focus(control);
+                    }
+                }
+                else if (_firstStart)
+                {
+                    prevNavigation = WPFUtils.GetTopLeftControl<NavigationViewItem>(_gamepadWindow.elements);
+                    Focus(prevNavigation);
+
+                    // remove state
+                    _firstStart = false;
+                }
+
+                // clear history
+                if (_gamepadPage is not null)
+                    prevControl.Remove(_gamepadPage.Tag, out _);
+
+                // set rendering state
+                _rendered = true;
+            });
         }
 
         private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
@@ -251,6 +262,7 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
+                                // set state
                                 _goingForward = true;
 
                                 if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
@@ -303,8 +315,10 @@ namespace HandheldCompanion.Managers
                                     case "SettingsMode0":
                                     case "SettingsMode1":
                                         {
-                                            // go back to previous page
+                                            // set state
                                             _goingBack = true;
+
+                                            // go back to previous page
                                             _gamepadFrame.GoBack();
                                         }
                                         break;
@@ -353,9 +367,6 @@ namespace HandheldCompanion.Managers
                     {
                         case "NavigationViewItem":
                             {
-                                // clear history
-                                prevControl.Remove(_gamepadPage.Tag, out _);
-
                                 focusedElement = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, _gamepadWindow.elements, direction);
                                 Focus(focusedElement);
                             }
