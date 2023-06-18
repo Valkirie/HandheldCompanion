@@ -165,16 +165,22 @@ public static class WPFUtils
 
     public static double GetDistanceV2(Control c1, Control c2, Direction direction)
     {
-        // We retrieve the control's bounding box
-        Rect r1 = c1.TransformToVisual(c1).TransformBounds(new Rect(c1.RenderSize));
-        Rect r2 = c2.TransformToVisual(c1).TransformBounds(new Rect(c2.RenderSize));
+        try
+        {
+            // We retrieve the control's bounding box
+            Rect r1 = c1.TransformToVisual(c1).TransformBounds(new Rect(c1.RenderSize));
+            Rect r2 = c2.TransformToVisual(c1).TransformBounds(new Rect(c2.RenderSize));
 
-        // Calculate the horizontal and vertical distances between the edges of the rectangles
-        double dx = Math.Max(0, Math.Max(r1.Left, r2.Left) - Math.Min(r1.Right, r2.Right));
-        double dy = Math.Max(0, Math.Max(r1.Top, r2.Top) - Math.Min(r1.Bottom, r2.Bottom));
+            // Calculate the horizontal and vertical distances between the edges of the rectangles
+            double dx = Math.Max(0, Math.Max(r1.Left, r2.Left) - Math.Min(r1.Right, r2.Right));
+            double dy = Math.Max(0, Math.Max(r1.Top, r2.Top) - Math.Min(r1.Bottom, r2.Bottom));
 
-        // Return the Euclidean distance between the nearest edges
-        return Math.Sqrt(dx * dx + dy * dy);
+            // Return the Euclidean distance between the nearest edges
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+        catch { }
+
+        return 9999.0d;
     }
 
     public static List<Control> FindChildren(DependencyObject startNode)
