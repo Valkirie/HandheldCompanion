@@ -92,8 +92,7 @@
                             Glyph="&#xE950;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorSpecification}" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -108,10 +107,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.AboutPage_SensorInternal}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.AboutPage_SensorExternal}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorInternal}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_SensorExternal}" />
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
@@ -146,8 +143,7 @@
                             Glyph="&#xE74C;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="{x:Static resx:Resources.AboutPage_Service}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Service}" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
                 </Expander.Header>
@@ -163,14 +159,10 @@
                                 </Grid.ColumnDefinitions>
 
                                 <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.AboutPage_Version}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.AboutPage_Author}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.AboutPage_Contributors}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.AboutPage_Description}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Version}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Author}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Contributors}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Description}" />
                                 </ui:SimpleStackPanel>
 
                                 <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
@@ -204,20 +196,17 @@
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                                 <TextBlock Text="{x:Static resx:Resources.AboutPage_RelatedLinks}" />
                                 <TextBlock>
-                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion"
-                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion" RequestNavigate="Hyperlink_RequestNavigate">
                                         SourceCode
                                     </Hyperlink>
                                 </TextBlock>
                                 <TextBlock>
-                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki"
-                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                    <Hyperlink NavigateUri="https://github.com/Valkirie/HandheldCompanion/wiki" RequestNavigate="Hyperlink_RequestNavigate">
                                         Wiki
                                     </Hyperlink>
                                 </TextBlock>
                                 <TextBlock>
-                                    <Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR"
-                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                    <Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">
                                         Donate
                                     </Hyperlink>
                                 </TextBlock>

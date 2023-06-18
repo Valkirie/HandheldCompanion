@@ -361,8 +361,13 @@ public static class ProfileManager
             TypeNameHandling = TypeNameHandling.All
         });
 
+        // prepare for writing
         var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
-        File.WriteAllText(profilePath, jsonString);
+        try
+        {
+            File.WriteAllTextAsync(profilePath, jsonString);
+        }
+        catch { }
     }
 
     private static void SanitizeProfile(Profile profile)

@@ -689,6 +689,7 @@ public partial class MainWindow : GamepadWindow
     public static void NavView_Navigate(Page _page)
     {
         CurrentWindow.ContentFrame.Navigate(_page);
+        CurrentWindow.scrollViewer.ScrollToTop();
     }
 
     private void navView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
