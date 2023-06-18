@@ -115,8 +115,8 @@ public static class WPFUtils
     {
         // Get the position of the target on the canvas
         var p = target.TranslatePoint(new Point(0, 0), source);
-        double x = p.X;
-        double y = p.Y;
+        double x = Math.Round(p.X);
+        double y = Math.Round(p.Y);
 
         switch (direction)
         {
