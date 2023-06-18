@@ -58,6 +58,9 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         InitializeComponent();
 
+        // used by gamepad navigation
+        Tag = "QuickTools";
+
         PreviewKeyDown += HandleEsc;
         Deactivated += OverlayQuickTools_Deactivated;
 

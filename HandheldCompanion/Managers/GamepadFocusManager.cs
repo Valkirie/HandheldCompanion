@@ -38,15 +38,14 @@ namespace HandheldCompanion.Managers
 
         private static bool _goingBack;
         private static bool _goingForward;
-        private static bool _firstStart = true;
 
         private static bool _rendered;
 
         private static ButtonState prevButtonState = new();
 
-        private static Control prevNavigation;
-
-        // key: Page.Tag
+        // key: Windows, value: NavigationViewItem
+        private static ConcurrentDictionary<object, Control> prevNavigation = new();
+        // key: Page
         private static ConcurrentDictionary<object, Control> prevControl = new();
 
         static GamepadFocusManager()
@@ -118,13 +117,11 @@ namespace HandheldCompanion.Managers
                         Focus(control);
                     }
                 }
-                else if (_firstStart)
+                else if (!prevNavigation.ContainsKey(_gamepadWindow.Tag))
                 {
-                    prevNavigation = WPFUtils.GetTopLeftControl<NavigationViewItem>(_gamepadWindow.elements);
-                    Focus(prevNavigation);
-
-                    // remove state
-                    _firstStart = false;
+                    NavigationViewItem currentNavigationViewItem = (NavigationViewItem)WPFUtils.GetTopLeftControl<NavigationViewItem>(_gamepadWindow.elements);
+                    prevNavigation[_gamepadWindow.Tag] = currentNavigationViewItem;
+                    Focus(currentNavigationViewItem);
                 }
 
                 // clear history
@@ -175,7 +172,7 @@ namespace HandheldCompanion.Managers
                 case "MainWindow":
                 case "OverlayQuickTools":
                     {
-                        if (prevNavigation is not null)
+                        if (prevNavigation.ContainsKey(window.Tag))
                         {
                             // a new page opened
                             keyboardFocused = WPFUtils.GetTopLeftControl<Control>(window.elements);
@@ -191,7 +188,7 @@ namespace HandheldCompanion.Managers
                 case "NavigationViewItem":
                     {
                         // update navigation
-                        prevNavigation = keyboardFocused;
+                        prevNavigation[window.Tag] = (NavigationViewItem)keyboardFocused;
                     }
                     break;
 
@@ -290,7 +287,8 @@ namespace HandheldCompanion.Managers
 
                         case "ComboBox":
                             {
-                                KeyboardSimulator.KeyPress(new VirtualKeyCode[] { VirtualKeyCode.MENU, VirtualKeyCode.DOWN });
+                                ComboBox comboBox = (ComboBox)focusedElement;
+                                comboBox.IsDropDownOpen = true;
                             }
                             break;
 
@@ -319,7 +317,7 @@ namespace HandheldCompanion.Managers
                                     default:
                                         {
                                             // restore previous NavigationViewItem
-                                            Focus(prevNavigation);
+                                            Focus(prevNavigation[_gamepadWindow.Tag]);
                                         }
                                         break;
 
@@ -340,7 +338,8 @@ namespace HandheldCompanion.Managers
 
                         case "ComboBoxItem":
                             {
-                                KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
+                                ComboBox comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
+                                comboBox.IsDropDownOpen = false;
                             }
                             break;
 
@@ -353,6 +352,22 @@ namespace HandheldCompanion.Managers
                             {
                             }
                             break;
+                    }
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1))
+                {
+                    if (prevNavigation.TryGetValue(_gamepadWindow.Tag, out focusedElement))
+                    {
+                        elementType = focusedElement.GetType().Name;
+                        direction = WPFUtils.Direction.Left;
+                    }
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1))
+                {
+                    if (prevNavigation.TryGetValue(_gamepadWindow.Tag, out focusedElement))
+                    {
+                        elementType = focusedElement.GetType().Name;
+                        direction = WPFUtils.Direction.Right;
                     }
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))

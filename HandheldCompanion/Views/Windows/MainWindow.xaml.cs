@@ -83,6 +83,9 @@ public partial class MainWindow : GamepadWindow
         fileVersionInfo = _fileVersionInfo;
         CurrentWindow = this;
 
+        // used by gamepad navigation
+        Tag = "MainWindow";
+
         // get process
         var process = Process.GetCurrentProcess();
 
