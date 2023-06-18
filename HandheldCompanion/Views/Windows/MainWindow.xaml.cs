@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
@@ -177,6 +178,8 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         ProfileManager.Start();
+
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.Start();
         HotkeysManager.Start();
 
@@ -215,6 +218,10 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
+    }
+
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
     }
 
     private void AddNotifyIconItem(string name, object tag = null)

@@ -26,6 +26,11 @@ namespace HandheldCompanion.Managers
 {
     public static class GamepadFocusManager
     {
+        #region events
+        public static event FocusedEventHandler Focused;
+        public delegate void FocusedEventHandler(Control control);
+        #endregion
+    
         private static GamepadWindow _gamepadWindow;
         private static Frame _gamepadFrame;
         private static Page _gamepadPage;
@@ -151,6 +156,9 @@ namespace HandheldCompanion.Managers
 
             // set focus to control
             Keyboard.Focus(control);
+
+            // raise event
+            Focused?.Invoke(control);
         }
 
         public static Control FocusedElement(GamepadWindow window)

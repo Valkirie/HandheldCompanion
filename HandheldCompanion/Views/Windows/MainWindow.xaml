@@ -157,10 +157,48 @@
                         HorizontalAlignment="Left" />
                 </common:TouchScrollViewer>
 
+                <!--  GAMEPAD AREA  -->
                 <Grid
                     Grid.Row="1"
+                    Margin="20,0,20,0"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
+                    VerticalAlignment="Stretch">
+
+                    <ui:SimpleStackPanel
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="6">
+
+                        <!--  SELECT  -->
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                            <ui:FontIcon
+                                VerticalAlignment="Center"
+                                FontFamily="PromptFont"
+                                FontSize="28"
+                                Foreground="GreenYellow"
+                                Glyph="&#x21D3;" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="Select" />
+                        </ui:SimpleStackPanel>
+
+                        <!--  BACK  -->
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                            <ui:FontIcon
+                                VerticalAlignment="Center"
+                                FontFamily="PromptFont"
+                                FontSize="28"
+                                Foreground="OrangeRed"
+                                Glyph="&#x21D2;" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="Back" />
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
             </Grid>
         </ui:NavigationView.Content>
     </ui:NavigationView>
