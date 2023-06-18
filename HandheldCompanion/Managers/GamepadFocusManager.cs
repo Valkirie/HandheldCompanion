@@ -164,6 +164,10 @@ namespace HandheldCompanion.Managers
         public static Control FocusedElement(GamepadWindow window)
         {
             Control keyboardFocused = (Control)Keyboard.FocusedElement;
+
+            if (keyboardFocused is null)
+                keyboardFocused = window;
+
             string keyboardType = keyboardFocused.GetType().Name;
 
             switch(keyboardType)
