@@ -110,7 +110,7 @@ public static class ControllerManager
         }
     }
 
-    private static void ProcessManager_FocusChanged(ProcessEx processEx)
+    private static void ProcessManager_FocusChanged(ProcessEx processEx, string WindowTitle)
     {
         focusedProcess = processEx;
 

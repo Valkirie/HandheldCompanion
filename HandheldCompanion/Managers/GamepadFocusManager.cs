@@ -13,6 +13,7 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
@@ -51,14 +52,10 @@ namespace HandheldCompanion.Managers
         static GamepadFocusManager()
         {
             var mainWindow = MainWindow.GetCurrent();
-            mainWindow.Activated += GamepadFocusManager_GotFocus;
-            mainWindow.Deactivated += GamepadFocusManager_LostFocus;
             mainWindow.ContentFrame.Navigated += ContentFrame_Navigated;
-
-            MainWindow.overlayquickTools.Activated += GamepadFocusManager_GotFocus;
-            MainWindow.overlayquickTools.Deactivated += GamepadFocusManager_LostFocus;
             MainWindow.overlayquickTools.ContentFrame.Navigated += ContentFrame_Navigated;
 
+            ProcessManager.FocusChanged += ProcessManager_FocusChanged;
             ControllerManager.InputsUpdated += InputsUpdated;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -164,23 +161,20 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
+        private static void ProcessManager_FocusChanged(ProcessEx processEx, string WindowTitle)
         {
-            if (_currentWindow == (GamepadWindow)sender)
-            {
-                _currentWindow = null;
-
-                // halt timer
-                _gamepadTimer.Stop();
-            }
-        }
-
-        private static void GamepadFocusManager_GotFocus(object? sender, System.EventArgs e)
-        {
-            _currentWindow = (GamepadWindow)sender;
-
             // halt timer
             _gamepadTimer.Stop();
+
+            // get main window name
+            string MainWindowName = MainWindow.GetCurrent().Title;
+
+            if (WindowTitle.Equals(MainWindowName, StringComparison.InvariantCultureIgnoreCase))
+                _currentWindow = MainWindow.GetCurrent();
+            else if (WindowTitle.Equals("QuickTools", StringComparison.InvariantCultureIgnoreCase))
+                _currentWindow = MainWindow.overlayquickTools;
+            else
+                _currentWindow = null;
         }
 
         public static void Focus(Control control)
