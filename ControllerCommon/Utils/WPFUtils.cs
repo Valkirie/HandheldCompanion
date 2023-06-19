@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -105,7 +106,7 @@ public static class WPFUtils
 
         // Find the control with the same parent and the minimum distance to the source
         // If no control has the same parent, find the control with the minimum distance to the source
-        controls = controls.OrderBy(c => GetDistanceV2(source, c, Direction.None)).ToList();
+        controls = controls.OrderBy(c => GetDistanceV2(source, c, direction)).ToList();
 
         return controls.First();
     }
@@ -115,19 +116,19 @@ public static class WPFUtils
     {
         // Get the position of the target on the canvas
         var p = target.TranslatePoint(new Point(0, 0), source);
-        double x = p.X;
-        double y = p.Y;
+        double x = Math.Round(p.X);
+        double y = Math.Round(p.Y);
 
         switch (direction)
         {
             case Direction.Left:
-                return x + target.ActualWidth <= 0;
+                return x + (target.ActualWidth / 2) <= 0;
             case Direction.Right:
-                return x >= source.ActualWidth;
+                return x >= (source.ActualWidth / 2);
             case Direction.Up:
-                return y + target.ActualHeight <= 0;
+                return y + (target.ActualHeight / 2) <= 0;
             case Direction.Down:
-                return y >= source.ActualHeight;
+                return y >= (source.ActualHeight / 2);
             default:
                 return false;
         }
@@ -177,6 +178,42 @@ public static class WPFUtils
 
             // Return the Euclidean distance between the nearest edges
             return Math.Sqrt(dx * dx + dy * dy);
+        }
+        catch { }
+
+        return 9999.0d;
+    }
+
+    // This function takes two controls and returns their distance in pixels
+    private static double GetDistanceV3(Control c1, Control c2, Direction direction)
+    {
+        try
+        {
+            // Get the position of each control relative to the screen
+            Point p1 = c1.PointToScreen(new Point(0, 0));
+            Point p2 = c2.PointToScreen(new Point(0, 0));
+
+            // Convert the points to vectors
+            Vector3 v1 = new Vector3((float)p1.X, (float)p1.Y, 0f);
+            Vector3 v2 = new Vector3((float)p2.X, (float)p2.Y, 0f);
+
+            switch (direction)
+            {
+                case Direction.Up:
+                case Direction.Down:
+                    v1 = new Vector3(0f, (float)p1.Y, 0f);
+                    v2 = new Vector3(0f, (float)p2.Y, 0f);
+                    break;
+
+                case Direction.Left:
+                case Direction.Right:
+                    v1 = new Vector3((float)p1.X, 0f, 0f);
+                    v2 = new Vector3((float)p2.X, 0f, 0f);
+                    break;
+            }
+
+            // Calculate and return the distance between the vectors
+            return Vector3.Distance(v1, v2);
         }
         catch { }
 

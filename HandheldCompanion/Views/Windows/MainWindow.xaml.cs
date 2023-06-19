@@ -13,7 +13,9 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using ControllerCommon;
+using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
@@ -24,6 +26,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
+using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -81,6 +84,9 @@ public partial class MainWindow : GamepadWindow
 
         fileVersionInfo = _fileVersionInfo;
         CurrentWindow = this;
+
+        // used by gamepad navigation
+        Tag = "MainWindow";
 
         // get process
         var process = Process.GetCurrentProcess();
@@ -177,6 +183,8 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         ProfileManager.Start();
+
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.Start();
         HotkeysManager.Start();
 
@@ -194,6 +202,8 @@ public partial class MainWindow : GamepadWindow
         PowerManager.Start();
 
         SystemManager.Start();
+
+        GamepadFocusManager.Focused += GamepadFocusManagerOnFocused;
         GamepadFocusManager.Start();
 
         // start managers asynchroneously
@@ -215,6 +225,57 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
+    }
+
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            GamepadUISelect.Glyph = Controller.GetGlyph(ButtonFlags.B1);
+            GamepadUISelect.Foreground = Controller.GetGlyphColor(ButtonFlags.B1);
+
+            GamepadUIBack.Glyph = Controller.GetGlyph(ButtonFlags.B2);
+            GamepadUIBack.Foreground = Controller.GetGlyphColor(ButtonFlags.B2);
+        });
+    }
+
+    private void GamepadFocusManagerOnFocused(Control control)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // todo : localize me
+            string controlType = control.GetType().Name;
+            switch (controlType)
+            {
+                default:
+                    {
+                        GamepadUISelect.Visibility = Visibility.Visible;
+                        GamepadUISelectDesc.Text = "Select";
+
+                        GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIBackDesc.Text = "Back";
+                    }
+                    break;
+
+                case "Slider":
+                    {
+                        GamepadUISelect.Visibility = Visibility.Collapsed;
+                        GamepadUIBack.Visibility = Visibility.Visible;
+                    }
+                    break;
+
+                case "NavigationViewItem":
+                    {
+                        GamepadUISelect.Visibility = Visibility.Visible;
+                        GamepadUISelectDesc.Text = "Navigate";
+
+                        GamepadUIBack.Visibility = Visibility.Collapsed;
+                    }
+                    break;
+            }
+        });
     }
 
     private void AddNotifyIconItem(string name, object tag = null)

@@ -52,11 +52,12 @@ public partial class LayoutPage : Page
         navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads)
             ? Visibility.Visible
             : Visibility.Collapsed;
-        navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) ||
+        
+        /* navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) ||
                              MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) ||
                              MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor)
             ? Visibility.Visible
-            : Visibility.Collapsed;
+            : Visibility.Collapsed; */
 
         // create controller related pages
         _pages = new Dictionary<string, ILayoutPage>

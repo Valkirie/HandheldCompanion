@@ -157,10 +157,48 @@
                         HorizontalAlignment="Left" />
                 </common:TouchScrollViewer>
 
+                <!--  GAMEPAD AREA  -->
                 <Grid
                     Grid.Row="1"
+                    Margin="20,0,20,0"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
+                    VerticalAlignment="Stretch">
+
+                    <ui:SimpleStackPanel
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="6">
+
+                        <!--  SELECT  -->
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                            <ui:FontIcon
+                                Name="GamepadUISelect"
+                                VerticalAlignment="Center"
+                                FontFamily="PromptFont"
+                                FontSize="28" />
+                            <TextBlock
+                                Name="GamepadUISelectDesc"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Visibility="{Binding Visibility, ElementName=GamepadUISelect}" />
+                        </ui:SimpleStackPanel>
+
+                        <!--  BACK  -->
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                            <ui:FontIcon
+                                Name="GamepadUIBack"
+                                VerticalAlignment="Center"
+                                FontFamily="PromptFont"
+                                FontSize="28" />
+                            <TextBlock
+                                Name="GamepadUIBackDesc"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Visibility="{Binding Visibility, ElementName=GamepadUIBack}" />
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
             </Grid>
         </ui:NavigationView.Content>
     </ui:NavigationView>
