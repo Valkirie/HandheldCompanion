@@ -264,9 +264,9 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
                     Show();
-                    // ShowActivated
                     Activate();
                     Focus();
+                    Topmost = true;
                     break;
                 case Visibility.Visible:
                     Hide();
