@@ -163,8 +163,6 @@ namespace HandheldCompanion.Managers
 
         private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
         {
-            return;
-
             if (_currentWindow == (GamepadWindow)sender)
                 _currentWindow = null;
         }
