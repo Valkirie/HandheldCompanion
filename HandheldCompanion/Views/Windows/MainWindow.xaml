@@ -21,6 +21,8 @@
     Closing="Window_Closing"
     Icon="/Resources/icon.png"
     Loaded="Window_Loaded"
+    PreviewGotKeyboardFocus="GamepadWindow_PreviewGotKeyboardFocus"
+    PreviewLostKeyboardFocus="GamepadWindow_PreviewLostKeyboardFocus"
     StateChanged="Window_StateChanged"
     WindowState="Minimized"
     mc:Ignorable="d">
@@ -174,6 +176,7 @@
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
                             <ui:FontIcon
                                 Name="GamepadUISelect"
+                                Height="40"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
                                 FontSize="28" />
@@ -188,6 +191,7 @@
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
                             <ui:FontIcon
                                 Name="GamepadUIBack"
+                                Height="40"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
                                 FontSize="28" />

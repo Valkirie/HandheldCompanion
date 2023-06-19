@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -33,9 +34,22 @@ public class Hotkey
 
     public Hotkey()
     {
-        mainControl.HotkeyOutput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.Output);
-        mainControl.HotkeyPin.Click += (e, sender) => Pinning?.Invoke(this);
-        quickControl.QuickButton.Click += (e, sender) => Summoned?.Invoke(this);
+        mainControl.HotkeyOutput.Click += async (e, sender) =>
+        {
+            Listening?.Invoke(this, ListenerType.Output);
+        };
+
+        mainControl.HotkeyPin.Click += async (e, sender) =>
+        {
+            Pinning?.Invoke(this);
+        };
+
+        quickControl.QuickButton.Click += async (e, sender) =>
+        {
+            // workaround for gamepad navigation
+            await Task.Delay(100);
+            Summoned?.Invoke(this);
+        };
 
         // define animation
         var opacityAnimation = new DoubleAnimation

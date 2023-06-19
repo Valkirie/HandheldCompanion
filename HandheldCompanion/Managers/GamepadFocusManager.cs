@@ -59,8 +59,36 @@ namespace HandheldCompanion.Managers
             MainWindow.overlayquickTools.Deactivated += GamepadFocusManager_LostFocus;
             MainWindow.overlayquickTools.ContentFrame.Navigated += ContentFrame_Navigated;
 
+            ControllerManager.InputsUpdated += InputsUpdated;
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
+        }
+
+        private static void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                switch (name)
+                {
+                    case "DesktopLayoutEnabled":
+                        {
+                            var value = SettingsManager.GetBoolean(name, true);
+                            switch(value)
+                            {
+                                case true:
+                                    ControllerManager.InputsUpdated -= InputsUpdated;
+                                    break;
+                                case false:
+                                    ControllerManager.InputsUpdated += InputsUpdated;
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            });
         }
 
         private static void ContentFrame_Navigated(object sender, NavigationEventArgs e)
@@ -153,6 +181,7 @@ namespace HandheldCompanion.Managers
 
             // set focus to control
             Keyboard.Focus(control);
+            control.Focus();
 
             // raise event
             Focused?.Invoke(control);
@@ -224,9 +253,13 @@ namespace HandheldCompanion.Managers
         {
         }
 
-        public static void UpdateReport(ControllerState controllerState)
+        private static void InputsUpdated(ControllerState controllerState)
         {
             if (_currentWindow is null || !_rendered)
+                return;
+
+            // stop gamepad navigation when InputsManager is listening
+            if (InputsManager.IsListening())
                 return;
 
             if (controllerState.ButtonState.Equals(prevButtonState))
@@ -237,6 +270,7 @@ namespace HandheldCompanion.Managers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+
                 // get current focused element
                 Control focusedElement = FocusedElement(_currentWindow);
                 if (focusedElement is null)
@@ -246,10 +280,6 @@ namespace HandheldCompanion.Managers
 
                 // set direction
                 WPFUtils.Direction direction = WPFUtils.Direction.None;
-
-                // stop gamepad navigation when InputsManager is listening
-                if (InputsManager.IsListening())
-                    return;
 
                 // force display keyboard focus rectangle
                 WPFUtils.MakeFocusVisible(_currentWindow);

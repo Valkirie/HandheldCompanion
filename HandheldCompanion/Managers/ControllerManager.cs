@@ -521,13 +521,13 @@ public static class ControllerManager
 
     private static void UpdateInputs(ControllerState controllerState)
     {
-        var InputsState = controllerState.ButtonState.Clone() as ButtonState;
+        ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
+
+        // raise event
+        InputsUpdated?.Invoke(controllerState);
 
         // pass inputs to Inputs manager
-        InputsManager.UpdateReport(InputsState);
-
-        // pass inputs to Focus manager
-        GamepadFocusManager.UpdateReport(controllerState);
+        InputsManager.UpdateReport(buttonState);
 
         // pass inputs to Overlay Model
         MainWindow.overlayModel.UpdateReport(controllerState);
@@ -542,9 +542,9 @@ public static class ControllerManager
         // check if motion trigger is pressed
         var currentProfile = ProfileManager.GetCurrent();
         controllerState.MotionTriggered = (currentProfile.MotionMode == MotionMode.Off &&
-                                           InputsState.ContainsTrue(currentProfile.MotionTrigger)) ||
+                                           buttonState.ContainsTrue(currentProfile.MotionTrigger)) ||
                                           (currentProfile.MotionMode == MotionMode.On &&
-                                           !InputsState.ContainsTrue(currentProfile.MotionTrigger));
+                                           !buttonState.ContainsTrue(currentProfile.MotionTrigger));
 
         // pass inputs to service
         PipeClient.SendMessage(new PipeClientInputs(controllerState));
@@ -584,6 +584,10 @@ public static class ControllerManager
     public static event ControllerSelectedEventHandler ControllerSelected;
 
     public delegate void ControllerSelectedEventHandler(IController Controller);
+
+    public static event InputsUpdatedEventHandler InputsUpdated;
+
+    public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
     public static event InitializedEventHandler Initialized;
 

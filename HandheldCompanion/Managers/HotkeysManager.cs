@@ -162,11 +162,8 @@ public static class HotkeysManager
         });
     }
 
-    private static async void StartListening(Hotkey hotkey, ListenerType type)
+    private static void StartListening(Hotkey hotkey, ListenerType type)
     {
-        // workaround for gamepad navigation
-        await Task.Delay(250);
-
         InputsManager.StartListening(hotkey, type);
         hotkey.StartListening(type);
     }

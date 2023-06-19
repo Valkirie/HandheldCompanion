@@ -7,7 +7,9 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -202,8 +204,6 @@ public partial class MainWindow : GamepadWindow
         PowerManager.Start();
 
         SystemManager.Start();
-
-        GamepadFocusManager.Focused += GamepadFocusManagerOnFocused;
         GamepadFocusManager.Start();
 
         // start managers asynchroneously
@@ -234,9 +234,15 @@ public partial class MainWindow : GamepadWindow
         {
             GamepadUISelect.Glyph = Controller.GetGlyph(ButtonFlags.B1);
             GamepadUISelect.Foreground = Controller.GetGlyphColor(ButtonFlags.B1);
+            if (GamepadUISelect.Foreground is null)
+                GamepadUISelect.SetResourceReference(ForegroundProperty,
+                    "SystemControlForegroundBaseMediumBrush");
 
             GamepadUIBack.Glyph = Controller.GetGlyph(ButtonFlags.B2);
             GamepadUIBack.Foreground = Controller.GetGlyphColor(ButtonFlags.B2);
+            if (GamepadUIBack.Foreground is null)
+                GamepadUIBack.SetResourceReference(ForegroundProperty,
+                    "SystemControlForegroundBaseMediumBrush");
         });
     }
 
@@ -877,6 +883,16 @@ public partial class MainWindow : GamepadWindow
         // here to load the home page.
         preNavItemTag = "ControllerPage";
         NavView_Navigate(preNavItemTag);
+    }
+
+    private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        GamepadFocusManagerOnFocused((Control)e.NewFocus);
+    }
+
+    private void GamepadWindow_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        // do something
     }
 
     private bool TryGoBack()
