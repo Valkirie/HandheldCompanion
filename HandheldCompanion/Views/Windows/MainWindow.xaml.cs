@@ -25,6 +25,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
+using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
 using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
@@ -200,6 +201,8 @@ public partial class MainWindow : GamepadWindow
         PowerManager.Start();
 
         SystemManager.Start();
+
+        GamepadFocusManager.Focused += GamepadFocusManagerOnFocused;
         GamepadFocusManager.Start();
 
         // start managers asynchroneously
@@ -223,8 +226,13 @@ public partial class MainWindow : GamepadWindow
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
     }
 
+    private void GamepadFocusManagerOnFocused(Control control)
+    {
+    }
+
     private void ControllerManager_ControllerSelected(IController Controller)
     {
+
     }
 
     private void AddNotifyIconItem(string name, object tag = null)
