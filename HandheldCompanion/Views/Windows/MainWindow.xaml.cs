@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
+using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
@@ -226,13 +227,55 @@ public partial class MainWindow : GamepadWindow
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
     }
 
-    private void GamepadFocusManagerOnFocused(Control control)
-    {
-    }
-
     private void ControllerManager_ControllerSelected(IController Controller)
     {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            GamepadUISelect.Glyph = Controller.GetGlyph(ButtonFlags.B1);
+            GamepadUISelect.Foreground = Controller.GetGlyphColor(ButtonFlags.B1);
 
+            GamepadUIBack.Glyph = Controller.GetGlyph(ButtonFlags.B2);
+            GamepadUIBack.Foreground = Controller.GetGlyphColor(ButtonFlags.B2);
+        });
+    }
+
+    private void GamepadFocusManagerOnFocused(Control control)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // todo : localize me
+            string controlType = control.GetType().Name;
+            switch (controlType)
+            {
+                default:
+                    {
+                        GamepadUISelect.Visibility = Visibility.Visible;
+                        GamepadUISelectDesc.Text = "Select";
+
+                        GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIBackDesc.Text = "Back";
+                    }
+                    break;
+
+                case "Slider":
+                    {
+                        GamepadUISelect.Visibility = Visibility.Collapsed;
+                        GamepadUIBack.Visibility = Visibility.Visible;
+                    }
+                    break;
+
+                case "NavigationViewItem":
+                    {
+                        GamepadUISelect.Visibility = Visibility.Visible;
+                        GamepadUISelectDesc.Text = "Navigate";
+
+                        GamepadUIBack.Visibility = Visibility.Collapsed;
+                    }
+                    break;
+            }
+        });
     }
 
     private void AddNotifyIconItem(string name, object tag = null)

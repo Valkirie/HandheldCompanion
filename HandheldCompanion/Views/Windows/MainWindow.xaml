@@ -171,31 +171,31 @@
                         Spacing="6">
 
                         <!--  SELECT  -->
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
                             <ui:FontIcon
+                                Name="GamepadUISelect"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
-                                FontSize="28"
-                                Foreground="GreenYellow"
-                                Glyph="&#x21D3;" />
+                                FontSize="28" />
                             <TextBlock
+                                Name="GamepadUISelectDesc"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Select" />
+                                Visibility="{Binding Visibility, ElementName=GamepadUISelect}" />
                         </ui:SimpleStackPanel>
 
                         <!--  BACK  -->
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
                             <ui:FontIcon
+                                Name="GamepadUIBack"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
-                                FontSize="28"
-                                Foreground="OrangeRed"
-                                Glyph="&#x21D2;" />
+                                FontSize="28" />
                             <TextBlock
+                                Name="GamepadUIBackDesc"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Back" />
+                                Visibility="{Binding Visibility, ElementName=GamepadUIBack}" />
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
