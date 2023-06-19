@@ -194,6 +194,9 @@ public static class ProcessManager
             {
                 case EVENT_SYSTEM_FOREGROUND:
                 {
+                    // raise event
+                    FocusChanged?.Invoke(process);
+
                     // filter based on current process status
                     var filter = GetFilter(process.Executable, process.Path, ProcessUtils.GetWindowTitle(hWnd));
                     switch (filter)
@@ -502,6 +505,10 @@ public static class ProcessManager
     public static event ForegroundChangedEventHandler ForegroundChanged;
 
     public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
+
+    public static event FocusChangedEventHandler FocusChanged;
+
+    public delegate void FocusChangedEventHandler(ProcessEx processEx);
 
     public static event ProcessStartedEventHandler ProcessStarted;
 

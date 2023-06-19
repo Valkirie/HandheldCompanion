@@ -164,12 +164,20 @@ namespace HandheldCompanion.Managers
         private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
         {
             if (_currentWindow == (GamepadWindow)sender)
+            {
                 _currentWindow = null;
+
+                // halt timer
+                _gamepadTimer.Stop();
+            }
         }
 
         private static void GamepadFocusManager_GotFocus(object? sender, System.EventArgs e)
         {
             _currentWindow = (GamepadWindow)sender;
+
+            // halt timer
+            _gamepadTimer.Stop();
         }
 
         public static void Focus(Control control)

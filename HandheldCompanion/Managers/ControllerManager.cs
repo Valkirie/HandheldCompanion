@@ -35,7 +35,7 @@ public static class ControllerManager
     private static readonly DS4Controller? emptyDS4 = new();
 
     private static IController? targetController;
-    private static ProcessEx? foregroundProcess;
+    private static ProcessEx? focusedProcess;
     private static bool ControllerMuted;
 
     private static bool IsInitialized;
@@ -52,7 +52,7 @@ public static class ControllerManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
+        ProcessManager.FocusChanged += ProcessManager_FocusChanged;
 
         PipeClient.Connected += OnClientConnected;
 
@@ -96,17 +96,23 @@ public static class ControllerManager
             var neptuneController = (NeptuneController)targetController;
 
             // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-            if (foregroundProcess?.Platform == PlatformType.Steam)
+            if (focusedProcess?.Platform == PlatformType.Steam)
                 if (neptuneController.IsVirtualMuted())
                 {
                     ControllerMuted = true;
                 }
         }
+
+        string process = focusedProcess is not null ? focusedProcess.Executable.ToLower() : string.Empty;
+        if (process.Equals("handheldcompanion.exe"))
+        {
+            ControllerMuted = true;
+        }
     }
 
-    private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+    private static void ProcessManager_FocusChanged(ProcessEx processEx)
     {
-        foregroundProcess = processEx;
+        focusedProcess = processEx;
 
         // check applicable scenarios
         CheckControllerScenario();
