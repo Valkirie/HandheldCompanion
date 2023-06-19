@@ -118,6 +118,9 @@ namespace HandheldCompanion.Managers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+                if (_currentWindow is null)
+                    return;
+
                 // specific-cases
                 switch (_gamepadPage[_currentWindow].Tag)
                 {
