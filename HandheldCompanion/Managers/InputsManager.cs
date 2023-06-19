@@ -115,6 +115,12 @@ public static class InputsManager
         HotkeysManager.HotkeyCreated += TriggerCreated;
     }
 
+    public static event TriggerRaisedEventHandler TriggerRaised;
+
+    public static event TriggerUpdatedEventHandler TriggerUpdated;
+
+    public static event InitializedEventHandler Initialized;
+
     private static void InputsChordHold_Elapsed()
     {
         // triggered when key is pressed for a long time
