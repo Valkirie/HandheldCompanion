@@ -99,6 +99,9 @@ namespace HandheldCompanion.Managers
             // remove state
             _goingForward = false;
 
+            // store current window
+            _currentWindow = (GamepadWindow)Window.GetWindow((DependencyObject)sender);
+
             // store current Frame
             _gamepadFrame[_currentWindow] = (Frame)sender;
             _gamepadFrame[_currentWindow].ContentRendered += _gamepadFrame_ContentRendered;
