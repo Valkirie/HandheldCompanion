@@ -42,7 +42,7 @@ namespace ControllerCommon
             {
                 string output = ProcessOutput.StandardOutput.ReadToEnd();
 
-                ProcessOutput.WaitForInputIdle();
+                ProcessOutput.WaitForExit();
 
                 if (output.Contains("No matching devices found."))
                     return false;

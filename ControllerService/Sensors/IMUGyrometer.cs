@@ -52,10 +52,6 @@ public class IMUGyrometer : IMUSensor
         {
             case SensorFamily.Windows:
             {
-                // workaround Bosch BMI323
-                var path = ((Gyrometer)sensor).DeviceId;
-                LegacyDevcon.Restart(path);
-
                 ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
 
                 LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", ToString(),
