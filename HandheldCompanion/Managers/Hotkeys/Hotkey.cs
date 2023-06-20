@@ -36,6 +36,8 @@ public class Hotkey
     {
         mainControl.HotkeyOutput.Click += async (e, sender) =>
         {
+            // workaround for gamepad navigation
+            await Task.Delay(100);
             Listening?.Invoke(this, ListenerType.Output);
         };
 
@@ -125,16 +127,31 @@ public class Hotkey
                 mainControl.HotkeyGrid.Children.Remove(mainControl.HotkeyErase);
                 mainControl.EmbeddedGrid.Children.Add(mainControl.HotkeyErase);
 
-                mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.UI);
+                mainControl.HotkeyInput.Click += async (e, sender) =>
+                {
+                    // workaround for gamepad navigation
+                    await Task.Delay(100);
+                    Listening?.Invoke(this, ListenerType.UI);
+                };
                 break;
             case InputsHotkeyType.Custom:
                 mainControl.HotkeyCustomName.Visibility = Visibility.Visible;
                 mainControl.HotkeyOutput.Visibility = Visibility.Visible;
                 mainControl.HotkeyName.Visibility = Visibility.Collapsed;
-                mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.Default);
+                mainControl.HotkeyInput.Click += async (e, sender) =>
+                {
+                    // workaround for gamepad navigation
+                    await Task.Delay(100);
+                    Listening?.Invoke(this, ListenerType.Default);
+                };
                 break;
             default:
-                mainControl.HotkeyInput.Click += (e, sender) => Listening?.Invoke(this, ListenerType.Default);
+                mainControl.HotkeyInput.Click += async (e, sender) =>
+                {
+                    // workaround for gamepad navigation
+                    await Task.Delay(100);
+                    Listening?.Invoke(this, ListenerType.Default);
+                };
                 break;
         }
     }

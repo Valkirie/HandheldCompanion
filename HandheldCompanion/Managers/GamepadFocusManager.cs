@@ -28,10 +28,13 @@ namespace HandheldCompanion.Managers
     public static class GamepadFocusManager
     {
         #region events
-        public static event FocusedEventHandler Focused;
-        public delegate void FocusedEventHandler(Control control);
+        public static event GotFocusEventHandler GotFocus;
+        public delegate void GotFocusEventHandler(Control control);
+
+        public static event LostFocusEventHandler LostFocus;
+        public delegate void LostFocusEventHandler(Control control);
         #endregion
-    
+
         private static GamepadWindow _currentWindow;
         private static ConcurrentDictionary<object, Frame> _gamepadFrame = new();
         private static ConcurrentDictionary<object, Page> _gamepadPage = new();
@@ -53,14 +56,42 @@ namespace HandheldCompanion.Managers
         {
             var mainWindow = MainWindow.GetCurrent();
             mainWindow.ContentFrame.Navigated += ContentFrame_Navigated;
-            MainWindow.overlayquickTools.ContentFrame.Navigated += ContentFrame_Navigated;
+            mainWindow.Activated += GamepadFocusManager_GotFocus;
+            mainWindow.Deactivated += GamepadFocusManager_LostFocus;
 
-            ProcessManager.FocusChanged += ProcessManager_FocusChanged;
+            MainWindow.overlayquickTools.ContentFrame.Navigated += ContentFrame_Navigated;
+            MainWindow.overlayquickTools.Activated += GamepadFocusManager_GotFocus;
+            MainWindow.overlayquickTools.Deactivated += GamepadFocusManager_LostFocus;
+
             ControllerManager.InputsUpdated += InputsUpdated;
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
+        }
+
+        private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
+        {
+            if (_currentWindow == (GamepadWindow)sender)
+            {
+                // halt timer
+                _gamepadTimer.Stop();
+
+                // raise event
+                LostFocus?.Invoke(_currentWindow);
+
+                // reset current window
+                _currentWindow = null;
+            }
+        }
+
+        private static void GamepadFocusManager_GotFocus(object? sender, System.EventArgs e)
+        {
+            // set current window
+            _currentWindow = (GamepadWindow)sender;
+
+            // raise event
+            GotFocus?.Invoke(_currentWindow);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -164,22 +195,6 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        private static void ProcessManager_FocusChanged(ProcessEx processEx, string WindowTitle)
-        {
-            // halt timer
-            _gamepadTimer.Stop();
-
-            // get main window name
-            string MainWindowName = MainWindow.GetCurrent().Title;
-
-            if (WindowTitle.Equals(MainWindowName, StringComparison.InvariantCultureIgnoreCase))
-                _currentWindow = MainWindow.GetCurrent();
-            else if (WindowTitle.Equals("QuickTools", StringComparison.InvariantCultureIgnoreCase))
-                _currentWindow = MainWindow.overlayquickTools;
-            else
-                _currentWindow = null;
-        }
-
         public static void Focus(Control control)
         {
             if (control is null)
@@ -188,9 +203,6 @@ namespace HandheldCompanion.Managers
             // set focus to control
             Keyboard.Focus(control);
             control.Focus();
-
-            // raise event
-            Focused?.Invoke(control);
         }
 
         public static Control FocusedElement(GamepadWindow window)
@@ -198,7 +210,14 @@ namespace HandheldCompanion.Managers
             Control keyboardFocused = (Control)Keyboard.FocusedElement;
 
             if (keyboardFocused is null)
-                keyboardFocused = window;
+            {
+                if (window is not null)
+                    keyboardFocused = window;
+                else if (_currentWindow is not null)
+                    keyboardFocused = _currentWindow;
+                else
+                    return null;
+            }
 
             string keyboardType = keyboardFocused.GetType().Name;
 
@@ -222,8 +241,20 @@ namespace HandheldCompanion.Managers
 
                 case "NavigationViewItem":
                     {
-                        // update navigation
-                        prevNavigation[window.Tag] = (NavigationViewItem)keyboardFocused;
+                        switch (keyboardFocused.Name)
+                        {
+                            case "b_ServiceStart":
+                            case "b_ServiceStop":
+                            case "b_ServiceInstall":
+                            case "b_ServiceDelete":
+                                break;
+                            default:
+                                {
+                                    // update navigation
+                                    prevNavigation[window.Tag] = (NavigationViewItem)keyboardFocused;
+                                }
+                                break;
+                        }
                     }
                     break;
 
@@ -294,7 +325,7 @@ namespace HandheldCompanion.Managers
                 {
                     // lazy
                     // todo: implement proper RoutedEvent call
-                    switch (elementType)
+                     switch (elementType)
                     {
                         case "Button":
                         case "ToggleSwitch":
@@ -307,16 +338,31 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
-                                // set state
-                                _goingForward = true;
-
-                                if (prevControl.TryGetValue(_gamepadPage[_currentWindow].Tag, out Control control))
-                                    Focus(control);
-                                else
+                                switch(focusedElement.Name)
                                 {
-                                    // get the nearest non-navigation control
-                                    focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.elements);
-                                    Focus(focusedElement);
+                                    case "b_ServiceStart":
+                                    case "b_ServiceStop":
+                                    case "b_ServiceInstall":
+                                    case "b_ServiceDelete":
+                                        {
+                                            KeyboardSimulator.KeyPress(VirtualKeyCode.SPACE);
+                                        }
+                                        return;
+                                    default:
+                                        {
+                                            // set state
+                                            _goingForward = true;
+
+                                            if (prevControl.TryGetValue(_gamepadPage[_currentWindow].Tag, out Control control))
+                                                Focus(control);
+                                            else
+                                            {
+                                                // get the nearest non-navigation control
+                                                focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.elements);
+                                                Focus(focusedElement);
+                                            }
+                                        }
+                                        return;
                                 }
                             }
                             break;
@@ -326,18 +372,13 @@ namespace HandheldCompanion.Managers
                                 ComboBox comboBox = (ComboBox)focusedElement;
                                 comboBox.IsDropDownOpen = true;
                             }
-                            break;
+                            return;
 
                         case "ComboBoxItem":
                             {
                                 KeyboardSimulator.KeyPress(VirtualKeyCode.RETURN);
                             }
-                            break;
-
-                        case "RadioButtons":
-                            {
-                            }
-                            break;
+                            return;
                     }
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2))
@@ -355,7 +396,7 @@ namespace HandheldCompanion.Managers
                                             // restore previous NavigationViewItem
                                             Focus(prevNavigation[_currentWindow.Tag]);
                                         }
-                                        break;
+                                        return;
 
                                     case "layout":
                                     case "SettingsMode0":
@@ -367,7 +408,7 @@ namespace HandheldCompanion.Managers
                                             // go back to previous page
                                             _gamepadFrame[_currentWindow].GoBack();
                                         }
-                                        break;
+                                        return;
                                 }
                             }
                             break;
@@ -377,12 +418,7 @@ namespace HandheldCompanion.Managers
                                 ComboBox comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;
                                 comboBox.IsDropDownOpen = false;
                             }
-                            break;
-
-                        case "RadioButtons":
-                            {
-                            }
-                            break;
+                            return;
 
                         case "NavigationViewItem":
                             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
@@ -12,6 +13,7 @@ using ControllerCommon.Utils;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Classes;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
@@ -35,7 +37,8 @@ public static class ControllerManager
     private static readonly DS4Controller? emptyDS4 = new();
 
     private static IController? targetController;
-    private static ProcessEx? focusedProcess;
+    private static GamepadWindow? focusedWindow;
+    private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
 
     private static bool IsInitialized;
@@ -52,7 +55,10 @@ public static class ControllerManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        ProcessManager.FocusChanged += ProcessManager_FocusChanged;
+        GamepadFocusManager.GotFocus += GamepadFocusManager_GotFocus;
+        GamepadFocusManager.LostFocus += GamepadFocusManager_LostFocus;
+
+        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
         PipeClient.Connected += OnClientConnected;
 
@@ -70,6 +76,30 @@ public static class ControllerManager
         ControllerSelected?.Invoke(GetEmulatedController());
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void GamepadFocusManager_LostFocus(Control control)
+    {
+        focusedWindow = null;
+
+        // check applicable scenarios
+        CheckControllerScenario();
+    }
+
+    private static void GamepadFocusManager_GotFocus(Control control)
+    {
+        focusedWindow = (GamepadWindow)control;
+
+        // check applicable scenarios
+        CheckControllerScenario();
+    }
+
+    private static void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)
+    {
+        foregroundProcess = processEx;
+
+        // check applicable scenarios
+        CheckControllerScenario();
     }
 
     private static void CurrentDevice_KeyReleased(ButtonFlags button)
@@ -96,26 +126,18 @@ public static class ControllerManager
             var neptuneController = (NeptuneController)targetController;
 
             // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-            if (focusedProcess?.Platform == PlatformType.Steam)
+            if (foregroundProcess?.Platform == PlatformType.Steam)
                 if (neptuneController.IsVirtualMuted())
                 {
                     ControllerMuted = true;
                 }
         }
 
-        string process = focusedProcess is not null ? focusedProcess.Executable.ToLower() : string.Empty;
-        if (process.Equals("handheldcompanion.exe"))
+        // either main window or quicktools are focused
+        if (focusedWindow is not null)
         {
             ControllerMuted = true;
         }
-    }
-
-    private static void ProcessManager_FocusChanged(ProcessEx processEx, string WindowTitle)
-    {
-        focusedProcess = processEx;
-
-        // check applicable scenarios
-        CheckControllerScenario();
     }
 
     public static void Stop()

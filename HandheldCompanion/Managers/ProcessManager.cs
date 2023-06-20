@@ -196,9 +196,6 @@ public static class ProcessManager
                 {
                     string WindowTitle = ProcessUtils.GetWindowTitle(hWnd);
 
-                    // raise event
-                    FocusChanged?.Invoke(process, WindowTitle);
-
                     // filter based on current process status
                     var filter = GetFilter(process.Executable, process.Path, WindowTitle);
                     switch (filter)
@@ -507,10 +504,6 @@ public static class ProcessManager
     public static event ForegroundChangedEventHandler ForegroundChanged;
 
     public delegate void ForegroundChangedEventHandler(ProcessEx processEx, ProcessEx backgroundEx);
-
-    public static event FocusChangedEventHandler FocusChanged;
-
-    public delegate void FocusChangedEventHandler(ProcessEx processEx, string WindowTitle);
 
     public static event ProcessStartedEventHandler ProcessStarted;
 
