@@ -41,7 +41,7 @@ internal class DualShock4Target : ViGEmTarget
         // initialize controller
         HID = HIDmode.DualShock4Controller;
 
-        virtualController = ControllerService.vClient.CreateDualShock4Controller();
+        virtualController = ControllerService.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
         virtualController.AutoSubmitReport = false;
         virtualController.FeedbackReceived += FeedbackReceived;
 
