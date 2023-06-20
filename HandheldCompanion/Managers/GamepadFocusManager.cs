@@ -422,6 +422,8 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
+                                if (_currentWindow.GetType() == typeof(OverlayQuickTools))
+                                    KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
                             }
                             break;
                     }
