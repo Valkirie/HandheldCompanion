@@ -312,10 +312,16 @@ internal static class LayoutManager
 
             // skip, if not mapped
             if (!currentLayout.ButtonLayout.TryGetValue(button, out var action))
+            {
+                outputState.ButtonState[button] = value;
                 continue;
+            }
 
             if (action is null)
+            {
+                outputState.ButtonState[button] = value;
                 continue;
+            }
 
             switch (action.ActionType)
             {
@@ -348,10 +354,8 @@ internal static class LayoutManager
             }
         }
 
-        foreach (var axisLayout in currentLayout.AxisLayout)
+        foreach (AxisLayoutFlags flags in Enum.GetValues(typeof(AxisLayoutFlags)))
         {
-            var flags = axisLayout.Key;
-
             // read origin values
             var InLayout = AxisLayout.Layouts[flags];
             var InAxisX = InLayout.GetAxisFlags('X');
@@ -361,10 +365,20 @@ internal static class LayoutManager
             InLayout.vector.Y = controllerState.AxisState[InAxisY];
 
             // pull action
-            var action = axisLayout.Value;
+            // skip, if not mapped
+            if (!currentLayout.AxisLayout.TryGetValue(flags, out var action))
+            {
+                outputState.AxisState[InAxisX] = controllerState.AxisState[InAxisX];
+                outputState.AxisState[InAxisY] = controllerState.AxisState[InAxisY];
+                continue;
+            }
 
             if (action is null)
+            {
+                outputState.AxisState[InAxisX] = controllerState.AxisState[InAxisX];
+                outputState.AxisState[InAxisY] = controllerState.AxisState[InAxisY];
                 continue;
+            }
 
             switch (action.ActionType)
             {
@@ -379,9 +393,9 @@ internal static class LayoutManager
                     var OutAxisY = OutLayout.GetAxisFlags('Y');
 
                     outputState.AxisState[OutAxisX] =
-                        (short)Math.Clamp(aAction.GetValue().X, short.MinValue, short.MaxValue);
+                        (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
                     outputState.AxisState[OutAxisY] =
-                        (short)Math.Clamp(aAction.GetValue().Y, short.MinValue, short.MaxValue);
+                        (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
                 }
                     break;
 
