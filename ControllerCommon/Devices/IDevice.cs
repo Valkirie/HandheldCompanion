@@ -349,6 +349,12 @@ public abstract class IDevice
         }
     }
 
+    public bool RestartSensor()
+    {
+        var deviceId = sensor.DeviceId.Replace("\\1", string.Empty);
+        return LegacyDevcon.Restart(deviceId);
+    }
+
     public string GetButtonName(ButtonFlags button)
     {
         return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);

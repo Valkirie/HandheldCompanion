@@ -4,6 +4,7 @@ using ControllerCommon.Managers;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
 using static ControllerCommon.Utils.DeviceUtils;
+using ControllerCommon;
 
 namespace ControllerService.Sensors;
 
@@ -51,13 +52,6 @@ public class IMUGyrometer : IMUSensor
         {
             case SensorFamily.Windows:
             {
-                // workaround Bosch BMI323
-                var path = ((Gyrometer)sensor).DeviceId;
-                using (var details = DeviceManager.GetDeviceByInterfaceId(path))
-                {
-                    details.CyclePort();
-                }
-
                 ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
 
                 LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", ToString(),

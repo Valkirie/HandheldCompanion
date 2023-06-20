@@ -67,4 +67,14 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Resources\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Resources\devcon.exe">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

@@ -105,6 +105,22 @@ public class ControllerService : IHostedService
 
         // initialize device
         CurrentDevice = IDevice.GetDefault();
+        CurrentDevice.PullSensors();
+
+        // as of 06/20/2023, Bosch BMI320/BMI323 is crippled
+        string currentDeviceType = CurrentDevice.GetType().Name;
+        switch (currentDeviceType)
+        {
+            case "AYANEOAIRPlus":
+            case "ROGAlly":
+                {
+                    if (CurrentDevice.RestartSensor())
+                        LogManager.LogInformation("Successfully restarted: {0}", CurrentDevice.InternalSensorName);
+                    else
+                        LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
+                }
+                break;
+        }
 
         // initialize DSUClient
         DSUServer = new DSUServer(DSUip, DSUport);

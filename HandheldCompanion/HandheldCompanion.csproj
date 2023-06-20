@@ -170,6 +170,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\devcon.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\libryzenadj.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
