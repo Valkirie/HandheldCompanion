@@ -26,8 +26,8 @@ internal class DualShock4Target : ViGEmTarget
     // Note, at +/- 2000 the value is still off by a factor 5
     private static readonly SensorSpec DS4GyroscopeSensorSpec = new()
     {
-        minIn = -10000.0f,
-        maxIn = 10000.0f,
+        minIn = -2000.0f,
+        maxIn = 2000.0f,
         minOut = short.MinValue,
         maxOut = short.MaxValue
     };
