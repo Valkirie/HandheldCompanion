@@ -8,20 +8,22 @@ namespace HandheldCompanion.Managers.Desktop;
 
 public class ScreenResolution
 {
-    public SortedDictionary<int, ScreenFrequency> frequencies;
-    public int height;
-    public int width;
+    public SortedDictionary<int, ScreenFrequency> Frequencies;
+    public int Height;
+    public int Width;
+    public int BitsPerPel;
 
-    public ScreenResolution(int dmPelsWidth, int dmPelsHeight)
+    public ScreenResolution(int dmPelsWidth, int dmPelsHeight, int bitsPerPel)
     {
-        width = dmPelsWidth;
-        height = dmPelsHeight;
-        frequencies = new SortedDictionary<int, ScreenFrequency>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        Width = dmPelsWidth;
+        Height = dmPelsHeight;
+        BitsPerPel = bitsPerPel;
+        Frequencies = new SortedDictionary<int, ScreenFrequency>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
     }
 
     public override string ToString()
     {
-        return $"{width} x {height}";
+        return $"{Width} x {Height}";
     }
 }
 
@@ -35,31 +37,31 @@ public enum Frequency
 
 public class ScreenFrequency
 {
-    private readonly SortedDictionary<Frequency, double> frequencies = new();
+    private readonly SortedDictionary<Frequency, double> Frequencies = new();
 
     public ScreenFrequency(int frequency)
     {
-        frequencies[Frequency.Quarter] = Math.Round(frequency / 4.0d, 1);
-        frequencies[Frequency.Third] = Math.Round(frequency / 3.0d, 1);
-        frequencies[Frequency.Half] = Math.Round(frequency / 2.0d, 1);
-        frequencies[Frequency.Full] = frequency;
+        Frequencies[Frequency.Quarter] = Math.Round(frequency / 4.0d, 1);
+        Frequencies[Frequency.Third] = Math.Round(frequency / 3.0d, 1);
+        Frequencies[Frequency.Half] = Math.Round(frequency / 2.0d, 1);
+        Frequencies[Frequency.Full] = frequency;
     }
 
     public double GetValue(Frequency frequency)
     {
-        return frequencies[frequency];
+        return Frequencies[frequency];
     }
 
     public override string ToString()
     {
-        return $"{frequencies[Frequency.Full]} Hz";
+        return $"{Frequencies[Frequency.Full]} Hz";
     }
 
     public override bool Equals(object obj)
     {
         if (obj is ScreenFrequency frequency)
             foreach (var freq in (Frequency[])Enum.GetValues(typeof(Frequency)))
-                if (frequencies[freq] != frequency.frequencies[freq])
+                if (Frequencies[freq] != frequency.Frequencies[freq])
                     return false;
 
         return true;
@@ -139,12 +141,12 @@ public class DesktopScreen
 
     public bool HasResolution(ScreenResolution resolution)
     {
-        return resolutions.Count(a => a.width == resolution.width && a.height == resolution.height) > 0;
+        return resolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
     }
 
     public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
     {
-        return resolutions.FirstOrDefault(a => a.width == dmPelsWidth && a.height == dmPelsHeight);
+        return resolutions.FirstOrDefault(a => a.Width == dmPelsWidth && a.Height == dmPelsHeight);
     }
 
     public ScreenFrequency GetFrequency()
@@ -154,6 +156,6 @@ public class DesktopScreen
 
     public void SortResolutions()
     {
-        resolutions = resolutions.OrderByDescending(a => a.width).ThenByDescending(b => b.height).ToList();
+        resolutions = resolutions.OrderByDescending(a => a.Width).ThenByDescending(b => b.Height).ToList();
     }
 }

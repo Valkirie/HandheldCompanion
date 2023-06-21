@@ -222,13 +222,13 @@ public static class SystemManager
 
             foreach (var mode in resolutions)
             {
-                var res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight);
+                var res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
 
                 var frequencies = resolutions
                     .Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight)
                     .Select(b => b.dmDisplayFrequency).Distinct().ToList();
                 foreach (var frequency in frequencies)
-                    res.frequencies[frequency] = new ScreenFrequency(frequency);
+                    res.Frequencies[frequency] = new ScreenFrequency(frequency);
 
                 if (!DesktopScreen.HasResolution(res))
                     DesktopScreen.resolutions.Add(res);
