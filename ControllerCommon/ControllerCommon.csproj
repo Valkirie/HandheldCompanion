@@ -8,6 +8,7 @@
 		<Version>0.9.3.0</Version>
 		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
 		<Platforms>AnyCPU;x64</Platforms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

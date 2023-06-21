@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
 using static PInvoke.Kernel32;
 using BOOL = System.Int32;
 using DWORD = System.Int32;
@@ -10,6 +12,21 @@ namespace ControllerCommon;
 
 public static class WinAPI
 {
+    [Flags]
+    public enum UFlags : uint
+    {
+        SWP_NOACTIVATE = 0x0010,
+        SWP_NOMOVE = 0x0002,
+        SWP_NOSIZE = 0x0001
+    }
+
+    [Flags]
+    public enum HWND : int
+    {
+        SW_SHOWNOACTIVATE = 4,
+        HWND_TOPMOST = -1
+    }
+
     [Flags]
     public enum PriorityClass : uint
     {
@@ -72,6 +89,19 @@ public static class WinAPI
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern int SetPriorityClass(HANDLE hProcess, int dwPriorityClass);
 
+    [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+    static extern bool SetWindowPos(
+        int hWnd,             // Window handle
+        int hWndInsertAfter,  // Placement-order handle
+        int X,                // Horizontal position
+        int Y,                // Vertical position
+        int cx,               // Width
+        int cy,               // Height
+        uint uFlags);         // Window positioning flags
+
+    [DllImport("user32.dll")]
+    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
     public static int GetWindowProcessId(HANDLE hwnd)
     {
         int pid;
@@ -82,5 +112,13 @@ public static class WinAPI
     public static HANDLE GetforegroundWindow()
     {
         return GetForegroundWindow();
+    }
+
+    public static void ShowInactiveTopmost(Window window)
+    {
+        var hwnd = (HwndSource.FromVisual(window) as HwndSource).Handle;
+        ShowWindow(hwnd, (int)HWND.SW_SHOWNOACTIVATE);
+
+        SetWindowPos(hwnd.ToInt32(), (int)HWND.HWND_TOPMOST, 0, 0, 0, 0, (uint)UFlags.SWP_NOMOVE | (uint)UFlags.SWP_NOSIZE | (uint)UFlags.SWP_NOACTIVATE);
     }
 }
