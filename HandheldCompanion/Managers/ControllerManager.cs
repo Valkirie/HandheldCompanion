@@ -563,12 +563,12 @@ public static class ControllerManager
         // pass inputs to Overlay Model
         MainWindow.overlayModel.UpdateReport(controllerState);
 
+        // pass inputs to Layout manager
+        controllerState = LayoutManager.MapController(controllerState);
+
         // controller is muted
         if (ControllerMuted)
             return;
-
-        // pass inputs to Layout manager
-        controllerState = LayoutManager.MapController(controllerState);
 
         // check if motion trigger is pressed
         var currentProfile = ProfileManager.GetCurrent();
