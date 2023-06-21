@@ -158,7 +158,7 @@ public partial class QuickPerformancePage : Page
         var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
 
         ComboBoxFrequency.Items.Clear();
-        foreach (var frequency in resolution.frequencies.Values)
+        foreach (var frequency in resolution.Frequencies.Values)
             ComboBoxFrequency.Items.Add(frequency);
 
         ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
@@ -186,7 +186,7 @@ public partial class QuickPerformancePage : Page
         var frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
 
         // update current screen resolution
-        SystemManager.SetResolution(resolution.width, resolution.height, (int)frequency.GetValue(Frequency.Full));
+        SystemManager.SetResolution(resolution.Width, resolution.Height, (int)frequency.GetValue(Frequency.Full), resolution.BitsPerPel);
     }
 
     private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
