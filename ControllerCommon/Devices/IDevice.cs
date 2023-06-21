@@ -96,7 +96,7 @@ public abstract class IDevice
     public string ProductName;
 
     // mininum delay before trying to emulate a virtual controller on system resume (milliseconds)
-    public short ResumeDelay = 6000;
+    public short ResumeDelay = 10000;
 
     protected USBDeviceInfo sensor = new();
 
