@@ -149,7 +149,6 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
-        CurrentDevice.Open();
 
         if (SettingsManager.GetBoolean("FirstStart"))
         {
@@ -672,38 +671,48 @@ public partial class MainWindow : GamepadWindow
         switch (status)
         {
             case PowerManager.SystemStatus.SystemReady:
-            {
-                switch (prevStatus)
                 {
-                    case PowerManager.SystemStatus.SystemBooting:
-                        // cold boot
-                        break;
-                    case PowerManager.SystemStatus.SystemPending:
-                        // resume from sleep
-                        Thread.Sleep(2000);
-                        break;
+                    switch (prevStatus)
+                    {
+                        case PowerManager.SystemStatus.SystemBooting:
+                            // cold boot
+                            break;
+                        case PowerManager.SystemStatus.SystemPending:
+                            // resume from sleep
+                            Thread.Sleep(2000);
+                            break;
+                    }
+
+                    // open current device
+                    CurrentDevice.Open();
+
+                    // restore device settings
+                    CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
+                    CurrentDevice.SetFanDuty(SettingsManager.GetDouble("QuietModeDuty"));
+
+                    // restore inputs manager
+                    InputsManager.TriggerRaised += InputsManager_TriggerRaised;
+                    InputsManager.Start();
+
+                    // start timer manager
+                    TimerManager.Start();
                 }
-
-                // restore inputs manager
-                InputsManager.TriggerRaised += InputsManager_TriggerRaised;
-                InputsManager.Start();
-
-                // start timer manager
-                TimerManager.Start();
-            }
                 break;
             case PowerManager.SystemStatus.SystemPending:
-            {
-                // stop timer manager
-                TimerManager.Stop();
+                {
+                    // close current device
+                    CurrentDevice.Close();
 
-                // clear pipes
-                PipeClient.ClearQueue();
+                    // stop timer manager
+                    TimerManager.Stop();
 
-                // pause inputs manager
-                InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
-                InputsManager.Stop();
-            }
+                    // clear pipes
+                    PipeClient.ClearQueue();
+
+                    // pause inputs manager
+                    InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
+                    InputsManager.Stop();
+                }
                 break;
         }
     }
