@@ -80,10 +80,13 @@ public static class ControllerManager
 
     private static void GamepadFocusManager_LostFocus(Control control)
     {
-        focusedWindow = null;
+        if (focusedWindow == (GamepadWindow)control)
+        {
+            focusedWindow = null;
 
-        // check applicable scenarios
-        CheckControllerScenario();
+            // check applicable scenarios
+            CheckControllerScenario();
+        }
     }
 
     private static void GamepadFocusManager_GotFocus(Control control)
@@ -560,12 +563,12 @@ public static class ControllerManager
         // pass inputs to Overlay Model
         MainWindow.overlayModel.UpdateReport(controllerState);
 
-        // pass inputs to Layout manager
-        controllerState = LayoutManager.MapController(controllerState);
-
         // controller is muted
         if (ControllerMuted)
             return;
+
+        // pass inputs to Layout manager
+        controllerState = LayoutManager.MapController(controllerState);
 
         // check if motion trigger is pressed
         var currentProfile = ProfileManager.GetCurrent();
