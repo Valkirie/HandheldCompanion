@@ -93,10 +93,7 @@ public static class InputsManager
     static InputsManager()
     {
         KeyboardResetTimer = new PrecisionTimer();
-        KeyboardResetTimer.SetPeriod(TIME_FLUSH);
-        KeyboardResetTimer.SetResolution(0);
-        KeyboardResetTimer.SetAutoResetMode(false);
-        KeyboardResetTimer.Tick += (sender, e) => ReleaseKeyboardBuffer();
+        KeyboardResetTimer.SetInterval(new Action(ReleaseKeyboardBuffer), TIME_FLUSH, false, 0, TimerMode.OneShot, true);
 
         ListenerTimer = new Timer(TIME_EXPIRED);
         ListenerTimer.AutoReset = false;

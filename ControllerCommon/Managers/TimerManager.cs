@@ -19,32 +19,24 @@ public static class TimerManager
     static TimerManager()
     {
         MasterTimer = new PrecisionTimer();
-        MasterTimer.SetAutoResetMode(true);
-        MasterTimer.SetResolution(0);
-        MasterTimer.SetPeriod(MasterInterval);
-        MasterTimer.Tick += MasterTimerTicked;
+        MasterTimer.SetInterval(new Action(DoWork), MasterInterval, false, 0, TimerMode.Periodic, true);
 
         Stopwatch = new Stopwatch();
+    }
+
+    private static void DoWork()
+    {
+        // if (Stopwatch.ElapsedTicks % MasterInterval == 0)
+        Tick?.Invoke(Stopwatch.ElapsedTicks);
     }
 
     public static event TickEventHandler Tick;
 
     public static event InitializedEventHandler Initialized;
 
-    private static void MasterTimerTicked(object sender, EventArgs e)
-    {
-        // if (Stopwatch.ElapsedTicks % MasterInterval == 0)
-        Tick?.Invoke(Stopwatch.ElapsedTicks);
-    }
-
     public static int GetPeriod()
     {
         return MasterInterval;
-    }
-
-    public static int GetResolution()
-    {
-        return MasterTimer.GetResolution();
     }
 
     public static float GetPeriodMilliseconds()
@@ -83,8 +75,7 @@ public static class TimerManager
         IsInitialized = true;
         Initialized?.Invoke();
 
-        LogManager.LogInformation("{0} has started with Period set to {1} and Resolution set to {2}", "TimerManager",
-            GetPeriod(), GetResolution());
+        LogManager.LogInformation("{0} has started with Period set to {1}", "TimerManager", GetPeriod());
     }
 
     public static void Stop()
