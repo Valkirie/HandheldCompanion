@@ -227,7 +227,8 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // do something
+        // load gamepad navigation maanger
+        gamepadFocusManager = new(this, ContentFrame);
     }
 
     private void Window_SourceInitialized(object sender, EventArgs e)

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
 using static PInvoke.User32;
 
 namespace HandheldCompanion.Views.Classes
@@ -16,6 +17,7 @@ namespace HandheldCompanion.Views.Classes
     public class GamepadWindow : Window
     {
         public List<Control> elements = new();
+        protected GamepadFocusManager gamepadFocusManager;
 
         public GamepadWindow()
         {
