@@ -279,13 +279,12 @@ public static class HotkeysManager
             switch (listener)
             {
                 case "shortcutKeyboard":
-                    new Thread(() =>
                     {
                         var uiHostNoLaunch = new ProcessUtils.UIHostNoLaunch();
                         var tipInvocation = (ProcessUtils.ITipInvocation)uiHostNoLaunch;
                         tipInvocation.Toggle(ProcessUtils.GetDesktopWindow());
                         Marshal.ReleaseComObject(uiHostNoLaunch);
-                    }).Start();
+                    }
                     break;
                 case "shortcutDesktop":
                     KeyboardSimulator.KeyPress(new[] { VirtualKeyCode.LWIN, VirtualKeyCode.VK_D });

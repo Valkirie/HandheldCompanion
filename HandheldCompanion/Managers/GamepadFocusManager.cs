@@ -44,6 +44,7 @@ namespace HandheldCompanion.Managers
         private bool _goingForward;
 
         private bool _rendered;
+        private bool _focused;
 
         private ButtonState prevButtonState = new();
 
@@ -54,42 +55,45 @@ namespace HandheldCompanion.Managers
 
         public GamepadFocusManager(GamepadWindow gamepadWindow, Frame contentFrame)
         {
+            // set current window
             _currentWindow = gamepadWindow;
-            _currentWindow.Activated += GamepadFocusManager_GotFocus;
-            _currentWindow.Deactivated += GamepadFocusManager_LostFocus;
+            _currentWindow.GotFocus += _currentWindow_GotFocus;
+            _currentWindow.LostFocus += _currentWindow_LostFocus;
+
+            _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
+            _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
 
             _gamepadFrame = contentFrame;
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
+            // start listening to inputs
             ControllerManager.InputsUpdated += InputsUpdated;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
         }
 
-        private void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
+        private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (_currentWindow == (GamepadWindow)sender)
-            {
-                // halt timer
-                _gamepadTimer.Stop();
-
-                // raise event
-                LostFocus?.Invoke(_currentWindow);
-
-                // reset current window
-                _currentWindow = null;
-            }
-        }
-
-        private void GamepadFocusManager_GotFocus(object? sender, System.EventArgs e)
-        {
-            // set current window
-            _currentWindow = (GamepadWindow)sender;
+            // set focus
+            _focused = true;
 
             // raise event
             GotFocus?.Invoke(_currentWindow);
+        }
+
+        private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // unset focus
+            _focused = false;
+
+            // halt timer
+            _gamepadTimer.Stop();
+
+            // raise event
+            LostFocus?.Invoke(_currentWindow);
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
@@ -125,9 +129,6 @@ namespace HandheldCompanion.Managers
             // remove state
             _goingForward = false;
 
-            // store current window
-            _currentWindow = (GamepadWindow)Window.GetWindow((DependencyObject)sender);
-
             // store current Frame
             _gamepadFrame = (Frame)sender;
             _gamepadFrame.ContentRendered += _gamepadFrame_ContentRendered;
@@ -147,9 +148,6 @@ namespace HandheldCompanion.Managers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                if (_currentWindow is null)
-                    return;
-
                 // specific-cases
                 switch (_gamepadPage.Tag)
                 {
@@ -211,10 +209,8 @@ namespace HandheldCompanion.Managers
             {
                 if (window is not null)
                     keyboardFocused = window;
-                else if (_currentWindow is not null)
-                    keyboardFocused = _currentWindow;
                 else
-                    return null;
+                    keyboardFocused = _currentWindow;
             }
 
             string keyboardType = keyboardFocused.GetType().Name;
@@ -286,7 +282,7 @@ namespace HandheldCompanion.Managers
 
         private void InputsUpdated(ControllerState controllerState)
         {
-            if (_currentWindow is null || !_rendered)
+            if (!_rendered || !_focused)
                 return;
 
             // stop gamepad navigation when InputsManager is listening
