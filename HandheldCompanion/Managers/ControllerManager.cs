@@ -348,11 +348,6 @@ public static class ControllerManager
             if (!controller.IsConnected())
                 return;
 
-            /*
-            if (controller.IsVirtual())
-                return;
-            */
-
             // update or create controller
             var path = controller.GetInstancePath();
             Controllers[path] = controller;
@@ -363,6 +358,8 @@ public static class ControllerManager
 
             // raise event
             ControllerPlugged?.Invoke(controller);
+            LogManager.LogDebug("DInput controller plugged: {0}", controller.ToString());
+
             ToastManager.SendToast(controller.ToString(), "detected");
         });
     }
@@ -371,14 +368,6 @@ public static class ControllerManager
     {
         if (!Controllers.TryGetValue(details.deviceInstanceId, out var controller))
             return;
-
-        if (!controller.IsConnected())
-            return;
-
-        /*
-        if (controller.IsVirtual())
-            return;
-        */
 
         // XInput controller are handled elsewhere
         if (controller.GetType() == typeof(XInputController))
@@ -411,6 +400,8 @@ public static class ControllerManager
                 break;
         }
 
+        LogManager.LogDebug("XInput slot available: {0}", slot);
+
         // UI thread (synchronous)
         // We need to wait for each controller to initialize and take (or not) its slot in the array
         Application.Current.Dispatcher.Invoke(() =>
@@ -419,18 +410,19 @@ public static class ControllerManager
 
             // failed to initialize
             if (controller.Details is null)
+            {
+                LogManager.LogError("XInput details is empty");
                 return;
+            }
 
             if (!controller.IsConnected())
+            {
+                LogManager.LogError("XInput controller is not connected");
                 return;
+            }
 
             // slot is now busy
             XUsbControllers[slot] = false;
-
-            /*
-            if (controller.IsVirtual())
-                return;
-            */
 
             // update or create controller
             var path = controller.GetInstancePath();
@@ -442,6 +434,8 @@ public static class ControllerManager
 
             // raise event
             ControllerPlugged?.Invoke(controller);
+            LogManager.LogDebug("XInput controller plugged: {0}", controller.ToString());
+
             ToastManager.SendToast(controller.ToString(), "detected");
         });
     }
@@ -451,17 +445,9 @@ public static class ControllerManager
         if (!Controllers.TryGetValue(details.deviceInstanceId, out var controller))
             return;
 
-        if (controller.IsConnected())
-            return;
-
         // slot is now free
         var slot = (UserIndex)controller.GetUserIndex();
         XUsbControllers[slot] = true;
-
-        /*
-        if (controller.IsVirtual())
-            return;
-        */
 
         // controller was unplugged
         Controllers.Remove(details.deviceInstanceId);
