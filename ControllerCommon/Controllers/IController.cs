@@ -226,8 +226,8 @@ public abstract class IController
 
     protected void RefreshControls()
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
         {
             ui_button_hook.IsEnabled = !IsPlugged();
             ui_button_hook.Content = IsPlugged() ? "Connected" : "Connect";
