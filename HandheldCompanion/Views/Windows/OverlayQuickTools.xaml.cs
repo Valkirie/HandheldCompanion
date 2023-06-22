@@ -25,7 +25,6 @@ using PowerManager = ControllerCommon.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using Control = System.Windows.Controls.Control;
 using HandheldCompanion.Views.Classes;
 
 namespace HandheldCompanion.Views.Windows;
@@ -56,6 +55,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
+        WindowSinker overlayquickToolsSinker = new WindowSinker(this);
+        overlayquickToolsSinker.Sink();
+
         InitializeComponent();
 
         // used by gamepad navigation
@@ -265,9 +267,6 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
                     Show();
-                    Activate();
-                    Focus();
-                    Topmost = true;
                     break;
                 case Visibility.Visible:
                     Hide();
@@ -275,7 +274,6 @@ public partial class OverlayQuickTools : GamepadWindow
             }
         });
     }
-
     private void Window_Closing(object sender, CancelEventArgs e)
     {
         // position and size settings
