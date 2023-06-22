@@ -80,10 +80,13 @@ public static class ControllerManager
 
     private static void GamepadFocusManager_LostFocus(Control control)
     {
-        focusedWindow = null;
+        if (focusedWindow == (GamepadWindow)control)
+        {
+            focusedWindow = null;
 
-        // check applicable scenarios
-        CheckControllerScenario();
+            // check applicable scenarios
+            CheckControllerScenario();
+        }
     }
 
     private static void GamepadFocusManager_GotFocus(Control control)

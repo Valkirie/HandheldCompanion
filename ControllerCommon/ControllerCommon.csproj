@@ -13,9 +13,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="HidSharp" Version="2.1.0" />
-		<PackageReference Include="MemoryPack" Version="1.9.15" />
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.4" />
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+		<PackageReference Include="MemoryPack" Version="1.9.16" />
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5" />
+		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
@@ -29,7 +29,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
 		<PackageReference Include="PInvoke.User32" Version="0.7.124" />
-		<PackageReference Include="PrecisionTimer.NET" Version="2.2.5.3" />
+		<PackageReference Include="PrecisionTimer.NET" Version="2.3.0.8" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
@@ -39,8 +39,8 @@
 		<PackageReference Include="SharpDX.XInput" Version="4.2.0" />
 		<PackageReference Include="System.IO.Pipes.AccessControl" Version="5.0.0" />
 		<PackageReference Include="System.IO.Ports" Version="7.0.0" />
-		<PackageReference Include="System.Management" Version="7.0.1" />
-		<PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.0" />
+		<PackageReference Include="System.Management" Version="7.0.2" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
 		<PackageReference Include="WindowsInput" Version="6.4.1" />
 	</ItemGroup>
 

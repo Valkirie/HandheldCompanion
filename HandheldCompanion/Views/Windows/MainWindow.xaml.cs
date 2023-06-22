@@ -204,7 +204,6 @@ public partial class MainWindow : GamepadWindow
         PowerManager.Start();
 
         SystemManager.Start();
-        GamepadFocusManager.Start();
 
         // start managers asynchroneously
         foreach (var manager in _managers)
@@ -499,7 +498,8 @@ public partial class MainWindow : GamepadWindow
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // do something
+        // load gamepad navigation maanger
+        gamepadFocusManager = new(this, ContentFrame);
     }
 
     private void ControllerPage_Loaded(object sender, RoutedEventArgs e)

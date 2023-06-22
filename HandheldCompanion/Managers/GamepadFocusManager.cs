@@ -25,7 +25,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
-    public static class GamepadFocusManager
+    public class GamepadFocusManager
     {
         #region events
         public static event GotFocusEventHandler GotFocus;
@@ -35,66 +35,68 @@ namespace HandheldCompanion.Managers
         public delegate void LostFocusEventHandler(Control control);
         #endregion
 
-        private static GamepadWindow _currentWindow;
-        private static ConcurrentDictionary<object, Frame> _gamepadFrame = new();
-        private static ConcurrentDictionary<object, Page> _gamepadPage = new();
-        private static Timer _gamepadTimer;
+        private GamepadWindow _currentWindow;
+        private Frame _gamepadFrame;
+        private Page _gamepadPage;
+        private Timer _gamepadTimer;
 
-        private static bool _goingBack;
-        private static bool _goingForward;
+        private bool _goingBack;
+        private bool _goingForward;
 
-        private static bool _rendered;
+        private bool _rendered;
+        private bool _focused;
 
-        private static ButtonState prevButtonState = new();
+        private ButtonState prevButtonState = new();
 
         // key: Windows, value: NavigationViewItem
-        private static ConcurrentDictionary<object, Control> prevNavigation = new();
+        private Control prevNavigation;
         // key: Page
-        private static ConcurrentDictionary<object, Control> prevControl = new();
+        private ConcurrentDictionary<object, Control> prevControl = new();
 
-        static GamepadFocusManager()
+        public GamepadFocusManager(GamepadWindow gamepadWindow, Frame contentFrame)
         {
-            var mainWindow = MainWindow.GetCurrent();
-            mainWindow.ContentFrame.Navigated += ContentFrame_Navigated;
-            mainWindow.Activated += GamepadFocusManager_GotFocus;
-            mainWindow.Deactivated += GamepadFocusManager_LostFocus;
+            // set current window
+            _currentWindow = gamepadWindow;
+            _currentWindow.GotFocus += _currentWindow_GotFocus;
+            _currentWindow.LostFocus += _currentWindow_LostFocus;
 
-            MainWindow.overlayquickTools.ContentFrame.Navigated += ContentFrame_Navigated;
-            MainWindow.overlayquickTools.Activated += GamepadFocusManager_GotFocus;
-            MainWindow.overlayquickTools.Deactivated += GamepadFocusManager_LostFocus;
+            _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
+            _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
 
+            _gamepadFrame = contentFrame;
+            _gamepadFrame.Navigated += ContentFrame_Navigated;
+
+            // start listening to inputs
             ControllerManager.InputsUpdated += InputsUpdated;
+
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
         }
 
-        private static void GamepadFocusManager_LostFocus(object? sender, System.EventArgs e)
+        private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (_currentWindow == (GamepadWindow)sender)
-            {
-                // halt timer
-                _gamepadTimer.Stop();
-
-                // raise event
-                LostFocus?.Invoke(_currentWindow);
-
-                // reset current window
-                _currentWindow = null;
-            }
-        }
-
-        private static void GamepadFocusManager_GotFocus(object? sender, System.EventArgs e)
-        {
-            // set current window
-            _currentWindow = (GamepadWindow)sender;
+            // set focus
+            _focused = true;
 
             // raise event
             GotFocus?.Invoke(_currentWindow);
         }
 
-        private static void SettingsManager_SettingValueChanged(string name, object value)
+        private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // unset focus
+            _focused = false;
+
+            // halt timer
+            _gamepadTimer.Stop();
+
+            // raise event
+            LostFocus?.Invoke(_currentWindow);
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
@@ -119,7 +121,7 @@ namespace HandheldCompanion.Managers
             });
         }
 
-        private static void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             // set rendering state
             _rendered = false;
@@ -127,33 +129,27 @@ namespace HandheldCompanion.Managers
             // remove state
             _goingForward = false;
 
-            // store current window
-            _currentWindow = (GamepadWindow)Window.GetWindow((DependencyObject)sender);
-
             // store current Frame
-            _gamepadFrame[_currentWindow] = (Frame)sender;
-            _gamepadFrame[_currentWindow].ContentRendered += _gamepadFrame_ContentRendered;
+            _gamepadFrame = (Frame)sender;
+            _gamepadFrame.ContentRendered += _gamepadFrame_ContentRendered;
 
             // store current Page
-            _gamepadPage[_currentWindow] = (Page)_gamepadFrame[_currentWindow].Content;
+            _gamepadPage = (Page)_gamepadFrame.Content;
         }
 
-        private static void _gamepadFrame_ContentRendered(object? sender, EventArgs e)
+        private void _gamepadFrame_ContentRendered(object? sender, EventArgs e)
         {
             _gamepadTimer.Stop();
             _gamepadTimer.Start();
         }
 
-        private static void _gamepadTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        private void _gamepadTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                if (_currentWindow is null)
-                    return;
-
                 // specific-cases
-                switch (_gamepadPage[_currentWindow].Tag)
+                switch (_gamepadPage.Tag)
                 {
                     case "layout":
                     case "SettingsMode0":
@@ -162,7 +158,7 @@ namespace HandheldCompanion.Managers
                         break;
                 }
 
-                if (_goingBack && prevControl.TryGetValue(_gamepadPage[_currentWindow].Tag, out Control control))
+                if (_goingBack && prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
                 {
                     Focus(control);
 
@@ -171,7 +167,7 @@ namespace HandheldCompanion.Managers
                 }
                 else if (_goingForward)
                 {
-                    if (prevControl.TryGetValue(_gamepadPage[_currentWindow].Tag, out control))
+                    if (prevControl.TryGetValue(_gamepadPage.Tag, out control))
                         Focus(control);
                     else
                     {
@@ -179,23 +175,23 @@ namespace HandheldCompanion.Managers
                         Focus(control);
                     }
                 }
-                else if (!prevNavigation.ContainsKey(_currentWindow.Tag))
+                else if (prevNavigation is null)
                 {
                     NavigationViewItem currentNavigationViewItem = (NavigationViewItem)WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.elements);
-                    prevNavigation[_currentWindow.Tag] = currentNavigationViewItem;
+                    prevNavigation = currentNavigationViewItem;
                     Focus(currentNavigationViewItem);
                 }
 
                 // clear history
-                if (_gamepadPage.ContainsKey(_currentWindow))
-                    prevControl.Remove(_gamepadPage[_currentWindow].Tag, out _);
+                if (_gamepadPage is not null)
+                    prevControl.Remove(_gamepadPage.Tag, out _);
 
                 // set rendering state
                 _rendered = true;
             });
         }
 
-        public static void Focus(Control control)
+        public void Focus(Control control)
         {
             if (control is null)
                 return;
@@ -205,7 +201,7 @@ namespace HandheldCompanion.Managers
             control.Focus();
         }
 
-        public static Control FocusedElement(GamepadWindow window)
+        public Control FocusedElement(GamepadWindow window)
         {
             Control keyboardFocused = (Control)Keyboard.FocusedElement;
 
@@ -213,10 +209,8 @@ namespace HandheldCompanion.Managers
             {
                 if (window is not null)
                     keyboardFocused = window;
-                else if (_currentWindow is not null)
-                    keyboardFocused = _currentWindow;
                 else
-                    return null;
+                    keyboardFocused = _currentWindow;
             }
 
             string keyboardType = keyboardFocused.GetType().Name;
@@ -226,7 +220,7 @@ namespace HandheldCompanion.Managers
                 case "MainWindow":
                 case "OverlayQuickTools":
                     {
-                        if (prevNavigation.ContainsKey(window.Tag))
+                        if (prevNavigation is not null)
                         {
                             // a new page opened
                             keyboardFocused = WPFUtils.GetTopLeftControl<Control>(window.elements);
@@ -251,7 +245,7 @@ namespace HandheldCompanion.Managers
                             default:
                                 {
                                     // update navigation
-                                    prevNavigation[window.Tag] = (NavigationViewItem)keyboardFocused;
+                                    prevNavigation = (NavigationViewItem)keyboardFocused;
                                 }
                                 break;
                         }
@@ -261,8 +255,8 @@ namespace HandheldCompanion.Managers
                 default:
                     {
                         // store current control
-                        if (_gamepadPage.ContainsKey(window))
-                            prevControl[_gamepadPage[window].Tag] = keyboardFocused;
+                        if (_gamepadPage is not null)
+                            prevControl[_gamepadPage.Tag] = keyboardFocused;
                     }
                     break;
             }
@@ -286,13 +280,9 @@ namespace HandheldCompanion.Managers
             return null;
         }
 
-        public static void Start()
+        private void InputsUpdated(ControllerState controllerState)
         {
-        }
-
-        private static void InputsUpdated(ControllerState controllerState)
-        {
-            if (_currentWindow is null || !_rendered)
+            if (!_rendered || !_focused)
                 return;
 
             // stop gamepad navigation when InputsManager is listening
@@ -353,7 +343,7 @@ namespace HandheldCompanion.Managers
                                             // set state
                                             _goingForward = true;
 
-                                            if (prevControl.TryGetValue(_gamepadPage[_currentWindow].Tag, out Control control))
+                                            if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
                                                 Focus(control);
                                             else
                                             {
@@ -389,12 +379,12 @@ namespace HandheldCompanion.Managers
                     {
                         default:
                             {
-                                switch (_gamepadPage[_currentWindow].Tag)
+                                switch (_gamepadPage.Tag)
                                 {
                                     default:
                                         {
                                             // restore previous NavigationViewItem
-                                            Focus(prevNavigation[_currentWindow.Tag]);
+                                            Focus(prevNavigation);
                                         }
                                         return;
 
@@ -406,7 +396,7 @@ namespace HandheldCompanion.Managers
                                             _goingBack = true;
 
                                             // go back to previous page
-                                            _gamepadFrame[_currentWindow].GoBack();
+                                            _gamepadFrame.GoBack();
                                         }
                                         return;
                                 }
@@ -430,17 +420,17 @@ namespace HandheldCompanion.Managers
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.L1))
                 {
-                    if (prevNavigation.TryGetValue(_currentWindow.Tag, out focusedElement))
+                    if (prevNavigation is not null)
                     {
-                        elementType = focusedElement.GetType().Name;
+                        elementType = prevNavigation.GetType().Name;
                         direction = WPFUtils.Direction.Left;
                     }
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.R1))
                 {
-                    if (prevNavigation.TryGetValue(_currentWindow.Tag, out focusedElement))
+                    if (prevNavigation is not null)
                     {
-                        elementType = focusedElement.GetType().Name;
+                        elementType = prevNavigation.GetType().Name;
                         direction = WPFUtils.Direction.Right;
                     }
                 }

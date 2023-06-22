@@ -45,10 +45,7 @@ public static class OSDManager
         RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
 
         RefreshTimer = new PrecisionTimer();
-        RefreshTimer.SetAutoResetMode(true);
-        RefreshTimer.SetResolution(0);
-        RefreshTimer.SetPeriod(RefreshInterval);
-        RefreshTimer.Tick += UpdateOSD;
+        RefreshTimer.SetInterval(new Action(UpdateOSD), RefreshInterval, false, 0, TimerMode.Periodic, true);
     }
 
     public static event InitializedEventHandler Initialized;
@@ -120,7 +117,7 @@ public static class OSDManager
         return 0;
     }
 
-    private static void UpdateOSD(object? sender, EventArgs e)
+    private static void UpdateOSD()
     {
         if (OverlayLevel == 0)
             return;
