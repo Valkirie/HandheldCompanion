@@ -40,22 +40,20 @@ public class AxisActions : IActions
         value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
 
         // Apply anti deadzone adjustments
-        switch (axis)
-        {
-            case AxisFlags.L2:
-            case AxisFlags.R2:
-                value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
-                break;
-        }
+        value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
 
         Value = (short)(value * (AxisInverted ? -1 : 1));
     }
 
     public void Execute(AxisLayout layout)
     {
-        layout.vector =
-            InputUtils.ThumbScaledRadialInnerOuterDeadzone(layout.vector, AxisDeadZoneInner, AxisDeadZoneOuter);
+        // Apply inner and outer deadzone adjustments
+        layout.vector = InputUtils.ThumbScaledRadialInnerOuterDeadzone(layout.vector, AxisDeadZoneInner, AxisDeadZoneOuter);
 
+        // Apply anti-deadzone adjustments
+        layout.vector = InputUtils.ApplyAntiDeadzone(layout.vector, AxisAntiDeadZone);
+        
+        // Apply improved circularity
         if (ImproveCircularity)
             layout.vector = InputUtils.ImproveCircularity(layout.vector);
 

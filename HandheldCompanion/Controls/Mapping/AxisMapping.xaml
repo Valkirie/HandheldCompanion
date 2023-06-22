@@ -126,8 +126,7 @@
                                 Opacity="0.25" />
 
                             <!--  Axis rotation  -->
-                            <Grid
-                                IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2AxisAutoRotate}">
+                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2AxisAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock
@@ -188,7 +187,7 @@
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="5"
+                                        TickFrequency="1"
                                         ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -224,7 +223,7 @@
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="5"
+                                        TickFrequency="1"
                                         ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -259,7 +258,7 @@
                                         Minimum="0"
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="5"
+                                        TickFrequency="1"
                                         ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -310,8 +309,7 @@
                                 Opacity="0.25" />
 
                             <!--  Axis rotation  -->
-                            <Grid
-                                IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2MouseAutoRotate}">
+                            <Grid IsEnabled="{Binding IsOn, Converter={StaticResource InvertBooleanConverter}, ElementName=Axis2MouseAutoRotate}">
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
                                         <TextBlock
