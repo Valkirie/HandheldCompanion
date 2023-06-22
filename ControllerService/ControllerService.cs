@@ -576,6 +576,11 @@ public class ControllerService : IHostedService
                     case SystemStatus.SystemPending:
                         // resume from sleep
                         Thread.Sleep(CurrentDevice.ResumeDelay);
+
+                        // refresh device list
+                        DeviceManager.Refresh();
+
+                        // restart IMU
                         IMU.Restart(true);
                         break;
                 }

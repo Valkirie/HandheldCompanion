@@ -41,7 +41,7 @@ public static class ControllerManager
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
 
-    private static bool IsInitialized;
+    public static bool IsInitialized;
 
     public static void Start()
     {
@@ -220,11 +220,12 @@ public static class ControllerManager
 
         if (Controllers.ContainsKey(path))
         {
+            // last known controller still is plugged, set as target
             SetTargetController(path);
         }
         else if (HasPhysicalController())
         {
-            // no known controller, connect to the first available
+            // no known controller, connect to first available
             path = GetPhysicalControllers().FirstOrDefault().GetInstancePath();
             SetTargetController(path);
         }
@@ -356,6 +357,10 @@ public static class ControllerManager
             var path = controller.GetInstancePath();
             Controllers[path] = controller;
 
+            // first controller logic
+            if (!controller.IsVirtual() && GetTargetController() is null)
+                SetTargetController(controller.GetInstancePath());
+
             // raise event
             ControllerPlugged?.Invoke(controller);
             ToastManager.SendToast(controller.ToString(), "detected");
@@ -381,6 +386,10 @@ public static class ControllerManager
 
         // controller was unplugged
         Controllers.Remove(details.deviceInstanceId);
+
+        // unplug controller, if needed
+        if (GetTargetController().GetInstancePath() == details.deviceInstanceId)
+            ClearTargetController();
 
         // raise event
         ControllerUnplugged?.Invoke(controller);
@@ -427,6 +436,10 @@ public static class ControllerManager
             var path = controller.GetInstancePath();
             Controllers[path] = controller;
 
+            // first controller logic
+            if (!controller.IsVirtual() && GetTargetController() is null)
+                SetTargetController(controller.GetInstancePath());
+
             // raise event
             ControllerPlugged?.Invoke(controller);
             ToastManager.SendToast(controller.ToString(), "detected");
@@ -453,11 +466,15 @@ public static class ControllerManager
         // controller was unplugged
         Controllers.Remove(details.deviceInstanceId);
 
+        // unplug controller, if needed
+        if (GetTargetController().GetInstancePath() == controller.GetInstancePath())
+            ClearTargetController();
+
         // raise event
         ControllerUnplugged?.Invoke(controller);
     }
 
-    public static void SetTargetController(string baseContainerDeviceInstancePath)
+    private static void ClearTargetController()
     {
         // unplug previous controller
         if (targetController is not null)
@@ -465,13 +482,20 @@ public static class ControllerManager
             targetController.InputsUpdated -= UpdateInputs;
             targetController.MovementsUpdated -= UpdateMovements;
             targetController.Unplug();
+            targetController = null;
         }
+    }
+
+    public static void SetTargetController(string deviceInstanceId)
+    {
+        // unplug previous controller
+        ClearTargetController();
 
         // warn service the current controller has been unplugged
         PipeClient.SendMessage(new PipeClientControllerDisconnect());
 
         // look for new controller
-        if (!Controllers.TryGetValue(baseContainerDeviceInstancePath, out var controller))
+        if (!Controllers.TryGetValue(deviceInstanceId, out var controller))
             return;
 
         if (controller is null)
@@ -484,10 +508,8 @@ public static class ControllerManager
 
         // update target controller
         targetController = controller;
-
         targetController.InputsUpdated += UpdateInputs;
         targetController.MovementsUpdated += UpdateMovements;
-
         targetController.Plug();
 
         if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
@@ -497,7 +519,7 @@ public static class ControllerManager
             targetController.Hide();
 
         // update settings
-        SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstancePath);
+        SettingsManager.SetProperty("HIDInstancePath", deviceInstanceId);
 
         // warn service a new controller has arrived
         PipeClient.SendMessage(

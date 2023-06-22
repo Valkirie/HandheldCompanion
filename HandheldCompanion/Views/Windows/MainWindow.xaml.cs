@@ -680,6 +680,9 @@ public partial class MainWindow : GamepadWindow
                         case PowerManager.SystemStatus.SystemPending:
                             // resume from sleep
                             Thread.Sleep(2000);
+
+                            // refresh device list
+                            DeviceManager.Refresh();
                             break;
                     }
 
