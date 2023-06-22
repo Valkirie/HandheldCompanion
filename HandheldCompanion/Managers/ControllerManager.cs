@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -25,13 +26,7 @@ public static class ControllerManager
 {
     private static readonly Dictionary<string, IController> Controllers = new();
 
-    private static readonly Dictionary<UserIndex, bool> XUsbControllers = new()
-    {
-        { UserIndex.One, true },
-        { UserIndex.Two, true },
-        { UserIndex.Three, true },
-        { UserIndex.Four, true }
-    };
+    private static readonly ConcurrentDictionary<UserIndex, bool> XUsbControllers = new();
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -396,7 +391,7 @@ public static class ControllerManager
             _controller = new Controller(slot);
 
             // check if controller is connected and slot free
-            if (_controller.IsConnected && XUsbControllers[slot])
+            if (_controller.IsConnected && !XUsbControllers.ContainsKey(slot))
                 break;
         }
 
@@ -422,7 +417,7 @@ public static class ControllerManager
             }
 
             // slot is now busy
-            XUsbControllers[slot] = false;
+            XUsbControllers[slot] = true;
 
             // update or create controller
             var path = controller.GetInstancePath();
@@ -447,7 +442,7 @@ public static class ControllerManager
 
         // slot is now free
         var slot = (UserIndex)controller.GetUserIndex();
-        XUsbControllers[slot] = true;
+        XUsbControllers.Remove(slot, out _);
 
         // controller was unplugged
         Controllers.Remove(details.deviceInstanceId);
