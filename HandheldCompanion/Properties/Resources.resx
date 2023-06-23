@@ -1241,4 +1241,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="MainWindow_navHotkeys" xml:space="preserve">
     <value>Hotkeys</value>
   </data>
+  <data name="SettingsPage_ThemeDefault" xml:space="preserve">
+    <value>Use system setting</value>
+  </data>
 </root>

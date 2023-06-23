@@ -3287,6 +3287,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use system setting.
+        /// </summary>
+        public static string SettingsPage_ThemeDefault {
+            get {
+                return ResourceManager.GetString("SettingsPage_ThemeDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
         public static string SettingsPage_ThemeLight {
