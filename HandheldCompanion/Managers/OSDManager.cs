@@ -315,16 +315,15 @@ public static class OSDManager
                     // Set 60.0  12.34 
                     // Act 59.3  12.54
 
-                    OverlayRow row1 = new OverlayRow();
-                    OverlayRow row2 = new OverlayRow();
-                    OverlayRow row3 = new OverlayRow();
+                    OverlayRow row1 = new OverlayRow(false, false);
+                    OverlayRow row2 = new OverlayRow(false, false);
+                    OverlayRow row3 = new OverlayRow(false, false);
 
                     // Row 1, header
                     OverlayEntry headerEntry = new OverlayEntry("       FPS    TDP", "C1");
                     row1.entries.Add(headerEntry);
 
                     // Row 2, setpoints
-
                     OverlayEntry setFPSEntry = new OverlayEntry("Set ", "C2");
                     setFPSEntry.elements.Add(new SensorElement()
                     {
@@ -333,7 +332,6 @@ public static class OSDManager
                     row2.entries.Add(setFPSEntry);
 
                     OverlayEntry setTDPEntry = new OverlayEntry("", "C3");
-                    // Add your code here to get the AutoTDP setpoint value from your application
                     setTDPEntry.elements.Add(new SensorElement()
                     {
                         Value = MainWindow.performanceManager.GetAutoTDPSetpoint(),
@@ -355,8 +353,6 @@ public static class OSDManager
                         {
                             Value = sensor.Value,
                         });
-
-                        //ActTDPentry.elements.Add(sensor);
                     row3.entries.Add(ActTDPentry);
 
                     // Add the rows to the content list
@@ -474,6 +470,14 @@ public class OverlayEntry : IDisposable
 public class OverlayRow : IDisposable
 {
     public List<OverlayEntry> entries = new();
+    public bool skipEmpty;
+    public bool joinWithVerticalDivider;
+
+    public OverlayRow(bool skipEmpty = true, bool joinWithVerticalDivider = true)
+    {
+        this.skipEmpty = skipEmpty;
+        this.joinWithVerticalDivider = joinWithVerticalDivider;
+    }
 
     public void Dispose()
     {
@@ -487,8 +491,8 @@ public class OverlayRow : IDisposable
 
         foreach (var entry in entries)
         {
-            //if (entry.elements is null || entry.elements.Count == 0)
-            //    continue;
+            if ((entry.elements is null || entry.elements.Count == 0) && skipEmpty)
+                continue;
 
             List<string> entriesStr = new() { entry.Name };
 
@@ -499,6 +503,11 @@ public class OverlayRow : IDisposable
             rowStr.Add(ItemStr);
         }
 
-        return string.Join(" ", rowStr);
+        if (joinWithVerticalDivider)
+        {
+            return string.Join(" | ", rowStr);
+        }
+        else
+            return string.Join(" ", rowStr);
     }
 }
