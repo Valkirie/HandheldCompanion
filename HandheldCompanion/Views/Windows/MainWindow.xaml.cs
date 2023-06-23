@@ -683,8 +683,8 @@ public partial class MainWindow : GamepadWindow
                             break;
                     }
 
-                    // open current device
-                    CurrentDevice.Open();
+                    // open current device (threaded to avoid device to hang)
+                    new Thread(() => { CurrentDevice.Open(); }).Start();
 
                     // restore device settings
                     CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
