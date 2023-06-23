@@ -354,7 +354,10 @@ public abstract class IDevice
 
     public bool RestartSensor()
     {
-        var deviceId = sensor.DeviceId.Replace("\\1", string.Empty);
+        if (sensor is null)
+            return false;
+
+        string deviceId = sensor.DeviceId.Replace("\\1", string.Empty);
         return LegacyDevcon.Restart(deviceId);
     }
 

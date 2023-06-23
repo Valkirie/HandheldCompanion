@@ -13,7 +13,7 @@ namespace ControllerCommon
     public static class LegacyDevcon
     {
         private static readonly string path;
-        private static readonly ProcessStartInfo startInfo;
+        private static bool _IsInstalled;
 
         static LegacyDevcon()
         {
@@ -25,30 +25,34 @@ namespace ControllerCommon
                 return;
             }
 
-            startInfo = new ProcessStartInfo(path)
-            {
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
+            _IsInstalled = true;
         }
 
         public static bool Restart(string InstanceId)
         {
-            // register command
-            startInfo.Arguments = $"restart \"{InstanceId}\"";
-            using (var ProcessOutput = Process.Start(startInfo))
+            if (!_IsInstalled)
+                return false;
+
+            string output = string.Empty;
+            using (Process process = new Process())
             {
-                string output = ProcessOutput.StandardOutput.ReadToEnd();
+                process.StartInfo.FileName = path;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
 
-                ProcessOutput.WaitForExit();
+                StreamReader reader = process.StandardOutput;
+                output = reader.ReadToEnd();
 
-                if (output.Contains("No matching devices found."))
-                    return false;
-                else if (output.Contains("Restarted"))
-                    return true;
+                process.WaitForExit();
             }
+
+            if (output.Contains("No matching devices found."))
+                return false;
+            else if (output.Contains("Restarted"))
+                return true;
 
             return false;
         }
