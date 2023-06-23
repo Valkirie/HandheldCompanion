@@ -523,7 +523,10 @@ public partial class SettingsPage : Page
         if (cB_Theme.SelectedIndex == -1)
             return;
 
-        ThemeManager.Current.ApplicationTheme = (ApplicationTheme)cB_Theme.SelectedIndex;
+        ElementTheme theme = (ElementTheme)cB_Theme.SelectedIndex;
+        MainWindow mainWindow = MainWindow.GetCurrent();
+        ThemeManager.SetRequestedTheme(mainWindow, theme);
+        ThemeManager.SetRequestedTheme(MainWindow.overlayquickTools, theme);
 
         // update default style
         MainWindow.GetCurrent().UpdateDefaultStyle();
