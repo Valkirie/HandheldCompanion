@@ -158,6 +158,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.ja-JP.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.fr.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.fr-FR.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.fr.Designer.cs</LastGenOutput>
