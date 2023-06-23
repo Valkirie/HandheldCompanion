@@ -82,8 +82,8 @@ public class ROGAlly : IDevice
 
         // prepare configuration
         var deviceConfiguration = new OpenConfiguration();
-        deviceConfiguration.SetOption(OpenOption.Exclusive, true);
-        deviceConfiguration.SetOption(OpenOption.Transient, true);
+        deviceConfiguration.SetOption(OpenOption.Exclusive, false);
+        deviceConfiguration.SetOption(OpenOption.Transient, false);
 
         foreach (var _hidDevice in DeviceList.Local.GetHidDevices()
                      .Where(d => d.ProductID == _pid && d.VendorID == _vid))
