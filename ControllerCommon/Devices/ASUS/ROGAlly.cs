@@ -75,6 +75,10 @@ public class ROGAlly : IDevice
 
     public override bool Open()
     {
+        var success = base.Open();
+        if (!success)
+            return false;
+
         // prepare configuration
         var deviceConfiguration = new OpenConfiguration();
         deviceConfiguration.SetOption(OpenOption.Exclusive, true);
@@ -98,7 +102,7 @@ public class ROGAlly : IDevice
             }
         }
 
-        return base.Open();
+        return true;
     }
 
     public override void Close()

@@ -683,12 +683,14 @@ public partial class MainWindow : GamepadWindow
                             break;
                     }
 
-                    // open current device
-                    CurrentDevice.Open();
-
-                    // restore device settings
-                    CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
-                    CurrentDevice.SetFanDuty(SettingsManager.GetDouble("QuietModeDuty"));
+                    new Thread(() => {
+                        // open current device (threaded to avoid device to hang)
+                        CurrentDevice.Open();
+                        
+                        // restore device settings
+                        CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
+                        CurrentDevice.SetFanDuty(SettingsManager.GetDouble("QuietModeDuty"));
+                    }).Start();
 
                     // restore inputs manager
                     InputsManager.TriggerRaised += InputsManager_TriggerRaised;

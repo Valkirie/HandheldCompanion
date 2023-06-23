@@ -44,9 +44,7 @@ public static class DeviceManager
         HidDeviceListener.DeviceArrived += HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved += HidDevice_DeviceRemoved;
 
-        RefreshHID();
-        RefreshXInput();
-        RefreshDInput();
+        Refresh();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -74,6 +72,13 @@ public static class DeviceManager
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
 
         LogManager.LogInformation("{0} has stopped", "DeviceManager");
+    }
+
+    public static void Refresh()
+    {
+        RefreshHID();
+        RefreshXInput();
+        RefreshDInput();
     }
 
     private static void RefreshXInput()

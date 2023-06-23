@@ -182,8 +182,6 @@ public partial class ControllerPage : Page
 
     private void ControllerPlugged(IController Controller)
     {
-        LogManager.LogDebug("Controller plugged: {0}", Controller.ToString());
-
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {

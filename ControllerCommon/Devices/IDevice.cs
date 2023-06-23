@@ -310,6 +310,9 @@ public abstract class IDevice
 
     public virtual void Close()
     {
+        if (openLibSys is null)
+            return;
+
         SetFanControl(false);
 
         openLibSys.Dispose();

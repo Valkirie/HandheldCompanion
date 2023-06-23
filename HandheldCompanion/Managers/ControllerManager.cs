@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -25,13 +26,7 @@ public static class ControllerManager
 {
     private static readonly Dictionary<string, IController> Controllers = new();
 
-    private static readonly Dictionary<UserIndex, bool> XUsbControllers = new()
-    {
-        { UserIndex.One, true },
-        { UserIndex.Two, true },
-        { UserIndex.Three, true },
-        { UserIndex.Four, true }
-    };
+    private static readonly ConcurrentDictionary<UserIndex, bool> XUsbControllers = new();
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -41,7 +36,7 @@ public static class ControllerManager
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
 
-    private static bool IsInitialized;
+    public static bool IsInitialized;
 
     public static void Start()
     {
@@ -220,11 +215,12 @@ public static class ControllerManager
 
         if (Controllers.ContainsKey(path))
         {
+            // last known controller still is plugged, set as target
             SetTargetController(path);
         }
         else if (HasPhysicalController())
         {
-            // no known controller, connect to the first available
+            // no known controller, connect to first available
             path = GetPhysicalControllers().FirstOrDefault().GetInstancePath();
             SetTargetController(path);
         }
@@ -347,17 +343,18 @@ public static class ControllerManager
             if (!controller.IsConnected())
                 return;
 
-            /*
-            if (controller.IsVirtual())
-                return;
-            */
-
             // update or create controller
             var path = controller.GetInstancePath();
             Controllers[path] = controller;
 
+            // first controller logic
+            if (!controller.IsVirtual() && GetTargetController() is null)
+                SetTargetController(controller.GetInstancePath());
+
             // raise event
             ControllerPlugged?.Invoke(controller);
+            LogManager.LogDebug("DInput controller plugged: {0}", controller.ToString());
+
             ToastManager.SendToast(controller.ToString(), "detected");
         });
     }
@@ -367,20 +364,16 @@ public static class ControllerManager
         if (!Controllers.TryGetValue(details.deviceInstanceId, out var controller))
             return;
 
-        if (!controller.IsConnected())
-            return;
-
-        /*
-        if (controller.IsVirtual())
-            return;
-        */
-
         // XInput controller are handled elsewhere
         if (controller.GetType() == typeof(XInputController))
             return;
 
         // controller was unplugged
         Controllers.Remove(details.deviceInstanceId);
+
+        // unplug controller, if needed
+        if (GetTargetController().GetInstancePath() == details.deviceInstanceId)
+            ClearTargetController();
 
         // raise event
         ControllerUnplugged?.Invoke(controller);
@@ -398,9 +391,11 @@ public static class ControllerManager
             _controller = new Controller(slot);
 
             // check if controller is connected and slot free
-            if (_controller.IsConnected && XUsbControllers[slot])
+            if (_controller.IsConnected && !XUsbControllers.ContainsKey(slot))
                 break;
         }
+
+        LogManager.LogDebug("XInput slot available: {0}", slot);
 
         // UI thread (synchronous)
         // We need to wait for each controller to initialize and take (or not) its slot in the array
@@ -410,25 +405,32 @@ public static class ControllerManager
 
             // failed to initialize
             if (controller.Details is null)
+            {
+                LogManager.LogError("XInput details is empty");
                 return;
+            }
 
             if (!controller.IsConnected())
+            {
+                LogManager.LogError("XInput controller is not connected");
                 return;
+            }
 
             // slot is now busy
-            XUsbControllers[slot] = false;
-
-            /*
-            if (controller.IsVirtual())
-                return;
-            */
+            XUsbControllers[slot] = true;
 
             // update or create controller
             var path = controller.GetInstancePath();
             Controllers[path] = controller;
 
+            // first controller logic
+            if (!controller.IsVirtual() && GetTargetController() is null)
+                SetTargetController(controller.GetInstancePath());
+
             // raise event
             ControllerPlugged?.Invoke(controller);
+            LogManager.LogDebug("XInput controller plugged: {0}", controller.ToString());
+
             ToastManager.SendToast(controller.ToString(), "detected");
         });
     }
@@ -438,26 +440,22 @@ public static class ControllerManager
         if (!Controllers.TryGetValue(details.deviceInstanceId, out var controller))
             return;
 
-        if (controller.IsConnected())
-            return;
-
         // slot is now free
         var slot = (UserIndex)controller.GetUserIndex();
-        XUsbControllers[slot] = true;
-
-        /*
-        if (controller.IsVirtual())
-            return;
-        */
+        XUsbControllers.Remove(slot, out _);
 
         // controller was unplugged
         Controllers.Remove(details.deviceInstanceId);
+
+        // unplug controller, if needed
+        if (GetTargetController().GetInstancePath() == controller.GetInstancePath())
+            ClearTargetController();
 
         // raise event
         ControllerUnplugged?.Invoke(controller);
     }
 
-    public static void SetTargetController(string baseContainerDeviceInstancePath)
+    private static void ClearTargetController()
     {
         // unplug previous controller
         if (targetController is not null)
@@ -465,13 +463,20 @@ public static class ControllerManager
             targetController.InputsUpdated -= UpdateInputs;
             targetController.MovementsUpdated -= UpdateMovements;
             targetController.Unplug();
+            targetController = null;
         }
+    }
+
+    public static void SetTargetController(string deviceInstanceId)
+    {
+        // unplug previous controller
+        ClearTargetController();
 
         // warn service the current controller has been unplugged
         PipeClient.SendMessage(new PipeClientControllerDisconnect());
 
         // look for new controller
-        if (!Controllers.TryGetValue(baseContainerDeviceInstancePath, out var controller))
+        if (!Controllers.TryGetValue(deviceInstanceId, out var controller))
             return;
 
         if (controller is null)
@@ -484,10 +489,8 @@ public static class ControllerManager
 
         // update target controller
         targetController = controller;
-
         targetController.InputsUpdated += UpdateInputs;
         targetController.MovementsUpdated += UpdateMovements;
-
         targetController.Plug();
 
         if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
@@ -497,7 +500,7 @@ public static class ControllerManager
             targetController.Hide();
 
         // update settings
-        SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstancePath);
+        SettingsManager.SetProperty("HIDInstancePath", deviceInstanceId);
 
         // warn service a new controller has arrived
         PipeClient.SendMessage(

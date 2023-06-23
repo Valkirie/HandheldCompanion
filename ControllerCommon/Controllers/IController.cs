@@ -226,9 +226,13 @@ public abstract class IController
 
     protected void RefreshControls()
     {
-        ui_button_hook.IsEnabled = !IsPlugged();
-        ui_button_hook.Content = IsPlugged() ? "Connected" : "Connect";
-        ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ui_button_hook.IsEnabled = !IsPlugged();
+            ui_button_hook.Content = IsPlugged() ? "Connected" : "Connect";
+            ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
+        });
     }
 
     public Border GetControl()
