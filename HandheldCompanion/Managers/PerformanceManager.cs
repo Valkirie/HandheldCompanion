@@ -1,14 +1,12 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using ControllerCommon;
 using ControllerCommon.Managers;
 using ControllerCommon.Processor;
 using ControllerCommon.Utils;
-using GregsStack.InputSimulatorStandard;
 using HandheldCompanion.Views;
 using PowerProfileUtils;
 using RTSSSharedMemoryNET;
@@ -658,6 +656,7 @@ public class PerformanceManager : Manager
 
     public double GetAutoTDPSetpoint()
     {
+        // @Benjamin, not sure if this causes a racing condition and is thread safe?
         return AutoTDP;
     }
 

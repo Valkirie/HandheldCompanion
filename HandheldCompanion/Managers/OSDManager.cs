@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
 using ControllerCommon;
 using ControllerCommon.Managers;
 using HandheldCompanion.Views;
-using HidSharp.Reports.Units;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using static HandheldCompanion.Platforms.HWiNFO;
@@ -323,36 +321,22 @@ public static class OSDManager
                     OverlayEntry headerEntry = new OverlayEntry("       FPS    TDP", "C1");
                     row1.entries.Add(headerEntry);
 
-                    // Row 2, setpoints
                     OverlayEntry setFPSEntry = new OverlayEntry("Set ", "C2");
-                    setFPSEntry.elements.Add(new SensorElement()
-                    {
-                        Value = autoTDPTargetFPS,
-                    });
+                    setFPSEntry.elements.Add(new SensorElement { Value = autoTDPTargetFPS });
                     row2.entries.Add(setFPSEntry);
 
                     OverlayEntry setTDPEntry = new OverlayEntry("", "C3");
-                    setTDPEntry.elements.Add(new SensorElement()
-                    {
-                        Value = MainWindow.performanceManager.GetAutoTDPSetpoint(),
-                    });
+                    setTDPEntry.elements.Add(new SensorElement { Value = MainWindow.performanceManager.GetAutoTDPSetpoint() });
                     row2.entries.Add(setTDPEntry);
 
                     // Row 3, actuals
-                    OverlayEntry ActFPSentry = new OverlayEntry("Act ", "C4");
-                    ActFPSentry.elements.Add(new SensorElement()
-                    {
-                        Value = PlatformManager.RTSS.GetFramerate(processId),
-                    });
-                    row3.entries.Add(ActFPSentry);
+                    OverlayEntry actFPSEntry = new OverlayEntry("Act ", "C4");
+                    actFPSEntry.elements.Add(new SensorElement { Value = PlatformManager.RTSS.GetFramerate(processId) });
+                    row3.entries.Add(actFPSEntry);
 
                     OverlayEntry ActTDPentry = new OverlayEntry("", "C5");
-
                     if (PlatformManager.HWiNFO.MonitoredSensors.TryGetValue(SensorElementType.CPUPower, out sensor))
-                        ActTDPentry.elements.Add(new SensorElement()
-                        {
-                            Value = sensor.Value,
-                        });
+                        ActTDPentry.elements.Add(new SensorElement { Value = sensor.Value });
                     row3.entries.Add(ActTDPentry);
 
                     // Add the rows to the content list
@@ -364,13 +348,11 @@ public static class OSDManager
                 else
                 {
                     // Indicate AutoTDP is off
+                    OverlayRow row1 = new OverlayRow();
+                    OverlayEntry autoTDPStatus = new OverlayEntry("AutoTDP Off", "C6");
+                    row1.entries.Add(autoTDPStatus);
 
-                    OverlayRow row1 = new();
-
-                    OverlayEntry AutoTDPStatus = new("AutoTDP Off", "C6");
-                    row1.entries.Add(AutoTDPStatus);
-
-                    // add header to row1
+                    // Add header to row1
                     Content.Add(Header + row1.ToString());
                 }
                 break;
