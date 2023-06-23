@@ -41,6 +41,10 @@ namespace ControllerCommon
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.CreateNoWindow = true;
+
+                // register command
+                process.StartInfo.Arguments = $"restart \"{InstanceId}\"";
+
                 process.Start();
 
                 StreamReader reader = process.StandardOutput;
