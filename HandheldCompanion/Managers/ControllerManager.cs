@@ -348,7 +348,7 @@ public static class ControllerManager
             Controllers[path] = controller;
 
             // first controller logic
-            if (!controller.IsVirtual() && GetTargetController() is null)
+            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
                 SetTargetController(controller.GetInstancePath());
 
             // raise event
@@ -424,7 +424,7 @@ public static class ControllerManager
             Controllers[path] = controller;
 
             // first controller logic
-            if (!controller.IsVirtual() && GetTargetController() is null)
+            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
                 SetTargetController(controller.GetInstancePath());
 
             // raise event

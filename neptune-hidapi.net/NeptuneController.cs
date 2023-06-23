@@ -201,6 +201,7 @@ namespace neptune_hidapi.net
                 _hidDevice.EndRead();
             _hidDevice.Dispose();
             _active = false;
+            _configureTask.Dispose();
         }
     }
 }
