@@ -540,17 +540,23 @@ public class PerformanceManager : Manager
 
         var requestedEPP = new uint[2]
         {
-            Math.Max(0, EPPOverrideValue - 17),
-            Math.Max(0, EPPOverrideValue)
+            (uint)Math.Max(0, (int)EPPOverrideValue - 17),
+            (uint)Math.Max(0, (int)EPPOverrideValue)
         };
 
+        // Is the EPP value already correct?
+        uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
+        if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
+            return;
+        
         LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
 
-        // set profile EPP
+        // Set profile EPP
         WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, requestedEPP[0], requestedEPP[1]);
         WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, requestedEPP[0], requestedEPP[1]);
 
-        var EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
+        // Has the EPP value been applied?
+        EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
         if (EPP[0] != requestedEPP[0] || EPP[1] != requestedEPP[1])
             LogManager.LogWarning("Failed to set requested EPP");
     }
