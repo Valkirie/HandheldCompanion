@@ -119,7 +119,7 @@ public class ControllerService : IHostedService
                     if (CurrentDevice.RestartSensor())
                     {
                         // give the device some breathing space once restarted
-                        Thread.Sleep(2000);
+                        Thread.Sleep(500);
 
                         LogManager.LogInformation("Successfully restarted: {0}", CurrentDevice.InternalSensorName);
                     }
