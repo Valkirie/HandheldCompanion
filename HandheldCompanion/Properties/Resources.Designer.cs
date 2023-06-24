@@ -487,7 +487,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Press to define hotkey input.
+        ///   Looks up a localized string similar to Press to define trigger.
         /// </summary>
         public static string InputsHotkey_fallbackInput {
             get {

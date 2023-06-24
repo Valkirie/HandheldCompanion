@@ -224,7 +224,7 @@
     <value>Decrease system or currently applied profile TDP by one watt</value>
   </data>
   <data name="InputsHotkey_fallbackInput" xml:space="preserve">
-    <value>Press to define hotkey input</value>
+    <value>Press to define trigger</value>
   </data>
   <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
     <value>Press to define keyboard output</value>
