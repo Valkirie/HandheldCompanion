@@ -24,6 +24,7 @@ public class ROGAlly : IDevice
     };
 
     private bool previousWasEmpty;
+    private List<HidStream> _hidStreams = new();
 
     public ROGAlly()
     {
@@ -81,8 +82,8 @@ public class ROGAlly : IDevice
 
         // prepare configuration
         var deviceConfiguration = new OpenConfiguration();
-        deviceConfiguration.SetOption(OpenOption.Exclusive, true);
-        deviceConfiguration.SetOption(OpenOption.Transient, true);
+        deviceConfiguration.SetOption(OpenOption.Exclusive, false);
+        deviceConfiguration.SetOption(OpenOption.Transient, false);
 
         foreach (var _hidDevice in DeviceList.Local.GetHidDevices()
                      .Where(d => d.ProductID == _pid && d.VendorID == _vid))
@@ -91,13 +92,20 @@ public class ROGAlly : IDevice
             var deviceDescriptor = _hidDevice.GetReportDescriptor();
 
             if (!_hidDevice.TryOpen(deviceConfiguration, out var inputStream)) continue;
+
+            // add stream to array
+            _hidStreams.Add(inputStream);
+
             foreach (var inputReport in deviceDescriptor.InputReports)
             {
-                var hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
-                var hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
-
+                DeviceItemInputParser hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
+                HidDeviceInputReceiver hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
+                
+                // listen for event(s)
                 hidDeviceInputReceiver.Received += (sender, e) =>
-                    InputReportReciever_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
+                    InputReportReceiver_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
+
+                // start receiver
                 hidDeviceInputReceiver.Start(inputStream);
             }
         }
@@ -107,10 +115,17 @@ public class ROGAlly : IDevice
 
     public override void Close()
     {
+        // close stream(s)
+        foreach (HidStream stream in _hidStreams)
+            stream.Close();
+
+        // clear array
+        _hidStreams.Clear();
+
         base.Close();
     }
 
-    private void InputReportReciever_Received(HidDevice hidDevice, DeviceItemInputParser hiddeviceInputParser,
+    private void InputReportReceiver_Received(HidDevice hidDevice, DeviceItemInputParser hiddeviceInputParser,
         HidDeviceInputReceiver hidDeviceInputReceiver)
     {
         var inputReportBuffer = new byte[hidDevice.GetMaxInputReportLength()];

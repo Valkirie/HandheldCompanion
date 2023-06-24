@@ -114,8 +114,15 @@ public class ControllerService : IHostedService
             case "AYANEOAIRPlus":
             case "ROGAlly":
                 {
+                    LogManager.LogInformation("Restarting: {0}", CurrentDevice.InternalSensorName);
+
                     if (CurrentDevice.RestartSensor())
+                    {
+                        // give the device some breathing space once restarted
+                        Thread.Sleep(500);
+
                         LogManager.LogInformation("Successfully restarted: {0}", CurrentDevice.InternalSensorName);
+                    }
                     else
                         LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
                 }
