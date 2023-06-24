@@ -403,6 +403,18 @@ namespace HandheldCompanion.Managers
                             }
                             break;
 
+                        case "ComboBox":
+                            {
+                                ComboBox comboBox = (ComboBox)focusedElement;
+                                switch(comboBox.IsDropDownOpen)
+                                {
+                                    case true:
+                                        comboBox.IsDropDownOpen = false;
+                                        break;
+                                }
+                            }
+                            return;
+
                         case "ComboBoxItem":
                             {
                                 ComboBox comboBox = ItemsControl.ItemsControlFromItemContainer(focusedElement) as ComboBox;

@@ -94,7 +94,7 @@
                     d:Visibility="Visible"
                     Spacing="12">
 
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Layout picker" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Layout template picker" />
                     <ComboBox
                         Name="cB_Layouts"
                         HorizontalAlignment="Stretch"
@@ -115,7 +115,7 @@
                             Checked="CheckBoxDeviceLayouts_Checked"
                             IsChecked="True"
                             Unchecked="CheckBoxDeviceLayouts_Checked">
-                            Show current controller layouts only
+                            Show current controller templates only
                         </CheckBox>
 
                         <ui:SimpleStackPanel
@@ -123,13 +123,13 @@
                             Orientation="Horizontal"
                             Spacing="6">
 
-                            <!-- Apply layout -->
+                            <!--  Apply template  -->
                             <Button
                                 Name="ButtonApplyLayout"
                                 Click="ButtonApplyLayout_Click"
                                 IsEnabled="False"
                                 Style="{DynamicResource AccentButtonStyle}">
-                                Apply layout
+                                Apply template
                             </Button>
 
                             <!--  Export layout  -->
@@ -156,11 +156,12 @@
                                                     Name="LayoutAuthor"
                                                     HorizontalAlignment="Stretch"
                                                     ui:ControlHelper.Header="Layout author" />
-                                                <CheckBox x:Name="ExportForCurrent"
-                                                          Content="Export for current controller" />
-                                                <CheckBox x:Name="SaveGameInfo"
-                                                          Content="Save game information with the layout"
-                                                          IsChecked="True" Click="SaveGameInfo_Toggled" />
+                                                <CheckBox x:Name="ExportForCurrent" Content="Export for current controller" />
+                                                <CheckBox
+                                                    x:Name="SaveGameInfo"
+                                                    Click="SaveGameInfo_Toggled"
+                                                    Content="Save game information with the layout"
+                                                    IsChecked="True" />
 
                                                 <!--  Separator  -->
                                                 <Separator
