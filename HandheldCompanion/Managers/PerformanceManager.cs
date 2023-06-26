@@ -144,6 +144,7 @@ public class PerformanceManager : Manager
         else
         {
             RequestTDP(MainWindow.CurrentDevice.nTDP);
+            StartTDPWatchdog();
             StopTDPWatchdog();
         }
 
@@ -156,6 +157,7 @@ public class PerformanceManager : Manager
         else
         {
             RequestGPUClock(255 * 50);
+            StartGPUWatchdog();
             StopGPUWatchdog();
         }
 
@@ -490,6 +492,9 @@ public class PerformanceManager : Manager
 
     public void RequestTDP(PowerType type, double value, bool immediate = false)
     {
+        if (processor is null || !processor.IsInitialized)
+            return;
+
         var idx = (int)type;
 
         // update value read by timer
@@ -502,6 +507,9 @@ public class PerformanceManager : Manager
 
     public async void RequestTDP(double[] values, bool immediate = false)
     {
+        if (processor is null || !processor.IsInitialized)
+            return;
+
         for (var idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
             // update value read by timer
@@ -518,6 +526,9 @@ public class PerformanceManager : Manager
 
     public void RequestGPUClock(double value, bool immediate = false)
     {
+        if (processor is null || !processor.IsInitialized)
+            return;
+
         // update value read by timer
         StoredGfxClock = value;
 
