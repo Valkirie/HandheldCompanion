@@ -48,6 +48,7 @@ public abstract class IController
     protected FontFamily DefaultFontFamily = new("Segeo WP");
 
     public PnPDetails Details;
+    public bool IsPowerCycling;
 
     // UI
     protected FontFamily GlyphFontFamily = new("PromptFont");
@@ -86,7 +87,10 @@ public abstract class IController
         { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
 
     protected Button ui_button_hide = new()
-        { Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center };
+    {
+        Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center,
+        Style = Application.Current.FindResource("AccentButtonStyle") as Style
+    };
 
     protected Button ui_button_hook = new()
     {
@@ -323,21 +327,37 @@ public abstract class IController
     {
         var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
         var hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
-        return hide_device || hide_base;
+        return /* hide_device || */ hide_base;
     }
 
     public void Hide()
     {
+        if (IsHidden())
+            return;
+
         HidHide.HidePath(Details.deviceInstanceId);
         HidHide.HidePath(Details.baseContainerDeviceInstanceId);
+
+        // set flag
+        IsPowerCycling = true;
+
+        Details.CyclePort();
 
         RefreshControls();
     }
 
     public void Unhide()
     {
+        if (!IsHidden())
+            return;
+
         HidHide.UnhidePath(Details.deviceInstanceId);
         HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
+
+        // set flag
+        IsPowerCycling = true;
+
+        Details.CyclePort();
 
         RefreshControls();
     }

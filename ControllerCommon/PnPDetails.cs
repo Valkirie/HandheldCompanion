@@ -61,7 +61,13 @@ public class PnPDetails : IDisposable
         if (usbDevice is null)
             return false;
 
-        usbDevice.CyclePort();
-        return true;
+        try
+        {
+            usbDevice.CyclePort();
+            return true;
+        }
+        catch { }
+
+        return false;
     }
 }

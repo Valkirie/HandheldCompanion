@@ -169,7 +169,7 @@ public partial class ControllerPage : Page
                 if (ctrl is null)
                     continue;
 
-                if (ctrl.GetInstancePath() == Controller.GetInstancePath())
+                if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                 {
                     InputDevices.Children.Remove(border);
                     break;
@@ -206,7 +206,7 @@ public partial class ControllerPage : Page
 
     private void ControllerHookClicked(IController Controller)
     {
-        var path = Controller.GetInstancePath();
+        var path = Controller.GetContainerInstancePath();
         ControllerManager.SetTargetController(path);
 
         ControllerRefresh();

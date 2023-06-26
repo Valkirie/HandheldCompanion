@@ -221,7 +221,7 @@ public static class ControllerManager
         else if (HasPhysicalController())
         {
             // no known controller, connect to first available
-            path = GetPhysicalControllers().FirstOrDefault().GetInstancePath();
+            path = GetPhysicalControllers().FirstOrDefault().GetContainerInstancePath();
             SetTargetController(path);
         }
     }
@@ -234,6 +234,22 @@ public static class ControllerManager
 
     private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
+        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+        {
+            if (!controller.IsPowerCycling)
+                return;
+
+            // unset flag
+            controller.IsPowerCycling = false;
+
+            // set flag
+            details.isHooked = true;
+
+            LogManager.LogDebug("DInput controller power-cycled: {0}", controller.ToString());
+
+            return;
+        }
+
         var directInput = new DirectInput();
         int VendorId = details.attributes.VendorID;
         int ProductId = details.attributes.ProductID;
@@ -344,12 +360,12 @@ public static class ControllerManager
                 return;
 
             // update or create controller
-            var path = controller.GetInstancePath();
+            var path = controller.GetContainerInstancePath();
             Controllers[path] = controller;
 
             // first controller logic
             if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-                SetTargetController(controller.GetInstancePath());
+                SetTargetController(controller.GetContainerInstancePath());
 
             // raise event
             ControllerPlugged?.Invoke(controller);
@@ -361,18 +377,22 @@ public static class ControllerManager
 
     private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.deviceInstanceId, out var controller))
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out var controller))
             return;
 
         // XInput controller are handled elsewhere
         if (controller.GetType() == typeof(XInputController))
             return;
 
+        // ignore the event if device is power cycling
+        if (controller.IsPowerCycling)
+            return;
+
         // controller was unplugged
-        Controllers.Remove(details.deviceInstanceId);
+        Controllers.Remove(details.baseContainerDeviceInstanceId);
 
         // unplug controller, if needed
-        if (GetTargetController().GetInstancePath() == details.deviceInstanceId)
+        if (GetTargetController().GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
             ClearTargetController();
 
         // raise event
@@ -381,6 +401,22 @@ public static class ControllerManager
 
     private static void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
+        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+        {
+            if (!controller.IsPowerCycling)
+                return;
+
+            // unset flag
+            controller.IsPowerCycling = false;
+
+            // set flag
+            details.isHooked = true;
+
+            LogManager.LogDebug("XInput controller power-cycled: {0}", controller.ToString());
+
+            return;
+        }
+
         // trying to guess XInput behavior...
         // get first available slot
         var slot = UserIndex.One;
@@ -405,27 +441,21 @@ public static class ControllerManager
 
             // failed to initialize
             if (controller.Details is null)
-            {
-                LogManager.LogError("XInput details is empty");
                 return;
-            }
 
             if (!controller.IsConnected())
-            {
-                LogManager.LogError("XInput controller is not connected");
                 return;
-            }
 
             // slot is now busy
             XUsbControllers[slot] = true;
 
             // update or create controller
-            var path = controller.GetInstancePath();
+            var path = controller.GetContainerInstancePath();
             Controllers[path] = controller;
 
             // first controller logic
             if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-                SetTargetController(controller.GetInstancePath());
+                SetTargetController(controller.GetContainerInstancePath());
 
             // raise event
             ControllerPlugged?.Invoke(controller);
@@ -437,7 +467,11 @@ public static class ControllerManager
 
     private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.deviceInstanceId, out var controller))
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out var controller))
+            return;
+
+        // ignore the event if device is power cycling
+        if (controller.IsPowerCycling)
             return;
 
         // slot is now free
@@ -445,10 +479,10 @@ public static class ControllerManager
         XUsbControllers.Remove(slot, out _);
 
         // controller was unplugged
-        Controllers.Remove(details.deviceInstanceId);
+        Controllers.Remove(details.baseContainerDeviceInstanceId);
 
         // unplug controller, if needed
-        if (GetTargetController().GetInstancePath() == controller.GetInstancePath())
+        if (GetTargetController().GetContainerInstancePath() == controller.GetContainerInstancePath())
             ClearTargetController();
 
         // raise event
@@ -467,7 +501,7 @@ public static class ControllerManager
         }
     }
 
-    public static void SetTargetController(string deviceInstanceId)
+    public static void SetTargetController(string baseContainerDeviceInstanceId)
     {
         // unplug previous controller
         ClearTargetController();
@@ -476,7 +510,7 @@ public static class ControllerManager
         PipeClient.SendMessage(new PipeClientControllerDisconnect());
 
         // look for new controller
-        if (!Controllers.TryGetValue(deviceInstanceId, out var controller))
+        if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController? controller))
             return;
 
         if (controller is null)
@@ -500,7 +534,7 @@ public static class ControllerManager
             targetController.Hide();
 
         // update settings
-        SettingsManager.SetProperty("HIDInstancePath", deviceInstanceId);
+        SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
 
         // warn service a new controller has arrived
         PipeClient.SendMessage(
