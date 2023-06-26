@@ -233,11 +233,27 @@ public partial class QuickProfilesPage : Page
         {
             switch (name)
             {
-                case "ConfigurableTDPOverrideUp":
-                    TDPSlider.Maximum = Convert.ToInt32(value);
-                    break;
                 case "ConfigurableTDPOverrideDown":
-                    TDPSlider.Minimum = Convert.ToInt32(value);
+                    {
+                        // set flag
+                        profileLock = true;
+
+                        TDPSlider.Minimum = (double)value;
+
+                        // release flag
+                        profileLock = false;
+                    }
+                    break;
+                case "ConfigurableTDPOverrideUp":
+                    {
+                        // set flag
+                        profileLock = true;
+
+                        TDPSlider.Maximum = (double)value;
+
+                        // release flag
+                        profileLock = false;
+                    }
                     break;
             }
         });
@@ -480,10 +496,12 @@ public partial class QuickProfilesPage : Page
 
         if (!profileLock)
         {
-            currentProfile.TDPOverrideValues = new double[3];
-            currentProfile.TDPOverrideValues[(int)PowerType.Slow] = (int)TDPSlider.Value;
-            currentProfile.TDPOverrideValues[(int)PowerType.Stapm] = (int)TDPSlider.Value;
-            currentProfile.TDPOverrideValues[(int)PowerType.Fast] = (int)TDPSlider.Value;
+            currentProfile.TDPOverrideValues = new double[3]
+            {
+                (int)TDPSlider.Value,
+                (int)TDPSlider.Value,
+                (int)TDPSlider.Value
+            };
             RequestUpdate();
         }
     }

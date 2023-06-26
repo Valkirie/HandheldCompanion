@@ -171,10 +171,26 @@ public partial class ProfilesPage : Page
             switch (name)
             {
                 case "ConfigurableTDPOverrideDown":
-                    TDPSlider.Minimum = (double)value;
+                    {
+                        // set flag
+                        profileLock = true;
+
+                        TDPSlider.Minimum = (double)value;
+
+                        // release flag
+                        profileLock = false;
+                    }
                     break;
                 case "ConfigurableTDPOverrideUp":
-                    TDPSlider.Maximum = (double)value;
+                    {
+                        // set flag
+                        profileLock = true;
+
+                        TDPSlider.Maximum = (double)value;
+
+                        // release flag
+                        profileLock = false;
+                    }
                     break;
             }
         });
