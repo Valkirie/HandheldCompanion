@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using ControllerCommon;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
@@ -31,8 +32,10 @@ public static class XInputPlus
         var DirectoryPath = Path.GetDirectoryName(profile.Path);
         var IniPath = Path.Combine(DirectoryPath, "XInputPlus.ini");
 
-        if (!File.Exists(IniPath))
-            File.WriteAllText(IniPath, IniContent);
+        if (!CommonUtils.IsFileWritable(IniPath))
+            return;
+        
+        File.WriteAllText(IniPath, IniContent);
 
         // we need to define Controller index overwrite
         XInputController controller = (XInputController)ControllerManager.GetVirtualControllers().FirstOrDefault(c => c.GetType() == typeof(XInputController));
@@ -102,7 +105,8 @@ public static class XInputPlus
                     File.Move(dllpath, backpath, true);
 
                 // deploy wrapper
-                File.WriteAllBytes(dllpath, outputData);
+                if (CommonUtils.IsFileWritable(dllpath))
+                    File.WriteAllBytes(dllpath, outputData);
             }
         }
     }

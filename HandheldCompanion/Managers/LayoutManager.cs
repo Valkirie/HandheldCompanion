@@ -8,6 +8,7 @@ using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers.Desktop;
@@ -221,7 +222,8 @@ internal static class LayoutManager
         });
 
         fileName = Path.Combine(LayoutsPath, $"{fileName}.json");
-        File.WriteAllText(fileName, jsonString);
+        if (CommonUtils.IsFileWritable(fileName))
+            File.WriteAllText(fileName, jsonString);
     }
 
     public static void SerializeLayoutTemplate(LayoutTemplate layoutTemplate)
@@ -231,8 +233,9 @@ internal static class LayoutManager
             TypeNameHandling = TypeNameHandling.All
         });
 
-        var fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
-        File.WriteAllText(fileName, jsonString);
+        string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
+        if (CommonUtils.IsFileWritable(fileName))
+            File.WriteAllText(fileName, jsonString);
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value)

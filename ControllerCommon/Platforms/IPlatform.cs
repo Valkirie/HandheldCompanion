@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using Timer = System.Timers.Timer;
 
 namespace ControllerCommon.Platforms;
@@ -388,7 +389,7 @@ public abstract class IPlatform : IDisposable
         try
         {
             var configPath = Path.Combine(InstallPath, FilePath);
-            if (!File.Exists(configPath))
+            if (!CommonUtils.IsFileWritable(configPath))
                 return false;
 
             // file has already been overwritten

@@ -12,6 +12,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static PInvoke.Kernel32;
 
 namespace HandheldCompanion.Managers;
 
@@ -363,11 +364,8 @@ public static class ProfileManager
 
         // prepare for writing
         var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
-        try
-        {
+        if (CommonUtils.IsFileWritable(profilePath))
             File.WriteAllTextAsync(profilePath, jsonString);
-        }
-        catch { }
     }
 
     private static void SanitizeProfile(Profile profile)

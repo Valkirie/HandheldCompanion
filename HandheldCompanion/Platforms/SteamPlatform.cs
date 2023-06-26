@@ -99,7 +99,7 @@ public class SteamPlatform : IPlatform
         if (IsRunning())
             return false;
 
-        if (!File.Exists(SettingsPath))
+        if (!CommonUtils.IsFileWritable(SettingsPath))
             return false;
 
         try
