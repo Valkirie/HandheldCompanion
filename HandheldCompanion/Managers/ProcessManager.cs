@@ -411,7 +411,6 @@ public static class ProcessManager
             case "explorer.exe":
             case "hwinfo64.exe":
             case "searchapp.exe":
-            case "handheldcompanion.exe":
             case "ashotplugctrl.exe":
             case "gameinputsvc.exe":
                 return ProcessFilter.Desktop;
