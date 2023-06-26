@@ -28,7 +28,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
 		<PackageReference Include="PInvoke.User32" Version="0.7.124" />
-		<PackageReference Include="PrecisionTimer.NET" Version="2.3.0.8" />
+		<PackageReference Include="PrecisionTimer.NET" Version="2.2.5.3" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
