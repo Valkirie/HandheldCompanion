@@ -439,15 +439,21 @@ public partial class ProfilesPage : Page
                     cB_Wrapper.IsEnabled = true;
                     break;
 
-                case ProfileErrorCode.Running:
-                case ProfileErrorCode.MissingExecutable:
-                case ProfileErrorCode.MissingPath:
-                case ProfileErrorCode.MissingPermission:
-                case ProfileErrorCode.Default:
+                case ProfileErrorCode.Running:              // application is running
+                case ProfileErrorCode.MissingExecutable:    // profile has no executable
+                case ProfileErrorCode.MissingPath:          // profile has no path
+                case ProfileErrorCode.Default:              // profile is default
                     WarningBorder.Visibility = Visibility.Visible;
                     WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
-                    cB_Whitelist.IsEnabled = false; // you can't whitelist an application without path
-                    cB_Wrapper.IsEnabled = false; // you can't deploy wrapper on an application without path
+                    cB_Whitelist.IsEnabled = false;
+                    cB_Wrapper.IsEnabled = false;
+                    break;
+
+                case ProfileErrorCode.MissingPermission:
+                    WarningBorder.Visibility = Visibility.Visible;
+                    WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
+                    cB_Whitelist.IsEnabled = true;
+                    cB_Wrapper.IsEnabled = false;
                     break;
             }
 
