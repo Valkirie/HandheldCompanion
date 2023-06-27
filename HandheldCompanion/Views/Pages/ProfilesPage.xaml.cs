@@ -224,7 +224,11 @@ public partial class ProfilesPage : Page
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
-        var openFileDialog = new OpenFileDialog();
+        var openFileDialog = new OpenFileDialog()
+        {
+            Filter = "Executable|*.exe|UWP manifest|AppxManifest.xml",
+        };
+
         if (openFileDialog.ShowDialog() == true)
             try
             {
