@@ -362,14 +362,16 @@ public static class ProcessManager
             // handheld companion
             case "handheldcompanion.exe":
             {
-                if (!string.IsNullOrEmpty(MainWindowTitle))
+                /* if (!string.IsNullOrEmpty(MainWindowTitle))
+                {
                     switch (MainWindowTitle)
                     {
                         case "QuickTools":
                             return ProcessFilter.HandheldCompanion;
                     }
+                } */
 
-                return ProcessFilter.Restricted;
+                return ProcessFilter.HandheldCompanion;
             }
 
             case "rw.exe": // Used to change TDP
