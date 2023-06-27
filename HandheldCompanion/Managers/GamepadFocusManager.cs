@@ -77,6 +77,10 @@ namespace HandheldCompanion.Managers
 
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
+            // already has focus
+            if (_focused)
+                return;
+
             // set focus
             _focused = true;
 
@@ -86,6 +90,16 @@ namespace HandheldCompanion.Managers
 
         private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
         {
+            // check if sender is part of current window
+            if (e is not null && e.OriginalSource is not null)
+            {
+                Window yourParentWindow = Window.GetWindow((DependencyObject)e.OriginalSource);
+
+                // sender is part of parent window, return
+                if (yourParentWindow == _currentWindow)
+                    return;
+            }
+
             // unset focus
             _focused = false;
 
