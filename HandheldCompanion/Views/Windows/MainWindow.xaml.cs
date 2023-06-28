@@ -196,7 +196,10 @@ public partial class MainWindow : GamepadWindow
         PlatformManager.Start();
         OSDManager.Start();
         LayoutManager.Start();
+
+        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.Start();
+
         EnergyManager.Start();
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
@@ -223,6 +226,12 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
+    }
+
+    private void ProcessManager_ForegroundChanged(Controls.ProcessEx processEx, Controls.ProcessEx backgroundEx)
+    {
+        // unset flag
+        SystemPending = false;
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -663,6 +672,7 @@ public partial class MainWindow : GamepadWindow
 
     #endregion
 
+    private bool SystemPending;
     private async void OnSystemStatusChanged(PowerManager.SystemStatus status, PowerManager.SystemStatus prevStatus)
     {
         if (status == prevStatus)
@@ -679,17 +689,22 @@ public partial class MainWindow : GamepadWindow
                             break;
                         case PowerManager.SystemStatus.SystemPending:
                             // resume from sleep
-                            Thread.Sleep(2000);
                             break;
                     }
 
-                    new Thread(() => {
+                    new Thread(() =>
+                    {
+                        // wait for all HIDs to be ready
+                        while (!CurrentDevice.IsReady())
+                            Thread.Sleep(500);
+
                         // open current device (threaded to avoid device to hang)
                         CurrentDevice.Open();
-                        
+
                         // restore device settings
                         CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
                         CurrentDevice.SetFanDuty(SettingsManager.GetDouble("QuietModeDuty"));
+
                     }).Start();
 
                     // restore inputs manager
@@ -702,6 +717,9 @@ public partial class MainWindow : GamepadWindow
                 break;
             case PowerManager.SystemStatus.SystemPending:
                 {
+                    // set flag
+                    SystemPending = true;
+
                     // close current device
                     CurrentDevice.Close();
 

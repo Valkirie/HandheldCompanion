@@ -454,7 +454,7 @@ public static class DeviceManager
         }
 
         var deviceEx = FindDevice(SymLink);
-        if (deviceEx is not null && deviceEx.isGaming && !deviceEx.isXInput)
+        if (deviceEx is not null && !deviceEx.isXInput)
         {
             LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
                 deviceEx.GetProductID(), deviceEx.deviceInstanceId);

@@ -234,6 +234,9 @@ public static class ControllerManager
 
     private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
+        if (!details.isGaming)
+            return;
+
         if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
         {
             if (!controller.IsPowerCycling)

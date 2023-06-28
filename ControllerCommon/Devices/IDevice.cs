@@ -307,7 +307,6 @@ public abstract class IDevice
 
         return true;
     }
-
     public virtual void Close()
     {
         if (openLibSys is null)
@@ -317,6 +316,11 @@ public abstract class IDevice
 
         openLibSys.Dispose();
         openLibSys = null;
+    }
+
+    public virtual bool IsReady()
+    {
+        return true;
     }
 
     public void PullSensors()
