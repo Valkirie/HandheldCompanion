@@ -184,8 +184,6 @@ public class ROGAlly : IDevice
             // get button
             var button = keyMapping[key];
 
-            LogManager.LogDebug("Detected a key press: {0} from HID Device: {1}!", button, hidDevice.DevicePath);
-
             switch (key)
             {
                 case 236:
