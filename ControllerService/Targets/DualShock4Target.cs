@@ -158,7 +158,7 @@ internal class DualShock4Target : ViGEmTarget
 
             if (Inputs.ButtonState[ButtonFlags.Special])
                 tempSpecial |= DualShock4SpecialButton.Ps.Value;
-            if (Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick])
+            if (Inputs.ButtonState[ButtonFlags.LeftPadClick] || Inputs.ButtonState[ButtonFlags.RightPadClick] || DS4Touch.OutputClickButton)
                 tempSpecial |= DualShock4SpecialButton.Touchpad.Value;
 
             outDS4Report.bSpecial = (byte)(tempSpecial | (0 << 2));

@@ -86,10 +86,6 @@ public partial class OverlayTrackpad : OverlayWindow
         // do something
     }
 
-    private void UpdateUI_TrackpadsPosition(int trackpadsAlignment)
-    {
-    }
-
     public double GetWindowsScaling()
     {
         return Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth;
@@ -226,5 +222,15 @@ public partial class OverlayTrackpad : OverlayWindow
     {
         public short Flags;
         public int Timestamp;
+    }
+
+    private void LeftTrackpadClick_Click(object sender, RoutedEventArgs e)
+    {
+        leftInput.Flags = 30;
+    }
+
+    private void RightTrackpadClick_Click(object sender, RoutedEventArgs e)
+    {
+        rightInput.Flags = 30;
     }
 }
