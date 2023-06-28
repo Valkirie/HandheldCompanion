@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 
@@ -14,6 +15,9 @@ public class OverlayWindow : Window
     public HorizontalAlignment _HorizontalAlignment;
     public VerticalAlignment _VerticalAlignment;
     protected ushort _hotkeyId;
+
+    private const int WM_MOUSEACTIVATE = 0x0021;
+    private const int MA_NOACTIVATE = 0x0003;
 
     public OverlayWindow()
     {
@@ -26,6 +30,7 @@ public class OverlayWindow : Window
         Focusable = false;
         ResizeMode = ResizeMode.NoResize;
         ShowActivated = false;
+        FocusManager.SetIsFocusScope(this, false);
 
         SizeChanged += (o, e) => { UpdatePosition(); };
 
@@ -66,10 +71,22 @@ public class OverlayWindow : Window
 
     private void Overlay_SourceInitialized(object? sender, EventArgs e)
     {
+        var source = PresentationSource.FromVisual(this) as HwndSource;
+        source.AddHook(WndProc);
+
         //Set the window style to noactivate.
         var helper = new WindowInteropHelper(this);
-        SetWindowLong(helper.Handle, GWL_EXSTYLE,
-            GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+        SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+    }
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_MOUSEACTIVATE)
+        {
+            handled = true;
+            return new IntPtr(MA_NOACTIVATE);
+        }
+        else return IntPtr.Zero;
     }
 
     private void UpdatePosition()

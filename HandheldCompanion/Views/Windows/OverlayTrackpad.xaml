@@ -5,7 +5,11 @@
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
     Title="Virtual Trackpads"
+    d:Background="White"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
     Closing="Window_Closing"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -17,12 +21,25 @@
             Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
             Margin="15,0,0,0"
             HorizontalAlignment="Left"
+            d:Height="250"
+            d:Width="250"
             Background="Black"
             CornerRadius="10"
-            PreviewTouchDown="Trackpad_PreviewTouchDown"
-            PreviewTouchMove="Trackpad_PreviewTouchMove"
-            PreviewTouchUp="Trackpad_PreviewTouchUp"
-            TouchLeave="Trackpad_PreviewTouchUp" />
+            TouchDown="Trackpad_PreviewTouchDown"
+            TouchMove="Trackpad_PreviewTouchMove"
+            TouchUp="Trackpad_PreviewTouchUp"
+            TouchLeave="Trackpad_PreviewTouchUp">
+            <Button
+                Name="LeftTrackpadClick"
+                Width="{Binding ActualWidth, ConverterParameter=x/4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                Height="{Binding ActualHeight, ConverterParameter=x/4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                Margin="12"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                PreviewTouchDown="LeftTrackpadClick_PreviewTouchDown">
+                <ui:FontIcon FontSize="20" Glyph="&#xe815;" />
+            </Button>
+        </Border>
 
         <!--  Right Trackpad  -->
         <Border
@@ -30,11 +47,24 @@
             Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
             Margin="0,0,15,0"
             HorizontalAlignment="Right"
+            d:Height="250"
+            d:Width="250"
             Background="Black"
             CornerRadius="10"
-            PreviewTouchDown="Trackpad_PreviewTouchDown"
-            PreviewTouchMove="Trackpad_PreviewTouchMove"
-            PreviewTouchUp="Trackpad_PreviewTouchUp"
-            TouchLeave="Trackpad_PreviewTouchUp" />
+            TouchDown="Trackpad_PreviewTouchDown"
+            TouchMove="Trackpad_PreviewTouchMove"
+            TouchUp="Trackpad_PreviewTouchUp"
+            TouchLeave="Trackpad_PreviewTouchUp">
+            <Button
+                Name="RightTrackpadClick"
+                Width="{Binding ActualWidth, ConverterParameter=x/4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                Height="{Binding ActualHeight, ConverterParameter=x/4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
+                Margin="12"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                PreviewTouchDown="RightTrackpadClick_PreviewTouchDown">
+                <ui:FontIcon FontSize="20" Glyph="&#xe815;" />
+            </Button>
+        </Border>
     </Grid>
 </common:OverlayWindow>
