@@ -697,7 +697,7 @@ public partial class MainWindow : GamepadWindow
                     {
                         // extra delay for device functions
                         while (SystemPending)
-                            Thread.Sleep(100);
+                            Thread.Sleep(1000);
 
                         // open current device (threaded to avoid device to hang)
                         CurrentDevice.Open();
