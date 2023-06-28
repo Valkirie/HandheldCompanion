@@ -71,8 +71,6 @@ public class OverlayWindow : Window
 
     private void Overlay_SourceInitialized(object? sender, EventArgs e)
     {
-        base.OnSourceInitialized(e);
-
         var source = PresentationSource.FromVisual(this) as HwndSource;
         source.AddHook(WndProc);
 

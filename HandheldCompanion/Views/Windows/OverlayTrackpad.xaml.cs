@@ -224,12 +224,12 @@ public partial class OverlayTrackpad : OverlayWindow
         public int Timestamp;
     }
 
-    private void LeftTrackpadClick_Click(object sender, RoutedEventArgs e)
+    private void LeftTrackpadClick_PreviewTouchDown(object sender, TouchEventArgs e)
     {
         leftInput.Flags = 30;
     }
 
-    private void RightTrackpadClick_Click(object sender, RoutedEventArgs e)
+    private void RightTrackpadClick_PreviewTouchDown(object sender, TouchEventArgs e)
     {
         rightInput.Flags = 30;
     }

@@ -25,9 +25,9 @@
             d:Width="250"
             Background="Black"
             CornerRadius="10"
-            PreviewTouchDown="Trackpad_PreviewTouchDown"
-            PreviewTouchMove="Trackpad_PreviewTouchMove"
-            PreviewTouchUp="Trackpad_PreviewTouchUp"
+            TouchDown="Trackpad_PreviewTouchDown"
+            TouchMove="Trackpad_PreviewTouchMove"
+            TouchUp="Trackpad_PreviewTouchUp"
             TouchLeave="Trackpad_PreviewTouchUp">
             <Button
                 Name="LeftTrackpadClick"
@@ -36,7 +36,7 @@
                 Margin="12"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Click="LeftTrackpadClick_Click">
+                PreviewTouchDown="LeftTrackpadClick_PreviewTouchDown">
                 <ui:FontIcon FontSize="20" Glyph="&#xe815;" />
             </Button>
         </Border>
@@ -51,9 +51,9 @@
             d:Width="250"
             Background="Black"
             CornerRadius="10"
-            PreviewTouchDown="Trackpad_PreviewTouchDown"
-            PreviewTouchMove="Trackpad_PreviewTouchMove"
-            PreviewTouchUp="Trackpad_PreviewTouchUp"
+            TouchDown="Trackpad_PreviewTouchDown"
+            TouchMove="Trackpad_PreviewTouchMove"
+            TouchUp="Trackpad_PreviewTouchUp"
             TouchLeave="Trackpad_PreviewTouchUp">
             <Button
                 Name="RightTrackpadClick"
@@ -62,7 +62,7 @@
                 Margin="12"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Click="RightTrackpadClick_Click">
+                PreviewTouchDown="RightTrackpadClick_PreviewTouchDown">
                 <ui:FontIcon FontSize="20" Glyph="&#xe815;" />
             </Button>
         </Border>
