@@ -80,17 +80,20 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        // prepare configuration
+        // set exclusive connection with highest priority
         var deviceConfiguration = new OpenConfiguration();
-        deviceConfiguration.SetOption(OpenOption.Exclusive, false);
-        deviceConfiguration.SetOption(OpenOption.Transient, false);
+        deviceConfiguration.SetOption(OpenOption.Exclusive, true);
+        deviceConfiguration.SetOption(OpenOption.Transient, true);
+        deviceConfiguration.SetOption(OpenOption.Priority, OpenPriority.VeryHigh);
 
+        // find rog ally hid devices
         foreach (var _hidDevice in DeviceList.Local.GetHidDevices()
                      .Where(d => d.ProductID == _pid && d.VendorID == _vid))
         {
             // get descriptor
             var deviceDescriptor = _hidDevice.GetReportDescriptor();
 
+            // open connection to hid device
             if (!_hidDevice.TryOpen(deviceConfiguration, out var inputStream)) continue;
 
             // add stream to array
@@ -100,7 +103,7 @@ public class ROGAlly : IDevice
             {
                 DeviceItemInputParser hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
                 HidDeviceInputReceiver hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
-                
+
                 // listen for event(s)
                 hidDeviceInputReceiver.Received += (sender, e) =>
                     InputReportReceiver_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
