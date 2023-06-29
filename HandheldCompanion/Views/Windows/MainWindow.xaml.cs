@@ -26,6 +26,7 @@ using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
@@ -874,7 +875,11 @@ public partial class MainWindow : GamepadWindow
             case WindowState.Maximized:
                 notifyIcon.Visible = false;
                 ShowInTaskbar = true;
+
                 Activate();
+                Topmost = true;  // important
+                Topmost = false; // important
+                Focus();
 
                 prevWindowState = WindowState;
                 break;

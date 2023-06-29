@@ -96,7 +96,6 @@ public partial class App : Application
 
         MainWindow = new MainWindow(fileVersionInfo, CurrentAssembly);
         MainWindow.Show();
-        MainWindow.Activate();
     }
 
     private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

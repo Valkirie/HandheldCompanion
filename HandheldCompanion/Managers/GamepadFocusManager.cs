@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using System.Xml.Linq;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Controls;
@@ -58,6 +59,7 @@ namespace HandheldCompanion.Managers
             // set current window
             _currentWindow = gamepadWindow;
             _currentWindow.GotFocus += _currentWindow_GotFocus;
+            _currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
             _currentWindow.LostFocus += _currentWindow_LostFocus;
 
             _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
@@ -90,6 +92,10 @@ namespace HandheldCompanion.Managers
 
         private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
         {
+            // doesn't have focus
+            if (!_focused)
+                return;
+
             // check if sender is part of current window
             if (e is not null && e.OriginalSource is not null)
             {
@@ -143,6 +149,9 @@ namespace HandheldCompanion.Managers
             // remove state
             _goingForward = false;
 
+            // halt timer
+            _gamepadTimer.Stop();
+
             // store current Frame
             _gamepadFrame = (Frame)sender;
             _gamepadFrame.ContentRendered += _gamepadFrame_ContentRendered;
@@ -189,7 +198,7 @@ namespace HandheldCompanion.Managers
                         Focus(control);
                     }
                 }
-                else if (prevNavigation is null)
+                else if (prevNavigation is null && _currentWindow.IsVisible && _currentWindow.WindowState != WindowState.Minimized)
                 {
                     NavigationViewItem currentNavigationViewItem = (NavigationViewItem)WPFUtils.GetTopLeftControl<NavigationViewItem>(_currentWindow.elements);
                     prevNavigation = currentNavigationViewItem;
@@ -242,7 +251,7 @@ namespace HandheldCompanion.Managers
                         else
                         {
                             // first start
-                            keyboardFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
+                            prevNavigation = keyboardFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
                         }
                     }
                     break;
@@ -424,6 +433,10 @@ namespace HandheldCompanion.Managers
                                 {
                                     case true:
                                         comboBox.IsDropDownOpen = false;
+                                        break;
+                                    case false:
+                                        // restore previous NavigationViewItem
+                                        Focus(prevNavigation);
                                         break;
                                 }
                             }
