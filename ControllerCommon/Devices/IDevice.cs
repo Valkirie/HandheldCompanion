@@ -319,6 +319,11 @@ public abstract class IDevice
         openLibSys = null;
     }
 
+    public virtual bool IsReady()
+    {
+        return true;
+    }
+
     public void PullSensors()
     {
         var gyrometer = Gyrometer.GetDefault();

@@ -313,10 +313,13 @@ public class ControllerService : IHostedService
         switch (message.code)
         {
             case PipeCode.CLIENT_PROFILE:
-            {
-                var profileMsg = (PipeClientProfile)message;
-                UpdateProfile(profileMsg.profile);
-            }
+                {
+                    var profileMsg = (PipeClientProfile)message;
+                    UpdateProfile(profileMsg.profile);
+
+                    // unset flag
+                    SystemPending = false;
+                }
                 break;
 
             case PipeCode.CLIENT_PROCESS:
@@ -564,6 +567,9 @@ public class ControllerService : IHostedService
         }
     }
 
+    private bool SystemPending;
+    private int SystemPendingIdx;
+
     private async void OnSystemStatusChanged(SystemStatus status, SystemStatus prevStatus)
     {
         if (status == prevStatus)
@@ -572,58 +578,69 @@ public class ControllerService : IHostedService
         switch (status)
         {
             case SystemStatus.SystemReady:
-            {
-                switch (prevStatus)
                 {
-                    case SystemStatus.SystemBooting:
-                        // cold boot
-                        IMU.SetSensorFamily(SensorSelection);
-                        IMU.Start();
-                        break;
-                    case SystemStatus.SystemPending:
-                        // resume from sleep
-                        Thread.Sleep(CurrentDevice.ResumeDelay);
-                        // restart IMU
-                        IMU.Restart(true);
-                        break;
+                    switch (prevStatus)
+                    {
+                        case SystemStatus.SystemBooting:
+                            // cold boot
+                            IMU.SetSensorFamily(SensorSelection);
+                            IMU.Start();
+                            break;
+                        case SystemStatus.SystemPending:
+                            // resume from sleep
+                            // restart IMU
+                            IMU.Restart(true);
+                            break;
+                    }
+
+                    // check if service/system was suspended previously
+                    if (vTarget is not null)
+                        return;
+
+                    // extra delay for device functions
+                    while (SystemPending && SystemPendingIdx < CurrentDevice.ResumeDelay / 1000)
+                    {
+                        Thread.Sleep(1000);
+                        SystemPendingIdx++;
+                    }
+
+                    while (vTarget is null || !vTarget.IsConnected)
+                    {
+                        // reset vigem
+                        ResetViGEm();
+
+                        // create new ViGEm client
+                        vClient = new ViGEmClient();
+
+                        // set controller mode
+                        SetControllerMode(HIDmode);
+
+                        Thread.Sleep(1000);
+                    }
+
+                    // start timer manager
+                    TimerManager.Start();
                 }
+                break;
 
-                // check if service/system was suspended previously
-                if (vTarget is not null)
-                    return;
-
-                while (vTarget is null || !vTarget.IsConnected)
+            case SystemStatus.SystemPending:
                 {
+                    // set flag
+                    SystemPending = true;
+                    SystemPendingIdx = 0;
+
+                    // stop timer manager
+                    TimerManager.Stop();
+
+                    // clear pipes
+                    PipeServer.ClearQueue();
+
+                    // stop sensors
+                    IMU.Stop();
+
                     // reset vigem
                     ResetViGEm();
-
-                    // create new ViGEm client
-                    vClient = new ViGEmClient();
-
-                    // set controller mode
-                    SetControllerMode(HIDmode);
-
-                    Thread.Sleep(1000);
                 }
-
-                // start timer manager
-                TimerManager.Start();
-            }
-                break;
-            case SystemStatus.SystemPending:
-            {
-                // stop timer manager
-                TimerManager.Stop();
-
-                // clear pipes
-                PipeServer.ClearQueue();
-
-                // stop sensors
-                IMU.Stop();
-
-                // reset vigem
-                ResetViGEm();
-            }
                 break;
         }
     }

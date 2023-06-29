@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
+using HandheldCompanion;
 using HidSharp;
 using HidSharp.Reports.Input;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices;
@@ -24,6 +29,7 @@ public class ROGAlly : IDevice
     };
 
     private bool previousWasEmpty;
+    private IEnumerable<HidDevice> _hidDevices;
     private List<HidStream> _hidStreams = new();
 
     public ROGAlly()
@@ -80,36 +86,45 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        // prepare configuration
+        // set exclusive connection with highest priority
         var deviceConfiguration = new OpenConfiguration();
-        deviceConfiguration.SetOption(OpenOption.Exclusive, false);
-        deviceConfiguration.SetOption(OpenOption.Transient, false);
+        deviceConfiguration.SetOption(OpenOption.Exclusive, true);
+        deviceConfiguration.SetOption(OpenOption.Transient, true);
+        deviceConfiguration.SetOption(OpenOption.Priority, OpenPriority.VeryHigh);
 
-        foreach (var _hidDevice in DeviceList.Local.GetHidDevices()
-                     .Where(d => d.ProductID == _pid && d.VendorID == _vid))
+        foreach (var _hidDevice in _hidDevices)
         {
-            // get descriptor
-            var deviceDescriptor = _hidDevice.GetReportDescriptor();
-
-            if (!_hidDevice.TryOpen(deviceConfiguration, out var inputStream)) continue;
-
-            // add stream to array
-            _hidStreams.Add(inputStream);
-
-            foreach (var inputReport in deviceDescriptor.InputReports)
+            try
             {
-                DeviceItemInputParser hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
-                HidDeviceInputReceiver hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
-                
-                // listen for event(s)
-                hidDeviceInputReceiver.Received += (sender, e) =>
-                    InputReportReceiver_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
+                // connect to hid device
+                var _stream = _hidDevice.Open();
 
-                // start receiver
-                hidDeviceInputReceiver.Start(inputStream);
+                // add stream to array
+                _hidStreams.Add(_stream);
+
+                // get descriptor
+                var deviceDescriptor = _hidDevice.GetReportDescriptor();
+
+                foreach (var inputReport in deviceDescriptor.InputReports)
+                {
+                    DeviceItemInputParser hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
+                    HidDeviceInputReceiver hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
+
+                    // listen for event(s)
+                    hidDeviceInputReceiver.Received += (sender, e) =>
+                        InputReportReceiver_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
+
+                    // start receiver
+                    hidDeviceInputReceiver.Start(_stream);
+
+                    LogManager.LogInformation("HID connected: {0}", _stream.Device.DevicePath);
+                }
+            }
+            catch
+            {
+                LogManager.LogError("HID error: {0}", _hidDevice.DevicePath);
             }
         }
-
         return true;
     }
 
@@ -123,6 +138,26 @@ public class ROGAlly : IDevice
         _hidStreams.Clear();
 
         base.Close();
+    }
+    public override bool IsReady()
+    {
+        // get hid devices
+        _hidDevices = DeviceList.Local.GetHidDevices()
+            .Where(d => d.ProductID == _pid && d.VendorID == _vid);
+
+        var _hidDevice = _hidDevices.FirstOrDefault();
+
+        if (_hidDevice is null)
+            return false;
+
+        var pnpDevice = PnPDevice.GetDeviceByInterfaceId(_hidDevice.DevicePath);
+        var device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+        
+        var pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+        var parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+        var parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+
+        return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
     }
 
     private void InputReportReceiver_Received(HidDevice hidDevice, DeviceItemInputParser hiddeviceInputParser,
