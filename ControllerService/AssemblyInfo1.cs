@@ -21,5 +21,5 @@
 //      Numéro de build
 //      Révision
 //
-[assembly: AssemblyVersion("0.16.2.2")]
-[assembly: AssemblyFileVersion("0.16.2.2")]
+[assembly: AssemblyVersion("0.16.2.3")]
+[assembly: AssemblyFileVersion("0.16.2.3")]
