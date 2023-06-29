@@ -418,6 +418,7 @@ public static class ProcessManager
             case "gamebuzz.exe":
             case "asmultidisplaycontrol.exe":
             case "lockapp.exe":
+            case "asusosd.exe":
                 return ProcessFilter.Desktop;
 
             default:
