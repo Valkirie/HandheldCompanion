@@ -307,6 +307,7 @@ public abstract class IDevice
 
         return true;
     }
+
     public virtual void Close()
     {
         if (openLibSys is null)
