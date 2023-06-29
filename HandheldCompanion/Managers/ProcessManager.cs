@@ -415,6 +415,9 @@ public static class ProcessManager
             case "searchapp.exe":
             case "ashotplugctrl.exe":
             case "gameinputsvc.exe":
+            case "gamebuzz.exe":
+            case "asmultidisplaycontrol.exe":
+            case "lockapp":
                 return ProcessFilter.Desktop;
 
             default:
