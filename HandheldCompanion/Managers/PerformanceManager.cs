@@ -234,8 +234,8 @@ public class PerformanceManager : Manager
             }
             AutoTDPPrev = AutoTDP;
 
-            // LogManager.LogInformation("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
-            
+            // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
+
             // release lock
             autoLock = false;
         }
@@ -742,14 +742,14 @@ public class PerformanceManager : Manager
         // raise event
         PowerLimitChanged?.Invoke(type, limit);
 
-        LogManager.LogDebug("PowerLimitChanged: {0}\t{1} W", type, limit);
+        LogManager.LogTrace("PowerLimitChanged: {0}\t{1} W", type, limit);
     }
 
     private void HWiNFO_GPUFrequencyChanged(double value)
     {
         CurrentGfxClock = value;
 
-        LogManager.LogDebug("GPUFrequencyChanged: {0} Mhz", value);
+        LogManager.LogTrace("GPUFrequencyChanged: {0} Mhz", value);
     }
 
     private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)

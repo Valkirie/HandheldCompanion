@@ -53,4 +53,10 @@ public static class LogManager
         Trace.TraceError(message, args);
         logger.LogError(message, args);
     }
+
+    public static void LogTrace(string message, params object[] args)
+    {
+        Trace.TraceInformation(message, args);
+        logger.LogTrace(message, args);
+    }
 }
