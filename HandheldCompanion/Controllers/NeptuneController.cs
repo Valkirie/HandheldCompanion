@@ -63,8 +63,8 @@ public class NeptuneController : IController
             Controller = new neptune_hidapi.net.NeptuneController();
             Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
 
-            Controller.Open();
-            isConnected = !string.IsNullOrEmpty(Controller.SerialNumber);
+            // open controller
+            Open();
         }
         catch (Exception ex)
         {
@@ -329,12 +329,37 @@ public class NeptuneController : IController
         });
     }
 
+    private void Open()
+    {
+        try
+        {
+            Controller.Open();
+            isConnected = true;
+        }
+        catch { }
+    }
+
+    private void Close()
+    {
+        try
+        {
+            Controller.Close();
+            isConnected = false;
+        }
+        catch { }
+    }
+
     public override void Plug()
     {
         TimerManager.Tick += UpdateInputs;
         TimerManager.Tick += UpdateMovements;
 
-        Controller.Open();
+        try
+        {
+            // open controller
+            Open();
+        }
+        catch { }
 
         SetHDRumble(UseHDRumble);
 
@@ -355,7 +380,8 @@ public class NeptuneController : IController
             SetLizardButtons(true);
             SetLizardMouse(true);
 
-            Controller.Close();
+            // close controller
+            Close();
         }
         catch
         {
