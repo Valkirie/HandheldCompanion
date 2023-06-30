@@ -226,78 +226,81 @@ namespace HandheldCompanion.Managers
 
         public Control FocusedElement(GamepadWindow window)
         {
-            Control keyboardFocused = (Control)Keyboard.FocusedElement;
-
-            if (keyboardFocused is null)
+            if(Keyboard.FocusedElement is not null && Keyboard.FocusedElement.Focusable)
             {
-                if (window is not null)
-                    keyboardFocused = window;
-                else
-                    keyboardFocused = _currentWindow;
-            }
+                Control keyboardFocused = (Control)Keyboard.FocusedElement;
 
-            string keyboardType = keyboardFocused.GetType().Name;
+                if (keyboardFocused is null)
+                {
+                    if (window is not null)
+                        keyboardFocused = window;
+                    else
+                        keyboardFocused = _currentWindow;
+                }
 
-            switch(keyboardType)
-            {
-                case "MainWindow":
-                case "OverlayQuickTools":
-                    {
-                        if (prevNavigation is not null)
+                string keyboardType = keyboardFocused.GetType().Name;
+
+                switch(keyboardType)
+                {
+                    case "MainWindow":
+                    case "OverlayQuickTools":
                         {
-                            // a new page opened
-                            keyboardFocused = WPFUtils.GetTopLeftControl<Control>(window.elements);
+                            if (prevNavigation is not null)
+                            {
+                                // a new page opened
+                                keyboardFocused = WPFUtils.GetTopLeftControl<Control>(window.elements);
+                            }
+                            else
+                            {
+                                // first start
+                                prevNavigation = keyboardFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
+                            }
                         }
-                        else
+                        break;
+
+                    case "NavigationViewItem":
                         {
-                            // first start
-                            prevNavigation = keyboardFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
+                            switch (keyboardFocused.Name)
+                            {
+                                case "b_ServiceStart":
+                                case "b_ServiceStop":
+                                case "b_ServiceInstall":
+                                case "b_ServiceDelete":
+                                    break;
+                                default:
+                                    {
+                                        // update navigation
+                                        prevNavigation = (NavigationViewItem)keyboardFocused;
+                                    }
+                                    break;
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                case "NavigationViewItem":
-                    {
-                        switch (keyboardFocused.Name)
+                    default:
                         {
-                            case "b_ServiceStart":
-                            case "b_ServiceStop":
-                            case "b_ServiceInstall":
-                            case "b_ServiceDelete":
-                                break;
-                            default:
-                                {
-                                    // update navigation
-                                    prevNavigation = (NavigationViewItem)keyboardFocused;
-                                }
-                                break;
+                            // store current control
+                            if (_gamepadPage is not null)
+                                prevControl[_gamepadPage.Tag] = keyboardFocused;
                         }
-                    }
-                    break;
+                        break;
+                }
 
-                default:
-                    {
-                        // store current control
-                        if (_gamepadPage is not null)
-                            prevControl[_gamepadPage.Tag] = keyboardFocused;
-                    }
-                    break;
-            }
-
-            if (keyboardFocused is not null)
-            {
-                // pick the last known Control
-                return keyboardFocused;
-            }
-            else if (window.GetType() == typeof(MainWindow))
-            {
-                // pick the top left NavigationViewItem
-                return WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
-            }
-            else if (window.GetType() == typeof(OverlayQuickTools))
-            {
-                // pick the top left Control
-                return WPFUtils.GetTopLeftControl<Control>(window.elements);
+                if (keyboardFocused is not null)
+                {
+                    // pick the last known Control
+                    return keyboardFocused;
+                }
+                else if (window.GetType() == typeof(MainWindow))
+                {
+                    // pick the top left NavigationViewItem
+                    return WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
+                }
+                else if (window.GetType() == typeof(OverlayQuickTools))
+                {
+                    // pick the top left Control
+                    return WPFUtils.GetTopLeftControl<Control>(window.elements);
+                }
             }
 
             return null;

@@ -295,7 +295,7 @@ ref PropertyChangeParameters classInstallParams, int classInstallParamsSize);
             diSetHandle = NativeMethods.SetupDiGetClassDevs(ref classGuid, null, IntPtr.Zero, SetupDiGetClassDevsFlags.Present);
             // Get the device information data for each matching device.
             DeviceInfoData[] diData = GetDeviceInfoData(diSetHandle);
-            // Find the index of our instance. i.e. the touchpad mouse - I have 3 mice attached...
+            // Find the index of our instance.
             int index = GetIndexOfInstance(diSetHandle, diData, instanceId);
 
             return (index != -1);
