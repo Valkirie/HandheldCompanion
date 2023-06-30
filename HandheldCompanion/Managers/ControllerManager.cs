@@ -228,8 +228,7 @@ public static class ControllerManager
 
     private static void SetHIDStrength(double value)
     {
-        var target = GetTargetController();
-        target?.SetVibrationStrength(value, SettingsManager.IsInitialized);
+        GetTargetController()?.SetVibrationStrength(value, SettingsManager.IsInitialized);
     }
 
     private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -395,7 +394,7 @@ public static class ControllerManager
         Controllers.Remove(details.baseContainerDeviceInstanceId);
 
         // unplug controller, if needed
-        if (GetTargetController().GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+        if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
             ClearTargetController();
 
         // raise event
@@ -485,7 +484,7 @@ public static class ControllerManager
         Controllers.Remove(details.baseContainerDeviceInstanceId);
 
         // unplug controller, if needed
-        if (GetTargetController().GetContainerInstancePath() == controller.GetContainerInstancePath())
+        if (GetTargetController()?.GetContainerInstancePath() == controller.GetContainerInstancePath())
             ClearTargetController();
 
         // raise event
