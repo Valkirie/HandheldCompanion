@@ -123,9 +123,38 @@ public abstract class IDevice
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
         var Version = MotherboardInfo.Version;
+        var Processor = MotherboardInfo.Processor;
 
         switch (ManufacturerName)
         {
+            case "AYN":
+                {
+                    switch (ProductName)
+                    {
+                        case "Loki MiniPro":
+                            device = new LokiMiniPro();
+                            break;
+                        case "Loki Zero":
+                            device = new LokiZero();
+                            break;
+                        case "Loki Max":
+                            switch (Processor)
+                            {
+                                case "6600U":
+                                    device = new LokiMax6600U();
+                                    break;
+                                case "6800U":
+                                    device = new LokiMax6800U();
+                                    break;
+                                // Todo, remove default
+                                default:
+                                    device = new LokiMax6600U();
+                                    break;
+                            }
+                            break;
+                    }
+                }
+                break;
             case "AOKZOE":
             {
                 switch (ProductName)

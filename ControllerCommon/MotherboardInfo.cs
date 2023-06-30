@@ -132,6 +132,21 @@ public static class MotherboardInfo
         }
     }
 
+    public static string Processor
+    {
+        get
+        {
+            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            {
+                var query = queryObj["Processor"];
+                if (query is not null)
+                    return query.ToString();
+            }
+
+            return string.Empty;
+        }
+    }
+
     public static string Product
     {
         get
