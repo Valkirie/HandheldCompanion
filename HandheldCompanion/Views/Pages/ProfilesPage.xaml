@@ -520,10 +520,10 @@
                                                 IsSnapToTickEnabled="True"
                                                 LargeChange="10"
                                                 Maximum="120"
-                                                SmallChange="5"
                                                 Minimum="20"
+                                                SmallChange="1"
                                                 Style="{DynamicResource SliderStyle1}"
-                                                TickFrequency="5"
+                                                TickFrequency="1"
                                                 TickPlacement="BottomRight"
                                                 ValueChanged="AutoTDPSlider_ValueChanged" />
                                         </DockPanel>
