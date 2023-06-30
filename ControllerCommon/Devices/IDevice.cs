@@ -140,10 +140,10 @@ public abstract class IDevice
                         case "Loki Max":
                             switch (Processor)
                             {
-                                case "6600U":
+                                case "AMD Ryzen 5 6600U with Radeon Graphics":
                                     device = new LokiMax6600U();
                                     break;
-                                case "6800U":
+                                case "AMD Ryzen 7 6800U with Radeon Graphics":
                                     device = new LokiMax6800U();
                                     break;
                                 // Todo, remove default
