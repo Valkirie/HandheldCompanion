@@ -146,7 +146,7 @@ public static class MotherboardInfo
                 var query = queryObj["Name"];
 
                 if (query is not null)
-                    return query.ToString();
+                    return query.ToString().TrimEnd();
             }
             
             return string.Empty;
