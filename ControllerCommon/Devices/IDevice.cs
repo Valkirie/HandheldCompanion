@@ -146,10 +146,6 @@ public abstract class IDevice
                                 case "AMD Ryzen 7 6800U with Radeon Graphics":
                                     device = new LokiMax6800U();
                                     break;
-                                // Todo, remove default
-                                default:
-                                    device = new LokiMax6600U();
-                                    break;
                             }
                             break;
                     }

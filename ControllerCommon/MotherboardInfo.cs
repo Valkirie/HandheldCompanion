@@ -145,9 +145,6 @@ public static class MotherboardInfo
             {
                 var query = queryObj["Name"];
 
-                // Todo, remove me when done.
-                LogManager.LogTrace("Name {0}", query);
-
                 if (query is not null)
                     return query.ToString();
             }
