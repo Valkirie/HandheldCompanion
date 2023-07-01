@@ -15,9 +15,9 @@ public class AynLoki : IDevice
 
         AngularVelocityAxisSwap = new SortedDictionary<char, char>
         {
-            { 'X', 'X' },
+            { 'X', 'Y' },
             { 'Y', 'Z' },
-            { 'Z', 'Y' }
+            { 'Z', 'X' }
         };
 
         AccelerationAxisSwap = new SortedDictionary<char, char>
