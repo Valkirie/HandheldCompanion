@@ -622,19 +622,14 @@ public class PerformanceManager : Manager
         // initialize processor
         processor = Processor.GetCurrent();
 
-        // higher interval on Intel CPUs to avoid CPU overload
-        if (processor.GetType() == typeof(IntelProcessor))
-        {
-            // read OS specific values
-            var HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(
-                @"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity", "Enabled");
-            var VulnerableDriverBlocklistEnable =
-                RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config",
-                    "VulnerableDriverBlocklistEnable");
+        // read OS specific values
+        var HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios",
+            "HypervisorEnforcedCodeIntegrity");
+        var VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config",
+            "VulnerableDriverBlocklistEnable");
 
-            if (VulnerableDriverBlocklistEnable || HypervisorEnforcedCodeIntegrityEnabled)
-                LogManager.LogWarning("Core isolation settings are turned on. TDP read/write is disabled");
-        }
+        if (VulnerableDriverBlocklistEnable || HypervisorEnforcedCodeIntegrityEnabled)
+            LogManager.LogWarning("Core isolation settings are turned on. TDP read/write and fan control might be disabled");
 
         if (processor.IsInitialized)
         {
