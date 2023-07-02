@@ -167,6 +167,9 @@ public static class ProfileManager
             if (profile is null || profile.Default)
                 return;
 
+            // raise event
+            Discarded?.Invoke(profile);
+
             if (profile.ErrorCode.HasFlag(ProfileErrorCode.Running))
             {
                 // update profile
@@ -212,6 +215,13 @@ public static class ProfileManager
             {
                 profile.Path = proc.Path;
                 UpdateOrCreateProfile(profile);
+            }
+
+            // raise event
+            if (back is not null)
+            {
+                var backProfile = GetProfileFromPath(back.Path, false);
+                Discarded?.Invoke(backProfile);
             }
 
             ApplyProfile(profile);
@@ -334,6 +344,9 @@ public static class ProfileManager
 
             // warn owner
             var isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+
+            // raise event
+            Discarded?.Invoke(profile);
 
             // raise event(s)
             Deleted?.Invoke(profile);
@@ -509,6 +522,10 @@ public static class ProfileManager
     public static event AppliedEventHandler Applied;
 
     public delegate void AppliedEventHandler(Profile profile, ProfileUpdateSource source);
+
+    public static event DiscardedEventHandler Discarded;
+
+    public delegate void DiscardedEventHandler(Profile profile);
 
     public static event InitializedEventHandler Initialized;
 

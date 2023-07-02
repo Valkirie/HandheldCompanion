@@ -101,6 +101,7 @@ public class PerformanceManager : Manager
         autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
         ProfileManager.Applied += ProfileManager_Applied;
+        ProfileManager.Discarded += ProfileManager_Discarded;
 
         PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
         PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
@@ -141,12 +142,6 @@ public class PerformanceManager : Manager
             RequestTDP(profile.TDPOverrideValues);
             StartTDPWatchdog();
         }
-        else
-        {
-            RequestTDP(MainWindow.CurrentDevice.nTDP);
-            StartTDPWatchdog();
-            StopTDPWatchdog();
-        }
 
         // apply profile defined GPU
         if (profile.GPUOverrideEnabled)
@@ -154,30 +149,58 @@ public class PerformanceManager : Manager
             RequestGPUClock(profile.GPUOverrideValue);
             StartGPUWatchdog();
         }
-        else
-        {
-            RequestGPUClock(255 * 50);
-            StartGPUWatchdog();
-            StopGPUWatchdog();
-        }
 
-        // AutoTDP
+        // apply profile defined AutoTDP
         if (profile.AutoTDPEnabled)
         {
             AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
             autoWatchdog.Start();
         }
-        else
+
+        // apply profile defined EPP
+        if (profile.EPPOverrideEnabled)
         {
-            autoWatchdog.Stop();
+            RequestEPP(profile.EPPOverrideValue);
+        }
+    }
+
+    private void ProfileManager_Discarded(Profile profile)
+    {
+        // (un)apply profile defined TDP
+        if (profile.TDPOverrideEnabled)
+        {
+            // restore default TDP
+            RequestTDP(MainWindow.CurrentDevice.nTDP);
+            StartTDPWatchdog();
+            StopTDPWatchdog();
         }
 
-        // EPP
+        // (un)apply profile defined GPU
+        if (profile.GPUOverrideEnabled)
+        {
+            // restore default GPU frequency
+            RequestGPUClock(255 * 50);
+            StartGPUWatchdog();
+            StopGPUWatchdog();
+        }
+
+        // (un)apply profile defined AutoTDP
+        if (profile.AutoTDPEnabled)
+        {
+            autoWatchdog.Stop();
+
+            // restore default TDP
+            RequestTDP(MainWindow.CurrentDevice.nTDP);
+            StartTDPWatchdog();
+            StopTDPWatchdog();
+        }
+
+        // (un)apply profile defined EPP
         if (profile.EPPOverrideEnabled)
-            RequestEPP(profile.EPPOverrideValue);
-        else
+        {
             // restore default EPP
             RequestEPP(0x00000032);
+        }
     }
 
     private void RTSS_Hooked(AppEntry appEntry)
