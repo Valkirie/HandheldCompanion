@@ -54,13 +54,6 @@ public class AOKZOEA1Pro : IDevice
             false, ButtonFlags.OEM1
         ));
 
-        // Home (long press 1.5s)
-        OEMChords.Add(new DeviceChord("Home, Long-press",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.G },
-            new List<KeyCode> { KeyCode.LWin, KeyCode.G },
-            false, ButtonFlags.OEM6
-        ));
-
         // Keyboard
         OEMChords.Add(new DeviceChord("Keyboard",
             new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
@@ -73,20 +66,6 @@ public class AOKZOEA1Pro : IDevice
             new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
             new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
             false, ButtonFlags.OEM3
-        ));
-
-        // Home + Keyboard
-        OEMChords.Add(new DeviceChord("Home + Keyboard",
-            new List<KeyCode> { KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete },
-            new List<KeyCode> { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt },
-            false, ButtonFlags.OEM4
-        ));
-
-        // Home + Turbo
-        OEMChords.Add(new DeviceChord("Home + Turbo",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.Snapshot },
-            new List<KeyCode> { KeyCode.Snapshot, KeyCode.LWin },
-            false, ButtonFlags.OEM5
         ));
 
     }
