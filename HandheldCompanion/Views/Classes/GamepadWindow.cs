@@ -87,5 +87,22 @@ namespace HandheldCompanion.Views.Classes
         {
             elements = WPFUtils.FindChildren(this);
         }
+
+        protected void InvokeGotGamepadWindowFocus()
+        {
+            GotGamepadWindowFocus?.Invoke();
+        }
+
+        protected void InvokeLostGamepadWindowFocus()
+        {
+            LostGamepadWindowFocus?.Invoke();
+        }
+#region events
+        public event GotGamepadWindowFocusEventHandler GotGamepadWindowFocus;
+        public delegate void GotGamepadWindowFocusEventHandler();
+
+        public event LostGamepadWindowFocusEventHandler LostGamepadWindowFocus;
+        public delegate void LostGamepadWindowFocusEventHandler();
+#endregion
     }
 }

@@ -58,12 +58,17 @@ namespace HandheldCompanion.Managers
         {
             // set current window
             _currentWindow = gamepadWindow;
-            _currentWindow.GotFocus += _currentWindow_GotFocus;
-            _currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
-            _currentWindow.LostFocus += _currentWindow_LostFocus;
+            //_currentWindow.GotFocus += _currentWindow_GotFocus;
+            //_currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
+            //_currentWindow.LostFocus += _currentWindow_LostFocus;
 
-            _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
-            _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
+            //_currentWindow.IsVisibleChanged += _currentWindow_IsVisibleChanged;
+
+            _currentWindow.GotGamepadWindowFocus +=  _currentWindow_GotGamepadWindowFocus;
+            _currentWindow.LostGamepadWindowFocus += _currentWindow_LostGamepadWindowFocus;
+
+            //_currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
+            //_currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
 
             _gamepadFrame = contentFrame;
             _gamepadFrame.Navigated += ContentFrame_Navigated;
@@ -77,6 +82,21 @@ namespace HandheldCompanion.Managers
             _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
         }
 
+        private void _currentWindow_GotGamepadWindowFocus()
+        {
+            _focused = true;
+            GotFocus?.Invoke(_currentWindow);
+        }
+
+        private void _currentWindow_LostGamepadWindowFocus()
+        {
+            // halt timer
+            _gamepadTimer.Stop();
+
+            _focused = false;
+
+            LostFocus?.Invoke(_currentWindow);
+        }
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
             // already has focus

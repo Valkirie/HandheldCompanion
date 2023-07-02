@@ -27,6 +27,7 @@ using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 using Control = System.Windows.Controls.Control;
 using HandheldCompanion.Views.Classes;
+using ControllerCommon;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -38,6 +39,17 @@ public partial class OverlayQuickTools : GamepadWindow
     private const int WM_SYSCOMMAND = 0x0112;
 
     private const int SC_MOVE = 0xF010;
+
+    const UInt32 SWP_NOSIZE = 0x0001;
+    const UInt32 SWP_NOMOVE = 0x0002;
+    const UInt32 SWP_NOACTIVATE = 0x0010;
+    const UInt32 SWP_NOZORDER = 0x0004;
+    const int WM_ACTIVATEAPP = 0x001C;
+    const int WM_ACTIVATE = 0x0006;
+    const int WM_SETFOCUS = 0x0007;
+    const int WM_WINDOWPOSCHANGING = 0x0046;
+
+    static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
@@ -56,6 +68,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
+        SetWndProcHook();
         InitializeComponent();
 
         // used by gamepad navigation
@@ -244,6 +257,13 @@ public partial class OverlayQuickTools : GamepadWindow
                 var command = wParam.ToInt32() & 0xfff0;
                 if (command == SC_MOVE) handled = true;
                 break;
+
+            case WM_SETFOCUS:
+                var hWnd = new WindowInteropHelper(this).Handle;
+                WinAPI.SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                InvokeGotGamepadWindowFocus();
+                handled = true;
+                break;
         }
 
         return IntPtr.Zero;
@@ -266,14 +286,16 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Hidden:
 
                     Show();
-                    Activate();
-                    Topmost = true;  // important
+                    InvokeGotGamepadWindowFocus();
+                    //Activate();
+                    //Topmost = true;  // important
                     Focus();
 
                     break;
                 case Visibility.Visible:
                     Hide();
-                    Topmost = false;  // important
+                    InvokeLostGamepadWindowFocus();
+                    //Topmost = false;  // important
                     break;
             }
         });
@@ -309,7 +331,7 @@ public partial class OverlayQuickTools : GamepadWindow
         if (hwndSource is null)
             return;
 
-        hwndSource.AddHook(WndProc);
+        //hwndSource.AddHook(WndProc);
 
         switch (Visibility)
         {
@@ -321,6 +343,32 @@ public partial class OverlayQuickTools : GamepadWindow
                 hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
                 break;
         }
+    }
+
+    void SetWndProcHook()
+    {
+        Loaded += OnLoaded;
+        Closing += OnClosing;
+    }
+
+    void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        var Handle = (new WindowInteropHelper(this)).Handle;
+
+        var Source = HwndSource.FromHwnd(Handle);
+        Source.RemoveHook(new HwndSourceHook(WndProc));
+        InvokeLostGamepadWindowFocus();
+    }
+
+    void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        var Hwnd = new WindowInteropHelper(this).Handle;
+        WinAPI.SetWindowPos(Hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+
+        var Handle = (new WindowInteropHelper(this)).Handle;
+
+        var Source = HwndSource.FromHwnd(Handle);
+        Source.AddHook(new HwndSourceHook(WndProc));
     }
 
     #region navView

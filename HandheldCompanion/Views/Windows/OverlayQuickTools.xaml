@@ -25,9 +25,8 @@
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SourceInitialized="Window_SourceInitialized"
-    Topmost="True"
-    WindowStyle="SingleBorderWindow"
-    mc:Ignorable="d">
+    WindowStyle="ToolWindow"
+    mc:Ignorable="d" Topmost="False" ShowActivated="False">
 
     <Grid>
         <ui:NavigationView
