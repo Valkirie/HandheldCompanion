@@ -123,9 +123,34 @@ public abstract class IDevice
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
         var Version = MotherboardInfo.Version;
+        var Processor = MotherboardInfo.Processor;
 
         switch (ManufacturerName)
         {
+            case "AYN":
+                {
+                    switch (ProductName)
+                    {
+                        case "Loki MiniPro":
+                            device = new LokiMiniPro();
+                            break;
+                        case "Loki Zero":
+                            device = new LokiZero();
+                            break;
+                        case "Loki Max":
+                            switch (Processor)
+                            {
+                                case "AMD Ryzen 5 6600U with Radeon Graphics":
+                                    device = new LokiMax6600U();
+                                    break;
+                                case "AMD Ryzen 7 6800U with Radeon Graphics":
+                                    device = new LokiMax6800U();
+                                    break;
+                            }
+                            break;
+                    }
+                }
+                break;
             case "AOKZOE":
             {
                 switch (ProductName)

@@ -1,4 +1,6 @@
-﻿using System.Management;
+﻿using ControllerCommon.Managers;
+using System;
+using System.Management;
 
 namespace ControllerCommon;
 
@@ -9,6 +11,9 @@ public static class MotherboardInfo
 
     private static readonly ManagementObjectSearcher motherboardSearcher =
         new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
+
+    private static readonly ManagementObjectSearcher processerSearcher =
+        new("root\\CIMV2", "SELECT * FROM Win32_Processor");
 
     public static string Availability
     {
@@ -128,6 +133,22 @@ public static class MotherboardInfo
                     return query.ToString();
             }
 
+            return string.Empty;
+        }
+    }
+
+    public static string Processor
+    {
+        get
+        {           
+            foreach (ManagementObject queryObj in processerSearcher.Get())
+            {
+                var query = queryObj["Name"];
+
+                if (query is not null)
+                    return query.ToString().TrimEnd();
+            }
+            
             return string.Empty;
         }
     }
