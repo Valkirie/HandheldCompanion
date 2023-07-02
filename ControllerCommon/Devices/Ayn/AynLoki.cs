@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ControllerCommon.Inputs;
+using System.Numerics;
 using ControllerCommon.Managers;
 using WindowsInput.Events;
 
@@ -13,6 +14,7 @@ public class AynLoki : IDevice
         ProductIllustration = "device_ayn_loki";
         ProductModel = "AynLoki";
 
+        AngularVelocityAxis = new Vector3(1.0f, 1.0f, -1.0f);
         AngularVelocityAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'Y' },
@@ -20,6 +22,7 @@ public class AynLoki : IDevice
             { 'Z', 'X' }
         };
 
+        AccelerationAxis = new Vector3(1.0f, -1.0f, -1.0f);
         AccelerationAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
