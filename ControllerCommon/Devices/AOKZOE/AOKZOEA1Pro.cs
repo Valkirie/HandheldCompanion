@@ -47,6 +47,10 @@ public class AOKZOEA1Pro : IDevice
             ValueMax = 184
         };
 
+        /*
+        // Commented out, keystrokes are not
+        // consistent when HC is running
+
         // Home
         OEMChords.Add(new DeviceChord("Home",
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
@@ -67,6 +71,7 @@ public class AOKZOEA1Pro : IDevice
             new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
             false, ButtonFlags.OEM3
         ));
+        */
 
     }
     public override bool Open()
