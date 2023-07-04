@@ -106,38 +106,50 @@
                 Name="b_ServiceStop"
                 Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
                 Content="{x:Static resx:Resources.MainWindow_serviceStop}"
-                Icon="Stop"
                 SelectsOnInvoked="False"
                 Tag="ServiceStop"
                 ToolTipService.InitialShowDelay="100"
-                ToolTipService.ShowOnDisabled="True" />
+                ToolTipService.ShowOnDisabled="True">
+                <ui:NavigationViewItem.Icon>
+                    <ui:SymbolIcon Symbol="Stop" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
             <ui:NavigationViewItem
                 Name="b_ServiceStart"
                 Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
                 Content="{x:Static resx:Resources.MainWindow_serviceStart}"
-                Icon="Play"
                 SelectsOnInvoked="False"
                 Tag="ServiceStart"
                 ToolTipService.InitialShowDelay="100"
-                ToolTipService.ShowOnDisabled="True" />
+                ToolTipService.ShowOnDisabled="True">
+                <ui:NavigationViewItem.Icon>
+                    <ui:SymbolIcon Symbol="Play" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
             <ui:NavigationViewItem
                 Name="b_ServiceInstall"
                 Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
                 Content="{x:Static resx:Resources.MainWindow_serviceDeploy}"
-                Icon="Refresh"
                 SelectsOnInvoked="False"
                 Tag="ServiceInstall"
                 ToolTipService.InitialShowDelay="100"
-                ToolTipService.ShowOnDisabled="True" />
+                ToolTipService.ShowOnDisabled="True">
+                <ui:NavigationViewItem.Icon>
+                    <ui:SymbolIcon Symbol="Refresh" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
             <ui:NavigationViewItem
                 Name="b_ServiceDelete"
                 Background="{DynamicResource SystemControlHighlightAltListAccentLowBrush}"
                 Content="{x:Static resx:Resources.MainWindow_serviceRemove}"
-                Icon="Delete"
                 SelectsOnInvoked="False"
                 Tag="ServiceDelete"
                 ToolTipService.InitialShowDelay="100"
-                ToolTipService.ShowOnDisabled="True" />
+                ToolTipService.ShowOnDisabled="True">
+                <ui:NavigationViewItem.Icon>
+                    <ui:SymbolIcon Symbol="Delete" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
         </ui:NavigationView.FooterMenuItems>
 
         <ui:NavigationView.Content>
