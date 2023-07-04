@@ -158,7 +158,10 @@ public abstract class IDevice
                     case "AOKZOE A1 AR07":
                         device = new AOKZOEA1();
                         break;
-                }
+                    case "AOKZOE A1 Pro":
+                        device = new AOKZOEA1Pro();
+                        break;
+                    }
             }
                 break;
             case "AYADEVICE":

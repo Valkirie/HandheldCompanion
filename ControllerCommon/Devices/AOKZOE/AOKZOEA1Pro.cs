@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices;
 
-public class AOKZOEA1 : IDevice
+public class AOKZOEA1Pro : IDevice
 {
-    public AOKZOEA1()
+    public AOKZOEA1Pro()
     {
         // device specific settings
         ProductIllustration = "device_aokzoe_a1";
-        ProductModel = "AOKZOEA1";
+        ProductModel = "AOKZOEA1Pro";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u 
+        // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 28 };
-        GfxClock = new double[] { 100, 2200 };
+        GfxClock = new double[] { 100, 2700 };
 
         AngularVelocityAxisSwap = new SortedDictionary<char, char>
         {
@@ -46,18 +47,15 @@ public class AOKZOEA1 : IDevice
             ValueMax = 184
         };
 
+        /*
+        // Commented out, keystrokes are not
+        // consistent when HC is running
+
         // Home
         OEMChords.Add(new DeviceChord("Home",
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             false, ButtonFlags.OEM1
-        ));
-
-        // Home (long press 1.5s)
-        OEMChords.Add(new DeviceChord("Home, Long-press",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.G },
-            new List<KeyCode> { KeyCode.LWin, KeyCode.G },
-            false, ButtonFlags.OEM6
         ));
 
         // Keyboard
@@ -73,19 +71,24 @@ public class AOKZOEA1 : IDevice
             new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
             false, ButtonFlags.OEM3
         ));
+        */
 
-        // Home + Keyboard
-        OEMChords.Add(new DeviceChord("Home + Keyboard",
-            new List<KeyCode> { KeyCode.RAlt, KeyCode.RControlKey, KeyCode.Delete },
-            new List<KeyCode> { KeyCode.Delete, KeyCode.RControlKey, KeyCode.RAlt },
-            false, ButtonFlags.OEM4
-        ));
+    }
+    public override bool Open()
+    {
+        var success = base.Open();
+        if (!success)
+            return false;
 
-        // Home + Turbo
-        OEMChords.Add(new DeviceChord("Home + Turbo",
-            new List<KeyCode> { KeyCode.LWin, KeyCode.Snapshot },
-            new List<KeyCode> { KeyCode.Snapshot, KeyCode.LWin },
-            false, ButtonFlags.OEM5
-        ));
+        // allow AOKZOE A1 Pro button to pass key inputs for Turbo button
+        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM3);
+        return ECRamDirectWrite(0xF1, ECDetails, 0x40);
+    }
+
+    public override void Close()
+    {
+        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
+        ECRamDirectWrite(0xF1, ECDetails, 0x00);
+        base.Close();
     }
 }
