@@ -153,7 +153,7 @@ public static class InputsManager
 
             if (keys.Count != 0)
             {
-                LogManager.LogDebug("Captured: Buttons: {0}, Type: {1}, IsKeyDown: {2}", currentChord.State,
+                LogManager.LogDebug("Captured: Buttons: {0}, Type: {1}, IsKeyDown: {2}", string.Join(',', currentChord.State.Buttons),
                     currentChord.InputsType, IsKeyDown);
 
                 foreach (var key in keys)
