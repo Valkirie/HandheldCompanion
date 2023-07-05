@@ -28,6 +28,7 @@ using SystemPowerManager = Windows.System.Power.PowerManager;
 using Control = System.Windows.Controls.Control;
 using HandheldCompanion.Views.Classes;
 using ControllerCommon;
+using System.Diagnostics;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -36,7 +37,6 @@ namespace HandheldCompanion.Views.Windows;
 /// </summary>
 public partial class OverlayQuickTools : GamepadWindow
 {
-    private const int WM_SYSCOMMAND = 0x0112;
     private const int SC_MOVE = 0xF010;
     private readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
@@ -47,6 +47,8 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WM_ACTIVATEAPP = 0x001C;
     const int WM_ACTIVATE = 0x0006;
     const int WM_SETFOCUS = 0x0007;
+    const int WM_NCACTIVATE = 0x0086;
+    const int WM_SYSCOMMAND = 0x0112;
     const int WM_WINDOWPOSCHANGING = 0x0046;
 
     // page vars
@@ -267,6 +269,14 @@ public partial class OverlayQuickTools : GamepadWindow
                 var hWnd = new WindowInteropHelper(this).Handle;
                 WinAPI.SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                 handled = true;
+                break;
+
+            case WM_NCACTIVATE:
+                {
+                    // prevent window from loosing its fancy style
+                    if (wParam == 0 && (lParam == 0 || lParam == 1969296))
+                        handled = true;
+                }
                 break;
         }
 
