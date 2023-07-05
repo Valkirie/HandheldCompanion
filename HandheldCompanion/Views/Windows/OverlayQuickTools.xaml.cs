@@ -314,7 +314,9 @@ public partial class OverlayQuickTools : GamepadWindow
         SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
 
         e.Cancel = !isClosing;
-        ToggleVisibility();
+
+        if (!isClosing)
+            ToggleVisibility();
     }
 
     public void Close(bool v)
