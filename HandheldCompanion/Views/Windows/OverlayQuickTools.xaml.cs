@@ -47,6 +47,7 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WM_ACTIVATEAPP = 0x001C;
     const int WM_ACTIVATE = 0x0006;
     const int WM_SETFOCUS = 0x0007;
+    const int WM_KILLFOCUS = 0x0008;
     const int WM_NCACTIVATE = 0x0086;
     const int WM_SYSCOMMAND = 0x0112;
     const int WM_WINDOWPOSCHANGING = 0x0046;
@@ -256,14 +257,18 @@ public partial class OverlayQuickTools : GamepadWindow
         switch (msg)
         {
             case WM_SYSCOMMAND:
-                var command = wParam.ToInt32() & 0xfff0;
-                if (command == SC_MOVE) handled = true;
+                {
+                    var command = wParam.ToInt32() & 0xfff0;
+                    if (command == SC_MOVE) handled = true;
+                }
                 break;
 
             case WM_SETFOCUS:
-                var hWnd = new WindowInteropHelper(this).Handle;
-                WinAPI.SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-                handled = true;
+                {
+                    var hWnd = new WindowInteropHelper(this).Handle;
+                    WinAPI.SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                    handled = true;
+                }
                 break;
 
             case WM_NCACTIVATE:
@@ -272,6 +277,37 @@ public partial class OverlayQuickTools : GamepadWindow
                     if (wParam == 0 && (lParam == 0))
                         handled = true;
                 }
+                break;
+
+            case WM_ACTIVATEAPP:
+                {
+                    if (wParam == 0)
+                    {
+                        Focus();
+                        Activate();
+                        InvokeGotGamepadWindowFocus();
+                    }
+                }
+                break;
+
+            case 641:
+            case 642:
+            case 32:
+            case 33:
+            case 132:
+            case 512:
+            case 513:
+            case 514:
+            case 673:
+            case 674:
+            case 675:
+            case 13:
+            case 256:
+            case 257:
+                break;
+
+            default:
+                Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
                 break;
         }
 
@@ -294,8 +330,8 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
                     Show();
-                    InvokeGotGamepadWindowFocus();
                     Focus();
+                    InvokeGotGamepadWindowFocus();
                     break;
                 case Visibility.Visible:
                     Hide();
