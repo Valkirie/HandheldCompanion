@@ -247,6 +247,7 @@ public partial class OverlayQuickTools : GamepadWindow
         {
             // hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
             hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+            WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
 
