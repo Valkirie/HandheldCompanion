@@ -20,13 +20,13 @@
     ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     Closing="Window_Closing"
-    IsVisibleChanged="Window_IsVisibleChanged"
     Loaded="Window_Loaded"
     ResizeMode="NoResize"
+    ShowActivated="False"
     ShowInTaskbar="False"
-    SourceInitialized="Window_SourceInitialized"
+    Topmost="False"
     WindowStyle="ToolWindow"
-    mc:Ignorable="d" Topmost="False" ShowActivated="False">
+    mc:Ignorable="d">
 
     <Grid>
         <ui:NavigationView

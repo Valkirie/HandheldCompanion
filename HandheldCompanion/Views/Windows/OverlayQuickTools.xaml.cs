@@ -37,8 +37,8 @@ namespace HandheldCompanion.Views.Windows;
 public partial class OverlayQuickTools : GamepadWindow
 {
     private const int WM_SYSCOMMAND = 0x0112;
-
     private const int SC_MOVE = 0xF010;
+    private readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
 
     const UInt32 SWP_NOSIZE = 0x0001;
     const UInt32 SWP_NOMOVE = 0x0002;
@@ -49,15 +49,10 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WM_SETFOCUS = 0x0007;
     const int WM_WINDOWPOSCHANGING = 0x0046;
 
-    static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
 
     private bool AutoHide;
-
-    public HwndSource hwndSource;
-
     private bool isClosing;
 
     public QuickPerformancePage performancePage;
@@ -244,9 +239,19 @@ public partial class OverlayQuickTools : GamepadWindow
         gamepadFocusManager = new(this, ContentFrame);
     }
 
-    private void Window_SourceInitialized(object sender, EventArgs e)
+    protected override void OnSourceInitialized(EventArgs e)
     {
-        // do something
+        WindowInteropHelper helper = new WindowInteropHelper(this);
+        HwndSource hwndSource = HwndSource.FromHwnd(helper.EnsureHandle());
+
+        // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
+        if (hwndSource != null)
+        {
+            // hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+        }
+
+        base.OnSourceInitialized(e);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -323,18 +328,6 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         isClosing = v;
         Close();
-    }
-
-    private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-        hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-
-        if (hwndSource is null)
-            return;
-
-        //hwndSource.AddHook(WndProc);
-
-        hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
     }
 
     void SetWndProcHook()
