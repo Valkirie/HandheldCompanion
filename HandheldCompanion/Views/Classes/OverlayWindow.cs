@@ -136,7 +136,7 @@ public class OverlayWindow : Window
         }
     }
 
-    public virtual void UpdateVisibility()
+    public virtual void ToggleVisibility()
     {
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>

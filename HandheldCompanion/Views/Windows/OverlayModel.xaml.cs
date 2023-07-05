@@ -203,7 +203,7 @@ public partial class OverlayModel : OverlayWindow
         }
     }
 
-    public override void UpdateVisibility()
+    public override void ToggleVisibility()
     {
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>

@@ -449,10 +449,10 @@ public partial class MainWindow : GamepadWindow
                 overlayquickTools.ToggleVisibility();
                 break;
             case "overlayGamepad":
-                overlayModel.UpdateVisibility();
+                overlayModel.ToggleVisibility();
                 break;
             case "overlayTrackpads":
-                overlayTrackpad.UpdateVisibility();
+                overlayTrackpad.ToggleVisibility();
                 break;
             case "shortcutMainwindow":
                 SwapWindowState();
