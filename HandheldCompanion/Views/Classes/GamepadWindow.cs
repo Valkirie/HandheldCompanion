@@ -45,7 +45,7 @@ namespace HandheldCompanion.Views.Classes
                 return IntPtr.Zero;
 
             switch (msg)
-            {
+            {                
                 case 6:
                 case 7:
                 case 8:
@@ -68,8 +68,8 @@ namespace HandheldCompanion.Views.Classes
                     return IntPtr.Zero;
             }
 
-            return IntPtr.Zero;
-        }
+                    return IntPtr.Zero;
+            }
 
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {

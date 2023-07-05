@@ -103,7 +103,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void OverlayQuickTools_Deactivated(object? sender, EventArgs e)
     {
         if (AutoHide)
-            Hide();
+            ToggleVisibility();
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
@@ -261,7 +261,6 @@ public partial class OverlayQuickTools : GamepadWindow
             case WM_SETFOCUS:
                 var hWnd = new WindowInteropHelper(this).Handle;
                 WinAPI.SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-                InvokeGotGamepadWindowFocus();
                 handled = true;
                 break;
         }
@@ -272,13 +271,13 @@ public partial class OverlayQuickTools : GamepadWindow
     private void HandleEsc(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
-            Hide();
+            ToggleVisibility();
     }
 
-    public void UpdateVisibility()
+    public void ToggleVisibility()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(async () =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (Visibility)
             {
@@ -315,7 +314,7 @@ public partial class OverlayQuickTools : GamepadWindow
         SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
 
         e.Cancel = !isClosing;
-        Hide();
+        ToggleVisibility();
     }
 
     public void Close(bool v)
@@ -333,16 +332,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         //hwndSource.AddHook(WndProc);
 
-        switch (Visibility)
-        {
-            case Visibility.Collapsed:
-            case Visibility.Hidden:
-                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
-                break;
-            case Visibility.Visible:
-                hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-                break;
-        }
+        hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
     }
 
     void SetWndProcHook()
