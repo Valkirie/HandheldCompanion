@@ -65,7 +65,6 @@ public partial class OverlayQuickTools : GamepadWindow
 
     public OverlayQuickTools()
     {
-        SetWndProcHook();
         InitializeComponent();
 
         // used by gamepad navigation
@@ -239,12 +238,9 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
-    }
 
-    protected override void OnSourceInitialized(EventArgs e)
-    {
-        WindowInteropHelper helper = new WindowInteropHelper(this);
-        HwndSource hwndSource = HwndSource.FromHwnd(helper.EnsureHandle());
+        HwndSource hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+        hwndSource.AddHook(WndProc);
 
         // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
         if (hwndSource != null)
@@ -252,8 +248,6 @@ public partial class OverlayQuickTools : GamepadWindow
             // hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
             hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
         }
-
-        base.OnSourceInitialized(e);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -298,18 +292,13 @@ public partial class OverlayQuickTools : GamepadWindow
             {
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
-
                     Show();
                     InvokeGotGamepadWindowFocus();
-                    //Activate();
-                    //Topmost = true;  // important
                     Focus();
-
                     break;
                 case Visibility.Visible:
                     Hide();
                     InvokeLostGamepadWindowFocus();
-                    //Topmost = false;  // important
                     break;
             }
         });
@@ -338,32 +327,6 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         isClosing = v;
         Close();
-    }
-
-    void SetWndProcHook()
-    {
-        Loaded += OnLoaded;
-        Closing += OnClosing;
-    }
-
-    void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-        var Handle = (new WindowInteropHelper(this)).Handle;
-
-        var Source = HwndSource.FromHwnd(Handle);
-        Source.RemoveHook(new HwndSourceHook(WndProc));
-        InvokeLostGamepadWindowFocus();
-    }
-
-    void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        var Hwnd = new WindowInteropHelper(this).Handle;
-        WinAPI.SetWindowPos(Hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
-
-        var Handle = (new WindowInteropHelper(this)).Handle;
-
-        var Source = HwndSource.FromHwnd(Handle);
-        Source.AddHook(new HwndSourceHook(WndProc));
     }
 
     #region navView
