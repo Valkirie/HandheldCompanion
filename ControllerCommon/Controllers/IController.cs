@@ -335,11 +335,11 @@ public abstract class IController
         if (IsHidden())
             return;
 
-        HidHide.HidePath(Details.deviceInstanceId);
-        HidHide.HidePath(Details.baseContainerDeviceInstanceId);
-
         // set flag
         IsPowerCycling = true;
+
+        HidHide.HidePath(Details.deviceInstanceId);
+        HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
         Details.CyclePort();
 
@@ -351,11 +351,11 @@ public abstract class IController
         if (!IsHidden())
             return;
 
-        HidHide.UnhidePath(Details.deviceInstanceId);
-        HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
-
         // set flag
         IsPowerCycling = true;
+
+        HidHide.UnhidePath(Details.deviceInstanceId);
+        HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
         Details.CyclePort();
 
