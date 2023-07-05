@@ -241,6 +241,10 @@ public static class ControllerManager
             if (!controller.IsPowerCycling)
                 return;
 
+            // hide new hid value
+            if (controller.IsHidden())
+                HidHide.HidePath(details.deviceInstanceId);
+
             // unset flag
             controller.IsPowerCycling = false;
 
@@ -407,6 +411,10 @@ public static class ControllerManager
         {
             if (!controller.IsPowerCycling)
                 return;
+
+            // hide new hid value
+            if (controller.IsHidden())
+                HidHide.HidePath(details.deviceInstanceId);
 
             // unset flag
             controller.IsPowerCycling = false;
