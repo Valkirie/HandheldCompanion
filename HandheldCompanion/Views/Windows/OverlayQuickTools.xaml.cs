@@ -51,6 +51,9 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WM_NCACTIVATE = 0x0086;
     const int WM_SYSCOMMAND = 0x0112;
     const int WM_WINDOWPOSCHANGING = 0x0046;
+    const int WM_SHOWWINDOW = 0x0018;
+
+    private HwndSource hwndSource;
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
@@ -240,7 +243,7 @@ public partial class OverlayQuickTools : GamepadWindow
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
 
-        HwndSource hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+        hwndSource = PresentationSource.FromVisual(this) as HwndSource;
         hwndSource.AddHook(WndProc);
 
         // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
@@ -265,9 +268,10 @@ public partial class OverlayQuickTools : GamepadWindow
 
             case WM_SETFOCUS:
                 {
-                    var hWnd = new WindowInteropHelper(this).Handle;
-                    WinAPI.SetWindowPos(hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                    if (hwndSource != null)
+                        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                     handled = true;
+                    InvokeGotGamepadWindowFocus();
                 }
                 break;
 
@@ -283,10 +287,17 @@ public partial class OverlayQuickTools : GamepadWindow
                 {
                     if (wParam == 0)
                     {
-                        Focus();
-                        Activate();
-                        InvokeGotGamepadWindowFocus();
+                        if (hwndSource != null)
+                            WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
                     }
+                }
+                break;
+
+            case WM_ACTIVATE:
+                {
+                    // WA_INACTIVE
+                    if (wParam == 0)
+                        handled = true;
                 }
                 break;
 
@@ -307,7 +318,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 break;
 
             default:
-                Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
+                // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
                 break;
         }
 
@@ -331,6 +342,8 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Hidden:
                     Show();
                     Focus();
+                    if (hwndSource != null)
+                        WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
                     InvokeGotGamepadWindowFocus();
                     break;
                 case Visibility.Visible:
