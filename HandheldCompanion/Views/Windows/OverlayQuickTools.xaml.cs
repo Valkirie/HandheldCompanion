@@ -278,7 +278,8 @@ public partial class OverlayQuickTools : GamepadWindow
             case WM_NCACTIVATE:
                 {
                     // prevent window from loosing its fancy style
-                    wParam = (IntPtr)1;
+                    if (wParam == 0 && (lParam == 0))
+                        handled = true;
                 }
                 break;
 
