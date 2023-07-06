@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ControllerCommon;
 using ControllerCommon.Controllers;
+using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
@@ -32,7 +33,7 @@ public static class ControllerManager
     private static readonly DS4Controller? emptyDS4 = new();
 
     private static IController? targetController;
-    private static GamepadWindow? focusedWindow;
+    private static FocusedWindow focusedWindows = FocusedWindow.None;
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
 
@@ -73,20 +74,44 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has started", "ControllerManager");
     }
 
+    [Flags]
+    private enum FocusedWindow
+    {
+        None,
+        MainWindow,
+        Quicktools
+    }
+
     private static void GamepadFocusManager_LostFocus(Control control)
     {
-        if (focusedWindow == (GamepadWindow)control)
-        {
-            focusedWindow = null;
+        GamepadWindow gamepadWindow = (GamepadWindow)control;
 
-            // check applicable scenarios
-            CheckControllerScenario();
+        switch(gamepadWindow.Title)
+        {
+            case "QuickTools":
+                focusedWindows &= ~FocusedWindow.Quicktools;
+                break;
+            default:
+                focusedWindows &= ~FocusedWindow.MainWindow;
+                break;
         }
+
+        // check applicable scenarios
+        CheckControllerScenario();
     }
 
     private static void GamepadFocusManager_GotFocus(Control control)
     {
-        focusedWindow = (GamepadWindow)control;
+        GamepadWindow gamepadWindow = (GamepadWindow)control;
+        switch (gamepadWindow.Title)
+        {
+            case "QuickTools":
+                focusedWindows |= FocusedWindow.Quicktools;
+                break;
+            default:
+                focusedWindows |= FocusedWindow.MainWindow;
+                break;
+        }
 
         // check applicable scenarios
         CheckControllerScenario();
@@ -132,10 +157,8 @@ public static class ControllerManager
         }
 
         // either main window or quicktools are focused
-        if (focusedWindow is not null)
-        {
+        if (focusedWindows != FocusedWindow.None)
             ControllerMuted = true;
-        }
     }
 
     public static void Stop()

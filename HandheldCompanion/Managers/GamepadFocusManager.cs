@@ -62,6 +62,11 @@ namespace HandheldCompanion.Managers
             _currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
             _currentWindow.LostFocus += _currentWindow_LostFocus;
 
+            //_currentWindow.IsVisibleChanged += _currentWindow_IsVisibleChanged;
+
+            _currentWindow.GotGamepadWindowFocus +=  _currentWindow_GotGamepadWindowFocus;
+            _currentWindow.LostGamepadWindowFocus += _currentWindow_LostGamepadWindowFocus;
+
             _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
             _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
 
@@ -77,6 +82,21 @@ namespace HandheldCompanion.Managers
             _gamepadTimer.Elapsed += _gamepadTimer_Elapsed;
         }
 
+        private void _currentWindow_GotGamepadWindowFocus()
+        {
+            _focused = true;
+            GotFocus?.Invoke(_currentWindow);
+        }
+
+        private void _currentWindow_LostGamepadWindowFocus()
+        {
+            // halt timer
+            _gamepadTimer.Stop();
+
+            _focused = false;
+
+            LostFocus?.Invoke(_currentWindow);
+        }
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
             // already has focus
@@ -345,12 +365,16 @@ namespace HandheldCompanion.Managers
                      switch (elementType)
                     {
                         case "Button":
+                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
+                            break;
                         case "ToggleSwitch":
+                            ((ToggleSwitch)focusedElement).IsOn = !((ToggleSwitch)focusedElement).IsOn;
+                            break;
                         case "ToggleButton":
+                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
+                            break;
                         case "CheckBox":
-                            {
-                                KeyboardSimulator.KeyPress(VirtualKeyCode.SPACE);
-                            }
+                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
                             break;
 
                         case "NavigationViewItem":
@@ -361,9 +385,7 @@ namespace HandheldCompanion.Managers
                                     case "b_ServiceStop":
                                     case "b_ServiceInstall":
                                     case "b_ServiceDelete":
-                                        {
-                                            KeyboardSimulator.KeyPress(VirtualKeyCode.SPACE);
-                                        }
+                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
                                         return;
                                     default:
                                         {
@@ -392,9 +414,7 @@ namespace HandheldCompanion.Managers
                             return;
 
                         case "ComboBoxItem":
-                            {
-                                KeyboardSimulator.KeyPress(VirtualKeyCode.RETURN);
-                            }
+                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
                             return;
                     }
                 }
@@ -410,6 +430,10 @@ namespace HandheldCompanion.Managers
                                 {
                                     default:
                                         {
+                                            //TODO: this sometimes happens. we need to handle this.
+                                            if (prevNavigation is null)
+                                                LogManager.LogInformation("prevNav is null");
+
                                             // restore previous NavigationViewItem
                                             Focus(prevNavigation);
                                         }
@@ -456,7 +480,7 @@ namespace HandheldCompanion.Managers
                         case "NavigationViewItem":
                             {
                                 if (_currentWindow.GetType() == typeof(OverlayQuickTools))
-                                    KeyboardSimulator.KeyPress(VirtualKeyCode.ESCAPE);
+                                    WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.ESCAPE);
                             }
                             break;
                     }
@@ -514,10 +538,10 @@ namespace HandheldCompanion.Managers
                                     switch (direction)
                                     {
                                         case WPFUtils.Direction.Up:
-                                            KeyboardSimulator.KeyPress(VirtualKeyCode.UP);
+                                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.UP);
                                             return;
                                         case WPFUtils.Direction.Down:
-                                            KeyboardSimulator.KeyPress(VirtualKeyCode.DOWN);
+                                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.DOWN);
                                             return;
                                     }
                                 }
@@ -529,10 +553,10 @@ namespace HandheldCompanion.Managers
                                 switch(direction)
                                 {
                                     case WPFUtils.Direction.Up:
-                                        KeyboardSimulator.KeyPress(VirtualKeyCode.UP);
+                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.UP);
                                         return;
                                     case WPFUtils.Direction.Down:
-                                        KeyboardSimulator.KeyPress(VirtualKeyCode.DOWN);
+                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.DOWN);
                                         return;
                                 }
                             }
@@ -549,10 +573,10 @@ namespace HandheldCompanion.Managers
                                         return;
 
                                     case WPFUtils.Direction.Left:
-                                        KeyboardSimulator.KeyPress(VirtualKeyCode.LEFT);
+                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.LEFT);
                                         return;
                                     case WPFUtils.Direction.Right:
-                                        KeyboardSimulator.KeyPress(VirtualKeyCode.RIGHT);
+                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RIGHT);
                                         return;
                                 }
                             }
