@@ -86,8 +86,6 @@ namespace HandheldCompanion.Managers
         {
             _focused = true;
             GotFocus?.Invoke(_currentWindow);
-
-            LogManager.LogInformation("GotGamepadWindowFocus: {0}", _currentWindow.ToString());
         }
 
         private void _currentWindow_LostGamepadWindowFocus()
@@ -98,8 +96,6 @@ namespace HandheldCompanion.Managers
             _focused = false;
 
             LostFocus?.Invoke(_currentWindow);
-
-            LogManager.LogInformation("LostGamepadWindowFocus: {0}", _currentWindow.ToString());
         }
         private void _currentWindow_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -112,8 +108,6 @@ namespace HandheldCompanion.Managers
 
             // raise event
             GotFocus?.Invoke(_currentWindow);
-
-            LogManager.LogInformation("GotWindowFocus: {0}", _currentWindow.ToString());
         }
 
         private void _currentWindow_LostFocus(object sender, RoutedEventArgs e)
@@ -140,8 +134,6 @@ namespace HandheldCompanion.Managers
 
             // raise event
             LostFocus?.Invoke(_currentWindow);
-
-            LogManager.LogInformation("LostWindowFocus: {0}", _currentWindow.ToString());
         }
 
         private void SettingsManager_SettingValueChanged(string name, object value)
