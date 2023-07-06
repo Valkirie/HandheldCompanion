@@ -169,6 +169,14 @@ public partial class ProcessEx : UserControl, IDisposable
         return mainThread;
     }
 
+    public bool HasExited()
+    {
+        if (Process is not null)
+            return Process.HasExited;
+
+        return true;
+    }
+
     public void Refresh()
     {
         if (Process.HasExited)

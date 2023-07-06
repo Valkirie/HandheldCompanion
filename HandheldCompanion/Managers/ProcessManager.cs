@@ -116,6 +116,11 @@ public static class ProcessManager
         return null;
     }
 
+    public static bool HasProcess(int pId)
+    {
+        return Processes.ContainsKey(pId);
+    }
+
     public static List<ProcessEx> GetProcesses()
     {
         return Processes.Values.ToList();
