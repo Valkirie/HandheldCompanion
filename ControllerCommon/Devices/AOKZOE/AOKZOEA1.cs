@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
 using WindowsInput.Events;
 
 namespace ControllerCommon.Devices;
@@ -87,5 +88,23 @@ public class AOKZOEA1 : IDevice
             new List<KeyCode> { KeyCode.Snapshot, KeyCode.LWin },
             false, ButtonFlags.OEM5
         ));
+    }
+
+    public override bool Open()
+    {
+        var success = base.Open();
+        if (!success)
+            return false;
+
+        // allow OneX button to pass key inputs
+        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM3);
+        return ECRamDirectWrite(0xF1, ECDetails, 0x40);
+    }
+
+    public override void Close()
+    {
+        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
+        ECRamDirectWrite(0x1E, ECDetails, 0x00);
+        base.Close();
     }
 }

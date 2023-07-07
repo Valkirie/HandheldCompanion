@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using ControllerCommon.Inputs;
+using ControllerCommon.Managers;
+using System.Numerics;
 
 namespace ControllerCommon.Devices;
 
@@ -12,5 +14,23 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         GfxClock = new double[] { 100, 2200 };
 
         AccelerationAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+    }
+
+    public override bool Open()
+    {
+        var success = base.Open();
+        if (!success)
+            return false;
+
+        // allow OneX button to pass key inputs
+        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
+        return ECRamDirectWrite(0xF1, ECDetails, 0x40);
+    }
+
+    public override void Close()
+    {
+        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
+        ECRamDirectWrite(0x1E, ECDetails, 0x00);
+        base.Close();
     }
 }
