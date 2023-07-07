@@ -669,10 +669,10 @@
                                 IsSnapToTickEnabled="True"
                                 LargeChange="5"
                                 Maximum="120"
-                                Minimum="30"
-                                SmallChange="5"
+                                Minimum="20"
+                                SmallChange="1"
                                 Style="{DynamicResource SliderStyle1}"
-                                TickFrequency="5"
+                                TickFrequency="1"
                                 TickPlacement="BottomRight"
                                 ValueChanged="AutoTDPRequestedFPSSlider_ValueChanged"
                                 Value="30" />
