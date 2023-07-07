@@ -71,6 +71,7 @@ public static class ProfileManager
                 Enabled = false,
                 Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
+                TDPOverrideValues = MainWindow.CurrentDevice.nTDP,
                 LayoutEnabled = true
             };
 
