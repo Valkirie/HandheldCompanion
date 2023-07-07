@@ -1,10 +1,14 @@
 name: Build and Publish Handheld Companion
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-
   build:
     name: Build (Release)
     runs-on: windows-latest 
@@ -21,14 +25,13 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
+    - name: Install Innosetup
+      shell: pwsh
+      run: |
+        choco install innosetup --version=${{ env.INNO_VERSION }}
     
     # Setup NuGet and run Restore
-    - name: Setup NuGet
+    - name: NuGet Restore
       uses: nuget/setup-nuget@v1
       with:
         nuget-version: '5.x'
@@ -36,7 +39,7 @@ jobs:
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.1
 
     # Build ControllerService solution
     - name: Build Entire Solution
@@ -45,29 +48,70 @@ jobs:
     # Rebuild ControllerService project
     - name: Rebuild ControllerService Project
       run: msbuild $env:Solution_Name /t:ControllerService:rebuild /p:Configuration="Release"
-    
-    # Download Inno Setup
-    - name: Download Inno Setup installer
-      run: curl -L -o ./installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe      
-      
-    # Install Inno Setup
-    - name: Install Inno Setup
-      run: ./installer.exe /verysilent /allusers /dir=inst
+
+    - name: Set release version number
+      if: ${{ GITHUB_REF_TYPE == 'tag' }}
+      uses: jacobtomlinson/gha-find-replace@v3
+      with:
+        find: "#define MyAppVersion '\\d+(?:\\.\\d+)+'"
+        replace: "#define MyAppVersion '${{ vars.GITHUB_REF_NAME }}'"
+        include: "*.iss"
+        regex: true
       
     # Create Installers
     - name: Create Installer
       run: |
-          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService.iss"
-      shell: cmd
+          "iscc.exe ControllerService.iss"
+      shell: pwsh
       
     - name: Create Offline Installer
       run: |
-          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService-offline.iss"
-      shell: cmd
+          "iscc.exe ControllerService-offline.iss"
+      shell: pwsh
     
     # Upload install file artifacts
-    - name: Upload Installs Artifact
+    - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: install-files
         path: ./install
+
+  release:
+    if: ${{ GITHUB_REF_TYPE == 'tag' }}
+    name: Release
+    runs-on: windows-latest 
+    needs: build
+
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: install-files
+        path: ./install
+    # Create release only when new tag is pushed
+    - name: Create Draft Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ vars.GITHUB_REF_NAME }}
+        release_name: 'Build'
+        draft: true
+        prerelease: false        
+
+    - name: Upload Assets to release
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./install/HandheldCompanion-${{ vars.GITHUB_REF_NAME }}.exe
+        asset_name: ./install/HandheldCompanion-${{ vars.GITHUB_REF_NAME }}.exe
+        asset_content_type: application/octet-stream
+
+    - name: Publish Release
+      uses: eregon/publish-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ steps.create_release.outputs.id }}
