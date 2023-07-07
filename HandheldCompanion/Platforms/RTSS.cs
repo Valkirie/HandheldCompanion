@@ -45,7 +45,6 @@ public class RTSS : IPlatform
     private const uint RTSSHOOKSFLAG_OSD_VISIBLE = 1;
     private const uint RTSSHOOKSFLAG_LIMITER_DISABLED = 4;
     private const string GLOBAL_PROFILE = "";
-    private const int MaxTentative = 10;
 
     private readonly ConcurrentList<int> HookedProcessIds = new();
     private bool ProfileLoaded;

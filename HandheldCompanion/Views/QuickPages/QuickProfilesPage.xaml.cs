@@ -152,8 +152,8 @@ public partial class QuickProfilesPage : Page
                     StackProfileAutoTDP.IsEnabled = true && Processor is not null ? Processor.CanChangeTDP : false;
                     break;
                 case PlatformStatus.Stalled:
-                    StackProfileFramerate.IsEnabled = false;
-                    StackProfileAutoTDP.IsEnabled = false;
+                    // StackProfileFramerate.IsEnabled = false;
+                    // StackProfileAutoTDP.IsEnabled = false;
                     break;
             }
         });
