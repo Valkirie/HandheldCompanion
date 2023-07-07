@@ -142,6 +142,10 @@ public class PerformanceManager : Manager
             RequestTDP(profile.TDPOverrideValues);
             StartTDPWatchdog();
         }
+        else if (cpuWatchdog.Enabled)
+        {
+            StopTDPWatchdog();
+        }
 
         // apply profile defined GPU
         if (profile.GPUOverrideEnabled)
@@ -149,12 +153,20 @@ public class PerformanceManager : Manager
             RequestGPUClock(profile.GPUOverrideValue);
             StartGPUWatchdog();
         }
+        else if (gfxWatchdog.Enabled)
+        {
+            StopGPUWatchdog();
+        }
 
         // apply profile defined AutoTDP
         if (profile.AutoTDPEnabled)
         {
             AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
             autoWatchdog.Start();
+        }
+        else if (autoWatchdog.Enabled)
+        {
+            autoWatchdog.Stop();
         }
 
         // apply profile defined EPP
