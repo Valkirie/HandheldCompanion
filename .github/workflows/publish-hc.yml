@@ -90,22 +90,15 @@ jobs:
         run: |
           iscc.exe ControllerService-offline.iss
         shell: pwsh
-
-      # Generate release notes
-      - uses: johnyherangi/create-release-notes@main
-        if: ${{ ( inputs.createRelease == true) && ( inputs.tagVersion != '') }}
-        id: create-release-notes
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Create Release
         if: ${{ ( inputs.createRelease == true) && ( inputs.tagVersion != '') }}
         uses: softprops/action-gh-release@v0.1.15
         with:
-          body: ${{ steps.create-release-notes.outputs.release-notes }}
+          body_path: .github/workflows/RELEASE_FORMAT.txt
           tag_name: ${{ inputs.tagVersion }}
           name: "Build ${{ inputs.tagVersion }}"
-          draft: false
+          draft: true
           fail_on_unmatched_files: true
           files: |
             ./install/HandheldCompanion-${{ inputs.tagVersion }}.exe

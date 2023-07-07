@@ -1,0 +1,9 @@
+A new HC release, with a focus on bug fixes and controller connection improvements.
+
+## What's Changed
+
+**Improvements**
+- **Improved something**, with better something.
+
+**Bugfixes**
+- Fixed an issue
