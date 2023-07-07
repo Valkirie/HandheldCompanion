@@ -14,13 +14,14 @@ namespace ControllerCommon.Utils;
 
 public static class WPFUtils
 {
-    [DllImport("user32.dll")]
-    public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-
+    public const int WM_KEYDOWN = 0x0100;
     public const int WM_CHANGEUISTATE = 0x0127;
     public const int UIS_SET = 1;
     public const int UIS_CLEAR = 2;
     public const int UISF_HIDEFOCUS = 0x1;
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
     public static HwndSource GetControlHandle(Control control)
     {
@@ -278,5 +279,10 @@ public static class WPFUtils
             CurrentParent = VisualTreeHelper.GetParent(CurrentParent);
         }
         return parent;
+    }
+
+    public static void SendKeyToControl(Control control, int keyCode)
+    {
+        SendMessage(GetControlHandle(control).Handle.ToInt32(), WM_KEYDOWN, keyCode, IntPtr.Zero);
     }
 }

@@ -172,22 +172,26 @@ public class RTSS : IPlatform
         if (ProcessId == 0)
             return;
 
-        var HookTentative = 0;
         do
         {
+            /* 
+             * loop until we either:
+             * - got an RTSS entry
+             * - process no longer exists
+             * - RTSS was closed
+             */
+
             try
             {
-                appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None)
-                    .FirstOrDefault(a => a.ProcessId == ProcessId);
+                appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == ProcessId).FirstOrDefault();
             }
             catch (Exception)
             {
             }
-
-            HookTentative++;
+            catch {}
 
             await Task.Delay(1000);
-        } while (appEntry is null && KeepAlive);
+        } while (appEntry is null && ProcessManager.HasProcess(ProcessId) && KeepAlive);
 
         if (appEntry is null)
             return;

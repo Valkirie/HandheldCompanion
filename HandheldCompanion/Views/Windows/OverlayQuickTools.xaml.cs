@@ -27,6 +27,8 @@ using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 using Control = System.Windows.Controls.Control;
 using HandheldCompanion.Views.Classes;
+using ControllerCommon;
+using System.Diagnostics;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -35,17 +37,28 @@ namespace HandheldCompanion.Views.Windows;
 /// </summary>
 public partial class OverlayQuickTools : GamepadWindow
 {
-    private const int WM_SYSCOMMAND = 0x0112;
-
     private const int SC_MOVE = 0xF010;
+    private readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+
+    const UInt32 SWP_NOSIZE = 0x0001;
+    const UInt32 SWP_NOMOVE = 0x0002;
+    const UInt32 SWP_NOACTIVATE = 0x0010;
+    const UInt32 SWP_NOZORDER = 0x0004;
+    const int WM_ACTIVATEAPP = 0x001C;
+    const int WM_ACTIVATE = 0x0006;
+    const int WM_SETFOCUS = 0x0007;
+    const int WM_KILLFOCUS = 0x0008;
+    const int WM_NCACTIVATE = 0x0086;
+    const int WM_SYSCOMMAND = 0x0112;
+    const int WM_WINDOWPOSCHANGING = 0x0046;
+    const int WM_SHOWWINDOW = 0x0018;
+
+    private HwndSource hwndSource;
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
 
     private bool AutoHide;
-
-    public HwndSource hwndSource;
-
     private bool isClosing;
 
     public QuickPerformancePage performancePage;
@@ -90,7 +103,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void OverlayQuickTools_Deactivated(object? sender, EventArgs e)
     {
         if (AutoHide)
-            Hide();
+            ToggleVisibility();
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
@@ -229,11 +242,17 @@ public partial class OverlayQuickTools : GamepadWindow
     {
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
-    }
 
-    private void Window_SourceInitialized(object sender, EventArgs e)
-    {
-        // do something
+        hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+        hwndSource.AddHook(WndProc);
+
+        // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
+        if (hwndSource != null)
+        {
+            // hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+            WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+        }
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -241,8 +260,65 @@ public partial class OverlayQuickTools : GamepadWindow
         switch (msg)
         {
             case WM_SYSCOMMAND:
-                var command = wParam.ToInt32() & 0xfff0;
-                if (command == SC_MOVE) handled = true;
+                {
+                    var command = wParam.ToInt32() & 0xfff0;
+                    if (command == SC_MOVE) handled = true;
+                }
+                break;
+
+            case WM_SETFOCUS:
+                {
+                    if (hwndSource != null)
+                        WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
+                    handled = true;
+                    InvokeGotGamepadWindowFocus();
+                }
+                break;
+
+            case WM_NCACTIVATE:
+                {
+                    // prevent window from loosing its fancy style
+                    if (wParam == 0 && (lParam == 0))
+                        handled = true;
+                }
+                break;
+
+            case WM_ACTIVATEAPP:
+                {
+                    if (wParam == 0)
+                    {
+                        if (hwndSource != null)
+                            WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                    }
+                }
+                break;
+
+            case WM_ACTIVATE:
+                {
+                    // WA_INACTIVE
+                    if (wParam == 0)
+                        handled = true;
+                }
+                break;
+
+            case 641:
+            case 642:
+            case 32:
+            case 33:
+            case 132:
+            case 512:
+            case 513:
+            case 514:
+            case 673:
+            case 674:
+            case 675:
+            case 13:
+            case 256:
+            case 257:
+                break;
+
+            default:
+                // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
                 break;
         }
 
@@ -252,28 +328,27 @@ public partial class OverlayQuickTools : GamepadWindow
     private void HandleEsc(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
-            Hide();
+            ToggleVisibility();
     }
 
-    public void UpdateVisibility()
+    public void ToggleVisibility()
     {
         // UI thread
-        Application.Current.Dispatcher.Invoke(async () =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             switch (Visibility)
             {
                 case Visibility.Collapsed:
                 case Visibility.Hidden:
-
                     Show();
-                    Activate();
-                    Topmost = true;  // important
                     Focus();
-
+                    if (hwndSource != null)
+                        WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+                    InvokeGotGamepadWindowFocus();
                     break;
                 case Visibility.Visible:
                     Hide();
-                    Topmost = false;  // important
+                    InvokeLostGamepadWindowFocus();
                     break;
             }
         });
@@ -293,34 +368,15 @@ public partial class OverlayQuickTools : GamepadWindow
         SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
 
         e.Cancel = !isClosing;
-        Hide();
+
+        if (!isClosing)
+            ToggleVisibility();
     }
 
     public void Close(bool v)
     {
         isClosing = v;
         Close();
-    }
-
-    private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-        hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-
-        if (hwndSource is null)
-            return;
-
-        hwndSource.AddHook(WndProc);
-
-        switch (Visibility)
-        {
-            case Visibility.Collapsed:
-            case Visibility.Hidden:
-                hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
-                break;
-            case Visibility.Visible:
-                hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-                break;
-        }
     }
 
     #region navView

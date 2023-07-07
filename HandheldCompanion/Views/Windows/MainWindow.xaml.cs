@@ -446,13 +446,13 @@ public partial class MainWindow : GamepadWindow
         switch (listener)
         {
             case "quickTools":
-                overlayquickTools.UpdateVisibility();
+                overlayquickTools.ToggleVisibility();
                 break;
             case "overlayGamepad":
-                overlayModel.UpdateVisibility();
+                overlayModel.ToggleVisibility();
                 break;
             case "overlayTrackpads":
-                overlayTrackpad.UpdateVisibility();
+                overlayTrackpad.ToggleVisibility();
                 break;
             case "shortcutMainwindow":
                 SwapWindowState();
@@ -468,7 +468,7 @@ public partial class MainWindow : GamepadWindow
                 SwapWindowState();
                 break;
             case "QuickTools":
-                overlayquickTools.UpdateVisibility();
+                overlayquickTools.ToggleVisibility();
                 break;
             case "ServiceStart":
                 _ = serviceManager.StartServiceAsync();
