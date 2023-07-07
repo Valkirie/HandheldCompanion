@@ -435,8 +435,18 @@ public class PerformanceManager : Manager
             }
 
             // user requested to halt cpu watchdog
-            if (TDPdone && MSRdone && cpuWatchdogPendingStop)
-                cpuWatchdog.Stop();
+            if (cpuWatchdogPendingStop)
+            {
+                if (cpuWatchdog.Interval == INTERVAL_DEFAULT)
+                {
+                    if (TDPdone && MSRdone)
+                        cpuWatchdog.Stop();
+                }
+                else if (cpuWatchdog.Interval == INTERVAL_DEGRADED)
+                {
+                    cpuWatchdog.Stop();
+                }
+            }
 
             // release lock
             cpuLock = false;
@@ -483,8 +493,18 @@ public class PerformanceManager : Manager
             }
 
             // user requested to halt gpu watchdog
-            if (GPUdone && gfxWatchdogPendingStop)
-                gfxWatchdog.Stop();
+            if (gfxWatchdogPendingStop)
+            {
+                if (gfxWatchdog.Interval == INTERVAL_DEFAULT)
+                {
+                    if (GPUdone)
+                        gfxWatchdog.Stop();
+                }
+                else if (gfxWatchdog.Interval == INTERVAL_DEGRADED)
+                {
+                    gfxWatchdog.Stop();
+                }
+            }
 
             // release lock
             gfxLock = false;
