@@ -17,19 +17,19 @@
         <ui:SimpleStackPanel Spacing="6">
 
             <!--  LEFT TRIGGER BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="LEFT TRIGGER BUTTONS" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TriggersPage_Trigger_Left_Button}" />
             <ui:SimpleStackPanel Name="LeftTriggerButtonsPanel" Spacing="6" />
 
             <!--  LEFT TRIGGER  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="LEFT TRIGGER" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TriggersPage_Trigger_Left}" />
             <ui:SimpleStackPanel Name="LeftTriggerPanel" Spacing="6" />
 
             <!--  RIGHT TRIGGER BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="RIGHT TRIGGER BUTTONS" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TriggersPage_Trigger_Right_Button}" />
             <ui:SimpleStackPanel Name="RightTriggerButtonsPanel" Spacing="6" />
 
             <!--  RIGHT TRIGGER  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="RIGHT TRIGGER" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TriggersPage_Trigger_Right}" />
             <ui:SimpleStackPanel Name="RightTriggerPanel" Spacing="6" />
 
         </ui:SimpleStackPanel>

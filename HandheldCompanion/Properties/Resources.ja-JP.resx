@@ -1234,7 +1234,4 @@
   <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
     <value>Press this key: Windows + Shift + S</value>
   </data>
-  <data name="MainWindow_navHotkeys" xml:space="preserve">
-    <value>Hotkeys</value>
-  </data>
 </root>

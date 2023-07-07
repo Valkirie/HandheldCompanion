@@ -16,7 +16,7 @@
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
             <!--  DIRECTIONAL PAD  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="DIRECTIONAL PAD" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DPadPage_DPad}" />
             <ui:SimpleStackPanel Name="DpadStackPanel" Spacing="6" />
         </ui:SimpleStackPanel>
     </Grid>
