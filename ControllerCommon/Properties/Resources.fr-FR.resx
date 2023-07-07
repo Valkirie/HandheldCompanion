@@ -265,4 +265,31 @@
   <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
     <value>Handheld Companion</value>
   </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+    <value>KB</value>
+  </data>
 </root>

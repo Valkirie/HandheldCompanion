@@ -2297,7 +2297,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Properties.Resources.ControllerPage_Disconnect.
+        ///   Looks up a localized string similar to Disconnect.
         /// </summary>
         public static string Properties_Resources_ControllerPage_Disconnect {
             get {

@@ -332,4 +332,7 @@
   <data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
     <value>STEAM</value>
   </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+    <value>KB</value>
+  </data>
 </root>

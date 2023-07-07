@@ -816,7 +816,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Yes</value>
   </data>
   <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
-    <value>Properties.Resources.ControllerPage_Disconnect</value>
+    <value>Disconnect</value>
   </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
     <value>Manual GPU Clock Control</value>
