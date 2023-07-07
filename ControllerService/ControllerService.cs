@@ -510,7 +510,7 @@ public class ControllerService : IHostedService
             case "DSUip":
             {
                 var value = Convert.ToString(property);
-                DSUServer.ip = value;
+                // DSUServer.ip = value;
             }
                 break;
             case "DSUport":
