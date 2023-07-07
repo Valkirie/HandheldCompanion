@@ -26,7 +26,7 @@ A few examples of the most common use cases are:
 [Youtube Channel](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 
 ## Supported Systems
-The software is built for Windows 10/Windows 11 (x86 and amd64). TESTIES
+The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 ## Supported Devices
 
