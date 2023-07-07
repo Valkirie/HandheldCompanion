@@ -144,6 +144,13 @@ public class PerformanceManager : Manager
         }
         else if (cpuWatchdog.Enabled)
         {
+            if (!profile.AutoTDPEnabled)
+            {
+                // restore default TDP
+                var arr = new double[3];
+                Array.Fill(arr, MainWindow.CurrentDevice.cTDP[1]);
+                RequestTDP(arr);
+            }
             StopTDPWatchdog();
         }
 
@@ -167,6 +174,16 @@ public class PerformanceManager : Manager
         else if (autoWatchdog.Enabled)
         {
             autoWatchdog.Stop();
+
+            if (!profile.TDPOverrideEnabled)
+            {
+                // restore default TDP
+                var arr = new double[3];
+                Array.Fill(arr, MainWindow.CurrentDevice.cTDP[1]);
+                RequestTDP(arr);
+                StartTDPWatchdog();
+                StopTDPWatchdog();
+            }
         }
 
         // apply profile defined EPP
@@ -182,7 +199,9 @@ public class PerformanceManager : Manager
         if (profile.TDPOverrideEnabled)
         {
             // restore default TDP
-            RequestTDP(MainWindow.CurrentDevice.nTDP);
+            var arr = new double[3];
+            Array.Fill(arr, MainWindow.CurrentDevice.cTDP[1]);
+            RequestTDP(arr);
             StartTDPWatchdog();
             StopTDPWatchdog();
         }
@@ -202,7 +221,9 @@ public class PerformanceManager : Manager
             autoWatchdog.Stop();
 
             // restore default TDP
-            RequestTDP(MainWindow.CurrentDevice.nTDP);
+            var arr = new double[3];
+            Array.Fill(arr, MainWindow.CurrentDevice.cTDP[1]);
+            RequestTDP(arr);
             StartTDPWatchdog();
             StopTDPWatchdog();
         }
