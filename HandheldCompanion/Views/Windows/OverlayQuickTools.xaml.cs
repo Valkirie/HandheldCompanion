@@ -52,6 +52,10 @@ public partial class OverlayQuickTools : GamepadWindow
     const int WM_SYSCOMMAND = 0x0112;
     const int WM_WINDOWPOSCHANGING = 0x0046;
     const int WM_SHOWWINDOW = 0x0018;
+    const int WM_MOUSEACTIVATE = 0x0021;
+
+    const int WS_EX_NOACTIVATE = 0x08000000;
+    const int GWL_EXSTYLE = -20;
 
     private HwndSource hwndSource;
 
@@ -301,10 +305,15 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
+            case WM_MOUSEACTIVATE:
+                {
+                    handled = true;
+                }
+                break;
+
             case 641:
             case 642:
             case 32:
-            case 33:
             case 132:
             case 512:
             case 513:
