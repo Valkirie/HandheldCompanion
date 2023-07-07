@@ -526,6 +526,7 @@ public class PerformanceManager : Manager
     internal void StartGPUWatchdog()
     {
         gfxWatchdogPendingStop = false;
+        gfxWatchdog.Interval = INTERVAL_DEFAULT;
         gfxWatchdog.Start();
     }
 
@@ -542,6 +543,7 @@ public class PerformanceManager : Manager
     internal void StartTDPWatchdog()
     {
         cpuWatchdogPendingStop = false;
+        cpuWatchdog.Interval = INTERVAL_DEFAULT;
         cpuWatchdog.Start();
     }
 
