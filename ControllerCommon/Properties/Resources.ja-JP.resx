@@ -335,4 +335,13 @@
   <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
     <value>KB</value>
   </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+    <value>M1 / M2</value>
+  </data>
 </root>

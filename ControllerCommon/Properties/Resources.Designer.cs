@@ -304,6 +304,159 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_A {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.A", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always On.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to B.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_B {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.B", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Back {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Down.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadDown {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Left.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadLeft {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Right.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadRight {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DPad Up.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadUp {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Shoulder.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftShoulder {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftShoulder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Thumb.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Trigger.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftTrigger {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Shoulder.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightShoulder {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightShoulder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Thumb.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RightTrigger.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightTrigger {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Start {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to X.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_X {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Y {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Y", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emulated DualShock 4 controller.
         /// </summary>
         public static string Enum_HIDmode_DualShock4Controller {
@@ -588,6 +741,15 @@ namespace ControllerCommon.Properties {
         public static string Enum_ProfileErrorCode_Default {
             get {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops. This profile seems to be running. Some options requiring an executable may be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_IsRunning {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.IsRunning", resourceCulture);
             }
         }
         

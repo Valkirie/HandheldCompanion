@@ -309,9 +309,6 @@
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>掌機伴侶</value>
   </data>
-  <data name="MainWindow_MainWindow_navHotkeys" xml:space="preserve">
-    <value>快捷鍵</value>
-  </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
     <value>關於</value>
   </data>
@@ -1061,5 +1058,8 @@
   </data>
   <data name="ProfilesPage_SensitivityY" xml:space="preserve">
     <value>Y</value>
+  </data>
+  <data name="MainWindow_navHotkeys" xml:space="preserve">
+    <value>快捷鍵</value>
   </data>
 </root>

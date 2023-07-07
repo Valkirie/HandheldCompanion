@@ -301,18 +301,6 @@
   <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>Hotkey durch Drücken einer Schaltfläche oder einer speziellen Taste ändern</value>
   </data>
-  <data name="InputsHotkey_SteamDeckLizardButtons" xml:space="preserve">
-    <value>Lizard mode (Schaltflächen)</value>
-  </data>
-  <data name="InputsHotkey_SteamDeckLizardButtonsDesc" xml:space="preserve">
-    <value>Schaltflächen von oder nach lizard brain (Maus- und Tastaturemulation)</value>
-  </data>
-  <data name="InputsHotkey_SteamDeckLizardMouse" xml:space="preserve">
-    <value>Lizard mode (Maus)</value>
-  </data>
-  <data name="InputsHotkey_SteamDeckLizardMouseDesc" xml:space="preserve">
-    <value>Umschalten der Trackpads von oder auf lizard brain (Maus- und Tastaturemulation)</value>
-  </data>
   <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
     <value>Task-Manager öffnen</value>
   </data>
@@ -960,7 +948,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Nutzer</value>
   </data>
   <data name="WarningElevated" xml:space="preserve">
-    <value>Führen Sie dieses Tool als Administrator aus, um diese Einstellungen freizugeben.</value>
+    <value>Führen Sie dieses Tool als Administrator aus, um diese Einstellungen freizugeben</value>
   </data>
   <data name="xinput1_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xinput1_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
