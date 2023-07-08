@@ -60,8 +60,8 @@ public class PerformanceManager : Manager
     private bool AutoTDPFirstRun = true;
     private int AutoTDPFPSSetpointMetCounter;
     private int AutoTDPFPSSmallDipCounter;
-    private double AutoTDPMax;
-    private double AutoTDPMin;
+    private double TDPMax;
+    private double TDPMin;
     private int AutoTDPProcessId;
     private double AutoTDPTargetFPS;
     private bool cpuWatchdogPendingStop;
@@ -121,14 +121,14 @@ public class PerformanceManager : Manager
         {
             case "ConfigurableTDPOverrideDown":
             {
-                AutoTDPMin = Convert.ToDouble(value);
-                AutoTDP = (AutoTDPMax + AutoTDPMin) / 2.0d;
+                TDPMin = Convert.ToDouble(value);
+                AutoTDP = (TDPMax + TDPMin) / 2.0d;
             }
                 break;
             case "ConfigurableTDPOverrideUp":
             {
-                AutoTDPMax = Convert.ToDouble(value);
-                AutoTDP = (AutoTDPMax + AutoTDPMin) / 2.0d;
+                TDPMax = Convert.ToDouble(value);
+                AutoTDP = (TDPMax + TDPMin) / 2.0d;
             }
                 break;
         }
@@ -142,6 +142,10 @@ public class PerformanceManager : Manager
             RequestTDP(profile.TDPOverrideValues);
             StartTDPWatchdog();
         }
+        else if (cpuWatchdog.Enabled)
+        {
+            StopTDPWatchdog();
+        }
 
         // apply profile defined GPU
         if (profile.GPUOverrideEnabled)
@@ -149,12 +153,20 @@ public class PerformanceManager : Manager
             RequestGPUClock(profile.GPUOverrideValue);
             StartGPUWatchdog();
         }
+        else if (gfxWatchdog.Enabled)
+        {
+            StopGPUWatchdog();
+        }
 
         // apply profile defined AutoTDP
         if (profile.AutoTDPEnabled)
         {
             AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
             autoWatchdog.Start();
+        }
+        else if (autoWatchdog.Enabled)
+        {
+            autoWatchdog.Stop();
         }
 
         // apply profile defined EPP
@@ -247,7 +259,7 @@ public class PerformanceManager : Manager
             else
                 AutoTDPFirstRun = false;
 
-            AutoTDP = Math.Clamp(AutoTDP, AutoTDPMin, AutoTDPMax);
+            AutoTDP = Math.Clamp(AutoTDP, TDPMin, TDPMax);
 
             // Only update if we have a different TDP value to set
             if (AutoTDP != AutoTDPPrev)
@@ -435,8 +447,18 @@ public class PerformanceManager : Manager
             }
 
             // user requested to halt cpu watchdog
-            if (TDPdone && MSRdone && cpuWatchdogPendingStop)
-                cpuWatchdog.Stop();
+            if (cpuWatchdogPendingStop)
+            {
+                if (cpuWatchdog.Interval == INTERVAL_DEFAULT)
+                {
+                    if (TDPdone && MSRdone)
+                        cpuWatchdog.Stop();
+                }
+                else if (cpuWatchdog.Interval == INTERVAL_DEGRADED)
+                {
+                    cpuWatchdog.Stop();
+                }
+            }
 
             // release lock
             cpuLock = false;
@@ -483,8 +505,18 @@ public class PerformanceManager : Manager
             }
 
             // user requested to halt gpu watchdog
-            if (GPUdone && gfxWatchdogPendingStop)
-                gfxWatchdog.Stop();
+            if (gfxWatchdogPendingStop)
+            {
+                if (gfxWatchdog.Interval == INTERVAL_DEFAULT)
+                {
+                    if (GPUdone)
+                        gfxWatchdog.Stop();
+                }
+                else if (gfxWatchdog.Interval == INTERVAL_DEGRADED)
+                {
+                    gfxWatchdog.Stop();
+                }
+            }
 
             // release lock
             gfxLock = false;
@@ -494,6 +526,7 @@ public class PerformanceManager : Manager
     internal void StartGPUWatchdog()
     {
         gfxWatchdogPendingStop = false;
+        gfxWatchdog.Interval = INTERVAL_DEFAULT;
         gfxWatchdog.Start();
     }
 
@@ -510,6 +543,7 @@ public class PerformanceManager : Manager
     internal void StartTDPWatchdog()
     {
         cpuWatchdogPendingStop = false;
+        cpuWatchdog.Interval = INTERVAL_DEFAULT;
         cpuWatchdog.Start();
     }
 
@@ -518,9 +552,11 @@ public class PerformanceManager : Manager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        var idx = (int)type;
+        // make sure we're not trying to run below or above specs
+        value = Math.Min(TDPMax, Math.Max(TDPMin, value));
 
         // update value read by timer
+        var idx = (int)type;
         StoredTDP[idx] = value;
 
         // immediately apply
@@ -535,6 +571,9 @@ public class PerformanceManager : Manager
 
         for (var idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
+            // make sure we're not trying to run below or above specs
+            values[idx] = Math.Min(TDPMax, Math.Max(TDPMin, values[idx]));
+
             // update value read by timer
             StoredTDP[idx] = values[idx];
 

@@ -57,8 +57,8 @@ public partial class QuickPerformancePage : Page
                     OverlayDisplayLevelFull.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:
-                    OverlayDisplayLevelExtended.IsEnabled = false;
-                    OverlayDisplayLevelFull.IsEnabled = false;
+                    // OverlayDisplayLevelExtended.IsEnabled = false;
+                    // OverlayDisplayLevelFull.IsEnabled = false;
                     break;
             }
         });
@@ -75,7 +75,7 @@ public partial class QuickPerformancePage : Page
                     ComboBoxOverlayDisplayLevel.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:
-                    ComboBoxOverlayDisplayLevel.IsEnabled = false;
+                    ComboBoxOverlayDisplayLevel.SelectedIndex = 0;
                     break;
             }
         });

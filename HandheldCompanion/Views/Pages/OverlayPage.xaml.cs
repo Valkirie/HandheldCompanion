@@ -43,7 +43,7 @@ public partial class OverlayPage : Page
                     OnScreenDisplayLevel.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:
-                    OnScreenDisplayLevel.IsEnabled = false;
+                    OnScreenDisplayLevel.SelectedIndex = 0;
                     break;
             }
         });

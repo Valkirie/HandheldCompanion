@@ -88,7 +88,7 @@ public partial class SettingsPage : Page
                     Toggle_HWiNFO.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:
-                    Toggle_HWiNFO.IsEnabled = false;
+                    Toggle_HWiNFO.IsOn = false;
                     break;
             }
         });
@@ -105,7 +105,7 @@ public partial class SettingsPage : Page
                     Toggle_RTSS.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:
-                    Toggle_RTSS.IsEnabled = false;
+                    Toggle_RTSS.IsOn = false;
                     break;
             }
         });
