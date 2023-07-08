@@ -165,10 +165,6 @@ public static class SettingsManager
             case "HasVolumeSupport":
                 return SystemManager.HasVolumeSupport();
 
-            case "PhysicalControllerInstanceId":
-
-                return Properties.Settings.Default[name];
-
             default:
             {
                 if (temporary && Settings.TryGetValue(name, out var property))

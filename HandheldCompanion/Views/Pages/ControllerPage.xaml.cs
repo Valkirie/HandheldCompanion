@@ -465,7 +465,6 @@ public partial class ControllerPage : Page
 
         SettingsManager.SetProperty("PhysicalControllerInstanceIds", physicalControllerInstanceIds);
 
-        var test = SettingsManager.GetStringCollection("PhysicalControllerInstanceIds");
         ControllerRefresh();
     }
 
