@@ -13,6 +13,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Navigation;
 using ControllerCommon;
 using ControllerCommon.Controllers;
@@ -25,6 +26,7 @@ using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Inkore.UI.WPF.Modern.Controls;
+using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static HandheldCompanion.Managers.InputsHotkey;
@@ -80,6 +82,42 @@ public partial class MainWindow : GamepadWindow
     private string preNavItemTag;
 
     private WindowState prevWindowState;
+
+    private const int WM_QUERYENDSESSION = 0x0011;
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_QUERYENDSESSION)
+        {
+            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+            {
+                // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
+                {
+                    var pnputil = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "pnputil.exe",
+                            Arguments = $"/disable-device \"{physicalControllerInstanceId}\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    pnputil.Start();
+
+                    while (!pnputil.StandardOutput.EndOfStream)
+                    {
+                        string line = pnputil.StandardOutput.ReadLine();
+                        LogManager.LogInformation("{0}", line);
+                    }
+                }
+            }
+        }
+
+        return IntPtr.Zero;
+    }
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -204,6 +242,7 @@ public partial class MainWindow : GamepadWindow
         EnergyManager.Start();
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+        //PowerManager.SessionEnded += OnSessionEnding;
         PowerManager.Start();
 
         SystemManager.Start();
@@ -509,6 +548,9 @@ public partial class MainWindow : GamepadWindow
     {
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
+
+        HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+        source.AddHook(WndProc); // Hook into the window's message loop
     }
 
     private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
@@ -735,6 +777,15 @@ public partial class MainWindow : GamepadWindow
                     InputsManager.Stop();
                 }
                 break;
+        }
+    }
+    private static void OnSessionEnding(SessionEndReasons endReason)
+    {
+        LogManager.LogInformation("sessionend: {0}", endReason.ToString());
+        if (endReason == SessionEndReasons.SystemShutdown)
+        {
+            LogManager.LogInformation("system is shutting down");
+            
         }
     }
 

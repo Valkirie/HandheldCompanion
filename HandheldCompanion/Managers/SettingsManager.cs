@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using ControllerCommon.Managers;
@@ -56,8 +57,10 @@ public static class SettingsManager
     public static void SetProperty(string name, object value, bool force = false, bool temporary = false)
     {
         var prevValue = GetProperty(name, temporary);
-        if (prevValue.ToString() == value.ToString() && !force)
-            return;
+        
+        if(prevValue is not null)
+            if (prevValue.ToString() == value.ToString() && !force)
+                return;
 
         // specific cases
         switch (name)
@@ -162,6 +165,10 @@ public static class SettingsManager
             case "HasVolumeSupport":
                 return SystemManager.HasVolumeSupport();
 
+            case "PhysicalControllerInstanceId":
+
+                return Properties.Settings.Default[name];
+
             default:
             {
                 if (temporary && Settings.TryGetValue(name, out var property))
@@ -197,5 +204,10 @@ public static class SettingsManager
     public static double GetDouble(string name, bool temporary = false)
     {
         return Convert.ToDouble(GetProperty(name, temporary));
+    }
+
+    public static StringCollection GetStringCollection(string name, bool temporary = false) 
+    {
+        return (StringCollection)GetProperty(name, temporary);
     }
 }

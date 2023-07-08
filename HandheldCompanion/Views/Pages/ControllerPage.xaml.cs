@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -96,6 +98,9 @@ public partial class ControllerPage : Page
                 case "SteamDeckHDRumble":
                     Toggle_SDHDRumble.IsOn = Convert.ToBoolean(value);
                     break;
+                case "VirtualControllerForceOrder":
+                    Toggle_ForceVirtualControllerOrder.IsOn = Convert.ToBoolean(value);
+                    break;
             }
         });
     }
@@ -128,7 +133,6 @@ public partial class ControllerPage : Page
                 isConnected = false;
                 break;
             case ServiceControllerStatus.Running:
-            {
                 Task.Factory.StartNew(() =>
                 {
                     while (!hasSettings)
@@ -138,13 +142,35 @@ public partial class ControllerPage : Page
                 isLoading = false;
                 isConnected = true;
 
-                ControllerRefresh();
-            }
-                break;
-            default:
-                isLoading = false;
+                if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+                {
+                    // enable physical controller(s) after virtual controller to ensure first order
+                    foreach(var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
+                    {
+                        var pnputil = new Process
+                        {
+                            StartInfo = new ProcessStartInfo
+                            {
+                                FileName = "pnputil.exe",
+                                Arguments = $"/enable-device \"{physicalControllerInstanceId}\"",
+                                UseShellExecute = false,
+                                RedirectStandardOutput = true,
+                                CreateNoWindow = true
+                            }
+                        };
+                        pnputil.Start();
+
+                        while (!pnputil.StandardOutput.EndOfStream)
+                        {
+                            string line = pnputil.StandardOutput.ReadLine();
+                            LogManager.LogInformation("{0}", line);
+                        }
+                    }
+                }
                 break;
         }
+
+        ControllerRefresh();
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
@@ -240,6 +266,7 @@ public partial class ControllerPage : Page
             var isHidden = hasTarget && target.IsHidden();
             var isNeptune = hasTarget && target.GetType() == typeof(NeptuneController);
             var isMuted = SettingsManager.GetBoolean("SteamDeckMuteController");
+            var isForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
@@ -256,6 +283,9 @@ public partial class ControllerPage : Page
             // hint: Has physical controller not hidden, and virtual controller
             var notmuted = !isHidden && hasVirtual && !isMuted;
             HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
+
+            // hint: Has affected device and virtual controller order not forced (ROG ally, etc)
+            HintsVirtualOrder.Visibility = !isForceOrder ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 
@@ -410,6 +440,33 @@ public partial class ControllerPage : Page
             return;
 
         SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
+    }
+
+    private void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
+    {
+        SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
+        
+        var physicalControllers = ControllerManager.GetPhysicalControllers();
+        
+        StringCollection physicalControllerInstanceIds = new StringCollection();
+
+        foreach(var physicalController in physicalControllers)
+        {
+            if (physicalController is not null)
+            {
+                var physicalControllerInstanceId = physicalController.Details.baseContainerDeviceInstanceId;
+
+                if (physicalControllerInstanceId is not null)
+                {
+                    physicalControllerInstanceIds.Add(physicalControllerInstanceId);
+                }
+            }
+        }
+
+        SettingsManager.SetProperty("PhysicalControllerInstanceIds", physicalControllerInstanceIds);
+
+        var test = SettingsManager.GetStringCollection("PhysicalControllerInstanceIds");
+        ControllerRefresh();
     }
 
     private void Button_Layout_Click(object sender, RoutedEventArgs e)

@@ -314,6 +314,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Force virtual controller order.
+        /// </summary>
+        public static string ControllerPage_ForceVirtualControllerOrder {
+            get {
+                return ResourceManager.GetString("ControllerPage_ForceVirtualControllerOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forces the virtual controller to be detected as first controller (requires restart).
+        /// </summary>
+        public static string ControllerPage_ForceVirtualControllerOrderDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_ForceVirtualControllerOrderDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input devices.
         /// </summary>
         public static string ControllerPage_InputDevices {
@@ -391,6 +409,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_VibrationStrengthExpl {
             get {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual controller settings.
+        /// </summary>
+        public static string ControllerPage_VirtualControllerSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualControllerSettings", resourceCulture);
             }
         }
         

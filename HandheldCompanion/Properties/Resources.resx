@@ -1244,4 +1244,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_ThemeDefault" xml:space="preserve">
     <value>Use system setting</value>
   </data>
+  <data name="ControllerPage_ForceVirtualControllerOrder" xml:space="preserve">
+    <value>Force virtual controller order</value>
+  </data>
+  <data name="ControllerPage_ForceVirtualControllerOrderDesc" xml:space="preserve">
+    <value>Forces the virtual controller to be detected as first controller (requires restart)</value>
+  </data>
+  <data name="ControllerPage_VirtualControllerSettings" xml:space="preserve">
+    <value>Virtual controller settings</value>
+  </data>
 </root>
