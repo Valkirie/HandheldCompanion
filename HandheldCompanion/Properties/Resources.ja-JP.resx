@@ -120,7 +120,7 @@
     <value>概要</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>>Windows サービスとタッチ インターフェイスに最適化された GUI の組み合わせにより、ハンドヘルド ゲーム コンピューターのエクスペリエンスが向上します。機能には、ジャイロ コントロール、仮想コントローラ シミュレーション、クイック ツール オーバーレイ、仮想タッチパッド、3D コントローラ モデル、アプリケーションごとのベースのプロファイル設定システムが含まれます。Handheld Companion は、ViGEmBus ドライバーと ViGEmClient ライブラリ、および HidHide カーネル モード フィルター ドライバーに依存しています。モーション コントロール アルゴリズムは、Jibbsmart による研究と GyroWiki で入手可能な情報に基づいています。</value>
+    <value>&gt;Windows サービスとタッチ インターフェイスに最適化された GUI の組み合わせにより、ハンドヘルド ゲーム コンピューターのエクスペリエンスが向上します。機能には、ジャイロ コントロール、仮想コントローラ シミュレーション、クイック ツール オーバーレイ、仮想タッチパッド、3D コントローラ モデル、アプリケーションごとのベースのプロファイル設定システムが含まれます。Handheld Companion は、ViGEmBus ドライバーと ViGEmClient ライブラリ、および HidHide カーネル モード フィルター ドライバーに依存しています。モーション コントロール アルゴリズムは、Jibbsmart による研究と GyroWiki で入手可能な情報に基づいています。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速度計</value>
@@ -201,7 +201,7 @@
     <value>入力デバイス</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
-    <value>>閉じるときにコントローラを再表示する</value>
+    <value>&gt;閉じるときにコントローラを再表示する</value>
   </data>
   <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
     <value>アプリケーションの終了時にすべての物理コントローラーを復元</value>
@@ -814,9 +814,6 @@
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
-    <value>Properties.Resources.ControllerPage_Disconnect</value>
-  </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
     <value>手動 GPU クロック制御</value>
   </data>
@@ -1236,8 +1233,5 @@
   </data>
   <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
     <value>Press this key: Windows + Shift + S</value>
-  </data>
-  <data name="MainWindow_navHotkeys" xml:space="preserve">
-    <value>Hotkeys</value>
   </data>
 </root>

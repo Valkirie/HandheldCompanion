@@ -309,9 +309,6 @@
   <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>掌機伴侶</value>
   </data>
-  <data name="MainWindow_MainWindow_navHotkeys" xml:space="preserve">
-    <value>快捷鍵</value>
-  </data>
   <data name="MainWindow_navAbout" xml:space="preserve">
     <value>關於</value>
   </data>
@@ -820,7 +817,7 @@
     <value>創建配置</value>
   </data>
   <data name="QuickProfilesPage_Waiting" xml:space="preserve">
-    <value>等待前臺進程…</value>
+    <value>等待前臺進程...</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>通過虛擬的DS4控制器，為Windows掌機提供體感支持。如果啟用該服務，物理控制器將不會被白名單外的程序識別到。如果服務被關閉，物理控制器將會再次被啟用，虛擬DS4也將被關閉。</value>
@@ -904,7 +901,7 @@
     <value>立即安裝</value>
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
-    <value>最後一次檢查：</value>
+    <value>最後一次檢查: </value>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知設置</value>
@@ -1049,5 +1046,20 @@
   </data>
   <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
     <value>Change the motion sensitivity of the vertical axis</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+    <value> %</value>
+  </data>
+  <data name="OverlayPage_DualSenseController" xml:space="preserve">
+    <value>Playstation DualSense</value>
+  </data>
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="MainWindow_navHotkeys" xml:space="preserve">
+    <value>快捷鍵</value>
   </data>
 </root>
