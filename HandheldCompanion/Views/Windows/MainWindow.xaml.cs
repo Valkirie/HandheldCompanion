@@ -242,7 +242,6 @@ public partial class MainWindow : GamepadWindow
         EnergyManager.Start();
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
-        //PowerManager.SessionEnded += OnSessionEnding;
         PowerManager.Start();
 
         SystemManager.Start();
@@ -777,15 +776,6 @@ public partial class MainWindow : GamepadWindow
                     InputsManager.Stop();
                 }
                 break;
-        }
-    }
-    private static void OnSessionEnding(SessionEndReasons endReason)
-    {
-        LogManager.LogInformation("sessionend: {0}", endReason.ToString());
-        if (endReason == SessionEndReasons.SystemShutdown)
-        {
-            LogManager.LogInformation("system is shutting down");
-            
         }
     }
 
