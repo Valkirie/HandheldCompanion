@@ -144,10 +144,11 @@ public class PerformanceManager : Manager
         }
         else if (cpuWatchdog.Enabled)
         {
+            StopTDPWatchdog(true);
+
             // restore default TDP (if not AutoTDP is enabled)
             if (!profile.AutoTDPEnabled)
                 RestoreTDP(true);
-            StopTDPWatchdog();
         }
 
         // apply profile defined AutoTDP
@@ -158,10 +159,11 @@ public class PerformanceManager : Manager
         }
         else if (autoWatchdog.Enabled)
         {
+            StopAutoTDPWatchdog(true);
+
             // restore default TDP (if not manual TDP is enabled)
             if (!profile.TDPOverrideEnabled)
                 RestoreTDP(true);
-            StopAutoTDPWatchdog();
         }
 
         // apply profile defined GPU
@@ -172,8 +174,8 @@ public class PerformanceManager : Manager
         }
         else if (gfxWatchdog.Enabled)
         {
+            StopGPUWatchdog(true);
             RestoreGPUClock(true);
-            StopGPUWatchdog();
         }
 
         // apply profile defined EPP
@@ -188,23 +190,23 @@ public class PerformanceManager : Manager
         // restore default TDP
         if (profile.TDPOverrideEnabled)
         {
+            StopTDPWatchdog(true);
             RestoreTDP(true);
-            StopTDPWatchdog();
         }
 
         // restore default TDP
         if (profile.AutoTDPEnabled)
         {
+            StopAutoTDPWatchdog(true);
+            StopTDPWatchdog(true);
             RestoreTDP(true);
-            StopAutoTDPWatchdog();
-            StopTDPWatchdog();
         }
 
         // restore default GPU frequency
         if (profile.GPUOverrideEnabled)
         {
+            StopGPUWatchdog(true);
             RestoreGPUClock(true);
-            StopGPUWatchdog();
         }
 
         // (un)apply profile defined EPP
@@ -541,14 +543,11 @@ public class PerformanceManager : Manager
         gfxWatchdog.Start();
     }
 
-    internal void StopGPUWatchdog()
+    internal void StopGPUWatchdog(bool immediate = false)
     {
         gfxWatchdogPendingStop = true;
-    }
-
-    internal void StopTDPWatchdog()
-    {
-        cpuWatchdogPendingStop = true;
+        if (immediate)
+            gfxWatchdog.Stop();
     }
 
     internal void StartTDPWatchdog()
@@ -558,12 +557,19 @@ public class PerformanceManager : Manager
         cpuWatchdog.Start();
     }
 
+    internal void StopTDPWatchdog(bool immediate = false)
+    {
+        cpuWatchdogPendingStop = true;
+        if (immediate)
+            cpuWatchdog.Stop();
+    }
+
     internal void StartAutoTDPWatchdog()
     {
         autoWatchdog.Start();
     }
 
-    internal void StopAutoTDPWatchdog()
+    internal void StopAutoTDPWatchdog(bool immediate = false)
     {
         autoWatchdog.Stop();
     }
