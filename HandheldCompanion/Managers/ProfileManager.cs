@@ -222,7 +222,9 @@ public static class ProfileManager
             if (back is not null)
             {
                 var backProfile = GetProfileFromPath(back.Path, false);
-                Discarded?.Invoke(backProfile);
+
+                if (backProfile != profile)
+                    Discarded?.Invoke(backProfile);
             }
 
             ApplyProfile(profile);
