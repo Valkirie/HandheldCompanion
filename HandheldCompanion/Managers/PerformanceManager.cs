@@ -142,6 +142,29 @@ public class PerformanceManager : Manager
             RequestTDP(profile.TDPOverrideValues);
             StartTDPWatchdog();
         }
+        else if (cpuWatchdog.Enabled)
+        {
+            StopTDPWatchdog(true);
+
+            // restore default TDP (if not AutoTDP is enabled)
+            if (!profile.AutoTDPEnabled)
+                RestoreTDP(true);
+        }
+
+        // apply profile defined AutoTDP
+        if (profile.AutoTDPEnabled)
+        {
+            AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
+            StartAutoTDPWatchdog();
+        }
+        else if (autoWatchdog.Enabled)
+        {
+            StopAutoTDPWatchdog(true);
+
+            // restore default TDP (if not manual TDP is enabled)
+            if (!profile.TDPOverrideEnabled)
+                RestoreTDP(true);
+        }
 
         // apply profile defined GPU
         if (profile.GPUOverrideEnabled)
@@ -149,12 +172,10 @@ public class PerformanceManager : Manager
             RequestGPUClock(profile.GPUOverrideValue);
             StartGPUWatchdog();
         }
-
-        // apply profile defined AutoTDP
-        if (profile.AutoTDPEnabled)
+        else if (gfxWatchdog.Enabled)
         {
-            AutoTDPTargetFPS = profile.AutoTDPRequestedFPS;
-            autoWatchdog.Start();
+            StopGPUWatchdog(true);
+            RestoreGPUClock(true);
         }
 
         // apply profile defined EPP
@@ -166,33 +187,26 @@ public class PerformanceManager : Manager
 
     private void ProfileManager_Discarded(Profile profile)
     {
-        // (un)apply profile defined TDP
+        // restore default TDP
         if (profile.TDPOverrideEnabled)
         {
-            // restore default TDP
-            RequestTDP(MainWindow.CurrentDevice.nTDP);
-            StartTDPWatchdog();
-            StopTDPWatchdog();
+            StopTDPWatchdog(true);
+            RestoreTDP(true);
         }
 
-        // (un)apply profile defined GPU
-        if (profile.GPUOverrideEnabled)
-        {
-            // restore default GPU frequency
-            RequestGPUClock(255 * 50);
-            StartGPUWatchdog();
-            StopGPUWatchdog();
-        }
-
-        // (un)apply profile defined AutoTDP
+        // restore default TDP
         if (profile.AutoTDPEnabled)
         {
-            autoWatchdog.Stop();
+            StopAutoTDPWatchdog(true);
+            StopTDPWatchdog(true);
+            RestoreTDP(true);
+        }
 
-            // restore default TDP
-            RequestTDP(MainWindow.CurrentDevice.nTDP);
-            StartTDPWatchdog();
-            StopTDPWatchdog();
+        // restore default GPU frequency
+        if (profile.GPUOverrideEnabled)
+        {
+            StopGPUWatchdog(true);
+            RestoreGPUClock(true);
         }
 
         // (un)apply profile defined EPP
@@ -201,6 +215,17 @@ public class PerformanceManager : Manager
             // restore default EPP
             RequestEPP(0x00000032);
         }
+    }
+
+    private void RestoreTDP(bool immediate)
+    {
+        for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
+            RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
+    }
+
+    private void RestoreGPUClock(bool immediate)
+    {
+        RequestGPUClock(255 * 50, immediate);
     }
 
     private void RTSS_Hooked(AppEntry appEntry)
@@ -514,23 +539,39 @@ public class PerformanceManager : Manager
     internal void StartGPUWatchdog()
     {
         gfxWatchdogPendingStop = false;
+        gfxWatchdog.Interval = INTERVAL_DEFAULT;
         gfxWatchdog.Start();
     }
 
-    internal void StopGPUWatchdog()
+    internal void StopGPUWatchdog(bool immediate = false)
     {
         gfxWatchdogPendingStop = true;
-    }
-
-    internal void StopTDPWatchdog()
-    {
-        cpuWatchdogPendingStop = true;
+        if (immediate)
+            gfxWatchdog.Stop();
     }
 
     internal void StartTDPWatchdog()
     {
         cpuWatchdogPendingStop = false;
+        cpuWatchdog.Interval = INTERVAL_DEFAULT;
         cpuWatchdog.Start();
+    }
+
+    internal void StopTDPWatchdog(bool immediate = false)
+    {
+        cpuWatchdogPendingStop = true;
+        if (immediate)
+            cpuWatchdog.Stop();
+    }
+
+    internal void StartAutoTDPWatchdog()
+    {
+        autoWatchdog.Start();
+    }
+
+    internal void StopAutoTDPWatchdog(bool immediate = false)
+    {
+        autoWatchdog.Stop();
     }
 
     public void RequestTDP(PowerType type, double value, bool immediate = false)

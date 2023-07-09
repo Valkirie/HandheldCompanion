@@ -771,9 +771,6 @@
   <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>确认</value>
   </data>
-  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
-    <value>Properties.Resources.ControllerPage_Disconnect</value>
-  </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
     <value>手动设置GPU频率</value>
   </data>
@@ -814,7 +811,7 @@
     <value>创建配置</value>
   </data>
   <data name="QuickProfilesPage_Waiting" xml:space="preserve">
-    <value>等待前台进程…</value>
+    <value>等待前台进程...</value>
   </data>
   <data name="ServiceDescription" xml:space="preserve">
     <value>通过虚拟的DS4手柄，为Windows掌机提供体感支持。如果启用该服务，物理手柄将不会被白名单外的程序识别到。如果服务被关闭，物理手柄将会再次被启用，虚拟DS4也将被关闭。</value>
@@ -898,7 +895,7 @@
     <value>立即安装</value>
   </data>
   <data name="SettingsPage_LastChecked" xml:space="preserve">
-    <value>最后一次检查：</value>
+    <value>最后一次检查: </value>
   </data>
   <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知设置</value>
