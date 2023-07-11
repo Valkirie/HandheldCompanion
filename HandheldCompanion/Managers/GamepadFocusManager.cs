@@ -74,7 +74,15 @@ namespace HandheldCompanion.Managers
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
             // start listening to inputs
-            ControllerManager.InputsUpdated += InputsUpdated;
+            switch(SettingsManager.GetBoolean("DesktopProfileOnStart"))
+            {
+                case true:
+                    ControllerManager.InputsUpdated -= InputsUpdated;
+                    break;
+                case false:
+                    ControllerManager.InputsUpdated += InputsUpdated;
+                    break;
+            }
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
