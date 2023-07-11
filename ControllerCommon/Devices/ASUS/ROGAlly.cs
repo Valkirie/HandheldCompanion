@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
+using ControllerCommon.Utils;
 using HandheldCompanion;
 using HidSharp;
 using HidSharp.Reports.Input;
@@ -160,6 +161,19 @@ public class ROGAlly : IDevice
         return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
     }
 
+    public override void SetKeyPressDelay(HIDmode controllerMode)
+    {
+        switch(controllerMode)
+        {
+            case HIDmode.DualShock4Controller:
+                KeyPressDelay = 180; 
+                break;
+            default:
+                KeyPressDelay = 20;
+                break;
+        }
+    }
+
     private void InputReportReceiver_Received(HidDevice hidDevice, DeviceItemInputParser hiddeviceInputParser,
         HidDeviceInputReceiver hidDeviceInputReceiver)
     {
@@ -198,6 +212,19 @@ public class ROGAlly : IDevice
                     previousWasEmpty = true;
                 }
                     return;
+
+                case 56:
+                case 166:
+                {
+                    // OEM1 and OEM2 key needs a key press delay based on emulated controller
+                    Task.Factory.StartNew(async () =>
+                    {
+                        KeyPress(button);
+                        await Task.Delay(KeyPressDelay);
+                        KeyRelease(button);
+                    });
+                }
+                break;
 
                 case 165:
                 case 167:
