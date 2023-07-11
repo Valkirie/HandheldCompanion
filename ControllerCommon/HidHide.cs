@@ -6,6 +6,7 @@ using System.Linq;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
 using Nefarius.Drivers.HidHide;
+using Newtonsoft.Json;
 
 namespace ControllerCommon;
 
@@ -153,6 +154,9 @@ public static class HidHide
 
     public static void UnhidePath(string deviceInstancePath)
     {
+        if (string.IsNullOrEmpty(deviceInstancePath))
+            return;
+
         try
         {
             var service = new HidHideControlService();
@@ -169,6 +173,9 @@ public static class HidHide
 
     public static void HidePath(string deviceInstancePath)
     {
+        if (string.IsNullOrEmpty(deviceInstancePath))
+            return;
+
         try
         {
             var service = new HidHideControlService();
@@ -182,4 +189,84 @@ public static class HidHide
         {
         }
     }
+
+    public static List<HidHideDevice> GetHidHideDevices()
+    {
+        try
+        {
+            if (process is null)
+                return null;
+
+            process.StartInfo.Arguments = $"--dev-gaming";
+            process.Start();
+            process.WaitForExit(TimeSpan.FromSeconds(3));
+            string jsonString = process.StandardOutput.ReadToEnd().Trim();
+
+            if (string.IsNullOrEmpty(jsonString))
+                return null;
+
+            return JsonConvert.DeserializeObject<List<HidHideDevice>>(jsonString);
+        }
+        catch { }
+
+        return null;
+    }
+
+    public static HidHideDevice GetHidHideDevice(string deviceInstancePath)
+    {
+        List<HidHideDevice> hidHideDevices = GetHidHideDevices();
+
+        if (hidHideDevices.Count != 0)
+            return hidHideDevices.FirstOrDefault(device => device.Devices.Where(a => a.BaseContainerDeviceInstancePath == deviceInstancePath).Any());
+
+        return null;
+    }
+}
+
+public partial class HidHideDevice
+{
+    [JsonProperty("friendlyName")]
+    public string FriendlyName { get; set; }
+
+    [JsonProperty("devices")]
+    public HidHideSubDevice[] Devices { get; set; }
+}
+
+public partial class HidHideSubDevice
+{
+    [JsonProperty("present")]
+    public bool Present { get; set; }
+
+    [JsonProperty("gamingDevice")]
+    public bool GamingDevice { get; set; }
+
+    [JsonProperty("symbolicLink")]
+    public string SymbolicLink { get; set; }
+
+    [JsonProperty("vendor")]
+    public string Vendor { get; set; }
+
+    [JsonProperty("product")]
+    public string Product { get; set; }
+
+    [JsonProperty("serialNumber")]
+    public string SerialNumber { get; set; }
+
+    [JsonProperty("usage")]
+    public string Usage { get; set; }
+
+    [JsonProperty("description")]
+    public string Description { get; set; }
+
+    [JsonProperty("deviceInstancePath")]
+    public string DeviceInstancePath { get; set; }
+
+    [JsonProperty("baseContainerDeviceInstancePath")]
+    public string BaseContainerDeviceInstancePath { get; set; }
+
+    [JsonProperty("baseContainerClassGuid")]
+    public string BaseContainerClassGuid { get; set; }
+
+    [JsonProperty("baseContainerDeviceCount")]
+    public long BaseContainerDeviceCount { get; set; }
 }
