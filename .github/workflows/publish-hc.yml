@@ -44,7 +44,7 @@ jobs:
           nuget-version: "5.x"
       - run: nuget restore ControllerService.sln
 
-      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+      # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.1
 
@@ -55,30 +55,6 @@ jobs:
       # Rebuild ControllerService project
       - name: Rebuild ControllerService Project
         run: msbuild $env:Solution_Name /t:ControllerService:rebuild /p:Configuration="Release"
-
-      # Sets version based off the latest tag in the repo
-      - name: Get latest tag
-        if: ${{ ( inputs.createRelease == false) && ( inputs.tagVersion == '') }}
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-
-      # Set version number for current release
-      - name: Set non-release version number
-        if: ${{ ( inputs.createRelease == false) && ( inputs.tagVersion == '') }}
-        uses: mingjun97/file-regex-replace@v1
-        with:
-          regex: "#define MyAppVersion '\\d+(?:\\.\\d+)+'"
-          replacement: "#define MyAppVersion '${{ steps.previoustag.outputs.tag }}'"
-          include: 'ControllerService\.iss|ControllerService-offline\.iss'
-
-      # Set version number for next release
-      - name: Set release version number
-        if: ${{ ( inputs.createRelease == true) && ( inputs.tagVersion != '') }}
-        uses: mingjun97/file-regex-replace@v1
-        with:
-          regex: "#define MyAppVersion '\\d+(?:\\.\\d+)+'"
-          replacement: "#define MyAppVersion '${{ inputs.tagVersion }}'"
-          include: 'ControllerService\.iss|ControllerService-offline\.iss'
 
       # Create Installers
       - name: Create Installer
