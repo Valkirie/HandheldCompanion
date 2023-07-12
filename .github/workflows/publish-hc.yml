@@ -6,15 +6,29 @@ on:
       - main
   workflow_dispatch:
     inputs:
-      createRelease:
-        description: 'Create a release'
-        default: false
-        required: false
-        type: boolean
-      tagVersion:
-        description: 'Version (Required if createRelease = true)'
+      releaseVersion:
+        description: 'Release version to create'
         required: false
         type: string
+
+defaults:
+  run:
+    shell: pwsh
+
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: none
+  id-token: none
+  issues: none
+  discussions: none
+  packages: none
+  pages: none
+  pull-requests: write
+  repository-projects: none
+  security-events: none
+  statuses: none    
 
 jobs:
   build:
@@ -22,60 +36,95 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: ControllerService.sln
+      SOLUTION_NAME: HandheldCompanion
       INNO_VERSION: 6.2.2
 
     steps:
-      # Checkout project
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      - name: Validate Release
+        if: inputs.releaseVersion != ''
+        run: |
+          if ('${{ inputs.releaseVersion }}' -notmatch '^\d+(?:\.\d+){3}$') {
+            Write-Error "Version ${{ inputs.releaseVersion }} is not valid, please use format Major.Minor.Revision.Build"
+            Exit 1
+          }
+
+          if ('${{ github.ref }}' -ne 'refs/heads/main') {
+            Write-Error "Release may only be created from main"
+            Exit 1
+          }
+
+      - name: Set HandheldCompanion Release Version Number
+        if: inputs.releaseVersion != ''
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          regex: "<Version>\\d+(?:\\.\\d+){3}<\\/Version>"
+          replacement: "<Version>${{ inputs.releaseVersion }}</Version>"
+          include: 'HandheldCompanion.csproj'
+          path: ./HandheldCompanion
+
+      - name: Set ControllerService Release Version Number
+        if: inputs.releaseVersion != ''
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          regex: "\\d+(?:\\.\\d+){3}"
+          replacement: "${{ inputs.releaseVersion }}"
+          include: 'AssemblyInfo1.cs'
+          path: ./ControllerService
+
       - name: Install Innosetup
-        shell: pwsh
         run: |
           choco install innosetup --version=${{ env.INNO_VERSION }} --force
 
-      # Setup NuGet and run Restore
-      - name: NuGet Restore
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: "5.x"
-      - run: nuget restore ControllerService.sln
+      - name: Nuget Restore
+        run: nuget restore ${{ env.SOLUTION_NAME }}.sln
 
-      # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1
-
-      # Build ControllerService solution
       - name: Build Solution
-        run: msbuild $env:Solution_Name /p:Configuration=Release
+        run: dotnet build ${{ env.SOLUTION_NAME }}.sln /p:Configuration=Release
 
-      # Rebuild ControllerService project
-      - name: Rebuild ControllerService Project
-        run: msbuild $env:Solution_Name /t:ControllerService:rebuild /p:Configuration="Release"
+      - name: Rebuild ControllerService
+        run: dotnet build ${{ env.SOLUTION_NAME }}.sln /t:ControllerService:rebuild /p:Configuration=Release
 
-      # Create Installers
       - name: Create Installer
         run: |
-          iscc.exe ControllerService.iss
-        shell: pwsh
+          if ([string]::IsNullOrWhitespace('${{ inputs.releaseVersion }}')) {
+            iscc.exe ${{ env.SOLUTION_NAME }}.iss
+          }
+          else {
+            iscc.exe "/DMyAppVersion=${{ inputs.releaseVersion }}" ${{ env.SOLUTION_NAME }}.iss
+          }
 
       - name: Create Offline Installer
         run: |
-          iscc.exe ControllerService-offline.iss
-        shell: pwsh
+          if ([string]::IsNullOrWhitespace('${{ inputs.releaseVersion }}')) {
+            iscc.exe ${{ env.SOLUTION_NAME }}-offline.iss
+          }
+          else {
+            iscc.exe "/DMyAppVersion=${{ inputs.releaseVersion }}" ${{ env.SOLUTION_NAME }}-offline.iss
+          }
+
+      - name: Create Release Pull Request
+        if: inputs.releaseVersion != ''
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: release/${{ inputs.releaseVersion }}
+          title: 'Release ${{ inputs.releaseVersion }}'
+          commit-message: 'Release ${{ inputs.releaseVersion }}'
+          body: 'Release ${{ inputs.releaseVersion }}. Triggered by ${{ github.actor }}'
           
       - name: Create Release
-        if: ${{ ( inputs.createRelease == true) && ( inputs.tagVersion != '') }}
+        if: inputs.releaseVersion != ''
         uses: softprops/action-gh-release@v0.1.15
         with:
           body_path: .github/workflows/RELEASE_FORMAT.txt
-          tag_name: ${{ inputs.tagVersion }}
-          name: "Build ${{ inputs.tagVersion }}"
+          tag_name: ${{ inputs.releaseVersion }}
+          name: "Build ${{ inputs.releaseVersion }}"
           draft: true
           fail_on_unmatched_files: true
           files: |
-            ./install/HandheldCompanion-${{ inputs.tagVersion }}.exe
-            ./install/HandheldCompanion-${{ inputs.tagVersion }}-offline.exe
+            ./install/HandheldCompanion-${{ inputs.releaseVersion }}.exe
+            ./install/HandheldCompanion-${{ inputs.releaseVersion }}-offline.exe
