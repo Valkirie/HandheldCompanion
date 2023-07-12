@@ -53,10 +53,10 @@ jobs:
             Exit 1
           }
 
-          #if ('${{ github.ref }}' -ne 'refs/heads/main') {
-          #  Write-Error "Release may only be created from main"
-          #  Exit 1
-          #}
+          if ('${{ github.ref }}' -ne 'refs/heads/main') {
+            Write-Error "Release may only be created from main"
+            Exit 1
+          }
 
       - name: Set HandheldCompanion Release Version
         if: inputs.releaseVersion != ''
