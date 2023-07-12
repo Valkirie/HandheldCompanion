@@ -53,12 +53,12 @@ jobs:
             Exit 1
           }
 
-          if ('${{ github.ref }}' -ne 'refs/heads/main') {
-            Write-Error "Release may only be created from main"
-            Exit 1
-          }
+          #if ('${{ github.ref }}' -ne 'refs/heads/main') {
+          #  Write-Error "Release may only be created from main"
+          #  Exit 1
+          #}
 
-      - name: Set HandheldCompanion Release Version Number
+      - name: Set HandheldCompanion Release Version
         if: inputs.releaseVersion != ''
         uses: mingjun97/file-regex-replace@v1
         with:
@@ -67,7 +67,7 @@ jobs:
           include: 'HandheldCompanion.csproj'
           path: ./HandheldCompanion
 
-      - name: Set ControllerService Release Version Number
+      - name: Set ControllerService Release Version
         if: inputs.releaseVersion != ''
         uses: mingjun97/file-regex-replace@v1
         with:
@@ -75,6 +75,14 @@ jobs:
           replacement: "${{ inputs.releaseVersion }}"
           include: 'AssemblyInfo1.cs'
           path: ./ControllerService
+
+      - name: Set Installer Release Version
+        if: inputs.releaseVersion != ''
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          regex: "#define MyAppVersion '\\d+(?:\\.\\d+){3}'"
+          replacement: "#define MyAppVersion '${{ inputs.releaseVersion }}'"
+          include: 'HandheldCompanion-Offline.iss|HandheldCompanion.iss'
 
       - name: Install Innosetup
         run: |
@@ -91,21 +99,11 @@ jobs:
 
       - name: Create Installer
         run: |
-          if ([string]::IsNullOrWhitespace('${{ inputs.releaseVersion }}')) {
-            iscc.exe ${{ env.SOLUTION_NAME }}.iss
-          }
-          else {
-            iscc.exe "/DMyAppVersion=${{ inputs.releaseVersion }}" ${{ env.SOLUTION_NAME }}.iss
-          }
+          iscc.exe ${{ env.SOLUTION_NAME }}.iss
 
       - name: Create Offline Installer
         run: |
-          if ([string]::IsNullOrWhitespace('${{ inputs.releaseVersion }}')) {
-            iscc.exe ${{ env.SOLUTION_NAME }}-offline.iss
-          }
-          else {
-            iscc.exe "/DMyAppVersion=${{ inputs.releaseVersion }}" ${{ env.SOLUTION_NAME }}-offline.iss
-          }
+          iscc.exe ${{ env.SOLUTION_NAME }}-offline.iss
 
       - name: Create Release Pull Request
         if: inputs.releaseVersion != ''
