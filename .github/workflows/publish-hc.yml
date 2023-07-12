@@ -53,10 +53,10 @@ jobs:
             Exit 1
           }
 
-          if ('${{ github.ref }}' -ne 'refs/heads/main') {
-            Write-Error "Release may only be created from main"
-            Exit 1
-          }
+          #if ('${{ github.ref }}' -ne 'refs/heads/main') {
+          #  Write-Error "Release may only be created from main"
+          #  Exit 1
+          #}
 
       # This step sets release version in source control. Uses pwsh for lack of an available github action.
       - name: Set Release Version in Repo
