@@ -62,10 +62,10 @@ jobs:
       - name: Set Release Version in Repo
         if: inputs.releaseVersion != ''
         run: |
-          (Get-Content -Path ./HandheldCompanion.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '0.0.0.0'" | Out-File ./HandheldCompanion.iss
-          (Get-Content -Path ./HandheldCompanion-Offline.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '0.0.0.0'" | Out-File ./HandheldCompanion-Offline.iss
-          (Get-Content -Path ./ControllerService/AssemblyInfo1.cs) -replace '\d+(?:\.\d+){3}', "0.0.0.0" | Out-File ./ControllerService/AssemblyInfo1.cs
-          (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>0.0.0.0</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
+          (Get-Content -Path ./HandheldCompanion.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion.iss
+          (Get-Content -Path ./HandheldCompanion-Offline.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion-Offline.iss
+          (Get-Content -Path ./ControllerService/AssemblyInfo1.cs) -replace '\d+(?:\.\d+){3}', '${{ inputs.releaseVersion }}' | Out-File ./ControllerService/AssemblyInfo1.cs
+          (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>${{ inputs.releaseVersion }}</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
 
       - name: Install Innosetup
         run: |
