@@ -158,33 +158,89 @@
                                     <ColumnDefinition Width="5*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
-                                <ui:SimpleStackPanel Spacing="12">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Version}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Author}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Contributors}" />
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.AboutPage_Description}" />
-                                </ui:SimpleStackPanel>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
 
-                                <ui:SimpleStackPanel Grid.Column="1" Spacing="12">
-                                    <TextBlock
-                                        Name="VersionValue"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.AboutPage_NotApplicable}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="BenjaminLSR" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Nefarius, CasperH20, B-Core, Frank东, Toomy, Staubgeborener, Havner, Shadowflare" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.AboutPage_AboutDescription}"
-                                        TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                <!--  About  -->
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_Version}" />
+                                <TextBlock
+                                    Name="VersionValue"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_NotApplicable}" />
+
+                                <!--  Author  -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_Author}" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="BenjaminLSR" />
+
+                                <!--  Contributors  -->
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_Contributors}" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Nefarius, CasperH20, B-Core, Frank东, Toomy, Staubgeborener, Havner, Shadowflare, Trippy" />
+
+                                <!--  Description  -->
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Margin="0,0,0,5"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_Description}" />
+                                <TextBlock
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Margin="0,0,0,5"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_AboutDescription}" />
+
+                                <!--  Partner  -->
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.AboutPage_Partner}" />
+                                <TextBlock
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}">
+                                    <Hyperlink NavigateUri="https://droix.net/?ref=dxhc" RequestNavigate="Hyperlink_RequestNavigate">
+                                        DroiX
+                                    </Hyperlink></TextBlock>
                             </Grid>
 
                             <!--  Separator  -->
@@ -208,6 +264,11 @@
                                 <TextBlock>
                                     <Hyperlink NavigateUri="https://www.paypal.com/paypalme/BenjaminLSR" RequestNavigate="Hyperlink_RequestNavigate">
                                         Donate
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="https://www.patreon.com/handheldcompanion" RequestNavigate="Hyperlink_RequestNavigate">
+                                        Patreon
                                     </Hyperlink>
                                 </TextBlock>
                             </ui:SimpleStackPanel>

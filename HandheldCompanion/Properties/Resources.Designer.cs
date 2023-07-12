@@ -151,6 +151,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Partner.
+        /// </summary>
+        public static string AboutPage_Partner {
+            get {
+                return ResourceManager.GetString("AboutPage_Partner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Related Links.
         /// </summary>
         public static string AboutPage_RelatedLinks {
