@@ -80,7 +80,7 @@ public static class CommonUtils
         }
     }
 
-    public static bool IsFileWritable(string filePath)
+    public static bool IsFileWritable(string filePath, bool deleteMe = false)
     {
         try
         {
@@ -98,7 +98,9 @@ public static class CommonUtils
                 CanWrite = fs.CanWrite;
             }
 
-            File.Delete(filePath);
+            if (deleteMe)
+                File.Delete(filePath);
+
             return CanWrite;
         }
         catch

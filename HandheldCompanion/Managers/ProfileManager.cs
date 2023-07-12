@@ -71,6 +71,7 @@ public static class ProfileManager
                 Enabled = false,
                 Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
+                TDPOverrideValues = MainWindow.CurrentDevice.nTDP,
                 LayoutEnabled = true
             };
 
@@ -221,7 +222,9 @@ public static class ProfileManager
             if (back is not null)
             {
                 var backProfile = GetProfileFromPath(back.Path, false);
-                Discarded?.Invoke(backProfile);
+
+                if (backProfile != profile)
+                    Discarded?.Invoke(backProfile);
             }
 
             ApplyProfile(profile);
@@ -378,7 +381,7 @@ public static class ProfileManager
         // prepare for writing
         var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
         if (CommonUtils.IsFileWritable(profilePath))
-            File.WriteAllTextAsync(profilePath, jsonString);
+            File.WriteAllText(profilePath, jsonString);
     }
 
     private static void SanitizeProfile(Profile profile)

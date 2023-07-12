@@ -216,9 +216,6 @@
   <data name="Enum.Output.RightStick" xml:space="preserve">
     <value>Rechter Joystick</value>
   </data>
-  <data name="Enum.ProfileErrorCode.IsDefault" xml:space="preserve">
-    <value>Dies ist Ihr Standard-Controller-Profil. Dieses Profil wird für alle Ihre Anwendungen verwendet, die kein spezifisches Profil haben. Einige Optionen, die eine ausführbare Datei erfordern, sind möglicherweise deaktiviert.</value>
-  </data>
   <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
     <value>Oops. Es scheint, dass dieses Profil ausgeführt wird. Einige Optionen, die eine ausführbare Datei erfordern, sind möglicherweise deaktiviert.</value>
   </data>
@@ -259,9 +256,72 @@
     <value>Dieser Eingang funktioniert wie ein Joystick, der für die Steuerung eines Lenkrads oder eines Rennspiels optimiert ist.</value>
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>Diese Eingabe funktioniert wie ein Joystick, der für die Steuerung einer First- oder Third-Person-Kamera optimiert ist.</value>
+    <value>Diese Eingabe funktioniert wie ein Joystick, der für die Steuerung einer First- oder Third-Person-Kamera optimiert ist</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
     <value>Handheld Companion</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
+    <value>Dies ist Ihr Standard-Controller-Profil. Dieses Profil wird für alle Ihre Anwendungen verwendet, die kein spezifisches Profil haben. Einige Optionen, die eine ausführbare Datei erfordern, sind möglicherweise deaktiviert.</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+    <value>M1 / M2</value>
   </data>
 </root>

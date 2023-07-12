@@ -67,11 +67,27 @@
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             Glyph="&#xE7EE;" />
 
-                        <TextBlock
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{x:Static resx:Resources.ProfilesPage_EnableProfile}" />
+                            <DockPanel>
+                                <TextBlock
+                                    Name="CurrentProfile"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Current profile:"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    Name="CurrentProfileName"
+                                    Margin="2,0,0,0"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Default"
+                                    TextWrapping="Wrap" />
+                            </DockPanel>
+                        </ui:SimpleStackPanel>
                     </DockPanel>
 
                     <ui:ToggleSwitch

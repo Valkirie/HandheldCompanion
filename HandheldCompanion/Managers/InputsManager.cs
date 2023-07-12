@@ -137,9 +137,6 @@ public static class InputsManager
             currentChord.OutputKeys.Count == 0)
             return false;
 
-        // reset index
-        KeyIndex = 0;
-
         // stop timers on KeyUp
         if (IsKeyUp)
         {

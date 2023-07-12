@@ -921,6 +921,9 @@ public partial class MainWindow : GamepadWindow
 
     private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
+        if (!e.NewFocus.GetType().IsSubclassOf(typeof(Control)))
+            return;
+
         GamepadFocusManagerOnFocused((Control)e.NewFocus);
     }
 

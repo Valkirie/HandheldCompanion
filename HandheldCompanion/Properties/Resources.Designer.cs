@@ -241,6 +241,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A,B,X,Y.
+        /// </summary>
+        public static string ButtonsPage_ABXY {
+            get {
+                return ResourceManager.GetString("ButtonsPage_ABXY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BACK GRIPS.
+        /// </summary>
+        public static string ButtonsPage_Back_Grips {
+            get {
+                return ResourceManager.GetString("ButtonsPage_Back_Grips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BUMPERS.
+        /// </summary>
+        public static string ButtonsPage_Bumpers {
+            get {
+                return ResourceManager.GetString("ButtonsPage_Bumpers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MENU.
+        /// </summary>
+        public static string ButtonsPage_Menu {
+            get {
+                return ResourceManager.GetString("ButtonsPage_Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OEM.
+        /// </summary>
+        public static string ButtonsPage_OEM {
+            get {
+                return ResourceManager.GetString("ButtonsPage_OEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] chord_neptune {
@@ -391,6 +436,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_VibrationStrengthExpl {
             get {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DIRECTIONAL PAD.
+        /// </summary>
+        public static string DPadPage_DPad {
+            get {
+                return ResourceManager.GetString("DPadPage_DPad", resourceCulture);
             }
         }
         
@@ -879,6 +933,42 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_suspendResumeTaskDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_suspendResumeTaskDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LEFT JOYSTICK.
+        /// </summary>
+        public static string JoystickPage_Joystick_Left {
+            get {
+                return ResourceManager.GetString("JoystickPage_Joystick_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LEFT JOYSTICK BUTTONS.
+        /// </summary>
+        public static string JoystickPage_Joystick_Left_Buttons {
+            get {
+                return ResourceManager.GetString("JoystickPage_Joystick_Left_Buttons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIGHT JOYSTICK.
+        /// </summary>
+        public static string JoystickPage_Joystick_Right {
+            get {
+                return ResourceManager.GetString("JoystickPage_Joystick_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIGHT JOYSTICK BUTTONS.
+        /// </summary>
+        public static string JoystickPage_Joystick_Right_Buttons {
+            get {
+                return ResourceManager.GetString("JoystickPage_Joystick_Right_Buttons", resourceCulture);
             }
         }
         
@@ -2297,7 +2387,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Properties.Resources.ControllerPage_Disconnect.
+        ///   Looks up a localized string similar to Disconnect.
         /// </summary>
         public static string Properties_Resources_ControllerPage_Disconnect {
             get {
@@ -3391,6 +3481,78 @@ namespace HandheldCompanion.Properties {
         public static string ToastNewControllerEx {
             get {
                 return ResourceManager.GetString("ToastNewControllerEx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LEFT TRACKPAD.
+        /// </summary>
+        public static string TrackPadsPage_Trackpad_Left {
+            get {
+                return ResourceManager.GetString("TrackPadsPage_Trackpad_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LEFT TRACKPAD BUTTONS.
+        /// </summary>
+        public static string TrackPadsPage_Trackpad_Left_Buttons {
+            get {
+                return ResourceManager.GetString("TrackPadsPage_Trackpad_Left_Buttons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIGHT TRACKPAD.
+        /// </summary>
+        public static string TrackPadsPage_Trackpad_Right {
+            get {
+                return ResourceManager.GetString("TrackPadsPage_Trackpad_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIGHT TRACKPAD BUTTONS.
+        /// </summary>
+        public static string TrackPadsPage_Trackpad_Right_Buttons {
+            get {
+                return ResourceManager.GetString("TrackPadsPage_Trackpad_Right_Buttons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LEFT TRIGGER.
+        /// </summary>
+        public static string TriggersPage_Trigger_Left {
+            get {
+                return ResourceManager.GetString("TriggersPage_Trigger_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LEFT TRIGGER BUTTONS.
+        /// </summary>
+        public static string TriggersPage_Trigger_Left_Button {
+            get {
+                return ResourceManager.GetString("TriggersPage_Trigger_Left_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIGHT TRIGGER.
+        /// </summary>
+        public static string TriggersPage_Trigger_Right {
+            get {
+                return ResourceManager.GetString("TriggersPage_Trigger_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIGHT TRIGGER BUTTONS.
+        /// </summary>
+        public static string TriggersPage_Trigger_Right_Button {
+            get {
+                return ResourceManager.GetString("TriggersPage_Trigger_Right_Button", resourceCulture);
             }
         }
         

@@ -82,7 +82,6 @@ public class DSUServer
 
     private ControllerState Inputs = new();
 
-    public string ip;
     private int listInd;
     private readonly PhysicalAddress PadMacAddress;
 
@@ -99,11 +98,7 @@ public class DSUServer
 
     public DSUServer(string ipString, int port)
     {
-        ip = ipString;
         this.port = port;
-
-        if (!CommonUtils.IsTextAValidIPAddress(ip))
-            ip = "127.0.0.1";
 
         PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
         portInfoGet = GetPadDetailForIdx;
@@ -431,12 +426,11 @@ public class DSUServer
         udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         try
         {
-            var udpListenIPAddress = IPAddress.Parse(ip);
-            udpSock.Bind(new IPEndPoint(udpListenIPAddress, port));
+            udpSock.Bind(new IPEndPoint(IPAddress.Any, port));
         }
         catch (SocketException)
         {
-            LogManager.LogCritical("{0} couldn't listen to ip: {1} port: {2}", ToString(), ip, port);
+            LogManager.LogCritical("{0} couldn't listen to port: {1}", ToString(), port);
             Stop();
             return running;
         }
@@ -451,7 +445,7 @@ public class DSUServer
 
         StartReceive();
 
-        LogManager.LogInformation("{0} has started. Listening to ip: {1} port: {2}", ToString(), ip, port);
+        LogManager.LogInformation("{0} has started. Listening to port: {1}", ToString(), port);
         Started?.Invoke(this);
 
         return running;
