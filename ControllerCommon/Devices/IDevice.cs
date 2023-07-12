@@ -222,9 +222,12 @@ public abstract class IDevice
                                 device = new OneXPlayerMiniPro();
                                 break;
                         }
-
                         break;
                     }
+
+                    case "ONEXPLAYER mini A07":
+                        device = new OneXPlayerMiniAMD();
+                        break;
                 }
             }
                 break;
