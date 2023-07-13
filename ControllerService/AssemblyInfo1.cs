@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Pour modifier les informations
@@ -21,5 +21,5 @@
 //      Numéro de build
 //      Révision
 //
-[assembly: AssemblyVersion("0.16.2.5")]
-[assembly: AssemblyFileVersion("0.16.2.5")]
+[assembly: AssemblyVersion("0.16.2.7")]
+[assembly: AssemblyFileVersion("0.16.2.7")]
