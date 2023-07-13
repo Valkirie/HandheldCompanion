@@ -58,31 +58,14 @@ jobs:
             Exit 1
           }
 
-      - name: Set HandheldCompanion Release Version
+      # This step sets release version in source control. Uses pwsh for lack of an available github action.
+      - name: Set Release Version in Repo
         if: inputs.releaseVersion != ''
-        uses: mingjun97/file-regex-replace@v1
-        with:
-          regex: "<Version>\\d+(?:\\.\\d+){3}<\\/Version>"
-          replacement: "<Version>${{ inputs.releaseVersion }}</Version>"
-          include: 'HandheldCompanion.csproj'
-          path: ./HandheldCompanion
-
-      - name: Set ControllerService Release Version
-        if: inputs.releaseVersion != ''
-        uses: mingjun97/file-regex-replace@v1
-        with:
-          regex: "\\d+(?:\\.\\d+){3}"
-          replacement: "${{ inputs.releaseVersion }}"
-          include: 'AssemblyInfo1.cs'
-          path: ./ControllerService
-
-      - name: Set Installer Release Version
-        if: inputs.releaseVersion != ''
-        uses: mingjun97/file-regex-replace@v1
-        with:
-          regex: "#define MyAppVersion '\\d+(?:\\.\\d+){3}'"
-          replacement: "#define MyAppVersion '${{ inputs.releaseVersion }}'"
-          include: 'HandheldCompanion-Offline.iss|HandheldCompanion.iss'
+        run: |
+          (Get-Content -Path ./HandheldCompanion.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion.iss
+          (Get-Content -Path ./HandheldCompanion-Offline.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion-Offline.iss
+          (Get-Content -Path ./ControllerService/AssemblyInfo1.cs) -replace '\d+(?:\.\d+){3}', '${{ inputs.releaseVersion }}' | Out-File ./ControllerService/AssemblyInfo1.cs
+          (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>${{ inputs.releaseVersion }}</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
 
       - name: Install Innosetup
         run: |
