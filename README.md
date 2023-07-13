@@ -49,6 +49,8 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - English
 - French
 - German
+- Japanese
+- Portuguese (Brazilian)
 - Chinese (Simplified)
 - Chinese (Traditional)
 
