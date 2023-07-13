@@ -142,6 +142,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manufacturer.
+        /// </summary>
+        public static string AboutPage_Manufacturer {
+            get {
+                return ResourceManager.GetString("AboutPage_Manufacturer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
         public static string AboutPage_NotApplicable {
@@ -156,6 +165,15 @@ namespace HandheldCompanion.Properties {
         public static string AboutPage_Partner {
             get {
                 return ResourceManager.GetString("AboutPage_Partner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Product name.
+        /// </summary>
+        public static string AboutPage_ProductName {
+            get {
+                return ResourceManager.GetString("AboutPage_ProductName", resourceCulture);
             }
         }
         
@@ -373,6 +391,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_InputDevices {
             get {
                 return ResourceManager.GetString("ControllerPage_InputDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No physical controller connected.
+        /// </summary>
+        public static string ControllerPage_NoPhysicalControllerConnected {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerConnected", resourceCulture);
             }
         }
         
