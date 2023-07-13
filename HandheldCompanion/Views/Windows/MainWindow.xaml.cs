@@ -80,6 +80,7 @@ public partial class MainWindow : GamepadWindow
     private string preNavItemTag;
 
     private WindowState prevWindowState;
+    private SplashScreen splashScreen;
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -154,8 +155,8 @@ public partial class MainWindow : GamepadWindow
         if (SettingsManager.GetBoolean("FirstStart"))
         {
             // initialize splash screen on first start only
-            SplashScreen splashScreen = new SplashScreen(CurrentAssembly, "Resources/icon.png");
-            splashScreen.Show(true, true);
+            splashScreen = new SplashScreen();
+            splashScreen.Show();
 
             // handle a few edge-cases on first start
             if (CurrentDevice.GetType() == typeof(SteamDeck))
@@ -515,6 +516,10 @@ public partial class MainWindow : GamepadWindow
     {
         if (IsReady)
             return;
+
+        // hide splash screen
+        if (splashScreen is not null)
+            splashScreen.Hide();
 
         // home page has loaded, display main window
         WindowState = SettingsManager.GetBoolean("StartMinimized")
@@ -921,6 +926,9 @@ public partial class MainWindow : GamepadWindow
 
     private void GamepadWindow_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
+        if (!e.NewFocus.GetType().IsSubclassOf(typeof(Control)))
+            return;
+
         GamepadFocusManagerOnFocused((Control)e.NewFocus);
     }
 

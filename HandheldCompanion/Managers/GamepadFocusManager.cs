@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -74,7 +75,15 @@ namespace HandheldCompanion.Managers
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
             // start listening to inputs
-            ControllerManager.InputsUpdated += InputsUpdated;
+            switch(SettingsManager.GetBoolean("DesktopProfileOnStart"))
+            {
+                case true:
+                    ControllerManager.InputsUpdated -= InputsUpdated;
+                    break;
+                case false:
+                    ControllerManager.InputsUpdated += InputsUpdated;
+                    break;
+            }
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -246,7 +255,10 @@ namespace HandheldCompanion.Managers
 
         public Control FocusedElement(GamepadWindow window)
         {
-            var keyboardFocused = Keyboard.FocusedElement;
+            IInputElement? keyboardFocused = Keyboard.FocusedElement;
+
+            if (!keyboardFocused.GetType().IsSubclassOf(typeof(Control)))
+                keyboardFocused = null;
 
             if (keyboardFocused is null)
             {

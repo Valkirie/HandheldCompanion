@@ -1,73 +1,128 @@
-name: Build and Publish Handheld Companion
+name: Build and Release HandheldCompanion
 
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Release version to create'
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: pwsh
+
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: none
+  id-token: none
+  issues: none
+  discussions: none
+  packages: none
+  pages: none
+  pull-requests: write
+  repository-projects: none
+  security-events: none
+  statuses: none    
 
 jobs:
-
   build:
-    name: Build (Release)
-    runs-on: windows-latest 
+    name: Build and Release
+    runs-on: windows-latest
 
     env:
-      Solution_Name: ControllerService.sln
-      INNO_VERSION: 6.2.1
+      SOLUTION_NAME: HandheldCompanion
+      INNO_VERSION: 6.2.2
 
     steps:
-    
-    # Checkout project
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    # Install the .NET Core workload
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-    
-    # Setup NuGet and run Restore
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v1
-      with:
-        nuget-version: '5.x'
-    - run: nuget restore ControllerService.sln
+      - name: Validate Release
+        if: inputs.releaseVersion != ''
+        run: |
+          if ('${{ inputs.releaseVersion }}' -notmatch '^\d+(?:\.\d+){3}$') {
+            Write-Error "Version ${{ inputs.releaseVersion }} is not valid, please use format Major.Minor.Revision.Build"
+            Exit 1
+          }
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+          if ('${{ github.ref }}' -ne 'refs/heads/main') {
+            Write-Error "Release may only be created from main"
+            Exit 1
+          }
 
-    # Build ControllerService solution
-    - name: Build Entire Solution
-      run: msbuild $env:Solution_Name /p:Configuration=Release
-      
-    # Rebuild ControllerService project
-    - name: Rebuild ControllerService Project
-      run: msbuild $env:Solution_Name /t:ControllerService:rebuild /p:Configuration="Release"
-    
-    # Download Inno Setup
-    - name: Download Inno Setup installer
-      run: curl -L -o ./installer.exe http://files.jrsoftware.org/is/6/innosetup-${{ env.INNO_VERSION }}.exe      
-      
-    # Install Inno Setup
-    - name: Install Inno Setup
-      run: ./installer.exe /verysilent /allusers /dir=inst
-      
-    # Create Installers
-    - name: Create Installer
-      run: |
-          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService.iss"
-      shell: cmd
-      
-    - name: Create Offline Installer
-      run: |
-          "%programfiles(x86)%\Inno Setup 6\iscc.exe" "ControllerService-offline.iss"
-      shell: cmd
-    
-    # Upload install file artifacts
-    - name: Upload Installs Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: install-files
-        path: ./install
+      - name: Set HandheldCompanion Release Version
+        if: inputs.releaseVersion != ''
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          regex: "<Version>\\d+(?:\\.\\d+){3}<\\/Version>"
+          replacement: "<Version>${{ inputs.releaseVersion }}</Version>"
+          include: 'HandheldCompanion.csproj'
+          path: ./HandheldCompanion
+
+      - name: Set ControllerService Release Version
+        if: inputs.releaseVersion != ''
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          regex: "\\d+(?:\\.\\d+){3}"
+          replacement: "${{ inputs.releaseVersion }}"
+          include: 'AssemblyInfo1.cs'
+          path: ./ControllerService
+
+      - name: Set Installer Release Version
+        if: inputs.releaseVersion != ''
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          regex: "#define MyAppVersion '\\d+(?:\\.\\d+){3}'"
+          replacement: "#define MyAppVersion '${{ inputs.releaseVersion }}'"
+          include: 'HandheldCompanion-Offline.iss|HandheldCompanion.iss'
+
+      - name: Install Innosetup
+        run: |
+          choco install innosetup --version=${{ env.INNO_VERSION }} --force
+
+      - name: Nuget Restore
+        run: nuget restore ${{ env.SOLUTION_NAME }}.sln
+
+      - name: Build Solution
+        run: dotnet build ${{ env.SOLUTION_NAME }}.sln /p:Configuration=Release
+
+      - name: Rebuild ControllerService
+        run: dotnet build ${{ env.SOLUTION_NAME }}.sln /t:ControllerService:rebuild /p:Configuration=Release
+
+      - name: Create Installer
+        run: |
+          iscc.exe ${{ env.SOLUTION_NAME }}.iss
+
+      - name: Create Offline Installer
+        run: |
+          iscc.exe ${{ env.SOLUTION_NAME }}-offline.iss
+
+      - name: Create Release Pull Request
+        if: inputs.releaseVersion != ''
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: release/${{ inputs.releaseVersion }}
+          title: 'Release ${{ inputs.releaseVersion }}'
+          commit-message: 'Release ${{ inputs.releaseVersion }}'
+          body: 'Release ${{ inputs.releaseVersion }}. Triggered by ${{ github.actor }}'
+          
+      - name: Create Release
+        if: inputs.releaseVersion != ''
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          body_path: .github/workflows/RELEASE_FORMAT.txt
+          tag_name: ${{ inputs.releaseVersion }}
+          name: "Build ${{ inputs.releaseVersion }}"
+          draft: true
+          fail_on_unmatched_files: true
+          files: |
+            ./install/HandheldCompanion-${{ inputs.releaseVersion }}.exe
+            ./install/HandheldCompanion-${{ inputs.releaseVersion }}-offline.exe

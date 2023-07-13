@@ -287,6 +287,9 @@ public partial class QuickProfilesPage : Page
                 // set lock
                 profileLock = true;
 
+                // update profile name
+                CurrentProfileName.Text = currentProfile.Name;
+
                 UMCToggle.IsOn = currentProfile.MotionEnabled;
                 cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
                 cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;

@@ -816,7 +816,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Yes</value>
   </data>
   <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
-    <value>Properties.Resources.ControllerPage_Disconnect</value>
+    <value>Disconnect</value>
   </data>
   <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
     <value>Manual GPU Clock Control</value>
@@ -1243,5 +1243,62 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="SettingsPage_ThemeDefault" xml:space="preserve">
     <value>Use system setting</value>
+  </data>
+  <data name="ButtonsPage_ABXY" xml:space="preserve">
+    <value>A,B,X,Y</value>
+  </data>
+  <data name="ButtonsPage_Back_Grips" xml:space="preserve">
+    <value>BACK GRIPS</value>
+  </data>
+  <data name="ButtonsPage_Bumpers" xml:space="preserve">
+    <value>BUMPERS</value>
+  </data>
+  <data name="ButtonsPage_Menu" xml:space="preserve">
+    <value>MENU</value>
+  </data>
+  <data name="ButtonsPage_OEM" xml:space="preserve">
+    <value>OEM</value>
+  </data>
+  <data name="DPadPage_DPad" xml:space="preserve">
+    <value>DIRECTIONAL PAD</value>
+  </data>
+  <data name="JoystickPage_Joystick_Left" xml:space="preserve">
+    <value>LEFT JOYSTICK</value>
+  </data>
+  <data name="JoystickPage_Joystick_Left_Buttons" xml:space="preserve">
+    <value>LEFT JOYSTICK BUTTONS</value>
+  </data>
+  <data name="JoystickPage_Joystick_Right" xml:space="preserve">
+    <value>RIGHT JOYSTICK</value>
+  </data>
+  <data name="JoystickPage_Joystick_Right_Buttons" xml:space="preserve">
+    <value>RIGHT JOYSTICK BUTTONS</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Left" xml:space="preserve">
+    <value>LEFT TRACKPAD</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Left_Buttons" xml:space="preserve">
+    <value>LEFT TRACKPAD BUTTONS</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Right" xml:space="preserve">
+    <value>RIGHT TRACKPAD</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Right_Buttons" xml:space="preserve">
+    <value>RIGHT TRACKPAD BUTTONS</value>
+  </data>
+  <data name="TriggersPage_Trigger_Left" xml:space="preserve">
+    <value>LEFT TRIGGER</value>
+  </data>
+  <data name="TriggersPage_Trigger_Left_Button" xml:space="preserve">
+    <value>LEFT TRIGGER BUTTONS</value>
+  </data>
+  <data name="TriggersPage_Trigger_Right" xml:space="preserve">
+    <value>RIGHT TRIGGER</value>
+  </data>
+  <data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
+    <value>RIGHT TRIGGER BUTTONS</value>
+  </data>
+  <data name="AboutPage_Partner" xml:space="preserve">
+    <value>Partner</value>
   </data>
 </root>

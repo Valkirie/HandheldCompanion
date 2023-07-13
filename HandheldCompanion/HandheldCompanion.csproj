@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.16.2.4</Version>
+    <Version>0.16.2.5</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -72,10 +72,10 @@
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_rog_ally.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
+    <None Remove="Resources\droix.png" />
     <None Remove="Resources\icon.png" />
     <None Remove="Resources\MainBody.mtl" />
     <None Remove="Resources\MainBody.obj" />
-    <None Remove="Resources\overlay_back.png" />
     <None Remove="Resources\Screen.mtl" />
     <None Remove="Resources\Screen.obj" />
     <None Remove="Resources\seguiemj.ttf" />
@@ -120,8 +120,8 @@
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\device_rog_ally.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />
+    <Resource Include="Resources\droix.png" />
     <Resource Include="Resources\icon.png" />
-    <Resource Include="Resources\overlay_back.png" />
   </ItemGroup>
 
   <ItemGroup>

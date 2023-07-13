@@ -338,6 +338,12 @@ public abstract class IController
         // set flag
         IsPowerCycling = true;
 
+        // get HidHideDevice
+        HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
+        if (hideDevice is not null)
+            foreach(HidHideSubDevice subDevice in hideDevice.Devices)
+                HidHide.HidePath(subDevice.DeviceInstancePath);
+
         HidHide.HidePath(Details.deviceInstanceId);
         HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
@@ -353,6 +359,12 @@ public abstract class IController
 
         // set flag
         IsPowerCycling = true;
+
+        // get HidHideDevice
+        HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
+        if (hideDevice is not null)
+            foreach (HidHideSubDevice subDevice in hideDevice.Devices)
+                HidHide.UnhidePath(subDevice.DeviceInstancePath);
 
         HidHide.UnhidePath(Details.deviceInstanceId);
         HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
