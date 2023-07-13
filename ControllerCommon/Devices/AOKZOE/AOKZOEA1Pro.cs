@@ -19,22 +19,4 @@ public class AOKZOEA1Pro : AOKZOEA1
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2700 };
     }
-
-    public override bool Open()
-    {
-        var success = base.Open();
-        if (!success)
-            return false;
-
-        // allow AOKZOE A1 Pro button to pass key inputs for Turbo button
-        LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM3);
-        return ECRamDirectWrite(0xF1, ECDetails, 0x40);
-    }
-
-    public override void Close()
-    {
-        LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM3);
-        ECRamDirectWrite(0xF1, ECDetails, 0x00);
-        base.Close();
-    }
 }
