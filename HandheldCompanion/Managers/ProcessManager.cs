@@ -424,7 +424,7 @@ public static class ProcessManager
             case "asmultidisplaycontrol.exe":
             case "lockapp.exe":
             case "asusosd.exe":
-            case " gamepadcustomizeosd":
+            case "gamepadcustomizeosd":
                 return ProcessFilter.Desktop;
 
             default:
