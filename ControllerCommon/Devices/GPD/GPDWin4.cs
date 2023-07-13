@@ -28,7 +28,7 @@ public class GPDWin4 : IDevice
             AddressDuty = 0xC880,
             AddressRegistry = 0x2E,
             AddressData = 0x2F,
-            ValueMin = 1,
+            ValueMin = 0,
             ValueMax = 127
         };
 

@@ -98,6 +98,9 @@ public abstract class IDevice
     // mininum delay before trying to emulate a virtual controller on system resume (milliseconds)
     public short ResumeDelay = 10000;
 
+    // key press delay to use for certain scenarios
+    public short KeyPressDelay = 20;
+
     protected USBDeviceInfo sensor = new();
 
     public IDevice()
@@ -353,6 +356,16 @@ public abstract class IDevice
     public virtual bool IsReady()
     {
         return true;
+    }
+
+    public virtual void SetKeyPressDelay(HIDmode controllerMode)
+    {
+        switch (controllerMode)
+        {
+            default:
+                KeyPressDelay = 20;
+                break;
+        }
     }
 
     public void PullSensors()
