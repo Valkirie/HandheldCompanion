@@ -20,6 +20,7 @@ using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
+using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
@@ -381,6 +382,7 @@ public partial class MainWindow : GamepadWindow
 
         // handle controllerPage events
         controllerPage.HIDchanged += HID => { overlayModel.UpdateHIDMode(HID); };
+        controllerPage.HIDchanged += ControllerPage_HIDchanged;
     }
 
     private void loadWindows()
@@ -528,6 +530,11 @@ public partial class MainWindow : GamepadWindow
         prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
 
         IsReady = true;
+    }
+
+    private void ControllerPage_HIDchanged(HIDmode controllerMode)
+    {
+        CurrentDevice.SetKeyPressDelay(controllerMode);
     }
 
     public void UpdateSettings(Dictionary<string, string> args)
