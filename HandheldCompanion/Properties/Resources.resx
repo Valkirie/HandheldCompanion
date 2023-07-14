@@ -1448,4 +1448,25 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
     <value>Minimal</value>
   </data>
+  <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
+    <value>Change the virtual controller layout</value>
+  </data>
+  <data name="ProfilesPage_CPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ProfilesPage_EPP" xml:space="preserve">
+    <value>Energy performance preference (EPP)</value>
+  </data>
+  <data name="ProfilesPage_EPPBalance" xml:space="preserve">
+    <value>CPU/GPU power balance</value>
+  </data>
+  <data name="ProfilesPage_EPPDesc" xml:space="preserve">
+    <value>Specifies power distribution policy between CPU and GPU</value>
+  </data>
+  <data name="ProfilesPage_GPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
+    <value>Power limit target</value>
+  </data>
 </root>

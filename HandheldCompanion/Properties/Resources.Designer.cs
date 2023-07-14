@@ -2206,6 +2206,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change the virtual controller layout.
+        /// </summary>
+        public static string ProfilesPage_ControllerLayoutDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ControllerLayoutDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller settings.
         /// </summary>
         public static string ProfilesPage_ControllerSettings {
@@ -2220,6 +2229,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_ControllerSettingsDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_ControllerSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CPU.
+        /// </summary>
+        public static string ProfilesPage_CPU {
+            get {
+                return ResourceManager.GetString("ProfilesPage_CPU", resourceCulture);
             }
         }
         
@@ -2269,6 +2287,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Energy performance preference (EPP).
+        /// </summary>
+        public static string ProfilesPage_EPP {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EPP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CPU/GPU power balance.
+        /// </summary>
+        public static string ProfilesPage_EPPBalance {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EPPBalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specifies power distribution policy between CPU and GPU.
+        /// </summary>
+        public static string ProfilesPage_EPPDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EPPDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Framerate limit.
         /// </summary>
         public static string ProfilesPage_FramerateLimit {
@@ -2301,6 +2346,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_GlobalSettingsDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_GlobalSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPU.
+        /// </summary>
+        public static string ProfilesPage_GPU {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPU", resourceCulture);
             }
         }
         
@@ -2436,6 +2490,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_OK {
             get {
                 return ResourceManager.GetString("ProfilesPage_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power limit target.
+        /// </summary>
+        public static string ProfilesPage_PowerLimitTarget {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerLimitTarget", resourceCulture);
             }
         }
         
