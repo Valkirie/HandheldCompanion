@@ -58,10 +58,10 @@
                             VerticalAlignment="Center"
                             SelectionChanged="OnScreenDisplayLevel_SelectionChanged">
 
-                            <Label Content="Disabled" />
-                            <Label Content="Minimal" />
-                            <Label Content="Extended" />
-                            <Label Content="Full" />
+                            <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Disabled}" />
+                            <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />
+                            <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Extended}" />
+                            <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Full}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -102,7 +102,7 @@
                                 VerticalAlignment="Center"
                                 Text="{Binding Value, ElementName=SliderOnScreenUpdateRate, Mode=OneWay}"
                                 TextAlignment="Center" />
-                            <TextBlock VerticalAlignment="Center" Text="ms" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.OverlayPage_Millisecond}" />
                             <Slider
                                 x:Name="SliderOnScreenUpdateRate"
                                 Margin="6,0,0,0"

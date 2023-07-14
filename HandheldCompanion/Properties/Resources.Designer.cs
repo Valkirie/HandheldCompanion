@@ -1720,6 +1720,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ms.
+        /// </summary>
+        public static string OverlayPage_Millisecond {
+            get {
+                return ResourceManager.GetString("OverlayPage_Millisecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Motion.
         /// </summary>
         public static string OverlayPage_MotionActivated {
@@ -1797,6 +1806,42 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_OverlayDisplayLevel {
             get {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Disabled {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extended.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Extended {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Extended", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Full {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Full", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimal.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Minimal {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Minimal", resourceCulture);
             }
         }
         
