@@ -213,6 +213,7 @@ public class PerformanceManager : Manager
         else if (ADLXBackend.GetRSRState() == 1)
         {
             ADLXBackend.SetRSR(false);
+            ADLXBackend.SetRSRSharpness(20);
         }
     }
 
