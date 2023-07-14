@@ -29,7 +29,7 @@
         <ui:NavigationView.MenuItems>
             <ui:NavigationViewItem
                 Name="navButtons"
-                Content="Buttons"
+                Content="{x:Static resx:Resources.LayoutPage_Buttons}"
                 Tag="ButtonsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF093;" />
@@ -38,7 +38,7 @@
 
             <ui:NavigationViewItem
                 Name="navDpad"
-                Content="Dpad"
+                Content="{x:Static resx:Resources.LayoutPage_Dpad}"
                 Tag="DpadPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10E;" />
@@ -47,7 +47,7 @@
 
             <ui:NavigationViewItem
                 Name="navTriggers"
-                Content="Triggers"
+                Content="{x:Static resx:Resources.LayoutPage_Triggers}"
                 Tag="TriggersPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF10A;" />
@@ -56,7 +56,7 @@
 
             <ui:NavigationViewItem
                 Name="navJoysticks"
-                Content="Joysticks"
+                Content="{x:Static resx:Resources.LayoutPage_Joysticks}"
                 Tag="JoysticksPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF108;" />
@@ -65,7 +65,7 @@
 
             <ui:NavigationViewItem
                 Name="navTrackpads"
-                Content="Trackpads"
+                Content="{x:Static resx:Resources.LayoutPage_Trackpads}"
                 Tag="TrackpadsPage"
                 Visibility="Collapsed">
                 <ui:NavigationViewItem.Icon>
@@ -75,7 +75,7 @@
 
             <ui:NavigationViewItem
                 Name="navGyro"
-                Content="Gyro"
+                Content="{x:Static resx:Resources.LayoutPage_Gyro}"
                 IsEnabled="False"
                 Tag="GyroPage"
                 Visibility="Collapsed">
@@ -94,7 +94,7 @@
                     d:Visibility="Visible"
                     Spacing="12">
 
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Layout template picker" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_TemplatePicker}" />
                     <ComboBox
                         Name="cB_Layouts"
                         HorizontalAlignment="Stretch"
@@ -104,19 +104,24 @@
                         SizeChanged="cB_Layouts_SizeChanged">
 
                         <!--  TEMPLATES  -->
-                        <ComboBoxItem Name="cB_LayoutsSplitterTemplates" IsEnabled="false">TEMPLATES</ComboBoxItem>
+                        <ComboBoxItem
+                            Name="cB_LayoutsSplitterTemplates"
+                            Content="{x:Static resx:Resources.LayoutPage_Templates}"
+                            IsEnabled="false" />
                         <!--  COMMUNITY  -->
-                        <ComboBoxItem Name="cB_LayoutsSplitterCommunity" IsEnabled="false">COMMUNITY</ComboBoxItem>
+                        <ComboBoxItem
+                            Name="cB_LayoutsSplitterCommunity"
+                            Content="{x:Static resx:Resources.LayoutPage_Community}"
+                            IsEnabled="false" />
                     </ComboBox>
 
                     <Grid>
                         <CheckBox
                             Name="CheckBoxDeviceLayouts"
                             Checked="CheckBoxDeviceLayouts_Checked"
+                            Content="{x:Static resx:Resources.LayoutPage_ShowCurrentControllerTemplates}"
                             IsChecked="True"
-                            Unchecked="CheckBoxDeviceLayouts_Checked">
-                            Show current controller templates only
-                        </CheckBox>
+                            Unchecked="CheckBoxDeviceLayouts_Checked" />
 
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Right"
@@ -127,10 +132,9 @@
                             <Button
                                 Name="ButtonApplyLayout"
                                 Click="ButtonApplyLayout_Click"
+                                Content="{x:Static resx:Resources.LayoutPage_ApplyTemplate}"
                                 IsEnabled="False"
-                                Style="{DynamicResource AccentButtonStyle}">
-                                Apply template
-                            </Button>
+                                Style="{DynamicResource AccentButtonStyle}" />
 
                             <!--  Export layout  -->
                             <Button Name="ButtonLayoutSettings" Content="Export layout">
@@ -141,26 +145,26 @@
                                         Opening="Flyout_Opening"
                                         Placement="Left">
                                         <ui:SimpleStackPanel Width="400" Spacing="24">
-                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Export layout" />
+                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_ExportLayout}" />
 
                                             <ui:SimpleStackPanel Spacing="6">
                                                 <TextBox
                                                     Name="LayoutTitle"
                                                     HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="Layout title" />
+                                                    ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutTitle}" />
                                                 <TextBox
                                                     Name="LayoutDescription"
                                                     HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="Layout description" />
+                                                    ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutDesc}" />
                                                 <TextBox
                                                     Name="LayoutAuthor"
                                                     HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="Layout author" />
-                                                <CheckBox x:Name="ExportForCurrent" Content="Export for current controller" />
+                                                    ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutAuthor}" />
+                                                <CheckBox x:Name="ExportForCurrent" Content="{x:Static resx:Resources.LayoutPage_ExportCurrentController}" />
                                                 <CheckBox
                                                     x:Name="SaveGameInfo"
                                                     Click="SaveGameInfo_Toggled"
-                                                    Content="Save game information with the layout"
+                                                    Content="{x:Static resx:Resources.LayoutPage_SaveGameInfoLayout}"
                                                     IsChecked="True" />
 
                                                 <!--  Separator  -->
@@ -181,13 +185,13 @@
                                                         Grid.Column="0"
                                                         HorizontalAlignment="Stretch"
                                                         Click="LayoutExportButton_Click"
-                                                        Content="Confirm" />
+                                                        Content="{x:Static resx:Resources.LayoutPage_Confirm}" />
                                                     <Button
                                                         Name="LayoutCancelButton"
                                                         Grid.Column="2"
                                                         HorizontalAlignment="Stretch"
                                                         Click="LayoutCancelButton_Click"
-                                                        Content="Cancel" />
+                                                        Content="{x:Static resx:Resources.LayoutPage_Cancel}" />
                                                 </Grid>
                                             </ui:SimpleStackPanel>
                                         </ui:SimpleStackPanel>
