@@ -267,11 +267,11 @@
                                 Glyph="&#xE1CA;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Native display orientation" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display's orientation to the orientation that matches your controller, then click Detect"
+                                    Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -285,7 +285,7 @@
                                 x:Name="Text_NativeDisplayOrientation"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Not set" />
+                                Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationNotSet}" />
                             <Button
                                 Name="Button_DetectNativeDisplayOrientation"
                                 Width="120"
@@ -293,7 +293,7 @@
                                 Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 Click="Button_DetectNativeDisplayOrientation_Click"
-                                Content="Detect" />
+                                Content="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationDetect}" />
                         </DockPanel>
                     </Grid>
                 </Border>

@@ -3665,6 +3665,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Native display orientation.
+        /// </summary>
+        public static string SettingsPage_NativeDisplayOrientation {
+            get {
+                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display&apos;s orientation to the orientation that matches your controller, then click Detect.
+        /// </summary>
+        public static string SettingsPage_NativeDisplayOrientationDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detect.
+        /// </summary>
+        public static string SettingsPage_NativeDisplayOrientationDetect {
+            get {
+                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationDetect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not set.
+        /// </summary>
+        public static string SettingsPage_NativeDisplayOrientationNotSet {
+            get {
+                return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notification options.
         /// </summary>
         public static string SettingsPage_NotificationOptions {

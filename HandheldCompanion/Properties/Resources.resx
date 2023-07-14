@@ -1469,4 +1469,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>Power limit target</value>
   </data>
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+    <value>Native display orientation</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+    <value>Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display's orientation to the orientation that matches your controller, then click Detect</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+    <value>Detect</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
 </root>
