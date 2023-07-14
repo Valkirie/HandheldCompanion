@@ -1207,6 +1207,177 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apply template.
+        /// </summary>
+        public static string LayoutPage_ApplyTemplate {
+            get {
+                return ResourceManager.GetString("LayoutPage_ApplyTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buttons.
+        /// </summary>
+        public static string LayoutPage_Buttons {
+            get {
+                return ResourceManager.GetString("LayoutPage_Buttons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string LayoutPage_Cancel {
+            get {
+                return ResourceManager.GetString("LayoutPage_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to COMMUNITY.
+        /// </summary>
+        public static string LayoutPage_Community {
+            get {
+                return ResourceManager.GetString("LayoutPage_Community", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm.
+        /// </summary>
+        public static string LayoutPage_Confirm {
+            get {
+                return ResourceManager.GetString("LayoutPage_Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dpad.
+        /// </summary>
+        public static string LayoutPage_Dpad {
+            get {
+                return ResourceManager.GetString("LayoutPage_Dpad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export for current controller.
+        /// </summary>
+        public static string LayoutPage_ExportCurrentController {
+            get {
+                return ResourceManager.GetString("LayoutPage_ExportCurrentController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export layout.
+        /// </summary>
+        public static string LayoutPage_ExportLayout {
+            get {
+                return ResourceManager.GetString("LayoutPage_ExportLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gyro.
+        /// </summary>
+        public static string LayoutPage_Gyro {
+            get {
+                return ResourceManager.GetString("LayoutPage_Gyro", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joysticks.
+        /// </summary>
+        public static string LayoutPage_Joysticks {
+            get {
+                return ResourceManager.GetString("LayoutPage_Joysticks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout author.
+        /// </summary>
+        public static string LayoutPage_LayoutAuthor {
+            get {
+                return ResourceManager.GetString("LayoutPage_LayoutAuthor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout description.
+        /// </summary>
+        public static string LayoutPage_LayoutDesc {
+            get {
+                return ResourceManager.GetString("LayoutPage_LayoutDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout title.
+        /// </summary>
+        public static string LayoutPage_LayoutTitle {
+            get {
+                return ResourceManager.GetString("LayoutPage_LayoutTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save game information with the layout.
+        /// </summary>
+        public static string LayoutPage_SaveGameInfoLayout {
+            get {
+                return ResourceManager.GetString("LayoutPage_SaveGameInfoLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show current controller templates only.
+        /// </summary>
+        public static string LayoutPage_ShowCurrentControllerTemplates {
+            get {
+                return ResourceManager.GetString("LayoutPage_ShowCurrentControllerTemplates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Layout template picker.
+        /// </summary>
+        public static string LayoutPage_TemplatePicker {
+            get {
+                return ResourceManager.GetString("LayoutPage_TemplatePicker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TEMPLATES.
+        /// </summary>
+        public static string LayoutPage_Templates {
+            get {
+                return ResourceManager.GetString("LayoutPage_Templates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trackpads.
+        /// </summary>
+        public static string LayoutPage_Trackpads {
+            get {
+                return ResourceManager.GetString("LayoutPage_Trackpads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Triggers.
+        /// </summary>
+        public static string LayoutPage_Triggers {
+            get {
+                return ResourceManager.GetString("LayoutPage_Triggers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
         public static string MainWindow_HandheldCompanion {

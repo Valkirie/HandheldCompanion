@@ -1376,4 +1376,61 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_SteamDeckSettings" xml:space="preserve">
     <value>Steam Deck Settings</value>
   </data>
+  <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
+    <value>Apply template</value>
+  </data>
+  <data name="LayoutPage_Buttons" xml:space="preserve">
+    <value>Buttons</value>
+  </data>
+  <data name="LayoutPage_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LayoutPage_Community" xml:space="preserve">
+    <value>COMMUNITY</value>
+  </data>
+  <data name="LayoutPage_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="LayoutPage_Dpad" xml:space="preserve">
+    <value>Dpad</value>
+  </data>
+  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
+    <value>Export for current controller</value>
+  </data>
+  <data name="LayoutPage_ExportLayout" xml:space="preserve">
+    <value>Export layout</value>
+  </data>
+  <data name="LayoutPage_Gyro" xml:space="preserve">
+    <value>Gyro</value>
+  </data>
+  <data name="LayoutPage_Joysticks" xml:space="preserve">
+    <value>Joysticks</value>
+  </data>
+  <data name="LayoutPage_LayoutAuthor" xml:space="preserve">
+    <value>Layout author</value>
+  </data>
+  <data name="LayoutPage_LayoutDesc" xml:space="preserve">
+    <value>Layout description</value>
+  </data>
+  <data name="LayoutPage_LayoutTitle" xml:space="preserve">
+    <value>Layout title</value>
+  </data>
+  <data name="LayoutPage_SaveGameInfoLayout" xml:space="preserve">
+    <value>Save game information with the layout</value>
+  </data>
+  <data name="LayoutPage_ShowCurrentControllerTemplates" xml:space="preserve">
+    <value>Show current controller templates only</value>
+  </data>
+  <data name="LayoutPage_TemplatePicker" xml:space="preserve">
+    <value>Layout template picker</value>
+  </data>
+  <data name="LayoutPage_Templates" xml:space="preserve">
+    <value>TEMPLATES</value>
+  </data>
+  <data name="LayoutPage_Trackpads" xml:space="preserve">
+    <value>Trackpads</value>
+  </data>
+  <data name="LayoutPage_Triggers" xml:space="preserve">
+    <value>Triggers</value>
+  </data>
 </root>
