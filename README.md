@@ -55,7 +55,7 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - Chinese (Traditional)
 
 ## Partners
-![image](https://droix.net/wp-content/uploads/2023/06/Logo_%D1%852.png)
+![image](https://github.com/Valkirie/HandheldCompanion/assets/934757/0833e620-c629-4f63-b337-9b10138988b7)
 
 [DroiX](https://droix.net/?ref=dxhc), are trusted and respected sellers for PC gaming handhelds including GPD, AYA NEO, ONEXPLAYER & AOKZOE. Shipping worldwide with local return centers, their expert customer service is there to provide support, answer any queries and ensure you get the best support for your purchase. Try them today!
 
