@@ -359,6 +359,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Desktop layout.
+        /// </summary>
+        public static string ControllerPage_DesktopLayout {
+            get {
+                return ResourceManager.GetString("ControllerPage_DesktopLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define desktop layout.
+        /// </summary>
+        public static string ControllerPage_DesktopLayoutDefine {
+            get {
+                return ResourceManager.GetString("ControllerPage_DesktopLayoutDefine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define controller layout when in desktop mode.
+        /// </summary>
+        public static string ControllerPage_DesktopLayoutDefineController {
+            get {
+                return ResourceManager.GetString("ControllerPage_DesktopLayoutDefineController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string ControllerPage_DesktopLayoutEdit {
+            get {
+                return ResourceManager.GetString("ControllerPage_DesktopLayoutEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable desktop layout.
+        /// </summary>
+        public static string ControllerPage_DesktopLayoutEnable {
+            get {
+                return ResourceManager.GetString("ControllerPage_DesktopLayoutEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller cloaking.
         /// </summary>
         public static string ControllerPage_DeviceCloaking {
@@ -395,11 +440,155 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Non-game controller layouts.
+        /// </summary>
+        public static string ControllerPage_NonGameControllerLayouts {
+            get {
+                return ResourceManager.GetString("ControllerPage_NonGameControllerLayouts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You might want to click on Connect next to your plugged controller..
+        /// </summary>
+        public static string ControllerPage_NoPhysicalControllerAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have no physical controller connected. No inputs will be sent to HC or its service..
+        /// </summary>
+        public static string ControllerPage_NoPhysicalControllerDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please make sure you connected a compatible XInput or DInput device..
+        /// </summary>
+        public static string ControllerPage_NoPhysicalControllerDetectedAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDetectedAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No physical controller detected.
+        /// </summary>
+        public static string ControllerPage_NoPhysicalControllerDetectedWarning {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDetectedWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No physical controller connected.
         /// </summary>
-        public static string ControllerPage_NoPhysicalControllerConnected {
+        public static string ControllerPage_NoPhysicalControllerWarning {
             get {
-                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerConnected", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_NoPhysicalControllerWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You might want to start companion service or make sure your virtual controller status is set to: Connected.
+        /// </summary>
+        public static string ControllerPage_NoVirtualControllerAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoVirtualControllerAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games..
+        /// </summary>
+        public static string ControllerPage_NoVirtualControllerDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoVirtualControllerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No virtual controller detected.
+        /// </summary>
+        public static string ControllerPage_NoVirtualControllerWarning {
+            get {
+                return ResourceManager.GetString("ControllerPage_NoVirtualControllerWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You might want to unmute your virtual controller or unhide your physical controller..
+        /// </summary>
+        public static string ControllerPage_PhysicalControllerHiddenAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalControllerHiddenAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your physical controller is hidden, yet you have muted your virtual controller..
+        /// </summary>
+        public static string ControllerPage_PhysicalControllerHiddenDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalControllerHiddenDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Physical controller is hidden.
+        /// </summary>
+        public static string ControllerPage_PhysicalControllerHiddenWarning {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalControllerHiddenWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You might want to hide your physical controller or mute your virtual controller..
+        /// </summary>
+        public static string ControllerPage_PhysicalControllerNotHiddenAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalControllerNotHiddenAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games..
+        /// </summary>
+        public static string ControllerPage_PhysicalControllerNotHiddenDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalControllerNotHiddenDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Physical controller is not hidden.
+        /// </summary>
+        public static string ControllerPage_PhysicalControllerNotHiddenWarning {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalControllerNotHiddenWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HD rumble.
+        /// </summary>
+        public static string ControllerPage_SteamDeckHDRumble {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamDeckHDRumble", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use high-definition rumble engine, at the cost of higher CPU usage.
+        /// </summary>
+        public static string ControllerPage_SteamDeckHDRumbleDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamDeckHDRumbleDesc", resourceCulture);
             }
         }
         
@@ -418,6 +607,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_SteamDeckMuteControllerDesc {
             get {
                 return ResourceManager.GetString("ControllerPage_SteamDeckMuteControllerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steam Deck Settings.
+        /// </summary>
+        public static string ControllerPage_SteamDeckSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamDeckSettings", resourceCulture);
             }
         }
         

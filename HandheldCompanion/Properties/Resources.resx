@@ -1307,7 +1307,73 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="AboutPage_ProductName" xml:space="preserve">
     <value>Product name</value>
   </data>
-  <data name="ControllerPage_NoPhysicalControllerConnected" xml:space="preserve">
+  <data name="ControllerPage_NoPhysicalControllerWarning" xml:space="preserve">
     <value>No physical controller connected</value>
+  </data>
+  <data name="ControllerPage_DesktopLayout" xml:space="preserve">
+    <value>Desktop layout</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutDefine" xml:space="preserve">
+    <value>Define desktop layout</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutDefineController" xml:space="preserve">
+    <value>Define controller layout when in desktop mode</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
+    <value>Enable desktop layout</value>
+  </data>
+  <data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
+    <value>Non-game controller layouts</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerAction" xml:space="preserve">
+    <value>You might want to click on Connect next to your plugged controller.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDesc" xml:space="preserve">
+    <value>You have no physical controller connected. No inputs will be sent to HC or its service.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
+    <value>Please make sure you connected a compatible XInput or DInput device.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
+    <value>No physical controller detected</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerAction" xml:space="preserve">
+    <value>You might want to start companion service or make sure your virtual controller status is set to: Connected</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerDesc" xml:space="preserve">
+    <value>Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games.</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
+    <value>No virtual controller detected</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
+    <value>You might want to unmute your virtual controller or unhide your physical controller.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenDesc" xml:space="preserve">
+    <value>Your physical controller is hidden, yet you have muted your virtual controller.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenWarning" xml:space="preserve">
+    <value>Physical controller is hidden</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenAction" xml:space="preserve">
+    <value>You might want to hide your physical controller or mute your virtual controller.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenDesc" xml:space="preserve">
+    <value>Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
+    <value>Physical controller is not hidden</value>
+  </data>
+  <data name="ControllerPage_SteamDeckHDRumble" xml:space="preserve">
+    <value>HD rumble</value>
+  </data>
+  <data name="ControllerPage_SteamDeckHDRumbleDesc" xml:space="preserve">
+    <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
+  </data>
+  <data name="ControllerPage_SteamDeckSettings" xml:space="preserve">
+    <value>Steam Deck Settings</value>
   </data>
 </root>

@@ -87,16 +87,16 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerConnected}" />
+                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerWarning}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="You have no physical controller connected. No inputs will be sent to HC or its service."
+                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerDesc}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
                                         Foreground="{DynamicResource AccentFillColorDefaultBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="You might want to click on Connect next to your plugged controller."
+                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -130,16 +130,16 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="No virtual controller detected" />
+                                        Text="{x:Static resx:Resources.ControllerPage_NoVirtualControllerWarning}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games."
+                                        Text="{x:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
                                         Foreground="{DynamicResource AccentFillColorDefaultBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="You might want to start companion service or make sure your virtual controller status is set to: Connected"
+                                        Text="{x:Static resx:Resources.ControllerPage_NoVirtualControllerAction}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -173,16 +173,16 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Physical controller is hidden" />
+                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerHiddenWarning}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Your physical controller is hidden, yet you have muted your virtual controller."
+                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerHiddenDesc}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
                                         Foreground="{DynamicResource AccentFillColorDefaultBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="You might want to unmute your virtual controller or unhide your physical controller."
+                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerHiddenAction}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -216,16 +216,16 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Physical controller is not hidden" />
+                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games."
+                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
                                         Foreground="{DynamicResource AccentFillColorDefaultBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="You might want to hide your physical controller or mute your virtual controller."
+                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -269,11 +269,11 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="No physical controller detected" />
+                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedWarning}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Please make sure you connected a compatible XInput or DInput device."
+                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerDetectedAction}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -384,7 +384,7 @@
 
                 <!--  Non-game controller layouts  -->
                 <ui:SimpleStackPanel Spacing="6">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Non-game controller layouts" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_NonGameControllerLayouts}" />
 
                     <Expander
                         Name="GlobalSettings"
@@ -400,11 +400,11 @@
                                     Glyph="&#xE713;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Desktop layout" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DesktopLayout}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Define controller layout when in desktop mode"
+                                        Text="{x:Static resx:Resources.ControllerPage_DesktopLayoutDefineController}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
@@ -421,7 +421,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Enable desktop layout" />
+                                        Text="{x:Static resx:Resources.ControllerPage_DesktopLayoutEnable}" />
 
                                     <ui:ToggleSwitch
                                         Name="Toggle_DesktopLayout"
@@ -445,7 +445,7 @@
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="Define desktop layout" />
+                                        Text="{x:Static resx:Resources.ControllerPage_DesktopLayoutDefine}" />
 
                                     <Button
                                         Name="Button_Layout"
@@ -454,7 +454,7 @@
                                         Height="40"
                                         HorizontalAlignment="Right"
                                         Click="Button_Layout_Click"
-                                        Content="Edit" />
+                                        Content="{x:Static resx:Resources.ControllerPage_DesktopLayoutEdit}" />
                                 </Grid>
                             </ui:SimpleStackPanel>
                         </Expander.Content>
@@ -548,7 +548,7 @@
                     d:Visibility="Visible"
                     Spacing="6"
                     Visibility="Collapsed">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Steam Deck Settings" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckSettings}" />
 
                     <!--  Rumble engine  -->
                     <Border
@@ -570,11 +570,11 @@
                                     Glyph="&#xE877;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="HD rumble" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckHDRumble}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Use high-definition rumble engine, at the cost of higher CPU usage"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamDeckHDRumbleDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
