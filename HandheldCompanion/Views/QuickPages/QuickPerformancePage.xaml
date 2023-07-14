@@ -28,8 +28,7 @@
                             Glyph="&#xE78B;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -83,8 +82,7 @@
                             Glyph="&#xE2CB;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="Display resolution and refresh rate" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Display resolution and refresh rate" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
@@ -113,6 +111,7 @@
                     <ComboBox
                         Name="ComboBoxFrequency"
                         Grid.Column="1"
+                        Margin="6,0,0,0"
                         HorizontalAlignment="Stretch"
                         IsReadOnly="True"
                         SelectionChanged="ComboBoxFrequency_SelectionChanged" />
@@ -164,9 +163,7 @@
             CornerRadius="{DynamicResource ControlCornerRadius}"
             Visibility="{Binding ElementName=QuietModeToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-            <DockPanel
-                Margin="0,0,0,0"
-                ScrollViewer.PanningMode="HorizontalOnly">
+            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock
                     Width="35"
                     VerticalAlignment="Center"
@@ -250,8 +247,7 @@
                             Glyph="&#xEC48;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"

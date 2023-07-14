@@ -1,6 +1,8 @@
 ﻿using ControllerCommon.Managers;
 using System;
+using System.Collections.Generic;
 using System.Management;
+using System.Windows.Documents;
 
 namespace ControllerCommon;
 
@@ -15,6 +17,9 @@ public static class MotherboardInfo
     private static readonly ManagementObjectSearcher processerSearcher =
         new("root\\CIMV2", "SELECT * FROM Win32_Processor");
 
+    private static readonly ManagementObjectSearcher displaySearcher =
+        new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
+
     public static string Availability
     {
         get
@@ -28,6 +33,22 @@ public static class MotherboardInfo
             }
 
             return string.Empty;
+        }
+    }
+
+    public static List<string> DisplayDescription
+    {
+        get
+        {
+            List<string> strings = new List<string>();
+            foreach (ManagementObject queryObj in displaySearcher.Get())
+            {
+                var query = queryObj["Description"];
+                if (query is not null)
+                    strings.Add(query.ToString().ToUpper());
+            }
+
+            return strings;
         }
     }
 
@@ -89,6 +110,26 @@ public static class MotherboardInfo
             }
 
             return string.Empty;
+        }
+    }
+
+    private static int _NumberOfCores = 0;
+    public static int NumberOfCores
+    {
+        get
+        {
+            if (_NumberOfCores != 0)
+                return _NumberOfCores;
+
+            foreach (ManagementObject queryObj in processerSearcher.Get())
+            {
+                var query = queryObj["NumberOfCores"];
+                if (query is not null)
+                    if (int.TryParse(query.ToString(), out var value))
+                        _NumberOfCores = value;
+            }
+
+            return _NumberOfCores;
         }
     }
 

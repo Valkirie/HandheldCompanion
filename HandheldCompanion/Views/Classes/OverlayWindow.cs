@@ -34,8 +34,18 @@ public class OverlayWindow : Window
 
         SizeChanged += (o, e) => { UpdatePosition(); };
 
-        SourceInitialized += Overlay_SourceInitialized;
         IsVisibleChanged += OverlayWindow_IsVisibleChanged;
+        Loaded += OverlayWindow_Loaded;
+    }
+
+    private void OverlayWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        var source = PresentationSource.FromVisual(this) as HwndSource;
+        source.AddHook(WndProc);
+
+        //Set the window style to noactivate.
+        var helper = new WindowInteropHelper(this);
+        SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
     }
 
     private void OverlayWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -67,16 +77,6 @@ public class OverlayWindow : Window
             _VerticalAlignment = value;
             UpdatePosition();
         }
-    }
-
-    private void Overlay_SourceInitialized(object? sender, EventArgs e)
-    {
-        var source = PresentationSource.FromVisual(this) as HwndSource;
-        source.AddHook(WndProc);
-
-        //Set the window style to noactivate.
-        var helper = new WindowInteropHelper(this);
-        SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
     }
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

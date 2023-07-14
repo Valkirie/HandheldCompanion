@@ -146,6 +146,12 @@ public partial class Profile : ICloneable, IComparable
     public bool EPPOverrideEnabled { get; set; }
     public uint EPPOverrideValue { get; set; } = 50;
 
+    public bool RSREnabled { get; set; }
+    public int RSRSharpness { get; set; } = 20;
+
+    public bool CPUCoreEnabled { get; set; }
+    public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
+
     public object Clone()
     {
         var jsonString = JsonConvert.SerializeObject(this, Formatting.Indented,

@@ -23,7 +23,7 @@ public enum DeviceCapacities : ushort
     ExternalSensor = 2,
     ControllerSensor = 4,
     Trackpads = 8,
-    FanControl = 16
+    FanControl = 16,
 }
 
 public struct ECDetails
@@ -80,8 +80,6 @@ public abstract class IDevice
     public double[] GfxClock = { 100, 1800 };
     public string InternalSensorName = string.Empty;
 
-    public string ManufacturerName;
-
     // device nominal TDP (slow, fast)
     public double[] nTDP = { 15, 15, 20 };
 
@@ -93,7 +91,6 @@ public abstract class IDevice
 
     public string ProductIllustration = "device_generic";
     public string ProductModel = "default";
-    public string ProductName;
 
     // mininum delay before trying to emulate a virtual controller on system resume (milliseconds)
     public short ResumeDelay = 10000;
@@ -114,8 +111,14 @@ public abstract class IDevice
     public virtual bool IsSupported => true;
 
     public event KeyPressedEventHandler KeyPressed;
-
     public event KeyReleasedEventHandler KeyReleased;
+
+    public string ManufacturerName = string.Empty;
+    public string ProductName = string.Empty;
+    public string SystemName = string.Empty;
+    public string Version = string.Empty;
+    public string Processor = string.Empty;
+    public int NumberOfCores = 0;
 
     public static IDevice GetDefault()
     {
@@ -127,6 +130,7 @@ public abstract class IDevice
         var SystemName = MotherboardInfo.SystemName;
         var Version = MotherboardInfo.Version;
         var Processor = MotherboardInfo.Processor;
+        var NumberOfCores = MotherboardInfo.NumberOfCores;
 
         switch (ManufacturerName)
         {

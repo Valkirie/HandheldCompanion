@@ -6,11 +6,13 @@ using ControllerCommon;
 using ControllerCommon.Inputs;
 using ControllerCommon.Platforms;
 using ControllerCommon.Processor;
+using ControllerCommon.Processor.AMD;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using Inkore.UI.WPF.Modern.Controls;
+using static HandheldCompanion.Managers.SystemManager;
 using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
@@ -44,7 +46,8 @@ public partial class QuickProfilesPage : Page
 
         ProfileManager.Applied += ProfileApplied;
 
-        SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
+        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -128,6 +131,9 @@ public partial class QuickProfilesPage : Page
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
         GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
 
+        // motherboard settings
+        CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
+
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
@@ -135,8 +141,31 @@ public partial class QuickProfilesPage : Page
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
         // force call
-        // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void SystemManager_RSRStateChanged(int RSRState, int RSRSharpness)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            switch (RSRState)
+            {
+                case -1:
+                    StackProfileRSR.IsEnabled = false;
+                    break;
+                case 0:
+                    StackProfileRSR.IsEnabled = true;
+                    RSRToggle.IsOn = false;
+                    RSRSlider.Value = RSRSharpness;
+                    break;
+                case 1:
+                    StackProfileRSR.IsEnabled = true;
+                    RSRToggle.IsOn = true;
+                    RSRSlider.Value = RSRSharpness;
+                    break;
+            }
+        });
     }
 
     private void RTSS_Updated(PlatformStatus status)
@@ -159,17 +188,17 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
 
-            FramerateQuarter.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
-            FramerateThird.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
-            FramerateHalf.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
-            FramerateFull.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
+            FramerateQuarter.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
+            FramerateThird.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
+            FramerateHalf.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
+            FramerateFull.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
         });
     }
 
@@ -322,6 +351,14 @@ public partial class QuickProfilesPage : Page
                 // EPP
                 EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
                 EPPSlider.Value = currentProfile.EPPOverrideValue;
+
+                // RSR
+                RSRToggle.IsOn = currentProfile.RSREnabled;
+                RSRSlider.Value = currentProfile.RSRSharpness;
+
+                // CPU Core Count
+                CPUCoreToggle.IsOn = currentProfile.CPUCoreEnabled;
+                CPUCoreSlider.Value = currentProfile.CPUCoreCount;
 
                 // todo: improve me ?
                 ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
@@ -649,6 +686,25 @@ public partial class QuickProfilesPage : Page
 
     private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            if (FramerateToggle.IsOn)
+            {
+                FramerateSlider_ValueChanged(null, null);
+            }
+            else
+            {
+                foreach (Control control in FramerateModeGrid.Children)
+                {
+                    if (control.GetType() != typeof(Label))
+                        continue;
+
+                    control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                }
+            }
+        });
+
         if (currentProfile is null)
             return;
 
@@ -667,11 +723,16 @@ public partial class QuickProfilesPage : Page
         {
             var value = (int)FramerateSlider.Value;
 
-            foreach (TextBlock tb in FramerateModeGrid.Children)
-                tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+            foreach (Control control in FramerateModeGrid.Children)
+            {
+                if (control.GetType() != typeof(Label))
+                    continue;
 
-            var TextBlock = (TextBlock)FramerateModeGrid.Children[value];
-            TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+                control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+            }
+
+            Label Label = (Label)FramerateModeGrid.Children[value];
+            Label.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
         });
 
         if (currentProfile is null)
@@ -707,5 +768,51 @@ public partial class QuickProfilesPage : Page
             currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
             RequestUpdate();
         }
+    }
+
+    private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (profileLock)
+            return;
+
+        currentProfile.RSREnabled = RSRToggle.IsOn;
+        RequestUpdate();
+    }
+
+    private void RSRSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!RSRSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (profileLock)
+            return;
+
+        currentProfile.RSRSharpness = (int)RSRSlider.Value;
+        RequestUpdate();
+    }
+
+    private void CPUCoreToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (profileLock)
+            return;
+
+        currentProfile.CPUCoreEnabled = CPUCoreToggle.IsOn;
+        RequestUpdate();
+    }
+
+    private void CPUCoreSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!CPUCoreSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (profileLock)
+            return;
+
+        currentProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
+        RequestUpdate();
     }
 }

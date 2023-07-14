@@ -231,6 +231,8 @@ public abstract class IPlatform : IDisposable
 
     protected virtual void Process_Exited(object? sender, EventArgs e)
     {
+        LogManager.LogDebug("{0} has exited", GetType());
+
         if (KeepAlive)
         {
             if (Tentative < MaxTentative)
@@ -242,8 +244,11 @@ public abstract class IPlatform : IDisposable
                 LogManager.LogError("Something wen't wrong while trying to start {0}", GetType());
                 Stop();
 
+                // reset tentative counter
+                Tentative = 0;
+
                 // raise event
-                IsInstalled = false;
+                SetStatus(PlatformStatus.Stalled);
             }
         }
     }
@@ -252,17 +257,17 @@ public abstract class IPlatform : IDisposable
     {
         try
         {
-            // increase tentative counter
-            Tentative++;
-
-            LogManager.LogDebug("Starting {0}, tentative: {1}/{2}", GetType(), Tentative, MaxTentative);
-
             // set lock
             IsStarting = true;
 
             Process process = null;
-            while (process is null)
+            while (process is null && Tentative < MaxTentative)
             {
+                // increase tentative counter
+                Tentative++;
+
+                LogManager.LogDebug("Starting {0}, tentative: {1}/{2}", GetType(), Tentative, MaxTentative);
+
                 process = Process.Start(new ProcessStartInfo
                 {
                     FileName = ExecutablePath,
@@ -272,24 +277,24 @@ public abstract class IPlatform : IDisposable
                 });
 
                 Thread.Sleep(500);
+            }
 
-                if (process is not null && !process.HasExited)
-                {
-                    process.EnableRaisingEvents = true;
-                    process.Exited += Process_Exited;
+            if (process is not null && !process.HasExited)
+            {
+                process.EnableRaisingEvents = true;
+                process.Exited += Process_Exited;
 
-                    process.WaitForInputIdle();
+                process.WaitForInputIdle();
 
-                    // (re)start watchdog
-                    PlatformWatchdog.Start();
+                // (re)start watchdog
+                PlatformWatchdog.Start();
 
-                    // release lock
-                    IsStarting = false;
+                // release lock
+                IsStarting = false;
 
-                    return true;
-                }
+                LogManager.LogDebug("{0} has started", GetType());
 
-                Thread.Sleep(500);
+                return true;
             }
         }
         catch

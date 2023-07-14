@@ -6,13 +6,19 @@ using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ControllerCommon;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
+using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
+using System.Timers;
+using Timer = System.Timers.Timer;
+using ControllerCommon.Processor.AMD;
 
 namespace HandheldCompanion.Managers;
 
@@ -24,18 +30,28 @@ public static class SystemManager
     private static readonly MMDeviceEnumerator DevEnum;
     private static MMDevice multimediaDevice;
     private static readonly MMDeviceNotificationClient notificationClient;
-    private static bool VolumeSupport;
 
-    private static readonly ManagementEventWatcher EventWatcher;
+    private static readonly ManagementEventWatcher BrightnessWatcher;
     private static readonly ManagementScope Scope;
-    private static readonly bool BrightnessSupport;
 
+    private static bool VolumeSupport;
+    private static readonly bool BrightnessSupport;
     private static bool FanControlSupport;
+
+    private const int UpdateInterval = 1000;
+    private static readonly Timer ADLXTimer;
+    private static int prevRSRState = -2;
+    private static int prevRSRSharpness = -1;
 
     public static bool IsInitialized;
 
     static SystemManager()
     {
+        // ADLX
+        ADLXTimer = new Timer(UpdateInterval);
+        ADLXTimer.AutoReset = true;
+        ADLXTimer.Elapsed += ADLXTimer_Elapsed;
+
         // setup the multimedia device and get current volume value
         notificationClient = new MMDeviceNotificationClient();
         DevEnum = new MMDeviceEnumerator();
@@ -47,11 +63,10 @@ public static class SystemManager
         Scope.Connect();
 
         // creating the watcher
-        EventWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
-        EventWatcher.EventArrived += onWMIEvent;
+        BrightnessWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
+        BrightnessWatcher.EventArrived += onWMIEvent;
 
-        // start brightness watcher
-        EventWatcher.Start();
+        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
         // check if we have control over brightness
         BrightnessSupport = GetBrightness() != -1;
@@ -64,6 +79,20 @@ public static class SystemManager
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
     }
 
+    private static void ADLXTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        var RSRState = ADLXBackend.GetRSRState();
+        var RSRSharpness = ADLXBackend.GetRSRSharpness();
+
+        if ((RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+        {
+            RSRStateChanged?.Invoke(RSRState, RSRSharpness);
+
+            prevRSRState = RSRState;
+            prevRSRSharpness = RSRSharpness;
+        }
+    }
+    
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
     {
         VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
@@ -191,17 +220,6 @@ public static class SystemManager
         }
     }
 
-    public static void Start()
-    {
-        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-        SystemEvents_DisplaySettingsChanged(null, null);
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "SystemManager");
-    }
-
     private static void onWMIEvent(object sender, EventArrivedEventArgs e)
     {
         var brightness = Convert.ToInt32(e.NewEvent.Properties["Brightness"].Value);
@@ -283,10 +301,29 @@ public static class SystemManager
         return ScreenOrientation;
     }
 
+    public static void Start()
+    {
+        // start brightness watcher
+        BrightnessWatcher.Start();
+        ADLXTimer.Start();
+
+        // force trigger events
+        SystemEvents_DisplaySettingsChanged(null, null);
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "SystemManager");
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
+
+        // stop brightness watcher
+        BrightnessWatcher.Stop();
+        ADLXTimer.Stop();
 
         DevEnum.UnregisterEndpointNotificationCallback(notificationClient);
 
@@ -598,6 +635,10 @@ public static class SystemManager
     #endregion
 
     #region events
+
+    public static event RSRStateChangedEventHandler RSRStateChanged;
+
+    public delegate void RSRStateChangedEventHandler(int RSRState, int RSRSharpness);
 
     public static event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
 

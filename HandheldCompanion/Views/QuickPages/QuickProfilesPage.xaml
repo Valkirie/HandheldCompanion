@@ -409,6 +409,95 @@
                 BorderThickness="0,1,0,0"
                 Opacity="0.25" />
 
+            <!--  Radeon Super Resolution  -->
+            <ui:SimpleStackPanel
+                Name="StackProfileRSR"
+                IsEnabled="False"
+                Spacing="2">
+
+                <!--  Header  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xe7f4;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Radeon Super Resolution" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="In-driver-based upscaling feature for faster framerates"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="RSRToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="RSRToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  RSR  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="Sharpen effect" />
+                        <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                Width="35"
+                                VerticalAlignment="Center"
+                                Text="{Binding Value, StringFormat=N0, ElementName=RSRSlider, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Width="30"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="%" />
+                            <Slider
+                                x:Name="RSRSlider"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="5"
+                                Maximum="100"
+                                Minimum="0"
+                                SmallChange="1"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="5"
+                                TickPlacement="BottomRight"
+                                ValueChanged="RSRSlider_ValueChanged" />
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+            </ui:SimpleStackPanel>
+
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
+
             <!--  Framerate Limit  -->
             <ui:SimpleStackPanel
                 Name="StackProfileFramerate"
@@ -465,6 +554,7 @@
                             ScrollViewer.PanningMode="HorizontalOnly">
                             <Slider
                                 x:Name="FramerateSlider"
+                                Grid.ColumnSpan="7"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 AutoToolTipPrecision="0"
@@ -479,39 +569,120 @@
 
                             <Grid Name="FramerateModeGrid">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock
+                                <Label
                                     Name="FramerateQuarter"
                                     Grid.Column="0"
-                                    Margin="0,0,51,0"
-                                    HorizontalAlignment="Center"
-                                    Text="|" />
-                                <TextBlock
+                                    HorizontalContentAlignment="Center" />
+                                <Label
                                     Name="FramerateThird"
-                                    Grid.Column="1"
-                                    Margin="0,0,19,0"
-                                    HorizontalAlignment="Center"
-                                    Text="|" />
-                                <TextBlock
-                                    Name="FramerateHalf"
                                     Grid.Column="2"
-                                    Margin="15,0,0,0"
-                                    HorizontalAlignment="Center"
-                                    Text="|" />
-                                <TextBlock
+                                    Margin="-2,0,0,0"
+                                    HorizontalContentAlignment="Center" />
+                                <Label
+                                    Name="FramerateHalf"
+                                    Grid.Column="4"
+                                    Margin="-2,0,0,0"
+                                    HorizontalContentAlignment="Center" />
+                                <Label
                                     Name="FramerateFull"
-                                    Grid.Column="3"
-                                    Margin="50,0,0,0"
-                                    HorizontalAlignment="Center"
-                                    Text="|" />
+                                    Grid.Column="6"
+                                    Margin="-2,0,0,0"
+                                    HorizontalContentAlignment="Center" />
                             </Grid>
                         </ui:SimpleStackPanel>
                     </DockPanel>
+                </Border>
+            </ui:SimpleStackPanel>
+            <!--  Separator  -->
+            <Separator
+                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                BorderThickness="0,1,0,0"
+                Opacity="0.25" />
+
+            <!--  Maximum CPU Count  -->
+            <ui:SimpleStackPanel Name="StackProfileCPUCore" Spacing="2">
+
+                <!--  Header  -->
+                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0.2*" MinWidth="80" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xe7e8;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Maximum CPU Count" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Controls CPU unparked core count limit"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="CPUCoreToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="CPUCoreToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  RSR  -->
+                <Border
+                    Padding="15,6,15,6"
+                    d:Visibility="Visible"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="Cores" />
+                        <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBlock
+                                Width="35"
+                                VerticalAlignment="Center"
+                                Text="{Binding Value, StringFormat=N0, ElementName=CPUCoreSlider, Mode=OneWay}"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Width="30"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="C" />
+                            <Slider
+                                x:Name="CPUCoreSlider"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Minimum="2"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ValueChanged="CPUCoreSlider_ValueChanged" />
+                        </DockPanel>
+                    </StackPanel>
                 </Border>
             </ui:SimpleStackPanel>
 
