@@ -24,13 +24,18 @@ public class OneXPlayerMiniPro : OneXPlayerMini
 
         // allow OneX button to pass key inputs
         LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM1);
-        return ECRamDirectWrite(0xF1, ECDetails, 0x40);
+
+        ECRamDirectWrite(0x4F1, ECDetails, 0x40);
+        ECRamDirectWrite(0x4F2, ECDetails, 0x02);
+
+        return (ECRamReadByte(0x4F1, ECDetails) == 0x40 && ECRamReadByte(0x4F2, ECDetails) == 0x02);
     }
 
     public override void Close()
     {
         LogManager.LogInformation("Locked {0} OEM button", ButtonFlags.OEM1);
-        ECRamDirectWrite(0xF1, ECDetails, 0x00);
+        ECRamDirectWrite(0x4F1, ECDetails, 0x00);
+        ECRamDirectWrite(0x4F2, ECDetails, 0x00);
         base.Close();
     }
 }
