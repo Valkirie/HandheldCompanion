@@ -1467,4 +1467,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="TriggersPage_Trigger_Right" xml:space="preserve">
     <value>RIGHT TRIGGER</value>
   </data>
+  <data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
+    <value>RIGHT TRIGGER BUTTONS</value>
+  </data>
 </root>

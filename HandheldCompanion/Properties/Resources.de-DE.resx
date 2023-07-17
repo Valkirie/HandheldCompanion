@@ -1478,4 +1478,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="TriggersPage_Trigger_Right" xml:space="preserve">
     <value>RIGHT TRIGGER</value>
   </data>
+  <data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
+    <value>RIGHT TRIGGER BUTTONS</value>
+  </data>
 </root>
