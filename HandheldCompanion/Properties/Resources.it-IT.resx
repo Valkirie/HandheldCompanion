@@ -268,7 +268,7 @@
   <data name="InputsHotkey_shortcutESC" xml:space="preserve">
     <value>Tasto Escape</value>
   </data>
-    <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
     <value>Premi questo tasto: Escape</value>
   </data>
   <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
@@ -361,7 +361,7 @@
   <data name="MainWindow_Settings" xml:space="preserve">
     <value>Impostazioni</value>
   </data>
-    <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
+  <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
     <value>8BitDo Lite 2</value>
   </data>
   <data name="OverlayPage_Alignment" xml:space="preserve">
@@ -505,7 +505,7 @@
   <data name="Overlay_Overlay" xml:space="preserve">
     <value>Overlay</value>
   </data>
-    <data name="ProcessEx_processResume" xml:space="preserve">
+  <data name="ProcessEx_processResume" xml:space="preserve">
     <value>Riprendi</value>
   </data>
   <data name="ProcessEx_processSuspend" xml:space="preserve">
@@ -1015,7 +1015,7 @@
   <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
     <value>La potenza massima in watt fornita al processore</value>
   </data>
-   <data name="SettingsPage_TDPMin" xml:space="preserve">
+  <data name="SettingsPage_TDPMin" xml:space="preserve">
     <value>Potenza minima</value>
   </data>
   <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
@@ -1183,7 +1183,7 @@
   <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
     <value>Aumenta luminosità</value>
   </data>
-   <data name="InputsHotkey_increaseVolume" xml:space="preserve">
+  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
     <value>Aumenta volume</value>
   </data>
   <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
@@ -1476,5 +1476,8 @@
   </data>
   <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
     <value>Non impostato</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>Increase the current display brightness by 5%</value>
   </data>
 </root>
