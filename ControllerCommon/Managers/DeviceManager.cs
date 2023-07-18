@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using ControllerCommon.Managers.Hid;
 using ControllerCommon.Sensors;
 using ControllerCommon.Utils;
+using Microsoft.Win32.SafeHandles;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
 
@@ -393,6 +395,20 @@ public static class DeviceManager
         XUsbDeviceRemoved?.Invoke(deviceEx, obj);
     }
 
+    const uint GENERIC_READ = (0x80000000);
+    const uint GENERIC_WRITE = (0x40000000);
+    const uint GENERIC_EXECUTE = (0x20000000);
+    const uint GENERIC_ALL = (0x10000000);
+    const uint FILE_SHARE_READ = 0x00000001;
+    const uint FILE_SHARE_WRITE = 0x00000002;
+    const uint FILE_SHARE_DELETE = 0x00000004;
+    const uint CREATE_NEW = 1;
+    const uint CREATE_ALWAYS = 2;
+    const uint OPEN_EXISTING = 3;
+    const uint OPEN_ALWAYS = 4;
+    const uint TRUNCATE_EXISTING = 5;
+    const uint IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
+
     private static async void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         try
@@ -409,6 +425,49 @@ public static class DeviceManager
             var deviceEx = FindDevice(SymLink);
             if (deviceEx is not null && deviceEx.isGaming)
             {
+                SafeFileHandle handle = CreateFileW(deviceEx.Path, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+                if (handle.IsInvalid)
+                    return;
+
+                byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
+                uint gamepadStateRequest0102 = BitConverter.ToUInt32(gamepadStateRequest0101);
+
+                byte[] ledStateData = new byte[3];
+                uint ledStateData2 = BitConverter.ToUInt32(ledStateData);
+
+                int len = 0;
+
+                const uint IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
+                if (!DeviceIoControl(handle.DangerousGetHandle(), IOCTL_XUSB_GET_LED_STATE, (nint)gamepadStateRequest0102, gamepadStateRequest0101.Length,
+                    (nint)ledStateData2, ledStateData.Length, out len, IntPtr.Zero))
+                {
+                    return;
+                }
+
+                byte[] XINPUT_LED_TO_PORT_MAP = new byte[]
+                {
+                    255,
+                    255,
+                    0,
+                    1,
+                    2,
+                    3,
+                    0,
+                    1,
+                    2,
+                    3,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                    255,
+                };
+
+                byte ledState = ledStateData[2];
+                Debug.Assert(ledState <= XINPUT_LED_TO_PORT_MAP.Length);
+                var m_XInputUserIndex = XINPUT_LED_TO_PORT_MAP[ledState]; // !!!!
+
                 deviceEx.isXInput = true;
 
                 LogManager.LogDebug("XUsbDevice {4} arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
@@ -510,6 +569,26 @@ public static class DeviceManager
     [return: MarshalAs(UnmanagedType.U1)]
     private static extern bool HidD_GetProductString(IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength);
 
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern SafeFileHandle CreateFileW(
+  [MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+  uint dwDesiredAccess,
+  uint dwShareMode,
+  IntPtr lpSecurityAttributes,
+  uint dwCreationDisposition,
+  uint dwFlagsAndAttributes,
+  IntPtr hTemplateFile);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern bool DeviceIoControl(
+            IntPtr hDevice,
+            uint dwIoControlCode,
+            IntPtr lpInBuffer,
+            int nInBufferSize,
+            IntPtr lpOutBuffer,
+            int nOutBufferSize,
+            out int lpBytesReturned,
+            IntPtr lpOverlapped);
     #endregion
 
     #region events
