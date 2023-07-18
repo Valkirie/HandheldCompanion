@@ -25,6 +25,8 @@ public class PnPDetails : IDisposable
     public string Path;
     public string SymLink;
 
+    public int DeviceIdx;
+
     public void Dispose()
     {
         GC.SuppressFinalize(this);
