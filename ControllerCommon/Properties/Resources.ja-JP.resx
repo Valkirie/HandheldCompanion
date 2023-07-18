@@ -344,4 +344,187 @@
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
     <value>M1 / M2</value>
   </data>
+  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+    <value>Always On</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+    <value>DPad Down</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+    <value>DPad Left</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+    <value>DPad Right</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+    <value>DPad Up</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+    <value>Left Shoulder</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+    <value>Left Trigger</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+    <value>Right Shoulder</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+    <value>RightTrigger</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
+    <value>Auto Roll Yaw Swap</value>
+  </data>
+  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+    <value>Joystick Camera</value>
+  </data>
+  <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
+    <value>Joystick Steering</value>
+  </data>
+  <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
+    <value>Player Space</value>
+  </data>
+  <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
+    <value>Left Stick</value>
+  </data>
+  <data name="Enum.MotionOutput.RightStick" xml:space="preserve">
+    <value>Right Stick</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+    <value>Oops. This profile seems to be running. Some options requiring an executable may be disabled.</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Command center</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM2" xml:space="preserve">
+    <value>Armory crate</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
+    <value>DPad Down</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
+    <value>DPad Left</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
+    <value>PPad Right</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
+    <value>DPad Up</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
+    <value>Left Thumb Down</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
+    <value>Left Thumb Left</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
+    <value>Left Thumb Right</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
+    <value>Left Thumb Up</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
+    <value>Right Thumb Down</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
+    <value>Right Thumb Left</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
+    <value>Right Thumb Right</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
+    <value>Right Thumb Up</value>
+  </data>
 </root>

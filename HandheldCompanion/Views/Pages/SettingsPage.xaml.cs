@@ -50,6 +50,7 @@ public partial class SettingsPage : Page
         cB_Language.Items.Add(new CultureInfo("en-US"));
         cB_Language.Items.Add(new CultureInfo("fr-FR"));
         cB_Language.Items.Add(new CultureInfo("de-DE"));
+        cB_Language.Items.Add(new CultureInfo("it-IT"));
         cB_Language.Items.Add(new CultureInfo("ja-JP"));
         cB_Language.Items.Add(new CultureInfo("pt-BR"));
         cB_Language.Items.Add(new CultureInfo("zh-CN"));

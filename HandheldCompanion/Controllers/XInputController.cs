@@ -50,6 +50,12 @@ public class XInputController : IController
             Details = devices.FirstOrDefault();
         }
 
+        var BusInformation = new XInputBaseBusInformation();
+
+        if (XInputGetBaseBusInformation(UserIndex, ref BusInformation) == 0)
+        {
+        }
+
         if (Details is null)
             return;
 
@@ -77,7 +83,7 @@ public class XInputController : IController
         Gamepad = Controller.GetState().Gamepad;
 
         // update secret state
-        XInputGetStateSecret13(UserIndex, out State);
+        XInputGetStateSecret14(UserIndex, out State);
 
         /*
         if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
@@ -373,5 +379,28 @@ public class XInputController : IController
     [DllImport("xinput1_4.dll", EntryPoint = "#100")]
     protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
 
+    [DllImport("xinput1_4.dll", EntryPoint = "#104")]
+    public static extern int XInputGetBaseBusInformation(int dwUserIndex, ref XInputBaseBusInformation pInfo);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct XInputBaseBusInformation
+    {
+        [MarshalAs(UnmanagedType.U2)]
+        UInt16 VID;
+        [MarshalAs(UnmanagedType.U2)]
+        UInt16 PID;
+        [MarshalAs(UnmanagedType.U4)]
+        UInt32 a3;
+        [MarshalAs(UnmanagedType.U4)]
+        UInt32 Flags; // probably
+        [MarshalAs(UnmanagedType.U1)]
+        byte a4;
+        [MarshalAs(UnmanagedType.U1)]
+        byte a5;
+        [MarshalAs(UnmanagedType.U1)]
+        byte a6;
+        [MarshalAs(UnmanagedType.U1)]
+        byte reserved;
+    }
     #endregion
 }
