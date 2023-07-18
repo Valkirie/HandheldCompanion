@@ -406,9 +406,6 @@
   <data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
     <value>L2</value>
   </data>
-  <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
-    <value>Left Thumb</value>
-  </data>
   <data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
     <value>R2</value>
   </data>
@@ -528,5 +525,8 @@
   </data>
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
   </data>
 </root>
