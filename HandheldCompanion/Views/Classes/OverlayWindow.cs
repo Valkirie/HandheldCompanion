@@ -34,8 +34,8 @@ public class OverlayWindow : Window
 
         SizeChanged += (o, e) => { UpdatePosition(); };
 
-        SourceInitialized += Overlay_SourceInitialized;
         IsVisibleChanged += OverlayWindow_IsVisibleChanged;
+        Loaded += OverlayWindow_Loaded;
     }
 
     private void OverlayWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -69,7 +69,7 @@ public class OverlayWindow : Window
         }
     }
 
-    private void Overlay_SourceInitialized(object? sender, EventArgs e)
+    private void OverlayWindow_Loaded(object sender, RoutedEventArgs e)
     {
         var source = PresentationSource.FromVisual(this) as HwndSource;
         source.AddHook(WndProc);
