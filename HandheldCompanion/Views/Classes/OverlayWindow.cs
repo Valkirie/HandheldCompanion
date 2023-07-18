@@ -34,8 +34,8 @@ public class OverlayWindow : Window
 
         SizeChanged += (o, e) => { UpdatePosition(); };
 
-        IsVisibleChanged += OverlayWindow_IsVisibleChanged;
         Loaded += OverlayWindow_Loaded;
+        IsVisibleChanged += OverlayWindow_IsVisibleChanged;
     }
 
     private void OverlayWindow_Loaded(object sender, RoutedEventArgs e)
@@ -78,7 +78,17 @@ public class OverlayWindow : Window
             UpdatePosition();
         }
     }
+    
+    private void OverlayWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        var source = PresentationSource.FromVisual(this) as HwndSource;
+        source.AddHook(WndProc);
 
+        //Set the window style to noactivate.
+        var helper = new WindowInteropHelper(this);
+        SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
+    }
+    
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == WM_MOUSEACTIVATE)

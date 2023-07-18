@@ -360,7 +360,7 @@ public abstract class IPlatform : IDisposable
             if (!File.Exists(origPath))
                 return false;
 
-            File.Copy(origPath, configPath, true);
+            File.Move(origPath, configPath, true);
             return true;
         }
         catch (FileNotFoundException e)

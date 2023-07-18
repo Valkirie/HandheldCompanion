@@ -267,11 +267,11 @@
                                 Glyph="&#xE1CA;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Native display orientation" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display's orientation to the orientation that matches your controller, then click Detect"
+                                    Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -285,7 +285,7 @@
                                 x:Name="Text_NativeDisplayOrientation"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource BodyTextBlockStyle}"
-                                Text="Not set" />
+                                Text="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationNotSet}" />
                             <Button
                                 Name="Button_DetectNativeDisplayOrientation"
                                 Width="120"
@@ -293,7 +293,7 @@
                                 Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 Click="Button_DetectNativeDisplayOrientation_Click"
-                                Content="Detect" />
+                                Content="{x:Static resx:Resources.SettingsPage_NativeDisplayOrientationDetect}" />
                         </DockPanel>
                     </Grid>
                 </Border>
@@ -425,7 +425,7 @@
 
             <!--  Quicktools options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Quicktools options" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_QuickToolsOptions}" />
 
                 <!--  Quicktools position  -->
                 <Border
@@ -447,11 +447,11 @@
                                 Glyph="&#xE8A7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Window location" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocation}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Define quicktools window location"
+                                    Text="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -462,10 +462,10 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
-                            <ComboBoxItem Content="Top left" />
-                            <ComboBoxItem Content="Top right" />
-                            <ComboBoxItem Content="Bottom left" />
-                            <ComboBoxItem Content="Bottom right" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopLeft}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopRight}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomLeft}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomRight}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -495,7 +495,7 @@
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Quicktools backdrop, none, mica, tabbed, acrylic"
+                                    Text="{x:Static resx:Resources.SettingsPage_QuickToolsBackdrop}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -534,11 +534,11 @@
                                 Glyph="&#xED1A;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Hide when loses focus" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HideWhenLoseFocus}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Automatically hide quick tools when the user clicks outside of window"
+                                    Text="{x:Static resx:Resources.SettingsPage_HideWhenLoseFocusDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -761,7 +761,7 @@
 
                             <ComboBoxItem
                                 Name="SensorNone"
-                                Content="None"
+                                Content="{x:Static resx:Resources.SettingsPage_SensorNone}"
                                 IsEnabled="True" />
                             <ComboBoxItem
                                 Name="SensorInternal"
@@ -914,7 +914,7 @@
 
             <!--  Third-party applications  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Third-pary applications" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ThirdPartyApps}" />
 
                 <!--  RTSS  -->
                 <Border
@@ -936,11 +936,11 @@
                                 Glyph="&#xEA6C;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="RivaTuner Statistics Server" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_RivaTunerStatisticsServer}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Automatically turn RTSS off when companion is closed"
+                                    Text="{x:Static resx:Resources.SettingsPage_RivaTunerStatisticsServerDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -974,11 +974,11 @@
                                 Glyph="&#xE870;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="HWiNFO" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HwInfo}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Automatically turn HWiNFO off when companion is closed"
+                                    Text="{x:Static resx:Resources.SettingsPage_HwInfoDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -995,7 +995,7 @@
 
             <!--  Power options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Power options" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_PowerOptions}" />
 
                 <!--  EnergyStar  -->
                 <Border

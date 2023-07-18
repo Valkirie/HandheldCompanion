@@ -68,11 +68,11 @@
                                 Name="LabelManufacturer"
                                 FontSize="20"
                                 Style="{StaticResource BaseTextBlockStyle}"
-                                Text="Manufacturer" />
+                                Text="{x:Static resx:Resources.AboutPage_Manufacturer}" />
                             <TextBlock
                                 Name="LabelProductName"
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Text="Product name" />
+                                Text="{x:Static resx:Resources.AboutPage_ProductName}" />
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>

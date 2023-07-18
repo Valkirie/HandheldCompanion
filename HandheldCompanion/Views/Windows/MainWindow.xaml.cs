@@ -712,7 +712,9 @@ public partial class MainWindow : GamepadWindow
                             Thread.Sleep(500);
 
                         // open current device (threaded to avoid device to hang)
-                        CurrentDevice.Open();
+                        var success = CurrentDevice.Open();
+                        if (!success)
+                            LogManager.LogError("Failed to open device");
 
                         // restore device settings
                         CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
