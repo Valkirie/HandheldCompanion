@@ -184,8 +184,9 @@ public class RTSS : IPlatform
             {
                 appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == ProcessId).FirstOrDefault();
             }
-            catch (Exception)
+            catch (FileNotFoundException)
             {
+                return;
             }
             catch {}
 
@@ -375,12 +376,7 @@ public class RTSS : IPlatform
             }
 
             if (GetProfileProperty("FramerateLimit", out int fpsLimit))
-            {
-                // reset tentative counter
-                Tentative = 0;
-
                 return fpsLimit;
-            }
         }
         catch
         {

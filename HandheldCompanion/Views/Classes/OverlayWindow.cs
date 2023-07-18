@@ -68,7 +68,7 @@ public class OverlayWindow : Window
             UpdatePosition();
         }
     }
-
+    
     private void OverlayWindow_Loaded(object sender, RoutedEventArgs e)
     {
         var source = PresentationSource.FromVisual(this) as HwndSource;
@@ -78,7 +78,7 @@ public class OverlayWindow : Window
         var helper = new WindowInteropHelper(this);
         SetWindowLong(helper.Handle, GWL_EXSTYLE, GetWindowLong(helper.Handle, GWL_EXSTYLE) | WS_EX_NOACTIVATE);
     }
-
+    
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         if (msg == WM_MOUSEACTIVATE)

@@ -14,10 +14,10 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6">
+    <ui:SimpleStackPanel Spacing="10" Margin="15,6,15,6">
         <ui:SimpleStackPanel Spacing="6">
             <!--  Header  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -40,7 +40,7 @@
             </Border>
 
             <!--  Content  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
                 <ComboBox
                     Name="ComboBoxOverlayDisplayLevel"
                     HorizontalAlignment="Stretch"
@@ -62,16 +62,10 @@
             </Border>
         </ui:SimpleStackPanel>
 
-        <!--  Separator  -->
-        <Separator
-            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            BorderThickness="0,1,0,0"
-            Opacity="0.25" />
-
         <!--  Refresh rate  -->
         <ui:SimpleStackPanel Spacing="6">
             <!--  Header  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -94,7 +88,7 @@
             </Border>
 
             <!--  Content  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -111,21 +105,16 @@
                     <ComboBox
                         Name="ComboBoxFrequency"
                         Grid.Column="1"
+                        Margin="6,0,0,0"
                         HorizontalAlignment="Stretch"
                         IsReadOnly="True"
                         SelectionChanged="ComboBoxFrequency_SelectionChanged" />
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>
-
-        <!--  Separator  -->
-        <Separator
-            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            BorderThickness="0,1,0,0"
-            Opacity="0.25" />
-
+        
         <!--  Quiet mode  -->
-        <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+        <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
             <Grid>
                 <DockPanel>
@@ -190,14 +179,8 @@
             </DockPanel>
         </Border>
 
-        <!--  Separator  -->
-        <Separator
-            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            BorderThickness="0,1,0,0"
-            Opacity="0.25" />
-
         <!--  Quiet mode  -->
-        <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+        <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
             <Grid>
                 <DockPanel>
@@ -226,16 +209,10 @@
             </Grid>
         </Border>
 
-        <!--  Separator  -->
-        <Separator
-            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            BorderThickness="0,1,0,0"
-            Opacity="0.25" />
-
         <!--  Power mode  -->
         <ui:SimpleStackPanel Spacing="6">
             <!--  Header  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -258,7 +235,7 @@
             </Border>
 
             <!--  Content  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <DockPanel>
                     <ui:SimpleStackPanel
