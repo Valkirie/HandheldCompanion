@@ -83,7 +83,7 @@ public class XInputController : IController
         Gamepad = Controller.GetState().Gamepad;
 
         // update secret state
-        XInputGetStateSecret13(UserIndex, out State);
+        XInputGetStateSecret14(UserIndex, out State);
 
         /*
         if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
