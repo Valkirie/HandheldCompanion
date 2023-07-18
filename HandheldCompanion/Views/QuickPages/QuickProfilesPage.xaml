@@ -14,11 +14,11 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="6">
+    <ui:SimpleStackPanel Spacing="10" Margin="15,6,15,6">
 
         <Grid>
             <!--  Header  -->
-            <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <DockPanel>
@@ -44,15 +44,9 @@
             </Border>
         </Grid>
 
-        <!--  Separator  -->
-        <Separator
-            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-            BorderThickness="0,1,0,0"
-            Opacity="0.25" />
-
         <Grid Name="StackProfileToggle">
             <!--  Header  -->
-            <Border Padding="15,0,15,0" CornerRadius="{DynamicResource ControlCornerRadius}">
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -101,16 +95,15 @@
             </Border>
         </Grid>
 
-        <ui:SimpleStackPanel Name="GridProfile" Spacing="6">
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
+        <Separator
+            Background="{DynamicResource ExpanderHeaderBackground}"/>
+
+        <ui:SimpleStackPanel Name="GridProfile" Spacing="10">
+            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Universal motion control settings" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
 
             <Grid Name="StackProfileUMC">
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <ui:SimpleStackPanel Spacing="6">
                         <Grid>
@@ -147,13 +140,14 @@
                 </Border>
             </Grid>
 
-            <Grid Name="StackProfileUMCSettings">
+            <Grid Name="StackProfileUMCSettings"
+                    d:Visibility="Visible"
+                    Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                
                 <!--  Header  -->
                 <Border
-                    Padding="15,6,15,6"
-                    d:Visibility="Visible"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                   
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Border.IsEnabled>
                         <MultiBinding Converter="{StaticResource IsEnabledConverter}">
@@ -189,12 +183,6 @@
                             VerticalAlignment="Center"
                             SelectionChanged="cB_Input_SelectionChanged" />
 
-                        <!--  Separator  -->
-                        <Separator
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0"
-                            Opacity="0.25" />
-
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition MinWidth="420" />
@@ -221,12 +209,6 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             SelectionChanged="cB_Output_SelectionChanged" />
-
-                        <!--  Separator  -->
-                        <Separator
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0"
-                            Opacity="0.25" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -264,12 +246,6 @@
                             Margin="6,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center" />
-
-                        <!--  Separator  -->
-                        <Separator
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0"
-                            Opacity="0.25" />
 
                         <ui:SimpleStackPanel Name="GridAntiDeadzone" Spacing="6">
                             <Grid>
@@ -317,12 +293,6 @@
                                     ValueChanged="SliderUMCAntiDeadzone_ValueChanged" />
                             </DockPanel>
                         </ui:SimpleStackPanel>
-
-                        <!--  Separator  -->
-                        <Separator
-                            BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                            BorderThickness="0,1,0,0"
-                            Opacity="0.25" />
 
                         <ui:SimpleStackPanel Name="GridSensivity" Spacing="6">
                             <Grid>
@@ -403,11 +373,7 @@
                 </Border>
             </Grid>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
+            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Graphics settings" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
 
             <!--  Radeon Super Resolution  -->
             <ui:SimpleStackPanel
@@ -416,7 +382,7 @@
                 Spacing="2">
 
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -452,7 +418,7 @@
 
                 <!--  RSR  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -492,12 +458,6 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <!--  Framerate Limit  -->
             <ui:SimpleStackPanel
                 Name="StackProfileFramerate"
@@ -505,7 +465,7 @@
                 Spacing="2">
 
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -541,7 +501,7 @@
 
                 <!--  Content  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -602,17 +562,14 @@
                     </DockPanel>
                 </Border>
             </ui:SimpleStackPanel>
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
+
+            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
 
             <!--  Maximum CPU Count  -->
             <ui:SimpleStackPanel Name="StackProfileCPUCore" Spacing="2">
 
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -648,7 +605,7 @@
 
                 <!--  RSR  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -686,12 +643,6 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <!--  Thermal Power (TDP) Limit  -->
             <ui:SimpleStackPanel
                 Name="StackProfileTDP"
@@ -699,7 +650,7 @@
                 Spacing="2">
 
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -735,7 +686,7 @@
 
                 <!--  TDP  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -775,12 +726,6 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <!--  Auto TDP  -->
             <ui:SimpleStackPanel
                 Name="StackProfileAutoTDP"
@@ -788,7 +733,7 @@
                 Spacing="2">
 
                 <!--  AutoTDP Toggle  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -824,7 +769,7 @@
 
                 <!--  Auto TDP Requested FPS Slider  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -868,17 +813,11 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <!--  Processor energy performance preference policy  -->
             <ui:SimpleStackPanel Name="StackProfileEPP" Spacing="2">
 
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -914,7 +853,7 @@
 
                 <!--  Content  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -969,12 +908,6 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <!--  Separator  -->
-            <Separator
-                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderThickness="0,1,0,0"
-                Opacity="0.25" />
-
             <!--  Manual GPU Clock Control  -->
             <ui:SimpleStackPanel
                 Name="StackProfileGPU"
@@ -982,7 +915,7 @@
                 Spacing="2">
 
                 <!--  Header  -->
-                <Border Padding="15,6,15,6" CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1018,7 +951,7 @@
 
                 <!--  Content  -->
                 <Border
-                    Padding="15,6,15,6"
+                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
