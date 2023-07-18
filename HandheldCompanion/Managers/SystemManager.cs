@@ -81,16 +81,20 @@ public static class SystemManager
 
     private static void ADLXTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        var RSRState = ADLXBackend.GetRSRState();
-        var RSRSharpness = ADLXBackend.GetRSRSharpness();
-
-        if ((RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+        try
         {
-            RSRStateChanged?.Invoke(RSRState, RSRSharpness);
+            var RSRState = ADLXBackend.GetRSRState();
+            var RSRSharpness = ADLXBackend.GetRSRSharpness();
 
-            prevRSRState = RSRState;
-            prevRSRSharpness = RSRSharpness;
+            if ((RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+            {
+                RSRStateChanged?.Invoke(RSRState, RSRSharpness);
+
+                prevRSRState = RSRState;
+                prevRSRSharpness = RSRSharpness;
+            }
         }
+        catch { }
     }
     
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)

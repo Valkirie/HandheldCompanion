@@ -205,16 +205,20 @@ public class PerformanceManager : Manager
         }
 
         // apply profile define RSR
-        if (profile.RSREnabled)
+        try
         {
-            ADLXBackend.SetRSR(true);
-            ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
+            if (profile.RSREnabled)
+            {
+                ADLXBackend.SetRSR(true);
+                ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
+            }
+            else if (ADLXBackend.GetRSRState() == 1)
+            {
+                ADLXBackend.SetRSR(false);
+                ADLXBackend.SetRSRSharpness(20);
+            }
         }
-        else if (ADLXBackend.GetRSRState() == 1)
-        {
-            ADLXBackend.SetRSR(false);
-            ADLXBackend.SetRSRSharpness(20);
-        }
+        catch { }
     }
 
     private void ProfileManager_Discarded(Profile profile)
@@ -254,12 +258,16 @@ public class PerformanceManager : Manager
             RequestCPUCoreCount(100);
         }
 
-        // restore default RSR
-        if (profile.RSREnabled)
+        try
         {
-            ADLXBackend.SetRSR(false);
-            ADLXBackend.SetRSRSharpness(20);
+            // restore default RSR
+            if (profile.RSREnabled)
+            {
+                ADLXBackend.SetRSR(false);
+                ADLXBackend.SetRSRSharpness(20);
+            }
         }
+        catch { }
     }
 
     private void RestoreTDP(bool immediate)
