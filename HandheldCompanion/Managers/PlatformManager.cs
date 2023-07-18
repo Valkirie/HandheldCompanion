@@ -31,9 +31,9 @@ public static class PlatformManager
     public static void Start()
     {
         if (Steam.IsInstalled)
-            // overwrite controller files
-            foreach (var config in SteamPlatform.ControllerFiles)
-                Steam.OverwriteFile(config.Key, config.Value, true);
+        {
+            Steam.Start();
+        }
 
         if (GOGGalaxy.IsInstalled)
         {
@@ -42,6 +42,7 @@ public static class PlatformManager
 
         if (UbisoftConnect.IsInstalled)
         {
+            // do something
         }
 
         if (RTSS.IsInstalled)
@@ -192,17 +193,13 @@ public static class PlatformManager
     public static void Stop()
     {
         if (Steam.IsInstalled)
-        {
-            // restore controller files
-            foreach (var config in SteamPlatform.ControllerFiles)
-                Steam.ResetFile(config.Key);
+            Steam.Stop();
 
-            Steam.Dispose();
-        }
+        if (GOGGalaxy.IsInstalled)
+            GOGGalaxy.Dispose();
 
-        if (GOGGalaxy.IsInstalled) GOGGalaxy.Dispose();
-
-        if (UbisoftConnect.IsInstalled) UbisoftConnect.Dispose();
+        if (UbisoftConnect.IsInstalled)
+            UbisoftConnect.Dispose();
 
         if (RTSS.IsInstalled)
         {

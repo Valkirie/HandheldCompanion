@@ -592,7 +592,7 @@
                                         <TextBlock
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
-                                            Text="Power limit target" />
+                                            Text="{x:Static resx:Resources.ProfilesPage_PowerLimitTarget}" />
 
                                         <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
@@ -706,11 +706,11 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Energy performance preference (EPP)" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EPP}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="Specifies power distribution policy between CPU and GPU"
+                                            Text="{x:Static resx:Resources.ProfilesPage_EPPDesc}"
                                             TextWrapping="Wrap" />
                                     </StackPanel>
 
@@ -729,7 +729,7 @@
                                         <TextBlock
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
-                                            Text="CPU/GPU power balance" />
+                                            Text="{x:Static resx:Resources.ProfilesPage_EPPBalance}" />
 
                                         <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
@@ -774,11 +774,11 @@
                                                     <TextBlock
                                                         Grid.Column="1"
                                                         HorizontalAlignment="Left"
-                                                        Text="CPU" />
+                                                        Text="{x:Static resx:Resources.ProfilesPage_CPU}" />
                                                     <TextBlock
                                                         Grid.Column="2"
                                                         HorizontalAlignment="Right"
-                                                        Text="GPU" />
+                                                        Text="{x:Static resx:Resources.ProfilesPage_GPU}" />
                                                 </Grid>
                                             </ui:SimpleStackPanel>
                                         </DockPanel>
@@ -1272,7 +1272,7 @@
                         </Expander.Content>
                     </Expander>
 
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Controller settings" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
 
                     <!--  Controller settings  -->
                     <Button
@@ -1291,11 +1291,11 @@
                                     Glyph="&#xE7FC;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Controller layout" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ControllerLayout}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="Change the virtual controller layout"
+                                        Text="{x:Static resx:Resources.ProfilesPage_ControllerLayoutDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>

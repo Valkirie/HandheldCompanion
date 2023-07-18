@@ -48,15 +48,15 @@
                     IsReadOnly="True"
                     SelectionChanged="ComboBoxOverlayDisplayLevel_SelectionChanged">
 
-                    <ComboBoxItem Name="OverlayDisplayLevelDisabled" Content="Disabled" />
-                    <ComboBoxItem Name="OverlayDisplayLevelMinimal" Content="Minimal" />
+                    <ComboBoxItem Name="OverlayDisplayLevelDisabled" Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Disabled}" />
+                    <ComboBoxItem Name="OverlayDisplayLevelMinimal" Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />
                     <ComboBoxItem
                         Name="OverlayDisplayLevelExtended"
-                        Content="Extended"
+                        Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Extended}"
                         IsEnabled="False" />
                     <ComboBoxItem
                         Name="OverlayDisplayLevelFull"
-                        Content="Full"
+                        Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Full}"
                         IsEnabled="False" />
                 </ComboBox>
             </Border>
@@ -76,11 +76,11 @@
                             Glyph="&#xE2CB;" />
 
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Display resolution and refresh rate" />
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_DisplayResolutionRefreshRate}" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Adjust main display resolution and refresh rate"
+                                Text="{x:Static resx:Resources.QuickPerformancePage_DisplayResolutionRefreshRateDesc}"
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
@@ -125,11 +125,11 @@
                         Glyph="&#xE9CA;" />
 
                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Fan override" />
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_FanOverride}" />
                         <TextBlock
                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Set the fan duty cycle to user-defined value"
+                            Text="{x:Static resx:Resources.QuickPerformancePage_FanOverrideDesc}"
                             TextWrapping="Wrap" />
                     </ui:SimpleStackPanel>
                 </DockPanel>
@@ -161,7 +161,7 @@
                     Width="30"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Text="%" />
+                    Text="{x:Static resx:Resources.QuickPerformancePage_FanOverridePercentage}" />
                 <Slider
                     x:Name="QuietModeSlider"
                     Margin="8,0,0,0"
@@ -191,11 +191,11 @@
                         Glyph="&#xE964;" />
 
                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="CPU boost mode" />
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostMode}" />
                         <TextBlock
                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Set current CPU boost mode"
+                            Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}"
                             TextWrapping="Wrap" />
                     </ui:SimpleStackPanel>
                 </DockPanel>
