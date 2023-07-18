@@ -226,7 +226,7 @@ public static class DeviceManager
             }
 
             // get details
-            var details = new PnPDetails
+            PnPDetails details = new PnPDetails
             {
                 Path = path,
                 SymLink = PathToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
@@ -236,13 +236,15 @@ public static class DeviceManager
 
                 Name = FriendlyName,
 
-                isVirtual = parent.IsVirtual(),
+                isVirtual = parent.IsVirtual() || children.IsVirtual(),
                 isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
 
                 arrivalDate = children.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate),
 
                 attributes = (Attributes)attributes,
-                capabilities = (Capabilities)capabilities
+                capabilities = (Capabilities)capabilities,
+
+                DeviceIdx = deviceIndex
             };
 
             // add or update device
@@ -253,7 +255,7 @@ public static class DeviceManager
 
     public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
     {
-        return PnPDevices.Values.OrderBy(a => a.arrivalDate).Where(a =>
+        return PnPDevices.Values.OrderBy(a => a.DeviceIdx).Where(a =>
             a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
     }
 
@@ -387,7 +389,7 @@ public static class DeviceManager
         PnPDevices.TryRemove(deviceEx.SymLink, out var value);
 
         // RefreshHID();
-        LogManager.LogDebug("XUsbDevice removed: {0}", deviceEx.Name);
+        LogManager.LogDebug("XUsbDevice {1} removed: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical");
         XUsbDeviceRemoved?.Invoke(deviceEx, obj);
     }
 
@@ -409,8 +411,8 @@ public static class DeviceManager
             {
                 deviceEx.isXInput = true;
 
-                LogManager.LogDebug("XUsbDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
-                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+                LogManager.LogDebug("XUsbDevice {4} arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
+                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical");
                 XUsbDeviceArrived?.Invoke(deviceEx, obj);
             }
         }
