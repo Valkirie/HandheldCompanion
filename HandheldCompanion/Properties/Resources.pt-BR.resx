@@ -1475,4 +1475,85 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
     <value>Not set</value>
   </data>
+  <data name="QuickProfilesPage_PowerLimitTarget" xml:space="preserve">
+    <value>Power limit target</value>
+  </data>
+  <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
+    <value>Quicktools options</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverridePercentage" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
+    <value>Set current CPU boost mode</value>
+  </data>
+  <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
+    <value>CPU boost mode</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverrideDesc" xml:space="preserve">
+    <value>Set the fan duty cycle to user-defined value</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
+    <value>Fan override</value>
+  </data>
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+    <value>Adjust main display resolution and refresh rate</value>
+  </data>
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+    <value>Display resolution and refresh rate</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
+    <value>Top right</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
+    <value>Top left</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
+    <value>Window location</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomRight" xml:space="preserve">
+    <value>Bottom right</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
+    <value>Bottom left</value>
+  </data>
+  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+    <value>Power options</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
+    <value>Define quicktools window location</value>
+  </data>
+  <data name="SettingsPage_ThirdPartyApps" xml:space="preserve">
+    <value>Third-party applications</value>
+  </data>
+  <data name="SettingsPage_SensorNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
+    <value>Quicktools backdrop, none, mica, tabbed, acrylic</value>
+  </data>
+  <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
+    <value>Automatically turn RTSS off when companion is closed</value>
+  </data>
+  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
+    <value>Automatically turn HWiNFO off when companion is closed</value>
+  </data>
+  <data name="SettingsPage_HwInfo" xml:space="preserve">
+    <value>HWiNFO</value>
+  </data>
+  <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="QuickProfilesPage_CurrentProfile" xml:space="preserve">
+    <value>Current profile:</value>
+  </data>
+  <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
+    <value>RivaTuner Statistics Server</value>
+  </data>
+  <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
+    <value>Automatically hide quick tools when the user clicks outside of window</value>
+  </data>
+  <data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
+    <value>Hide when loses focus</value>
+  </data>
 </root>

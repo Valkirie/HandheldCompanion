@@ -2918,6 +2918,69 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CPU boost mode.
+        /// </summary>
+        public static string QuickPerformancePage_CPUBoostMode {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_CPUBoostMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set current CPU boost mode.
+        /// </summary>
+        public static string QuickPerformancePage_CPUBoostModeDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_CPUBoostModeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display resolution and refresh rate.
+        /// </summary>
+        public static string QuickPerformancePage_DisplayResolutionRefreshRate {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_DisplayResolutionRefreshRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust main display resolution and refresh rate.
+        /// </summary>
+        public static string QuickPerformancePage_DisplayResolutionRefreshRateDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_DisplayResolutionRefreshRateDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fan override.
+        /// </summary>
+        public static string QuickPerformancePage_FanOverride {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_FanOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set the fan duty cycle to user-defined value.
+        /// </summary>
+        public static string QuickPerformancePage_FanOverrideDesc {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_FanOverrideDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %.
+        /// </summary>
+        public static string QuickPerformancePage_FanOverridePercentage {
+            get {
+                return ResourceManager.GetString("QuickPerformancePage_FanOverridePercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manual GPU Clock Control.
         /// </summary>
         public static string QuickPerformancePage_GPUControl {
@@ -3049,6 +3112,33 @@ namespace HandheldCompanion.Properties {
         public static string QuickProfilesPage_Create {
             get {
                 return ResourceManager.GetString("QuickProfilesPage_Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current profile:.
+        /// </summary>
+        public static string QuickProfilesPage_CurrentProfile {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_CurrentProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string QuickProfilesPage_CurrentProfileDefault {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_CurrentProfileDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Power limit target.
+        /// </summary>
+        public static string QuickProfilesPage_PowerLimitTarget {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_PowerLimitTarget", resourceCulture);
             }
         }
         
@@ -3647,6 +3737,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide when loses focus.
+        /// </summary>
+        public static string SettingsPage_HideWhenLoseFocus {
+            get {
+                return ResourceManager.GetString("SettingsPage_HideWhenLoseFocus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically hide quick tools when the user clicks outside of window.
+        /// </summary>
+        public static string SettingsPage_HideWhenLoseFocusDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_HideWhenLoseFocusDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HWiNFO.
+        /// </summary>
+        public static string SettingsPage_HwInfo {
+            get {
+                return ResourceManager.GetString("SettingsPage_HwInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically turn HWiNFO off when companion is closed.
+        /// </summary>
+        public static string SettingsPage_HwInfoDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_HwInfoDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Install now.
         /// </summary>
         public static string SettingsPage_InstallNow {
@@ -3728,6 +3854,105 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Power options.
+        /// </summary>
+        public static string SettingsPage_PowerOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_PowerOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quicktools backdrop, none, mica, tabbed, acrylic.
+        /// </summary>
+        public static string SettingsPage_QuickToolsBackdrop {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsBackdrop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quicktools options.
+        /// </summary>
+        public static string SettingsPage_QuickToolsOptions {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window location.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocation {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom left.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationBottomLeft {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationBottomLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom right.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationBottomRight {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationBottomRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define quicktools window location.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top left.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationTopLeft {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top right.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationTopRight {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RivaTuner Statistics Server.
+        /// </summary>
+        public static string SettingsPage_RivaTunerStatisticsServer {
+            get {
+                return ResourceManager.GetString("SettingsPage_RivaTunerStatisticsServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically turn RTSS off when companion is closed.
+        /// </summary>
+        public static string SettingsPage_RivaTunerStatisticsServerDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_RivaTunerStatisticsServerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to External.
         /// </summary>
         public static string SettingsPage_SensorExternal {
@@ -3742,6 +3967,15 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_SensorInternal {
             get {
                 return ResourceManager.GetString("SettingsPage_SensorInternal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string SettingsPage_SensorNone {
+            get {
+                return ResourceManager.GetString("SettingsPage_SensorNone", resourceCulture);
             }
         }
         
@@ -3940,6 +4174,15 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_ThemeLight {
             get {
                 return ResourceManager.GetString("SettingsPage_ThemeLight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Third-party applications.
+        /// </summary>
+        public static string SettingsPage_ThirdPartyApps {
+            get {
+                return ResourceManager.GetString("SettingsPage_ThirdPartyApps", resourceCulture);
             }
         }
         
