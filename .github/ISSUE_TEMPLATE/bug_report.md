@@ -3,20 +3,23 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: bug
-assignees: CasperH2O
 
 ---
 
 **Device manufacturer**
 - [ ] AYANEO
-- [ ] ONEXPLAYER
+- [ ] AYN
 - [ ] AOKZOE
 - [ ] ASUS
-- [ ] STEAM
-- [ ] AYN
+- [ ] GPD
+- [ ] ONEXPLAYER
+- [ ] VALVE
 
 **Device model**
 Your device model
+
+**Handheld Companinion Version**
+0.X.X.X
 
 **Describe the bug**
 A clear and concise description of what the bug is.
