@@ -20,12 +20,16 @@ public class PnPDetails : IDisposable
     public bool isHooked;
 
     public bool isVirtual;
-    public bool isXInput;
     public string Name;
     public string Path;
     public string SymLink;
 
+    // dirty
     public int DeviceIdx;
+
+    // XInput
+    public bool isXInput;
+    public byte XInputUserIndex;
 
     public void Dispose()
     {

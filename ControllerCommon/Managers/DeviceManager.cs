@@ -24,6 +24,43 @@ public static class DeviceManager
 
     private static readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
 
+    const ulong GENERIC_READ = (0x80000000L);
+    const ulong GENERIC_WRITE = (0x40000000L);
+    const ulong GENERIC_EXECUTE = (0x20000000L);
+    const ulong GENERIC_ALL = (0x10000000L);
+
+    const uint FILE_SHARE_READ = 0x00000001;
+    const uint FILE_SHARE_WRITE = 0x00000002;
+    const uint FILE_SHARE_DELETE = 0x00000004;
+
+    const uint CREATE_NEW = 1;
+    const uint CREATE_ALWAYS = 2;
+    const uint OPEN_EXISTING = 3;
+    const uint OPEN_ALWAYS = 4;
+    const uint TRUNCATE_EXISTING = 5;
+
+    const ulong IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
+
+    static byte[] XINPUT_LED_TO_PORT_MAP = new byte[16]
+    {
+        255,
+        255,
+        0,
+        1,
+        2,
+        3,
+        0,
+        1,
+        2,
+        3,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+    };
+
     public static bool IsInitialized;
 
     static DeviceManager()
@@ -388,26 +425,15 @@ public static class DeviceManager
 
         // give system at least one second to initialize device
         await Task.Delay(1000);
-        PnPDevices.TryRemove(deviceEx.SymLink, out var value);
+        if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+        {
+            // RefreshHID();
+            LogManager.LogDebug("XUsbDevice {1} removed: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical");
 
-        // RefreshHID();
-        LogManager.LogDebug("XUsbDevice {1} removed: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical");
-        XUsbDeviceRemoved?.Invoke(deviceEx, obj);
+            // raise event
+            XUsbDeviceRemoved?.Invoke(deviceEx, obj);
+        }
     }
-
-    const uint GENERIC_READ = (0x80000000);
-    const uint GENERIC_WRITE = (0x40000000);
-    const uint GENERIC_EXECUTE = (0x20000000);
-    const uint GENERIC_ALL = (0x10000000);
-    const uint FILE_SHARE_READ = 0x00000001;
-    const uint FILE_SHARE_WRITE = 0x00000002;
-    const uint FILE_SHARE_DELETE = 0x00000004;
-    const uint CREATE_NEW = 1;
-    const uint CREATE_ALWAYS = 2;
-    const uint OPEN_EXISTING = 3;
-    const uint OPEN_ALWAYS = 4;
-    const uint TRUNCATE_EXISTING = 5;
-    const uint IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
 
     private static async void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
@@ -425,53 +451,27 @@ public static class DeviceManager
             var deviceEx = FindDevice(SymLink);
             if (deviceEx is not null && deviceEx.isGaming)
             {
-                SafeFileHandle handle = CreateFileW(deviceEx.Path, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+                SafeFileHandle handle = CreateFileW(obj.SymLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+
                 if (handle.IsInvalid)
                     return;
 
                 byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
-                uint gamepadStateRequest0102 = BitConverter.ToUInt32(gamepadStateRequest0101);
-
                 byte[] ledStateData = new byte[3];
-                uint ledStateData2 = BitConverter.ToUInt32(ledStateData);
+                uint len = 0;
 
-                int len = 0;
-
-                const uint IOCTL_XUSB_GET_LED_STATE = 0x8000E008;
-                if (!DeviceIoControl(handle.DangerousGetHandle(), IOCTL_XUSB_GET_LED_STATE, (nint)gamepadStateRequest0102, gamepadStateRequest0101.Length,
-                    (nint)ledStateData2, ledStateData.Length, out len, IntPtr.Zero))
-                {
+                if (!DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, gamepadStateRequest0101, gamepadStateRequest0101.Length, ledStateData, ledStateData.Length, ref len, 0))
                     return;
-                }
-
-                byte[] XINPUT_LED_TO_PORT_MAP = new byte[]
-                {
-                    255,
-                    255,
-                    0,
-                    1,
-                    2,
-                    3,
-                    0,
-                    1,
-                    2,
-                    3,
-                    255,
-                    255,
-                    255,
-                    255,
-                    255,
-                    255,
-                };
 
                 byte ledState = ledStateData[2];
-                Debug.Assert(ledState <= XINPUT_LED_TO_PORT_MAP.Length);
-                var m_XInputUserIndex = XINPUT_LED_TO_PORT_MAP[ledState]; // !!!!
 
                 deviceEx.isXInput = true;
+                deviceEx.XInputUserIndex = XINPUT_LED_TO_PORT_MAP[ledState];
 
-                LogManager.LogDebug("XUsbDevice {4} arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
-                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical");
+                LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
+                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+
+                // raise event
                 XUsbDeviceArrived?.Invoke(deviceEx, obj);
             }
         }
@@ -571,24 +571,24 @@ public static class DeviceManager
 
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern SafeFileHandle CreateFileW(
-  [MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-  uint dwDesiredAccess,
-  uint dwShareMode,
-  IntPtr lpSecurityAttributes,
-  uint dwCreationDisposition,
-  uint dwFlagsAndAttributes,
-  IntPtr hTemplateFile);
+        [MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+        ulong dwDesiredAccess,
+        ulong dwShareMode,
+        IntPtr lpSecurityAttributes,
+        uint dwCreationDisposition,
+        uint dwFlagsAndAttributes,
+        IntPtr hTemplateFile);
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     private static extern bool DeviceIoControl(
-            IntPtr hDevice,
-            uint dwIoControlCode,
-            IntPtr lpInBuffer,
-            int nInBufferSize,
-            IntPtr lpOutBuffer,
-            int nOutBufferSize,
-            out int lpBytesReturned,
-            IntPtr lpOverlapped);
+        SafeFileHandle hDevice,
+        ulong ioControlCode,
+        byte[] inBuffer,
+        int nInBufferSize,
+        byte[] outBuffer,
+        int nOutBufferSize,
+        ref uint pBytesReturned,
+        IntPtr overlapped);
     #endregion
 
     #region events
