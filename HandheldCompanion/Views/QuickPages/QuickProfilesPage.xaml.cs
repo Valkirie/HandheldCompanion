@@ -772,6 +772,9 @@ public partial class QuickProfilesPage : Page
 
     private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        if (currentProfile is null)
+            return;
+
         // wait until lock is released
         if (profileLock)
             return;
@@ -782,6 +785,9 @@ public partial class QuickProfilesPage : Page
 
     private void RSRSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        if (currentProfile is null)
+            return;
+
         if (!RSRSlider.IsInitialized)
             return;
 
@@ -795,6 +801,9 @@ public partial class QuickProfilesPage : Page
 
     private void CPUCoreToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        if (currentProfile is null)
+            return;
+
         // wait until lock is released
         if (profileLock)
             return;
@@ -805,6 +814,9 @@ public partial class QuickProfilesPage : Page
 
     private void CPUCoreSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        if (currentProfile is null)
+            return;
+
         if (!CPUCoreSlider.IsInitialized)
             return;
 
