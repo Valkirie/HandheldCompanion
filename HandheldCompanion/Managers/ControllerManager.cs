@@ -27,8 +27,6 @@ public static class ControllerManager
 {
     private static readonly Dictionary<string, IController> Controllers = new();
 
-    private static readonly ConcurrentDictionary<UserIndex, bool> XUsbControllers = new();
-
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
 
@@ -398,7 +396,7 @@ public static class ControllerManager
 
             // raise event
             ControllerPlugged?.Invoke(controller);
-            LogManager.LogDebug("DInput controller plugged: {0}", controller.ToString());
+            LogManager.LogDebug("DInput controller {0} plugged", controller.ToString());
 
             ToastManager.SendToast(controller.ToString(), "detected");
         });
@@ -424,53 +422,57 @@ public static class ControllerManager
         if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
             ClearTargetController();
 
+        LogManager.LogDebug("DInput controller {0} unplugged", controller.ToString());
+
         // raise event
         ControllerUnplugged?.Invoke(controller);
     }
 
     private static void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
+        // get details passed UserIndex
+        UserIndex userIndex = (UserIndex)details.XInputUserIndex;
+
         if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
         {
+            // check if controller is power cycling
             if (!controller.IsPowerCycling)
                 return;
 
-            // hide new hid value
-            if (controller.IsHidden())
+            // cast to XInputController
+            XInputController xInputController = (XInputController)controller;
+
+            // hide new InstanceID (HID)
+            if (xInputController.IsHidden())
                 HidHide.HidePath(details.deviceInstanceId);
 
             // unset flag
-            controller.IsPowerCycling = false;
+            // todo: check if userIndex changes when controller is power cycling
+            xInputController.IsPowerCycling = false;
+
+            // update bounds controller
+            if (xInputController.GetUserIndex() != (int)userIndex)
+            {
+                xInputController.UpdateController(new Controller(userIndex));
+                LogManager.LogDebug("XInput controller {0} userIndex changed to {1}", xInputController.ToString(), userIndex);
+            }
 
             // set flag
             details.isHooked = true;
 
-            LogManager.LogDebug("XInput controller power-cycled: {0}", controller.ToString());
+            LogManager.LogDebug("XInput controller {0} has power-cycled", xInputController.ToString());
 
             return;
         }
 
-        // trying to guess XInput behavior...
-        // get first available slot
-        var slot = UserIndex.One;
-        Controller _controller = new(slot);
-
-        for (slot = UserIndex.One; slot <= UserIndex.Four; slot++)
-        {
-            _controller = new Controller(slot);
-
-            // check if controller is connected and slot free
-            if (_controller.IsConnected && !XUsbControllers.ContainsKey(slot))
-                break;
-        }
-
-        LogManager.LogDebug("XInput slot available: {0}", slot);
+        // A XInput controller
+        Controller _controller = new(userIndex);
 
         // UI thread (synchronous)
         // We need to wait for each controller to initialize and take (or not) its slot in the array
         Application.Current.Dispatcher.Invoke(() =>
         {
-            XInputController controller = new(_controller);
+            XInputController controller = new(_controller, details);
 
             // failed to initialize
             if (controller.Details is null)
@@ -478,9 +480,6 @@ public static class ControllerManager
 
             if (!controller.IsConnected())
                 return;
-
-            // slot is now busy
-            XUsbControllers[slot] = true;
 
             // update or create controller
             var path = controller.GetContainerInstancePath();
@@ -490,9 +489,10 @@ public static class ControllerManager
             if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
                 SetTargetController(controller.GetContainerInstancePath());
 
+            LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
+
             // raise event
             ControllerPlugged?.Invoke(controller);
-            LogManager.LogDebug("XInput controller plugged: {0}", controller.ToString());
 
             ToastManager.SendToast(controller.ToString(), "detected");
         });
@@ -507,16 +507,14 @@ public static class ControllerManager
         if (controller.IsPowerCycling)
             return;
 
-        // slot is now free
-        var slot = (UserIndex)controller.GetUserIndex();
-        XUsbControllers.Remove(slot, out _);
-
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);
 
         // unplug controller, if needed
         if (GetTargetController()?.GetContainerInstancePath() == controller.GetContainerInstancePath())
             ClearTargetController();
+
+        LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
         ControllerUnplugged?.Invoke(controller);
