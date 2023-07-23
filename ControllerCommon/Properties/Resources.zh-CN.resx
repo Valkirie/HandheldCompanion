@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AutoRollYawSwapDesc" xml:space="preserve">
-    <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
+    <value>该模式适合笔记本或翻盖式掌机，可以根据该设备如何被握持（屏幕以90度角或者180度角打开）判断重力方向，来自动切换陀螺仪方向。</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>A</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
-    <value>持续启动</value>
+    <value>始终开启</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
     <value>B</value>
@@ -148,7 +148,7 @@
     <value>左肩键</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
-    <value>左摇杆下压</value>
+    <value>左摇杆按压</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
     <value>左板机</value>
@@ -157,7 +157,7 @@
     <value>右肩键</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
-    <value>右摇杆下压</value>
+    <value>右摇杆按压</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
     <value>右板机</value>
@@ -172,13 +172,13 @@
     <value>Y</value>
   </data>
   <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
-    <value>模拟DS4手柄</value>
+    <value>模拟 DualShock4 手柄</value>
   </data>
   <data name="Enum.HIDmode.NoController" xml:space="preserve">
     <value>无模拟手柄</value>
   </data>
   <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
-    <value>模拟360手柄</value>
+    <value>模拟 XBOX 360 手柄</value>
   </data>
   <data name="Enum.HIDstatus.Connected" xml:space="preserve">
     <value>已连接</value>
@@ -187,7 +187,7 @@
     <value>未连接</value>
   </data>
   <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
-    <value>自动横滚/航向轴切换</value>
+    <value>重力轴向切换</value>
   </data>
   <data name="Enum.Input.JoystickCamera" xml:space="preserve">
     <value>体感视角</value>
@@ -199,7 +199,7 @@
     <value>玩家空间</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
-    <value>Handheld Companion</value>
+    <value>掌机</value>
   </data>
   <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
     <value>浮窗</value>
@@ -217,22 +217,22 @@
     <value>右摇杆</value>
   </data>
   <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
-    <value>这是默认的手柄配置。此配置将应用于没有特定配置的所有应用程序。一些需要指定程序的选项可能被禁用。</value>
+    <value>这是默认的全局配置。此配置将应用于没有特定配置的应用程序。一些需要指定程序才可生效的选项可能被禁用。</value>
   </data>
   <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
-    <value>啊这。看来这个配置正在运行。一些需要指定程序的选项可能被禁用。</value>
+    <value>这个配置正在运行。一些选项可能被禁用。</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
-    <value>啊这。这个配置似乎没有可执行文件。这怎么可能?</value>
+    <value>这个配置似乎没有找到应用程序的可执行文件。</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
-    <value>啊这。这个配置似乎没有指定应用程序的路径。一些需要指定程序的选项可能被禁用。</value>
+    <value>这个配置似乎没有找到指定的路径。</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
-    <value>阿这。你似乎没有修改此应用程序内容的必要权限。确保在管理员模式下启动此程序。</value>
+    <value>似乎你的权限不够更改这里的选项。请确保在管理员模式下启动此程序。</value>
   </data>
   <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
-    <value>这里没什么好看的。</value>
+    <value>这里没什么东西。</value>
   </data>
   <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
     <value>默认</value>
@@ -241,7 +241,7 @@
     <value>节能</value>
   </data>
   <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
-    <value>高</value>
+    <value>高性能</value>
   </data>
   <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
     <value>自动</value>
@@ -253,16 +253,16 @@
     <value>手动</value>
   </data>
   <data name="JoystickCameraDesc" xml:space="preserve">
-    <value>这个输入将作为一个简单的摇杆操作，适用于传统的摇杆应用</value>
+    <value>这个模式将反转X轴，适用于将陀螺仪模拟鼠标。</value>
   </data>
   <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>这个输入将作为一个为赛车游戏优化的驾驶摇杆</value>
+    <value>这个模式适用于一些赛车游戏，陀螺仪输入将模拟方向盘。</value>
   </data>
   <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>这个输入将作为一个为第一或第三人称视角优化的摇杆</value>
+    <value>这个模式适用于第一人称或第三人称视角的游戏，体感输入将模拟玩家视角，</value>
   </data>
   <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
-    <value>Handheld Companion</value>
+    <value>掌机伴侣</value>
   </data>
   <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
@@ -325,16 +325,16 @@
     <value>M1 / M2</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
-    <value>Cross</value>
+    <value>叉</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
-    <value>Circle</value>
+    <value>圈</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
-    <value>Square</value>
+    <value>方</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
-    <value>Triangle</value>
+    <value>三角</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
     <value>Share</value>
@@ -346,28 +346,28 @@
     <value>Options</value>
   </data>
   <data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
-    <value>Custom</value>
+    <value>自定义</value>
   </data>
   <data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
-    <value>Device</value>
+    <value>设备</value>
   </data>
   <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
-    <value>Auto Roll Yaw Swap</value>
+    <value>重力切换模式</value>
   </data>
   <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
-    <value>Joystick Camera</value>
+    <value>X轴反转模式</value>
   </data>
   <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
-    <value>Joystick Steering</value>
+    <value>方向盘模式</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
-    <value>Player Space</value>
+    <value>普通模式</value>
   </data>
   <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
-    <value>Left Stick</value>
+    <value>左摇杆</value>
   </data>
   <data name="Enum.MotionOutput.RightStick" xml:space="preserve">
-    <value>Right Stick</value>
+    <value>右摇杆</value>
   </data>
   <data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
     <value>A</value>
@@ -391,7 +391,7 @@
     <value>Menu</value>
   </data>
   <data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
-    <value>Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.</value>
+    <value>这个配置正在运行。一些选项可能被禁用。</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
     <value>Command center</value>
@@ -406,13 +406,13 @@
     <value>L2</value>
   </data>
   <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
-    <value>Left Thumb</value>
+    <value>左摇杆</value>
   </data>
   <data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
     <value>R2</value>
   </data>
   <data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
-    <value>Right Thumb</value>
+    <value>右摇杆</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
     <value>A</value>
@@ -442,22 +442,22 @@
     <value>View</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
-    <value>DPad Down</value>
+    <value>下方向键</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
-    <value>DPad Left</value>
+    <value>左方向键</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Right</value>
+    <value>右方向键</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
-    <value>DPad Up</value>
+    <value>上方向键</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
     <value>LB</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
-    <value>L2</value>
+    <value>LT</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
     <value>L3</value>
@@ -469,19 +469,19 @@
     <value>L5</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
-    <value>Left Thumb</value>
+    <value>左摇杆</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
-    <value>Left Thumb Down</value>
+    <value>左摇杆下推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
-    <value>Left Thumb Left</value>
+    <value>左摇杆左推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
-    <value>Left Thumb Right</value>
+    <value>左摇杆右推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
-    <value>Left Thumb Up</value>
+    <value>左摇杆上推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
     <value>OEM1</value>
@@ -496,7 +496,7 @@
     <value>RB</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
-    <value>R2</value>
+    <value>RT</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
     <value>R3</value>
@@ -508,22 +508,22 @@
     <value>R5</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
-    <value>Right Thumb</value>
+    <value>左摇杆</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
-    <value>Right Thumb Down</value>
+    <value>左摇杆下推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
-    <value>Right Thumb Left</value>
+    <value>左摇杆左推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
-    <value>Right Thumb Right</value>
+    <value>左摇杆右推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
-    <value>Right Thumb Up</value>
+    <value>左摇杆上推</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
-    <value>Guide</value>
+    <value>导航键</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
