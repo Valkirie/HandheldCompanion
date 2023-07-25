@@ -33,31 +33,6 @@ public partial class DpadPage : ILayoutPage
         this.Tag = Tag;
     }
 
-    public override void UpdateController(IController Controller)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // controller based
-            foreach (var mapping in MappingButtons)
-            {
-                var button = mapping.Key;
-                var buttonMapping = mapping.Value;
-
-                // update mapping visibility
-                if (!Controller.HasSourceButton(button))
-                    buttonMapping.Visibility = Visibility.Collapsed;
-                else
-                    buttonMapping.Visibility = Visibility.Visible;
-
-                // update icon
-                var newIcon = Controller.GetFontIcon(button);
-                var newLabel = Controller.GetButtonName(button);
-                buttonMapping.UpdateIcon(newIcon, newLabel);
-            }
-        });
-    }
-
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
     }
