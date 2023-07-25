@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using HandheldCompanion.Actions;
 using MemoryPack;
 using Newtonsoft.Json;
 

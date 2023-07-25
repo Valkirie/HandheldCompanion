@@ -198,7 +198,7 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
-                            <!--  Inner deadzone  -->
+                            <!--  Outer deadzone  -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
@@ -234,7 +234,7 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
-                            <!--  Inner deadzone  -->
+                            <!--  Anti deadzone  -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>

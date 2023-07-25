@@ -1,8 +1,10 @@
 ﻿using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
 
@@ -102,6 +104,11 @@ public partial class TriggerMapping : IMapping
             }
         }
 
+        // settings
+        Trigger2TriggerInnerDeadzone.Value = ((TriggerActions)this.Actions).AxisDeadZoneInner;
+        Trigger2TriggerOuterDeadzone.Value = ((TriggerActions)this.Actions).AxisDeadZoneOuter;
+        Trigger2TriggerAntiDeadzone.Value = ((TriggerActions)this.Actions).AxisAntiDeadZone;
+
         base.Update();
     }
 
@@ -125,6 +132,51 @@ public partial class TriggerMapping : IMapping
                 var buttonLabel = TargetComboBox.SelectedItem as Label;
                 ((TriggerActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
             }
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Trigger2TriggerInnerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Trigger:
+                ((TriggerActions)this.Actions).AxisDeadZoneInner = (int)Trigger2TriggerInnerDeadzone.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Trigger2TriggerOuterDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Trigger:
+                ((TriggerActions)this.Actions).AxisDeadZoneOuter = (int)Trigger2TriggerOuterDeadzone.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Trigger2TriggerAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Trigger:
+                ((TriggerActions)this.Actions).AxisAntiDeadZone = (int)Trigger2TriggerAntiDeadzone.Value;
                 break;
         }
 

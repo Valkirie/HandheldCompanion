@@ -31,7 +31,7 @@ public class AxisActions : IActions
     public bool AxisRotated { get; set; } = false;
     public int AxisDeadZoneInner { get; set; } = 0;
     public int AxisDeadZoneOuter { get; set; } = 0;
-    public float AxisAntiDeadZone { get; set; } = 0.0f;
+    public int AxisAntiDeadZone { get; set; } = 0;
     public bool ImproveCircularity { get; set; } = false;
 
     public override void Execute(AxisFlags axis, short value)
@@ -40,7 +40,7 @@ public class AxisActions : IActions
         value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
 
         // Apply anti deadzone adjustments
-        value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
+        value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, short.MaxValue);
 
         Value = (short)(value * (AxisInverted ? -1 : 1));
     }

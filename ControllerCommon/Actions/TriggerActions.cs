@@ -1,35 +1,42 @@
-﻿using System;
+﻿using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
+using ControllerCommon.Utils;
+using System;
 
-namespace ControllerCommon.Actions;
-
-[Serializable]
-public class TriggerActions : IActions
+namespace HandheldCompanion.Actions
 {
-    public TriggerActions()
+    [Serializable]
+    public class TriggerActions : IActions
     {
-        ActionType = ActionType.Trigger;
-        Value = (short)0;
-    }
+        public AxisLayoutFlags Axis { get; set; }
 
-    public TriggerActions(AxisLayoutFlags axis) : this()
-    {
-        Axis = axis;
-    }
+        public int AxisDeadZoneInner { get; set; } = 0;
+        public int AxisDeadZoneOuter { get; set; } = 0;
+        public int AxisAntiDeadZone { get; set; } = 0;
 
-    public AxisLayoutFlags Axis { get; set; }
+        public TriggerActions()
+        {
+            this.ActionType = ActionType.Trigger;
+            this.Value = (short)0;
+        }
 
-    public override void Execute(AxisFlags axis, short value)
-    {
-        // Apply inner and outer deadzone adjustments
-        // value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
-        // value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone);
+        public TriggerActions(AxisLayoutFlags axis) : this()
+        {
+            this.Axis = axis;
+        }
 
-        Value = value;
-    }
+        public override void Execute(AxisFlags axis, short value)
+        {
+            // Apply inner and outer deadzone adjustments
+            value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
+            value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
 
-    public short GetValue()
-    {
-        return (short)Value;
+            this.Value = (short)(value);
+        }
+
+        public short GetValue()
+        {
+            return (short)this.Value;
+        }
     }
 }
