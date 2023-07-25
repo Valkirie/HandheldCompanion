@@ -514,7 +514,7 @@
     <value>Right Thumb</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
-    <value>RightTrigger</value>
+    <value>Right Trigger</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
     <value>Start</value>
