@@ -255,15 +255,11 @@ namespace HandheldCompanion.Managers
 
         public Control FocusedElement(GamepadWindow window)
         {
-            if (Keyboard.FocusedElement is null)
-                keyboardFocus = null;
-            else
-            {
-                IInputElement? keyboardFocused = Keyboard.FocusedElement;
+            IInputElement keyboardFocused = null;
 
-                if (!keyboardFocused.GetType().IsSubclassOf(typeof(Control)))
-                    keyboardFocused = null;
-            }
+            if (Keyboard.FocusedElement is not null)
+                if (Keyboard.FocusedElement.GetType().IsSubclassOf(typeof(Control)))
+                    keyboardFocused = Keyboard.FocusedElement;
 
             if (keyboardFocused is null)
             {
