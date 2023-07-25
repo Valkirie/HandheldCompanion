@@ -6,6 +6,8 @@ using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using Inkore.UI.WPF.Modern.Controls;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -17,6 +19,61 @@ public class ILayoutPage : Page
 
     public virtual void UpdateController(IController controller)
     {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // controller based
+            foreach (var mapping in MappingButtons)
+            {
+                ButtonFlags button = mapping.Key;
+                ButtonMapping buttonMapping = mapping.Value;
+                // update mapping visibility
+                if (!controller.HasSourceButton(button))
+                    buttonMapping.Visibility = Visibility.Collapsed;
+                else
+                {
+                    buttonMapping.Visibility = Visibility.Visible;
+                    // update icon
+                    FontIcon newIcon = controller.GetFontIcon(button);
+                    string newLabel = controller.GetButtonName(button);
+                    buttonMapping.UpdateIcon(newIcon, newLabel);
+                }
+            }
+            foreach (var mapping in MappingAxis)
+            {
+                AxisLayoutFlags flags = mapping.Key;
+                AxisLayout layout = AxisLayout.Layouts[flags];
+                AxisMapping axisMapping = mapping.Value;
+                // update mapping visibility
+                if (!controller.HasSourceAxis(flags))
+                    axisMapping.Visibility = Visibility.Collapsed;
+                else
+                {
+                    axisMapping.Visibility = Visibility.Visible;
+                    // update icon
+                    FontIcon newIcon = controller.GetFontIcon(flags);
+                    string newLabel = controller.GetAxisName(flags);
+                    axisMapping.UpdateIcon(newIcon, newLabel);
+                }
+            }
+            foreach (var mapping in MappingTriggers)
+            {
+                AxisLayoutFlags flags = mapping.Key;
+                AxisLayout layout = AxisLayout.Layouts[flags];
+                TriggerMapping axisMapping = mapping.Value;
+                // update mapping visibility
+                if (!controller.HasSourceAxis(flags))
+                    axisMapping.Visibility = Visibility.Collapsed;
+                else
+                {
+                    axisMapping.Visibility = Visibility.Visible;
+                    // update icon
+                    FontIcon newIcon = controller.GetFontIcon(flags);
+                    string newLabel = controller.GetAxisName(flags);
+                    axisMapping.UpdateIcon(newIcon, newLabel);
+                }
+            }
+        });
     }
 
     public void Refresh(SortedDictionary<ButtonFlags, IActions> buttonMapping,
