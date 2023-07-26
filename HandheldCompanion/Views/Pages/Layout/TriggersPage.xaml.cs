@@ -21,36 +21,36 @@ public partial class TriggersPage : ILayoutPage
         InitializeComponent();
 
         // draw UI
-        foreach (var button in LeftTrigger)
+        foreach (ButtonFlags button in LeftTrigger)
         {
-            var buttonMapping = new ButtonMapping(button);
-            LeftTriggerButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            LeftTriggerButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in LeftTriggerAxis)
+        foreach (AxisLayoutFlags axis in LeftTriggerAxis)
         {
-            var axisMapping = new TriggerMapping(axis);
+            TriggerMapping axisMapping = new TriggerMapping(axis);
             LeftTriggerPanel.Children.Add(axisMapping);
 
-            MappingTriggers.Add(axis, axisMapping);
+            TriggerMappings.Add(axis, axisMapping);
         }
 
-        foreach (var button in RightTrigger)
+        foreach (ButtonFlags button in RightTrigger)
         {
-            var buttonMapping = new ButtonMapping(button);
-            RightTriggerButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            RightTriggerButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in RightTriggerAxis)
+        foreach (AxisLayoutFlags axis in RightTriggerAxis)
         {
-            var axisMapping = new TriggerMapping(axis);
+            TriggerMapping axisMapping = new TriggerMapping(axis);
             RightTriggerPanel.Children.Add(axisMapping);
 
-            MappingTriggers.Add(axis, axisMapping);
+            TriggerMappings.Add(axis, axisMapping);
         }
     }
 

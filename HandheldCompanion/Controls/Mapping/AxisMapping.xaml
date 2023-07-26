@@ -9,11 +9,12 @@
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="800"
-    d:Visibility="Visible"
-    Visibility="Collapsed"
     mc:Ignorable="d">
 
-    <Expander Padding="15,12,12,12" HorizontalAlignment="Stretch">
+    <Expander
+        Margin="49,0,0,0"
+        Padding="15,12,12,12"
+        HorizontalAlignment="Stretch">
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -370,7 +371,8 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
-                                        ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
+                                        ValueChanged="Axis2MousePointerSpeed_ValueChanged"
+                                        Value="33" />
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -402,6 +404,7 @@
                                         IsSnapToTickEnabled="True"
                                         Maximum="100"
                                         Minimum="0"
+                                        Value="10"
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"

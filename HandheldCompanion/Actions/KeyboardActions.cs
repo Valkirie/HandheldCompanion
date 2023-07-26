@@ -3,6 +3,7 @@ using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Simulators;
+using WindowsInput.Events;
 
 namespace HandheldCompanion.Actions;
 
@@ -13,7 +14,6 @@ public class KeyboardActions : IActions
     {
         ActionType = ActionType.Keyboard;
         IsKeyDown = false;
-        IsKeyUp = true;
 
         Value = false;
         prevValue = false;
@@ -26,10 +26,15 @@ public class KeyboardActions : IActions
 
     public VirtualKeyCode Key { get; set; }
     private bool IsKeyDown { get; set; }
-    private bool IsKeyUp { get; set; }
+    private KeyCode[] pressed;
 
-    public override void Execute(ButtonFlags button, bool value)
+    // settings
+    public ModifierSet Modifiers = ModifierSet.None;
+
+    public override void Execute(ButtonFlags button, bool value, int longTime)
     {
+        base.Execute(button, value, longTime);
+
         if (Toggle)
         {
             if ((bool)prevValue != value && value)
@@ -77,22 +82,23 @@ public class KeyboardActions : IActions
         {
             case true:
             {
-                if (IsKeyDown || !IsKeyUp)
+                if (IsKeyDown)
                     return;
 
                 IsKeyDown = true;
-                IsKeyUp = false;
+                pressed = ModifierMap[Modifiers];
+                KeyboardSimulator.KeyDown(pressed);
                 KeyboardSimulator.KeyDown(Key);
             }
                 break;
             case false:
             {
-                if (IsKeyUp || !IsKeyDown)
+                if (!IsKeyDown)
                     return;
 
-                IsKeyUp = true;
                 IsKeyDown = false;
                 KeyboardSimulator.KeyUp(Key);
+                KeyboardSimulator.KeyUp(pressed);
             }
                 break;
         }

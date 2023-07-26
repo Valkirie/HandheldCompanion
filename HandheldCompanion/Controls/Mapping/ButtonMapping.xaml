@@ -9,8 +9,6 @@
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="800"
-    d:Visibility="Visible"
-    Visibility="Collapsed"
     mc:Ignorable="d">
 
     <Expander Padding="15,12,12,12" HorizontalAlignment="Stretch">
@@ -18,29 +16,42 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <ui:FontIcon
-                    Name="Icon"
-                    Height="40"
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontFamily="{DynamicResource PhoneFontFamilyNormal}"
-                    FontSize="14" />
-                <TextBlock
-                    Name="Name"
+                <DockPanel MinWidth="150">
+                    <ui:FontIcon
+                        Name="Icon"
+                        Height="40"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontFamily="{DynamicResource PhoneFontFamilyNormal}"
+                        FontSize="14" />
+                    <TextBlock
+                        Name="Name"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="14" />
+                </DockPanel>
+
+                <ComboBox
+                    Name="PressComboBox"
                     Grid.Column="1"
-                    HorizontalAlignment="Left"
+                    Width="120"
                     VerticalAlignment="Center"
-                    FontSize="14" />
+                    SelectedIndex="0"
+                    SelectionChanged="Press_SelectionChanged">
+                    <ComboBoxItem Content="Short press" />
+                    <ComboBoxItem Content="Long press" />
+                </ComboBox>
 
                 <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                     <ComboBox
                         Name="ActionComboBox"
                         Width="120"
+                        Margin="12,0,0,0"
                         VerticalAlignment="Center"
                         SelectedIndex="0"
                         SelectionChanged="Action_SelectionChanged">
@@ -64,6 +75,54 @@
         </Expander.Header>
         <Expander.Content>
             <StackPanel>
+                <!--  Button 2 Keyboard/Mouse, modifiers  -->
+                <Grid
+                    Name="Button2ButtonWithModifier"
+                    d:Visibility="Visible"
+                    Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
+
+                    <ui:SimpleStackPanel Spacing="12">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" MinWidth="200" />
+                                    <ColumnDefinition Width="4*" MinWidth="180" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Modifier(s)" />
+
+                                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                                    <ComboBox
+                                        Name="ModifierComboBox"
+                                        Width="180"
+                                        VerticalAlignment="Center"
+                                        SelectedIndex="0"
+                                        SelectionChanged="Modifier_SelectionChanged">
+                                        <ComboBoxItem Content="None" />
+                                        <ComboBoxItem Content="Shift" />
+                                        <ComboBoxItem Content="Control" />
+                                        <ComboBoxItem Content="Alt" />
+                                        <ComboBoxItem Content="Shift + Control" />
+                                        <ComboBoxItem Content="Shift + Alt" />
+                                        <ComboBoxItem Content="Control + Alt" />
+                                        <ComboBoxItem Content="Shift + Control + Alt" />
+                                    </ComboBox>
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
                 <!--  Button 2 Button/Keyboard/Mouse  -->
                 <Grid
                     Name="Button2Button"
@@ -98,8 +157,7 @@
                                 Opacity="0.25" />
 
                             <!--  Repeat rate (hidden)  -->
-                            <Grid d:Visibility="Visible"
-                                  Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid d:Visibility="Visible" Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                 <ui:SimpleStackPanel Spacing="6">
 
@@ -126,7 +184,7 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         ValueChanged="Turbo_Slider_ValueChanged"
-                                        Value="90" />
+                                        Value="30" />
 
                                     <!--  Separator  -->
                                     <Separator

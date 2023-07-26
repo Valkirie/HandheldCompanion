@@ -29,14 +29,14 @@ public partial class Layout : ICloneable, IDisposable
             if (!IController.TargetButtons.Contains(button))
                 continue;
 
-            ButtonLayout[button] = new ButtonActions { Button = button };
+            ButtonLayout[button] = new List<IActions>() { new ButtonActions() { Button = button } };
         }
 
-        ButtonLayout[ButtonFlags.OEM1] = new ButtonActions { Button = ButtonFlags.Special };
-        ButtonLayout[ButtonFlags.LeftPadClickUp] = new ButtonActions { Button = ButtonFlags.DPadUp };
-        ButtonLayout[ButtonFlags.LeftPadClickDown] = new ButtonActions { Button = ButtonFlags.DPadDown };
-        ButtonLayout[ButtonFlags.LeftPadClickLeft] = new ButtonActions { Button = ButtonFlags.DPadLeft };
-        ButtonLayout[ButtonFlags.LeftPadClickRight] = new ButtonActions { Button = ButtonFlags.DPadRight };
+        ButtonLayout[ButtonFlags.OEM1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.Special } };
+        ButtonLayout[ButtonFlags.LeftPadClickUp] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadUp }};
+        ButtonLayout[ButtonFlags.LeftPadClickDown] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadDown }};
+        ButtonLayout[ButtonFlags.LeftPadClickLeft] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadLeft }};
+        ButtonLayout[ButtonFlags.LeftPadClickRight] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadRight }};
 
         // generic axis mapping
         foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
@@ -57,7 +57,7 @@ public partial class Layout : ICloneable, IDisposable
         }
     }
 
-    public SortedDictionary<ButtonFlags, IActions> ButtonLayout { get; set; } = new();
+    public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = new();
     public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
 
     public object Clone()
@@ -79,9 +79,9 @@ public partial class Layout : ICloneable, IDisposable
         Updated?.Invoke(this);
     }
 
-    public void UpdateLayout(ButtonFlags button, IActions action)
+    public void UpdateLayout(ButtonFlags button, List<IActions> actions)
     {
-        ButtonLayout[button] = action;
+        ButtonLayout[button] = actions;
         Updated?.Invoke(this);
     }
 

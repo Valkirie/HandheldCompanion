@@ -32,36 +32,36 @@ public partial class TrackpadsPage : ILayoutPage
         InitializeComponent();
 
         // draw UI
-        foreach (var button in LeftButtons)
+        foreach (ButtonFlags button in LeftButtons)
         {
-            var buttonMapping = new ButtonMapping(button);
-            LeftTrackpadButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            LeftTrackpadButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in LeftAxis)
+        foreach (AxisLayoutFlags axis in LeftAxis)
         {
-            var axisMapping = new AxisMapping(axis);
+            AxisMapping axisMapping = new AxisMapping(axis);
             LeftTrackpadPanel.Children.Add(axisMapping);
 
-            MappingAxis.Add(axis, axisMapping);
+            AxisMappings.Add(axis, axisMapping);
         }
 
-        foreach (var button in RightButtons)
+        foreach (ButtonFlags button in RightButtons)
         {
-            var buttonMapping = new ButtonMapping(button);
-            RightTrackpadButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            RightTrackpadButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in RightAxis)
+        foreach (AxisLayoutFlags axis in RightAxis)
         {
-            var axisMapping = new AxisMapping(axis);
+            AxisMapping axisMapping = new AxisMapping(axis);
             RightTrackpadPanel.Children.Add(axisMapping);
 
-            MappingAxis.Add(axis, axisMapping);
+            AxisMappings.Add(axis, axisMapping);
         }
     }
 

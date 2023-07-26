@@ -10,11 +10,12 @@
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="800"
-    d:Visibility="Visible"
-    Visibility="Collapsed"
     mc:Ignorable="d">
 
-    <Expander Padding="15,12,12,12" HorizontalAlignment="Stretch">
+    <Expander
+        Margin="49,0,0,0"
+        Padding="15,12,12,12"
+        HorizontalAlignment="Stretch">
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>

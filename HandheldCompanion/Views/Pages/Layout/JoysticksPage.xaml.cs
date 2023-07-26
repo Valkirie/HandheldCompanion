@@ -32,36 +32,36 @@ public partial class JoysticksPage : ILayoutPage
         InitializeComponent();
 
         // draw UI
-        foreach (var button in LeftThumbButtons)
+        foreach (ButtonFlags button in LeftThumbButtons)
         {
-            var buttonMapping = new ButtonMapping(button);
-            LeftJoystickButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            LeftJoystickButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in LeftThumbAxis)
+        foreach (AxisLayoutFlags axis in LeftThumbAxis)
         {
-            var axisMapping = new AxisMapping(axis);
+            AxisMapping axisMapping = new AxisMapping(axis);
             LeftJoystickPanel.Children.Add(axisMapping);
 
-            MappingAxis.Add(axis, axisMapping);
+            AxisMappings.Add(axis, axisMapping);
         }
 
-        foreach (var button in RightThumbButtons)
+        foreach (ButtonFlags button in RightThumbButtons)
         {
-            var buttonMapping = new ButtonMapping(button);
-            RightJoystickButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            RightJoystickButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in RightThumbAxis)
+        foreach (AxisLayoutFlags axis in RightThumbAxis)
         {
-            var axisMapping = new AxisMapping(axis);
+            AxisMapping axisMapping = new AxisMapping(axis);
             RightJoystickPanel.Children.Add(axisMapping);
 
-            MappingAxis.Add(axis, axisMapping);
+            AxisMappings.Add(axis, axisMapping);
         }
     }
 

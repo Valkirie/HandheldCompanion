@@ -9,14 +9,10 @@ namespace ControllerCommon.Actions;
 [Serializable]
 public class AxisActions : IActions
 {
-    private Vector2 prevVector;
-    private Vector2 Vector;
-
     public AxisActions()
     {
         ActionType = ActionType.Joystick;
-        Vector = new Vector2();
-        prevVector = new Vector2();
+        this.Value = new Vector2();
     }
 
     public AxisActions(AxisLayoutFlags axis) : this()
@@ -27,14 +23,14 @@ public class AxisActions : IActions
     public AxisLayoutFlags Axis { get; set; }
 
     // Axis to axis
-    public bool AxisInverted { get; set; } = false;
-    public bool AxisRotated { get; set; } = false;
+    public bool ImproveCircularity { get; set; } = false;
+    public int AxisAntiDeadZone { get; set; } = 0;
     public int AxisDeadZoneInner { get; set; } = 0;
     public int AxisDeadZoneOuter { get; set; } = 0;
-    public int AxisAntiDeadZone { get; set; } = 0;
-    public bool ImproveCircularity { get; set; } = false;
+    public bool AxisRotated { get; set; } = false;
+    public bool AxisInverted { get; set; } = false;
 
-    public override void Execute(AxisFlags axis, short value)
+    public void Execute(AxisFlags axis, short value)
     {
         // Apply inner and outer deadzone adjustments
         value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, short.MaxValue);
@@ -58,17 +54,17 @@ public class AxisActions : IActions
             layout.vector = InputUtils.ImproveCircularity(layout.vector);
 
         if (AutoRotate)
-            Vector = ((Orientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90
+            Value = ((Orientation & ScreenOrientation.Angle90) == ScreenOrientation.Angle90
                          ? new Vector2(layout.vector.Y, -layout.vector.X)
                          : layout.vector)
                      * ((Orientation & ScreenOrientation.Angle180) == ScreenOrientation.Angle180 ? -1.0f : 1.0f);
         else
-            Vector = (AxisRotated ? new Vector2(layout.vector.Y, -layout.vector.X) : layout.vector)
+            Value = (AxisRotated ? new Vector2(layout.vector.Y, -layout.vector.X) : layout.vector)
                      * (AxisInverted ? -1.0f : 1.0f);
     }
 
     public Vector2 GetValue()
     {
-        return Vector;
+        return (Vector2)this.Value;
     }
 }

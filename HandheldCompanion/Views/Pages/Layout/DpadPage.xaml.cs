@@ -19,12 +19,12 @@ public partial class DpadPage : ILayoutPage
         InitializeComponent();
 
         // draw UI
-        foreach (var button in DPAD)
+        foreach (ButtonFlags button in DPAD)
         {
-            var buttonMapping = new ButtonMapping(button);
-            DpadStackPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            DpadStackPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
     }
 

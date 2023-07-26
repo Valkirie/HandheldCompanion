@@ -116,63 +116,55 @@ internal static class LayoutManager
 
     private static Layout? ProcessLayout(string fileName)
     {
-        // UI thread (synchronous)
-        return Application.Current.Dispatcher.Invoke(() =>
+        Layout layout = null;
+
+        try
         {
-            Layout layout = null;
-
-            try
+            string outputraw = File.ReadAllText(fileName);
+            layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
             {
-                var outputraw = File.ReadAllText(fileName);
-                layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
-            }
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
+        }
 
-            // failed to parse
-            if (layout is null)
-                LogManager.LogError("Could not parse Layout {0}", fileName);
+        // failed to parse
+        if (layout is null)
+            LogManager.LogError("Could not parse Layout {0}", fileName);
 
-            return layout;
-        });
+        return layout;
     }
 
     private static void ProcessLayoutTemplate(string fileName)
     {
-        // UI thread (synchronous)
-        Application.Current.Dispatcher.Invoke(() =>
+        LayoutTemplate layoutTemplate = null;
+
+        try
         {
-            LayoutTemplate layoutTemplate = null;
-
-            try
+            string outputraw = File.ReadAllText(fileName);
+            layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
             {
-                var outputraw = File.ReadAllText(fileName);
-                layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
-            }
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
+        }
 
-            // failed to parse
-            if (layoutTemplate is null || layoutTemplate.Layout is null)
-            {
-                LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
-                return;
-            }
+        // failed to parse
+        if (layoutTemplate is null || layoutTemplate.Layout is null)
+        {
+            LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
+            return;
+        }
 
-            // todo: implement deduplication
-            Templates.Add(layoutTemplate);
-            Updated?.Invoke(layoutTemplate);
-        });
+        // todo: implement deduplication
+        Templates.Add(layoutTemplate);
+        Updated?.Invoke(layoutTemplate);
     }
 
     private static void DesktopLayout_Updated(Layout layout)
@@ -314,47 +306,55 @@ internal static class LayoutManager
             var value = buttonState.Value;
 
             // skip, if not mapped
-            if (!currentLayout.ButtonLayout.TryGetValue(button, out var action))
+            if (!currentLayout.ButtonLayout.TryGetValue(button, out var actions))
             {
                 outputState.ButtonState[button] = value;
                 continue;
             }
 
-            if (action is null)
-            {
-                outputState.ButtonState[button] = value;
-                continue;
-            }
+            // Some long press logic. Unfortunately in case of long press actions are not 100%
+            // independent of eachother. When button is pressed that has long press mapped, short
+            // press should not be triggered on key down. It should only be triggered on keyup, but
+            // only if released before the long timer. If timer passed, short is ignored, long is
+            // pressed. Long story short :-), short press needs to be aware if long press exists.
 
-            switch (action.ActionType)
-            {
-                // button to button
-                case ActionType.Button:
+            // TODO: change to set of ranges so several independent long presses are possible
+            // if there are no long presses nothing changes
+            int maxLongTime = 0;
+            foreach (var action in actions)
+                if (action.PressType == PressType.Long)
+                    maxLongTime = Math.Max(maxLongTime, action.LongPressTime);
+
+            foreach (var action in actions)
+                switch (action.ActionType)
                 {
-                    var bAction = action as ButtonActions;
-                    value |= outputState.ButtonState[bAction.Button];
+                    // button to button
+                    case ActionType.Button:
+                    {
+                        ButtonActions bAction = action as ButtonActions;
+                        bAction.Execute(button, value, maxLongTime);
 
-                    bAction.Execute(button, value);
-                    outputState.ButtonState[bAction.Button] = bAction.GetValue();
-                }
-                    break;
+                        bool outVal = bAction.GetValue() || outputState.ButtonState[bAction.Button];
+                        outputState.ButtonState[bAction.Button] = outVal;
+                    }
+                        break;
 
-                // button to keyboard key
-                case ActionType.Keyboard:
-                {
-                    var kAction = action as KeyboardActions;
-                    kAction.Execute(button, value);
-                }
-                    break;
+                    // button to keyboard key
+                    case ActionType.Keyboard:
+                    {
+                        var kAction = action as KeyboardActions;
+                        kAction.Execute(button, value, maxLongTime);
+                    }
+                        break;
 
-                // button to mouse click
-                case ActionType.Mouse:
-                {
-                    var mAction = action as MouseActions;
-                    mAction.Execute(button, value);
+                    // button to mouse click
+                    case ActionType.Mouse:
+                    {
+                        var mAction = action as MouseActions;
+                        mAction.Execute(button, value, maxLongTime);
+                    }
+                        break;
                 }
-                    break;
-            }
         }
 
         foreach (AxisLayoutFlags flags in Enum.GetValues(typeof(AxisLayoutFlags)))

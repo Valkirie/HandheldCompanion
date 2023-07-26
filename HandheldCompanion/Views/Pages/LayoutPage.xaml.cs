@@ -25,7 +25,7 @@ public partial class LayoutPage : Page
 {
     protected readonly object updateLock = new();
 
-    private readonly Dictionary<string, ILayoutPage> _pages;
+    private readonly Dictionary<string, ILayoutPage> pages;
 
     // page vars
     private readonly ButtonsPage buttonsPage = new();
@@ -60,7 +60,7 @@ public partial class LayoutPage : Page
             : Visibility.Collapsed; */
 
         // create controller related pages
-        _pages = new Dictionary<string, ILayoutPage>
+        pages = new Dictionary<string, ILayoutPage>
         {
             // buttons
             { "ButtonsPage", buttonsPage },
@@ -77,24 +77,22 @@ public partial class LayoutPage : Page
             { "GyroPage", gyroPage }
         };
 
-        foreach (var buttonMapping in buttonsPage.MappingButtons.Values.Union(dpadPage.MappingButtons.Values)
-                     .Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values)
-                     .Union(trackpadsPage.MappingButtons.Values))
+        foreach (ButtonStack buttonStack in buttonsPage.ButtonStacks.Values.Union(dpadPage.ButtonStacks.Values).Union(triggersPage.ButtonStacks.Values).Union(joysticksPage.ButtonStacks.Values).Union(trackpadsPage.ButtonStacks.Values))
         {
-            buttonMapping.Updated += (sender, action) => ButtonMapping_Updated((ButtonFlags)sender, action);
-            buttonMapping.Deleted += sender => ButtonMapping_Deleted((ButtonFlags)sender);
+            buttonStack.Updated += (sender, actions) => ButtonMapping_Updated((ButtonFlags)sender, actions);
+            buttonStack.Deleted += (sender) => ButtonMapping_Deleted((ButtonFlags)sender);
         }
 
-        foreach (var AxisMapping in triggersPage.MappingTriggers.Values)
-        {
-            AxisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            AxisMapping.Deleted += sender => AxisMapping_Deleted((AxisLayoutFlags)sender);
-        }
-
-        foreach (var axisMapping in joysticksPage.MappingAxis.Values.Union(trackpadsPage.MappingAxis.Values))
+        foreach (TriggerMapping axisMapping in triggersPage.TriggerMappings.Values)
         {
             axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            axisMapping.Deleted += sender => AxisMapping_Deleted((AxisLayoutFlags)sender);
+            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+        }
+
+        foreach (AxisMapping axisMapping in joysticksPage.AxisMappings.Values.Union(trackpadsPage.AxisMappings.Values).Union(gyroPage.AxisMappings.Values))
+        {
+            axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
+            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
         }
 
         LayoutManager.Updated += LayoutManager_Updated;
@@ -110,21 +108,24 @@ public partial class LayoutPage : Page
     {
         RefreshLayoutList();
 
-        // cascade update to (sub)pages (async)
-        Parallel.ForEach(_pages.Values,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism },
-            page => { page.UpdateController(Controller); });
+        // cascade update to (sub)pages
+        foreach (var page in pages.Values)
+            page.UpdateController(Controller);
     }
 
     private void LayoutManager_Initialized()
     {
-        RefreshLayoutList();
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            RefreshLayoutList();
+        });
     }
 
     private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // Get template separator index
             var idx = -1;
@@ -217,12 +218,12 @@ public partial class LayoutPage : Page
         currentTemplate.Layout.RemoveLayout(button);
     }
 
-    private void ButtonMapping_Updated(ButtonFlags button, IActions action)
+    private void ButtonMapping_Updated(ButtonFlags button, List<IActions> actions)
     {
         if (Monitor.IsEntered(updateLock))
             return;
 
-        currentTemplate.Layout.UpdateLayout(button, action);
+        currentTemplate.Layout.UpdateLayout(button, actions);
     }
 
     private void AxisMapping_Deleted(AxisLayoutFlags axis)
@@ -256,25 +257,29 @@ public partial class LayoutPage : Page
 
     public void UpdateLayout(LayoutTemplate layoutTemplate)
     {
+        // TODO: Not entirely sure what is going on here, but the old templates were still sending
+        // events. Shouldn't they be destroyed? Either there is a bug or I don't understand something
+        // in C# (probably the latter). Either way this handles/fixes/workarounds the issue.
+        currentTemplate.ClearDelegates();
         currentTemplate = layoutTemplate;
         UpdatePages();
     }
 
     private void UpdatePages()
     {
+        // This is a very important lock, it blocks backward events to the layout when
+        // this is actually the backend that triggered the update. Notifications on higher
+        // levels (pages and mappings) could potentially be blocked for optimization.
         if (Monitor.TryEnter(updateLock))
         {
-            // cascade update to (sub)pages (async)
-            Parallel.ForEach(_pages.Values,
-                new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism },
-                page => { page.Refresh(currentTemplate.Layout.ButtonLayout, currentTemplate.Layout.AxisLayout); });
+            // cascade update to (sub)pages
+            foreach (var page in pages.Values)
+                page.Update(currentTemplate.Layout);
 
             // clear layout selection
             cB_Layouts.SelectedValue = null;
 
             Monitor.Exit(updateLock);
-
-            currentTemplate.Layout.UpdateLayout();
         }
     }
 
@@ -332,6 +337,9 @@ public partial class LayoutPage : Page
                 currentTemplate.Guid = layoutTemplate.Guid; // not needed
 
                 UpdatePages();
+
+                // the whole layout has been updated without notification, trigger one
+                currentTemplate.Layout.UpdateLayout();
             }
                 break;
         }
@@ -437,7 +445,7 @@ public partial class LayoutPage : Page
 
     public void NavView_Navigate(string navItemTag)
     {
-        var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
+        var item = pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
         Page _page = item.Value;
 
         // Get the page type before navigation so you can prevent duplicate

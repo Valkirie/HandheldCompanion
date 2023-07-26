@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
+using ControllerCommon;
 using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Inputs;
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using Inkore.UI.WPF.Modern.Controls;
+using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
 
 public class ILayoutPage : Page
 {
-    public Dictionary<AxisLayoutFlags, AxisMapping> MappingAxis = new();
-    public Dictionary<ButtonFlags, ButtonMapping> MappingButtons = new();
-    public Dictionary<AxisLayoutFlags, TriggerMapping> MappingTriggers = new();
+    public Dictionary<ButtonFlags, ButtonStack> ButtonStacks = new();
+    public Dictionary<AxisLayoutFlags, AxisMapping> AxisMappings = new();
+    public Dictionary<AxisLayoutFlags, TriggerMapping> TriggerMappings = new();
 
     public virtual void UpdateController(IController controller)
     {
@@ -23,27 +23,27 @@ public class ILayoutPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // controller based
-            foreach (var mapping in MappingButtons)
+            foreach (var pair in ButtonStacks)
             {
-                ButtonFlags button = mapping.Key;
-                ButtonMapping buttonMapping = mapping.Value;
+                ButtonFlags button = pair.Key;
+                ButtonStack buttonStack = pair.Value;
                 // update mapping visibility
                 if (!controller.HasSourceButton(button))
-                    buttonMapping.Visibility = Visibility.Collapsed;
+                    buttonStack.Visibility = Visibility.Collapsed;
                 else
                 {
-                    buttonMapping.Visibility = Visibility.Visible;
+                    buttonStack.Visibility = Visibility.Visible;
                     // update icon
                     FontIcon newIcon = controller.GetFontIcon(button);
                     string newLabel = controller.GetButtonName(button);
-                    buttonMapping.UpdateIcon(newIcon, newLabel);
+                    buttonStack.UpdateIcon(newIcon, newLabel);
                 }
             }
-            foreach (var mapping in MappingAxis)
+            foreach (var pair in AxisMappings)
             {
-                AxisLayoutFlags flags = mapping.Key;
+                AxisLayoutFlags flags = pair.Key;
                 AxisLayout layout = AxisLayout.Layouts[flags];
-                AxisMapping axisMapping = mapping.Value;
+                AxisMapping axisMapping = pair.Value;
                 // update mapping visibility
                 if (!controller.HasSourceAxis(flags))
                     axisMapping.Visibility = Visibility.Collapsed;
@@ -56,11 +56,11 @@ public class ILayoutPage : Page
                     axisMapping.UpdateIcon(newIcon, newLabel);
                 }
             }
-            foreach (var mapping in MappingTriggers)
+            foreach (var pair in TriggerMappings)
             {
-                AxisLayoutFlags flags = mapping.Key;
+                AxisLayoutFlags flags = pair.Key;
                 AxisLayout layout = AxisLayout.Layouts[flags];
-                TriggerMapping axisMapping = mapping.Value;
+                TriggerMapping axisMapping = pair.Value;
                 // update mapping visibility
                 if (!controller.HasSourceAxis(flags))
                     axisMapping.Visibility = Visibility.Collapsed;
@@ -76,62 +76,48 @@ public class ILayoutPage : Page
         });
     }
 
-    public void Refresh(SortedDictionary<ButtonFlags, IActions> buttonMapping,
-        SortedDictionary<AxisLayoutFlags, IActions> axisMapping)
+    public void Update(Layout layout)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        foreach (var pair in ButtonStacks)
         {
-            foreach (var pair in MappingButtons)
+            ButtonFlags button = pair.Key;
+            ButtonStack mappings = pair.Value;
+
+            if (layout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
             {
-                var button = pair.Key;
-                var mapping = pair.Value;
-
-                if (buttonMapping.TryGetValue(button, out var actions))
-                {
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
+                mappings.SetActions(actions);
+                continue;
             }
 
-            foreach (var pair in MappingAxis)
+            mappings.Reset();
+        }
+
+        foreach (var pair in AxisMappings)
+        {
+            AxisLayoutFlags axis = pair.Key;
+            AxisMapping mapping = pair.Value;
+
+            if (layout.AxisLayout.TryGetValue(axis, out IActions actions))
             {
-                var axis = pair.Key;
-                var mapping = pair.Value;
-
-                if (axisMapping.TryGetValue(axis, out var actions))
-                {
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
+                mapping.SetIActions(actions);
+                continue;
             }
 
-            foreach (var pair in MappingTriggers)
+            mapping.Reset();
+        }
+
+        foreach (var pair in TriggerMappings)
+        {
+            AxisLayoutFlags axis = pair.Key;
+            TriggerMapping mapping = pair.Value;
+
+            if (layout.AxisLayout.TryGetValue(axis, out IActions actions))
             {
-                var axis = pair.Key;
-                var mapping = pair.Value;
-
-                if (axisMapping.TryGetValue(axis, out var actions))
-                {
-                    if (actions is null)
-                        actions = new EmptyActions();
-
-                    mapping.SetIActions(actions);
-                    continue;
-                }
-
-                mapping.Reset();
+                mapping.SetIActions(actions);
+                continue;
             }
-        });
+
+            mapping.Reset();
+        }
     }
 }

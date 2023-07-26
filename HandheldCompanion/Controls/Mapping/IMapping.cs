@@ -5,27 +5,18 @@ namespace HandheldCompanion.Controls;
 
 public class IMapping : UserControl
 {
-    protected readonly object updateLock = new();
-
     protected IActions Actions;
-    protected IActions prevActions;
-    protected object prevValue;
     protected object Value;
 
     protected void Update()
     {
         // update axis mapping
-        if (Value != prevValue || Actions != prevActions)
-            Updated?.Invoke(Value, Actions);
-
-        prevValue = Value;
-        prevActions = Actions.Clone() as IActions;
+        Updated?.Invoke(Value, Actions);
     }
 
     protected void Delete()
     {
         Actions = null;
-        prevActions = null;
 
         Deleted?.Invoke(Value);
     }
@@ -34,7 +25,6 @@ public class IMapping : UserControl
     {
         // update mapping IActions
         Actions = actions;
-        prevActions = actions.Clone() as IActions;
     }
 
     #region events

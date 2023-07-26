@@ -25,7 +25,6 @@ public partial class AxisMapping : IMapping
     public AxisMapping(AxisLayoutFlags axis) : this()
     {
         Value = axis;
-        prevValue = axis;
 
         Icon.Glyph = axis.ToString();
     }
@@ -42,14 +41,11 @@ public partial class AxisMapping : IMapping
             Icon.Foreground = newIcon.Foreground;
         else
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-        Update();
     }
 
     internal void SetIActions(IActions actions)
     {
-        // reset and update mapping IActions
-        Reset();
+        // update mapping IActions
         base.SetIActions(actions);
 
         // update UI
@@ -63,10 +59,6 @@ public partial class AxisMapping : IMapping
 
         // we're not ready yet
         if (TargetComboBox is null)
-            return;
-
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
             return;
 
         // clear current dropdown values
@@ -160,10 +152,6 @@ public partial class AxisMapping : IMapping
         if (TargetComboBox.SelectedItem is null)
             return;
 
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
-            return;
-
         // generate IActions based on settings
         switch (Actions.ActionType)
         {
@@ -185,21 +173,10 @@ public partial class AxisMapping : IMapping
         base.Update();
     }
 
-    private void Update()
-    {
-        // force full update
-        Action_SelectionChanged(null, null);
-        Target_SelectionChanged(null, null);
-    }
-
     public void Reset()
     {
-        if (Monitor.TryEnter(updateLock))
-        {
-            ActionComboBox.SelectedIndex = 0;
-            TargetComboBox.SelectedItem = null;
-            Monitor.Exit(updateLock);
-        }
+        ActionComboBox.SelectedIndex = 0;
+        TargetComboBox.SelectedItem = null;
     }
 
     private void Axis2AxisAutoRotate_Toggled(object sender, RoutedEventArgs e)

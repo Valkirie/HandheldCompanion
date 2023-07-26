@@ -25,13 +25,13 @@ namespace HandheldCompanion.Actions
             this.Axis = axis;
         }
 
-        public override void Execute(AxisFlags axis, short value)
+        public void Execute(AxisFlags axis, short value)
         {
             // Apply inner and outer deadzone adjustments
             value = (short)InputUtils.InnerOuterDeadzone(value, AxisDeadZoneInner, AxisDeadZoneOuter, byte.MaxValue);
             value = (short)InputUtils.ApplyAntiDeadzone(value, AxisAntiDeadZone, byte.MaxValue);
 
-            this.Value = (short)(value);
+            this.Value = value;
         }
 
         public short GetValue()

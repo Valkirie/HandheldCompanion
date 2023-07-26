@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -88,7 +89,7 @@ public partial class QuickSettingsPage : Page
             Application.Current.Dispatcher.Invoke(() =>
             {
                 // todo: update volume icon on update
-                SliderVolume.Value = volume;
+                SliderVolume.Value = Math.Round(volume);
             });
 
             Monitor.Exit(volumeLock);

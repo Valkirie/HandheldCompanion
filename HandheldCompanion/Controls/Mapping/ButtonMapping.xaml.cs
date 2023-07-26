@@ -27,9 +27,6 @@ public partial class ButtonMapping : IMapping
     public ButtonMapping(ButtonFlags button) : this()
     {
         Value = button;
-        prevValue = button;
-
-        Icon.Glyph = button.ToString();
     }
 
     public void UpdateIcon(FontIcon newIcon, string newLabel)
@@ -44,18 +41,20 @@ public partial class ButtonMapping : IMapping
             Icon.Foreground = newIcon.Foreground;
         else
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-        Update();
     }
 
-    internal void SetIActions(IActions actions)
+    public void SetIActions(IActions actions)
     {
-        // reset and update mapping IActions
-        Reset();
+        // update mapping IActions
         base.SetIActions(actions);
 
         // update UI
         ActionComboBox.SelectedIndex = (int)actions.ActionType;
+    }
+
+    public IActions GetIActions()
+    {
+        return Actions;
     }
 
     private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -65,10 +64,6 @@ public partial class ButtonMapping : IMapping
 
         // we're not ready yet
         if (TargetComboBox is null)
-            return;
-
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
             return;
 
         // clear current dropdown values
@@ -93,10 +88,6 @@ public partial class ButtonMapping : IMapping
             if (Actions is null || Actions is not ButtonActions)
                 Actions = new ButtonActions();
 
-            // we need a controller to get compatible buttons
-            if (controller is null)
-                return;
-
             foreach (var button in IController.GetTargetButtons())
             {
                 // create a label, store ButtonFlags as Tag and Label as controller specific string
@@ -108,9 +99,14 @@ public partial class ButtonMapping : IMapping
             }
 
             // settings
-            Toggle_Turbo.IsOn = ((ButtonActions)Actions).Turbo;
-            Turbo_Slider.Value = ((ButtonActions)Actions).TurboDelay;
-            Toggle_Toggle.IsOn = ((ButtonActions)Actions).Toggle;
+            if (TargetComboBox.SelectedItem is not null)
+                PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            else
+                this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            Toggle_Turbo.IsOn = this.Actions.Turbo;
+            Turbo_Slider.Value = this.Actions.TurboDelay;
+            Toggle_Toggle.IsOn = this.Actions.Toggle;
         }
         else if (type == ActionType.Keyboard)
         {
@@ -128,9 +124,15 @@ public partial class ButtonMapping : IMapping
             }
 
             // settings
-            Toggle_Turbo.IsOn = ((KeyboardActions)Actions).Turbo;
-            Turbo_Slider.Value = ((KeyboardActions)Actions).TurboDelay;
-            Toggle_Toggle.IsOn = ((KeyboardActions)Actions).Toggle;
+            if (TargetComboBox.SelectedItem is not null)
+                PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            else
+                this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            Toggle_Turbo.IsOn = this.Actions.Turbo;
+            Turbo_Slider.Value = this.Actions.TurboDelay;
+            Toggle_Toggle.IsOn = this.Actions.Toggle;
+            ModifierComboBox.SelectedIndex = (int)((KeyboardActions)this.Actions).Modifiers;
         }
         else if (type == ActionType.Mouse)
         {
@@ -157,9 +159,15 @@ public partial class ButtonMapping : IMapping
             }
 
             // settings
-            Toggle_Turbo.IsOn = ((MouseActions)Actions).Turbo;
-            Turbo_Slider.Value = ((MouseActions)Actions).TurboDelay;
-            Toggle_Toggle.IsOn = ((MouseActions)Actions).Toggle;
+            if (TargetComboBox.SelectedItem is not null)
+                PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            else
+                this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            Toggle_Turbo.IsOn = this.Actions.Turbo;
+            Turbo_Slider.Value = this.Actions.TurboDelay;
+            Toggle_Toggle.IsOn = this.Actions.Toggle;
+            ModifierComboBox.SelectedIndex = (int)((MouseActions)this.Actions).Modifiers;
         }
 
         base.Update();
@@ -171,10 +179,6 @@ public partial class ButtonMapping : IMapping
             return;
 
         if (TargetComboBox.SelectedItem is null)
-            return;
-
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
             return;
 
         // generate IActions based on settings
@@ -205,42 +209,48 @@ public partial class ButtonMapping : IMapping
         base.Update();
     }
 
-    private void Update()
-    {
-        // force full update
-        Action_SelectionChanged(null, null);
-        Target_SelectionChanged(null, null);
-    }
-
     public void Reset()
     {
-        if (Monitor.TryEnter(updateLock))
-        {
-            ActionComboBox.SelectedIndex = 0;
-            TargetComboBox.SelectedItem = null;
-            Monitor.Exit(updateLock);
-        }
+        ActionComboBox.SelectedIndex = 0;
+        TargetComboBox.SelectedItem = null;
     }
 
-    #region Button2Button
+    private void Press_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (this.Actions is null)
+            return;
+
+        this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+
+        base.Update();
+    }
+
+    private void Modifier_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (this.Actions is null)
+            return;
+
+        ModifierSet mods = (ModifierSet)ModifierComboBox.SelectedIndex;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Keyboard:
+                ((KeyboardActions)this.Actions).Modifiers = mods;
+                break;
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).Modifiers = mods;
+                break;
+        }
+
+        base.Update();
+    }
 
     private void Toggle_Turbo_Toggled(object sender, RoutedEventArgs e)
     {
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
-        {
-            case ActionType.Button:
-                ((ButtonActions)Actions).Turbo = Toggle_Turbo.IsOn;
-                break;
-            case ActionType.Keyboard:
-                ((KeyboardActions)Actions).Turbo = Toggle_Turbo.IsOn;
-                break;
-            case ActionType.Mouse:
-                ((MouseActions)Actions).Turbo = Toggle_Turbo.IsOn;
-                break;
-        }
+        this.Actions.Turbo = Toggle_Turbo.IsOn;
 
         base.Update();
     }
@@ -250,18 +260,7 @@ public partial class ButtonMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
-        {
-            case ActionType.Button:
-                ((ButtonActions)Actions).TurboDelay = (byte)Turbo_Slider.Value;
-                break;
-            case ActionType.Keyboard:
-                ((KeyboardActions)Actions).TurboDelay = (byte)Turbo_Slider.Value;
-                break;
-            case ActionType.Mouse:
-                ((MouseActions)Actions).TurboDelay = (byte)Turbo_Slider.Value;
-                break;
-        }
+        this.Actions.TurboDelay = (int)Turbo_Slider.Value;
 
         base.Update();
     }
@@ -271,21 +270,8 @@ public partial class ButtonMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
-        {
-            case ActionType.Button:
-                ((ButtonActions)Actions).Toggle = Toggle_Toggle.IsOn;
-                break;
-            case ActionType.Keyboard:
-                ((KeyboardActions)Actions).Toggle = Toggle_Toggle.IsOn;
-                break;
-            case ActionType.Mouse:
-                ((MouseActions)Actions).Toggle = Toggle_Toggle.IsOn;
-                break;
-        }
+        this.Actions.Toggle = Toggle_Toggle.IsOn;
 
         base.Update();
     }
-
-    #endregion
 }
