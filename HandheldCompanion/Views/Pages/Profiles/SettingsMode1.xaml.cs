@@ -25,6 +25,8 @@ public partial class SettingsMode1 : Page
     {
         this.Tag = Tag;
 
+        lvCartesianChart.DataTooltip = null;
+
         PipeClient.ServerMessage += OnServerMessage;
 
         SteeringLinearityPoints = new ChartValues<ObservablePoint>();
