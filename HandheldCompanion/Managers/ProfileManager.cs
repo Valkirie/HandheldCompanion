@@ -117,15 +117,23 @@ public static class ProfileManager
 
     public static Profile GetProfileFromPath(string path, bool ignoreStatus)
     {
-        var profile =
-            profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+        // get profile from path
+        Profile profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
 
         if (profile is null)
-            return GetDefault();
+        {
+            // otherwise, get profile from executable
+            string fileName = Path.GetFileName(path);
+            profile = profiles.Values.FirstOrDefault(a => a.Executable.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
+
+            if (profile is null)
+                return GetDefault();
+        }
 
         // ignore profile status (enabled/disabled)
         if (ignoreStatus)
             return profile;
+
         return profile.Enabled ? profile : GetDefault();
     }
 
