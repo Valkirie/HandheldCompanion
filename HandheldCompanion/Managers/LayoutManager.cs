@@ -111,7 +111,11 @@ internal static class LayoutManager
 
     private static void LayoutWatcher_Created(object sender, FileSystemEventArgs e)
     {
-        ProcessLayoutTemplate(e.FullPath);
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ProcessLayoutTemplate(e.FullPath);
+        });
     }
 
     private static Layout? ProcessLayout(string fileName)
