@@ -13,7 +13,6 @@ namespace HandheldCompanion.Controls
     /// </summary>
     public partial class ButtonStack : SimpleStackPanel
     {
-        static Brush foreground = (Brush)Application.Current.Resources["AccentButtonBackground"];
         static Style buttonStyle = (Style)Application.Current.Resources["TabViewButtonStyle"];
         static FontFamily fontFamily = new("Segoe Fluent Icons");
         static Thickness margin = new(0, 0, 1, 0);
@@ -145,7 +144,7 @@ namespace HandheldCompanion.Controls
             Button button = new();
             button.VerticalAlignment = VerticalAlignment.Top;
             button.Height = 48; button.Width = 48;
-            button.Foreground = foreground;
+            button.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
             button.Margin = margin;
             button.Padding = padding;  // the glyph is not centered within its box
             button.Style = buttonStyle;
