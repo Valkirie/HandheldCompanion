@@ -45,7 +45,8 @@ public partial class ButtonMapping : IMapping
 
     public void SetIActions(IActions actions)
     {
-        // update mapping IActions
+        // reset and update mapping IActions
+        Reset();
         base.SetIActions(actions);
 
         // update UI

@@ -43,7 +43,8 @@ public partial class TriggerMapping : IMapping
 
     internal void SetIActions(IActions actions)
     {
-        // update mapping IAction
+        // reset and update mapping IActions
+        Reset();
         base.SetIActions(actions);
 
         // update UI
