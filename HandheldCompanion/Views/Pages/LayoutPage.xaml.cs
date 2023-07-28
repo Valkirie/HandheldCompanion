@@ -10,6 +10,7 @@ using ControllerCommon.Actions;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Inputs;
+using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
@@ -23,21 +24,19 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class LayoutPage : Page
 {
-    protected readonly object updateLock = new();
-
-    private readonly Dictionary<string, ILayoutPage> pages;
+    private LayoutTemplate currentTemplate = new();
+    protected LockObject updateLock = new();
 
     // page vars
-    private readonly ButtonsPage buttonsPage = new();
-
-    private LayoutTemplate currentTemplate = new();
+    private readonly Dictionary<string, ILayoutPage> pages;
+    private readonly ButtonsPage buttonsPage = new();    
     private readonly DpadPage dpadPage = new();
     private readonly GyroPage gyroPage = new();
     private readonly JoysticksPage joysticksPage = new();
-
-    private string preNavItemTag;
     private readonly TrackpadsPage trackpadsPage = new();
     private readonly TriggersPage triggersPage = new();
+
+    private string preNavItemTag;
 
     public LayoutPage()
     {
@@ -212,7 +211,7 @@ public partial class LayoutPage : Page
 
     private void ButtonMapping_Deleted(ButtonFlags button)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.RemoveLayout(button);
@@ -220,7 +219,7 @@ public partial class LayoutPage : Page
 
     private void ButtonMapping_Updated(ButtonFlags button, List<IActions> actions)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.UpdateLayout(button, actions);
@@ -228,7 +227,7 @@ public partial class LayoutPage : Page
 
     private void AxisMapping_Deleted(AxisLayoutFlags axis)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.RemoveLayout(axis);
@@ -236,7 +235,7 @@ public partial class LayoutPage : Page
 
     private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.UpdateLayout(axis, action);
@@ -270,7 +269,7 @@ public partial class LayoutPage : Page
         // This is a very important lock, it blocks backward events to the layout when
         // this is actually the backend that triggered the update. Notifications on higher
         // levels (pages and mappings) could potentially be blocked for optimization.
-        if (Monitor.TryEnter(updateLock))
+        using (new ScopedLock(updateLock))
         {
             // cascade update to (sub)pages
             foreach (var page in pages.Values)
