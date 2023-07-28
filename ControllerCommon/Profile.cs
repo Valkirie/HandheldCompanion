@@ -6,6 +6,7 @@ using ControllerCommon.Properties;
 using ControllerCommon.Utils;
 using MemoryPack;
 using Newtonsoft.Json;
+using static ControllerCommon.Utils.XInputPlusUtils;
 
 namespace ControllerCommon;
 
@@ -96,7 +97,8 @@ public partial class Profile : ICloneable, IComparable
     [MemoryPackIgnore] public Layout Layout { get; set; } = new();
 
     public bool Whitelisted { get; set; } // if true, can see through the HidHide cloak
-    public bool XInputPlus { get; set; } // if true, deploy xinput1_3.dll
+  
+    public XInputPlusMethod XInputPlus { get; set; } // if true, deploy xinput1_3.dll
 
     public float GyrometerMultiplier { get; set; } = 1.0f; // gyroscope multiplicator (remove me)
     public float AccelerometerMultiplier { get; set; } = 1.0f; // accelerometer multiplicator (remove me)

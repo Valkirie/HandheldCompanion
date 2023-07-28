@@ -12,7 +12,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static PInvoke.Kernel32;
+using static ControllerCommon.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion.Managers;
 
@@ -493,16 +493,17 @@ public static class ProfileManager
 
         switch (profile.XInputPlus)
         {
-            case true:
+            case XInputPlusMethod.Redirection:
                 XInputPlus.RegisterApplication(profile);
                 break;
-            case false:
+            case XInputPlusMethod.Disabled:
+            case XInputPlusMethod.Injection:
                 XInputPlus.UnregisterApplication(profile);
                 break;
         }
     }
 
-    private static void ControllerManager_ControllerPlugged(IController Controller)
+    private static void ControllerManager_ControllerPlugged(IController Controller, bool isHCVirtualController)
     {
         // we're only interest in virtual, XInput controllers
         if (Controller.GetType() != typeof(XInputController) || !Controller.IsVirtual())

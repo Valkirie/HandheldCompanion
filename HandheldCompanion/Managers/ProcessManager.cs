@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,9 @@ public static class ProcessManager
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
 
+    private static ManagementEventWatcher processStart = new ManagementEventWatcher(
+            new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
+
     private static ProcessEx foregroundProcess;
     private static ProcessEx previousProcess;
 
@@ -45,13 +49,17 @@ public static class ProcessManager
     static ProcessManager()
     {
         ForegroundTimer = new Timer(1000);
-        ForegroundTimer.Elapsed += ForegroundCallback;
+        ForegroundTimer.Elapsed += ForegroundCallback;        
+
+        // Register a callback method for the event
+        processStart.EventArrived += new EventArrivedEventHandler(OnProcessCreated);
     }
 
     public static void Start()
     {
         // start processes monitor
         ForegroundTimer.Start();
+        processStart.Start();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -69,8 +77,30 @@ public static class ProcessManager
         // stop processes monitor
         ForegroundTimer.Elapsed -= ForegroundCallback;
         ForegroundTimer.Stop();
+        processStart.Stop();
 
         LogManager.LogInformation("{0} has stopped", "ProcessManager");
+    }
+
+    private static void OnProcessCreated(object sender, EventArrivedEventArgs e)
+    {
+        // Get the process name and ID from the event properties
+        string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
+        int processId = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value);
+
+        try
+        {
+            Process process = Process.GetProcessById(processId);
+            if (process is null)
+                return;
+
+            // hook into events
+            process.EnableRaisingEvents = true;
+            process.Exited += ProcessHalted;
+
+            ProcessCreated?.Invoke(process);
+        }
+        catch { }
     }
 
     public static ProcessEx GetForegroundProcess()
@@ -120,7 +150,7 @@ public static class ProcessManager
 
             if (!Processes.TryGetValue(processId, out ProcessEx process))
             {
-                if (!ProcessCreated(processId, (int)hWnd))
+                if (!CreateProcess(processId, (int)hWnd))
                     return;
                 process = Processes[processId];
             }
@@ -187,7 +217,7 @@ public static class ProcessManager
         processEx.Dispose();
     }
 
-    private static bool ProcessCreated(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)
+    private static bool CreateProcess(int ProcessID, int NativeWindowHandle = 0, bool OnStartup = false)
     {
         try
         {
@@ -195,9 +225,6 @@ public static class ProcessManager
             Process proc = Process.GetProcessById(ProcessID);
             if (proc.HasExited)
                 return false;
-
-            // hook into events
-            proc.EnableRaisingEvents = true;
 
             if (Processes.ContainsKey(proc.Id))
                 return true;
@@ -220,7 +247,6 @@ public static class ProcessManager
                 processEx.MainWindowHandle = hWnd;
 
                 Processes.TryAdd(processEx.GetProcessId(), processEx);
-                proc.Exited += ProcessHalted;
 
                 if (processEx.Filter != ProcessFilter.Allowed)
                     return true;
@@ -381,6 +407,10 @@ public static class ProcessManager
     public static event ProcessStoppedEventHandler ProcessStopped;
 
     public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
+
+    public static event ProcessCreatedEventHandler ProcessCreated;
+
+    public delegate void ProcessCreatedEventHandler(Process process);
 
     public static event InitializedEventHandler Initialized;
 

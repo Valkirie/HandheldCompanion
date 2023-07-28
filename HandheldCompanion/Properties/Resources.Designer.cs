@@ -413,7 +413,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Controller settings.
+        ///   Looks up a localized string similar to Virtual controller settings.
         /// </summary>
         public static string ControllerPage_DeviceSettings {
             get {
@@ -1509,6 +1509,42 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_Settings {
             get {
                 return ResourceManager.GetString("MainWindow_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string MainWindow_VirtualControllerForceOrderClosePrimary {
+            get {
+                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderClosePrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string MainWindow_VirtualControllerForceOrderCloseSecondary {
+            get {
+                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseSecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?.
+        /// </summary>
+        public static string MainWindow_VirtualControllerForceOrderCloseText {
+            get {
+                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string MainWindow_VirtualControllerForceOrderCloseTitle {
+            get {
+                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseTitle", resourceCulture);
             }
         }
         
@@ -2882,6 +2918,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string ProfilesPage_Wrapper_Disabled {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Wrapper_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Injection (recommended).
+        /// </summary>
+        public static string ProfilesPage_Wrapper_Injection {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Wrapper_Injection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redirection.
+        /// </summary>
+        public static string ProfilesPage_Wrapper_Redirection {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Wrapper_Redirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Yaw.
         /// </summary>
         public static string ProfilesPage_Yaw {
@@ -3575,6 +3638,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string SettingsPage_AutoStartPrimary {
+            get {
+                return ResourceManager.GetString("SettingsPage_AutoStartPrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string SettingsPage_AutoStartSecondary {
+            get {
+                return ResourceManager.GetString("SettingsPage_AutoStartSecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
+        /// </summary>
+        public static string SettingsPage_AutoStartText {
+            get {
+                return ResourceManager.GetString("SettingsPage_AutoStartText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string SettingsPage_AutoStartTitle {
+            get {
+                return ResourceManager.GetString("SettingsPage_AutoStartTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Application backdrop.
         /// </summary>
         public static string SettingsPage_Backdrop {
@@ -3706,6 +3805,60 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_EnableDesktopProfileOnStartDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_EnableDesktopProfileOnStartDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improve virtual controller detection.
+        /// </summary>
+        public static string SettingsPage_ForceVirtualControllerOrder {
+            get {
+                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn&apos;t detect your inputs (requires device reboot)..
+        /// </summary>
+        public static string SettingsPage_ForceVirtualControllerOrderDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string SettingsPage_ForceVirtualControllerOrderPrimary {
+            get {
+                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderPrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string SettingsPage_ForceVirtualControllerOrderSecondary {
+            get {
+                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderSecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
+        /// </summary>
+        public static string SettingsPage_ForceVirtualControllerOrderText {
+            get {
+                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        public static string SettingsPage_ForceVirtualControllerOrderTitle {
+            get {
+                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderTitle", resourceCulture);
             }
         }
         
@@ -4431,6 +4584,26 @@ namespace HandheldCompanion.Properties {
         public static string XInputPlus {
             get {
                 return ResourceManager.GetString("XInputPlus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] XInputPlusInjector {
+            get {
+                object obj = ResourceManager.GetObject("XInputPlusInjector", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] XInputPlusInjector64 {
+            get {
+                object obj = ResourceManager.GetObject("XInputPlusInjector64", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

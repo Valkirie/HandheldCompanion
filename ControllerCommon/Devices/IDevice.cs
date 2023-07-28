@@ -410,8 +410,7 @@ public abstract class IDevice
         if (sensor is null)
             return false;
 
-        string deviceId = sensor.DeviceId.Replace("\\1", string.Empty);
-        return LegacyDevcon.Restart(deviceId);
+        return PnPUtil.RestartDevice(sensor.DeviceId);
     }
 
     public string GetButtonName(ButtonFlags button)

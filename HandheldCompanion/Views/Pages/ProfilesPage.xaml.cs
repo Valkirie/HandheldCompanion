@@ -20,6 +20,8 @@ using Page = System.Windows.Controls.Page;
 using System.Timers;
 using static HandheldCompanion.Managers.SystemManager;
 using ControllerCommon.Processor.AMD;
+using static HandheldCompanion.XInputPlus;
+using static ControllerCommon.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -256,11 +258,11 @@ public partial class ProfilesPage : Page
         if (openFileDialog.ShowDialog() == true)
             try
             {
-                var path = openFileDialog.FileName;
-                var folder = Path.GetDirectoryName(path);
+                string path = openFileDialog.FileName;
+                string folder = Path.GetDirectoryName(path);
 
-                var file = openFileDialog.SafeFileName;
-                var ext = Path.GetExtension(file);
+                string file = openFileDialog.SafeFileName;
+                string ext = Path.GetExtension(file);
 
                 switch (ext)
                 {
@@ -270,22 +272,57 @@ public partial class ProfilesPage : Page
                     case ".xml":
                         try
                         {
-                            var doc = new XmlDocument();
-                            doc.Load(path);
+                            XmlDocument doc = new XmlDocument();
+                            string UWPpath = string.Empty;
+                            string UWPfile = string.Empty;
 
-                            var Applications = doc.GetElementsByTagName("Applications");
-                            foreach (XmlNode node in Applications)
-                            foreach (XmlNode child in node.ChildNodes)
-                                if (child.Name.Equals("Application"))
-                                    if (child.Attributes is not null)
-                                        foreach (XmlAttribute attribute in child.Attributes)
-                                            switch (attribute.Name)
-                                            {
-                                                case "Executable":
-                                                    path = Path.Combine(folder, attribute.InnerText);
-                                                    file = Path.GetFileName(path);
-                                                    break;
-                                            }
+                            // check if MicrosoftGame.config exists
+                            string configPath = Path.Combine(folder, "MicrosoftGame.config");
+                            if (File.Exists(configPath))
+                            {
+                                doc.Load(configPath);
+
+                                XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
+                                foreach (XmlNode node in ExecutableList)
+                                    foreach (XmlNode child in node.ChildNodes)
+                                        if (child.Name.Equals("Executable"))
+                                            if (child.Attributes is not null)
+                                                foreach (XmlAttribute attribute in child.Attributes)
+                                                    switch (attribute.Name)
+                                                    {
+                                                        case "Name":
+                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                            UWPfile = Path.GetFileName(path);
+                                                            break;
+                                                    }
+                            }
+
+                            // either there was no config file, either we couldn't find an executable within it
+                            if (!File.Exists(UWPpath))
+                            {
+                                doc.Load(path);
+
+                                XmlNodeList Applications = doc.GetElementsByTagName("Applications");
+                                foreach (XmlNode node in Applications)
+                                    foreach (XmlNode child in node.ChildNodes)
+                                        if (child.Name.Equals("Application"))
+                                            if (child.Attributes is not null)
+                                                foreach (XmlAttribute attribute in child.Attributes)
+                                                    switch (attribute.Name)
+                                                    {
+                                                        case "Executable":
+                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                            UWPfile = Path.GetFileName(path);
+                                                            break;
+                                                    }
+                            }
+
+                            // we're good to go
+                            if (File.Exists(UWPpath))
+                            {
+                                path = UWPpath;
+                                file = UWPfile;
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -526,13 +563,17 @@ public partial class ProfilesPage : Page
         RequestUpdate();
     }
 
-    private void cB_Wrapper_Checked(object sender, RoutedEventArgs e)
+    private void cB_Wrapper_SelectionChanged(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
         if (updateLock)
             return;
 
-        currentProfile.XInputPlus = (bool)cB_Wrapper.IsChecked;
+        int test = cB_Wrapper.SelectedIndex;
+
+        if (currentProfile is not null && cB_Wrapper.SelectedIndex > -1)
+            currentProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;
+        
         RequestUpdate();
     }
 
@@ -1022,8 +1063,11 @@ public partial class ProfilesPage : Page
 
     public static void RequestUpdate()
     {
-        UpdateTimer.Stop();
-        UpdateTimer.Start();
+        if(UpdateTimer is not null)
+        {
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
+        }
     }
 
     public void SubmitProfile(ProfileUpdateSource source = ProfileUpdateSource.ProfilesPage)

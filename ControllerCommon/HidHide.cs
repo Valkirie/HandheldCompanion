@@ -203,13 +203,13 @@ public static class HidHide
             string jsonString = process.StandardOutput.ReadToEnd().Trim();
 
             if (string.IsNullOrEmpty(jsonString))
-                return null;
+                return new();
 
             return JsonConvert.DeserializeObject<List<HidHideDevice>>(jsonString);
         }
         catch { }
 
-        return null;
+        return new();
     }
 
     public static HidHideDevice GetHidHideDevice(string deviceInstancePath)

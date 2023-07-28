@@ -46,6 +46,8 @@ public enum PipeCode
 
     CLIENT_MOVEMENTS = 18, // Sent to server to inform on controller/device movements
 
-    CLIENT_CLEARINDEX = 19 // Sent to server to clear all hidden controllers
+    CLIENT_CLEARINDEX = 19, // Sent to server to clear all hidden controllers
     // args: ...
+
+    SERVER_CONTROLLER_CONNECT = 20
 }

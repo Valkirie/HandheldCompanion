@@ -13,6 +13,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Navigation;
 using ControllerCommon;
 using ControllerCommon.Controllers;
@@ -82,6 +83,8 @@ public partial class MainWindow : GamepadWindow
 
     private WindowState prevWindowState;
     private SplashScreen splashScreen;
+
+    private const int WM_QUERYENDSESSION = 0x0011;
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -229,6 +232,24 @@ public partial class MainWindow : GamepadWindow
         Left = Math.Min(SystemParameters.PrimaryScreenWidth - MinWidth, SettingsManager.GetDouble("MainWindowLeft"));
         Top = Math.Min(SystemParameters.PrimaryScreenHeight - MinHeight, SettingsManager.GetDouble("MainWindowTop"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("MainWindowIsPaneOpen");
+    }
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        // windows shutting down event
+        if (msg == WM_QUERYENDSESSION)
+        {
+            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+            {
+                // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
+                {
+                    PnPUtil.DisableDevice(physicalControllerInstanceId);
+                }
+            }
+        }
+
+        return IntPtr.Zero;
     }
 
     private void ProcessManager_ForegroundChanged(Controls.ProcessEx processEx, Controls.ProcessEx backgroundEx)
@@ -512,16 +533,15 @@ public partial class MainWindow : GamepadWindow
     {
         // load gamepad navigation maanger
         gamepadFocusManager = new(this, ContentFrame);
+
+        HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+        source.AddHook(WndProc); // Hook into the window's message loop
     }
 
     private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
     {
         if (IsReady)
             return;
-
-        // hide splash screen
-        if (splashScreen is not null)
-            splashScreen.Hide();
 
         // home page has loaded, display main window
         WindowState = SettingsManager.GetBoolean("StartMinimized")
@@ -849,7 +869,9 @@ public partial class MainWindow : GamepadWindow
         Environment.Exit(0);
     }
 
-    private void Window_Closing(object sender, CancelEventArgs e)
+    bool CloseOverride = false;
+
+    private async void Window_Closing(object sender, CancelEventArgs e)
     {
         // position and size settings
         switch (WindowState)
@@ -879,6 +901,32 @@ public partial class MainWindow : GamepadWindow
             e.Cancel = true;
             WindowState = WindowState.Minimized;
             return;
+        }
+
+        if(SettingsManager.GetBoolean("VirtualControllerForceOrder") && !CloseOverride)
+        {
+            // we have to cancel closing the window to be able to prompt the user
+            e.Cancel = true;
+
+            // warn user when attempting to close HC while using Improve virtual controller detection
+            var result = Dialog.ShowAsync(
+                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseTitle,
+                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseText,
+                ContentDialogButton.Primary, null,
+                Properties.Resources.MainWindow_VirtualControllerForceOrderClosePrimary,
+                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseSecondary);
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    CloseOverride = true;
+                    Close();
+                    break;
+                case ContentDialogResult.Secondary:
+                    return;
+            }
         }
 
         // stop service with companion

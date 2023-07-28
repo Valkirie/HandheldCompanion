@@ -7,7 +7,7 @@
 		<DebugType>portable</DebugType>
 		<Version>0.9.3.0</Version>
 		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Platforms>AnyCPU;x64;x86</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -70,12 +70,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Resources\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Resources\devcon.exe">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>

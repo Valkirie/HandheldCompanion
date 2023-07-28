@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.ServiceProcess;
@@ -190,6 +192,9 @@ public partial class SettingsPage : Page
                 case "DesktopProfileOnStart":
                     Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
                     break;
+                case "VirtualControllerForceOrder":
+                    Toggle_ForceVirtualControllerOrder.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "NativeDisplayOrientation":
                     var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
 
@@ -293,10 +298,31 @@ public partial class SettingsPage : Page
         MainWindow.serviceManager.Updated -= OnServiceUpdate;
     }
 
-    private void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)
+    private async void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)
     {
         if (!IsLoaded)
             return;
+
+        if (!Toggle_AutoStart.IsOn && SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+        {
+            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_AutoStartTitle,
+                Properties.Resources.SettingsPage_AutoStartText,
+                ContentDialogButton.Primary, null,
+                Properties.Resources.SettingsPage_AutoStartPrimary,
+                Properties.Resources.SettingsPage_AutoStartSecondary);
+
+            await result;
+
+            switch(result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    SettingsManager.SetProperty("VirtualControllerForceOrder", false);
+                    break;
+                case ContentDialogResult.Secondary:
+                    Toggle_AutoStart.IsOn = true;
+                    break;
+            }
+        }
 
         SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
     }
@@ -352,6 +378,55 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
+    }
+
+    private async void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
+    {
+        var ForceVirtualControllerOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
+
+        if (Toggle_ForceVirtualControllerOrder.IsOn && !ForceVirtualControllerOrder)
+        {
+            var physicalControllerInstanceIds = new StringCollection();
+            var physicalControllers = ControllerManager.GetPhysicalControllers();
+
+            foreach (var physicalController in physicalControllers)
+            {
+                physicalControllerInstanceIds.Add(physicalController.Details.baseContainerDeviceInstanceId);
+            }
+
+            SettingsManager.SetProperty("PhysicalControllerInstanceIds", physicalControllerInstanceIds);
+
+            var result = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderTitle}",
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderText}",
+                ContentDialogButton.Primary, null,
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderPrimary}",
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderSecondary}");
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    using (Process shutdown = new())
+                    {
+                        shutdown.StartInfo.FileName = "shutdown.exe";
+                        shutdown.StartInfo.Arguments = "-r -t 3";
+
+                        shutdown.StartInfo.UseShellExecute = false;
+                        shutdown.StartInfo.CreateNoWindow = true;
+                        shutdown.Start();
+                    }
+                    break;
+                case ContentDialogResult.Secondary:
+                    break;
+            }
+        }
+
+        // force auto start to on when using this feature
+        if (Toggle_ForceVirtualControllerOrder.IsOn)
+            SettingsManager.SetProperty("RunAtStartup", true);
+
+        SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
 
     private void Button_DetectNativeDisplayOrientation_Click(object sender, RoutedEventArgs? e)

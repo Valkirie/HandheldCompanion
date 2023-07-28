@@ -26,6 +26,7 @@ namespace ControllerCommon.Pipes;
 [MemoryPackUnion(12, typeof(PipeSensor))]
 [MemoryPackUnion(13, typeof(PipeNavigation))]
 [MemoryPackUnion(14, typeof(PipeOverlay))]
+[MemoryPackUnion(15, typeof(PipeServerControllerConnect))]
 public abstract partial class PipeMessage
 {
     public PipeCode code;
@@ -66,6 +67,16 @@ public partial class PipeServerSettings : PipeMessage
     public PipeServerSettings()
     {
         code = PipeCode.SERVER_SETTINGS;
+    }
+}
+
+[Serializable]
+[MemoryPackable]
+public partial class PipeServerControllerConnect : PipeMessage
+{
+    public PipeServerControllerConnect()
+    {
+        code = PipeCode.SERVER_CONTROLLER_CONNECT;
     }
 }
 

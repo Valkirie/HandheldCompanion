@@ -239,6 +239,7 @@
                         Name="GlobalSettings"
                         HorizontalAlignment="Stretch"
                         Expanded="Expander_Expanded">
+                        
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
@@ -267,18 +268,44 @@
                                     Content="{x:Static resx:Resources.ProfilesPage_Whitelist}"
                                     Unchecked="cB_Whitelist_Checked" />
 
-                                <!--  Separator  -->
+                                    <!--  Separator  -->
                                 <Separator
-                                    Margin="-46,0,-16,0"
-                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
 
-                                <CheckBox
-                                    Name="cB_Wrapper"
-                                    HorizontalAlignment="Stretch"
-                                    Checked="cB_Wrapper_Checked"
-                                    Content="{x:Static resx:Resources.ProfilesPage_Wrapper}"
-                                    Unchecked="cB_Wrapper_Checked" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" MinWidth="250" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <DockPanel>
+                                        <ui:FontIcon
+                                            Height="40"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Glyph="&#xE8AC;" />
+                                        <TextBlock
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_Wrapper}" />
+                                    </DockPanel>
+
+                                    <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                        <ComboBox
+                                            Name="cB_Wrapper"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            SelectionChanged="cB_Wrapper_SelectionChanged" SelectedIndex="0" >
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Disabled}"/>
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Injection}"/>
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Redirection}"/>
+                                        </ComboBox>
+                                    </DockPanel>
+                                </Grid>
+                                
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>

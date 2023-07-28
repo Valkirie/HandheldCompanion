@@ -281,7 +281,7 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <!--  Controller settings  -->
+                <!--  Virtual controller settings  -->
                 <ui:SimpleStackPanel Spacing="6">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
 

@@ -279,6 +279,9 @@ public class ControllerService : IHostedService
 
     private void OnTargetConnected(ViGEmTarget target)
     {
+        // send virtual controller connected notification
+        PipeServer.SendMessage(new PipeServerControllerConnect());
+
         // send notification
         PipeServer.SendMessage(new PipeServerToast
         {

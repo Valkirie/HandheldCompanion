@@ -37,6 +37,8 @@ public static class ControllerManager
 
     public static bool IsInitialized;
 
+    private static bool virtualControllerCreated;
+
     public static void Start()
     {
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
@@ -55,6 +57,7 @@ public static class ControllerManager
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
         PipeClient.Connected += OnClientConnected;
+        PipeClient.ServerMessage += OnServerMessage;
 
         MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
         MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
@@ -395,7 +398,7 @@ public static class ControllerManager
                 SetTargetController(controller.GetContainerInstancePath());
 
             // raise event
-            ControllerPlugged?.Invoke(controller);
+            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller));
             LogManager.LogDebug("DInput controller {0} plugged", controller.ToString());
 
             ToastManager.SendToast(controller.ToString(), "detected");
@@ -492,7 +495,7 @@ public static class ControllerManager
             LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
 
             // raise event
-            ControllerPlugged?.Invoke(controller);
+            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller));
 
             ToastManager.SendToast(controller.ToString(), "detected");
         });
@@ -670,11 +673,45 @@ public static class ControllerManager
         }
     }
 
+    private static bool IsHCVirtualController(XInputController controller)
+    {
+        if(controller.IsVirtual() && virtualControllerCreated)
+        {
+            virtualControllerCreated = false;
+            return true;
+        }
+        return false;
+    }
+
+    private static bool IsHCVirtualController(IController controller)
+    {
+        if (controller.IsVirtual() && virtualControllerCreated)
+        {
+            virtualControllerCreated = false;
+            return true;
+        }
+        return false;
+    }
+
+    #region PipeServer
+
+    static private void OnServerMessage(PipeMessage message)
+    {
+        switch (message.code)
+        {
+            case PipeCode.SERVER_CONTROLLER_CONNECT:
+                virtualControllerCreated = true;
+            break;
+        }
+    }
+
+    #endregion
+
     #region events
 
     public static event ControllerPluggedEventHandler ControllerPlugged;
 
-    public delegate void ControllerPluggedEventHandler(IController Controller);
+    public delegate void ControllerPluggedEventHandler(IController Controller, bool isHCVirtualController);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
 
@@ -683,6 +720,10 @@ public static class ControllerManager
     public static event ControllerSelectedEventHandler ControllerSelected;
 
     public delegate void ControllerSelectedEventHandler(IController Controller);
+
+    public static event ServerControllerConnectEventHandler ServerControllerConnected;
+
+    public delegate void ServerControllerConnectEventHandler();
 
     public static event InputsUpdatedEventHandler InputsUpdated;
 

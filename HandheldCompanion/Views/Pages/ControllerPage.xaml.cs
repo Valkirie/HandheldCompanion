@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,14 +9,18 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ControllerCommon;
 using ControllerCommon.Controllers;
 using ControllerCommon.Devices;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using Inkore.UI.WPF.Modern.Controls;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -180,8 +186,21 @@ public partial class ControllerPage : Page
         });
     }
 
-    private void ControllerPlugged(IController Controller)
+    private void ControllerPlugged(IController Controller, bool isHCVirtualController)
     {
+        // we assume this is HC virtual controller
+        if(Controller.IsVirtual() && isHCVirtualController)
+        {
+            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+            {
+                // enable physical controller(s) after virtual controller to ensure first order
+                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
+                {
+                    PnPUtil.EnableDevice(physicalControllerInstanceId);
+                }
+            }
+        }
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
@@ -227,23 +246,24 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var hasPhysiscal = ControllerManager.HasPhysicalController();
+            var hasPhysical = ControllerManager.HasPhysicalController();
             var hasVirtual = ControllerManager.HasVirtualController();
             var hasTarget = ControllerManager.GetTargetController() != null;
 
             // check: do we have any plugged physical controller
-            InputDevices.Visibility = hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
-            WarningNoPhysical.Visibility = !hasPhysiscal ? Visibility.Visible : Visibility.Collapsed;
+            InputDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
+            WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
             var target = ControllerManager.GetTargetController();
             var isPlugged = hasTarget && target.IsPlugged();
             var isHidden = hasTarget && target.IsHidden();
             var isNeptune = hasTarget && target.GetType() == typeof(NeptuneController);
             var isMuted = SettingsManager.GetBoolean("SteamDeckMuteController");
+            var isForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
-                hasPhysiscal && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
+                hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (not Neptune) hidden, but no virtual controller
             var hiddenbutnovirtual = isHidden && !hasVirtual;
@@ -320,7 +340,7 @@ public partial class ControllerPage : Page
         hasSettings = true;
     }
 
-    private void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (cB_HidMode.SelectedIndex == -1)
             return;
@@ -338,6 +358,7 @@ public partial class ControllerPage : Page
         UpdateController();
 
         SettingsManager.SetProperty("HIDmode", controllerMode, false, true);
+
     }
 
     private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)
