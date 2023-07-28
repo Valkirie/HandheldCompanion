@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using ControllerCommon.Pipes;
+using ControllerCommon.Utils;
 using LiveCharts;
 using LiveCharts.Defaults;
 
@@ -12,9 +13,10 @@ namespace HandheldCompanion.Views.Pages.Profiles;
 /// </summary>
 public partial class SettingsMode1 : Page
 {
+    private LockObject updateLock = new();
+
     private readonly int SteeringArraySize = 30;
     private readonly ChartValues<ObservablePoint> SteeringLinearityPoints;
-    private bool profileLock;
 
     public SettingsMode1()
     {
@@ -44,17 +46,14 @@ public partial class SettingsMode1 : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // set lock
-            profileLock = true;
+            using (new ScopedLock(updateLock))
+            {
+                SliderDeadzoneAngle.Value = ProfilesPage.currentProfile.SteeringDeadzone;
+                SliderPower.Value = ProfilesPage.currentProfile.SteeringPower;
+                SliderSteeringAngle.Value = ProfilesPage.currentProfile.SteeringMaxAngle;
 
-            SliderDeadzoneAngle.Value = ProfilesPage.currentProfile.SteeringDeadzone;
-            SliderPower.Value = ProfilesPage.currentProfile.SteeringPower;
-            SliderSteeringAngle.Value = ProfilesPage.currentProfile.SteeringMaxAngle;
-
-            lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.currentProfile.SteeringPower);
-
-            // release lock
-            profileLock = false;
+                lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.currentProfile.SteeringPower);
+            }
         });
     }
 
@@ -96,6 +95,9 @@ public partial class SettingsMode1 : Page
         if (ProfilesPage.currentProfile is null)
             return;
 
+        if (updateLock)
+            return;
+        
         ProfilesPage.currentProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
         ProfilesPage.RequestUpdate();
     }
@@ -103,6 +105,9 @@ public partial class SettingsMode1 : Page
     private void SliderPower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (ProfilesPage.currentProfile is null)
+            return;
+
+        if (updateLock)
             return;
 
         lvLineSeriesValues.Values = GeneratePoints(SliderPower.Value);
@@ -114,6 +119,9 @@ public partial class SettingsMode1 : Page
     private void SliderDeadzoneAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (ProfilesPage.currentProfile is null)
+            return;
+
+        if (updateLock)
             return;
 
         ProfilesPage.currentProfile.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;

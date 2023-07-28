@@ -28,7 +28,7 @@ public partial class QuickProfilesPage : Page
     private ProcessEx currentProcess;
     private Profile currentProfile;
 
-    private bool profileLock;
+    private LockObject updateLock = new();
 
     private Hotkey ProfilesPageHotkey = new(61);
     private Profile realProfile;
@@ -264,24 +264,18 @@ public partial class QuickProfilesPage : Page
             {
                 case "ConfigurableTDPOverrideDown":
                     {
-                        // set flag
-                        profileLock = true;
-
-                        TDPSlider.Minimum = (double)value;
-
-                        // release flag
-                        profileLock = false;
+                        using (new ScopedLock(updateLock))
+                        {
+                            TDPSlider.Minimum = (double)value;
+                        }
                     }
                     break;
                 case "ConfigurableTDPOverrideUp":
                     {
-                        // set flag
-                        profileLock = true;
-
-                        TDPSlider.Maximum = (double)value;
-
-                        // release flag
-                        profileLock = false;
+                        using (new ScopedLock(updateLock))
+                        {
+                            TDPSlider.Maximum = (double)value;
+                        }
                     }
                     break;
             }
@@ -313,59 +307,56 @@ public partial class QuickProfilesPage : Page
             // UI thread
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                // set lock
-                profileLock = true;
+                using (new ScopedLock(updateLock))
+                {
+                    // update profile name
+                    CurrentProfileName.Text = currentProfile.Name;
 
-                // update profile name
-                CurrentProfileName.Text = currentProfile.Name;
+                    UMCToggle.IsOn = currentProfile.MotionEnabled;
+                    cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
+                    cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
+                    cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
 
-                UMCToggle.IsOn = currentProfile.MotionEnabled;
-                cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
-                cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
-                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
+                    // TDP
+                    TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
+                    var TDP = currentProfile.TDPOverrideValues is not null
+                        ? currentProfile.TDPOverrideValues
+                        : MainWindow.CurrentDevice.nTDP;
+                    TDPSlider.Value = TDP[(int)PowerType.Slow];
 
-                // TDP
-                TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
-                var TDP = currentProfile.TDPOverrideValues is not null
-                    ? currentProfile.TDPOverrideValues
-                    : MainWindow.CurrentDevice.nTDP;
-                TDPSlider.Value = TDP[(int)PowerType.Slow];
+                    // GPU
+                    GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
+                    GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : 255 * 50;
 
-                // GPU
-                GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
-                GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : 255 * 50;
+                    // Framerate
+                    FramerateToggle.IsOn = currentProfile.FramerateEnabled;
+                    FramerateSlider.Value = currentProfile.FramerateValue;
 
-                // Framerate
-                FramerateToggle.IsOn = currentProfile.FramerateEnabled;
-                FramerateSlider.Value = currentProfile.FramerateValue;
+                    // AutoTDP
+                    AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
+                    AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
 
-                // AutoTDP
-                AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
-                AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
+                    // Slider settings
+                    SliderUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
+                    SliderSensitivityX.Value = currentProfile.MotionSensivityX;
+                    SliderSensitivityY.Value = currentProfile.MotionSensivityY;
 
-                // Slider settings
-                SliderUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
-                SliderSensitivityX.Value = currentProfile.MotionSensivityX;
-                SliderSensitivityY.Value = currentProfile.MotionSensivityY;
+                    // EPP
+                    EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
+                    EPPSlider.Value = currentProfile.EPPOverrideValue;
 
-                // EPP
-                EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
-                EPPSlider.Value = currentProfile.EPPOverrideValue;
+                    // RSR
+                    RSRToggle.IsOn = currentProfile.RSREnabled;
+                    RSRSlider.Value = currentProfile.RSRSharpness;
 
-                // RSR
-                RSRToggle.IsOn = currentProfile.RSREnabled;
-                RSRSlider.Value = currentProfile.RSRSharpness;
+                    // CPU Core Count
+                    CPUCoreToggle.IsOn = currentProfile.CPUCoreEnabled;
+                    CPUCoreSlider.Value = currentProfile.CPUCoreCount;
 
-                // CPU Core Count
-                CPUCoreToggle.IsOn = currentProfile.CPUCoreEnabled;
-                CPUCoreSlider.Value = currentProfile.CPUCoreCount;
-
-                // todo: improve me ?
-                ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
-                ProfilesPageHotkey.DrawInput();
-
-                // release lock
-                profileLock = false;
+                    // todo: improve me ?
+                    ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
+                    ProfilesPageHotkey.DrawInput();
+                }
             });
         }
     }
@@ -381,31 +372,28 @@ public partial class QuickProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // set lock
-            profileLock = true;
-
-            ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
-            ProfileIcon.Source = processEx.imgSource;
-
-            if (processEx.MainWindowHandle != IntPtr.Zero)
+            using (new ScopedLock(updateLock))
             {
-                var MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
+                ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
+                ProfileIcon.Source = processEx.imgSource;
 
-                ProfileToggle.IsEnabled = true;
-                ProcessName.Text = currentProcess.Executable;
-                ProcessPath.Text = currentProcess.Path;
+                if (processEx.MainWindowHandle != IntPtr.Zero)
+                {
+                    var MainWindowTitle = ProcessUtils.GetWindowTitle(processEx.MainWindowHandle);
+
+                    ProfileToggle.IsEnabled = true;
+                    ProcessName.Text = currentProcess.Executable;
+                    ProcessPath.Text = currentProcess.Path;
+                }
+                else
+                {
+                    ProfileIcon.Source = null;
+
+                    ProfileToggle.IsEnabled = false;
+                    ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
+                    ProcessPath.Text = string.Empty;
+                }
             }
-            else
-            {
-                ProfileIcon.Source = null;
-
-                ProfileToggle.IsEnabled = false;
-                ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
-                ProcessPath.Text = string.Empty;
-            }
-
-            // release lock
-            profileLock = false;
         });
     }
 
@@ -422,17 +410,17 @@ public partial class QuickProfilesPage : Page
         if (realProfile is null)
             return;
 
-        if (!profileLock)
+        if (updateLock)
+            return;
+
+        if (realProfile.Default)
         {
-            if (realProfile.Default)
-            {
-                CreateProfile();
-            }
-            else
-            {
-                realProfile.Enabled = ProfileToggle.IsOn;
-                ProfileManager.UpdateOrCreateProfile(realProfile, ProfileUpdateSource.Creation);
-            }
+            CreateProfile();
+        }
+        else
+        {
+            realProfile.Enabled = ProfileToggle.IsOn;
+            ProfileManager.UpdateOrCreateProfile(realProfile, ProfileUpdateSource.Creation);
         }
     }
 
@@ -459,11 +447,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionEnabled = UMCToggle.IsOn;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionEnabled = UMCToggle.IsOn;
+        RequestUpdate();
     }
 
     private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -493,11 +481,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
+        RequestUpdate();
     }
 
     private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -505,11 +493,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
+        RequestUpdate();
     }
 
     private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -517,16 +505,16 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            // TDP and AutoTDP are mutually exclusive
-            var toggled = TDPToggle.IsOn;
-            if (toggled)
-                AutoTDPToggle.IsOn = false;
+        if (updateLock)
+            return;
 
-            currentProfile.TDPOverrideEnabled = toggled;
-            RequestUpdate();
-        }
+        // TDP and AutoTDP are mutually exclusive
+        var toggled = TDPToggle.IsOn;
+        if (toggled)
+            AutoTDPToggle.IsOn = false;
+
+        currentProfile.TDPOverrideEnabled = toggled;
+        RequestUpdate();
     }
 
     private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -534,16 +522,16 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
+        if (updateLock)
+            return;
+
+        currentProfile.TDPOverrideValues = new double[3]
         {
-            currentProfile.TDPOverrideValues = new double[3]
-            {
                 (int)TDPSlider.Value,
                 (int)TDPSlider.Value,
                 (int)TDPSlider.Value
-            };
-            RequestUpdate();
-        }
+        };
+        RequestUpdate();
     }
 
     private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -551,18 +539,18 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            // TDP and AutoTDP are mutually exclusive
-            var toggled = AutoTDPToggle.IsOn;
-            if (toggled)
-                TDPToggle.IsOn = false;
+        if (updateLock)
+            return;
 
-            currentProfile.AutoTDPEnabled = toggled;
-            AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
+        // TDP and AutoTDP are mutually exclusive
+        var toggled = AutoTDPToggle.IsOn;
+        if (toggled)
+            TDPToggle.IsOn = false;
 
-            RequestUpdate();
-        }
+        currentProfile.AutoTDPEnabled = toggled;
+        AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
+
+        RequestUpdate();
     }
 
     private void AutoTDPRequestedFPSSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -570,11 +558,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
+        RequestUpdate();
     }
 
     private void SliderUMCAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -582,11 +570,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionAntiDeadzone = (float)SliderUMCAntiDeadzone.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionAntiDeadzone = (float)SliderUMCAntiDeadzone.Value;
+        RequestUpdate();
     }
 
     private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -594,11 +582,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
+        RequestUpdate();
     }
 
     private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -606,11 +594,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
+        RequestUpdate();
     }
 
     private void TriggerCreated(Hotkey hotkey)
@@ -653,11 +641,11 @@ public partial class QuickProfilesPage : Page
         if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1 || currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+        RequestUpdate();
     }
 
     private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
@@ -665,11 +653,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.GPUOverrideEnabled = GPUToggle.IsOn;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.GPUOverrideEnabled = GPUToggle.IsOn;
+        RequestUpdate();
     }
 
     private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -677,11 +665,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
+        RequestUpdate();
     }
 
     private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
@@ -708,12 +696,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.FramerateEnabled = FramerateToggle.IsOn;
+        if (updateLock)
+            return;
 
-            RequestUpdate();
-        }
+        currentProfile.FramerateEnabled = FramerateToggle.IsOn;
+        RequestUpdate();
     }
 
     private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -738,11 +725,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.FramerateValue = (int)FramerateSlider.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.FramerateValue = (int)FramerateSlider.Value;
+        RequestUpdate();
     }
 
     private void EPPToggle_Toggled(object sender, RoutedEventArgs e)
@@ -750,12 +737,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.EPPOverrideEnabled = EPPToggle.IsOn;
+        if (updateLock)
+            return;
 
-            RequestUpdate();
-        }
+        currentProfile.EPPOverrideEnabled = EPPToggle.IsOn;
+        RequestUpdate();
     }
 
     private void EPPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -763,11 +749,11 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        if (!profileLock)
-        {
-            currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
-            RequestUpdate();
-        }
+        if (updateLock)
+            return;
+
+        currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
+        RequestUpdate();
     }
 
     private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
@@ -776,7 +762,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
         currentProfile.RSREnabled = RSRToggle.IsOn;
@@ -792,7 +778,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
         currentProfile.RSRSharpness = (int)RSRSlider.Value;
@@ -805,7 +791,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
         currentProfile.CPUCoreEnabled = CPUCoreToggle.IsOn;
@@ -821,7 +807,7 @@ public partial class QuickProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
         currentProfile.CPUCoreCount = (int)CPUCoreSlider.Value;

@@ -277,8 +277,6 @@ public partial class LayoutPage : Page
 
             // clear layout selection
             cB_Layouts.SelectedValue = null;
-
-            Monitor.Exit(updateLock);
         }
     }
 
