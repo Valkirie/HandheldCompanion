@@ -438,7 +438,7 @@ public partial class ProfilesPage : Page
 
                 // Global settings
                 cB_Whitelist.IsChecked = currentProfile.Whitelisted;
-                cB_Wrapper.IsChecked = currentProfile.XInputPlus;
+                cB_Wrapper.SelectedIndex = (int)currentProfile.XInputPlus;
 
                 // Motion control settings
                 tb_ProfileGyroValue.Value = currentProfile.GyrometerMultiplier;
