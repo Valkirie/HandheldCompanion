@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using ControllerCommon.Inputs;
@@ -371,6 +372,19 @@ public static class InputsManager
                 }
             }
         }
+        else
+        {
+            // manage AltGr
+            if (args.IsKeyUp)
+            {
+                switch (args.KeyValue)
+                {
+                    case 165:
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)162);
+                        break;
+                }
+            }
+        }
 
         KeyboardResetTimer.Start();
     }
@@ -407,27 +421,18 @@ public static class InputsManager
         {
             var args = keys[i];
 
-            // improve me
-            var key = (VirtualKeyCode)args.KeyValue;
-            if (args.KeyValue == 0)
-            {
-                if (args.Control)
-                    key = VirtualKeyCode.LCONTROL;
-                else if (args.Alt)
-                    key = VirtualKeyCode.RMENU;
-                else if (args.Shift)
-                    key = VirtualKeyCode.RSHIFT;
-            }
-
             switch (args.IsKeyDown)
             {
                 case true:
-                    KeyboardSimulator.KeyDown(key);
+                    KeyboardSimulator.KeyDown(args);
                     break;
                 case false:
-                    KeyboardSimulator.KeyUp(key);
+                    KeyboardSimulator.KeyUp(args);
                     break;
             }
+
+            // clear buffer
+            BufferKeys.Remove(args);
         }
 
         // clear buffer
