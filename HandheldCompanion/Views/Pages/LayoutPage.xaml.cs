@@ -103,13 +103,28 @@ public partial class LayoutPage : Page
         // cB_Layouts.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
     }
 
-    private void ControllerManager_ControllerSelected(IController Controller)
+    private void ControllerManager_ControllerSelected(IController controller)
     {
-        RefreshLayoutList();
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            RefreshLayoutList();
 
-        // cascade update to (sub)pages
-        foreach (var page in pages.Values)
-            page.UpdateController(Controller);
+            // manage layout pages visibility
+            navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            /* navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) ||
+                                 MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) ||
+                                 MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor)
+                ? Visibility.Visible
+                : Visibility.Collapsed; */
+
+            // cascade update to (sub)pages
+            foreach (var page in pages.Values)
+                page.UpdateController(controller);
+        });
     }
 
     private void LayoutManager_Initialized()
@@ -271,18 +286,21 @@ public partial class LayoutPage : Page
 
     private void UpdatePages()
     {
-        // This is a very important lock, it blocks backward events to the layout when
-        // this is actually the backend that triggered the update. Notifications on higher
-        // levels (pages and mappings) could potentially be blocked for optimization.
-        using (new ScopedLock(updateLock))
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // cascade update to (sub)pages
-            foreach (var page in pages.Values)
-                page.Update(currentTemplate.Layout);
-
-            // clear layout selection
-            cB_Layouts.SelectedValue = null;
-        }
+            // This is a very important lock, it blocks backward events to the layout when
+            // this is actually the backend that triggered the update. Notifications on higher
+            // levels (pages and mappings) could potentially be blocked for optimization.
+            using (new ScopedLock(updateLock))
+            {
+                // cascade update to (sub)pages
+                foreach (var page in pages.Values)
+                    page.Update(currentTemplate.Layout);
+                // clear layout selection
+                cB_Layouts.SelectedValue = null;
+            }
+        });
     }
 
     private void cB_Layouts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -342,6 +360,7 @@ public partial class LayoutPage : Page
 
                 // the whole layout has been updated without notification, trigger one
                 currentTemplate.Layout.UpdateLayout();
+                UpdatePages();
             }
                 break;
         }

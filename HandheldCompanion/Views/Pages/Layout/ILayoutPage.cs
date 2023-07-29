@@ -19,61 +19,67 @@ public class ILayoutPage : Page
 
     public virtual void UpdateController(IController controller)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // controller based
+        foreach (var pair in ButtonStacks)
         {
-            // controller based
-            foreach (var pair in ButtonStacks)
+            ButtonFlags button = pair.Key;
+            ButtonStack buttonStack = pair.Value;
+
+            // update mapping visibility
+            if (!controller.HasSourceButton(button))
+                buttonStack.Visibility = Visibility.Collapsed;
+            else
             {
-                ButtonFlags button = pair.Key;
-                ButtonStack buttonStack = pair.Value;
-                // update mapping visibility
-                if (!controller.HasSourceButton(button))
-                    buttonStack.Visibility = Visibility.Collapsed;
-                else
-                {
-                    buttonStack.Visibility = Visibility.Visible;
-                    // update icon
-                    FontIcon newIcon = controller.GetFontIcon(button);
-                    string newLabel = controller.GetButtonName(button);
-                    buttonStack.UpdateIcon(newIcon, newLabel);
-                }
+                buttonStack.Visibility = Visibility.Visible;
+
+                // update icon
+                FontIcon newIcon = controller.GetFontIcon(button);
+                string newLabel = controller.GetButtonName(button);
+                buttonStack.UpdateIcon(newIcon, newLabel);
             }
-            foreach (var pair in AxisMappings)
+        }
+
+        foreach (var pair in AxisMappings)
+        {
+            AxisLayoutFlags flags = pair.Key;
+            AxisLayout layout = AxisLayout.Layouts[flags];
+
+            AxisMapping axisMapping = pair.Value;
+
+            // update mapping visibility
+            if (!controller.HasSourceAxis(flags))
+                axisMapping.Visibility = Visibility.Collapsed;
+            else
             {
-                AxisLayoutFlags flags = pair.Key;
-                AxisLayout layout = AxisLayout.Layouts[flags];
-                AxisMapping axisMapping = pair.Value;
-                // update mapping visibility
-                if (!controller.HasSourceAxis(flags))
-                    axisMapping.Visibility = Visibility.Collapsed;
-                else
-                {
-                    axisMapping.Visibility = Visibility.Visible;
-                    // update icon
-                    FontIcon newIcon = controller.GetFontIcon(flags);
-                    string newLabel = controller.GetAxisName(flags);
-                    axisMapping.UpdateIcon(newIcon, newLabel);
-                }
+                axisMapping.Visibility = Visibility.Visible;
+
+                // update icon
+                FontIcon newIcon = controller.GetFontIcon(flags);
+                string newLabel = controller.GetAxisName(flags);
+                axisMapping.UpdateIcon(newIcon, newLabel);
             }
-            foreach (var pair in TriggerMappings)
+        }
+
+        foreach (var pair in TriggerMappings)
+        {
+            AxisLayoutFlags flags = pair.Key;
+            AxisLayout layout = AxisLayout.Layouts[flags];
+
+            TriggerMapping axisMapping = pair.Value;
+
+            // update mapping visibility
+            if (!controller.HasSourceAxis(flags))
+                axisMapping.Visibility = Visibility.Collapsed;
+            else
             {
-                AxisLayoutFlags flags = pair.Key;
-                AxisLayout layout = AxisLayout.Layouts[flags];
-                TriggerMapping axisMapping = pair.Value;
-                // update mapping visibility
-                if (!controller.HasSourceAxis(flags))
-                    axisMapping.Visibility = Visibility.Collapsed;
-                else
-                {
-                    axisMapping.Visibility = Visibility.Visible;
-                    // update icon
-                    FontIcon newIcon = controller.GetFontIcon(flags);
-                    string newLabel = controller.GetAxisName(flags);
-                    axisMapping.UpdateIcon(newIcon, newLabel);
-                }
+                axisMapping.Visibility = Visibility.Visible;
+
+                // update icon
+                FontIcon newIcon = controller.GetFontIcon(flags);
+                string newLabel = controller.GetAxisName(flags);
+                axisMapping.UpdateIcon(newIcon, newLabel);
             }
-        });
+        }
     }
 
     public void Update(Layout layout)
