@@ -323,7 +323,7 @@ public static class InputsManager
             BufferKeys[args.Timestamp] = args;
 
             // search for matching triggers
-            var buffer_keys = GetChord(BufferKeys.Values.ToList());
+            var buffer_keys = GetBufferKeyCodes();
 
             foreach (var chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
                          a.chords[args.IsKeyDown].Count == BufferKeys.Count))
@@ -434,9 +434,9 @@ public static class InputsManager
         }
     }
 
-    private static List<KeyCode> GetChord(List<KeyEventArgsExt> args)
+    private static List<KeyCode> GetBufferKeyCodes()
     {
-        return args.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList();
+        return BufferKeys.Values.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList();
     }
 
     public static void Start()
