@@ -321,6 +321,7 @@ public static class ProcessManager
             case "lockapp.exe":
             case "asusosd.exe":
             case "gamepadcustomizeosd":
+            case "rtkuwp.exe":
                 return ProcessFilter.Desktop;
 
             default:
