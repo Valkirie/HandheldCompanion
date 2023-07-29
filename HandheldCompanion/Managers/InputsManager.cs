@@ -70,7 +70,7 @@ public static class InputsManager
     private static ListenerType currentType;
     private static InputsHotkey currentHotkey = new();
 
-    private static readonly ConcurrentDictionary<int, KeyEventArgsExt> BufferKeys = new();
+    private static readonly ConcurrentQueue<KeyEventArgsExt> BufferKeys = new();
 
     private static readonly Dictionary<string, InputsChord> Triggers = new();
 
@@ -320,7 +320,7 @@ public static class InputsManager
             args.SuppressKeyPress = true;
 
             // add key to buffer
-            BufferKeys[args.Timestamp] = args;
+            BufferKeys.Enqueue(args);
 
             // search for matching triggers
             var buffer_keys = GetBufferKeyCodes();
@@ -403,13 +403,12 @@ public static class InputsManager
         // reset index
         KeyIndex = 0;
 
-        var keys = BufferKeys.OrderBy(a => a.Key).ToList();
-        for (var i = 0; i < keys.Count; i++)
+        var keys = BufferKeys.OrderBy(a => a.Timestamp).ToList();
+        foreach (KeyEventArgsExt args in keys)
         {
-            KeyEventArgsExt args = keys[i].Value;
-
             // improve me
             var key = (VirtualKeyCode)args.KeyValue;
+
             if (args.KeyValue == 0)
             {
                 if (args.Control)
@@ -430,13 +429,13 @@ public static class InputsManager
                     break;
             }
 
-            BufferKeys.TryRemove(args.Timestamp, out _);
+            BufferKeys.Enqueue(args);
         }
     }
 
     private static List<KeyCode> GetBufferKeyCodes()
     {
-        return BufferKeys.Values.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList();
+        return BufferKeys.Select(a => (KeyCode)a.KeyValue).OrderBy(key => key).ToList();
     }
 
     public static void Start()
