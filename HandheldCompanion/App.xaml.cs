@@ -77,6 +77,7 @@ public partial class App : Application
             case "zh-Hant":
             case "de-DE":
             case "ja-JP":
+            case "ru-RU":
                 culture = new CultureInfo(CurrentCulture);
                 break;
         }

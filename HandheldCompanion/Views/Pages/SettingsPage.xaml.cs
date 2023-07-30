@@ -54,6 +54,7 @@ public partial class SettingsPage : Page
         cB_Language.Items.Add(new CultureInfo("ja-JP"));
         cB_Language.Items.Add(new CultureInfo("zh-CN"));
         cB_Language.Items.Add(new CultureInfo("zh-Hant"));
+        cB_Language.Items.Add(new CultureInfo("ru-RU"));
 
         // call function
         UpdateDevice();
