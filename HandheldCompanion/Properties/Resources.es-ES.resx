@@ -142,7 +142,7 @@
     <value>Girometro</value>
   </data>
   <data name="AboutPage_Inclinometer" xml:space="preserve">
-    <value>Clinómetro</value>
+    <value>Inclinómetro</value>
   </data>
   <data name="AboutPage_NotApplicable" xml:space="preserve">
     <value>N/A</value>
