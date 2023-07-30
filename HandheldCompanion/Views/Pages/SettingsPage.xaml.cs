@@ -47,11 +47,13 @@ public partial class SettingsPage : Page
             cB_StartupType.Items.Add(radio);
         }
 
-
         cB_Language.Items.Add(new CultureInfo("en-US"));
         cB_Language.Items.Add(new CultureInfo("fr-FR"));
         cB_Language.Items.Add(new CultureInfo("de-DE"));
+        cB_Language.Items.Add(new CultureInfo("it-IT"));
         cB_Language.Items.Add(new CultureInfo("ja-JP"));
+        cB_Language.Items.Add(new CultureInfo("pt-BR"));
+        cB_Language.Items.Add(new CultureInfo("es-ES"));
         cB_Language.Items.Add(new CultureInfo("zh-CN"));
         cB_Language.Items.Add(new CultureInfo("zh-Hant"));
         cB_Language.Items.Add(new CultureInfo("ru-RU"));

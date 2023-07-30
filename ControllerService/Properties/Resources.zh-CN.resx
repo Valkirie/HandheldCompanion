@@ -121,6 +121,6 @@
     <value>虚拟手柄已连接</value>
   </data>
   <data name="ToastOnTargetDisconnected" xml:space="preserve">
-    <value>虚拟手柄现在已断开连接</value>
+    <value>虚拟手柄已断开</value>
   </data>
 </root>

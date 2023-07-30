@@ -76,6 +76,9 @@ public partial class App : Application
             case "zh-CN":
             case "zh-Hant":
             case "de-DE":
+            case "it-IT":
+            case "pt-BR":
+            case "es-ES":
             case "ja-JP":
             case "ru-RU":
                 culture = new CultureInfo(CurrentCulture);

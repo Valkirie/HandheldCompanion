@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
+	<!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,269 +59,473 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
-    <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="metadata">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" />
+							</xsd:sequence>
+							<xsd:attribute name="name" use="required" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="assembly">
+						<xsd:complexType>
+							<xsd:attribute name="alias" type="xsd:string" />
+							<xsd:attribute name="name" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="AutoRollYawSwapDesc" xml:space="preserve">
+    <value>該模式適合筆記本或翻蓋式掌機，可以根據該設備如何被握持（屏幕以90度角或者180度角打開）判斷重力方向，來自動切換陀螺儀方向。</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>A</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
-    <value>持續啟動</value>
+	<data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+    <value>始終開啟</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
     <value>B</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
     <value>Back</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
     <value>下</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
     <value>左</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
     <value>右</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
     <value>上</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
     <value>左肩鍵</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
-    <value>左搖桿下壓</value>
+	<data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+    <value>左搖杆按壓</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
     <value>左板機</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
     <value>右肩鍵</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
-    <value>右搖桿下壓</value>
+	<data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+    <value>右搖杆按壓</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
     <value>右板機</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
     <value>Start</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
     <value>X</value>
   </data>
-  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+	<data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
     <value>Y</value>
   </data>
-  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
-    <value>模擬DS4手柄</value>
+	<data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+    <value>模擬 DualShock4 手柄</value>
   </data>
-  <data name="Enum.HIDmode.NoController" xml:space="preserve">
+	<data name="Enum.HIDmode.NoController" xml:space="preserve">
     <value>無模擬手柄</value>
   </data>
-  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
-    <value>模擬360手柄</value>
+	<data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+    <value>模擬 XBOX 360 手柄</value>
   </data>
-  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
+	<data name="Enum.HIDstatus.Connected" xml:space="preserve">
     <value>已連接</value>
   </data>
-  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+	<data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
     <value>未連接</value>
   </data>
-  <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
-    <value>自動橫滾/航向軸切換</value>
+	<data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
+    <value>重力軸向切換</value>
   </data>
-  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+	<data name="Enum.Input.JoystickCamera" xml:space="preserve">
     <value>體感視角</value>
   </data>
-  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
+	<data name="Enum.Input.JoystickSteering" xml:space="preserve">
     <value>體感駕駛</value>
   </data>
-  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
+	<data name="Enum.Input.PlayerSpace" xml:space="preserve">
     <value>玩家空間</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
-    <value>Handheld Companion</value>
+	<data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+    <value>掌機</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+	<data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
     <value>浮窗</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+	<data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
     <value>快捷工具</value>
   </data>
-  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+	<data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
     <value>窗口</value>
   </data>
-  <data name="Enum.Output.LeftStick" xml:space="preserve">
-    <value>左搖桿</value>
+	<data name="Enum.Output.LeftStick" xml:space="preserve">
+    <value>左搖杆</value>
   </data>
-  <data name="Enum.Output.RightStick" xml:space="preserve">
-    <value>右搖桿</value>
+	<data name="Enum.Output.RightStick" xml:space="preserve">
+    <value>右搖杆</value>
   </data>
-  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
-    <value>這是默認的手柄配置。此配置將應用於沒有特定配置的所有應用程序。一些需要指定程序的選項可能被禁用。</value>
+	<data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
+    <value>這是默認的全局配置。此配置將應用於沒有特定配置的應用程式。一些需要指定程序才可生效的選項可能被禁用。</value>
   </data>
-  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
-    <value>啊這。看來這個配置正在運行。一些需要指定程序的選項可能被禁用。</value>
+	<data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+    <value>這個配置正在運行。一些選項可能被禁用。</value>
   </data>
-  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
-    <value>啊這。這個配置似乎沒有可執行文件。這怎麽可能?</value>
+	<data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+    <value>這個配置似乎沒有找到應用程式的可執行文件。</value>
   </data>
-  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
-    <value>啊這。這個配置似乎沒有指定應用程序的路徑。一些需要指定程序的選項可能被禁用。</value>
+	<data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+    <value>這個配置似乎沒有找到指定的路徑。</value>
   </data>
-  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
-    <value>阿這。你似乎沒有修改此應用程序內容的必要權限。確保在管理員模式下啟動此程序。</value>
+	<data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+    <value>似乎你的權限不夠更改這裡的選項。請確保在管理員模式下啟動此程序。</value>
   </data>
-  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
-    <value>這裏沒什麽好看的。</value>
+	<data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+    <value>這裡沒什麼東西。</value>
   </data>
-  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+	<data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
     <value>默認</value>
   </data>
-  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+	<data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
     <value>節能</value>
   </data>
-  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
-    <value>高</value>
+	<data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+    <value>高性能</value>
   </data>
-  <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
+	<data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
     <value>自動</value>
   </data>
-  <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
+	<data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
     <value>關閉</value>
   </data>
-  <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
+	<data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手動</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
-    <value>這個輸入將作為一個簡單的搖桿操作，適用於傳統的搖桿應用</value>
+	<data name="JoystickCameraDesc" xml:space="preserve">
+    <value>這個模式將反轉X軸，適用於將陀螺儀模擬滑鼠。</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>這個輸入將作為一個為賽車遊戲優化的駕駛搖桿</value>
+	<data name="JoystickSteeringDesc" xml:space="preserve">
+    <value>這個模式適用於一些賽車遊戲，陀螺儀輸入將模擬方向盤。</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
-    <value>這個輸入將作為一個為第一或第三人稱視角優化的搖桿</value>
+	<data name="PlayerSpaceDesc" xml:space="preserve">
+    <value>這個模式適用於第一人稱或第三人稱視角的遊戲，體感輸入將模擬玩家視角，</value>
   </data>
-  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
-    <value>Handheld Companion</value>
+	<data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
+    <value>掌機伴侶</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
+	<data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
+	<data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
+	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
+	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
+	<data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
+	<data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+	<data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
     <value>KB</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
+	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
+	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
+	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
+	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
+	<data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
+	<data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
+	<data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
     <value>Win</value>
   </data>
-  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
+	<data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
     <value>Esc</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
+	<data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-  <data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
+	<data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+	<data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
     <value>M1 / M2</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
+    <value>叉</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
+    <value>圈</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
+    <value>方</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
+    <value>三角</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+	<data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+	<data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
+    <value>自定義</value>
+  </data>
+	<data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
+    <value>設備</value>
+  </data>
+	<data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
+    <value>重力切換模式</value>
+  </data>
+	<data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+    <value>X軸反轉模式</value>
+  </data>
+	<data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
+    <value>方向盤模式</value>
+  </data>
+	<data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
+    <value>普通模式</value>
+  </data>
+	<data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
+    <value>左搖杆</value>
+  </data>
+	<data name="Enum.MotionOutput.RightStick" xml:space="preserve">
+    <value>右搖杆</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
+    <value>STEAM</value>
+  </data>
+	<data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+	<data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
+    <value>這個配置正在運行。一些選項可能被禁用。</value>
+  </data>
+	<data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Command center</value>
+  </data>
+	<data name="Enum.ROGAlly.ButtonFlags.OEM2" xml:space="preserve">
+    <value>Armory crate</value>
+  </data>
+	<data name="Enum.SteamDeck.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Options</value>
+  </data>
+	<data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+	<data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
+    <value>左搖杆</value>
+  </data>
+	<data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+	<data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
+    <value>右搖杆</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
+    <value>下方向鍵</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
+    <value>左方向鍵</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
+    <value>右方向鍵</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
+    <value>上方向鍵</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
+    <value>LT</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
+    <value>左搖杆</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
+    <value>左搖杆下推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
+    <value>左搖杆左推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
+    <value>左搖杆右推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
+    <value>左搖杆上推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
+    <value>RT</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
+    <value>左搖杆</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
+    <value>左搖杆下推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
+    <value>左搖杆左推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
+    <value>左搖杆右推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
+    <value>左搖杆上推</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
+    <value>導航鍵</value>
+  </data>
+	<data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
+    <value>Menu</value>
   </data>
 </root>

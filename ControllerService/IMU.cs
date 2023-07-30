@@ -21,11 +21,9 @@ public static class IMU
 
     public static SortedDictionary<XInputSensorFlags, Vector3> Acceleration = new();
     public static SortedDictionary<XInputSensorFlags, Vector3> AngularVelocity = new();
-    public static Vector3 IMU_Angle;
 
     public static IMUGyrometer Gyrometer;
     public static IMUAccelerometer Accelerometer;
-    public static IMUInclinometer Inclinometer;
 
     public static SensorFusion sensorFusion;
     public static MadgwickAHRS madgwickAHRS;
@@ -62,7 +60,6 @@ public static class IMU
 
         Gyrometer = new IMUGyrometer(sensorFamily, UpdateInterval);
         Accelerometer = new IMUAccelerometer(sensorFamily, UpdateInterval);
-        Inclinometer = new IMUInclinometer(sensorFamily, UpdateInterval);
     }
 
     public static void Start()
@@ -82,7 +79,6 @@ public static class IMU
         // halt sensors
         Gyrometer?.StopListening();
         Accelerometer?.StopListening();
-        Inclinometer?.StopListening();
 
         stopwatch.Stop();
 
@@ -104,14 +100,12 @@ public static class IMU
     {
         Gyrometer.UpdateSensor();
         Accelerometer.UpdateSensor();
-        Inclinometer.UpdateSensor();
     }
 
     public static void UpdateMovements(ControllerMovements movements)
     {
         Gyrometer.ReadingChanged(movements.GyroRoll, movements.GyroPitch, movements.GyroYaw);
         Accelerometer.ReadingChanged(movements.GyroAccelX, movements.GyroAccelY, movements.GyroAccelZ);
-        Inclinometer.ReadingChanged(movements.GyroAccelX, movements.GyroAccelY, movements.GyroAccelZ);
     }
 
     private static void Tick(long ticks)
@@ -159,16 +153,13 @@ public static class IMU
                         break;
                 }
 
-            IMU_Angle = Inclinometer.GetCurrentReading();
-
             // update sensorFusion
             switch (ControllerService.currentProfile.MotionInput)
             {
                 case MotionInput.PlayerSpace:
                 case MotionInput.AutoRollYawSwap:
                 case MotionInput.JoystickSteering:
-                    sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds,
-                        AngularVelocity[XInputSensorFlags.Centered], Acceleration[XInputSensorFlags.Default]);
+                    sensorFusion.UpdateReport(TotalMilliseconds, DeltaSeconds, AngularVelocity[XInputSensorFlags.Centered], Acceleration[XInputSensorFlags.Default]);
                     break;
             }
 
@@ -179,7 +170,7 @@ public static class IMU
                     break;
 
                 case "SettingsMode1":
-                    PipeServer.SendMessage(new PipeSensor(IMU_Angle, Quaternion.Zero, SensorType.Inclinometer));
+                    PipeServer.SendMessage(new PipeSensor(new Vector3() { X = sensorFusion.DeviceAngle.X, Y = sensorFusion.DeviceAngle.Y }, Quaternion.Zero, SensorType.Inclinometer));
                     break;
             }
 
