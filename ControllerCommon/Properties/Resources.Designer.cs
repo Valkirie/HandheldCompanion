@@ -421,7 +421,7 @@ namespace ControllerCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RightTrigger.
+        ///   Looks up a localized string similar to Right Trigger.
         /// </summary>
         public static string Enum_GamepadButtonFlagsExt_RightTrigger {
             get {
