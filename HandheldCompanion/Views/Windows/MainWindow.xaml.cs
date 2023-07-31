@@ -206,8 +206,6 @@ public partial class MainWindow : GamepadWindow
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.Start();
 
-        EnergyManager.Start();
-
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
         PowerManager.Start();
 
@@ -852,7 +850,6 @@ public partial class MainWindow : GamepadWindow
         OSDManager.Stop();
         ProfileManager.Stop();
         LayoutManager.Stop();
-        EnergyManager.Stop();
         PowerManager.Stop();
         ProcessManager.Stop();
         ToastManager.Stop();

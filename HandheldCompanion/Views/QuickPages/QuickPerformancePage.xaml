@@ -14,7 +14,7 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="10" Margin="15,6,15,6">
+    <ui:SimpleStackPanel Margin="15,6,15,6" Spacing="10">
         <ui:SimpleStackPanel Spacing="6">
             <!--  Header  -->
             <Border CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -112,7 +112,7 @@
                 </Grid>
             </Border>
         </ui:SimpleStackPanel>
-        
+
         <!--  Quiet mode  -->
         <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 

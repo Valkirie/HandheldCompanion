@@ -17,6 +17,7 @@ using System.Reflection;
 using static ControllerCommon.Utils.XInputPlusUtils;
 using System.ComponentModel;
 using System.Threading;
+using HandheldCompanion.Controls;
 
 namespace HandheldCompanion;
 
@@ -96,7 +97,7 @@ public static class XInputPlus
     static XInputPlus()
     {
         ExtractXInputPlusLibraries();
-        ProcessManager.ProcessCreated += ProcessManager_ProcessStarted;
+        ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
     }
 
     // this should be handled by the installer at some point.
@@ -129,10 +130,13 @@ public static class XInputPlus
         // todo: add support for xinputplus dinput libraries
     }
 
-    private static void ProcessManager_ProcessStarted(Process process)
+    private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
     {
         try
         {
+            // get attached process
+            Process process = processEx.Process;
+
             var profile = ProfileManager.GetProfileFromPath(process.MainModule.FileName, true);
 
             if (!string.IsNullOrEmpty(profile.Executable) && profile.XInputPlus == XInputPlusMethod.Injection)
@@ -143,7 +147,7 @@ public static class XInputPlus
         }
         catch(Exception ex)
         {
-            LogManager.LogError("Error when injecting XInputPlus to {0}: {1}", process.ProcessName, ex.Message);
+            LogManager.LogError("Error when injecting XInputPlus to {0}: {1}", processEx.Name, ex.Message);
         }
     }
 

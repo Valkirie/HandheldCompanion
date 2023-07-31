@@ -239,7 +239,7 @@
                         Name="GlobalSettings"
                         HorizontalAlignment="Stretch"
                         Expanded="Expander_Expanded">
-                        
+
                         <Expander.Header>
                             <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
@@ -268,11 +268,11 @@
                                     Content="{x:Static resx:Resources.ProfilesPage_Whitelist}"
                                     Unchecked="cB_Whitelist_Checked" />
 
-                                    <!--  Separator  -->
+                                <!--  Separator  -->
                                 <Separator
-                                        Margin="-46,0,-16,0"
-                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                        BorderThickness="0,1,0,0" />
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -298,14 +298,15 @@
                                             Name="cB_Wrapper"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            SelectionChanged="cB_Wrapper_SelectionChanged" SelectedIndex="0" >
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Disabled}"/>
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Injection}"/>
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Redirection}"/>
+                                            SelectedIndex="0"
+                                            SelectionChanged="cB_Wrapper_SelectionChanged">
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Injection}" />
+                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Redirection}" />
                                         </ComboBox>
                                     </DockPanel>
                                 </Grid>
-                                
+
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>

@@ -21,6 +21,10 @@ public partial class QuickSuspenderPage : Page
 
         ProcessManager.ProcessStarted += ProcessStarted;
         ProcessManager.ProcessStopped += ProcessStopped;
+
+        // get processes
+        foreach (ProcessEx processEx in ProcessManager.GetProcesses())
+            ProcessStarted(processEx, true);
     }
 
     private void ProcessStopped(ProcessEx processEx)

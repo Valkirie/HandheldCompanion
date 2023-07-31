@@ -57,30 +57,6 @@
                         Style="{DynamicResource InvertedToggleSwitchStyle}"
                         Toggled="SuspendToggle_Toggled" />
                 </Grid>
-
-                <!--  EcoQos  -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="0.2*" MinWidth="80" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Efficiency mode" />
-                        <TextBlock
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Efficiency mode will lower process priority and improve power efficiency"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <CheckBox
-                        Name="QoSCheckBox"
-                        Grid.Column="1"
-                        Margin="30,0,0,0"
-                        Focusable="False"
-                        IsHitTestVisible="False" />
-                </Grid>
             </ui:SimpleStackPanel>
         </Expander.Content>
     </Expander>

@@ -14,7 +14,7 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Spacing="10" Margin="15,6,15,6">
+    <ui:SimpleStackPanel Margin="15,6,15,6" Spacing="10">
 
         <Grid>
             <!--  Header  -->
@@ -95,11 +95,13 @@
             </Border>
         </Grid>
 
-        <Separator
-            Background="{DynamicResource ExpanderHeaderBackground}"/>
+        <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
         <ui:SimpleStackPanel Name="GridProfile" Spacing="10">
-            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Universal motion control settings" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+            <TextBlock
+                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="Universal motion control settings" />
 
             <Grid Name="StackProfileUMC">
                 <!--  Header  -->
@@ -140,14 +142,13 @@
                 </Border>
             </Grid>
 
-            <Grid Name="StackProfileUMCSettings"
-                    d:Visibility="Visible"
-                    Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                
+            <Grid
+                Name="StackProfileUMCSettings"
+                d:Visibility="Visible"
+                Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                 <!--  Header  -->
-                <Border
-                   
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <Border.IsEnabled>
                         <MultiBinding Converter="{StaticResource IsEnabledConverter}">
@@ -373,7 +374,10 @@
                 </Border>
             </Grid>
 
-            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Graphics settings" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+            <TextBlock
+                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="Graphics settings" />
 
             <!--  Radeon Super Resolution  -->
             <ui:SimpleStackPanel
@@ -418,7 +422,6 @@
 
                 <!--  RSR  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -501,7 +504,6 @@
 
                 <!--  Content  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -563,7 +565,10 @@
                 </Border>
             </ui:SimpleStackPanel>
 
-            <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+            <TextBlock
+                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="Power settings" />
 
             <!--  Maximum CPU Count  -->
             <ui:SimpleStackPanel Name="StackProfileCPUCore" Spacing="2">
@@ -605,7 +610,6 @@
 
                 <!--  RSR  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -686,7 +690,6 @@
 
                 <!--  TDP  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -769,7 +772,6 @@
 
                 <!--  Auto TDP Requested FPS Slider  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -853,7 +855,6 @@
 
                 <!--  Content  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -951,7 +952,6 @@
 
                 <!--  Content  -->
                 <Border
-                   
                     d:Visibility="Visible"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,26 +14,30 @@ using System.Windows.Automation;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using ControllerCommon.Platforms;
+using ControllerCommon.Processor;
 using ControllerCommon.Utils;
 using HandheldCompanion.Controls;
 using Windows.System.Diagnostics;
 using static ControllerCommon.WinAPI;
 using static HandheldCompanion.Controls.ProcessEx;
-using static HandheldCompanion.Managers.EnergyManager;
+using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
 public static class ProcessManager
 {
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool EnumWindows(WindowEnumCallback lpEnumFunc, int lParam);
+    public delegate bool WindowEnumCallback(IntPtr hwnd, int lparam);
+
+    [DllImport("user32.dll")]
+    public static extern bool IsWindowVisible(int h);
+
     // process vars
     private static readonly Timer ForegroundTimer;
-
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
-
-    private static ManagementEventWatcher processStart = new ManagementEventWatcher(
-            new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace"));
-
     private static ProcessEx foregroundProcess;
     private static ProcessEx previousProcess;
 
@@ -48,18 +53,56 @@ public static class ProcessManager
 
     static ProcessManager()
     {
-        ForegroundTimer = new Timer(1000);
-        ForegroundTimer.Elapsed += ForegroundCallback;        
+        // hook: on window opened
+        Automation.AddAutomationEventHandler(
+            WindowPattern.WindowOpenedEvent,
+            AutomationElement.RootElement,
+            TreeScope.Children,
+            OnWindowOpened);
 
-        // Register a callback method for the event
-        processStart.EventArrived += new EventArrivedEventHandler(OnProcessCreated);
+        // list all current windows
+        EnumWindows(OnWindowDiscovered, 0);
+
+        ForegroundTimer = new Timer(1000);
+        ForegroundTimer.Elapsed += ForegroundCallback;
+    }
+
+    private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
+    {
+        try
+        {
+            if (sender is AutomationElement element)
+            {
+                var processInfo = new ProcessUtils.FindHostedProcess(element.Current.NativeWindowHandle)._realProcess;
+                if (processInfo is null)
+                    return;
+
+                CreateProcess((int)processInfo.ProcessId, element.Current.NativeWindowHandle);
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    private static bool OnWindowDiscovered(IntPtr hWnd, int lparam)
+    {
+        if (IsWindowVisible((int)hWnd))
+        {
+            var processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
+            if (processInfo is null)
+                return false;
+
+            CreateProcess((int)processInfo.ProcessId, (int)hWnd, true);
+        }
+
+        return true;
     }
 
     public static void Start()
     {
         // start processes monitor
         ForegroundTimer.Start();
-        processStart.Start();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -77,30 +120,8 @@ public static class ProcessManager
         // stop processes monitor
         ForegroundTimer.Elapsed -= ForegroundCallback;
         ForegroundTimer.Stop();
-        processStart.Stop();
 
         LogManager.LogInformation("{0} has stopped", "ProcessManager");
-    }
-
-    private static void OnProcessCreated(object sender, EventArrivedEventArgs e)
-    {
-        // Get the process name and ID from the event properties
-        string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
-        int processId = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value);
-
-        try
-        {
-            Process process = Process.GetProcessById(processId);
-            if (process is null)
-                return;
-
-            // hook into events
-            process.EnableRaisingEvents = true;
-            process.Exited += ProcessHalted;
-
-            ProcessCreated?.Invoke(process);
-        }
-        catch { }
     }
 
     public static ProcessEx GetForegroundProcess()
@@ -223,11 +244,15 @@ public static class ProcessManager
         {
             // process has exited on arrival
             Process proc = Process.GetProcessById(ProcessID);
+            proc.EnableRaisingEvents = true;
             if (proc.HasExited)
                 return false;
 
             if (Processes.ContainsKey(proc.Id))
                 return true;
+
+            // hook exited event
+            proc.Exited += ProcessHalted;
 
             // UI thread (synchronous)
             Application.Current.Dispatcher.Invoke(() =>
@@ -245,8 +270,10 @@ public static class ProcessManager
 
                 ProcessEx processEx = new ProcessEx(proc, path, exec, filter);
                 processEx.MainWindowHandle = hWnd;
+                processEx.MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
+                processEx.MainThread = GetMainThread(proc);
 
-                Processes.TryAdd(processEx.GetProcessId(), processEx);
+                Processes.TryAdd(ProcessID, processEx);
 
                 if (processEx.Filter != ProcessFilter.Allowed)
                     return true;
@@ -265,15 +292,6 @@ public static class ProcessManager
         }
 
         return false;
-    }
-
-    private static void ChildProcessCreated(ProcessEx parent, int pId)
-    {
-        var mode = parent.GetEfficiencyMode();
-        if (mode == EfficiencyMode.Default)
-            return;
-
-        ToggleEfficiencyMode(pId, mode, parent);
     }
 
     private static ProcessFilter GetFilter(string exec, string path, string MainWindowTitle = "")
@@ -354,6 +372,43 @@ public static class ProcessManager
         }
     }
 
+    private static ProcessThread GetMainThread(Process process)
+    {
+        ProcessThread mainThread = null;
+        var startTime = DateTime.MaxValue;
+
+        try
+        {
+            if (process.Threads is null || process.Threads.Count == 0)
+                return null;
+
+            foreach (ProcessThread thread in process.Threads)
+            {
+                if (thread.ThreadState != ThreadState.Running)
+                    continue;
+
+                if (thread.StartTime < startTime)
+                {
+                    startTime = thread.StartTime;
+                    mainThread = thread;
+                }
+            }
+
+            if (mainThread is null)
+                mainThread = process.Threads[0];
+        }
+        catch (Win32Exception)
+        {
+            // Access if denied
+        }
+        catch (InvalidOperationException)
+        {
+            // thread has exited
+        }
+
+        return mainThread;
+    }
+
     public static void ResumeProcess(ProcessEx processEx)
     {
         // process has exited
@@ -362,7 +417,9 @@ public static class ProcessManager
 
         ProcessUtils.NtResumeProcess(processEx.Process.Handle);
 
+        // refresh child processes list (most likely useless, a suspended process shouldn't have new child processes)
         processEx.RefreshChildProcesses();
+
         Parallel.ForEach(processEx.Children,
             new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
             {
@@ -380,12 +437,14 @@ public static class ProcessManager
         if (processEx.Process.HasExited)
             return;
 
-        ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Minimized);
+        ProcessUtils.ShowWindow(processEx.MainWindowHandle, (int)ProcessUtils.ShowWindowCommands.Hide);
         Task.Delay(500);
 
         ProcessUtils.NtSuspendProcess(processEx.Process.Handle);
 
+        // refresh child processes list
         processEx.RefreshChildProcesses();
+
         Parallel.ForEach(processEx.Children,
             new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
             {
@@ -407,10 +466,6 @@ public static class ProcessManager
     public static event ProcessStoppedEventHandler ProcessStopped;
 
     public delegate void ProcessStoppedEventHandler(ProcessEx processEx);
-
-    public static event ProcessCreatedEventHandler ProcessCreated;
-
-    public delegate void ProcessCreatedEventHandler(Process process);
 
     public static event InitializedEventHandler Initialized;
 

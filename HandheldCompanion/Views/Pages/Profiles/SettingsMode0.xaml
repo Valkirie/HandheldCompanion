@@ -17,8 +17,7 @@
 
             <!--  Joystick camera options  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                           Text="{x:Static resx:Resources.SettingsMode0_CameraOptions}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_CameraOptions}" />
 
                 <!--  Sensivity X  -->
                 <Border
@@ -40,8 +39,7 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.SettingsMode0_SensitivityX}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_SensitivityX}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -99,8 +97,7 @@
                                 Glyph="&#xECE7;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.SettingsMode0_SensitivityY}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_SensitivityY}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -151,8 +148,7 @@
                                 Glyph="&#xE710;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.SettingsMode0_AimingDownSights}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_AimingDownSights}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -171,8 +167,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsMultiplier}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_AimingDownSightsMultiplier}" />
                                 </StackPanel>
 
                                 <DockPanel
@@ -245,8 +240,7 @@
                                 Glyph="&#xE759;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="{x:Static resx:Resources.SettingsMode0_FlickStick}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_FlickStick}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
@@ -288,8 +282,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.SettingsMode0_FlickDuration}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_FlickDuration}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -338,8 +331,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}"
-                                               Text="{x:Static resx:Resources.SettingsMode0_StickSensitivtity}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_StickSensitivtity}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
@@ -381,8 +373,7 @@
 
             <!--  Custom response curve  -->
             <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
-                           Text="{x:Static resx:Resources.SettingsMode0_CustomResponseCurve}" />
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsMode0_CustomResponseCurve}" />
 
                 <Border
                     Padding="0,12,12,12"
@@ -396,8 +387,7 @@
                             Orientation="Horizontal"
                             ScrollViewer.PanningMode="HorizontalOnly"
                             Spacing="12">
-                            <Label VerticalAlignment="Center"
-                                   Content="{x:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
+                            <Label VerticalAlignment="Center" Content="{x:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
                                 <Label.LayoutTransform>
                                     <TransformGroup>
                                         <RotateTransform Angle="90" />
@@ -406,8 +396,7 @@
                                 </Label.LayoutTransform>
                             </Label>
                             <ui:SimpleStackPanel Orientation="Vertical" Spacing="12">
-                                <Label HorizontalAlignment="Center"
-                                       Content="{x:Static resx:Resources.SettingsMode0_CustomResponseIntensity}" />
+                                <Label HorizontalAlignment="Center" Content="{x:Static resx:Resources.SettingsMode0_CustomResponseIntensity}" />
                                 <ui:SimpleStackPanel
                                     Name="StackCurve"
                                     Width="480"
@@ -427,9 +416,7 @@
                                                         <RectangleGeometry Rect="50,50,50,50" />
                                                     </GeometryDrawing.Geometry>
                                                     <GeometryDrawing.Pen>
-                                                        <Pen
-                                                            Brush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                                            Thickness="1" />
+                                                        <Pen Brush="{DynamicResource SystemControlBackgroundChromeMediumBrush}" Thickness="1" />
                                                     </GeometryDrawing.Pen>
                                                 </GeometryDrawing>
                                             </DrawingBrush.Drawing>
@@ -440,8 +427,7 @@
                                     Name="StackIndicator"
                                     Height="10"
                                     Orientation="Horizontal" />
-                                <Label HorizontalAlignment="Center"
-                                       Content="{x:Static resx:Resources.SettingsMode0_CustomResponsePresetOptions}" />
+                                <Label HorizontalAlignment="Center" Content="{x:Static resx:Resources.SettingsMode0_CustomResponsePresetOptions}" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="3.33*" />
@@ -465,8 +451,7 @@
                                         Content="{x:Static resx:Resources.SettingsMode0_CustomResponsePresetPrecise}" />
                                 </Grid>
                             </ui:SimpleStackPanel>
-                            <Label VerticalAlignment="Center"
-                                   Content="{x:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
+                            <Label VerticalAlignment="Center" Content="{x:Static resx:Resources.SettingsMode0_CustomResponseCurveGameOutput}">
                                 <Label.LayoutTransform>
                                     <TransformGroup>
                                         <RotateTransform Angle="-90" />
