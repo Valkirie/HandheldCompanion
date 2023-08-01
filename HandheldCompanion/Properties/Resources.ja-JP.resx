@@ -120,7 +120,7 @@
     <value>概要</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>&gt;Windows サービスとタッチ インターフェイスに最適化された GUI の組み合わせにより、ハンドヘルド ゲーム コンピューターのエクスペリエンスが向上します。機能には、ジャイロ コントロール、仮想コントローラ シミュレーション、クイック ツール オーバーレイ、仮想タッチパッド、3D コントローラ モデル、アプリケーションごとのベースのプロファイル設定システムが含まれます。Handheld Companion は、ViGEmBus ドライバーと ViGEmClient ライブラリ、および HidHide カーネル モード フィルター ドライバーに依存しています。モーション コントロール アルゴリズムは、Jibbsmart による研究と GyroWiki で入手可能な情報に基づいています。ドイツ語の翻訳はBagboi（@lunabagboi）によって行われました</value>
+    <value>&gt;Windows サービスとタッチ インターフェイスに最適化された GUI の組み合わせにより、ハンドヘルド ゲーム コンピューターのエクスペリエンスが向上します。機能には、ジャイロ コントロール、仮想コントローラ シミュレーション、クイック ツール オーバーレイ、仮想タッチパッド、3D コントローラ モデル、アプリケーションごとのベースのプロファイル設定システムが含まれます。Handheld Companion は、ViGEmBus ドライバーと ViGEmClient ライブラリ、および HidHide カーネル モード フィルター ドライバーに依存しています。モーション コントロール アルゴリズムは、Jibbsmart による研究と GyroWiki で入手可能な情報に基づいています。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速度計</value>

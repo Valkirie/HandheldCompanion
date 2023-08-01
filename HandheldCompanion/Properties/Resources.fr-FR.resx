@@ -121,7 +121,7 @@
     <value>À propos</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion fournit une prise en charge du gyroscope et de l'accéléromètre aux modèles AYA NEO 2020 et 2021 par le biais d'un contrôleur DualShock 4 virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur intégré ne sera pas masqué et le contrôleur DualShock 4 virtuel sera désactivé. Handheld Companion s'appuie sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode noyau HidHide. Les algorithmes de contrôle de mouvement sont basés sur le travail de Jibbsmart et les informations disponibles sur le GyroWiki. La traduction allemande a été réalisée par Bagboi (@lunabagboi)</value>
+    <value>Handheld Companion fournit une prise en charge du gyroscope et de l'accéléromètre aux modèles AYA NEO 2020 et 2021 par le biais d'un contrôleur DualShock 4 virtuel. Si le service est activé, le contrôleur intégré sera masqué pour les applications en dehors de la liste blanche. Si le service est désactivé, le contrôleur intégré ne sera pas masqué et le contrôleur DualShock 4 virtuel sera désactivé. Handheld Companion s'appuie sur le pilote ViGEmBus et les bibliothèques ViGEmClient ainsi que sur le pilote de filtre en mode noyau HidHide. Les algorithmes de contrôle de mouvement sont basés sur le travail de Jibbsmart et les informations disponibles sur le GyroWiki. </value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accéléromètre</value>

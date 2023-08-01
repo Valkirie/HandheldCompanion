@@ -121,7 +121,7 @@
     <value>关于</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Handheld Companion - “掌机伴侣“ 是一个集多种功能（虚拟手柄、体感控制、性能监控、悬浮窗等）于一体，来改善玩家掌机游戏体验的工具。掌机伴侣依赖于ViGEmBus驱动和ViGEmClient库，以及内核态的HidHide过滤驱动。体感算法基于Jibbsmart的研究成果和GyroWiki上公开的信息。德语翻译由 Bagboi (@lunabagboi) 完成</value>
+    <value>Handheld Companion - “掌机伴侣“ 是一个集多种功能（虚拟手柄、体感控制、性能监控、悬浮窗等）于一体，来改善玩家掌机游戏体验的工具。掌机伴侣依赖于ViGEmBus驱动和ViGEmClient库，以及内核态的HidHide过滤驱动。体感算法基于Jibbsmart的研究成果和GyroWiki上公开的信息。</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速计</value>
