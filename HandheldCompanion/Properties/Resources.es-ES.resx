@@ -121,7 +121,7 @@
     <value>Acerca de</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Una combinación de un servicio de Windows y una interfaz gráfica de usuario optimizada para aumentar la experiencia de su computadora portátil para juegos. Las características incluyen: control de movimiento, también conocido como control giroscópico, simulación de controlador virtual, superposición de herramientas rápidas, paneles táctiles virtuales, modelo de controlador 3D, sistema de configuración de perfil basado en la aplicación. Handheld Companion se basa en el controlador ViGEmBus y las bibliotecas ViGEmClient, así como en el controlador de filtro en modo kernel HidHide. Los algoritmos de control de movimiento se basan en el trabajo de Jibbsmart y en la información disponible en GyroWiki.</value>
+    <value>Una combinación de un servicio de Windows y una interfaz gráfica de usuario optimizada para aumentar la experiencia de su computadora portátil para juegos. Las características incluyen: control de movimiento, también conocido como control giroscópico, simulación de controlador virtual, superposición de herramientas rápidas, paneles táctiles virtuales, modelo de controlador 3D, sistema de configuración de perfil basado en la aplicación. Handheld Companion se basa en el controlador ViGEmBus y las bibliotecas ViGEmClient, así como en el controlador de filtro en modo kernel HidHide. Los algoritmos de control de movimiento se basan en el trabajo de Jibbsmart y en la información disponible en GyroWiki. La traducción al alemán fue realizada por Bagboi (@lunabagboi)</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Acelerometro</value>

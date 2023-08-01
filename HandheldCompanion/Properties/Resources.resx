@@ -121,7 +121,7 @@
     <value>About</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki.</value>
+    <value>A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible information on the GyroWiki. German Translation was made by Bagboi (@lunabagboi)</value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Accelerometer</value>
