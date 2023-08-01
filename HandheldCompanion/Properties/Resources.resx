@@ -1543,7 +1543,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Bottom right</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
-    <value>Standort des QuickTools-Fenster festlegen</value>
+    <value>Define quicktools window location</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
     <value>Top left</value>

@@ -1516,7 +1516,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
     <value>Energie-Optionen</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
-    <value>Schnellleiste-Fensterort anpassen</value>
+    <value>Standort des QuickTools-Fenster festlegen</value>
   </data>
   <data name="SettingsPage_ThirdPartyApps" xml:space="preserve">
     <value>Drittanbieter-Programme</value>
