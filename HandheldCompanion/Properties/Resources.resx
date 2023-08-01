@@ -404,7 +404,7 @@
     <value>Controller options</value>
   </data>
   <data name="OverlayPage_DualSenseController" xml:space="preserve">
-    <value>Playstation DualSense</value>
+    <value>PlayStation DualSense</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Emulated controller</value>
@@ -515,7 +515,8 @@
     <value>Additional settings</value>
   </data>
   <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
-    <value>Aiming down sights motion multiplier</value>
+    <value>Aiming down sights motion multiplier
+</value>
   </data>
   <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
     <value>Activation button</value>
@@ -1197,7 +1198,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Automatic TDP</value>
   </data>
   <data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
-    <value>Automatic adjustement of TDP based on measured FPS and requested FPS target</value>
+    <value>Automatic adjustment of TDP based on measured FPS and requested FPS target</value>
   </data>
   <data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
     <value>Framerate target</value>
@@ -1542,7 +1543,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Bottom right</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
-    <value>Define quicktools window location</value>
+    <value>Standort des QuickTools-Fenster festlegen</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
     <value>Top left</value>
