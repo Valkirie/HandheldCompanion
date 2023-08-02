@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ControllerCommon.Managers;
+using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using static HandheldCompanion.Platforms.HWiNFO;
@@ -162,10 +163,10 @@ public static class OSDManager
         switch (OverlayLevel)
         {
             default:
-            case 0:
+            case 0: // Disabled
                 break;
 
-            case 1:
+            case 1: // Minimal
             {
                 OverlayRow row1 = new();
 
@@ -182,7 +183,7 @@ public static class OSDManager
             }
                 break;
 
-            case 2:
+            case 2: // Extended
             {
                 OverlayRow row1 = new();
 
@@ -228,7 +229,7 @@ public static class OSDManager
             }
                 break;
 
-            case 3:
+            case 3: // Full
             {
                 OverlayRow row1 = new();
                 OverlayRow row2 = new();
@@ -295,6 +296,15 @@ public static class OSDManager
                 Content.Add(row6.ToString());
             }
                 break;
+
+            case 4: // Custom
+            {
+                /*
+                 * Intended to simply allow RTSS/HWINFO to run, and let the user configure the overlay within those
+                 * tools as they wish
+                 */
+                break;
+            }
         }
 
         return string.Join("\n", Content);
@@ -324,13 +334,35 @@ public static class OSDManager
             {
                 OverlayLevel = Convert.ToInt16(value);
 
-                if (OverlayLevel != 0)
+                if (OverlayLevel > 0)
                 {
-                    if (!RefreshTimer.IsRunning())
-                        RefreshTimer.Start();
+                    // Ensure OSD is enabled in RTSS
+                    PlatformManager.RTSS.SetEnableOSD(true);
+
+                    if (OverlayLevel == 4)
+                    {
+                        // No need to update OSD in Custom
+                        RefreshTimer.Stop();
+
+                        // Remove previous UI in Custom
+                        foreach (var pair in OnScreenDisplay)
+                        {
+                            var processOSD = pair.Value;
+                            processOSD.Update("");
+                        }
+                    }
+                    else
+                    {
+                        // Other modes need the refresh timer to update OSD
+                        if (!RefreshTimer.IsRunning())
+                            RefreshTimer.Start();
+                    }
                 }
                 else
                 {
+                    // Ensure OSD is disabled in RTSS
+                    PlatformManager.RTSS.SetEnableOSD(false);
+
                     RefreshTimer.Stop();
 
                     // clear UI on stop

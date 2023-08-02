@@ -98,17 +98,18 @@ public static class PlatformManager
 
                     switch (level)
                     {
-                        case 0:
+                        case 0: // Disabled
                             CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
                             CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
                             break;
                         default:
-                        case 1:
+                        case 1: // Minimal
                             CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                             CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
                             break;
-                        case 2:
-                        case 3:
+                        case 2: // Extended
+                        case 3: // Full
+                        case 4: // Custom
                             CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                             CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
                             break;
@@ -124,10 +125,10 @@ public static class PlatformManager
 
     private static void MonitorPlatforms()
     {
-        /* 
-         * Dependencies: 
-         * HWInfo: OSD 
-         * RTSS: AutoTDP, framerate limiter, OSD 
+        /*
+         * Dependencies:
+         * HWInfo: OSD
+         * RTSS: AutoTDP, framerate limiter, OSD
          */
 
         // Check if the current needs are the same as the previous needs

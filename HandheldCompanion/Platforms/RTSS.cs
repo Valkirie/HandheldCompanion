@@ -173,7 +173,7 @@ public class RTSS : IPlatform
 
         do
         {
-            /* 
+            /*
              * loop until we either:
              * - got an RTSS entry
              * - process no longer exists
@@ -323,6 +323,29 @@ public class RTSS : IPlatform
         var current = SetFlags(~flag, status ? flag : 0);
         UpdateSettings();
         return current;
+    }
+
+    public bool SetEnableOSD(bool enable)
+    {
+        if (!IsRunning())
+            return false;
+
+        try
+        {
+            if (SetProfileProperty("EnableOSD", enable ? 1 : 0))
+            {
+                SaveProfile();
+                UpdateSettings();
+                UpdateProfiles();
+
+                return true;
+            }
+        }
+        catch
+        {
+        }
+
+        return false;
     }
 
     private bool SetTargetFPS(int Limit)
