@@ -10,6 +10,7 @@ public class AMDProcessor : Processor
 {
     public RyzenFamily family;
     public IntPtr ry;
+    private readonly bool _supportsTdpReadout;
 
     public AMDProcessor()
     {
@@ -22,6 +23,10 @@ public class AMDProcessor : Processor
         else
         {
             family = RyzenAdj.get_cpu_family(ry);
+
+            // Attempt to initialize tables, which indicates whether TDP limits can be read
+            _supportsTdpReadout = RyzenAdj.init_table(ry) == 0;
+
             IsInitialized = true;
 
             switch (family)
@@ -142,7 +147,7 @@ public class AMDProcessor : Processor
 
     public bool TryGetTDPLimit(PowerType type, out float limit)
     {
-        if (ry == IntPtr.Zero)
+        if (ry == IntPtr.Zero || !_supportsTdpReadout)
         {
             limit = default;
             return false;

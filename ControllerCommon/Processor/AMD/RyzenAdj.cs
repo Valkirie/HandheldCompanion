@@ -28,6 +28,9 @@ public class RyzenAdj
     public static extern IntPtr init_ryzenadj();
 
     [DllImport(ryzenadj)]
+    public static extern int init_table(IntPtr ry);
+
+    [DllImport(ryzenadj)]
     public static extern int set_stapm_limit(IntPtr ry, [In] uint value);
 
     [DllImport(ryzenadj)]
