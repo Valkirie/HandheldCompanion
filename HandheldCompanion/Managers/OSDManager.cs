@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ControllerCommon.Managers;
-using HandheldCompanion.Platforms;
 using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using static HandheldCompanion.Platforms.HWiNFO;
@@ -297,7 +296,7 @@ public static class OSDManager
             }
                 break;
 
-            case 4: // Custom
+            case 4: // External
             {
                 /*
                  * Intended to simply allow RTSS/HWINFO to run, and let the user configure the overlay within those
@@ -341,10 +340,10 @@ public static class OSDManager
 
                     if (OverlayLevel == 4)
                     {
-                        // No need to update OSD in Custom
+                        // No need to update OSD in External
                         RefreshTimer.Stop();
 
-                        // Remove previous UI in Custom
+                        // Remove previous UI in External
                         foreach (var pair in OnScreenDisplay)
                         {
                             var processOSD = pair.Value;

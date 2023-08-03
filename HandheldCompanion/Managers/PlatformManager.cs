@@ -109,7 +109,7 @@ public static class PlatformManager
                             break;
                         case 2: // Extended
                         case 3: // Full
-                        case 4: // Custom
+                        case 4: // External
                             CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                             CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
                             break;

@@ -62,7 +62,7 @@
                             <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />
                             <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Extended}" />
                             <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Full}" />
-                            <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Custom}" />
+                            <Label Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_External}" />
                         </ComboBox>
                     </Grid>
                 </Border>

@@ -1809,15 +1809,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom.
-        /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel_Custom {
-            get {
-                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Custom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Disabled.
         /// </summary>
         public static string OverlayPage_OverlayDisplayLevel_Disabled {
@@ -1832,6 +1823,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_OverlayDisplayLevel_Extended {
             get {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Extended", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_External {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_External", resourceCulture);
             }
         }
         
