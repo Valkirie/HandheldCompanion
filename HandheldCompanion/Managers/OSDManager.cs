@@ -335,9 +335,6 @@ public static class OSDManager
 
                 if (OverlayLevel > 0)
                 {
-                    // Ensure OSD is enabled in RTSS
-                    PlatformManager.RTSS.SetEnableOSD(true);
-
                     if (OverlayLevel == 4)
                     {
                         // No need to update OSD in External
@@ -359,9 +356,6 @@ public static class OSDManager
                 }
                 else
                 {
-                    // Ensure OSD is disabled in RTSS
-                    PlatformManager.RTSS.SetEnableOSD(false);
-
                     RefreshTimer.Stop();
 
                     // clear UI on stop

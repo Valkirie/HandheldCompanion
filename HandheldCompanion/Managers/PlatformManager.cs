@@ -141,7 +141,11 @@ public static class PlatformManager
             if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
+                {
+                    // Start and enable OSD
                     RTSS.Start();
+                    RTSS.SetEnableOSD(true);
+                }
             if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
             {
                 // This condition checks if OnScreenDisplayComplex is true
@@ -169,11 +173,15 @@ public static class PlatformManager
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
                     RTSS.Start();
+
+            // Only stop HWiNFO if it was running before
+            // Only stop HWiNFO if it is installed
             if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
-                // Only stop HWiNFO if it was running before
-                // Only stop HWiNFO if it is installed
                 if (HWiNFO.IsInstalled)
                     HWiNFO.Stop(true);
+
+            // Disable OSD
+            RTSS.SetEnableOSD(false);
         }
         else
         {
@@ -183,7 +191,12 @@ public static class PlatformManager
             {
                 // Only stop HWiNFO and RTSS if they were running before and if they are installed
                 if (HWiNFO.IsInstalled) HWiNFO.Stop(true);
-                if (RTSS.IsInstalled) RTSS.Stop();
+                if (RTSS.IsInstalled)
+                {
+                    // Disable OSD
+                    RTSS.SetEnableOSD(false);
+                    RTSS.Stop();
+                }
             }
         }
 
