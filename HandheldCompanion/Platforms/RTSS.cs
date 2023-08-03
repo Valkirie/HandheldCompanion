@@ -332,10 +332,14 @@ public class RTSS : IPlatform
 
         try
         {
+            // Ensure Global profile is loaded
+            LoadProfile();
+
+            // Set EnableOSD as requested
             if (SetProfileProperty("EnableOSD", enable ? 1 : 0))
             {
+                // Save and reload profile
                 SaveProfile();
-                UpdateSettings();
                 UpdateProfiles();
 
                 return true;
@@ -343,6 +347,7 @@ public class RTSS : IPlatform
         }
         catch
         {
+            LogManager.LogWarning("Failed to set OSD visibility settings in RTSS");
         }
 
         return false;
@@ -355,10 +360,14 @@ public class RTSS : IPlatform
 
         try
         {
+            // Ensure Global profile is loaded
+            LoadProfile();
+
+            // Set Framerate Limit as requested
             if (SetProfileProperty("FramerateLimit", Limit))
             {
+                // Save and reload profile
                 SaveProfile();
-                UpdateSettings();
                 UpdateProfiles();
 
                 return true;
@@ -366,6 +375,7 @@ public class RTSS : IPlatform
         }
         catch
         {
+            LogManager.LogWarning("Failed to set Framerate Limit in RTSS");
         }
 
         /*
