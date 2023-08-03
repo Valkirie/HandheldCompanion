@@ -312,7 +312,7 @@ public class PerformanceManager : Manager
                 AutoTDPFPSSmallDipCounter++;
                 Modifier = FPSSetpoint + 0.5 - FPSActual;
             }
-            // After three small dips, perform larger dip 
+            // After three small dips, perform larger dip
             // Reduction only happens if average FPS is on target or slightly below
             else if (AutoTDPFPSSmallDipCounter >= 3 &&
                      FPSSetpoint - 0.5 <= FPSHistory.Average() && FPSHistory.Average() <= FPSSetpoint + 0.1)
@@ -413,13 +413,24 @@ public class PerformanceManager : Manager
                 if (idx >= StoredTDP.Length)
                     break;
 
+                // Wanted TDP
                 var TDP = StoredTDP[idx];
 
-                if (processor.GetType() == typeof(AMDProcessor))
+                // Actual TDP
+                var ReadTDP = CurrentTDP[idx];
+
+                if (processor is AMDProcessor amdProcessor)
                 {
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
                     if (currentPowerMode == PowerMode.BetterBattery)
                         TDP = (int)Math.Truncate(TDP * 0.9);
+
+                    // Try to use RyzenAdj to read actual TDP
+                    if (amdProcessor.TryGetTDPLimit(type, out var tdpLimit))
+                    {
+                        ReadTDP = tdpLimit;
+                    }
+
                 }
                 else if (processor.GetType() == typeof(IntelProcessor))
                 {
@@ -428,7 +439,7 @@ public class PerformanceManager : Manager
                         continue;
                 }
 
-                var ReadTDP = CurrentTDP[idx];
+
 
                 if (ReadTDP != 0)
                     cpuWatchdog.Interval = INTERVAL_DEFAULT;
@@ -436,7 +447,7 @@ public class PerformanceManager : Manager
                     cpuWatchdog.Interval = INTERVAL_DEGRADED;
 
                 // only request an update if current limit is different than stored
-                if (ReadTDP != TDP)
+                if (Math.Abs(ReadTDP - TDP) > 0.001)
                     processor.SetTDPLimit(type, TDP);
 
                 await Task.Delay(12);
@@ -648,7 +659,7 @@ public class PerformanceManager : Manager
         uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
         if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
             return;
-        
+
         LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
 
         // Set profile EPP
