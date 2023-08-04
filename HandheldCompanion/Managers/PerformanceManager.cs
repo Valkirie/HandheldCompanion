@@ -64,7 +64,6 @@ public class PerformanceManager : Manager
     private double TDPMin;
     private int AutoTDPProcessId;
     private double AutoTDPTargetFPS;
-    private bool cpuWatchdogPendingStop;
     private uint currentEPP = 50;
     private double CurrentGfxClock;
 
@@ -144,7 +143,7 @@ public class PerformanceManager : Manager
         }
         else if (cpuWatchdog.Enabled)
         {
-            StopTDPWatchdog(true);
+            StopTDPWatchdog();
 
             // restore default TDP (if not AutoTDP is enabled)
             if (!profile.AutoTDPEnabled)
@@ -190,7 +189,7 @@ public class PerformanceManager : Manager
         // restore default TDP
         if (profile.TDPOverrideEnabled)
         {
-            StopTDPWatchdog(true);
+            StopTDPWatchdog();
             RestoreTDP(true);
         }
 
@@ -198,7 +197,7 @@ public class PerformanceManager : Manager
         if (profile.AutoTDPEnabled)
         {
             StopAutoTDPWatchdog(true);
-            StopTDPWatchdog(true);
+            StopTDPWatchdog();
             RestoreTDP(true);
         }
 
@@ -401,9 +400,6 @@ public class PerformanceManager : Manager
             // set lock
             cpuLock = true;
 
-            var TDPdone = false;
-            var MSRdone = false;
-
             // read current values and (re)apply requested TDP if needed
             foreach (var type in (PowerType[])Enum.GetValues(typeof(PowerType)))
             {
@@ -439,8 +435,6 @@ public class PerformanceManager : Manager
                         continue;
                 }
 
-
-
                 if (ReadTDP != 0)
                     cpuWatchdog.Interval = INTERVAL_DEFAULT;
                 else
@@ -453,9 +447,6 @@ public class PerformanceManager : Manager
                 await Task.Delay(12);
             }
 
-            // are we done ?
-            TDPdone = CurrentTDP[0] == StoredTDP[0] && CurrentTDP[1] == StoredTDP[1] && CurrentTDP[2] == StoredTDP[2];
-
             // processor specific
             if (processor.GetType() == typeof(IntelProcessor))
             {
@@ -466,22 +457,6 @@ public class PerformanceManager : Manager
                 if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow ||
                     CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
                     ((IntelProcessor)processor).SetMSRLimit(TDPslow, TDPfast);
-                else
-                    MSRdone = true;
-            }
-
-            // user requested to halt cpu watchdog
-            if (cpuWatchdogPendingStop)
-            {
-                if (cpuWatchdog.Interval == INTERVAL_DEFAULT)
-                {
-                    if (TDPdone && MSRdone)
-                        cpuWatchdog.Stop();
-                }
-                else if (cpuWatchdog.Interval == INTERVAL_DEGRADED)
-                {
-                    cpuWatchdog.Stop();
-                }
             }
 
             // release lock
@@ -563,16 +538,13 @@ public class PerformanceManager : Manager
 
     internal void StartTDPWatchdog()
     {
-        cpuWatchdogPendingStop = false;
         cpuWatchdog.Interval = INTERVAL_DEFAULT;
         cpuWatchdog.Start();
     }
 
-    internal void StopTDPWatchdog(bool immediate = false)
+    internal void StopTDPWatchdog()
     {
-        cpuWatchdogPendingStop = true;
-        if (immediate)
-            cpuWatchdog.Stop();
+        cpuWatchdog.Stop();
     }
 
     internal void StartAutoTDPWatchdog()
