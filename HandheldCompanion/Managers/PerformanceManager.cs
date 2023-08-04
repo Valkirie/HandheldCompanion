@@ -74,7 +74,6 @@ public class PerformanceManager : Manager
     // GPU limits
     private double FallbackGfxClock;
     private readonly double[] FPSHistory = new double[6];
-    private bool gfxWatchdogPendingStop;
 
     private Processor processor;
     private double ProcessValueFPSPrevious;
@@ -157,7 +156,7 @@ public class PerformanceManager : Manager
         }
         else if (autoWatchdog.Enabled)
         {
-            StopAutoTDPWatchdog(true);
+            StopAutoTDPWatchdog();
 
             // restore default TDP (if not manual TDP is enabled)
             if (!profile.TDPOverrideEnabled)
@@ -172,7 +171,7 @@ public class PerformanceManager : Manager
         }
         else if (gfxWatchdog.Enabled)
         {
-            StopGPUWatchdog(true);
+            StopGPUWatchdog();
             RestoreGPUClock(true);
         }
 
@@ -195,7 +194,7 @@ public class PerformanceManager : Manager
         // restore default TDP
         if (profile.AutoTDPEnabled)
         {
-            StopAutoTDPWatchdog(true);
+            StopAutoTDPWatchdog();
             StopTDPWatchdog();
             RestoreTDP(true);
         }
@@ -203,7 +202,7 @@ public class PerformanceManager : Manager
         // restore default GPU frequency
         if (profile.GPUOverrideEnabled)
         {
-            StopGPUWatchdog(true);
+            StopGPUWatchdog();
             RestoreGPUClock(true);
         }
 
@@ -473,8 +472,6 @@ public class PerformanceManager : Manager
             // set lock
             gfxLock = true;
 
-            var GPUdone = false;
-
             if (CurrentGfxClock != 0)
                 gfxWatchdog.Interval = INTERVAL_DEFAULT;
             else
@@ -492,28 +489,8 @@ public class PerformanceManager : Manager
             if (CurrentGfxClock != StoredGfxClock)
             {
                 // disabling
-                if (StoredGfxClock == 12750)
-                    GPUdone = true;
-                else
+                if (StoredGfxClock != 12750)
                     processor.SetGPUClock(StoredGfxClock);
-            }
-            else
-            {
-                GPUdone = true;
-            }
-
-            // user requested to halt gpu watchdog
-            if (gfxWatchdogPendingStop)
-            {
-                if (gfxWatchdog.Interval == INTERVAL_DEFAULT)
-                {
-                    if (GPUdone)
-                        gfxWatchdog.Stop();
-                }
-                else if (gfxWatchdog.Interval == INTERVAL_DEGRADED)
-                {
-                    gfxWatchdog.Stop();
-                }
             }
 
             // release lock
@@ -523,16 +500,13 @@ public class PerformanceManager : Manager
 
     internal void StartGPUWatchdog()
     {
-        gfxWatchdogPendingStop = false;
         gfxWatchdog.Interval = INTERVAL_DEFAULT;
         gfxWatchdog.Start();
     }
 
-    internal void StopGPUWatchdog(bool immediate = false)
+    internal void StopGPUWatchdog()
     {
-        gfxWatchdogPendingStop = true;
-        if (immediate)
-            gfxWatchdog.Stop();
+        gfxWatchdog.Stop();
     }
 
     internal void StartTDPWatchdog()
@@ -551,7 +525,7 @@ public class PerformanceManager : Manager
         autoWatchdog.Start();
     }
 
-    internal void StopAutoTDPWatchdog(bool immediate = false)
+    internal void StopAutoTDPWatchdog()
     {
         autoWatchdog.Stop();
     }
