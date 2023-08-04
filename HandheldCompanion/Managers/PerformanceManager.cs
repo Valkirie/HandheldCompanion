@@ -145,7 +145,7 @@ public class PerformanceManager : Manager
 
             // restore default TDP (if not AutoTDP is enabled)
             if (!profile.AutoTDPEnabled)
-                RestoreTDP(true);
+                RestoreTDP();
         }
 
         // apply profile defined AutoTDP
@@ -160,7 +160,7 @@ public class PerformanceManager : Manager
 
             // restore default TDP (if not manual TDP is enabled)
             if (!profile.TDPOverrideEnabled)
-                RestoreTDP(true);
+                RestoreTDP();
         }
 
         // apply profile defined GPU
@@ -188,7 +188,7 @@ public class PerformanceManager : Manager
         if (profile.TDPOverrideEnabled)
         {
             StopTDPWatchdog();
-            RestoreTDP(true);
+            RestoreTDP();
         }
 
         // restore default TDP
@@ -196,7 +196,7 @@ public class PerformanceManager : Manager
         {
             StopAutoTDPWatchdog();
             StopTDPWatchdog();
-            RestoreTDP(true);
+            RestoreTDP();
         }
 
         // restore default GPU frequency
@@ -214,10 +214,12 @@ public class PerformanceManager : Manager
         }
     }
 
-    private void RestoreTDP(bool immediate)
+    private void RestoreTDP()
     {
-        for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
-            RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
+        // Use device Up TDP as default
+        var defaultTdp = MainWindow.CurrentDevice.cTDP[1];
+
+        RequestTDP(new[] {defaultTdp, defaultTdp, defaultTdp}, true);
     }
 
     private void RestoreGPUClock(bool immediate)
@@ -529,23 +531,6 @@ public class PerformanceManager : Manager
     internal void StopAutoTDPWatchdog()
     {
         autoWatchdog.Stop();
-    }
-
-    public void RequestTDP(PowerType type, double value, bool immediate = false)
-    {
-        if (processor is null || !processor.IsInitialized)
-            return;
-
-        // make sure we're not trying to run below or above specs
-        value = Math.Min(TDPMax, Math.Max(TDPMin, value));
-
-        // update value read by timer
-        var idx = (int)type;
-        StoredTDP[idx] = value;
-
-        // immediately apply
-        if (immediate)
-            processor.SetTDPLimit((PowerType)idx, value);
     }
 
     public async void RequestTDP(double[] values, bool immediate = false)
