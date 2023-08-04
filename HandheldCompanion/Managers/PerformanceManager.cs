@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using ControllerCommon;
@@ -761,14 +760,6 @@ public class PerformanceManager : Manager
 
     #region events
 
-    public event LimitChangedHandler PowerLimitChanged;
-
-    public delegate void LimitChangedHandler(PowerType type, int limit);
-
-    public event ValueChangedHandler PowerValueChanged;
-
-    public delegate void ValueChangedHandler(PowerType type, float value);
-
     public event StatusChangedHandler ProcessorStatusChanged;
 
     public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
@@ -806,9 +797,6 @@ public class PerformanceManager : Manager
                 break;
         }
 
-        // raise event
-        PowerLimitChanged?.Invoke(type, limit);
-
         LogManager.LogTrace("PowerLimitChanged: {0}\t{1} W", type, limit);
     }
 
@@ -822,35 +810,6 @@ public class PerformanceManager : Manager
     private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
     {
         ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private void Processor_ValueChanged(PowerType type, float value)
-    {
-        PowerValueChanged?.Invoke(type, value);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private void Processor_LimitChanged(PowerType type, int limit)
-    {
-        var idx = (int)type;
-        CurrentTDP[idx] = limit;
-
-        // raise event
-        PowerLimitChanged?.Invoke(type, limit);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private void Processor_MiscChanged(string misc, float value)
-    {
-        switch (misc)
-        {
-            case "gfx_clk":
-            {
-                CurrentGfxClock = value;
-            }
-                break;
-        }
     }
 
     #endregion
