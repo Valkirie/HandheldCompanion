@@ -216,10 +216,22 @@ public class PerformanceManager : Manager
 
     private void RestoreTDP()
     {
-        // Use device Up TDP as default
-        var defaultTdp = MainWindow.CurrentDevice.cTDP[1];
+        var device = MainWindow.CurrentDevice;
 
-        RequestTDP(new[] {defaultTdp, defaultTdp, defaultTdp}, true);
+        // Determine default TDP of device
+        double[] defaultTdp;
+        if (device.DefaultTDP != null)
+        {
+            defaultTdp = device.DefaultTDP;
+        }
+        else
+        {
+            // Use device max TDP as default
+            var maxDeviceTdp = device.cTDP[1];
+            defaultTdp = new[] {maxDeviceTdp, maxDeviceTdp, maxDeviceTdp};
+        }
+
+        RequestTDP(defaultTdp, true, false);
     }
 
     private void RestoreGPUClock(bool immediate)
@@ -533,15 +545,28 @@ public class PerformanceManager : Manager
         autoWatchdog.Stop();
     }
 
-    public async void RequestTDP(double[] values, bool immediate = false)
+    /// <summary>
+    /// Request TDP limits <paramref name="values"/> be applied
+    /// </summary>
+    /// <remarks>
+    /// <paramref name="values"/> must be an array of exactly length 3, containing TDP limits for
+    /// <see cref="PowerType.Slow"/>, <see cref="PowerType.Stapm"/> and <see cref="PowerType.Fast"/> in that order
+    /// </remarks>
+    /// <param name="values">Array of TDP limits to apply</param>
+    /// <param name="immediate">Whether changes should be applied immediately or wait for next CPU watchdog iteration</param>
+    /// <param name="clamp">Whether values should be clamped to within <see cref="TDPMin"/> and <see cref="TDPMax"/></param>
+    public async void RequestTDP(double[] values, bool immediate = false, bool clamp = true)
     {
         if (processor is null || !processor.IsInitialized)
             return;
 
         for (var idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
-            // make sure we're not trying to run below or above specs
-            values[idx] = Math.Min(TDPMax, Math.Max(TDPMin, values[idx]));
+            if (clamp)
+            {
+                // make sure we're not trying to run below or above specs
+                values[idx] = Math.Min(TDPMax, Math.Max(TDPMin, values[idx]));
+            }
 
             // update value read by timer
             StoredTDP[idx] = values[idx];

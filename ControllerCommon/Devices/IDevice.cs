@@ -72,6 +72,14 @@ public abstract class IDevice
     // device configurable TDP (down, up)
     public double[] cTDP = { 10, 25 };
 
+    /// <summary>
+    /// Optional default TDP to be applied when restoring device default TDP
+    /// </summary>
+    /// <remarks>
+    /// These values represent [Slow, Stamp, Fast]
+    /// </remarks>
+    public double[] DefaultTDP;
+
     public ECDetails ECDetails;
 
     public string ExternalSensorName = string.Empty;

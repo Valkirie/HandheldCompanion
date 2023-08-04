@@ -47,6 +47,14 @@ public class ROGAlly : IDevice
         // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };
+
+        /*
+         * ROG Ally has these default TDP values in boost mode:
+         * Slow  = 43
+         * Stamp = 30
+         * Fast  = 53
+         */
+        DefaultTDP = new double[] {43, 30, 53};
         GfxClock = new double[] { 100, 2700 };
 
         AngularVelocityAxis = new Vector3(-1.0f, 1.0f, 1.0f);
@@ -153,7 +161,7 @@ public class ROGAlly : IDevice
 
         var pnpDevice = PnPDevice.GetDeviceByInterfaceId(_hidDevice.DevicePath);
         var device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-        
+
         var pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
         var parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
         var parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
@@ -166,7 +174,7 @@ public class ROGAlly : IDevice
         switch(controllerMode)
         {
             case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180; 
+                KeyPressDelay = 180;
                 break;
             default:
                 KeyPressDelay = 20;
