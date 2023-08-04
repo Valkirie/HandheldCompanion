@@ -398,6 +398,14 @@ public class PerformanceManager : Manager
             // set lock
             cpuLock = true;
 
+            // Get current TDP values
+            var currentTdp = CurrentTDP;    // Fallback to HWINFO provided values
+            if (processor is AMDProcessor amdProcessor &&
+                amdProcessor.TryGetTDPLimits(out var limits))
+            {
+                currentTdp = limits;
+            }
+
             // read current values and (re)apply requested TDP if needed
             foreach (var type in (PowerType[])Enum.GetValues(typeof(PowerType)))
             {
@@ -408,45 +416,38 @@ public class PerformanceManager : Manager
                     break;
 
                 // Wanted TDP
-                var TDP = StoredTDP[idx];
+                var wantedTDP = StoredTDP[idx];
 
                 // Actual TDP
-                var ReadTDP = CurrentTDP[idx];
+                var actualTDP = currentTdp[idx];
 
-                if (processor is AMDProcessor amdProcessor)
+                if (processor is AMDProcessor)
                 {
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
                     if (currentPowerMode == PowerMode.BetterBattery)
-                        TDP = (int)Math.Truncate(TDP * 0.9);
-
-                    // Try to use RyzenAdj to read actual TDP
-                    if (amdProcessor.TryGetTDPLimit(type, out var tdpLimit))
-                    {
-                        ReadTDP = tdpLimit;
-                    }
-
+                        wantedTDP = (int)Math.Truncate(wantedTDP * 0.9);
                 }
-                else if (processor.GetType() == typeof(IntelProcessor))
+                else if (processor is IntelProcessor)
                 {
                     // Intel doesn't have stapm
                     if (type == PowerType.Stapm)
                         continue;
                 }
 
-                if (ReadTDP != 0)
+                if (actualTDP != 0)
                     cpuWatchdog.Interval = INTERVAL_DEFAULT;
                 else
                     cpuWatchdog.Interval = INTERVAL_DEGRADED;
 
                 // only request an update if current limit is different than stored
-                if (Math.Abs(ReadTDP - TDP) > 0.001)
-                    processor.SetTDPLimit(type, TDP);
+                if (Math.Abs(actualTDP - wantedTDP) > 0.001)
+                    processor.SetTDPLimit(type, wantedTDP);
 
                 await Task.Delay(12);
             }
 
             // processor specific
-            if (processor.GetType() == typeof(IntelProcessor))
+            if (processor is IntelProcessor intelProcessor)
             {
                 var TDPslow = (int)StoredTDP[(int)PowerType.Slow];
                 var TDPfast = (int)StoredTDP[(int)PowerType.Fast];
@@ -454,7 +455,7 @@ public class PerformanceManager : Manager
                 // only request an update if current limit is different than stored
                 if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow ||
                     CurrentTDP[(int)PowerType.MsrFast] != TDPfast)
-                    ((IntelProcessor)processor).SetMSRLimit(TDPslow, TDPfast);
+                    intelProcessor.SetMSRLimit(TDPslow, TDPfast);
             }
 
             // release lock

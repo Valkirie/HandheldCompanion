@@ -145,6 +145,58 @@ public class AMDProcessor : Processor
         }
     }
 
+    /// <summary>
+    /// Attempt to read out current TDP limits for <see cref="PowerType.Slow"/>m <see cref="PowerType.Stapm"/> and
+    /// <see cref="PowerType.Fast"/> in that order <paramref name="limits"/>
+    /// </summary>
+    /// <param name="limits">Array of read TDP values, provided when return value is `true`</param>
+    /// <returns>true if successful and <paramref name="limits"/> have been supplied</returns>
+    public bool TryGetTDPLimits(out double[] limits)
+    {
+        if (ry == IntPtr.Zero || !_supportsTdpReadout)
+        {
+            limits = default;
+            return false;
+        }
+
+        if (Monitor.TryEnter(IsBusy))
+        {
+            try
+            {
+                // Refresh table to get current readings
+                var refreshTableResult = RyzenAdj.refresh_table(ry);
+                if (refreshTableResult != 0)
+                {
+                    LogManager.LogWarning("Failed to refresh CPU tables: {0}", refreshTableResult);
+                    limits = default;
+                    return false;
+                }
+
+                // Initialize results
+                limits = new double[3];
+
+                /*
+                 * Read limits
+                 *
+                 * RyzenAdj will only return NaN when `ry->tables` is `NULL`, but that is populated when `refresh_table`
+                 * is called, and goes well.
+                 */
+                limits[(int) PowerType.Slow] = RyzenAdj.get_slow_limit(ry);
+                limits[(int) PowerType.Stapm] = RyzenAdj.get_stapm_limit(ry);
+                limits[(int) PowerType.Fast] = RyzenAdj.get_fast_limit(ry);
+
+                return true;
+            }
+            finally
+            {
+                Monitor.Exit(IsBusy);
+            }
+        }
+
+        limits = default;
+        return false;
+    }
+
     public bool TryGetTDPLimit(PowerType type, out float limit)
     {
         if (ry == IntPtr.Zero || !_supportsTdpReadout)
