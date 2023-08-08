@@ -17,11 +17,10 @@ internal class ModelToyController : IModel
     private readonly Model3DGroup B4Letter;
     private readonly Model3DGroup B4LetterInside1;
     private readonly Model3DGroup B4LetterInside2;
+    
     private readonly Model3DGroup DPadDown4;
-
     private readonly Model3DGroup DPadLeft1;
     private readonly Model3DGroup DPadRight3;
-
     private readonly Model3DGroup DPadUp2;
 
     // Specific groups (move me)
@@ -53,7 +52,6 @@ internal class ModelToyController : IModel
 
         var MaterialPlasticBlack = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlack));
         var MaterialPlasticWhite = new DiffuseMaterial(new SolidColorBrush(ColorPlasticWhite));
-        var MaterialHighlight = new DiffuseMaterial(ColorHighlight);
 
         var MaterialPlasticBlue = new DiffuseMaterial(new SolidColorBrush(ColorPlasticBlue));
         var MaterialPlasticGreen = new DiffuseMaterial(new SolidColorBrush(ColorPlasticGreen));
@@ -180,9 +178,11 @@ internal class ModelToyController : IModel
                         case ButtonFlags.DPadRight:
                             buttonMaterial = MaterialPlasticRed;
                             break;
+                        case ButtonFlags.L1:
                         case ButtonFlags.L2Soft:
                             buttonMaterial = MaterialPlasticOrange;
                             break;
+                        case ButtonFlags.R1:
                         case ButtonFlags.R2Soft:
                             buttonMaterial = MaterialPlasticPurple;
                             break;

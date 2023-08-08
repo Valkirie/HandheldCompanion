@@ -150,7 +150,9 @@ internal class ModelDualSense : IModel
                     {
                         case ButtonFlags.LeftStickClick:
                         case ButtonFlags.RightStickClick:
+                        case ButtonFlags.L1:
                         case ButtonFlags.L2Soft:
+                        case ButtonFlags.R1:
                         case ButtonFlags.R2Soft:
                         case ButtonFlags.Special:
                             buttonMaterial = MaterialPlasticBlack;

@@ -1191,16 +1191,16 @@
     <None Update="Models\N64\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickRight.obj">
+    <None Update="Models\N64\RightThumbRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\N64\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickRight.obj">
+    <None Update="Models\N64\RightThumbRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickDown.obj">
+    <None Update="Models\N64\RightThumbDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\DPadDown.obj">
@@ -1254,10 +1254,10 @@
     <None Update="models\N64\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickLeft.obj">
+    <None Update="Models\N64\RightThumbLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickUp.obj">
+    <None Update="Models\N64\RightThumbUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\Z.obj">

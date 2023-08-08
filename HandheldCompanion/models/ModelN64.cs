@@ -46,7 +46,6 @@ internal class ModelN64 : IModel
 
         // load model(s)
         JoystickShield = modelImporter.Load($"models/{ModelName}/JoystickShield.obj");
-        // todo : add all four c-buttons
 
         // pull model(s)
         model3DGroup.Children.Add(JoystickShield);
