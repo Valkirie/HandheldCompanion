@@ -60,6 +60,11 @@ namespace HandheldCompanion.Controls
             getMapping(0).UpdateIcon(newIcon, newLabel);
         }
 
+        public void UpdateSelections()
+        {
+            getMapping(0).UpdateSelections();
+        }
+
         // actions cannot be null or empty
         public void SetActions(List<IActions> actions)
         {
@@ -116,9 +121,9 @@ namespace HandheldCompanion.Controls
             }
 
             if (actions.Count > 0)
-                Updated.Invoke(button, actions);
+                Updated?.Invoke(button, actions);
             else
-                Deleted.Invoke(button);
+                Deleted?.Invoke(button);
         }
 
         private void AddMappingToChildren(ButtonMapping mapping)

@@ -1,27 +1,54 @@
+using ControllerCommon.Controllers;
+using ControllerCommon.Inputs;
+using HandheldCompanion.Controls;
+using System.Collections.Generic;
 using System.Windows;
 
-namespace HandheldCompanion.Views.Pages;
-
-/// <summary>
-///     Interaction logic for GyroPage.xaml
-/// </summary>
-public partial class GyroPage : ILayoutPage
+namespace HandheldCompanion.Views.Pages
 {
-    public GyroPage()
+    /// <summary>
+    /// Interaction logic for GyroPage.xaml
+    /// </summary>
+    public partial class GyroPage : ILayoutPage
     {
-        InitializeComponent();
-    }
+        public static List<AxisLayoutFlags> Gyroscope = new() { AxisLayoutFlags.Gyroscope };
 
-    public GyroPage(string Tag) : this()
-    {
-        this.Tag = Tag;
-    }
+        public GyroPage()
+        {
+            InitializeComponent();
 
-    private void Page_Loaded(object sender, RoutedEventArgs e)
-    {
-    }
+            // draw UI
+            foreach (AxisLayoutFlags axis in Gyroscope)
+            {
+                AxisMapping axisMapping = new AxisMapping(axis);
+                GyroscopePanel.Children.Add(axisMapping);
 
-    public void Page_Closed()
-    {
+                AxisMappings.Add(axis, axisMapping);
+            }
+        }
+
+        public override void UpdateController(IController controller)
+        {
+            base.UpdateController(controller);
+
+            bool gyro = CheckController(controller, Gyroscope);
+
+            gridGyroscope.Visibility = gyro ? Visibility.Visible : Visibility.Collapsed;
+
+            enabled = gyro;
+        }
+
+        public GyroPage(string Tag) : this()
+        {
+            this.Tag = Tag;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        public void Page_Closed()
+        {
+        }
     }
 }

@@ -13,9 +13,32 @@ namespace HandheldCompanion.Views.Pages;
 
 public class ILayoutPage : Page
 {
+    protected bool enabled = false;
+
     public Dictionary<ButtonFlags, ButtonStack> ButtonStacks = new();
     public Dictionary<AxisLayoutFlags, AxisMapping> AxisMappings = new();
     public Dictionary<AxisLayoutFlags, TriggerMapping> TriggerMappings = new();
+
+    protected bool CheckController(IController controller, List<ButtonFlags> buttons)
+    {
+        foreach (ButtonFlags button in buttons)
+            if (controller.HasSourceButton(button))
+                return true;
+        return false;
+    }
+
+    protected bool CheckController(IController controller, List<AxisLayoutFlags> axes)
+    {
+        foreach (AxisLayoutFlags axis in axes)
+            if (controller.HasSourceAxis(axis))
+                return true;
+        return false;
+    }
+
+    public bool IsEnabled()
+    {
+        return enabled;
+    }
 
     public virtual void UpdateController(IController controller)
     {
@@ -80,6 +103,18 @@ public class ILayoutPage : Page
                 axisMapping.UpdateIcon(newIcon, newLabel);
             }
         }
+    }
+
+    public virtual void UpdateSelections()
+    {
+        foreach (var pair in ButtonStacks)
+            pair.Value.UpdateSelections();
+
+        foreach (var pair in AxisMappings)
+            pair.Value.UpdateSelections();
+
+        foreach (var pair in TriggerMappings)
+            pair.Value.UpdateSelections();
     }
 
     public void Update(Layout layout)

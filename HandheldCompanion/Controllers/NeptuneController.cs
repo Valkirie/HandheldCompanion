@@ -8,13 +8,14 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
-using neptune_hidapi.net;
-using neptune_hidapi.net.Hid;
+using steam_hidapi.net;
+using steam_hidapi.net.Hid;
 using SharpDX.XInput;
+using ControllerCommon.Actions;
 
 namespace HandheldCompanion.Controllers;
 
-public class NeptuneController : IController
+public class NeptuneController : SteamController
 {
     private const short TrackPadInner = 21844;
 
@@ -23,23 +24,12 @@ public class NeptuneController : IController
 
     public const sbyte SDRumbleMinIntensity = 8;
     public const sbyte SDRumbleMaxIntensity = 12;
-    private readonly neptune_hidapi.net.NeptuneController Controller;
+    private readonly steam_hidapi.net.NeptuneController Controller;
 
     public byte FeedbackLargeMotor;
     public byte FeedbackSmallMotor;
     private readonly ushort HDRumblePeriod = 8;
     private NeptuneControllerInputEventArgs input;
-
-    private bool isConnected;
-    private bool isVirtualMuted;
-
-    private bool lastLeftHaptic;
-
-    private Task<byte[]> lastLeftHaptic2;
-    private bool lastRightHaptic;
-    private Task<byte[]> lastRightHaptic2;
-
-    private NeptuneControllerInputState prevState;
 
     private Thread RumbleThread;
     private bool RumbleThreadRunning;
@@ -47,7 +37,7 @@ public class NeptuneController : IController
 
     private bool UseHDRumble;
 
-    public NeptuneController(PnPDetails details)
+    public NeptuneController(PnPDetails details) : base()
     {
         if (details is null)
             return;
@@ -55,13 +45,9 @@ public class NeptuneController : IController
         Details = details;
         Details.isHooked = true;
 
-        Capacities |= ControllerCapacities.Gyroscope;
-        Capacities |= ControllerCapacities.Accelerometer;
-
         try
         {
-            Controller = new neptune_hidapi.net.NeptuneController();
-            Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+            Controller = new(details.attributes.VendorID, details.attributes.ProductID, details.GetMI());
 
             // open controller
             Open();
@@ -71,13 +57,6 @@ public class NeptuneController : IController
             LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
             return;
         }
-
-        // disable lizard state
-        SetLizardMouse(false);
-        SetLizardButtons(false);
-
-        var Muted = SettingsManager.GetBoolean("SteamDeckMuteController");
-        SetVirtualMuted(Muted);
 
         var HDRumble = SettingsManager.GetBoolean("SteamDeckHDRumble");
         SetHDRumble(HDRumble);
@@ -89,7 +68,7 @@ public class NeptuneController : IController
         // Additional controller specific source buttons/axes
         SourceButtons.AddRange(new List<ButtonFlags>
             { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
-        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftThumbTouch, ButtonFlags.RightThumbTouch });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftStickTouch, ButtonFlags.RightStickTouch });
         SourceButtons.AddRange(new List<ButtonFlags>
         {
             ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp,
@@ -108,27 +87,6 @@ public class NeptuneController : IController
         SDRumblePeriod = (ushort)(TimerManager.GetPeriod() * 10);
     }
 
-    private async void ThreadLoop(object? obj)
-    {
-        while (RumbleThreadRunning)
-        {
-            if (GetHapticIntensity(FeedbackLargeMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity,
-                    out var leftIntensity))
-                lastLeftHaptic2 = Controller.SetHaptic2(HapticPad.Left, HapticStyle.Weak, leftIntensity);
-
-            if (GetHapticIntensity(FeedbackSmallMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity,
-                    out var rightIntensity))
-                lastRightHaptic2 = Controller.SetHaptic2(HapticPad.Right, HapticStyle.Weak, rightIntensity);
-
-            Thread.Sleep(HDRumblePeriod);
-
-            if (lastLeftHaptic2 is not null)
-                await lastLeftHaptic2;
-            if (lastRightHaptic2 is not null)
-                await lastRightHaptic2;
-        }
-    }
-
     public override string ToString()
     {
         var baseName = base.ToString();
@@ -142,17 +100,17 @@ public class NeptuneController : IController
         if (input is null)
             return;
 
-        /*
-        if (input.State.ButtonState.Equals(prevState.ButtonState) && input.State.AxesState.Equals(prevState.AxesState) && prevInjectedButtons.Equals(InjectedButtons))
-            return;
-        */
-
         Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
         Inputs.ButtonState[ButtonFlags.B1] = input.State.ButtonState[NeptuneControllerButton.BtnA];
         Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[NeptuneControllerButton.BtnB];
         Inputs.ButtonState[ButtonFlags.B3] = input.State.ButtonState[NeptuneControllerButton.BtnX];
         Inputs.ButtonState[ButtonFlags.B4] = input.State.ButtonState[NeptuneControllerButton.BtnY];
+
+        Inputs.ButtonState[ButtonFlags.DPadUp] = input.State.ButtonState[NeptuneControllerButton.BtnDpadUp];
+        Inputs.ButtonState[ButtonFlags.DPadDown] = input.State.ButtonState[NeptuneControllerButton.BtnDpadDown];
+        Inputs.ButtonState[ButtonFlags.DPadLeft] = input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft];
+        Inputs.ButtonState[ButtonFlags.DPadRight] = input.State.ButtonState[NeptuneControllerButton.BtnDpadRight];
 
         Inputs.ButtonState[ButtonFlags.Start] = input.State.ButtonState[NeptuneControllerButton.BtnOptions];
         Inputs.ButtonState[ButtonFlags.Back] = input.State.ButtonState[NeptuneControllerButton.BtnMenu];
@@ -163,19 +121,22 @@ public class NeptuneController : IController
         var L2 = input.State.AxesState[NeptuneControllerAxis.L2] * byte.MaxValue / short.MaxValue;
         var R2 = input.State.AxesState[NeptuneControllerAxis.R2] * byte.MaxValue / short.MaxValue;
 
-        Inputs.ButtonState[ButtonFlags.L2] = L2 > Gamepad.TriggerThreshold;
-        Inputs.ButtonState[ButtonFlags.R2] = R2 > Gamepad.TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.L2Soft] = L2 > Gamepad.TriggerThreshold;
+        Inputs.ButtonState[ButtonFlags.R2Soft] = R2 > Gamepad.TriggerThreshold;
 
-        Inputs.ButtonState[ButtonFlags.L3] = L2 > Gamepad.TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R3] = R2 > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.L2Full] = L2 > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.R2Full] = R2 > Gamepad.TriggerThreshold * 8;
+        
+        Inputs.AxisState[AxisFlags.L2] = (short)L2;
+        Inputs.AxisState[AxisFlags.R2] = (short)R2;
 
-        Inputs.ButtonState[ButtonFlags.LeftThumbTouch] =
+        Inputs.ButtonState[ButtonFlags.LeftStickTouch] =
             input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
-        Inputs.ButtonState[ButtonFlags.RightThumbTouch] =
+        Inputs.ButtonState[ButtonFlags.RightStickTouch] =
             input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
 
-        Inputs.ButtonState[ButtonFlags.LeftThumb] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
-        Inputs.ButtonState[ButtonFlags.RightThumb] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
+        Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
+        Inputs.ButtonState[ButtonFlags.RightStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
         Inputs.ButtonState[ButtonFlags.L1] = input.State.ButtonState[NeptuneControllerButton.BtnL1];
         Inputs.ButtonState[ButtonFlags.R1] = input.State.ButtonState[NeptuneControllerButton.BtnR1];
@@ -184,40 +145,53 @@ public class NeptuneController : IController
         Inputs.ButtonState[ButtonFlags.L5] = input.State.ButtonState[NeptuneControllerButton.BtnL5];
         Inputs.ButtonState[ButtonFlags.R5] = input.State.ButtonState[NeptuneControllerButton.BtnR5];
 
-        Inputs.ButtonState[ButtonFlags.DPadUp] = input.State.ButtonState[NeptuneControllerButton.BtnDpadUp];
-        Inputs.ButtonState[ButtonFlags.DPadDown] = input.State.ButtonState[NeptuneControllerButton.BtnDpadDown];
-        Inputs.ButtonState[ButtonFlags.DPadLeft] = input.State.ButtonState[NeptuneControllerButton.BtnDpadLeft];
-        Inputs.ButtonState[ButtonFlags.DPadRight] = input.State.ButtonState[NeptuneControllerButton.BtnDpadRight];
-
         // Left Stick
-        Inputs.ButtonState[ButtonFlags.LeftThumbLeft] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftThumbRight] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftThumbDown] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftThumbUp] =
-            input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.LeftStickUp] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
+        Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
 
         Inputs.AxisState[AxisFlags.LeftThumbX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
         Inputs.AxisState[AxisFlags.LeftThumbY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
 
+        Inputs.ButtonState[ButtonFlags.LeftStickLeft] =
+            input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.LeftStickRight] =
+            input.State.AxesState[NeptuneControllerAxis.LeftStickX] > Gamepad.LeftThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.LeftStickDown] =
+            input.State.AxesState[NeptuneControllerAxis.LeftStickY] < -Gamepad.LeftThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.LeftStickUp] =
+            input.State.AxesState[NeptuneControllerAxis.LeftStickY] > Gamepad.LeftThumbDeadZone;
+
+        // TODO: Implement Inner/Outer Ring button mappings for sticks
+        // https://github.com/Havner/HandheldCompanion/commit/e1124ceb6c59051201756d5e95b2eb39a3bb24f6
+
+        /* float leftLength = new Vector2(Inputs.AxisState[AxisFlags.LeftStickX], Inputs.AxisState[AxisFlags.LeftStickY]).Length();
+        Inputs.ButtonState[ButtonFlags.LeftStickOuterRing] = leftLength >= (RingThreshold * short.MaxValue);
+        Inputs.ButtonState[ButtonFlags.LeftStickInnerRing] = leftLength >= Gamepad.LeftThumbDeadZone && leftLength < (RingThreshold * short.MaxValue); */
+
         // Right Stick
-        Inputs.ButtonState[ButtonFlags.RightThumbLeft] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightThumbRight] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightThumbDown] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightThumbUp] =
-            input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.RightThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.RightStickTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
+        Inputs.ButtonState[ButtonFlags.RightStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
         Inputs.AxisState[AxisFlags.RightThumbX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
         Inputs.AxisState[AxisFlags.RightThumbY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
-        Inputs.AxisState[AxisFlags.L2] = (short)L2;
-        Inputs.AxisState[AxisFlags.R2] = (short)R2;
+        Inputs.ButtonState[ButtonFlags.RightStickLeft] =
+            input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.RightStickRight] =
+            input.State.AxesState[NeptuneControllerAxis.RightStickX] > Gamepad.RightThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.RightStickDown] =
+            input.State.AxesState[NeptuneControllerAxis.RightStickY] < -Gamepad.RightThumbDeadZone;
+        Inputs.ButtonState[ButtonFlags.RightStickUp] =
+            input.State.AxesState[NeptuneControllerAxis.RightStickY] > Gamepad.RightThumbDeadZone;
 
+        // TODO: Implement Inner/Outer Ring button mappings for sticks
+        // https://github.com/Havner/HandheldCompanion/commit/e1124ceb6c59051201756d5e95b2eb39a3bb24f6
+
+        /* float rightLength = new Vector2(Inputs.AxisState[AxisFlags.RightStickX], Inputs.AxisState[AxisFlags.RightStickY]).Length();
+        Inputs.ButtonState[ButtonFlags.RightStickOuterRing] = rightLength >= (RingThreshold * short.MaxValue);
+        Inputs.ButtonState[ButtonFlags.RightStickInnerRing] = rightLength >= Gamepad.RightThumbDeadZone && rightLength < (RingThreshold * short.MaxValue); */
+
+        // Left Pad
         Inputs.ButtonState[ButtonFlags.LeftPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch];
         if (input.State.ButtonState[NeptuneControllerButton.BtnLPadTouch])
         {
@@ -233,17 +207,20 @@ public class NeptuneController : IController
         Inputs.ButtonState[ButtonFlags.LeftPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnLPadPress];
         if (Inputs.ButtonState[ButtonFlags.LeftPadClick])
         {
-            if (Inputs.AxisState[AxisFlags.LeftPadY] >= TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.LeftPadClickUp] = true;
-            else if (Inputs.AxisState[AxisFlags.LeftPadY] <= -TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.LeftPadClickDown] = true;
-
-            if (Inputs.AxisState[AxisFlags.LeftPadX] >= TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.LeftPadClickRight] = true;
-            else if (Inputs.AxisState[AxisFlags.LeftPadX] <= -TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.LeftPadClickLeft] = true;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickUp] = Inputs.AxisState[AxisFlags.LeftPadY] >= TrackPadInner;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickDown] = Inputs.AxisState[AxisFlags.LeftPadY] <= -TrackPadInner;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickRight] = Inputs.AxisState[AxisFlags.LeftPadX] >= TrackPadInner;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickLeft] = Inputs.AxisState[AxisFlags.LeftPadX] <= -TrackPadInner;
+        }
+        else
+        {
+            Inputs.ButtonState[ButtonFlags.LeftPadClickUp] = false;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickDown] = false;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickRight] = false;
+            Inputs.ButtonState[ButtonFlags.LeftPadClickLeft] = false;
         }
 
+        // Right Pad
         Inputs.ButtonState[ButtonFlags.RightPadTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch];
         if (input.State.ButtonState[NeptuneControllerButton.BtnRPadTouch])
         {
@@ -259,19 +236,18 @@ public class NeptuneController : IController
         Inputs.ButtonState[ButtonFlags.RightPadClick] = input.State.ButtonState[NeptuneControllerButton.BtnRPadPress];
         if (Inputs.ButtonState[ButtonFlags.RightPadClick])
         {
-            if (Inputs.AxisState[AxisFlags.RightPadY] >= TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.RightPadClickUp] = true;
-            else if (Inputs.AxisState[AxisFlags.RightPadY] <= -TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
-
-            if (Inputs.AxisState[AxisFlags.RightPadX] >= TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.RightPadClickRight] = true;
-            else if (Inputs.AxisState[AxisFlags.RightPadX] <= -TrackPadInner)
-                Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = true;
+            Inputs.ButtonState[ButtonFlags.RightPadClickUp] = Inputs.AxisState[AxisFlags.RightPadY] >= TrackPadInner;
+            Inputs.ButtonState[ButtonFlags.RightPadClickDown] = Inputs.AxisState[AxisFlags.RightPadY] <= -TrackPadInner;
+            Inputs.ButtonState[ButtonFlags.RightPadClickRight] = Inputs.AxisState[AxisFlags.RightPadX] >= TrackPadInner;
+            Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = Inputs.AxisState[AxisFlags.RightPadX] <= -TrackPadInner;
         }
-
-        // update states
-        prevState = input.State;
+        else
+        {
+            Inputs.ButtonState[ButtonFlags.RightPadClickUp] = false;
+            Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
+            Inputs.ButtonState[ButtonFlags.RightPadClickRight] = false;
+            Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = false;
+        }
 
         base.UpdateInputs(ticks);
     }
@@ -290,26 +266,6 @@ public class NeptuneController : IController
         Movements.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
 
         base.UpdateMovements(ticks);
-    }
-
-    public override bool IsConnected()
-    {
-        return isConnected;
-    }
-
-    public bool IsLizardMouseEnabled()
-    {
-        return Controller.LizardMouseEnabled;
-    }
-
-    public bool IsLizardButtonsEnabled()
-    {
-        return Controller.LizardButtonsEnabled;
-    }
-
-    public virtual bool IsVirtualMuted()
-    {
-        return isVirtualMuted;
     }
 
     public override void Rumble(int Loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue,
@@ -349,27 +305,39 @@ public class NeptuneController : IController
         catch { }
     }
 
-    public override void Plug()
-    {
-        TimerManager.Tick += UpdateInputs;
-        TimerManager.Tick += UpdateMovements;
-
-        try
-        {
-            // open controller
-            Open();
-        }
-        catch { }
-
-        SetHDRumble(UseHDRumble);
-
-        PipeClient.ServerMessage += OnServerMessage;
-        base.Plug();
-    }
-
     private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
     {
         this.input = input;
+    }
+
+    public override void Plug()
+    {
+        try
+        {
+            Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
+
+            // open controller
+            Open();
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
+            return;
+        }
+
+        // disable lizard state
+        Controller.RequestLizardMode(false);
+
+        SetHDRumble(UseHDRumble);
+
+        SetVirtualMuted(SettingsManager.GetBoolean("SteamMuteController"));
+
+        PipeClient.ServerMessage += OnServerMessage;
+
+        TimerManager.Tick += UpdateInputs;
+        TimerManager.Tick += UpdateMovements;
+
+        base.Plug();
     }
 
     public override void Unplug()
@@ -377,8 +345,7 @@ public class NeptuneController : IController
         try
         {
             // restore lizard state
-            SetLizardButtons(true);
-            SetLizardMouse(true);
+            Controller.RequestLizardMode(true);
 
             // close controller
             Close();
@@ -396,6 +363,11 @@ public class NeptuneController : IController
 
         PipeClient.ServerMessage -= OnServerMessage;
         base.Unplug();
+    }
+
+    public override void Cleanup()
+    {
+        TimerManager.Tick -= UpdateInputs;
     }
 
     public bool GetHapticIntensity(byte? input, sbyte minIntensity, sbyte maxIntensity, out sbyte output)
@@ -428,10 +400,10 @@ public class NeptuneController : IController
     public void SetHaptic()
     {
         GetHapticIntensity(FeedbackLargeMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var leftIntensity);
-        _ = Controller.SetHaptic((byte)HapticPad.Left, (ushort)leftIntensity, SDRumblePeriod, 0);
+        _ = Controller.SetHaptic((byte)SCHapticMotor.Left, (ushort)leftIntensity, SDRumblePeriod, 0);
 
         GetHapticIntensity(FeedbackSmallMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var rightIntensity);
-        _ = Controller.SetHaptic((byte)HapticPad.Right, (ushort)rightIntensity, SDRumblePeriod, 0);
+        _ = Controller.SetHaptic((byte)SCHapticMotor.Right, (ushort)rightIntensity, SDRumblePeriod, 0);
     }
 
     private void OnServerMessage(PipeMessage message)
@@ -447,19 +419,18 @@ public class NeptuneController : IController
         }
     }
 
-    public void SetLizardMouse(bool lizardMode)
+    private async void ThreadLoop(object? obj)
     {
-        Controller.LizardMouseEnabled = lizardMode;
-    }
+        while (RumbleThreadRunning)
+        {
+            if (GetHapticIntensity(FeedbackLargeMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity, out var leftIntensity))
+                Controller.SetHaptic2(SCHapticMotor.Left, NCHapticStyle.Weak, leftIntensity);
 
-    public void SetLizardButtons(bool lizardMode)
-    {
-        Controller.LizardButtonsEnabled = lizardMode;
-    }
+            if (GetHapticIntensity(FeedbackSmallMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity, out var rightIntensity))
+                Controller.SetHaptic2(SCHapticMotor.Right, NCHapticStyle.Weak, rightIntensity);
 
-    public void SetVirtualMuted(bool mute)
-    {
-        isVirtualMuted = mute;
+            await Task.Delay(TimerManager.GetPeriod() * 2);
+        }
     }
 
     public void SetHDRumble(bool HDRumble)
@@ -502,104 +473,15 @@ public class NeptuneController : IController
         }
     }
 
-    public override string GetGlyph(ButtonFlags button)
+    public override void SetHaptic(HapticStrength strength, ButtonFlags button)
     {
-        switch (button)
+        ushort value = strength switch
         {
-            case ButtonFlags.B1:
-                return "\u21D3"; // Button A
-            case ButtonFlags.B2:
-                return "\u21D2"; // Button B
-            case ButtonFlags.B3:
-                return "\u21D0"; // Button X
-            case ButtonFlags.B4:
-                return "\u21D1"; // Button Y
-            case ButtonFlags.L1:
-                return "\u21B0";
-            case ButtonFlags.R1:
-                return "\u21B1";
-            case ButtonFlags.Back:
-                return "\u21FA";
-            case ButtonFlags.Start:
-                return "\u21FB";
-            case ButtonFlags.L2:
-            case ButtonFlags.L3:
-                return "\u21B2";
-            case ButtonFlags.R2:
-            case ButtonFlags.R3:
-                return "\u21B3";
-            case ButtonFlags.L4:
-                return "\u219c\u24f8";
-            case ButtonFlags.L5:
-                return "\u219c\u24f9";
-            case ButtonFlags.R4:
-                return "\u219d\u24f8";
-            case ButtonFlags.R5:
-                return "\u219d\u24f9";
-            case ButtonFlags.Special:
-                return "\u21E4";
-            case ButtonFlags.OEM1:
-                return "\u21E5";
-            case ButtonFlags.LeftThumbTouch:
-                return "\u21DA";
-            case ButtonFlags.RightThumbTouch:
-                return "\u21DB";
-            case ButtonFlags.LeftPadTouch:
-                return "\u2268";
-            case ButtonFlags.RightPadTouch:
-                return "\u2269";
-            case ButtonFlags.LeftPadClick:
-                return "\u2266";
-            case ButtonFlags.RightPadClick:
-                return "\u2267";
-            case ButtonFlags.LeftPadClickUp:
-                return "\u2270";
-            case ButtonFlags.LeftPadClickDown:
-                return "\u2274";
-            case ButtonFlags.LeftPadClickLeft:
-                return "\u226E";
-            case ButtonFlags.LeftPadClickRight:
-                return "\u2272";
-            case ButtonFlags.RightPadClickUp:
-                return "\u2271";
-            case ButtonFlags.RightPadClickDown:
-                return "\u2275";
-            case ButtonFlags.RightPadClickLeft:
-                return "\u226F";
-            case ButtonFlags.RightPadClickRight:
-                return "\u2273";
-        }
-
-        return base.GetGlyph(button);
-    }
-
-    public override string GetGlyph(AxisFlags axis)
-    {
-        switch (axis)
-        {
-            case AxisFlags.L2:
-                return "\u2196";
-            case AxisFlags.R2:
-                return "\u2197";
-        }
-
-        return base.GetGlyph(axis);
-    }
-
-    public override string GetGlyph(AxisLayoutFlags axis)
-    {
-        switch (axis)
-        {
-            case AxisLayoutFlags.L2:
-                return "\u2196";
-            case AxisLayoutFlags.R2:
-                return "\u2197";
-            case AxisLayoutFlags.LeftPad:
-                return "\u2264";
-            case AxisLayoutFlags.RightPad:
-                return "\u2265";
-        }
-
-        return base.GetGlyph(axis);
+            HapticStrength.Low => 512,
+            HapticStrength.Medium => 1024,
+            HapticStrength.High => 2048,
+            _ => 0,
+        };
+        Controller.SetHaptic((byte)GetMotorForButton(button), value, 0, 1);
     }
 }

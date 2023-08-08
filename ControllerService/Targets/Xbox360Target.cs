@@ -101,8 +101,8 @@ internal class Xbox360Target : ViGEmTarget
         virtualController.SetButtonState(Xbox360Button.LeftShoulder, Inputs.ButtonState[ButtonFlags.L1]);
         virtualController.SetButtonState(Xbox360Button.RightShoulder, Inputs.ButtonState[ButtonFlags.R1]);
 
-        virtualController.SetButtonState(Xbox360Button.LeftThumb, Inputs.ButtonState[ButtonFlags.LeftThumb]);
-        virtualController.SetButtonState(Xbox360Button.RightThumb, Inputs.ButtonState[ButtonFlags.RightThumb]);
+        virtualController.SetButtonState(Xbox360Button.LeftThumb, Inputs.ButtonState[ButtonFlags.LeftStickClick]);
+        virtualController.SetButtonState(Xbox360Button.RightThumb, Inputs.ButtonState[ButtonFlags.RightStickClick]);
 
         virtualController.SetButtonState(Xbox360Button.Guide, Inputs.ButtonState[ButtonFlags.Special]);
 

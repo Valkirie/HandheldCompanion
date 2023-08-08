@@ -16,16 +16,16 @@ public enum ButtonFlags : byte
     [Description("Start")] Start = 5,
     [Description("Back")] Back = 6,
 
-    [Description("Left Thumb Click")] LeftThumb = 7,
-    [Description("Right Thumb Click")] RightThumb = 8,
+    [Description("Left Thumb Click")] LeftStickClick = 7,
+    [Description("Right Thumb Click")] RightStickClick = 8,
 
     L1 = 9,
     R1 = 10,
 
-    [Description("Soft pull")] L2 = 11,
-    [Description("Soft pull")] R2 = 12,
-    [Description("Full pull")] L3 = 44,
-    [Description("Full pull")] R3 = 45,
+    [Description("Soft pull")] L2Soft = 11,
+    [Description("Soft pull")] R2Soft = 12,
+    [Description("Full pull")] L2Full = 44,
+    [Description("Full pull")] R2Full = 45,
 
     B1 = 13,
     B2 = 14,
@@ -36,15 +36,15 @@ public enum ButtonFlags : byte
     B7 = 19,
     B8 = 20,
 
-    [Description("Up")] LeftThumbUp = 21,
-    [Description("Down")] LeftThumbDown = 22,
-    [Description("Left")] LeftThumbLeft = 23,
-    [Description("Right")] LeftThumbRight = 24,
+    [Description("Up")] LeftStickUp = 21,
+    [Description("Down")] LeftStickDown = 22,
+    [Description("Left")] LeftStickLeft = 23,
+    [Description("Right")] LeftStickRight = 24,
 
-    [Description("Up")] RightThumbUp = 25,
-    [Description("Down")] RightThumbDown = 26,
-    [Description("Left")] RightThumbLeft = 27,
-    [Description("Right")] RightThumbRight = 28,
+    [Description("Up")] RightStickUp = 25,
+    [Description("Down")] RightStickDown = 26,
+    [Description("Left")] RightStickLeft = 27,
+    [Description("Right")] RightStickRight = 28,
 
     Special = 29,
 
@@ -71,8 +71,8 @@ public enum ButtonFlags : byte
     L5 = 48,
     R5 = 49,
 
-    [Description("Left Thumb Touch")] LeftThumbTouch = 50,
-    [Description("Left Thumb Touch")] RightThumbTouch = 51,
+    [Description("Left Thumb Touch")] LeftStickTouch = 50,
+    [Description("Left Thumb Touch")] RightStickTouch = 51,
 
     [Description("Up")] LeftPadClickUp = 52,
     [Description("Down")] LeftPadClickDown = 53,

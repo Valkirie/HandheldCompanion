@@ -484,8 +484,8 @@ public class DSUServer
             if (Inputs.ButtonState[ButtonFlags.DPadUp]) outputData[outIdx] |= 0x10;
 
             if (Inputs.ButtonState[ButtonFlags.Start]) outputData[outIdx] |= 0x08;
-            if (Inputs.ButtonState[ButtonFlags.RightThumb]) outputData[outIdx] |= 0x04;
-            if (Inputs.ButtonState[ButtonFlags.LeftThumb]) outputData[outIdx] |= 0x02;
+            if (Inputs.ButtonState[ButtonFlags.RightStickClick]) outputData[outIdx] |= 0x04;
+            if (Inputs.ButtonState[ButtonFlags.LeftStickClick]) outputData[outIdx] |= 0x02;
             if (Inputs.ButtonState[ButtonFlags.Back]) outputData[outIdx] |= 0x01;
 
             outputData[++outIdx] = 0;

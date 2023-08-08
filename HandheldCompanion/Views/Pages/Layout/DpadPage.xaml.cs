@@ -28,6 +28,17 @@ public partial class DpadPage : ILayoutPage
         }
     }
 
+    public override void UpdateController(IController controller)
+    {
+        base.UpdateController(controller);
+
+        bool dpad = CheckController(controller, DPAD);
+
+        gridDpad.Visibility = dpad ? Visibility.Visible : Visibility.Collapsed;
+
+        enabled = dpad;
+    }
+
     public DpadPage(string Tag) : this()
     {
         this.Tag = Tag;

@@ -212,7 +212,7 @@ public partial class PipeClientVibration : PipeMessage
 [MemoryPackable]
 public partial class PipeClientControllerConnect : PipeMessage
 {
-    public ControllerCapacities Capacities;
+    public ControllerCapabilities Capacities;
     public string ControllerName;
 
     public PipeClientControllerConnect()
@@ -221,7 +221,7 @@ public partial class PipeClientControllerConnect : PipeMessage
     }
 
     [MemoryPackConstructor]
-    public PipeClientControllerConnect(string controllerName, ControllerCapacities capacities) : this()
+    public PipeClientControllerConnect(string controllerName, ControllerCapabilities capacities) : this()
     {
         ControllerName = controllerName;
         Capacities = capacities;

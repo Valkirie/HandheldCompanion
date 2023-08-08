@@ -43,6 +43,11 @@ public partial class AxisMapping : IMapping
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
     }
 
+    public void UpdateSelections()
+    {
+        Action_SelectionChanged(null, null);
+    }
+
     internal void SetIActions(IActions actions)
     {
         // reset and update mapping IActions
@@ -140,6 +145,9 @@ public partial class AxisMapping : IMapping
             Axis2MouseRotation.Value = (((MouseActions)Actions).AxisInverted ? 180 : 0) +
                                        (((MouseActions)Actions).AxisRotated ? 90 : 0);
             Axis2MouseDeadzone.Value = ((MouseActions)Actions).Deadzone;
+            Axis2MouseAcceleration.Value = ((MouseActions)this.Actions).Acceleration;
+            Axis2MouseFiltering.IsOn = ((MouseActions)this.Actions).Filtering;
+            Axis2MouseFilterCutoff.Value = ((MouseActions)this.Actions).FilterCutoff;
         }
 
         base.Update();
@@ -326,6 +334,52 @@ public partial class AxisMapping : IMapping
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).Deadzone = (int)Axis2MouseDeadzone.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Axis2MouseAcceleration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).Acceleration = (float)Axis2MouseAcceleration.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    // TODO: artificially convert to something more human readable?
+    private void Axis2MouseFiltering_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).Filtering = Axis2MouseFiltering.IsOn;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Axis2MouseFilterCutoff_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).FilterCutoff = (float)Axis2MouseFilterCutoff.Value;
                 break;
         }
 

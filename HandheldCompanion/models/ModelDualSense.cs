@@ -148,10 +148,10 @@ internal class ModelDualSense : IModel
                 {
                     switch (button)
                     {
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
-                        case ButtonFlags.L2:
-                        case ButtonFlags.R2:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
+                        case ButtonFlags.L2Soft:
+                        case ButtonFlags.R2Soft:
                         case ButtonFlags.Special:
                             buttonMaterial = MaterialPlasticBlack;
                             break;

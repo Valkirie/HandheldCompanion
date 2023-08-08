@@ -67,10 +67,10 @@ internal class ModelN64 : IModel
                         case ButtonFlags.B3:
                         case ButtonFlags.B4:
                         case ButtonFlags.Back:
-                        case ButtonFlags.RightThumbDown:
-                        case ButtonFlags.RightThumbLeft:
-                        case ButtonFlags.RightThumbRight:
-                        case ButtonFlags.RightThumbUp:
+                        case ButtonFlags.RightStickDown:
+                        case ButtonFlags.RightStickLeft:
+                        case ButtonFlags.RightStickRight:
+                        case ButtonFlags.RightStickUp:
                             buttonMaterial = MaterialPlasticYellow;
                             break;
                         case ButtonFlags.B1:
@@ -83,12 +83,12 @@ internal class ModelN64 : IModel
                         case ButtonFlags.DPadUp:
                         case ButtonFlags.DPadLeft:
                         case ButtonFlags.DPadRight:
-                        case ButtonFlags.L2:
-                        case ButtonFlags.R2:
+                        case ButtonFlags.L2Soft:
+                        case ButtonFlags.R2Soft:
                             buttonMaterial = MaterialPlasticDarkGrey;
                             break;
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
                             buttonMaterial = MaterialPlasticGrey;
                             break;
                         default:

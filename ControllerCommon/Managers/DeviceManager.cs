@@ -392,10 +392,12 @@ public static class DeviceManager
 
     private static bool IsGaming(Attributes attributes, Capabilities capabilities)
     {
-        //      STEAM DECK                                                               STEAM CONTROLLER
-        return (attributes.VendorID == 0x28DE && attributes.ProductID == 0x1205) ||
-               (attributes.VendorID == 0x28DE && attributes.ProductID == 0x1142) || 0x05 == capabilities.UsagePage ||
-               (0x01 == capabilities.UsagePage && (0x04 == capabilities.Usage || 0x05 == capabilities.Usage));
+        return (
+            ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1102)) || // STEAM CONTROLLER
+            ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1106)) || // STEAM CONTROLLER BLUETOOTH
+            ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1142)) || // STEAM CONTROLLER WIRELESS
+            ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1205)) || // STEAM DECK
+            (0x05 == capabilities.UsagePage) || (0x01 == capabilities.UsagePage) && ((0x04 == capabilities.Usage) || (0x05 == capabilities.Usage)));
     }
 
     public static PnPDetails GetPnPDeviceEx(string SymLink)

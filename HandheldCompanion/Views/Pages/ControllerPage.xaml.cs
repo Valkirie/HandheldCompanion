@@ -59,11 +59,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.Initialized += ControllerManager_Initialized;
-
-        // device specific settings
-        var DeviceType = MainWindow.CurrentDevice.GetType();
-        if (DeviceType == typeof(SteamDeck))
-            SteamDeckPanel.Visibility = Visibility.Visible;
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
     }
 
     public ControllerPage(string Tag) : this()
@@ -95,12 +91,12 @@ public partial class ControllerPage : Page
                 case "DesktopLayoutEnabled":
                     Toggle_DesktopLayout.IsOn = Convert.ToBoolean(value);
                     break;
-                case "SteamDeckMuteController":
-                    Toggle_SDMuteController.IsOn = Convert.ToBoolean(value);
+                case "SteamMuteController":
+                    Toggle_SCMuteController.IsOn = Convert.ToBoolean(value);
                     ControllerRefresh();
                     break;
                 case "SteamDeckHDRumble":
-                    Toggle_SDHDRumble.IsOn = Convert.ToBoolean(value);
+                    Toggle_SCHDRumble.IsOn = Convert.ToBoolean(value);
                     break;
             }
         });
@@ -223,6 +219,13 @@ public partial class ControllerPage : Page
         ControllerRefresh();
     }
 
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
+        Type controllerType = ControllerManager.GetTargetController()?.GetType();
+        Type steamController = typeof(SteamController);
+        SteamControllerPanel.Visibility = steamController.IsAssignableFrom(controllerType) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     private void ControllerHookClicked(IController Controller)
     {
         var path = Controller.GetContainerInstancePath();
@@ -257,8 +260,8 @@ public partial class ControllerPage : Page
             var target = ControllerManager.GetTargetController();
             var isPlugged = hasTarget && target.IsPlugged();
             var isHidden = hasTarget && target.IsHidden();
-            var isNeptune = hasTarget && target.GetType() == typeof(NeptuneController);
-            var isMuted = SettingsManager.GetBoolean("SteamDeckMuteController");
+            var isSteam = hasTarget && (target.GetType() == typeof(NeptuneController) || target.GetType() == typeof(GordonController));
+            var isMuted = SettingsManager.GetBoolean("SteamMuteController");
             var isForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
 
             // hint: Has physical controller, but is not connected
@@ -270,7 +273,7 @@ public partial class ControllerPage : Page
             HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
-            var neptunehidden = isHidden && isNeptune && isMuted;
+            var neptunehidden = isHidden && isSteam && isMuted;
             HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller not hidden, and virtual controller
@@ -408,21 +411,21 @@ public partial class ControllerPage : Page
         SettingsManager.SetProperty("HIDstrength", value);
     }
 
-    private void Toggle_SDMuteController_Toggled(object sender, RoutedEventArgs e)
+    private void Toggle_SCMuteController_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("SteamDeckMuteController", Toggle_SDMuteController.IsOn);
+        SettingsManager.SetProperty("SteamMuteController", Toggle_SCMuteController.IsOn);
     }
 
-    private void Toggle_SDHDRumble_Toggled(object sender, RoutedEventArgs e)
+    private void Toggle_SCHDRumble_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)
             return;
 
         // temporary settings
-        SettingsManager.SetProperty("SteamDeckHDRumble", Toggle_SDHDRumble.IsOn);
+        SettingsManager.SetProperty("SteamDeckHDRumble", Toggle_SCHDRumble.IsOn);
     }
 
     private void Toggle_Vibrate_Toggled(object sender, RoutedEventArgs e)

@@ -124,9 +124,9 @@ internal class DualShock4Target : ViGEmTarget
             if (Inputs.ButtonState[ButtonFlags.Back])
                 tempButtons |= DualShock4Button.Share.Value;
 
-            if (Inputs.ButtonState[ButtonFlags.RightThumb])
+            if (Inputs.ButtonState[ButtonFlags.RightStickClick])
                 tempButtons |= DualShock4Button.ThumbRight.Value;
-            if (Inputs.ButtonState[ButtonFlags.LeftThumb])
+            if (Inputs.ButtonState[ButtonFlags.LeftStickClick])
                 tempButtons |= DualShock4Button.ThumbLeft.Value;
 
             if (Inputs.ButtonState[ButtonFlags.L1])

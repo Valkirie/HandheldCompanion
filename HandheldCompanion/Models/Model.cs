@@ -75,10 +75,10 @@ public abstract class IModel
                 switch (button)
                 {
                     // specific case, being both a button and a trigger
-                    case ButtonFlags.LeftThumb:
+                    case ButtonFlags.LeftStickClick:
                         LeftThumb = model;
                         break;
-                    case ButtonFlags.RightThumb:
+                    case ButtonFlags.RightStickClick:
                         RightThumb = model;
                         break;
                 }

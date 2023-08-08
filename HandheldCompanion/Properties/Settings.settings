@@ -140,7 +140,7 @@
     <Setting Name="OverlayControllerMotion" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SteamDeckMuteController" Type="System.Boolean" Scope="User">
+    <Setting Name="SteamMuteController" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HIDcloakonconnect" Type="System.Boolean" Scope="User">

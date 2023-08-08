@@ -180,18 +180,18 @@ internal class ModelToyController : IModel
                         case ButtonFlags.DPadRight:
                             buttonMaterial = MaterialPlasticRed;
                             break;
-                        case ButtonFlags.L2:
+                        case ButtonFlags.L2Soft:
                             buttonMaterial = MaterialPlasticOrange;
                             break;
-                        case ButtonFlags.R2:
+                        case ButtonFlags.R2Soft:
                             buttonMaterial = MaterialPlasticPurple;
                             break;
                         case ButtonFlags.Start:
                         case ButtonFlags.Back:
                             buttonMaterial = MaterialPlasticYellow;
                             break;
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
                             buttonMaterial = MaterialPlasticBlue;
                             break;
                         default:

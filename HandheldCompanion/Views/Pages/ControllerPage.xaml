@@ -544,11 +544,11 @@
 
                 <!--  Steam Deck settings  -->
                 <ui:SimpleStackPanel
-                    Name="SteamDeckPanel"
+                    Name="SteamControllerPanel"
                     d:Visibility="Visible"
                     Spacing="6"
                     Visibility="Collapsed">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckSettings}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamControllerSettings}" />
 
                     <!--  Rumble engine  -->
                     <Border
@@ -574,17 +574,17 @@
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_SteamDeckHDRumbleDesc}"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamControllerHDRumbleDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
                             <ui:ToggleSwitch
-                                Name="Toggle_SDHDRumble"
+                                Name="Toggle_SCHDRumble"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="Toggle_SDHDRumble_Toggled" />
+                                Toggled="Toggle_SCHDRumble_Toggled" />
                         </Grid>
                     </Border>
 
@@ -608,21 +608,21 @@
                                     Glyph="&#xE789;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteController}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamMuteController}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteControllerDesc}"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamMuteControllerDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
                             <ui:ToggleSwitch
-                                Name="Toggle_SDMuteController"
+                                Name="Toggle_SCMuteController"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="Toggle_SDMuteController_Toggled" />
+                                Toggled="Toggle_SCMuteController_Toggled" />
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

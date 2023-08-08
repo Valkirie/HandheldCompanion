@@ -45,11 +45,6 @@ public class DS4Controller : DInputController
         {
         }
 
-        /*
-        if (prevState.Buttons.Equals(State.Buttons) && prevState.PointOfViewControllers.Equals(State.PointOfViewControllers) && prevInjectedButtons.Equals(InjectedButtons))
-            return;
-        */
-
         Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
         Inputs.ButtonState[ButtonFlags.B1] = State.Buttons[1];
@@ -60,11 +55,11 @@ public class DS4Controller : DInputController
         Inputs.ButtonState[ButtonFlags.Back] = State.Buttons[8];
         Inputs.ButtonState[ButtonFlags.Start] = State.Buttons[9];
 
-        Inputs.ButtonState[ButtonFlags.L2] = State.Buttons[6];
-        Inputs.ButtonState[ButtonFlags.R2] = State.Buttons[7];
+        Inputs.ButtonState[ButtonFlags.L2Soft] = State.Buttons[6];
+        Inputs.ButtonState[ButtonFlags.R2Soft] = State.Buttons[7];
 
-        Inputs.ButtonState[ButtonFlags.LeftThumb] = State.Buttons[10];
-        Inputs.ButtonState[ButtonFlags.RightThumb] = State.Buttons[11];
+        Inputs.ButtonState[ButtonFlags.LeftStickClick] = State.Buttons[10];
+        Inputs.ButtonState[ButtonFlags.RightStickClick] = State.Buttons[11];
 
         Inputs.ButtonState[ButtonFlags.L1] = State.Buttons[4];
         Inputs.ButtonState[ButtonFlags.R1] = State.Buttons[5];
@@ -109,8 +104,8 @@ public class DS4Controller : DInputController
         Inputs.AxisState[AxisFlags.L2] = (short)(State.RotationX * byte.MaxValue / ushort.MaxValue);
         Inputs.AxisState[AxisFlags.R2] = (short)(State.RotationY * byte.MaxValue / ushort.MaxValue);
 
-        Inputs.ButtonState[ButtonFlags.L3] = Inputs.AxisState[AxisFlags.L2] > Gamepad.TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R3] = Inputs.AxisState[AxisFlags.R2] > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.L2Full] = Inputs.AxisState[AxisFlags.L2] > Gamepad.TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.R2Full] = Inputs.AxisState[AxisFlags.R2] > Gamepad.TriggerThreshold * 8;
 
         Inputs.AxisState[AxisFlags.LeftThumbX] =
             (short)Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
@@ -142,6 +137,11 @@ public class DS4Controller : DInputController
         base.Unplug();
     }
 
+    public override void Cleanup()
+    {
+        TimerManager.Tick -= UpdateInputs;
+    }
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
@@ -162,13 +162,13 @@ public class DS4Controller : DInputController
                 return "\u21E6";
             case ButtonFlags.Start:
                 return "\u21E8";
-            case ButtonFlags.L2:
+            case ButtonFlags.L2Soft:
                 return "\u21DC";
-            case ButtonFlags.L3:
+            case ButtonFlags.L2Full:
                 return "\u21B2";
-            case ButtonFlags.R2:
+            case ButtonFlags.R2Soft:
                 return "\u21DD";
-            case ButtonFlags.R3:
+            case ButtonFlags.R2Full:
                 return "\u21B3";
             case ButtonFlags.Special:
                 return "\uE000";

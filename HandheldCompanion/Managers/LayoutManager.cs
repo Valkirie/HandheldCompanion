@@ -59,7 +59,7 @@ internal static class LayoutManager
             EnableRaisingEvents = true,
             IncludeSubdirectories = true,
             Filter = "*.json",
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
         };
 
         ProfileManager.Applied += ProfileManager_Applied;
@@ -91,7 +91,9 @@ internal static class LayoutManager
 
         desktopLayout.Updated += DesktopLayout_Updated;
 
-        layoutWatcher.Created += LayoutWatcher_Created;
+        // TODO: overwritten layout will have different GUID so it will duplicate
+        layoutWatcher.Created += LayoutWatcher_Template;
+        layoutWatcher.Changed += LayoutWatcher_Template;
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -109,7 +111,8 @@ internal static class LayoutManager
         LogManager.LogInformation("{0} has stopped", "LayoutManager");
     }
 
-    private static void LayoutWatcher_Created(object sender, FileSystemEventArgs e)
+    // this event is called from non main thread and it creates LayoutTemplate which is a WPF element
+    private static void LayoutWatcher_Template(object sender, FileSystemEventArgs e)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>

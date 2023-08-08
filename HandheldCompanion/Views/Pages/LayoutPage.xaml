@@ -66,8 +66,7 @@
             <ui:NavigationViewItem
                 Name="navTrackpads"
                 Content="{x:Static resx:Resources.LayoutPage_Trackpads}"
-                Tag="TrackpadsPage"
-                Visibility="Collapsed">
+                Tag="TrackpadsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
                 </ui:NavigationViewItem.Icon>

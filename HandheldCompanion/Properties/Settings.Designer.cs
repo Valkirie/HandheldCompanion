@@ -578,12 +578,12 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool SteamDeckMuteController {
+        public bool SteamMuteController {
             get {
-                return ((bool)(this["SteamDeckMuteController"]));
+                return ((bool)(this["SteamMuteController"]));
             }
             set {
-                this["SteamDeckMuteController"] = value;
+                this["SteamMuteController"] = value;
             }
         }
         

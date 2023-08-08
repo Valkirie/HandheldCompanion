@@ -17,29 +17,32 @@
         <ui:SimpleStackPanel Spacing="6">
 
             <!--  A,B,X,Y  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_ABXY}" />
-            <ui:SimpleStackPanel Name="ButtonsStackPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridButtons" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_ABXY}" />
+                <ui:SimpleStackPanel Name="ButtonsStackPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
             <!--  BUMPERS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Bumpers}" />
-            <ui:SimpleStackPanel Name="BumpersStackPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridBumpers" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Bumpers}" />
+                <ui:SimpleStackPanel Name="BumpersStackPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
             <!--  BACK GRIPS  -->
-            <ui:SimpleStackPanel
-                x:Name="gridBACKGRIPS"
-                Spacing="6"
-                Visibility="Collapsed">
+            <ui:SimpleStackPanel Name="gridBackgrips" Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Back_Grips}" />
-                <ui:SimpleStackPanel Name="BACKGRIPSStackPanel" Spacing="6" />
+                <ui:SimpleStackPanel Name="BackgripsStackPanel" Spacing="6" />
             </ui:SimpleStackPanel>
 
             <!--  MENU  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Menu}" />
-            <ui:SimpleStackPanel Name="MenuStackPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridMenu" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_Menu}" />
+                <ui:SimpleStackPanel Name="MenuStackPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
             <!--  OEM  -->
             <ui:SimpleStackPanel
-                x:Name="gridOEM"
+                Name="gridOEM"
                 Spacing="6"
                 Visibility="Collapsed">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ButtonsPage_OEM}" />

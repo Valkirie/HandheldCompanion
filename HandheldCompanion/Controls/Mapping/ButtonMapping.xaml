@@ -75,6 +75,51 @@
         </Expander.Header>
         <Expander.Content>
             <StackPanel>
+                <!--  Button 2 Button, Long press  -->
+                <Grid d:Visibility="Visible" Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+
+                    <ui:SimpleStackPanel Name="Button2ButtonPressDelay" Spacing="12">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Long press delay (ms, longest applies)" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, ElementName=LongPressDelaySlider, Mode=OneWay}" />
+                                    </Grid>
+
+                                    <Slider
+                                        x:Name="LongPressDelaySlider"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="2000"
+                                        Minimum="100"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="50"
+                                        ValueChanged="LongPressDelaySlider_ValueChanged"
+                                        Value="450" />
+
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
                 <!--  Button 2 Keyboard/Mouse, modifiers  -->
                 <Grid
                     Name="Button2ButtonWithModifier"

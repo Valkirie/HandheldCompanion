@@ -92,14 +92,14 @@ public class XInputController : IController
             Inputs.ButtonState[ButtonFlags.Start] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
             Inputs.ButtonState[ButtonFlags.Back] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
 
-            Inputs.ButtonState[ButtonFlags.L2] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
-            Inputs.ButtonState[ButtonFlags.R2] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.L2Soft] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2Soft] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
 
-            Inputs.ButtonState[ButtonFlags.L3] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
-            Inputs.ButtonState[ButtonFlags.R3] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.L2Full] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R2Full] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
 
-            Inputs.ButtonState[ButtonFlags.LeftThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
-            Inputs.ButtonState[ButtonFlags.RightThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
+            Inputs.ButtonState[ButtonFlags.LeftStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
+            Inputs.ButtonState[ButtonFlags.RightStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
 
             Inputs.ButtonState[ButtonFlags.L1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
             Inputs.ButtonState[ButtonFlags.R1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
@@ -110,19 +110,19 @@ public class XInputController : IController
             Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
 
             // Left Stick
-            Inputs.ButtonState[ButtonFlags.LeftThumbLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftThumbRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftThumbDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.LeftThumbUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
 
             Inputs.AxisState[AxisFlags.LeftThumbX] = Gamepad.LeftThumbX;
             Inputs.AxisState[AxisFlags.LeftThumbY] = Gamepad.LeftThumbY;
 
             // Right Stick
-            Inputs.ButtonState[ButtonFlags.RightThumbLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightThumbRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightThumbDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
-            Inputs.ButtonState[ButtonFlags.RightThumbUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
 
             Inputs.AxisState[AxisFlags.RightThumbX] = Gamepad.RightThumbX;
             Inputs.AxisState[AxisFlags.RightThumbY] = Gamepad.RightThumbY;
@@ -198,6 +198,11 @@ public class XInputController : IController
         base.Unplug();
     }
 
+    public override void Cleanup()
+    {
+        TimerManager.Tick -= UpdateInputs;
+    }
+
     private void OnServerMessage(PipeMessage message)
     {
         switch (message.code)
@@ -231,13 +236,13 @@ public class XInputController : IController
                 return "\u21FA";
             case ButtonFlags.Start:
                 return "\u21FB";
-            case ButtonFlags.L2:
+            case ButtonFlags.L2Soft:
                 return "\u21DC";
-            case ButtonFlags.L3:
+            case ButtonFlags.L2Full:
                 return "\u2196";
-            case ButtonFlags.R2:
+            case ButtonFlags.R2Soft:
                 return "\u21DD";
-            case ButtonFlags.R3:
+            case ButtonFlags.R2Full:
                 return "\u2197";
             case ButtonFlags.Special:
                 return "\uE001";

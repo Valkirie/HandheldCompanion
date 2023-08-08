@@ -39,6 +39,23 @@ public enum PressType
 }
 
 [Serializable]
+public enum HapticMode
+{
+    Off = 0,
+    Down = 1,
+    Up = 2,
+    Both = 3,
+}
+
+[Serializable]
+public enum HapticStrength
+{
+    Low = 0,
+    Medium = 1,
+    High = 2,
+}
+
+[Serializable]
 public abstract class IActions : ICloneable
 {
     public static Dictionary<ModifierSet, KeyCode[]> ModifierMap = new()
@@ -56,6 +73,9 @@ public abstract class IActions : ICloneable
     protected bool IsToggled;
     protected bool IsTurboed;
 
+    public HapticMode HapticMode = HapticMode.Off;
+    public HapticStrength HapticStrength = HapticStrength.Low;
+
     protected ScreenOrientation Orientation = ScreenOrientation.Angle0;
 
     protected int Period;
@@ -72,6 +92,16 @@ public abstract class IActions : ICloneable
     public IActions()
     {
         Period = TimerManager.GetPeriod();
+    }
+
+    public virtual void SetHaptic(ButtonFlags button, bool up)
+    {
+        if (this.HapticMode == HapticMode.Off) return;
+        if (this.HapticMode == HapticMode.Down && up) return;
+        if (this.HapticMode == HapticMode.Up && !up) return;
+
+        // TODO
+        // ControllerManager.GetTargetController()?.SetHaptic(this.HapticStrength, button);
     }
 
     public ActionType ActionType { get; set; } = ActionType.Disabled;

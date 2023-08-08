@@ -312,4 +312,49 @@ public static class InputUtils
         return new Vector2(-GravityNormalized.Z * -AngularVelocityDeg.Z + -GravityNormalized.Y * -AngularVelocityDeg.Y,
             AngularVelocityDeg.X);
     }
+
+    public static void TouchToDirections(int x, int y, int radius, int radialShift, out bool[] buttons)
+    {
+        buttons = new bool[4];
+
+        float length = new Vector2(x, y).Length();
+        if (length < radius)
+            return;
+
+        int angle = (int)(Math.Atan2(x, y) * (180 / Math.PI) + 22.5) + radialShift;
+        if (angle < 0) angle += 360;
+        if (angle == 360) angle = 0;
+
+        switch (angle / 45)
+        {
+            case 0:
+                buttons[0] = true;
+                break;
+            case 1:
+                buttons[0] = true;
+                buttons[1] = true;
+                break;
+            case 2:
+                buttons[1] = true;
+                break;
+            case 3:
+                buttons[1] = true;
+                buttons[2] = true;
+                break;
+            case 4:
+                buttons[2] = true;
+                break;
+            case 5:
+                buttons[2] = true;
+                buttons[3] = true;
+                break;
+            case 6:
+                buttons[3] = true;
+                break;
+            case 7:
+                buttons[3] = true;
+                buttons[0] = true;
+                break;
+        }
+    }
 }

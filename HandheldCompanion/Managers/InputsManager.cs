@@ -472,32 +472,32 @@ public static class InputsManager
     public static void UpdateReport(ButtonState buttonState)
     {
         // half-press should be removed if full-press is also present
-        if (currentChord.State[ButtonFlags.L3])
+        if (currentChord.State[ButtonFlags.L2Full])
         {
-            currentChord.State[ButtonFlags.L2] = false;
-            storedChord.State[ButtonFlags.L2] = false;
-            buttonState[ButtonFlags.L2] = false;
+            currentChord.State[ButtonFlags.L2Soft] = false;
+            storedChord.State[ButtonFlags.L2Soft] = false;
+            buttonState[ButtonFlags.L2Soft] = false;
         }
 
-        if (currentChord.State[ButtonFlags.R3])
+        if (currentChord.State[ButtonFlags.R2Full])
         {
-            currentChord.State[ButtonFlags.R2] = false;
-            storedChord.State[ButtonFlags.R2] = false;
-            buttonState[ButtonFlags.R2] = false;
+            currentChord.State[ButtonFlags.R2Soft] = false;
+            storedChord.State[ButtonFlags.R2Soft] = false;
+            buttonState[ButtonFlags.R2Soft] = false;
         }
 
-        if (currentChord.State[ButtonFlags.LeftThumb])
+        if (currentChord.State[ButtonFlags.LeftStickClick])
         {
-            currentChord.State[ButtonFlags.LeftThumbTouch] = false;
-            storedChord.State[ButtonFlags.LeftThumbTouch] = false;
-            buttonState[ButtonFlags.LeftThumbTouch] = false;
+            currentChord.State[ButtonFlags.LeftStickTouch] = false;
+            storedChord.State[ButtonFlags.LeftStickTouch] = false;
+            buttonState[ButtonFlags.LeftStickTouch] = false;
         }
 
-        if (currentChord.State[ButtonFlags.RightThumb])
+        if (currentChord.State[ButtonFlags.RightStickClick])
         {
-            currentChord.State[ButtonFlags.RightThumbTouch] = false;
-            storedChord.State[ButtonFlags.RightThumbTouch] = false;
-            buttonState[ButtonFlags.RightThumbTouch] = false;
+            currentChord.State[ButtonFlags.RightStickTouch] = false;
+            storedChord.State[ButtonFlags.RightStickTouch] = false;
+            buttonState[ButtonFlags.RightStickTouch] = false;
         }
 
         if (currentChord.State[ButtonFlags.LeftPadClick])

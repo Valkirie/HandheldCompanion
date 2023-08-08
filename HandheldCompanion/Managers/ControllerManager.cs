@@ -144,18 +144,18 @@ public static class ControllerManager
     {
         ControllerMuted = false;
 
-        // controller specific scenarios
-        if (targetController?.GetType() == typeof(NeptuneController))
+        // platform specific scenarios
+        if (foregroundProcess?.Platform == PlatformType.Steam)
         {
-            var neptuneController = (NeptuneController)targetController;
-
             // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
-            if (foregroundProcess?.Platform == PlatformType.Steam)
-                if (neptuneController.IsVirtualMuted())
-                {
+            // Controller specific scenarios
+            if (typeof(SteamController).IsAssignableFrom(targetController?.GetType()))
+            {
+                SteamController steamController = (SteamController)targetController;
+                if (steamController.IsVirtualMuted())
                     ControllerMuted = true;
-                }
-        }
+            }
+        }        
 
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
@@ -201,7 +201,7 @@ public static class ControllerManager
                     SetHIDStrength(HIDstrength);
                     break;
 
-                case "SteamDeckMuteController":
+                case "SteamMuteController":
                 {
                     var target = GetTargetController();
                     if (target is null)
@@ -353,6 +353,26 @@ public static class ControllerManager
                 {
                     switch (ProductId)
                     {
+                        // WIRED STEAM CONTROLLER
+                        case 0x1102:
+                            // MI == 0 is virtual keyboards
+                            // MI == 1 is virtual mouse
+                            // MI == 2 is controller proper
+                            // No idea what's in case of more than one controller connected
+                            if (details.GetMI() == 2)
+                                controller = new GordonController(details);
+                            break;
+                        // WIRELESS STEAM CONTROLLER
+                        case 0x1142:
+                            // MI == 0 is virtual keyboards
+                            // MI == 1-4 are 4 controllers
+                            // TODO: The dongle registers 4 controller devices, regardless how many are
+                            // actually connected. There is no easy way to check for connection without
+                            // actually talking to each controller. Handle only the first for now.
+                            if (details.GetMI() == 1)
+                                controller = new GordonController(details);
+                            break;
+
                         // STEAM DECK
                         case 0x1205:
                             controller = new NeptuneController(details);
@@ -530,6 +550,7 @@ public static class ControllerManager
         {
             targetController.InputsUpdated -= UpdateInputs;
             targetController.MovementsUpdated -= UpdateMovements;
+            targetController.Cleanup();
             targetController.Unplug();
             targetController = null;
         }
@@ -537,11 +558,25 @@ public static class ControllerManager
 
     public static void SetTargetController(string baseContainerDeviceInstanceId)
     {
-        // unplug previous controller
-        ClearTargetController();
+        // unplug current controller
+        if (targetController is not null && targetController.IsPlugged())
+        {
+            string targetPath = targetController.GetContainerInstancePath();
 
-        // warn service the current controller has been unplugged
-        PipeClient.SendMessage(new PipeClientControllerDisconnect());
+            ClearTargetController();
+
+            // warn service the current controller has been unplugged
+            PipeClient.SendMessage(new PipeClientControllerDisconnect());
+
+            // if we're setting currently selected, it's unplugged, there is none plugged
+            // reset the UI to the default controller and stop
+            if (targetPath == baseContainerDeviceInstanceId)
+            {
+                // reset layout UI
+                ControllerSelected?.Invoke(GetEmulatedController());
+                return;
+            }
+        }
 
         // look for new controller
         if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController? controller))
@@ -550,10 +585,8 @@ public static class ControllerManager
         if (controller is null)
             return;
 
-        /*
         if (controller.IsVirtual())
             return;
-        */
 
         // update target controller
         targetController = controller;
@@ -572,7 +605,7 @@ public static class ControllerManager
 
         // warn service a new controller has arrived
         PipeClient.SendMessage(
-            new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
+            new PipeClientControllerConnect(targetController.ToString(), targetController.Capabilities));
 
         // check applicable scenarios
         CheckControllerScenario();
@@ -588,7 +621,7 @@ public static class ControllerManager
             return;
 
         PipeClient.SendMessage(
-            new PipeClientControllerConnect(targetController.ToString(), targetController.Capacities));
+            new PipeClientControllerConnect(targetController.ToString(), targetController.Capabilities));
     }
 
     public static IController GetTargetController()

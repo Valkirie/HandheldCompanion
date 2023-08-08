@@ -46,6 +46,20 @@ public class PnPDetails : IDisposable
         return "0x" + attributes.VendorID.ToString("X4");
     }
 
+    public short GetMI()
+    {
+        string low = SymLink.ToLower();
+        int index = low.IndexOf("mi_");
+        if (index == -1)
+            return -1;
+        string mi = low.Substring(index + 3, 2);
+
+        if (short.TryParse(mi, out short number))
+            return number;
+
+        return -1;
+    }
+
     public UsbPnPDevice GetUsbPnPDevice()
     {
         var pnpDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);

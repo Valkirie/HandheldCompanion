@@ -13,19 +13,19 @@ public partial class JoysticksPage : ILayoutPage
 {
     public static List<ButtonFlags> LeftThumbButtons = new()
     {
-        ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown,
-        ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight
+        ButtonFlags.LeftStickClick, ButtonFlags.LeftStickTouch, ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown,
+        ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight
     };
 
-    public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftThumb };
+    public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftStick };
 
     public static List<ButtonFlags> RightThumbButtons = new()
     {
-        ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown,
-        ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight
+        ButtonFlags.RightStickClick, ButtonFlags.RightStickTouch, ButtonFlags.RightStickUp, ButtonFlags.RightStickDown,
+        ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
     };
 
-    public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightThumb };
+    public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightStick };
 
     public JoysticksPage()
     {
@@ -63,6 +63,19 @@ public partial class JoysticksPage : ILayoutPage
 
             AxisMappings.Add(axis, axisMapping);
         }
+    }
+
+    public override void UpdateController(IController controller)
+    {
+        base.UpdateController(controller);
+
+        bool leftStick = CheckController(controller, LeftThumbAxis);
+        bool rightStick = CheckController(controller, RightThumbAxis);
+
+        gridLeftStick.Visibility = leftStick ? Visibility.Visible : Visibility.Collapsed;
+        gridRightStick.Visibility = rightStick ? Visibility.Visible : Visibility.Collapsed;
+
+        enabled = leftStick || rightStick;
     }
 
     public JoysticksPage(string Tag) : this()

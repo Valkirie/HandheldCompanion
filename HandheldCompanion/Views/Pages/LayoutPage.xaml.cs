@@ -28,7 +28,7 @@ public partial class LayoutPage : Page
     protected LockObject updateLock = new();
 
     // page vars
-    private readonly Dictionary<string, ILayoutPage> pages;
+    private Dictionary<string, (ILayoutPage, NavigationViewItem)> pages;
     private readonly ButtonsPage buttonsPage = new();    
     private readonly DpadPage dpadPage = new();
     private readonly GyroPage gyroPage = new();
@@ -36,6 +36,7 @@ public partial class LayoutPage : Page
     private readonly TrackpadsPage trackpadsPage = new();
     private readonly TriggersPage triggersPage = new();
 
+    private NavigationView parentNavView;
     private string preNavItemTag;
 
     public LayoutPage()
@@ -43,37 +44,27 @@ public partial class LayoutPage : Page
         InitializeComponent();
     }
 
-    public LayoutPage(string Tag) : this()
+    public LayoutPage(string Tag, NavigationView parent) : this()
     {
         this.Tag = Tag;
-
-        // manage layout pages visibility
-        navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        
-        /* navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) ||
-                             MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) ||
-                             MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor)
-            ? Visibility.Visible
-            : Visibility.Collapsed; */
+        this.parentNavView = parent;
 
         // create controller related pages
-        pages = new Dictionary<string, ILayoutPage>
+        this.pages = new()
         {
             // buttons
-            { "ButtonsPage", buttonsPage },
-            { "DpadPage", dpadPage },
+            { "ButtonsPage", ( buttonsPage, navButtons ) },
+            { "DpadPage", ( dpadPage, navDpad ) },
 
             // triger
-            { "TriggersPage", triggersPage },
+            { "TriggersPage", ( triggersPage, navTriggers ) },
 
             // axis
-            { "JoysticksPage", joysticksPage },
-            { "TrackpadsPage", trackpadsPage },
+            { "JoysticksPage", ( joysticksPage, navJoysticks ) },
+            { "TrackpadsPage", ( trackpadsPage, navTrackpads ) },
 
             // gyro
-            { "GyroPage", gyroPage }
+            { "GyroPage", ( gyroPage, navGyro ) },
         };
 
         foreach (ButtonStack buttonStack in buttonsPage.ButtonStacks.Values.Union(dpadPage.ButtonStacks.Values).Union(triggersPage.ButtonStacks.Values).Union(joysticksPage.ButtonStacks.Values).Union(trackpadsPage.ButtonStacks.Values))
@@ -97,10 +88,8 @@ public partial class LayoutPage : Page
         LayoutManager.Updated += LayoutManager_Updated;
         LayoutManager.Initialized += LayoutManager_Initialized;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        MainWindow.controllerPage.HIDchanged += VirtualManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        // auto-sort
-        // cB_Layouts.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
     }
 
     private void ControllerManager_ControllerSelected(IController controller)
@@ -110,20 +99,24 @@ public partial class LayoutPage : Page
         {
             RefreshLayoutList();
 
-            // manage layout pages visibility
-            navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            /* navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) ||
-                                 MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) ||
-                                 MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor)
-                ? Visibility.Visible
-                : Visibility.Collapsed; */
-
             // cascade update to (sub)pages
             foreach (var page in pages.Values)
-                page.UpdateController(controller);
+            {
+                page.Item1.UpdateController(controller);
+                page.Item2.IsEnabled = page.Item1.IsEnabled();
+            }
+        });
+    }
+
+    // todo: fix me when migrated to NO-SERVICE
+    private void VirtualManager_ControllerSelected(HIDmode HID)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // cascade update to (sub)pages
+            foreach (var page in pages.Values)
+                page.Item1.UpdateSelections();
         });
     }
 
@@ -296,7 +289,8 @@ public partial class LayoutPage : Page
             {
                 // cascade update to (sub)pages
                 foreach (var page in pages.Values)
-                    page.Update(currentTemplate.Layout);
+                    page.Item1.Update(currentTemplate.Layout);
+
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;
             }
@@ -444,30 +438,20 @@ public partial class LayoutPage : Page
         LayoutFlyout.Hide();
     }
 
-    #region UI
-
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
-        if (args.InvokedItemContainer is not null)
-        {
-            var navItem = (NavigationViewItem)args.InvokedItemContainer;
-            var navItemTag = (string)navItem.Tag;
+        if (args.InvokedItemContainer is null)
+            return;
 
-            switch (navItemTag)
-            {
-                default:
-                    preNavItemTag = navItemTag;
-                    break;
-            }
-
-            NavView_Navigate(preNavItemTag);
-        }
+        NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
+        preNavItemTag = (string)navItem.Tag;
+        NavView_Navigate(preNavItemTag);
     }
 
     public void NavView_Navigate(string navItemTag)
     {
         var item = pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
-        Page _page = item.Value;
+        Page _page = item.Value.Item1;
 
         // Get the page type before navigation so you can prevent duplicate
         // entries in the backstack.
@@ -511,8 +495,10 @@ public partial class LayoutPage : Page
 
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;
+
+            string header = currentTemplate.Product.Length > 0 ?
+                    "Profile: " + currentTemplate.Product : "Layout: Desktop";
+            parentNavView.Header = new TextBlock() { Text = header };
         }
     }
-
-    #endregion
 }

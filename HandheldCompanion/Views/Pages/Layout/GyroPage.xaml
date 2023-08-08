@@ -14,6 +14,14 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid">
-        <ui:SimpleStackPanel Spacing="6" />
+        <ui:SimpleStackPanel Spacing="6">
+
+            <ui:SimpleStackPanel Name="gridGyroscope" Spacing="6">
+                <!--  GYROSCOPE  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="GYROSCOPE" />
+                <ui:SimpleStackPanel Name="GyroscopePanel" Spacing="6" />
+            </ui:SimpleStackPanel>
+
+        </ui:SimpleStackPanel>
     </Grid>
 </local:ILayoutPage>

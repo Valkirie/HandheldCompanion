@@ -7,7 +7,6 @@ namespace HandheldCompanion.Controllers;
 public class DInputController : IController
 {
     public Joystick joystick;
-    protected JoystickState prevState = new();
     protected JoystickState State = new();
 
     public DInputController()
@@ -48,9 +47,6 @@ public class DInputController : IController
 
     public override void UpdateInputs(long ticks)
     {
-        // update states
-        prevState = State;
-
         base.UpdateInputs(ticks);
     }
 

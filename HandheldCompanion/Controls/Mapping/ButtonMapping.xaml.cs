@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,6 +9,7 @@ using ControllerCommon.Inputs;
 using ControllerCommon.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Simulators;
 using Inkore.UI.WPF.Modern.Controls;
@@ -19,8 +21,22 @@ namespace HandheldCompanion.Controls;
 /// </summary>
 public partial class ButtonMapping : IMapping
 {
+    private static List<Label> keyList = null;
+
     public ButtonMapping()
     {
+        // lazilly initialize
+        if (keyList is null)
+        {
+            keyList = new();
+            foreach (KeyFlags key in KeyFlagsOrder.arr)
+            {
+                // create a label, store VirtualKeyCode as Tag and Label as controller specific string
+                Label buttonLabel = new Label() { Tag = (VirtualKeyCode)key, Content = EnumUtils.GetDescriptionFromEnumValue(key) };
+                keyList.Add(buttonLabel);
+            }
+        }
+
         InitializeComponent();
     }
 
@@ -41,6 +57,11 @@ public partial class ButtonMapping : IMapping
             Icon.Foreground = newIcon.Foreground;
         else
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+    }
+
+    public void UpdateSelections()
+    {
+        Action_SelectionChanged(null, null);
     }
 
     public void SetIActions(IActions actions)
@@ -68,6 +89,7 @@ public partial class ButtonMapping : IMapping
             return;
 
         // clear current dropdown values
+        TargetComboBox.ItemsSource = null;
         TargetComboBox.Items.Clear();
         TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
@@ -104,6 +126,9 @@ public partial class ButtonMapping : IMapping
                 PressComboBox.SelectedIndex = (int)this.Actions.PressType;
             else
                 this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+
+            LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
+            Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
             PressComboBox.SelectedIndex = (int)this.Actions.PressType;
             Toggle_Turbo.IsOn = this.Actions.Turbo;
             Turbo_Slider.Value = this.Actions.TurboDelay;
@@ -114,21 +139,20 @@ public partial class ButtonMapping : IMapping
             if (Actions is null || Actions is not KeyboardActions)
                 Actions = new KeyboardActions();
 
-            foreach (VirtualKeyCode key in Enum.GetValues(typeof(VirtualKeyCode)))
-            {
-                // create a label, store VirtualKeyCode as Tag and Label as controller specific string
-                var buttonLabel = new Label { Tag = key, Content = KeyboardSimulator.GetVirtualKey(key) };
-                TargetComboBox.Items.Add(buttonLabel);
+            TargetComboBox.ItemsSource = keyList;
 
-                if (key.Equals(((KeyboardActions)Actions).Key))
-                    TargetComboBox.SelectedItem = buttonLabel;
-            }
+            foreach (var keyLabel in keyList)
+                if (keyLabel.Tag.Equals(((KeyboardActions)this.Actions).Key))
+                    TargetComboBox.SelectedItem = keyLabel;
 
             // settings
             if (TargetComboBox.SelectedItem is not null)
                 PressComboBox.SelectedIndex = (int)this.Actions.PressType;
             else
                 this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+
+            LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
+            Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
             PressComboBox.SelectedIndex = (int)this.Actions.PressType;
             Toggle_Turbo.IsOn = this.Actions.Turbo;
             Turbo_Slider.Value = this.Actions.TurboDelay;
@@ -164,6 +188,9 @@ public partial class ButtonMapping : IMapping
                 PressComboBox.SelectedIndex = (int)this.Actions.PressType;
             else
                 this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+
+            LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
+            Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
             PressComboBox.SelectedIndex = (int)this.Actions.PressType;
             Toggle_Turbo.IsOn = this.Actions.Turbo;
             Turbo_Slider.Value = this.Actions.TurboDelay;
@@ -223,6 +250,8 @@ public partial class ButtonMapping : IMapping
 
         this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
 
+        Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+
         base.Update();
     }
 
@@ -272,6 +301,16 @@ public partial class ButtonMapping : IMapping
             return;
 
         this.Actions.Toggle = Toggle_Toggle.IsOn;
+
+        base.Update();
+    }
+
+    private void LongPressDelaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        this.Actions.LongPressTime = (int)LongPressDelaySlider.Value;
 
         base.Update();
     }

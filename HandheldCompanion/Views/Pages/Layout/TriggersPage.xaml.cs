@@ -11,9 +11,9 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class TriggersPage : ILayoutPage
 {
-    public static List<ButtonFlags> LeftTrigger = new() { ButtonFlags.L2, ButtonFlags.L3 };
+    public static List<ButtonFlags> LeftTrigger = new() { ButtonFlags.L2Soft, ButtonFlags.L2Full };
     public static List<AxisLayoutFlags> LeftTriggerAxis = new() { AxisLayoutFlags.L2 };
-    public static List<ButtonFlags> RightTrigger = new() { ButtonFlags.R2, ButtonFlags.R3 };
+    public static List<ButtonFlags> RightTrigger = new() { ButtonFlags.R2Soft, ButtonFlags.R2Full };
     public static List<AxisLayoutFlags> RightTriggerAxis = new() { AxisLayoutFlags.R2 };
 
     public TriggersPage()
@@ -52,6 +52,19 @@ public partial class TriggersPage : ILayoutPage
 
             TriggerMappings.Add(axis, axisMapping);
         }
+    }
+
+    public override void UpdateController(IController controller)
+    {
+        base.UpdateController(controller);
+
+        bool leftTrigger = CheckController(controller, LeftTriggerAxis);
+        bool rightTrigger = CheckController(controller, RightTriggerAxis);
+
+        gridLeftTrigger.Visibility = leftTrigger ? Visibility.Visible : Visibility.Collapsed;
+        gridRightTrigger.Visibility = rightTrigger ? Visibility.Visible : Visibility.Collapsed;
+
+        enabled = leftTrigger || rightTrigger;
     }
 
     public TriggersPage(string Tag) : this()

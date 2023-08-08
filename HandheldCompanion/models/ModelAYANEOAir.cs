@@ -129,10 +129,10 @@ internal class ModelAYANEOAir : IModel
                         case ButtonFlags.DPadUp:
                         case ButtonFlags.DPadLeft:
                         case ButtonFlags.DPadRight:
-                        case ButtonFlags.L2:
-                        case ButtonFlags.R2:
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
+                        case ButtonFlags.L2Soft:
+                        case ButtonFlags.R2Soft:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
                         case ButtonFlags.OEM3:
                         case ButtonFlags.OEM4:
                             buttonMaterial = MaterialPlasticGreyDark;

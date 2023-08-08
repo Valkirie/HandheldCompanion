@@ -41,6 +41,11 @@ public partial class TriggerMapping : IMapping
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
     }
 
+    public void UpdateSelections()
+    {
+        Action_SelectionChanged(null, null);
+    }
+
     internal void SetIActions(IActions actions)
     {
         // reset and update mapping IActions

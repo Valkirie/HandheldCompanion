@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ControllerCommon.Actions;
 using ControllerCommon.Inputs;
 using ControllerCommon.Managers;
 using ControllerCommon.Utils;
@@ -12,12 +13,10 @@ using Inkore.UI.WPF.Modern.Controls;
 namespace ControllerCommon.Controllers;
 
 [Flags]
-public enum ControllerCapacities : ushort
+public enum ControllerCapabilities : ushort
 {
     None = 0,
-    Gyroscope = 1,
-    Accelerometer = 2,
-    Trackpad = 3
+    MotionSensor = 1
 }
 
 public abstract class IController
@@ -30,7 +29,7 @@ public abstract class IController
         ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
         ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
         ButtonFlags.L1, ButtonFlags.R1,
-        ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
+        ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
         // DS4
         ButtonFlags.LeftPadTouch, ButtonFlags.RightPadTouch,
         ButtonFlags.LeftPadClick, ButtonFlags.RightPadClick,
@@ -38,7 +37,7 @@ public abstract class IController
 
     public static readonly List<AxisLayoutFlags> TargetAxis = new()
     {
-        AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
+        AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
         AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         // DS4
         AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad,
@@ -46,7 +45,7 @@ public abstract class IController
 
     public static readonly string defaultGlyph = "\u2753";
 
-    public ControllerCapacities Capacities = ControllerCapacities.None;
+    public ControllerCapabilities Capabilities = ControllerCapabilities.None;
     protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
 
     protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = new();
@@ -67,7 +66,7 @@ public abstract class IController
     protected List<AxisLayoutFlags> SourceAxis = new()
     {
         // same as target, we assume all controllers have those axes
-        AxisLayoutFlags.LeftThumb, AxisLayoutFlags.RightThumb,
+        AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
         AxisLayoutFlags.L2, AxisLayoutFlags.R2
     };
 
@@ -80,11 +79,11 @@ public abstract class IController
         ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
         ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
         ButtonFlags.L1, ButtonFlags.R1,
-        ButtonFlags.LeftThumb, ButtonFlags.RightThumb,
+        ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
         // additional buttons calculated from the above
-        ButtonFlags.L2, ButtonFlags.R2, ButtonFlags.L3, ButtonFlags.R3,
-        ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown, ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight,
-        ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown, ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight
+        ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
+        ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown, ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight,
+        ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
     };
 
     // todo: make this a custom control !
@@ -140,19 +139,9 @@ public abstract class IController
         MovementsUpdated?.Invoke(Movements);
     }
 
-    public bool HasGyro()
+    public bool HasMotionSensor()
     {
-        return Capacities.HasFlag(ControllerCapacities.Gyroscope);
-    }
-
-    public bool HasAccelerometer()
-    {
-        return Capacities.HasFlag(ControllerCapacities.Accelerometer);
-    }
-
-    public bool HasTrackpad()
-    {
-        return Capacities.HasFlag(ControllerCapacities.Trackpad);
+        return Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
     }
 
     public bool IsVirtual()
@@ -238,8 +227,7 @@ public abstract class IController
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            ui_button_hook.IsEnabled = !IsPlugged();
-            ui_button_hook.Content = IsPlugged() ? "Connected" : "Connect";
+            ui_button_hook.Content = IsPlugged() ? "Disconnect" : "Connect";
             ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
         });
     }
@@ -291,6 +279,10 @@ public abstract class IController
     {
     }
 
+    // let the controller decide itself what motor to use for a specific button
+    public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
+    { }
+
     public virtual bool IsConnected()
     {
         return false;
@@ -306,11 +298,9 @@ public abstract class IController
         return isPlugged;
     }
 
+    // this function cannot be called twice
     public virtual void Plug()
     {
-        if (isPlugged)
-            return;
-
         isPlugged = true;
 
         InjectedButtons.Clear();
@@ -318,14 +308,17 @@ public abstract class IController
         RefreshControls();
     }
 
+    // this function cannot be called twice
     public virtual void Unplug()
     {
-        if (!isPlugged)
-            return;
-
         isPlugged = false;
 
         RefreshControls();
+    }
+
+    // like Unplug but one that can be safely called when controller is already removed
+    public virtual void Cleanup()
+    {
     }
 
     public bool IsHidden()
@@ -391,25 +384,25 @@ public abstract class IController
                 return "\u219E"; // Button X
             case ButtonFlags.DPadRight:
                 return "\u21A0"; // Button Y
-            case ButtonFlags.LeftThumb:
+            case ButtonFlags.LeftStickClick:
                 return "\u21BA";
-            case ButtonFlags.RightThumb:
+            case ButtonFlags.RightStickClick:
                 return "\u21BB";
-            case ButtonFlags.LeftThumbUp:
+            case ButtonFlags.LeftStickUp:
                 return "\u21BE";
-            case ButtonFlags.LeftThumbDown:
+            case ButtonFlags.LeftStickDown:
                 return "\u21C2";
-            case ButtonFlags.LeftThumbLeft:
+            case ButtonFlags.LeftStickLeft:
                 return "\u21BC";
-            case ButtonFlags.LeftThumbRight:
+            case ButtonFlags.LeftStickRight:
                 return "\u21C0";
-            case ButtonFlags.RightThumbUp:
+            case ButtonFlags.RightStickUp:
                 return "\u21BF";
-            case ButtonFlags.RightThumbDown:
+            case ButtonFlags.RightStickDown:
                 return "\u21C3";
-            case ButtonFlags.RightThumbLeft:
+            case ButtonFlags.RightStickLeft:
                 return "\u21BD";
-            case ButtonFlags.RightThumbRight:
+            case ButtonFlags.RightStickRight:
                 return "\u21C1";
             case ButtonFlags.OEM1:
                 return "\u2780";
@@ -461,9 +454,9 @@ public abstract class IController
     {
         switch (axis)
         {
-            case AxisLayoutFlags.LeftThumb:
+            case AxisLayoutFlags.LeftStick:
                 return "\u21CB";
-            case AxisLayoutFlags.RightThumb:
+            case AxisLayoutFlags.RightStick:
                 return "\u21CC";
         }
 

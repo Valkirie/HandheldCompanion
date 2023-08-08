@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandheldCompanion", "Handhe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hidapi.net", "hidapi.net\hidapi.net.csproj", "{9B860078-9AD1-45DD-8F85-E6D806E5DC9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "neptune-hidapi.net", "neptune-hidapi.net\neptune-hidapi.net.csproj", "{F7283783-81EF-4CD2-BD86-598FE193C11F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "steam-hidapi.net", "steam-hidapi.net\steam-hidapi.net.csproj", "{F7283783-81EF-4CD2-BD86-598FE193C11F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B860078-9AD1-45DD-8F85-E6D806E5DC9B} = {9B860078-9AD1-45DD-8F85-E6D806E5DC9B}
 	EndProjectSection

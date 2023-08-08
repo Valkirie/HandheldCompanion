@@ -1079,10 +1079,10 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="ControllerPage_SteamDeckMuteController" xml:space="preserve">
+  <data name="ControllerPage_SteamMuteController" xml:space="preserve">
     <value>Silenciar controle virtual</value>
   </data>
-  <data name="ControllerPage_SteamDeckMuteControllerDesc" xml:space="preserve">
+  <data name="ControllerPage_SteamMuteControllerDesc" xml:space="preserve">
     <value>Silenciar controle virutal em aplicações relacionadas ao Steam</value>
   </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
@@ -1370,10 +1370,10 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="ControllerPage_SteamDeckHDRumble" xml:space="preserve">
     <value>HD rumble (tremida)</value>
   </data>
-  <data name="ControllerPage_SteamDeckHDRumbleDesc" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Usar o motor de tremida de alta definição, ao custo de maior uso de CPU</value>
   </data>
-  <data name="ControllerPage_SteamDeckSettings" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
     <value>Configurações do Steam Deck</value>
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">

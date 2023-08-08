@@ -1078,10 +1078,10 @@
   <data name="XInputPlus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\XInputPlus.ini;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="ControllerPage_SteamDeckMuteController" xml:space="preserve">
+  <data name="ControllerPage_SteamMuteController" xml:space="preserve">
     <value>Silenciar controlador virtual</value>
   </data>
-  <data name="ControllerPage_SteamDeckMuteControllerDesc" xml:space="preserve">
+  <data name="ControllerPage_SteamMuteControllerDesc" xml:space="preserve">
     <value>Silenciar el controlador virtual en aplicaciones relacionadas con Steam</value>
   </data>
   <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
@@ -1300,7 +1300,7 @@
   <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
     <value>Physical controller is not hidden</value>
   </data>
-  <data name="ControllerPage_SteamDeckSettings" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
     <value>Steam Deck Settings</value>
   </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">
@@ -1540,7 +1540,7 @@
   <data name="ProfilesPage_EPPBalance" xml:space="preserve">
     <value>CPU/GPU power balance</value>
   </data>
-  <data name="ControllerPage_SteamDeckHDRumbleDesc" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
   </data>
   <data name="ProfilesPage_EPP" xml:space="preserve">

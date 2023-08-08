@@ -146,7 +146,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ControllerCommon\ControllerCommon.csproj" />
     <ProjectReference Include="..\ControllerService\ControllerService.csproj" />
-    <ProjectReference Include="..\neptune-hidapi.net\neptune-hidapi.net.csproj" />
+    <ProjectReference Include="..\steam-hidapi.net\steam-hidapi.net.csproj" />
   </ItemGroup>
 
   <ItemGroup>

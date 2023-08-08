@@ -65,6 +65,19 @@ public partial class TrackpadsPage : ILayoutPage
         }
     }
 
+    public override void UpdateController(IController controller)
+    {
+        base.UpdateController(controller);
+
+        bool leftPad = CheckController(controller, LeftAxis);
+        bool rightPad = CheckController(controller, RightAxis);
+
+        gridLeftPad.Visibility = leftPad ? Visibility.Visible : Visibility.Collapsed;
+        gridRightPad.Visibility = rightPad ? Visibility.Visible : Visibility.Collapsed;
+
+        enabled = leftPad || rightPad;
+    }
+
     public TrackpadsPage(string Tag) : this()
     {
         this.Tag = Tag;
