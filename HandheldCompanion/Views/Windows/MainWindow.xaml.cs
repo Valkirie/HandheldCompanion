@@ -505,6 +505,9 @@ public partial class MainWindow : GamepadWindow
                 serviceManager.DeleteService();
                 break;
             case "Exit":
+                if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+                    SwapWindowState();
+
                 appClosing = true;
                 Close();
                 break;
@@ -922,6 +925,7 @@ public partial class MainWindow : GamepadWindow
                     Close();
                     break;
                 case ContentDialogResult.Secondary:
+                    appClosing = false;
                     return;
             }
         }

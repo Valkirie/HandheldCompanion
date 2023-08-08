@@ -1080,16 +1080,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
     <value>Redémarrage requis</value>
   </data>
-  <data name="SettingsPage_AutoStartPrimary" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
     <value>Oui</value>
   </data>
-  <data name="SettingsPage_AutoStartSecondary" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
     <value>Non</value>
   </data>
-  <data name="SettingsPage_AutoStartText" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
     <value>Si vous désactivez ce paramètre, le paramètre "Amélioration de la détection du contrôleur virtuel" sera aussi désactivé. Voulez-vous continuer?</value>
   </data>
-  <data name="SettingsPage_AutoStartTitle" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
     <value>Avertissement</value>
   </data>
   <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">

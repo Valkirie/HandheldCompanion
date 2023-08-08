@@ -4421,7 +4421,43 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Controller is now cloaked and inputs forwarded to virtual controller.
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string SettingsPage_VirtualControllerForceOrderDependencyPrimary {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyPrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string SettingsPage_VirtualControllerForceOrderDependencySecondary {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencySecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
+        /// </summary>
+        public static string SettingsPage_VirtualControllerForceOrderDependencyText {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string SettingsPage_VirtualControllerForceOrderDependencyTitle {
+            get {
+                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller is now cloaked and inputs forwarded to virtual controller.
         /// </summary>
         public static string ToastNewControllerEx {
             get {

@@ -303,11 +303,11 @@ public partial class SettingsPage : Page
 
         if (!Toggle_AutoStart.IsOn && SettingsManager.GetBoolean("VirtualControllerForceOrder"))
         {
-            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_AutoStartTitle,
-                Properties.Resources.SettingsPage_AutoStartText,
+            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyTitle,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyText,
                 ContentDialogButton.Primary, null,
-                Properties.Resources.SettingsPage_AutoStartPrimary,
-                Properties.Resources.SettingsPage_AutoStartSecondary);
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyPrimary,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencySecondary);
 
             await result;
 
@@ -316,7 +316,6 @@ public partial class SettingsPage : Page
                 case ContentDialogResult.Primary:
                     SettingsManager.SetProperty("VirtualControllerForceOrder", false);
                     break;
-                case ContentDialogResult.Secondary:
                     Toggle_AutoStart.IsOn = true;
                     break;
             }
@@ -420,9 +419,13 @@ public partial class SettingsPage : Page
             }
         }
 
-        // force auto start to on when using this feature
+        // RunAtStartup and StartServiceWithCompanion required for this feature
         if (Toggle_ForceVirtualControllerOrder.IsOn)
+        {
             SettingsManager.SetProperty("RunAtStartup", true);
+            SettingsManager.SetProperty("StartServiceWithCompanion", true);
+        }
+            
 
         SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
@@ -555,10 +558,31 @@ public partial class SettingsPage : Page
         SettingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
     }
 
-    private void Toggle_ServiceStartup_Toggled(object? sender, RoutedEventArgs? e)
+    private async void Toggle_ServiceStartup_Toggled(object? sender, RoutedEventArgs? e)
     {
         if (!IsLoaded)
             return;
+
+        if (!Toggle_ServiceStartup.IsOn && SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+        {
+            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyTitle,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyText,
+                ContentDialogButton.Primary, null,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyPrimary,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencySecondary);
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    SettingsManager.SetProperty("VirtualControllerForceOrder", false);
+                    break;
+                case ContentDialogResult.Secondary:
+                    Toggle_ServiceStartup.IsOn = true;
+                    break;
+            }
+        }
 
         SettingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
     }

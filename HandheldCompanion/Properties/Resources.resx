@@ -1313,16 +1313,16 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
-  <data name="SettingsPage_AutoStartPrimary" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="SettingsPage_AutoStartSecondary" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_AutoStartText" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
     <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
   </data>
-  <data name="SettingsPage_AutoStartTitle" xml:space="preserve">
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
