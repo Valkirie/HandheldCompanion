@@ -530,8 +530,8 @@ public class DSUServer
             outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.R1] ? (byte)0xFF : (byte)0x00;
             outputData[++outIdx] = Inputs.ButtonState[ButtonFlags.L1] ? (byte)0xFF : (byte)0x00;
 
-            outputData[++outIdx] = (byte)Inputs.AxisState[AxisFlags.L2];
             outputData[++outIdx] = (byte)Inputs.AxisState[AxisFlags.R2];
+            outputData[++outIdx] = (byte)Inputs.AxisState[AxisFlags.L2];
 
             outIdx++;
 
