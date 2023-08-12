@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class LokiMax6600U : AynLoki
 {

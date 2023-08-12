@@ -45,37 +45,37 @@ public partial class OverlayTrackpad : OverlayWindow
             switch (name)
             {
                 case "OverlayTrackpadsSize":
-                {
-                    var size = Convert.ToInt32(value);
-                    LeftTrackpad.Width = size;
-                    RightTrackpad.Width = size;
-                    Height = size;
-                    HorizontalAlignment = HorizontalAlignment.Stretch;
-                }
+                    {
+                        var size = Convert.ToInt32(value);
+                        LeftTrackpad.Width = size;
+                        RightTrackpad.Width = size;
+                        Height = size;
+                        HorizontalAlignment = HorizontalAlignment.Stretch;
+                    }
                     break;
                 case "OverlayTrackpadsAlignment":
-                {
-                    var trackpadsAlignment = Convert.ToInt32(value);
-                    switch (trackpadsAlignment)
                     {
-                        case 0:
-                            VerticalAlignment = VerticalAlignment.Top;
-                            break;
-                        case 1:
-                            VerticalAlignment = VerticalAlignment.Center;
-                            break;
-                        case 2:
-                            VerticalAlignment = VerticalAlignment.Bottom;
-                            break;
+                        var trackpadsAlignment = Convert.ToInt32(value);
+                        switch (trackpadsAlignment)
+                        {
+                            case 0:
+                                VerticalAlignment = VerticalAlignment.Top;
+                                break;
+                            case 1:
+                                VerticalAlignment = VerticalAlignment.Center;
+                                break;
+                            case 2:
+                                VerticalAlignment = VerticalAlignment.Bottom;
+                                break;
+                        }
                     }
-                }
                     break;
                 case "OverlayTrackpadsOpacity":
-                {
-                    TrackpadOpacity = Convert.ToDouble(value);
-                    LeftTrackpad.Opacity = TrackpadOpacity;
-                    RightTrackpad.Opacity = TrackpadOpacity;
-                }
+                    {
+                        TrackpadOpacity = Convert.ToDouble(value);
+                        LeftTrackpad.Opacity = TrackpadOpacity;
+                        RightTrackpad.Opacity = TrackpadOpacity;
+                    }
                     break;
             }
         });
@@ -101,20 +101,20 @@ public partial class OverlayTrackpad : OverlayWindow
         {
             default:
             case CursorButton.TouchLeft:
-            {
-                point = args.GetTouchPoint(LeftTrackpad);
-                flags = leftInput.Flags;
+                {
+                    point = args.GetTouchPoint(LeftTrackpad);
+                    flags = leftInput.Flags;
 
-                leftInput.Timestamp = e.Timestamp;
-            }
+                    leftInput.Timestamp = e.Timestamp;
+                }
                 break;
             case CursorButton.TouchRight:
-            {
-                point = args.GetTouchPoint(RightTrackpad);
-                flags = rightInput.Flags;
+                {
+                    point = args.GetTouchPoint(RightTrackpad);
+                    flags = rightInput.Flags;
 
-                rightInput.Timestamp = e.Timestamp;
-            }
+                    rightInput.Timestamp = e.Timestamp;
+                }
                 break;
         }
 
@@ -141,14 +141,14 @@ public partial class OverlayTrackpad : OverlayWindow
         switch (name)
         {
             case "LeftTrackpad":
-            {
-                Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchLeft);
-            }
+                {
+                    Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchLeft);
+                }
                 break;
             case "RightTrackpad":
-            {
-                Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchRight);
-            }
+                {
+                    Trackpad_TouchInput(e, CursorAction.CursorMove, CursorButton.TouchRight);
+                }
                 break;
         }
 
@@ -162,32 +162,32 @@ public partial class OverlayTrackpad : OverlayWindow
         switch (name)
         {
             case "LeftTrackpad":
-            {
-                var elapsed = e.Timestamp - leftInput.Timestamp;
-                if (elapsed < 200)
-                    leftInput.Flags = 30;
+                {
+                    var elapsed = e.Timestamp - leftInput.Timestamp;
+                    if (elapsed < 200)
+                        leftInput.Flags = 30;
 
-                Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchLeft);
+                    Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchLeft);
 
-                LeftTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
+                    LeftTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
-                // send vibration (todo: make it a setting)
-                ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
-            }
+                    // send vibration (todo: make it a setting)
+                    ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
+                }
                 break;
             case "RightTrackpad":
-            {
-                var elapsed = e.Timestamp - rightInput.Timestamp;
-                if (elapsed < 200)
-                    rightInput.Flags = 30;
+                {
+                    var elapsed = e.Timestamp - rightInput.Timestamp;
+                    if (elapsed < 200)
+                        rightInput.Flags = 30;
 
-                Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchRight);
+                    Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchRight);
 
-                RightTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
+                    RightTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
-                // send vibration (todo: make it a setting)
-                ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
-            }
+                    // send vibration (todo: make it a setting)
+                    ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
+                }
                 break;
         }
 
@@ -201,18 +201,18 @@ public partial class OverlayTrackpad : OverlayWindow
         switch (name)
         {
             case "LeftTrackpad":
-            {
-                leftInput.Flags = 0;
-                Trackpad_TouchInput(e, CursorAction.CursorUp, CursorButton.TouchLeft);
-                LeftTrackpad.Opacity = TrackpadOpacity - TrackpadOpacityTouched;
-            }
+                {
+                    leftInput.Flags = 0;
+                    Trackpad_TouchInput(e, CursorAction.CursorUp, CursorButton.TouchLeft);
+                    LeftTrackpad.Opacity = TrackpadOpacity - TrackpadOpacityTouched;
+                }
                 break;
             case "RightTrackpad":
-            {
-                rightInput.Flags = 0;
-                Trackpad_TouchInput(e, CursorAction.CursorUp, CursorButton.TouchRight);
-                RightTrackpad.Opacity = TrackpadOpacity - TrackpadOpacityTouched;
-            }
+                {
+                    rightInput.Flags = 0;
+                    Trackpad_TouchInput(e, CursorAction.CursorUp, CursorButton.TouchRight);
+                    RightTrackpad.Opacity = TrackpadOpacity - TrackpadOpacityTouched;
+                }
                 break;
         }
 

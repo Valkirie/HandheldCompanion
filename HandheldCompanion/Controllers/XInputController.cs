@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -239,25 +238,32 @@ public class XInputController : IController
     [StructLayout(LayoutKind.Explicit)]
     protected struct XInputGamepad
     {
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(0)]
         public short wButtons;
 
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(2)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(2)]
         public byte bLeftTrigger;
 
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(3)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(3)]
         public byte bRightTrigger;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(4)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(4)]
         public short sThumbLX;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(6)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(6)]
         public short sThumbLY;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(8)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(8)]
         public short sThumbRX;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(10)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(10)]
         public short sThumbRY;
     }
 
@@ -272,13 +278,16 @@ public class XInputController : IController
     [StructLayout(LayoutKind.Explicit)]
     protected struct XInputCapabilities
     {
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(0)]
         private readonly byte Type;
 
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(1)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(1)]
         public byte SubType;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(2)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(2)]
         public short Flags;
 
         [FieldOffset(4)] public XInputGamepad Gamepad;

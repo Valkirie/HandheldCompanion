@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
 using static HandheldCompanion.WinAPI;
 

@@ -88,31 +88,35 @@ public abstract class IController
 
     // todo: make this a custom control !
     protected Border ui_border = new()
-        { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
+    { CornerRadius = new CornerRadius(4, 4, 4, 4), Padding = new Thickness(15, 12, 12, 12) };
 
     protected Button ui_button_hide = new()
     {
-        Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center,
+        Width = 100,
+        FontSize = 14,
+        VerticalAlignment = VerticalAlignment.Center,
         Style = Application.Current.FindResource("AccentButtonStyle") as Style
     };
 
     protected Button ui_button_hook = new()
     {
-        Width = 100, FontSize = 14, VerticalAlignment = VerticalAlignment.Center,
+        Width = 100,
+        FontSize = 14,
+        VerticalAlignment = VerticalAlignment.Center,
         Style = Application.Current.FindResource("AccentButtonStyle") as Style
     };
 
     protected SimpleStackPanel ui_dock_buttons = new()
-        { Spacing = 6, Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+    { Spacing = 6, Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
 
     protected DockPanel ui_dock_content = new() { HorizontalAlignment = HorizontalAlignment.Left };
     protected Grid ui_grid = new();
 
     protected FontIcon ui_icon = new()
-        { Glyph = "\uE7FC", Height = 40, HorizontalAlignment = HorizontalAlignment.Center };
+    { Glyph = "\uE7FC", Height = 40, HorizontalAlignment = HorizontalAlignment.Center };
 
     protected TextBlock ui_name = new()
-        { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 0, 0) };
+    { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(12, 0, 0, 0) };
 
     protected int UserIndex;
     protected double VibrationStrength = 1.0d;
@@ -330,7 +334,7 @@ public abstract class IController
         // get HidHideDevice
         HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
         if (hideDevice is not null)
-            foreach(HidHideSubDevice subDevice in hideDevice.Devices)
+            foreach (HidHideSubDevice subDevice in hideDevice.Devices)
                 HidHide.HidePath(subDevice.DeviceInstancePath);
 
         HidHide.HidePath(Details.deviceInstanceId);

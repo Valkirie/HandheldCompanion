@@ -286,71 +286,71 @@ public class SerialUSBIMU
         switch (SensorPlacement)
         {
             case SerialPlacement.Top:
-            {
-                AccelerationG.X = -AccTemp.X;
-
-                if (isUpsideDown)
-                {
-                    AccelerationG.X = AccTemp.X; // Intentionally undo previous
-                    AccelerationG.Y = -AccTemp.Y;
-
-                    AngularVelocityDeg.X = -AngVelTemp.X;
-                    AngularVelocityDeg.Y = -AngVelTemp.Y;
-                }
-            }
-                break;
-            case SerialPlacement.Right:
-            {
-                AccelerationG.X = AccTemp.Z;
-                AccelerationG.Z = AccTemp.X;
-
-                AngularVelocityDeg.X = -AngVelTemp.Z;
-                AngularVelocityDeg.Z = AngVelTemp.X;
-
-                if (isUpsideDown)
-                {
-                    AccelerationG.Y = -AccTemp.Y;
-                    AccelerationG.Z = -AccTemp.X;
-
-                    AngularVelocityDeg.Y = -AngVelTemp.Y;
-                    AngularVelocityDeg.Z = -AngVelTemp.X;
-                }
-            }
-                break;
-            case SerialPlacement.Bottom:
-            {
-                AccelerationG.Z = -AccTemp.Z;
-
-                AngularVelocityDeg.X = -AngVelTemp.X;
-                AngularVelocityDeg.Z = -AngVelTemp.Z;
-
-                if (isUpsideDown)
                 {
                     AccelerationG.X = -AccTemp.X;
-                    AccelerationG.Y = -AccTemp.Y;
 
-                    AngularVelocityDeg.X = AngVelTemp.X; // Intentionally undo previous
-                    AngularVelocityDeg.Y = -AngVelTemp.Y;
+                    if (isUpsideDown)
+                    {
+                        AccelerationG.X = AccTemp.X; // Intentionally undo previous
+                        AccelerationG.Y = -AccTemp.Y;
+
+                        AngularVelocityDeg.X = -AngVelTemp.X;
+                        AngularVelocityDeg.Y = -AngVelTemp.Y;
+                    }
                 }
-            }
                 break;
-            case SerialPlacement.Left:
-            {
-                AccelerationG.X = -AccTemp.Z;
-                AccelerationG.Z = -AccTemp.X;
-
-                AngularVelocityDeg.X = AngVelTemp.Z;
-                AngularVelocityDeg.Z = -AngVelTemp.X;
-
-                if (isUpsideDown)
+            case SerialPlacement.Right:
                 {
-                    AccelerationG.Y = -AccTemp.Y;
+                    AccelerationG.X = AccTemp.Z;
                     AccelerationG.Z = AccTemp.X;
 
-                    AngularVelocityDeg.Y = -AngVelTemp.Y;
+                    AngularVelocityDeg.X = -AngVelTemp.Z;
                     AngularVelocityDeg.Z = AngVelTemp.X;
+
+                    if (isUpsideDown)
+                    {
+                        AccelerationG.Y = -AccTemp.Y;
+                        AccelerationG.Z = -AccTemp.X;
+
+                        AngularVelocityDeg.Y = -AngVelTemp.Y;
+                        AngularVelocityDeg.Z = -AngVelTemp.X;
+                    }
                 }
-            }
+                break;
+            case SerialPlacement.Bottom:
+                {
+                    AccelerationG.Z = -AccTemp.Z;
+
+                    AngularVelocityDeg.X = -AngVelTemp.X;
+                    AngularVelocityDeg.Z = -AngVelTemp.Z;
+
+                    if (isUpsideDown)
+                    {
+                        AccelerationG.X = -AccTemp.X;
+                        AccelerationG.Y = -AccTemp.Y;
+
+                        AngularVelocityDeg.X = AngVelTemp.X; // Intentionally undo previous
+                        AngularVelocityDeg.Y = -AngVelTemp.Y;
+                    }
+                }
+                break;
+            case SerialPlacement.Left:
+                {
+                    AccelerationG.X = -AccTemp.Z;
+                    AccelerationG.Z = -AccTemp.X;
+
+                    AngularVelocityDeg.X = AngVelTemp.Z;
+                    AngularVelocityDeg.Z = -AngVelTemp.X;
+
+                    if (isUpsideDown)
+                    {
+                        AccelerationG.Y = -AccTemp.Y;
+                        AccelerationG.Z = AccTemp.X;
+
+                        AngularVelocityDeg.Y = -AngVelTemp.Y;
+                        AngularVelocityDeg.Z = AngVelTemp.X;
+                    }
+                }
                 break;
         }
     }

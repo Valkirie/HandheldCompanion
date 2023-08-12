@@ -64,7 +64,7 @@ namespace hidapi
                     if (_deviceHandle != IntPtr.Zero)
                         break;
 
-                next:
+                    next:
                     deviceInfo = hidDeviceInfo.NextDevicePtr;
                 }
 

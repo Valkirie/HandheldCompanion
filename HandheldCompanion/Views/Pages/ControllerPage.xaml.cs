@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -129,7 +126,7 @@ public partial class ControllerPage : Page
     private void ControllerPlugged(IController Controller, bool isHCVirtualController)
     {
         // we assume this is HC virtual controller
-        if(Controller.IsVirtual() && isHCVirtualController)
+        if (Controller.IsVirtual() && isHCVirtualController)
         {
             if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
             {

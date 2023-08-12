@@ -1,8 +1,5 @@
-﻿using HandheldCompanion.Managers;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Management;
-using System.Windows.Documents;
 
 namespace HandheldCompanion;
 
@@ -181,7 +178,7 @@ public static class MotherboardInfo
     public static string Processor
     {
         get
-        {           
+        {
             foreach (ManagementObject queryObj in processerSearcher.Get())
             {
                 var query = queryObj["Name"];
@@ -189,7 +186,7 @@ public static class MotherboardInfo
                 if (query is not null)
                     return query.ToString().TrimEnd();
             }
-            
+
             return string.Empty;
         }
     }

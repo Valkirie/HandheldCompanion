@@ -1,12 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using HandheldCompanion;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Managers;
@@ -137,32 +135,32 @@ public partial class ProcessEx : UserControl, IDisposable
             switch (MainThread.ThreadState)
             {
                 case ThreadState.Wait:
-                {
-                    // monitor if the process main thread was suspended or resumed
-                    if (MainThread.WaitReason != prevThreadWaitReason)
                     {
-                        prevThreadWaitReason = MainThread.WaitReason;
-
-                        switch (prevThreadWaitReason)
+                        // monitor if the process main thread was suspended or resumed
+                        if (MainThread.WaitReason != prevThreadWaitReason)
                         {
-                            case ThreadWaitReason.Suspended:
-                                SuspendToggle.IsOn = true;
-                                break;
+                            prevThreadWaitReason = MainThread.WaitReason;
 
-                            default:
-                                SuspendToggle.IsOn = false;
-                                break;
+                            switch (prevThreadWaitReason)
+                            {
+                                case ThreadWaitReason.Suspended:
+                                    SuspendToggle.IsOn = true;
+                                    break;
+
+                                default:
+                                    SuspendToggle.IsOn = false;
+                                    break;
+                            }
                         }
                     }
-                }
                     break;
 
                 case ThreadState.Terminated:
-                {
-                    // dispose from MainThread
-                    MainThread.Dispose();
-                    MainThread = null;
-                }
+                    {
+                        // dispose from MainThread
+                        MainThread.Dispose();
+                        MainThread = null;
+                    }
                     break;
             }
 
@@ -195,12 +193,12 @@ public partial class ProcessEx : UserControl, IDisposable
         switch (SuspendToggle.IsOn)
         {
             case true:
-            {
-                if (prevThreadWaitReason == ThreadWaitReason.Suspended)
-                    return;
+                {
+                    if (prevThreadWaitReason == ThreadWaitReason.Suspended)
+                        return;
 
-                ProcessManager.SuspendProcess(this);
-            }
+                    ProcessManager.SuspendProcess(this);
+                }
                 break;
             case false:
                 ProcessManager.ResumeProcess(this);

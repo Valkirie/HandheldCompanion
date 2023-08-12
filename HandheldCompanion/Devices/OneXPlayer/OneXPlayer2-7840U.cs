@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using WindowsInput.Events;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class OneXPlayer2_7840U : OneXPlayer2
 {

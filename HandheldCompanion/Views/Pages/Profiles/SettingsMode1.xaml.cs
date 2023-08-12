@@ -84,7 +84,7 @@ public partial class SettingsMode1 : Page
 
         if (updateLock)
             return;
-        
+
         ProfilesPage.currentProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
         ProfilesPage.RequestUpdate();
     }

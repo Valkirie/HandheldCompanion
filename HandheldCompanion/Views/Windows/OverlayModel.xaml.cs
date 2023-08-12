@@ -35,7 +35,7 @@ public partial class OverlayModel : OverlayWindow
     private HIDmode HIDmode;
 
     private ControllerState Inputs = new();
-    
+
     private OverlayModelMode Modelmode;
     public bool MotionActivated = true;
 

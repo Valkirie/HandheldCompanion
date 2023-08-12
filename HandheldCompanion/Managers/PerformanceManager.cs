@@ -119,16 +119,16 @@ public class PerformanceManager : Manager
         switch (name)
         {
             case "ConfigurableTDPOverrideDown":
-            {
-                TDPMin = Convert.ToDouble(value);
-                AutoTDP = (TDPMax + TDPMin) / 2.0d;
-            }
+                {
+                    TDPMin = Convert.ToDouble(value);
+                    AutoTDP = (TDPMax + TDPMin) / 2.0d;
+                }
                 break;
             case "ConfigurableTDPOverrideUp":
-            {
-                TDPMax = Convert.ToDouble(value);
-                AutoTDP = (TDPMax + TDPMin) / 2.0d;
-            }
+                {
+                    TDPMax = Convert.ToDouble(value);
+                    AutoTDP = (TDPMax + TDPMin) / 2.0d;
+                }
                 break;
         }
     }
@@ -697,7 +697,7 @@ public class PerformanceManager : Manager
         uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
         if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
             return;
-        
+
         LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
 
         // Set profile EPP
@@ -946,9 +946,9 @@ public class PerformanceManager : Manager
         switch (misc)
         {
             case "gfx_clk":
-            {
-                CurrentGfxClock = value;
-            }
+                {
+                    CurrentGfxClock = value;
+                }
                 break;
         }
     }

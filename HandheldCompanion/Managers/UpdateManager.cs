@@ -6,7 +6,6 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;

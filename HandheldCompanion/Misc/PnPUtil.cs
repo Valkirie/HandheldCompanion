@@ -7,7 +7,7 @@ namespace HandheldCompanion
     {
         public int ExitCode;
         public string StandardOutput;
-        
+
         public PnPUtilResult(int exitCode, string output)
         {
             ExitCode = exitCode;
@@ -27,7 +27,7 @@ namespace HandheldCompanion
             var pnpResult = StartPnPUtil($"/restart-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
-        public static bool EnableDevice(string InstanceId) 
+        public static bool EnableDevice(string InstanceId)
         {
             var pnpResult = StartPnPUtil($"/enable-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);

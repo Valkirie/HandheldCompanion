@@ -59,7 +59,7 @@ namespace HandheldCompanion.Managers
 
             //_currentWindow.IsVisibleChanged += _currentWindow_IsVisibleChanged;
 
-            _currentWindow.GotGamepadWindowFocus +=  _currentWindow_GotGamepadWindowFocus;
+            _currentWindow.GotGamepadWindowFocus += _currentWindow_GotGamepadWindowFocus;
             _currentWindow.LostGamepadWindowFocus += _currentWindow_LostGamepadWindowFocus;
 
             _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
@@ -69,7 +69,7 @@ namespace HandheldCompanion.Managers
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
             // start listening to inputs
-            switch(SettingsManager.GetBoolean("DesktopProfileOnStart"))
+            switch (SettingsManager.GetBoolean("DesktopProfileOnStart"))
             {
                 case true:
                     ControllerManager.InputsUpdated -= InputsUpdated;
@@ -149,7 +149,7 @@ namespace HandheldCompanion.Managers
                     case "DesktopLayoutEnabled":
                         {
                             var value = SettingsManager.GetBoolean(name, true);
-                            switch(value)
+                            switch (value)
                             {
                                 case true:
                                     ControllerManager.InputsUpdated -= InputsUpdated;
@@ -263,7 +263,7 @@ namespace HandheldCompanion.Managers
                     keyboardFocused = _currentWindow;
             }
 
-            if(keyboardFocused.Focusable)
+            if (keyboardFocused.Focusable)
             {
                 Control controlFocused = (Control)keyboardFocused;
 
@@ -369,7 +369,7 @@ namespace HandheldCompanion.Managers
                 {
                     // lazy
                     // todo: implement proper RoutedEvent call
-                     switch (elementType)
+                    switch (elementType)
                     {
                         case "Button":
                             WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
@@ -386,7 +386,7 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
-                                switch(focusedElement.Name)
+                                switch (focusedElement.Name)
                                 {
                                     // deprecated, used for ui:NavigationView.FooterMenuItem
                                     case "b_ServiceStart":
@@ -465,7 +465,7 @@ namespace HandheldCompanion.Managers
                         case "ComboBox":
                             {
                                 ComboBox comboBox = (ComboBox)focusedElement;
-                                switch(comboBox.IsDropDownOpen)
+                                switch (comboBox.IsDropDownOpen)
                                 {
                                     case true:
                                         comboBox.IsDropDownOpen = false;
@@ -529,7 +529,7 @@ namespace HandheldCompanion.Managers
                 // navigation
                 if (direction != WPFUtils.Direction.None)
                 {
-                    switch(elementType)
+                    switch (elementType)
                     {
                         case "NavigationViewItem":
                             {
@@ -558,7 +558,7 @@ namespace HandheldCompanion.Managers
 
                         case "ComboBoxItem":
                             {
-                                switch(direction)
+                                switch (direction)
                                 {
                                     case WPFUtils.Direction.Up:
                                         WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.UP);

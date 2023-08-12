@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using HandheldCompanion.Managers;
 using steam_hidapi.net;
@@ -108,7 +107,7 @@ public class NeptuneController : SteamController
 
         Inputs.ButtonState[ButtonFlags.L2Full] = L2 > Gamepad.TriggerThreshold * 8;
         Inputs.ButtonState[ButtonFlags.R2Full] = R2 > Gamepad.TriggerThreshold * 8;
-        
+
         Inputs.AxisState[AxisFlags.L2] = (short)L2;
         Inputs.AxisState[AxisFlags.R2] = (short)R2;
 

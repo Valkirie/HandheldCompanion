@@ -5,61 +5,61 @@ namespace steam_hidapi.net.Hid
 {
     internal enum SCPid : ushort
     {
-        WIRED     = 0x1102,
-        WIRELESS  = 0x1142,
+        WIRED = 0x1102,
+        WIRELESS = 0x1142,
         STEAMDECK = 0x1205,
     }
 
     internal enum SCEventType : byte
     {
-        INPUT_DATA      = 0x01,
-        CONNECT         = 0x03,
-        BATTERY         = 0x04,
+        INPUT_DATA = 0x01,
+        CONNECT = 0x03,
+        BATTERY = 0x04,
         DECK_INPUT_DATA = 0x09,
     }
 
     internal enum SCPacketType : byte
     {
         // linux kernel
-        CLEAR_MAPPINGS       = 0x81,
-        GET_MAPPINGS         = 0x82,
-        GET_ATTRIB           = 0x83,
-        GET_ATTRIB_LABEL     = 0x84,
-        DEFAULT_MAPPINGS     = 0x85,
-        FACTORY_RESET        = 0x86,
-        WRITE_REGISTER       = 0x87,
-        CLEAR_REGISTER       = 0x88,
-        READ_REGISTER        = 0x89,
-        GET_REGISTER_LABEL   = 0x8a,
-        GET_REGISTER_MAX     = 0x8b,
+        CLEAR_MAPPINGS = 0x81,
+        GET_MAPPINGS = 0x82,
+        GET_ATTRIB = 0x83,
+        GET_ATTRIB_LABEL = 0x84,
+        DEFAULT_MAPPINGS = 0x85,
+        FACTORY_RESET = 0x86,
+        WRITE_REGISTER = 0x87,
+        CLEAR_REGISTER = 0x88,
+        READ_REGISTER = 0x89,
+        GET_REGISTER_LABEL = 0x8a,
+        GET_REGISTER_MAX = 0x8b,
         GET_REGISTER_DEFAULT = 0x8c,
-        SET_MODE             = 0x8d,
-        DEFAULT_MOUSE        = 0x8e,
-        SET_HAPTIC           = 0x8f,
-        GET_SERIAL           = 0xae,
-        REQUEST_COMM_STATUS  = 0xb4,
-        HAPTIC_RUMBLE        = 0xeb,
+        SET_MODE = 0x8d,
+        DEFAULT_MOUSE = 0x8e,
+        SET_HAPTIC = 0x8f,
+        GET_SERIAL = 0xae,
+        REQUEST_COMM_STATUS = 0xb4,
+        HAPTIC_RUMBLE = 0xeb,
 
         // other sources
-        RESET                = 0x95,
-        OFF                  = 0x9f,
-        CALIBRATE_TRACKPAD   = 0xa7,
-        AUDIO                = 0xb6,
-        CALIBRATE_JOYSTICK   = 0xbf,
-        SET_AUDIO_INDICES    = 0xc1,
-        SET_HAPTIC2          = 0xea,
+        RESET = 0x95,
+        OFF = 0x9f,
+        CALIBRATE_TRACKPAD = 0xa7,
+        AUDIO = 0xb6,
+        CALIBRATE_JOYSTICK = 0xbf,
+        SET_AUDIO_INDICES = 0xc1,
+        SET_HAPTIC2 = 0xea,
     }
 
     internal enum SCRegister : byte
     {
-        LPAD_MODE           = 0x07,  // cursor keys, haptic on SD
-        RPAD_MODE           = 0x08,  // mouse
-        RPAD_MARGIN         = 0x18,  // dead margin, eliminating small movements, noise, on by default
-        LED_INTENSITY       = 0x2d,  // 0 - 100
-        UNKNOWN1            = 0x2e,  // seen in scc config packet, set to 0x00
-        GYRO_MODE           = 0x30,  // Gordon
-        UNKNOWN2            = 0x31,  // seen in scc config packet, set to 0x02
-        IDLE_TIMEOUT        = 0x32,  // in seconds
+        LPAD_MODE = 0x07,  // cursor keys, haptic on SD
+        RPAD_MODE = 0x08,  // mouse
+        RPAD_MARGIN = 0x18,  // dead margin, eliminating small movements, noise, on by default
+        LED_INTENSITY = 0x2d,  // 0 - 100
+        UNKNOWN1 = 0x2e,  // seen in scc config packet, set to 0x00
+        GYRO_MODE = 0x30,  // Gordon
+        UNKNOWN2 = 0x31,  // seen in scc config packet, set to 0x02
+        IDLE_TIMEOUT = 0x32,  // in seconds
         LPAD_CLICK_PRESSURE = 0x34,  // Neptune
         RPAD_CLICK_PRESSURE = 0x35,  // Neptune
     }
@@ -72,7 +72,7 @@ namespace steam_hidapi.net.Hid
 
     internal enum SCLizardMode : byte
     {
-        ON  = 0x00,
+        ON = 0x00,
         OFF = 0x07,
     }
 
@@ -97,47 +97,47 @@ namespace steam_hidapi.net.Hid
 
     internal enum GCGyroMode : byte
     {
-        NONE    = 0x00,
-        TILT_X  = 0x01,
-        TILT_Y  = 0x02,
-        Q       = 0x04,
-        ACCEL   = 0x08,
-        GYRO    = 0x10,
+        NONE = 0x00,
+        TILT_X = 0x01,
+        TILT_Y = 0x02,
+        Q = 0x04,
+        ACCEL = 0x08,
+        GYRO = 0x10,
     }
 
     internal enum GCButton0
     {
-        BTN_R2              = 0b00000001,
-        BTN_L2              = 0b00000010,
-        BTN_R1              = 0b00000100,
-        BTN_L1              = 0b00001000,
-        BTN_Y               = 0b00010000,
-        BTN_B               = 0b00100000,
-        BTN_X               = 0b01000000,
-        BTN_A               = 0b10000000,
+        BTN_R2 = 0b00000001,
+        BTN_L2 = 0b00000010,
+        BTN_R1 = 0b00000100,
+        BTN_L1 = 0b00001000,
+        BTN_Y = 0b00010000,
+        BTN_B = 0b00100000,
+        BTN_X = 0b01000000,
+        BTN_A = 0b10000000,
     }
 
     internal enum GCButton1
     {
-        BTN_DPAD_UP         = 0b00000001,
-        BTN_DPAD_RIGHT      = 0b00000010,
-        BTN_DPAD_LEFT       = 0b00000100,
-        BTN_DPAD_DOWN       = 0b00001000,
-        BTN_MENU            = 0b00010000,
-        BTN_STEAM           = 0b00100000,
-        BTN_OPTIONS         = 0b01000000,
-        BTN_L4              = 0b10000000,
+        BTN_DPAD_UP = 0b00000001,
+        BTN_DPAD_RIGHT = 0b00000010,
+        BTN_DPAD_LEFT = 0b00000100,
+        BTN_DPAD_DOWN = 0b00001000,
+        BTN_MENU = 0b00010000,
+        BTN_STEAM = 0b00100000,
+        BTN_OPTIONS = 0b01000000,
+        BTN_L4 = 0b10000000,
     }
 
     internal enum GCButton2
     {
-        BTN_R4              = 0b00000001,
-        BTN_LPAD_PRESS      = 0b00000010,
-        BTN_RPAD_PRESS      = 0b00000100,
-        BTN_LPAD_TOUCH      = 0b00001000,
-        BTN_RPAD_TOUCH      = 0b00010000,
-        BTN_LSTICK_PRESS    = 0b01000000,
-        BTN_LPAD_AND_JOY    = 0b10000000,
+        BTN_R4 = 0b00000001,
+        BTN_LPAD_PRESS = 0b00000010,
+        BTN_RPAD_PRESS = 0b00000100,
+        BTN_LPAD_TOUCH = 0b00001000,
+        BTN_RPAD_TOUCH = 0b00010000,
+        BTN_LSTICK_PRESS = 0b01000000,
+        BTN_LPAD_AND_JOY = 0b10000000,
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -186,54 +186,54 @@ namespace steam_hidapi.net.Hid
 
     internal enum NCButton0
     {
-        BTN_R2              = 0b00000001,
-        BTN_L2              = 0b00000010,
-        BTN_R1              = 0b00000100,
-        BTN_L1              = 0b00001000,
-        BTN_Y               = 0b00010000,
-        BTN_B               = 0b00100000,
-        BTN_X               = 0b01000000,
-        BTN_A               = 0b10000000,
+        BTN_R2 = 0b00000001,
+        BTN_L2 = 0b00000010,
+        BTN_R1 = 0b00000100,
+        BTN_L1 = 0b00001000,
+        BTN_Y = 0b00010000,
+        BTN_B = 0b00100000,
+        BTN_X = 0b01000000,
+        BTN_A = 0b10000000,
     }
 
     internal enum NCButton1
     {
-        BTN_DPAD_UP         = 0b00000001,
-        BTN_DPAD_RIGHT      = 0b00000010,
-        BTN_DPAD_LEFT       = 0b00000100,
-        BTN_DPAD_DOWN       = 0b00001000,
-        BTN_MENU            = 0b00010000,
-        BTN_STEAM           = 0b00100000,
-        BTN_OPTIONS         = 0b01000000,
-        BTN_L5              = 0b10000000,
+        BTN_DPAD_UP = 0b00000001,
+        BTN_DPAD_RIGHT = 0b00000010,
+        BTN_DPAD_LEFT = 0b00000100,
+        BTN_DPAD_DOWN = 0b00001000,
+        BTN_MENU = 0b00010000,
+        BTN_STEAM = 0b00100000,
+        BTN_OPTIONS = 0b01000000,
+        BTN_L5 = 0b10000000,
     }
 
     internal enum NCButton2
     {
-        BTN_R5              = 0b00000001,
-        BTN_LPAD_PRESS      = 0b00000010,
-        BTN_RPAD_PRESS      = 0b00000100,
-        BTN_LPAD_TOUCH      = 0b00001000,
-        BTN_RPAD_TOUCH      = 0b00010000,
-        BTN_LSTICK_PRESS    = 0b01000000,
+        BTN_R5 = 0b00000001,
+        BTN_LPAD_PRESS = 0b00000010,
+        BTN_RPAD_PRESS = 0b00000100,
+        BTN_LPAD_TOUCH = 0b00001000,
+        BTN_RPAD_TOUCH = 0b00010000,
+        BTN_LSTICK_PRESS = 0b01000000,
     }
 
     internal enum NCButton3
     {
-        BTN_RSTICK_PRESS    = 0b00000100,
+        BTN_RSTICK_PRESS = 0b00000100,
     }
 
     internal enum NCButton5
     {
-        BTN_L4              = 0b00000010,
-        BTN_R4              = 0b00000100,
-        BTN_LSTICK_TOUCH    = 0b01000000,
-        BTN_RSTICK_TOUCH    = 0b10000000,
+        BTN_L4 = 0b00000010,
+        BTN_R4 = 0b00000100,
+        BTN_LSTICK_TOUCH = 0b01000000,
+        BTN_RSTICK_TOUCH = 0b10000000,
     }
 
     internal enum NCButton6
     {
-        BTN_QUICK_ACCESS    = 0b00000100,
+        BTN_QUICK_ACCESS = 0b00000100,
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

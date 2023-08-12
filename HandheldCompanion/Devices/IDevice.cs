@@ -9,7 +9,6 @@ using HandheldCompanion.Inputs;
 using static HandheldCompanion.OneEuroFilter;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Sensors;
-using HandheldCompanion.Controllers;
 
 namespace HandheldCompanion.Devices;
 
@@ -154,154 +153,154 @@ public abstract class IDevice
                 }
                 break;
             case "AOKZOE":
-            {
-                switch (ProductName)
                 {
-                    case "AOKZOE A1 AR07":
-                        device = new AOKZOEA1();
-                        break;
-                    case "AOKZOE A1 Pro":
-                        device = new AOKZOEA1Pro();
-                        break;
+                    switch (ProductName)
+                    {
+                        case "AOKZOE A1 AR07":
+                            device = new AOKZOEA1();
+                            break;
+                        case "AOKZOE A1 Pro":
+                            device = new AOKZOEA1Pro();
+                            break;
                     }
-            }
+                }
                 break;
             case "AYADEVICE":
             case "AYANEO":
-            {
-                switch (ProductName)
                 {
-                    case "AIR":
-                        device = new AYANEOAIR();
-                        break;
-                    case "AIR Pro":
-                        device = new AYANEOAIRPro();
-                        break;
-                    case "AIR Lite":
-                        device = new AYANEOAIRLite();
-                        break;
-                    case "AYA NEO FOUNDER":
-                    case "AYANEO 2021":
-                        device = new AYANEO2021();
-                        break;
-                    case "AYANEO 2021 Pro":
-                    case "AYANEO 2021 Pro Retro Power":
-                        device = new AYANEO2021Pro();
-                        break;
-                    case "NEXT Pro":
-                    case "NEXT Advance":
-                    case "NEXT":
-                        device = new AYANEONEXT();
-                        break;
-                    case "AYANEO 2":
-                    case "GEEK":
-                        device = new AYANEO2();
-                        break;
-                    case "AB05-AMD":
-                        device = new AYANEOAIRPlus();
-                        break;
-                    case "AYANEO 2S":
-                    case "GEEK 1S":
-                        device = new AYANEO2S();
-                        break;
+                    switch (ProductName)
+                    {
+                        case "AIR":
+                            device = new AYANEOAIR();
+                            break;
+                        case "AIR Pro":
+                            device = new AYANEOAIRPro();
+                            break;
+                        case "AIR Lite":
+                            device = new AYANEOAIRLite();
+                            break;
+                        case "AYA NEO FOUNDER":
+                        case "AYANEO 2021":
+                            device = new AYANEO2021();
+                            break;
+                        case "AYANEO 2021 Pro":
+                        case "AYANEO 2021 Pro Retro Power":
+                            device = new AYANEO2021Pro();
+                            break;
+                        case "NEXT Pro":
+                        case "NEXT Advance":
+                        case "NEXT":
+                            device = new AYANEONEXT();
+                            break;
+                        case "AYANEO 2":
+                        case "GEEK":
+                            device = new AYANEO2();
+                            break;
+                        case "AB05-AMD":
+                            device = new AYANEOAIRPlus();
+                            break;
+                        case "AYANEO 2S":
+                        case "GEEK 1S":
+                            device = new AYANEO2S();
+                            break;
+                    }
                 }
-            }
                 break;
 
             case "GPD":
-            {
-                switch (ProductName)
                 {
-                    case "WIN2":
-                        device = new GPDWin2();
-                        break;
-                    case "G1618-03":
-                        device = new GPDWin3();
-                        break;
-                    case "G1618-04":
-                        device = new GPDWin4();
-                        break;
-                    case "G1619-03":
-                        device = new GPDWinMax2Intel();
-                        break;
-                    case "G1619-04":
-                        device = new GPDWinMax2AMD();
-                        break;
+                    switch (ProductName)
+                    {
+                        case "WIN2":
+                            device = new GPDWin2();
+                            break;
+                        case "G1618-03":
+                            device = new GPDWin3();
+                            break;
+                        case "G1618-04":
+                            device = new GPDWin4();
+                            break;
+                        case "G1619-03":
+                            device = new GPDWinMax2Intel();
+                            break;
+                        case "G1619-04":
+                            device = new GPDWinMax2AMD();
+                            break;
+                    }
                 }
-            }
                 break;
 
             case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
             case "ONE-NETBOOK":
-            {
-                switch (ProductName)
                 {
-                    case "ONE XPLAYER":
-                    case "ONEXPLAYER Mini Pro":
+                    switch (ProductName)
                     {
-                        switch (Version)
-                        {
-                            default:
-                            case "V01":
-                                device = new OneXPlayerMiniAMD();
+                        case "ONE XPLAYER":
+                        case "ONEXPLAYER Mini Pro":
+                            {
+                                switch (Version)
+                                {
+                                    default:
+                                    case "V01":
+                                        device = new OneXPlayerMiniAMD();
+                                        break;
+                                    case "1002-C":
+                                        device = new OneXPlayerMiniIntel();
+                                        break;
+                                    case "V03":
+                                        device = new OneXPlayerMiniPro();
+                                        break;
+                                }
                                 break;
-                            case "1002-C":
-                                device = new OneXPlayerMiniIntel();
+                            }
+                        case "ONEXPLAYER mini A07":
+                            device = new OneXPlayerMiniAMD();
+                            break;
+                        case "ONEXPLAYER 2 ARP23":
+                            {
+                                switch (Version)
+                                {
+                                    default:
+                                    case "Ver.1.0":
+                                        device = new OneXPlayer2();
+                                        break;
+                                }
                                 break;
-                            case "V03":
-                                device = new OneXPlayerMiniPro();
-                                break;
-                        }
-                        break;
+                            }
+                        case "ONEXPLAYER 2 PRO ARP23P EVA-01":
+                            switch (Version)
+                            {
+                                default:
+                                case "Version 1.0":
+                                    device = new OneXPlayer2_7840U();
+                                    break;
+                            }
+                            break;
                     }
-                    case "ONEXPLAYER mini A07":
-                        device = new OneXPlayerMiniAMD();
-                        break;
-                    case "ONEXPLAYER 2 ARP23":
-                    {
-                        switch (Version)
-                        {
-                            default:
-                            case "Ver.1.0":
-                                device = new OneXPlayer2();
-                                break;
-                        }
-                        break;
-                    }
-                    case "ONEXPLAYER 2 PRO ARP23P EVA-01":
-                        switch (Version)
-                        {
-                            default:
-                            case "Version 1.0":
-                                device = new OneXPlayer2_7840U();
-                                break;
-                        }
-                    break;
                 }
-            }
                 break;
 
             case "ASUSTEK COMPUTER INC.":
-            {
-                switch (ProductName)
                 {
-                    // Todo, figure out if theres a diff between Z1 and Z1 extreme versions
-                    case "RC71L":
-                        device = new ROGAlly();
-                        break;
+                    switch (ProductName)
+                    {
+                        // Todo, figure out if theres a diff between Z1 and Z1 extreme versions
+                        case "RC71L":
+                            device = new ROGAlly();
+                            break;
+                    }
                 }
-            }
                 break;
 
             case "VALVE":
-            {
-                switch (ProductName)
                 {
-                    case "Jupiter":
-                        device = new SteamDeck();
-                        break;
+                    switch (ProductName)
+                    {
+                        case "Jupiter":
+                            device = new SteamDeck();
+                            break;
+                    }
                 }
-            }
                 break;
         }
 

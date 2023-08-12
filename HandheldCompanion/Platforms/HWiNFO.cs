@@ -269,157 +269,157 @@ public class HWiNFO : IPlatform
                     switch (element.tReading)
                     {
                         case SENSOR_READING_TYPE.SENSOR_TYPE_TEMP:
-                        {
-                            switch (element.szLabelOrig)
                             {
-                                case "CPU Package":
-                                case "CPU (Tctl/Tdie)":
-                                    MonitoredSensors[SensorElementType.CPUTemperature] = element;
-                                    break;
+                                switch (element.szLabelOrig)
+                                {
+                                    case "CPU Package":
+                                    case "CPU (Tctl/Tdie)":
+                                        MonitoredSensors[SensorElementType.CPUTemperature] = element;
+                                        break;
 
-                                case "CPU GT Cores (Graphics)":
-                                case "GPU Temperature":
-                                    MonitoredSensors[SensorElementType.GPUTemperature] = element;
-                                    break;
+                                    case "CPU GT Cores (Graphics)":
+                                    case "GPU Temperature":
+                                        MonitoredSensors[SensorElementType.GPUTemperature] = element;
+                                        break;
+                                }
                             }
-                        }
                             break;
 
                         case SENSOR_READING_TYPE.SENSOR_TYPE_POWER:
-                        {
-                            switch (element.szLabelOrig)
                             {
-                                case "CPU Package Power":
-                                case "CPU PPT":
-                                    MonitoredSensors[SensorElementType.CPUPower] = element;
-                                    break;
-
-                                case "PL1 Power Limit":
-                                // case "PL1 Power Limit (Static)":
-                                case "PL1 Power Limit (Dynamic)":
+                                switch (element.szLabelOrig)
                                 {
-                                    var reading = (int)Math.Ceiling(element.Value);
-                                    if (reading != MonitoredSensors[SensorElementType.PL1].Value)
-                                        PowerLimitChanged?.Invoke(PowerType.Slow, reading);
+                                    case "CPU Package Power":
+                                    case "CPU PPT":
+                                        MonitoredSensors[SensorElementType.CPUPower] = element;
+                                        break;
 
-                                    element.Value = reading;
-                                    MonitoredSensors[SensorElementType.PL1] = element;
+                                    case "PL1 Power Limit":
+                                    // case "PL1 Power Limit (Static)":
+                                    case "PL1 Power Limit (Dynamic)":
+                                        {
+                                            var reading = (int)Math.Ceiling(element.Value);
+                                            if (reading != MonitoredSensors[SensorElementType.PL1].Value)
+                                                PowerLimitChanged?.Invoke(PowerType.Slow, reading);
+
+                                            element.Value = reading;
+                                            MonitoredSensors[SensorElementType.PL1] = element;
+                                        }
+                                        break;
+                                    case "PL2 Power Limit":
+                                    // case "PL2 Power Limit (Static)":
+                                    case "PL2 Power Limit (Dynamic)":
+                                        {
+                                            var reading = (int)Math.Ceiling(element.Value);
+                                            if (reading != MonitoredSensors[SensorElementType.PL2].Value)
+                                                PowerLimitChanged?.Invoke(PowerType.Fast, reading);
+
+                                            element.Value = reading;
+                                            MonitoredSensors[SensorElementType.PL2] = element;
+                                        }
+                                        break;
+
+                                    case "GPU ASIC Power":
+                                    case "GT Cores Power":
+                                    case "GPU SoC Power (VDDCR_SOC)":
+                                    case "GPU PPT":
+                                        MonitoredSensors[SensorElementType.GPUPower] = element;
+                                        break;
                                 }
-                                    break;
-                                case "PL2 Power Limit":
-                                // case "PL2 Power Limit (Static)":
-                                case "PL2 Power Limit (Dynamic)":
-                                {
-                                    var reading = (int)Math.Ceiling(element.Value);
-                                    if (reading != MonitoredSensors[SensorElementType.PL2].Value)
-                                        PowerLimitChanged?.Invoke(PowerType.Fast, reading);
-
-                                    element.Value = reading;
-                                    MonitoredSensors[SensorElementType.PL2] = element;
-                                }
-                                    break;
-
-                                case "GPU ASIC Power":
-                                case "GT Cores Power":
-                                case "GPU SoC Power (VDDCR_SOC)":
-                                case "GPU PPT":
-                                    MonitoredSensors[SensorElementType.GPUPower] = element;
-                                    break;
                             }
-                        }
                             break;
 
                         case SENSOR_READING_TYPE.SENSOR_TYPE_USAGE:
-                        {
-                            switch (element.szLabelOrig)
                             {
-                                case "GPU Utilization":
-                                case "GPU D3D Usage":
-                                    MonitoredSensors[SensorElementType.GPUUsage] = element;
-                                    break;
-
-                                case "Total CPU Usage":
-                                    MonitoredSensors[SensorElementType.CPUUsage] = element;
-                                    break;
-
-                                case "CPU PPT SLOW Limit":
+                                switch (element.szLabelOrig)
                                 {
-                                    var reading = (int)Math.Floor(MonitoredSensors[SensorElementType.CPUPower].Value /
-                                        element.Value * 100.0d);
-                                    if (reading != MonitoredSensors[SensorElementType.PL1].Value)
-                                        PowerLimitChanged?.Invoke(PowerType.Slow, reading);
+                                    case "GPU Utilization":
+                                    case "GPU D3D Usage":
+                                        MonitoredSensors[SensorElementType.GPUUsage] = element;
+                                        break;
 
-                                    element.Value = reading;
-                                    MonitoredSensors[SensorElementType.PL1] = element;
-                                }
-                                    break;
-                                case "CPU PPT FAST Limit":
-                                {
-                                    var reading = (int)Math.Floor(MonitoredSensors[SensorElementType.CPUPower].Value /
-                                        element.Value * 100.0d);
-                                    if (reading != MonitoredSensors[SensorElementType.PL2].Value)
-                                        PowerLimitChanged?.Invoke(PowerType.Fast, reading);
+                                    case "Total CPU Usage":
+                                        MonitoredSensors[SensorElementType.CPUUsage] = element;
+                                        break;
 
-                                    element.Value = reading;
-                                    MonitoredSensors[SensorElementType.PL2] = element;
+                                    case "CPU PPT SLOW Limit":
+                                        {
+                                            var reading = (int)Math.Floor(MonitoredSensors[SensorElementType.CPUPower].Value /
+                                                element.Value * 100.0d);
+                                            if (reading != MonitoredSensors[SensorElementType.PL1].Value)
+                                                PowerLimitChanged?.Invoke(PowerType.Slow, reading);
+
+                                            element.Value = reading;
+                                            MonitoredSensors[SensorElementType.PL1] = element;
+                                        }
+                                        break;
+                                    case "CPU PPT FAST Limit":
+                                        {
+                                            var reading = (int)Math.Floor(MonitoredSensors[SensorElementType.CPUPower].Value /
+                                                element.Value * 100.0d);
+                                            if (reading != MonitoredSensors[SensorElementType.PL2].Value)
+                                                PowerLimitChanged?.Invoke(PowerType.Fast, reading);
+
+                                            element.Value = reading;
+                                            MonitoredSensors[SensorElementType.PL2] = element;
+                                        }
+                                        break;
                                 }
-                                    break;
                             }
-                        }
                             break;
 
                         case SENSOR_READING_TYPE.SENSOR_TYPE_CLOCK:
-                        {
-                            switch (element.szLabelOrig)
                             {
-                                case "GPU Clock":
-                                case "GPU SoC Clock": // keep me ?
+                                switch (element.szLabelOrig)
                                 {
-                                    var reading = element.Value;
-                                    if (reading != MonitoredSensors[SensorElementType.GPUFrequency].Value)
-                                        GPUFrequencyChanged?.Invoke(reading);
+                                    case "GPU Clock":
+                                    case "GPU SoC Clock": // keep me ?
+                                        {
+                                            var reading = element.Value;
+                                            if (reading != MonitoredSensors[SensorElementType.GPUFrequency].Value)
+                                                GPUFrequencyChanged?.Invoke(reading);
 
-                                    MonitoredSensors[SensorElementType.GPUFrequency] = element;
-                                }
-                                    break;
+                                            MonitoredSensors[SensorElementType.GPUFrequency] = element;
+                                        }
+                                        break;
 
-                                case "Core 0 Clock":
-                                case "Core 1 Clock":
-                                case "Core 2 Clock":
-                                case "Core 3 Clock":
-                                case "Core 4 Clock":
-                                case "Core 5 Clock":
-                                case "Core 6 Clock":
-                                case "Core 7 Clock":
-                                case "Core 8 Clock":
-                                case "Core 9 Clock":
-                                case "Core 10 Clock":
-                                case "Core 11 Clock":
-                                case "Core 12 Clock":
-                                case "Core 13 Clock":
-                                case "Core 14 Clock":
-                                case "Core 15 Clock":
-                                case "Core 16 Clock":
-                                case "Core 17 Clock":
-                                case "Core 18 Clock": // improve me (lol)
-                                {
-                                    // we'll keep the highest known frequency right now
-                                    if (element.Value > MonitoredSensors[SensorElementType.CPUFrequency].Value)
-                                        MonitoredSensors[SensorElementType.CPUFrequency] = element;
+                                    case "Core 0 Clock":
+                                    case "Core 1 Clock":
+                                    case "Core 2 Clock":
+                                    case "Core 3 Clock":
+                                    case "Core 4 Clock":
+                                    case "Core 5 Clock":
+                                    case "Core 6 Clock":
+                                    case "Core 7 Clock":
+                                    case "Core 8 Clock":
+                                    case "Core 9 Clock":
+                                    case "Core 10 Clock":
+                                    case "Core 11 Clock":
+                                    case "Core 12 Clock":
+                                    case "Core 13 Clock":
+                                    case "Core 14 Clock":
+                                    case "Core 15 Clock":
+                                    case "Core 16 Clock":
+                                    case "Core 17 Clock":
+                                    case "Core 18 Clock": // improve me (lol)
+                                        {
+                                            // we'll keep the highest known frequency right now
+                                            if (element.Value > MonitoredSensors[SensorElementType.CPUFrequency].Value)
+                                                MonitoredSensors[SensorElementType.CPUFrequency] = element;
+                                        }
+                                        break;
                                 }
-                                    break;
                             }
-                        }
                             break;
 
                         case SENSOR_READING_TYPE.SENSOR_TYPE_VOLT:
-                        {
-                        }
+                            {
+                            }
                             break;
 
                         case SENSOR_READING_TYPE.SENSOR_TYPE_OTHER:
-                        {
-                        }
+                            {
+                            }
                             break;
                     }
 

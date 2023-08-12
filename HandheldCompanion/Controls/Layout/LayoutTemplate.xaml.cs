@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using HandheldCompanion;
 using HandheldCompanion.Actions;
 
 using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using Newtonsoft.Json;
 using HandheldCompanion.Inputs;
@@ -69,8 +67,8 @@ public partial class LayoutTemplate : UserControl, IComparable
         switch (Name)
         {
             case "Desktop":
-            {
-                Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
+                {
+                    Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                 {
                     {
                         AxisLayoutFlags.LeftStick,
@@ -90,7 +88,7 @@ public partial class LayoutTemplate : UserControl, IComparable
                     }
                 };
 
-                Layout.ButtonLayout = new()
+                    Layout.ButtonLayout = new()
                 {
                     { ButtonFlags.B1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.RETURN } } },
                     { ButtonFlags.B2, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.ESCAPE } } },
@@ -114,21 +112,21 @@ public partial class LayoutTemplate : UserControl, IComparable
                     { ButtonFlags.LeftPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
                     { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
                 };
-            }
+                }
                 break;
 
             case "Gamepad (Nintendo)":
-            {
-                Layout.ButtonLayout[ButtonFlags.B1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B2 } };
-                Layout.ButtonLayout[ButtonFlags.B2] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B1 } };
-                Layout.ButtonLayout[ButtonFlags.B3] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B4 } };
-                Layout.ButtonLayout[ButtonFlags.B4] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B3 } };
-            }
+                {
+                    Layout.ButtonLayout[ButtonFlags.B1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B2 } };
+                    Layout.ButtonLayout[ButtonFlags.B2] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B1 } };
+                    Layout.ButtonLayout[ButtonFlags.B3] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B4 } };
+                    Layout.ButtonLayout[ButtonFlags.B4] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B3 } };
+                }
                 break;
 
             case "Keyboard (WASD) and Mouse":
-            {
-                Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
+                {
+                    Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                 {
                     {
                         AxisLayoutFlags.RightStick,
@@ -140,7 +138,7 @@ public partial class LayoutTemplate : UserControl, IComparable
                     }
                 };
 
-                Layout.ButtonLayout = new()
+                    Layout.ButtonLayout = new()
                 {
                     { ButtonFlags.B1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.SPACE } } },
                     { ButtonFlags.B2, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_E } } },
@@ -176,19 +174,19 @@ public partial class LayoutTemplate : UserControl, IComparable
 
                     { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
                 };
-            }
+                }
                 break;
 
             case "Gamepad with Mouse Trackpad":
-            {
-                Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
-            }
+                {
+                    Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
+                }
                 break;
 
             case "Gamepad with Joystick Trackpad":
-            {
-                Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightStick };
-            }
+                {
+                    Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightStick };
+                }
                 break;
         }
     }

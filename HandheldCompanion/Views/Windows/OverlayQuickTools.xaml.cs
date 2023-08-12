@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Navigation;
 using Windows.System.Power;
 using HandheldCompanion.Utils;
@@ -25,10 +23,7 @@ using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using Control = System.Windows.Controls.Control;
 using HandheldCompanion.Views.Classes;
-using HandheldCompanion;
-using System.Diagnostics;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -118,15 +113,15 @@ public partial class OverlayQuickTools : GamepadWindow
             switch (name)
             {
                 case "QuickToolsLocation":
-                {
-                    var QuickToolsLocation = Convert.ToInt32(value);
-                    UpdateLocation(QuickToolsLocation);
-                }
+                    {
+                        var QuickToolsLocation = Convert.ToInt32(value);
+                        UpdateLocation(QuickToolsLocation);
+                    }
                     break;
                 case "QuickToolsAutoHide":
-                {
-                    AutoHide = Convert.ToBoolean(value);
-                }
+                    {
+                        AutoHide = Convert.ToBoolean(value);
+                    }
                     break;
             }
         });
@@ -144,39 +139,39 @@ public partial class OverlayQuickTools : GamepadWindow
         {
             // top, left
             case 0:
-            {
-                this.SetWindowPosition(WindowPositions.TopLeft, Screen.PrimaryScreen);
-                Top += Margin.Top;
-                Left += Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.TopLeft, Screen.PrimaryScreen);
+                    Top += Margin.Top;
+                    Left += Margin.Left;
+                }
                 break;
 
             // top, right
             case 1:
-            {
-                this.SetWindowPosition(WindowPositions.TopRight, Screen.PrimaryScreen);
-                Top += Margin.Top;
-                Left -= Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.TopRight, Screen.PrimaryScreen);
+                    Top += Margin.Top;
+                    Left -= Margin.Left;
+                }
                 break;
 
             // bottom, left
             case 2:
-            {
-                this.SetWindowPosition(WindowPositions.BottomLeft, Screen.PrimaryScreen);
-                Top -= Margin.Top;
-                Left += Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.BottomLeft, Screen.PrimaryScreen);
+                    Top -= Margin.Top;
+                    Left += Margin.Left;
+                }
                 break;
 
             // bottom, right
             default:
             case 3:
-            {
-                this.SetWindowPosition(WindowPositions.BottomRight, Screen.PrimaryScreen);
-                Top -= Margin.Top;
-                Left -= Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.BottomRight, Screen.PrimaryScreen);
+                    Top -= Margin.Top;
+                    Left -= Margin.Left;
+                }
                 break;
         }
 
@@ -202,15 +197,15 @@ public partial class OverlayQuickTools : GamepadWindow
                     KeyStatus = "Charging";
                     break;
                 default:
-                {
-                    var energy = SystemPowerManager.EnergySaverStatus;
-                    switch (energy)
                     {
-                        case EnergySaverStatus.On:
-                            KeyStatus = "Saver";
-                            break;
+                        var energy = SystemPowerManager.EnergySaverStatus;
+                        switch (energy)
+                        {
+                            case EnergySaverStatus.On:
+                                KeyStatus = "Saver";
+                                break;
+                        }
                     }
-                }
                     break;
             }
 

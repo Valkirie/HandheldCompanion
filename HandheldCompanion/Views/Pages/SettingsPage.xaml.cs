@@ -116,39 +116,39 @@ public partial class SettingsPage : Page
             switch (name)
             {
                 case "MainWindowTheme":
-                {
-                    cB_Theme.SelectedIndex = Convert.ToInt32(value);
+                    {
+                        cB_Theme.SelectedIndex = Convert.ToInt32(value);
 
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_Theme_SelectionChanged(this, null);
-                }
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Theme_SelectionChanged(this, null);
+                    }
                     break;
                 case "MainWindowBackdrop":
-                {
-                    cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
+                    {
+                        cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
 
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_Backdrop_SelectionChanged(this, null);
-                }
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Backdrop_SelectionChanged(this, null);
+                    }
                     break;
                 case "QuicktoolsBackdrop":
-                {
-                    cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
+                    {
+                        cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
 
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_QuickToolsBackdrop_SelectionChanged(this, null);
-                }
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_QuickToolsBackdrop_SelectionChanged(this, null);
+                    }
                     break;
                 case "SensorSelection":
-                {
-                    var idx = Convert.ToInt32(value);
-
-                    // default value
-                    if (idx == -1)
                     {
+                        var idx = Convert.ToInt32(value);
+
+                        // default value
+                        if (idx == -1)
+                        {
                             if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
                             {
                                 SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
@@ -162,15 +162,15 @@ public partial class SettingsPage : Page
                                 SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
                             }
 
-                        return;
+                            return;
+                        }
+
+                        cB_SensorSelection.SelectedIndex = idx;
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_SensorSelection_SelectionChanged(this, null);
                     }
-
-                    cB_SensorSelection.SelectedIndex = idx;
-
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_SensorSelection_SelectionChanged(this, null);
-                }
                     break;
                 case "RunAtStartup":
                     Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
@@ -287,7 +287,7 @@ public partial class SettingsPage : Page
 
             await result;
 
-            switch(result.Result)
+            switch (result.Result)
             {
                 case ContentDialogResult.Primary:
                     SettingsManager.SetProperty("VirtualControllerForceOrder", false);
@@ -371,7 +371,7 @@ public partial class SettingsPage : Page
         {
             SettingsManager.SetProperty("RunAtStartup", true);
         }
-            
+
 
         SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
@@ -396,96 +396,96 @@ public partial class SettingsPage : Page
                 case UpdateStatus.Failed: // lazy ?
                 case UpdateStatus.Updated:
                 case UpdateStatus.Initialized:
-                {
-                    if (updateFile is not null)
                     {
-                        updateFile.updateDownload.Visibility = Visibility.Visible;
+                        if (updateFile is not null)
+                        {
+                            updateFile.updateDownload.Visibility = Visibility.Visible;
 
-                        updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                        updateFile.updateInstall.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
-                        LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked +
-                                               MainWindow.updateManager.GetTime();
+                            updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                            updateFile.updateInstall.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
+                            LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked +
+                                                   MainWindow.updateManager.GetTime();
 
-                        LabelUpdateDate.Visibility = Visibility.Visible;
-                        GridUpdateSymbol.Visibility = Visibility.Visible;
-                        ProgressBarUpdate.Visibility = Visibility.Collapsed;
-                        B_CheckUpdate.IsEnabled = true;
+                            LabelUpdateDate.Visibility = Visibility.Visible;
+                            GridUpdateSymbol.Visibility = Visibility.Visible;
+                            ProgressBarUpdate.Visibility = Visibility.Collapsed;
+                            B_CheckUpdate.IsEnabled = true;
+                        }
                     }
-                }
                     break;
 
                 case UpdateStatus.Checking:
-                {
-                    LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
+                    {
+                        LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
 
-                    GridUpdateSymbol.Visibility = Visibility.Collapsed;
-                    LabelUpdateDate.Visibility = Visibility.Collapsed;
-                    ProgressBarUpdate.Visibility = Visibility.Visible;
-                    B_CheckUpdate.IsEnabled = false;
-                }
+                        GridUpdateSymbol.Visibility = Visibility.Collapsed;
+                        LabelUpdateDate.Visibility = Visibility.Collapsed;
+                        ProgressBarUpdate.Visibility = Visibility.Visible;
+                        B_CheckUpdate.IsEnabled = false;
+                    }
                     break;
 
                 case UpdateStatus.Ready:
-                {
-                    ProgressBarUpdate.Visibility = Visibility.Collapsed;
-
-                    var updateFiles = (Dictionary<string, UpdateFile>)value;
-                    LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateAvailable;
-
-                    foreach (var update in updateFiles.Values)
                     {
-                        var border = update.Draw();
+                        ProgressBarUpdate.Visibility = Visibility.Collapsed;
 
-                        // Set download button action
-                        update.updateDownload.Click += (sender, e) =>
+                        var updateFiles = (Dictionary<string, UpdateFile>)value;
+                        LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateAvailable;
+
+                        foreach (var update in updateFiles.Values)
                         {
-                            MainWindow.updateManager.DownloadUpdateFile(update);
-                        };
+                            var border = update.Draw();
 
-                        // Set button action
-                        update.updateInstall.Click += (sender, e) =>
-                        {
-                            MainWindow.updateManager.InstallUpdate(update);
-                        };
+                            // Set download button action
+                            update.updateDownload.Click += (sender, e) =>
+                            {
+                                MainWindow.updateManager.DownloadUpdateFile(update);
+                            };
 
-                        CurrentUpdates.Children.Add(border);
+                            // Set button action
+                            update.updateInstall.Click += (sender, e) =>
+                            {
+                                MainWindow.updateManager.InstallUpdate(update);
+                            };
+
+                            CurrentUpdates.Children.Add(border);
+                        }
                     }
-                }
                     break;
 
                 case UpdateStatus.Changelog:
-                {
-                    CurrentChangelog.Visibility = Visibility.Visible;
-                    CurrentChangelog.AppendText((string)value);
-                }
+                    {
+                        CurrentChangelog.Visibility = Visibility.Visible;
+                        CurrentChangelog.AppendText((string)value);
+                    }
                     break;
 
                 case UpdateStatus.Download:
-                {
-                    updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                    updateFile.updatePercentage.Visibility = Visibility.Visible;
-                }
+                    {
+                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                        updateFile.updatePercentage.Visibility = Visibility.Visible;
+                    }
                     break;
 
                 case UpdateStatus.Downloading:
-                {
-                    var progress = (int)value;
-                    updateFile.updatePercentage.Text =
-                        Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
-                }
+                    {
+                        var progress = (int)value;
+                        updateFile.updatePercentage.Text =
+                            Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
+                    }
                     break;
 
                 case UpdateStatus.Downloaded:
-                {
-                    updateFile.updateInstall.Visibility = Visibility.Visible;
+                    {
+                        updateFile.updateInstall.Visibility = Visibility.Visible;
 
-                    updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                    updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                }
+                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                        updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                    }
                     break;
             }
         });
@@ -705,11 +705,11 @@ public partial class SettingsPage : Page
     private void UpdateUI_SensorPlacement(int? SensorPlacement)
     {
         foreach (SimpleStackPanel panel in Grid_SensorPlacementVisualisation.Children)
-        foreach (Button button in panel.Children)
-            if (int.Parse((string)button.Tag) == SensorPlacement)
-                button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
-            else
-                button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+            foreach (Button button in panel.Children)
+                if (int.Parse((string)button.Tag) == SensorPlacement)
+                    button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                else
+                    button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
     }
 
     private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, RoutedEventArgs? e)

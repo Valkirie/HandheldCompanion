@@ -151,7 +151,7 @@ public static class ProcessManager
         return Processes.Values.Where(a => a.Executable.Equals(executable, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
     }
-    
+
     private static void ForegroundCallback(object? sender, EventArgs e)
     {
         IntPtr hWnd = GetforegroundWindow();
@@ -299,18 +299,18 @@ public static class ProcessManager
         {
             // handheld companion
             case "handheldcompanion.exe":
-            {
-                /* if (!string.IsNullOrEmpty(MainWindowTitle))
                 {
-                    switch (MainWindowTitle)
+                    /* if (!string.IsNullOrEmpty(MainWindowTitle))
                     {
-                        case "QuickTools":
-                            return ProcessFilter.HandheldCompanion;
-                    }
-                } */
+                        switch (MainWindowTitle)
+                        {
+                            case "QuickTools":
+                                return ProcessFilter.HandheldCompanion;
+                        }
+                    } */
 
-                return ProcessFilter.HandheldCompanion;
-            }
+                    return ProcessFilter.HandheldCompanion;
+                }
 
             case "rw.exe": // Used to change TDP
             case "kx.exe": // Used to change TDP

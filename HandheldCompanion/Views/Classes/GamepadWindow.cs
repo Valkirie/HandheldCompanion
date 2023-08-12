@@ -44,12 +44,12 @@ namespace HandheldCompanion.Views.Classes
             LostGamepadWindowFocus?.Invoke();
         }
 
-#region events
+        #region events
         public event GotGamepadWindowFocusEventHandler GotGamepadWindowFocus;
         public delegate void GotGamepadWindowFocusEventHandler();
 
         public event LostGamepadWindowFocusEventHandler LostGamepadWindowFocus;
         public delegate void LostGamepadWindowFocusEventHandler();
-#endregion
+        #endregion
     }
 }

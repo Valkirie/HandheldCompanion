@@ -132,11 +132,11 @@ public partial class OverlayPage : Page
     private void UpdateUI_ControllerPosition(int controllerAlignment)
     {
         foreach (SimpleStackPanel panel in OverlayControllerAlignment.Children)
-        foreach (Button button in panel.Children)
-            if (int.Parse((string)button.Tag) == controllerAlignment)
-                button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
-            else
-                button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+            foreach (Button button in panel.Children)
+                if (int.Parse((string)button.Tag) == controllerAlignment)
+                    button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                else
+                    button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
 
         switch (controllerAlignment)
         {

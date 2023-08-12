@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using HandheldCompanion;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Force.Crc32;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 using static HandheldCompanion.Utils.ProcessUtils;
 using System.IO.MemoryMappedFiles;
@@ -18,7 +16,6 @@ using static HandheldCompanion.Utils.XInputPlusUtils;
 using System.ComponentModel;
 using System.Threading;
 using HandheldCompanion.Controls;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion;
 
@@ -103,19 +100,19 @@ public static class XInputPlus
     // this should be handled by the installer at some point.
     public static void ExtractXInputPlusLibraries()
     {
-        if(!Directory.Exists(XInputPlusDir))
+        if (!Directory.Exists(XInputPlusDir))
             Directory.CreateDirectory(XInputPlusDir);
 
         if (!Directory.Exists(XInputPlus_InjectorDir))
             Directory.CreateDirectory(XInputPlus_InjectorDir);
 
-        if(!Directory.Exists(XInputPlus_x86Dir))
-            Directory.CreateDirectory (XInputPlus_x86Dir);
+        if (!Directory.Exists(XInputPlus_x86Dir))
+            Directory.CreateDirectory(XInputPlus_x86Dir);
 
         if (!Directory.Exists(XInputPlus_x64Dir))
             Directory.CreateDirectory(XInputPlus_x64Dir);
 
-        if(!File.Exists(XInputPlus_Injectorx86))
+        if (!File.Exists(XInputPlus_Injectorx86))
             File.WriteAllBytes(XInputPlus_Injectorx86, Resources.XInputPlusInjector);
 
         if (!File.Exists(XInputPlus_Injectorx64))
@@ -146,7 +143,7 @@ public static class XInputPlus
             WriteXInputPlusINI(XInputPlus_InjectorDir);
             InjectXInputPlus(processEx.Process);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             LogManager.LogError("Error when injecting XInputPlus to {0}: {1}", processEx.Name, ex.Message);
         }
@@ -301,13 +298,13 @@ public static class XInputPlus
             else
             {
                 // clean up XInputPlus files
-                if(dllexist)
+                if (dllexist)
                     File.Delete(XInputPlusDLLTargetPath);
             }
         }
 
         // remove XInputPlus INI file
-        if(File.Exists(IniPath))
+        if (File.Exists(IniPath))
             File.Delete(IniPath);
     }
 

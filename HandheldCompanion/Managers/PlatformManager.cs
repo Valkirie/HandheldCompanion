@@ -2,9 +2,6 @@
 using System.Diagnostics;
 using System.Timers;
 using System.Windows;
-using HandheldCompanion;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms;
 
 namespace HandheldCompanion.Managers;
@@ -93,30 +90,30 @@ public static class PlatformManager
             switch (name)
             {
                 case "OnScreenDisplayLevel":
-                {
-                    var level = Convert.ToInt16(value);
-
-                    switch (level)
                     {
-                        case 0:
-                            CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
-                            CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                            break;
-                        default:
-                        case 1:
-                            CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                            CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                            break;
-                        case 2:
-                        case 3:
-                            CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                            CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
-                            break;
-                    }
+                        var level = Convert.ToInt16(value);
 
-                    UpdateTimer.Stop();
-                    UpdateTimer.Start();
-                }
+                        switch (level)
+                        {
+                            case 0:
+                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
+                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                                break;
+                            default:
+                            case 1:
+                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                                break;
+                            case 2:
+                            case 3:
+                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
+                                break;
+                        }
+
+                        UpdateTimer.Stop();
+                        UpdateTimer.Start();
+                    }
                     break;
             }
         });

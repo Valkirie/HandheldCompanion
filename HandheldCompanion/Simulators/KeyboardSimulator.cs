@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
@@ -87,7 +86,7 @@ public static class KeyboardSimulator
             keybd_event(modifierVk, modifierScan, KEYEVENTF_KEYUP, UIntPtr.Zero);
         }
     }
-    
+
     public static void KeyDown(VirtualKeyCode key)
     {
         try

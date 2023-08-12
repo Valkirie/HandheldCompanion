@@ -50,12 +50,12 @@ public class IMUGyrometer : IMUSensor
         switch (sensorFamily)
         {
             case SensorFamily.Windows:
-            {
-                ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
+                {
+                    ((Gyrometer)sensor).ReportInterval = (uint)updateInterval;
 
-                LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", ToString(),
-                    sensorFamily.ToString(), updateInterval);
-            }
+                    LogManager.LogInformation("{0} initialised as a {1}. Report interval set to {2}ms", ToString(),
+                        sensorFamily.ToString(), updateInterval);
+                }
                 break;
             case SensorFamily.SerialUSBIMU:
                 LogManager.LogInformation("{0} initialised as a {1}. Baud rate set to {2}", ToString(),
@@ -107,13 +107,13 @@ public class IMUGyrometer : IMUSensor
         switch (sensorFamily)
         {
             case SensorFamily.Controller:
-            {
-                reading.X = reading_fixed.X = GyroRoll;
-                reading.Y = reading_fixed.Y = GyroPitch;
-                reading.Z = reading_fixed.Z = GyroYaw;
+                {
+                    reading.X = reading_fixed.X = GyroRoll;
+                    reading.Y = reading_fixed.Y = GyroPitch;
+                    reading.Z = reading_fixed.Z = GyroYaw;
 
-                base.ReadingChanged();
-            }
+                    base.ReadingChanged();
+                }
                 break;
         }
     }

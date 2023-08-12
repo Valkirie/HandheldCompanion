@@ -687,7 +687,7 @@ public partial class MainWindow : GamepadWindow
             return;
         }
 
-        if(SettingsManager.GetBoolean("VirtualControllerForceOrder") && !CloseOverride)
+        if (SettingsManager.GetBoolean("VirtualControllerForceOrder") && !CloseOverride)
         {
             // we have to cancel closing the window to be able to prompt the user
             e.Cancel = true;

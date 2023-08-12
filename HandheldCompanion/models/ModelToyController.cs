@@ -18,7 +18,7 @@ internal class ModelToyController : IModel
     private readonly Model3DGroup B4Letter;
     private readonly Model3DGroup B4LetterInside1;
     private readonly Model3DGroup B4LetterInside2;
-    
+
     private readonly Model3DGroup DPadDown4;
     private readonly Model3DGroup DPadLeft1;
     private readonly Model3DGroup DPadRight3;

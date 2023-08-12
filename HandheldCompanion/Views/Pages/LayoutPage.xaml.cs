@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-using HandheldCompanion.Devices;
 
 using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using Inkore.UI.WPF.Modern.Controls;
-using Layout = HandheldCompanion.Layout;
 using Page = System.Windows.Controls.Page;
 using HandheldCompanion.Inputs;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -32,7 +28,7 @@ public partial class LayoutPage : Page
 
     // page vars
     private Dictionary<string, (ILayoutPage, NavigationViewItem)> pages;
-    private readonly ButtonsPage buttonsPage = new();    
+    private readonly ButtonsPage buttonsPage = new();
     private readonly DpadPage dpadPage = new();
     private readonly GyroPage gyroPage = new();
     private readonly JoysticksPage joysticksPage = new();
@@ -355,22 +351,22 @@ public partial class LayoutPage : Page
         switch (result.Result)
         {
             case ContentDialogResult.Primary:
-            {
-                // do not overwrite currentTemplate and currentTemplate.Layout as a whole
-                // because they both have important Update notifitications set
-                var newLayout = layoutTemplate.Layout.Clone() as Layout;
-                currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
-                currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
-                currentTemplate.Name = layoutTemplate.Name;
-                currentTemplate.Description = layoutTemplate.Description;
-                currentTemplate.Guid = layoutTemplate.Guid; // not needed
+                {
+                    // do not overwrite currentTemplate and currentTemplate.Layout as a whole
+                    // because they both have important Update notifitications set
+                    var newLayout = layoutTemplate.Layout.Clone() as Layout;
+                    currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
+                    currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
+                    currentTemplate.Name = layoutTemplate.Name;
+                    currentTemplate.Description = layoutTemplate.Description;
+                    currentTemplate.Guid = layoutTemplate.Guid; // not needed
 
-                UpdatePages();
+                    UpdatePages();
 
-                // the whole layout has been updated without notification, trigger one
-                currentTemplate.Layout.UpdateLayout();
-                UpdatePages();
-            }
+                    // the whole layout has been updated without notification, trigger one
+                    currentTemplate.Layout.UpdateLayout();
+                    UpdatePages();
+                }
                 break;
         }
     }

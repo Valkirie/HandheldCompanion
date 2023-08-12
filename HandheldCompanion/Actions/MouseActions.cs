@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Misc;
 using HandheldCompanion.Simulators;
 using System;
 using System.ComponentModel;

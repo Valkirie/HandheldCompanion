@@ -120,10 +120,10 @@ public partial class TriggerMapping : IMapping
         switch (Actions.ActionType)
         {
             case ActionType.Trigger:
-            {
-                var buttonLabel = TargetComboBox.SelectedItem as Label;
-                ((TriggerActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
-            }
+                {
+                    var buttonLabel = TargetComboBox.SelectedItem as Label;
+                    ((TriggerActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
+                }
                 break;
         }
 

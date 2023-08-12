@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using HandheldCompanion;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-
-using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
@@ -243,17 +239,17 @@ internal static class LayoutManager
         switch (name)
         {
             case "DesktopLayoutEnabled":
-            {
-                switch (Convert.ToBoolean(value))
                 {
-                    case true:
-                        SetActiveLayout(desktopLayout);
-                        break;
-                    case false:
-                        SetActiveLayout(profileLayout);
-                        break;
+                    switch (Convert.ToBoolean(value))
+                    {
+                        case true:
+                            SetActiveLayout(desktopLayout);
+                            break;
+                        case false:
+                            SetActiveLayout(profileLayout);
+                            break;
+                    }
                 }
-            }
                 break;
         }
     }

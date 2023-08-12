@@ -92,7 +92,7 @@ public static class SystemManager
         }
         catch { }
     }
-    
+
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
     {
         VolumeNotification?.Invoke(data.MasterVolume * 100.0f);
@@ -130,57 +130,57 @@ public static class SystemManager
         switch (name)
         {
             case "NativeDisplayOrientation":
-            {
-                var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
+                {
+                    var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
 
-                if (!IsInitialized)
-                    return;
+                    if (!IsInitialized)
+                        return;
 
-                var oldOrientation = ScreenOrientation.rotation;
-                ScreenOrientation = new ScreenRotation(ScreenOrientation.rotationUnnormalized, nativeOrientation);
+                    var oldOrientation = ScreenOrientation.rotation;
+                    ScreenOrientation = new ScreenRotation(ScreenOrientation.rotationUnnormalized, nativeOrientation);
 
-                if (oldOrientation != ScreenOrientation.rotation)
-                    // Though the real orientation didn't change, raise event because the interpretation of it changed
-                    DisplayOrientationChanged?.Invoke(ScreenOrientation);
-            }
+                    if (oldOrientation != ScreenOrientation.rotation)
+                        // Though the real orientation didn't change, raise event because the interpretation of it changed
+                        DisplayOrientationChanged?.Invoke(ScreenOrientation);
+                }
                 break;
             case "QuietModeEnabled":
-            {
-                var enabled = Convert.ToBoolean(value);
-                var toggled = SettingsManager.GetBoolean("QuietModeToggled");
+                {
+                    var enabled = Convert.ToBoolean(value);
+                    var toggled = SettingsManager.GetBoolean("QuietModeToggled");
 
-                if (!enabled && toggled)
-                    SettingsManager.SetProperty("QuietModeToggled", false);
-            }
+                    if (!enabled && toggled)
+                        SettingsManager.SetProperty("QuietModeToggled", false);
+                }
                 break;
             case "QuietModeToggled":
-            {
-                var toggled = Convert.ToBoolean(value);
+                {
+                    var toggled = Convert.ToBoolean(value);
 
-                // do not send command to device on startup if toggle is off
-                if (!SettingsManager.IsInitialized && !toggled)
-                    return;
+                    // do not send command to device on startup if toggle is off
+                    if (!SettingsManager.IsInitialized && !toggled)
+                        return;
 
-                MainWindow.CurrentDevice.SetFanControl(toggled);
+                    MainWindow.CurrentDevice.SetFanControl(toggled);
 
-                if (!toggled)
-                    return;
+                    if (!toggled)
+                        return;
 
-                var duty = SettingsManager.GetDouble("QuietModeDuty");
-                MainWindow.CurrentDevice.SetFanDuty(duty);
-            }
+                    var duty = SettingsManager.GetDouble("QuietModeDuty");
+                    MainWindow.CurrentDevice.SetFanDuty(duty);
+                }
                 break;
             case "QuietModeDuty":
-            {
-                var enabled = SettingsManager.GetBoolean("QuietModeEnabled");
-                var toggled = SettingsManager.GetBoolean("QuietModeToggled");
+                {
+                    var enabled = SettingsManager.GetBoolean("QuietModeEnabled");
+                    var toggled = SettingsManager.GetBoolean("QuietModeToggled");
 
-                if (!enabled || !toggled)
-                    return;
+                    if (!enabled || !toggled)
+                        return;
 
-                var duty = Convert.ToDouble(value);
-                MainWindow.CurrentDevice.SetFanDuty(duty);
-            }
+                    var duty = Convert.ToDouble(value);
+                    MainWindow.CurrentDevice.SetFanDuty(duty);
+                }
                 break;
         }
     }
@@ -190,32 +190,32 @@ public static class SystemManager
         switch (listener)
         {
             case "increaseBrightness":
-            {
-                var stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
-                var brightness = stepRoundDn * 5 + 5;
-                SetBrightness(brightness);
-            }
+                {
+                    var stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
+                    var brightness = stepRoundDn * 5 + 5;
+                    SetBrightness(brightness);
+                }
                 break;
             case "decreaseBrightness":
-            {
-                var stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
-                var brightness = stepRoundUp * 5 - 5;
-                SetBrightness(brightness);
-            }
+                {
+                    var stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
+                    var brightness = stepRoundUp * 5 - 5;
+                    SetBrightness(brightness);
+                }
                 break;
             case "increaseVolume":
-            {
-                var stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
-                var volume = stepRoundDn * 5 + 5;
-                SetVolume(volume);
-            }
+                {
+                    var stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
+                    var volume = stepRoundDn * 5 + 5;
+                    SetVolume(volume);
+                }
                 break;
             case "decreaseVolume":
-            {
-                var stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
-                var volume = stepRoundUp * 5 - 5;
-                SetVolume(volume);
-            }
+                {
+                    var stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
+                    var volume = stepRoundUp * 5 - 5;
+                    SetVolume(volume);
+                }
                 break;
         }
     }

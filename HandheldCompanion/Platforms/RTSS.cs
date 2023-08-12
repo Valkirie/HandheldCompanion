@@ -7,12 +7,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using HandheldCompanion;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using RTSSSharedMemoryNET;
 using Timer = System.Timers.Timer;
@@ -188,7 +185,7 @@ public class RTSS : IPlatform
             {
                 return;
             }
-            catch {}
+            catch { }
 
             await Task.Delay(1000);
         } while (appEntry is null && ProcessManager.HasProcess(ProcessId) && KeepAlive);

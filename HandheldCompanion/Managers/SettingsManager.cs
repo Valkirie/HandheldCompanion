@@ -56,10 +56,10 @@ public static class SettingsManager
     public static void SetProperty(string name, object value, bool force = false, bool temporary = false)
     {
         var prevValue = GetProperty(name, temporary);
-        
-        if(prevValue is not null)
+
+        if (prevValue is not null)
         {
-            switch(prevValue.GetType().Name)
+            switch (prevValue.GetType().Name)
             {
                 case "StringCollection":
                     if (prevValue.Equals(value) && !force)
@@ -122,52 +122,52 @@ public static class SettingsManager
         switch (name)
         {
             case "ConfigurableTDPOverrideDown":
-            {
-                var TDPoverride = GetBoolean("ConfigurableTDPOverride");
+                {
+                    var TDPoverride = GetBoolean("ConfigurableTDPOverride");
 
-                var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideDown"]);
-                return TDPoverride
-                    ? Properties.Settings.Default["ConfigurableTDPOverrideDown"]
-                    : MainWindow.CurrentDevice.cTDP[0];
-            }
+                    var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideDown"]);
+                    return TDPoverride
+                        ? Properties.Settings.Default["ConfigurableTDPOverrideDown"]
+                        : MainWindow.CurrentDevice.cTDP[0];
+                }
 
             case "ConfigurableTDPOverrideUp":
-            {
-                var TDPoverride = GetBoolean("ConfigurableTDPOverride");
+                {
+                    var TDPoverride = GetBoolean("ConfigurableTDPOverride");
 
-                var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideUp"]);
-                return TDPoverride
-                    ? Properties.Settings.Default["ConfigurableTDPOverrideUp"]
-                    : MainWindow.CurrentDevice.cTDP[1];
-            }
+                    var TDPvalue = Convert.ToDouble(Properties.Settings.Default["ConfigurableTDPOverrideUp"]);
+                    return TDPoverride
+                        ? Properties.Settings.Default["ConfigurableTDPOverrideUp"]
+                        : MainWindow.CurrentDevice.cTDP[1];
+                }
 
             case "QuickToolsPerformanceTDPValue":
-            {
-                var TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
+                {
+                    var TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
 
-                var TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPValue"]);
-                return TDPvalue != 0
-                    ? Properties.Settings.Default["QuickToolsPerformanceTDPValue"]
-                    : MainWindow.CurrentDevice.nTDP[(int)PowerType.Slow];
-            }
+                    var TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPValue"]);
+                    return TDPvalue != 0
+                        ? Properties.Settings.Default["QuickToolsPerformanceTDPValue"]
+                        : MainWindow.CurrentDevice.nTDP[(int)PowerType.Slow];
+                }
 
             case "QuickToolsPerformanceTDPBoostValue":
-            {
-                var TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
+                {
+                    var TDPoverride = GetBoolean("QuickToolsPerformanceTDPEnabled");
 
-                var TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]);
-                return TDPvalue != 0
-                    ? Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]
-                    : MainWindow.CurrentDevice.nTDP[(int)PowerType.Fast];
-            }
+                    var TDPvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]);
+                    return TDPvalue != 0
+                        ? Properties.Settings.Default["QuickToolsPerformanceTDPBoostValue"]
+                        : MainWindow.CurrentDevice.nTDP[(int)PowerType.Fast];
+                }
 
             case "QuickToolsPerformanceGPUValue":
-            {
-                var GPUoverride = GetBoolean("QuickToolsPerformanceGPUEnabled");
+                {
+                    var GPUoverride = GetBoolean("QuickToolsPerformanceGPUEnabled");
 
-                var GPUvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceGPUValue"]);
-                return GPUvalue;
-            }
+                    var GPUvalue = Convert.ToDouble(Properties.Settings.Default["QuickToolsPerformanceGPUValue"]);
+                    return GPUvalue;
+                }
 
             case "HasBrightnessSupport":
                 return SystemManager.HasBrightnessSupport();
@@ -176,14 +176,14 @@ public static class SettingsManager
                 return SystemManager.HasVolumeSupport();
 
             default:
-            {
-                if (temporary && Settings.TryGetValue(name, out var property))
-                    return property;
-                if (PropertyExists(name))
-                    return Properties.Settings.Default[name];
+                {
+                    if (temporary && Settings.TryGetValue(name, out var property))
+                        return property;
+                    if (PropertyExists(name))
+                        return Properties.Settings.Default[name];
 
-                return false;
-            }
+                    return false;
+                }
         }
     }
 
@@ -217,7 +217,7 @@ public static class SettingsManager
         return Convert.ToDouble(GetProperty(name, temporary));
     }
 
-    public static StringCollection GetStringCollection(string name, bool temporary = false) 
+    public static StringCollection GetStringCollection(string name, bool temporary = false)
     {
         return (StringCollection)GetProperty(name, temporary);
     }

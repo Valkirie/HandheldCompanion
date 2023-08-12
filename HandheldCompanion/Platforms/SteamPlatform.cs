@@ -6,10 +6,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 
 namespace HandheldCompanion.Platforms;
@@ -34,7 +32,7 @@ public class SteamPlatform : IPlatform
 
         Name = "Steam";
         ExecutableName = "steam.exe";
-        
+
         // this is for detecting steam start/stop, for some reason steam.exe often doesn't work
         RunningName = "steamwebhelper.exe";
 

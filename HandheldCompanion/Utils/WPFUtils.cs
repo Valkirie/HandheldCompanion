@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
-using Button = System.Windows.Controls.Button;
 using Control = System.Windows.Controls.Control;
 
 namespace HandheldCompanion.Utils;

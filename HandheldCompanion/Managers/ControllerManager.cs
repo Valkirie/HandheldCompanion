@@ -53,7 +53,7 @@ public static class ControllerManager
 
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
-        
+
         MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
         MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
 
@@ -82,7 +82,7 @@ public static class ControllerManager
     {
         GamepadWindow gamepadWindow = (GamepadWindow)control;
 
-        switch(gamepadWindow.Title)
+        switch (gamepadWindow.Title)
         {
             case "QuickTools":
                 focusedWindows &= ~FocusedWindow.Quicktools;
@@ -150,7 +150,7 @@ public static class ControllerManager
                 if (steamController.IsVirtualMuted())
                     ControllerMuted = true;
             }
-        }        
+        }
 
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
@@ -197,17 +197,17 @@ public static class ControllerManager
                     break;
 
                 case "SteamControllerMute":
-                {
-                    IController target = GetTargetController();
-                    if (target is null)
-                        return;
+                    {
+                        IController target = GetTargetController();
+                        if (target is null)
+                            return;
 
-                    if (target is not SteamController)
-                        return;
+                        if (target is not SteamController)
+                            return;
 
-                    bool Muted = Convert.ToBoolean(value);
-                    ((SteamController)target).SetVirtualMuted(Muted);
-                }
+                        bool Muted = Convert.ToBoolean(value);
+                        ((SteamController)target).SetVirtualMuted(Muted);
+                    }
                     break;
             }
         });
@@ -316,62 +316,62 @@ public static class ControllerManager
             {
                 // SONY
                 case 0x054C:
-                {
-                    switch (ProductId)
                     {
-                        case 0x0268: // DualShock 3
-                        case 0x05C4: // DualShock 4
-                        case 0x09CC: // DualShock 4 (2nd Gen)
-                        case 0x0CE6: // DualSense
-                            controller = new DS4Controller(joystick, details);
-                            break;
+                        switch (ProductId)
+                        {
+                            case 0x0268: // DualShock 3
+                            case 0x05C4: // DualShock 4
+                            case 0x09CC: // DualShock 4 (2nd Gen)
+                            case 0x0CE6: // DualSense
+                                controller = new DS4Controller(joystick, details);
+                                break;
+                        }
                     }
-                }
                     break;
 
                 // STEAM
                 case 0x28DE:
-                {
-                    switch (ProductId)
                     {
-                        // WIRED STEAM CONTROLLER
-                        case 0x1102:
-                            // MI == 0 is virtual keyboards
-                            // MI == 1 is virtual mouse
-                            // MI == 2 is controller proper
-                            // No idea what's in case of more than one controller connected
-                            if (details.GetMI() == 2)
-                                controller = new GordonController(details);
-                            break;
-                        // WIRELESS STEAM CONTROLLER
-                        case 0x1142:
-                            // MI == 0 is virtual keyboards
-                            // MI == 1-4 are 4 controllers
-                            // TODO: The dongle registers 4 controller devices, regardless how many are
-                            // actually connected. There is no easy way to check for connection without
-                            // actually talking to each controller. Handle only the first for now.
-                            if (details.GetMI() == 1)
-                                controller = new GordonController(details);
-                            break;
+                        switch (ProductId)
+                        {
+                            // WIRED STEAM CONTROLLER
+                            case 0x1102:
+                                // MI == 0 is virtual keyboards
+                                // MI == 1 is virtual mouse
+                                // MI == 2 is controller proper
+                                // No idea what's in case of more than one controller connected
+                                if (details.GetMI() == 2)
+                                    controller = new GordonController(details);
+                                break;
+                            // WIRELESS STEAM CONTROLLER
+                            case 0x1142:
+                                // MI == 0 is virtual keyboards
+                                // MI == 1-4 are 4 controllers
+                                // TODO: The dongle registers 4 controller devices, regardless how many are
+                                // actually connected. There is no easy way to check for connection without
+                                // actually talking to each controller. Handle only the first for now.
+                                if (details.GetMI() == 1)
+                                    controller = new GordonController(details);
+                                break;
 
-                        // STEAM DECK
-                        case 0x1205:
-                            controller = new NeptuneController(details);
-                            break;
+                            // STEAM DECK
+                            case 0x1205:
+                                controller = new NeptuneController(details);
+                                break;
+                        }
                     }
-                }
                     break;
 
                 // NINTENDO
                 case 0x057E:
-                {
-                    switch (ProductId)
                     {
-                        // Nintendo Wireless Gamepad
-                        case 0x2009:
-                            break;
+                        switch (ProductId)
+                        {
+                            // Nintendo Wireless Gamepad
+                            case 0x2009:
+                                break;
+                        }
                     }
-                }
                     break;
             }
 
@@ -632,7 +632,7 @@ public static class ControllerManager
 
         // pass to SensorsManager for sensors value reading
         SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
-        switch(sensorSelection)
+        switch (sensorSelection)
         {
             case SensorFamily.Windows:
             case SensorFamily.SerialUSBIMU:
@@ -673,7 +673,7 @@ public static class ControllerManager
 
     private static bool IsHCVirtualController(XInputController controller)
     {
-        if(controller.IsVirtual() && virtualControllerCreated)
+        if (controller.IsVirtual() && virtualControllerCreated)
         {
             virtualControllerCreated = false;
             return true;

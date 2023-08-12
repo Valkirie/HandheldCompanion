@@ -72,7 +72,7 @@ public partial class ProfilesPage : Page
         {
             // create panel
             var panel = new SimpleStackPanel
-                { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
             // create icon
             var icon = new FontIcon { Glyph = "" };
@@ -110,7 +110,7 @@ public partial class ProfilesPage : Page
         {
             // create panel
             var panel = new SimpleStackPanel
-                { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
 
             // create icon
             var icon = new FontIcon { Glyph = "" };
@@ -576,7 +576,7 @@ public partial class ProfilesPage : Page
         if (updateLock)
             return;
 
-        currentProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;        
+        currentProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;
         RequestUpdate();
     }
 
@@ -792,16 +792,16 @@ public partial class ProfilesPage : Page
         switch (hotkey.inputsHotkey.Listener)
         {
             case "shortcutProfilesPage@":
-            {
-                var hotkeyBorder = hotkey.GetControl();
-                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                    return;
+                {
+                    var hotkeyBorder = hotkey.GetControl();
+                    if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
+                        return;
 
-                // pull hotkey
-                ProfilesPageHotkey = hotkey;
+                    // pull hotkey
+                    ProfilesPageHotkey = hotkey;
 
-                UMC_Activator.Children.Add(hotkeyBorder);
-            }
+                    UMC_Activator.Children.Add(hotkeyBorder);
+                }
                 break;
         }
     }
@@ -1066,7 +1066,7 @@ public partial class ProfilesPage : Page
 
     public static void RequestUpdate()
     {
-        if(UpdateTimer is not null)
+        if (UpdateTimer is not null)
         {
             UpdateTimer.Stop();
             UpdateTimer.Start();

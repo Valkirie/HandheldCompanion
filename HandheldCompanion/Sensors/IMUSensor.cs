@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
-using static HandheldCompanion.Sensors.SerialUSBIMU;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Sensors;

@@ -1,4 +1,3 @@
-using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
@@ -108,13 +107,13 @@ public class IMUAccelerometer : IMUSensor
         switch (sensorFamily)
         {
             case SensorFamily.Controller:
-            {
-                reading.X = reading_fixed.X = GyroAccelX;
-                reading.Y = reading_fixed.Y = GyroAccelY;
-                reading.Z = reading_fixed.Z = GyroAccelZ;
+                {
+                    reading.X = reading_fixed.X = GyroAccelX;
+                    reading.Y = reading_fixed.Y = GyroAccelY;
+                    reading.Z = reading_fixed.Z = GyroAccelZ;
 
-                base.ReadingChanged();
-            }
+                    base.ReadingChanged();
+                }
                 break;
         }
     }

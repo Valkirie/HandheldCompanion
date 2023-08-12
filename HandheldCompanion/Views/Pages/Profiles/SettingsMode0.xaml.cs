@@ -274,18 +274,18 @@ public partial class SettingsMode0 : Page
         switch (hotkey.inputsHotkey.Listener)
         {
             case "shortcutProfilesSettingsMode0":
-            {
-                // pull hotkey
-                ProfilesPageHotkey = hotkey;
+                {
+                    // pull hotkey
+                    ProfilesPageHotkey = hotkey;
 
-                // add to UI
-                var hotkeyBorder = ProfilesPageHotkey.GetControl();
-                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                    return;
+                    // add to UI
+                    var hotkeyBorder = ProfilesPageHotkey.GetControl();
+                    if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
+                        return;
 
-                if (UMC_Activator.Children.Count == 0)
-                    UMC_Activator.Children.Add(hotkeyBorder);
-            }
+                    if (UMC_Activator.Children.Count == 0)
+                        UMC_Activator.Children.Add(hotkeyBorder);
+                }
                 break;
         }
     }

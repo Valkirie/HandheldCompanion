@@ -1,5 +1,4 @@
 ﻿using System;
-using HandheldCompanion.Managers;
 using Microsoft.Win32.TaskScheduler;
 
 namespace HandheldCompanion.Managers;

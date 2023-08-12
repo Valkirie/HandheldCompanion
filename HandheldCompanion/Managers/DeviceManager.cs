@@ -138,7 +138,7 @@ public static class DeviceManager
         devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
         foreach (var pair in devices)
             XUsbDevice_DeviceArrived(new DeviceEventArgs
-                { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
+            { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
     }
 
     private static void RefreshDInput()
@@ -160,7 +160,7 @@ public static class DeviceManager
         devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
         foreach (var pair in devices)
             HidDevice_DeviceArrived(new DeviceEventArgs
-                { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = pair.Key });
+            { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = pair.Key });
     }
 
     private static PnPDetails FindDevice(string SymLink, bool Removed = false)
@@ -393,7 +393,7 @@ public static class DeviceManager
     {
         return (
             ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1102)) || // STEAM CONTROLLER
-            // ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1106)) || // STEAM CONTROLLER BLUETOOTH
+                                                                                     // ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1106)) || // STEAM CONTROLLER BLUETOOTH
             ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1142)) || // STEAM CONTROLLER WIRELESS
             ((attributes.VendorID == 0x28DE) && (attributes.ProductID == 0x1205)) || // STEAM DECK
             (0x05 == capabilities.UsagePage) || (0x01 == capabilities.UsagePage) && ((0x04 == capabilities.Usage) || (0x05 == capabilities.Usage)));

@@ -130,7 +130,7 @@ public partial class AxisMapping : IMapping
 
                 // create a label, store MouseActionsType as Tag and Label as controller specific string
                 var buttonLabel = new Label
-                    { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
+                { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
                 TargetComboBox.Items.Add(buttonLabel);
 
                 if (mouseType.Equals(((MouseActions)Actions).MouseType))
@@ -163,17 +163,17 @@ public partial class AxisMapping : IMapping
         switch (Actions.ActionType)
         {
             case ActionType.Joystick:
-            {
-                var buttonLabel = TargetComboBox.SelectedItem as Label;
-                ((AxisActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
-            }
+                {
+                    var buttonLabel = TargetComboBox.SelectedItem as Label;
+                    ((AxisActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
+                }
                 break;
 
             case ActionType.Mouse:
-            {
-                var buttonLabel = TargetComboBox.SelectedItem as Label;
-                ((MouseActions)Actions).MouseType = (MouseActionsType)buttonLabel.Tag;
-            }
+                {
+                    var buttonLabel = TargetComboBox.SelectedItem as Label;
+                    ((MouseActions)Actions).MouseType = (MouseActionsType)buttonLabel.Tag;
+                }
                 break;
         }
 

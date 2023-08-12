@@ -92,7 +92,7 @@ public partial class Profile : ICloneable, IComparable
     public Layout Layout { get; set; } = new();
 
     public bool Whitelisted { get; set; } // if true, can see through the HidHide cloak
-  
+
     public XInputPlusMethod XInputPlus { get; set; } // if true, deploy xinput1_3.dll
 
     public float GyrometerMultiplier { get; set; } = 1.0f; // gyroscope multiplicator (remove me)

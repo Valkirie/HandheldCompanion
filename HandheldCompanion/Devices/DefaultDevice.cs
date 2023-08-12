@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-
-using WindowsInput.Events;
-
-namespace HandheldCompanion.Devices;
+﻿namespace HandheldCompanion.Devices;
 
 public class DefaultDevice : IDevice
 {

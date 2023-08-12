@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using static PInvoke.Kernel32;
-using BOOL = System.Int32;
-using DWORD = System.Int32;
 using HANDLE = System.IntPtr;
 using LPVOID = System.IntPtr;
 

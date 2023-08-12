@@ -81,7 +81,7 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.B2] = input.State.ButtonState[GordonControllerButton.BtnB];
             Inputs.ButtonState[ButtonFlags.B3] = input.State.ButtonState[GordonControllerButton.BtnX];
             Inputs.ButtonState[ButtonFlags.B4] = input.State.ButtonState[GordonControllerButton.BtnY];
-            
+
             Inputs.ButtonState[ButtonFlags.DPadUp] = input.State.ButtonState[GordonControllerButton.BtnDpadUp];
             Inputs.ButtonState[ButtonFlags.DPadDown] = input.State.ButtonState[GordonControllerButton.BtnDpadDown];
             Inputs.ButtonState[ButtonFlags.DPadLeft] = input.State.ButtonState[GordonControllerButton.BtnDpadLeft];

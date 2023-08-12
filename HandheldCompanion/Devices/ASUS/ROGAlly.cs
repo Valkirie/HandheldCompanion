@@ -151,7 +151,7 @@ public class ROGAlly : IDevice
 
         var pnpDevice = PnPDevice.GetDeviceByInterfaceId(_hidDevice.DevicePath);
         var device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
-        
+
         var pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
         var parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
         var parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
@@ -161,10 +161,10 @@ public class ROGAlly : IDevice
 
     public override void SetKeyPressDelay(HIDmode controllerMode)
     {
-        switch(controllerMode)
+        switch (controllerMode)
         {
             case HIDmode.DualShock4Controller:
-                KeyPressDelay = 180; 
+                KeyPressDelay = 180;
                 break;
             default:
                 KeyPressDelay = 20;
@@ -202,27 +202,27 @@ public class ROGAlly : IDevice
                     return;
 
                 case 0:
-                {
-                    // two empty packets in a row means back button was released
-                    if (previousWasEmpty)
-                        KeyRelease(ButtonFlags.OEM3);
+                    {
+                        // two empty packets in a row means back button was released
+                        if (previousWasEmpty)
+                            KeyRelease(ButtonFlags.OEM3);
 
-                    previousWasEmpty = true;
-                }
+                        previousWasEmpty = true;
+                    }
                     return;
 
                 case 56:
                 case 166:
-                {
-                    // OEM1 and OEM2 key needs a key press delay based on emulated controller
-                    Task.Factory.StartNew(async () =>
                     {
-                        KeyPress(button);
-                        await Task.Delay(KeyPressDelay);
-                        KeyRelease(button);
-                    });
-                }
-                break;
+                        // OEM1 and OEM2 key needs a key press delay based on emulated controller
+                        Task.Factory.StartNew(async () =>
+                        {
+                            KeyPress(button);
+                            await Task.Delay(KeyPressDelay);
+                            KeyRelease(button);
+                        });
+                    }
+                    break;
 
                 case 165:
                 case 167:
@@ -234,14 +234,14 @@ public class ROGAlly : IDevice
                     break;
 
                 default:
-                {
-                    Task.Factory.StartNew(async () =>
                     {
-                        KeyPress(button);
-                        await Task.Delay(20);
-                        KeyRelease(button);
-                    });
-                }
+                        Task.Factory.StartNew(async () =>
+                        {
+                            KeyPress(button);
+                            await Task.Delay(20);
+                            KeyRelease(button);
+                        });
+                    }
                     break;
             }
 

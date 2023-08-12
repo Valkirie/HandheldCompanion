@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using HandheldCompanion;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using Inkore.UI.WPF.Modern.Controls;
-using Layout = HandheldCompanion.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -73,7 +71,7 @@ public class ILayoutPage : Page
             bool isVisible = false;
 
             // update mapping visibility
-            switch(flags)
+            switch (flags)
             {
                 default:
                     if (controller.HasSourceAxis(flags))

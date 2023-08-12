@@ -6,7 +6,6 @@ using System.ComponentModel;
 using Microsoft.Win32.SafeHandles;
 using System.Security;
 using System.Runtime.ConstrainedExecution;
-using System.Management;
 
 namespace HandheldCompanion
 {

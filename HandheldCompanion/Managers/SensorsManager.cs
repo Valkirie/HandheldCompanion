@@ -4,8 +4,6 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
-using System.Diagnostics;
-using System.Numerics;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers
@@ -52,7 +50,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // restore default sensor
-            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))                
+            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
                 SettingsManager.SetProperty("SensorSelection", 1);
             else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
                 SettingsManager.SetProperty("SensorSelection", 2);
