@@ -68,18 +68,13 @@ public class ILayoutPage : Page
 
             AxisMapping axisMapping = pair.Value;
 
-            bool isVisible = false;
-
             // update mapping visibility
+            bool isVisible = controller.HasSourceAxis(flags);
+
             switch (flags)
             {
-                default:
-                    if (controller.HasSourceAxis(flags))
-                        isVisible = true;
-                    break;
                 case AxisLayoutFlags.Gyroscope:
-                    if (controller.HasSourceAxis(flags) || MainWindow.CurrentDevice.HasMotionSensor())
-                        isVisible = true;
+                    isVisible |= MainWindow.CurrentDevice.HasMotionSensor();
                     break;
             }
 
