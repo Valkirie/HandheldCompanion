@@ -263,10 +263,11 @@ public abstract class IController
             ToString());
     }
 
-    public virtual void SetVibrationStrength(uint value)
+    public virtual void SetVibrationStrength(uint value, bool rumble = false)
     {
         VibrationStrength = value / 100.0d;
-        Rumble();
+        if (rumble)
+            Rumble();
     }
 
     public virtual void SetVibration(byte LargeMotor, byte SmallMotor)
@@ -282,10 +283,10 @@ public abstract class IController
         return false;
     }
 
-    public virtual async void Rumble()
+    public virtual async void Rumble(int delay = 125)
     {
         SetVibration(byte.MaxValue, byte.MaxValue);
-        await Task.Delay(125);
+        await Task.Delay(delay);
         SetVibration(0, 0);
     }
 
