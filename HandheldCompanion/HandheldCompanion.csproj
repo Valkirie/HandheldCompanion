@@ -77,6 +77,7 @@
     <None Remove="Resources\device_gpd4.png" />
     <None Remove="Resources\device_gpd_win2.png" />
     <None Remove="Resources\device_gpd_winmax2.png" />
+    <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_rog_ally.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
@@ -125,6 +126,7 @@
     <Resource Include="Resources\device_gpd4.png" />
     <Resource Include="Resources\device_gpd_win2.png" />
     <Resource Include="Resources\device_gpd_winmax2.png" />
+    <Resource Include="Resources\device_onexplayer_2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\device_rog_ally.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />

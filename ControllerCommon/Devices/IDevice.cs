@@ -259,13 +259,33 @@ public abstract class IDevice
                         }
                         break;
                     }
-
                     case "ONEXPLAYER mini A07":
                         device = new OneXPlayerMiniAMD();
                         break;
+                    case "ONEXPLAYER 2 ARP23":
+                    {
+                        switch (Version)
+                        {
+                            default:
+                            case "Ver.1.0":
+                                device = new OneXPlayer2();
+                                break;
+                        }
+                        break;
+                    }
+                    case "ONEXPLAYER 2 PRO ARP23P EVA-01":
+                        switch (Version)
+                        {
+                            default:
+                            case "Version 1.0":
+                                device = new OneXPlayer2_7840U();
+                                break;
+                        }
+                    break;
                 }
             }
                 break;
+
             case "ASUSTEK COMPUTER INC.":
             {
                 switch (ProductName)
@@ -277,6 +297,7 @@ public abstract class IDevice
                 }
             }
                 break;
+
             case "VALVE":
             {
                 switch (ProductName)
