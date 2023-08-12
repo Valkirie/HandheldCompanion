@@ -6,12 +6,9 @@ using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
-using ControllerCommon.Processor;
-using ControllerCommon.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Processors;
 
 namespace HandheldCompanion.Platforms;
 

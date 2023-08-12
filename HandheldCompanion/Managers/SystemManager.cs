@@ -6,19 +6,15 @@ using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ControllerCommon;
-using ControllerCommon.Devices;
-using ControllerCommon.Managers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views;
-using Microsoft.Extensions.FileSystemGlobbing;
-using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using System.Timers;
 using Timer = System.Timers.Timer;
-using ControllerCommon.Processor.AMD;
+using HandheldCompanion.Misc;
 
 namespace HandheldCompanion.Managers;
 
@@ -72,7 +68,7 @@ public static class SystemManager
         BrightnessSupport = GetBrightness() != -1;
 
         if (MainWindow.CurrentDevice.IsOpen && MainWindow.CurrentDevice.IsSupported)
-            if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl))
+            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl))
                 FanControlSupport = true;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;

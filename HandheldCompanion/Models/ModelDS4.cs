@@ -1,9 +1,10 @@
+using HandheldCompanion.Inputs;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
+
 
 namespace HandheldCompanion.Models;
 

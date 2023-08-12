@@ -2,8 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
 using Page = System.Windows.Controls.Page;

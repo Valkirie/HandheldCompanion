@@ -5,7 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
+using HandheldCompanion.Inputs;
 using HelixToolkit.Wpf;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;

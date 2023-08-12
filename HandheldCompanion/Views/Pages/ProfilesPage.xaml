@@ -300,9 +300,15 @@
                                             VerticalAlignment="Center"
                                             SelectedIndex="0"
                                             SelectionChanged="cB_Wrapper_SelectionChanged">
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Injection}" />
-                                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Redirection}" />
+                                            <ComboBoxItem Name="cB_Wrapper_Disabled" Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Disabled}" />
+                                            <ComboBoxItem
+                                                Name="cB_Wrapper_Injection"
+                                                Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Injection}"
+                                                IsEnabled="False" />
+                                            <ComboBoxItem
+                                                Name="cB_Wrapper_Redirection"
+                                                Content="{x:Static resx:Resources.ProfilesPage_Wrapper_Redirection}"
+                                                IsEnabled="False" />
                                         </ComboBox>
                                     </DockPanel>
                                 </Grid>

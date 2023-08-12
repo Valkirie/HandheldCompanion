@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ControllerCommon;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using SharpDX.XInput;
-using ControllerCommon.Actions;
+using HandheldCompanion.Actions;
+using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Controllers;
 
@@ -19,23 +15,13 @@ public class NeptuneController : SteamController
 {
     private const short TrackPadInner = 21844;
 
-    public const sbyte HDRumbleMinIntensity = -2;
-    public const sbyte HDRumbleMaxIntensity = 10;
-
-    public const sbyte SDRumbleMinIntensity = 8;
-    public const sbyte SDRumbleMaxIntensity = 12;
+    public const sbyte RumbleMinIntensity = 8;
+    public const sbyte RumbleMaxIntensity = 12;
     private readonly steam_hidapi.net.NeptuneController Controller;
 
-    public byte FeedbackLargeMotor;
-    public byte FeedbackSmallMotor;
-    private readonly ushort HDRumblePeriod = 8;
     private NeptuneControllerInputEventArgs input;
 
-    private Thread RumbleThread;
-    private bool RumbleThreadRunning;
-    private readonly ushort SDRumblePeriod = 8;
-
-    private bool UseHDRumble;
+    private readonly ushort RumblePeriod = 8;
 
     public NeptuneController(PnPDetails details) : base()
     {
@@ -57,9 +43,6 @@ public class NeptuneController : SteamController
             LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
             return;
         }
-
-        var HDRumble = SettingsManager.GetBoolean("SteamDeckHDRumble");
-        SetHDRumble(HDRumble);
 
         // UI
         DrawControls();
@@ -83,8 +66,7 @@ public class NeptuneController : SteamController
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);
 
-        HDRumblePeriod = (ushort)(TimerManager.GetPeriod() * 2);
-        SDRumblePeriod = (ushort)(TimerManager.GetPeriod() * 10);
+        RumblePeriod = (ushort)(TimerManager.GetPeriod() * 10);
     }
 
     public override string ToString()
@@ -149,8 +131,8 @@ public class NeptuneController : SteamController
         Inputs.ButtonState[ButtonFlags.LeftStickUp] = input.State.ButtonState[NeptuneControllerButton.BtnLStickTouch];
         Inputs.ButtonState[ButtonFlags.LeftStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnLStickPress];
 
-        Inputs.AxisState[AxisFlags.LeftThumbX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
-        Inputs.AxisState[AxisFlags.LeftThumbY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
+        Inputs.AxisState[AxisFlags.LeftStickX] = input.State.AxesState[NeptuneControllerAxis.LeftStickX];
+        Inputs.AxisState[AxisFlags.LeftStickY] = input.State.AxesState[NeptuneControllerAxis.LeftStickY];
 
         Inputs.ButtonState[ButtonFlags.LeftStickLeft] =
             input.State.AxesState[NeptuneControllerAxis.LeftStickX] < -Gamepad.LeftThumbDeadZone;
@@ -172,8 +154,8 @@ public class NeptuneController : SteamController
         Inputs.ButtonState[ButtonFlags.RightStickTouch] = input.State.ButtonState[NeptuneControllerButton.BtnRStickTouch];
         Inputs.ButtonState[ButtonFlags.RightStickClick] = input.State.ButtonState[NeptuneControllerButton.BtnRStickPress];
 
-        Inputs.AxisState[AxisFlags.RightThumbX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
-        Inputs.AxisState[AxisFlags.RightThumbY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
+        Inputs.AxisState[AxisFlags.RightStickX] = input.State.AxesState[NeptuneControllerAxis.RightStickX];
+        Inputs.AxisState[AxisFlags.RightStickY] = input.State.AxesState[NeptuneControllerAxis.RightStickY];
 
         Inputs.ButtonState[ButtonFlags.RightStickLeft] =
             input.State.AxesState[NeptuneControllerAxis.RightStickX] < -Gamepad.RightThumbDeadZone;
@@ -249,40 +231,17 @@ public class NeptuneController : SteamController
             Inputs.ButtonState[ButtonFlags.RightPadClickLeft] = false;
         }
 
+        // TODO: why Z/Y swapped?
+        Inputs.GyroState.Accelerometer.X = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
+        Inputs.GyroState.Accelerometer.Y = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
+        Inputs.GyroState.Accelerometer.Z = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
+
+        // TODO: why Roll/Pitch swapped?
+        Inputs.GyroState.Gyroscope.X = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2048.0f;  // Roll
+        Inputs.GyroState.Gyroscope.Y = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2048.0f;   // Pitch
+        Inputs.GyroState.Gyroscope.Z = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2048.0f;    // Yaw
+
         base.UpdateInputs(ticks);
-    }
-
-    public override void UpdateMovements(long ticks)
-    {
-        if (input is null)
-            return;
-
-        Movements.GyroAccelZ = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelY] / short.MaxValue * 2.0f;
-        Movements.GyroAccelY = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelZ] / short.MaxValue * 2.0f;
-        Movements.GyroAccelX = -(float)input.State.AxesState[NeptuneControllerAxis.GyroAccelX] / short.MaxValue * 2.0f;
-
-        Movements.GyroPitch = -(float)input.State.AxesState[NeptuneControllerAxis.GyroRoll] / short.MaxValue * 2000.0f;
-        Movements.GyroRoll = (float)input.State.AxesState[NeptuneControllerAxis.GyroPitch] / short.MaxValue * 2000.0f;
-        Movements.GyroYaw = -(float)input.State.AxesState[NeptuneControllerAxis.GyroYaw] / short.MaxValue * 2000.0f;
-
-        base.UpdateMovements(ticks);
-    }
-
-    public override void Rumble(int Loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue,
-        byte Duration = 125)
-    {
-        Task.Factory.StartNew(async () =>
-        {
-            for (var i = 0; i < Loop * 2; i++)
-            {
-                if (i % 2 == 0)
-                    SetVibration(LeftValue, RightValue);
-                else
-                    SetVibration(0, 0);
-
-                await Task.Delay(Duration);
-            }
-        });
     }
 
     private void Open()
@@ -328,14 +287,9 @@ public class NeptuneController : SteamController
         // disable lizard state
         Controller.RequestLizardMode(false);
 
-        SetHDRumble(UseHDRumble);
-
-        SetVirtualMuted(SettingsManager.GetBoolean("SteamMuteController"));
-
-        PipeClient.ServerMessage += OnServerMessage;
+        SetVirtualMuted(SettingsManager.GetBoolean("SteamControllerMute"));
 
         TimerManager.Tick += UpdateInputs;
-        TimerManager.Tick += UpdateMovements;
 
         base.Plug();
     }
@@ -356,12 +310,7 @@ public class NeptuneController : SteamController
         }
 
         TimerManager.Tick -= UpdateInputs;
-        TimerManager.Tick -= UpdateMovements;
 
-        // kill rumble thread
-        RumbleThreadRunning = false;
-
-        PipeClient.ServerMessage -= OnServerMessage;
         base.Unplug();
     }
 
@@ -381,96 +330,13 @@ public class NeptuneController : SteamController
         return true;
     }
 
-    public override void SetVibrationStrength(double value, bool rumble)
-    {
-        base.SetVibrationStrength(value, rumble);
-        if (rumble)
-            Rumble();
-    }
-
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
-        FeedbackLargeMotor = LargeMotor;
-        FeedbackSmallMotor = SmallMotor;
+        GetHapticIntensity(LargeMotor, RumbleMinIntensity, RumbleMaxIntensity, out var leftIntensity);
+        Controller.SetHaptic((byte)SCHapticMotor.Left, (ushort)leftIntensity, RumblePeriod, 0);
 
-        if (!UseHDRumble)
-            SetHaptic();
-    }
-
-    public void SetHaptic()
-    {
-        GetHapticIntensity(FeedbackLargeMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var leftIntensity);
-        _ = Controller.SetHaptic((byte)SCHapticMotor.Left, (ushort)leftIntensity, SDRumblePeriod, 0);
-
-        GetHapticIntensity(FeedbackSmallMotor, SDRumbleMinIntensity, SDRumbleMaxIntensity, out var rightIntensity);
-        _ = Controller.SetHaptic((byte)SCHapticMotor.Right, (ushort)rightIntensity, SDRumblePeriod, 0);
-    }
-
-    private void OnServerMessage(PipeMessage message)
-    {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_VIBRATION:
-            {
-                var e = (PipeClientVibration)message;
-                SetVibration(e.LargeMotor, e.SmallMotor);
-            }
-                break;
-        }
-    }
-
-    private async void ThreadLoop(object? obj)
-    {
-        while (RumbleThreadRunning)
-        {
-            if (GetHapticIntensity(FeedbackLargeMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity, out var leftIntensity))
-                Controller.SetHaptic2(SCHapticMotor.Left, NCHapticStyle.Weak, leftIntensity);
-
-            if (GetHapticIntensity(FeedbackSmallMotor, HDRumbleMinIntensity, HDRumbleMaxIntensity, out var rightIntensity))
-                Controller.SetHaptic2(SCHapticMotor.Right, NCHapticStyle.Weak, rightIntensity);
-
-            await Task.Delay(TimerManager.GetPeriod() * 2);
-        }
-    }
-
-    public void SetHDRumble(bool HDRumble)
-    {
-        UseHDRumble = HDRumble;
-
-        if (!IsPlugged())
-            return;
-
-        switch (UseHDRumble)
-        {
-            // new engine
-            default:
-            case true:
-            {
-                if (RumbleThreadRunning)
-                    return;
-
-                RumbleThreadRunning = true;
-
-                // Create Haptic2 rumble thread
-                RumbleThread = new Thread(ThreadLoop)
-                {
-                    IsBackground = true
-                };
-
-                RumbleThread.Start();
-            }
-                break;
-
-            // old engine
-            case false:
-            {
-                if (!RumbleThreadRunning)
-                    return;
-
-                RumbleThreadRunning = false;
-            }
-                break;
-        }
+        GetHapticIntensity(SmallMotor, RumbleMinIntensity, RumbleMaxIntensity, out var rightIntensity);
+        Controller.SetHaptic((byte)SCHapticMotor.Right, (ushort)rightIntensity, RumblePeriod, 0);
     }
 
     public override void SetHaptic(HapticStrength strength, ButtonFlags button)

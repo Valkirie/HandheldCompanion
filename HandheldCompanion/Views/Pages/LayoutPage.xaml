@@ -76,8 +76,7 @@
                 Name="navGyro"
                 Content="{x:Static resx:Resources.LayoutPage_Gyro}"
                 IsEnabled="False"
-                Tag="GyroPage"
-                Visibility="Collapsed">
+                Tag="GyroPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;" />
                 </ui:NavigationViewItem.Icon>
@@ -208,7 +207,6 @@
 
                 </ui:SimpleStackPanel>
 
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Current Layout" />
                 <ui:Frame
                     Name="ContentFrame"
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"

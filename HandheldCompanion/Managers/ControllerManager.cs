@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon;
-using ControllerCommon.Controllers;
-using ControllerCommon.Devices;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
@@ -20,6 +13,8 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using DeviceType = SharpDX.DirectInput.DeviceType;
+using HandheldCompanion.Inputs;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers;
 
@@ -56,9 +51,9 @@ public static class ControllerManager
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
-        PipeClient.Connected += OnClientConnected;
-        PipeClient.ServerMessage += OnServerMessage;
-
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+        VirtualManager.Vibrated += VirtualManager_Vibrated;
+        
         MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
         MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
 
@@ -149,7 +144,7 @@ public static class ControllerManager
         {
             // mute virtual controller if foreground process is Steam or Steam-related and user a toggle the mute setting
             // Controller specific scenarios
-            if (typeof(SteamController).IsAssignableFrom(targetController?.GetType()))
+            if (targetController is SteamController)
             {
                 SteamController steamController = (SteamController)targetController;
                 if (steamController.IsVirtualMuted())
@@ -196,36 +191,22 @@ public static class ControllerManager
         {
             switch (name)
             {
-                case "HIDstrength":
-                    var HIDstrength = Convert.ToDouble(value);
-                    SetHIDStrength(HIDstrength);
+                case "VibrationStrength":
+                    uint VibrationStrength = Convert.ToUInt32(value);
+                    targetController?.SetVibrationStrength(VibrationStrength);
                     break;
 
-                case "SteamMuteController":
+                case "SteamControllerMute":
                 {
-                    var target = GetTargetController();
+                    IController target = GetTargetController();
                     if (target is null)
                         return;
 
-                    if (typeof(NeptuneController) != target.GetType())
+                    if (target is not SteamController)
                         return;
 
-                    var Muted = Convert.ToBoolean(value);
-                    ((NeptuneController)target).SetVirtualMuted(Muted);
-                }
-                    break;
-
-                case "SteamDeckHDRumble":
-                {
-                    var target = GetTargetController();
-                    if (target is null)
-                        return;
-
-                    if (typeof(NeptuneController) != target.GetType())
-                        return;
-
-                    var HDRumble = Convert.ToBoolean(value);
-                    ((NeptuneController)target).SetHDRumble(HDRumble);
+                    bool Muted = Convert.ToBoolean(value);
+                    ((SteamController)target).SetVirtualMuted(Muted);
                 }
                     break;
             }
@@ -250,9 +231,9 @@ public static class ControllerManager
         }
     }
 
-    private static void SetHIDStrength(double value)
+    private static void VirtualManager_Vibrated(byte LargeMotor, byte SmallMotor)
     {
-        GetTargetController()?.SetVibrationStrength(value, SettingsManager.IsInitialized);
+        targetController?.SetVibration(LargeMotor, SmallMotor);
     }
 
     private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
@@ -549,7 +530,6 @@ public static class ControllerManager
         if (targetController is not null)
         {
             targetController.InputsUpdated -= UpdateInputs;
-            targetController.MovementsUpdated -= UpdateMovements;
             targetController.Cleanup();
             targetController.Unplug();
             targetController = null;
@@ -564,9 +544,6 @@ public static class ControllerManager
             string targetPath = targetController.GetContainerInstancePath();
 
             ClearTargetController();
-
-            // warn service the current controller has been unplugged
-            PipeClient.SendMessage(new PipeClientControllerDisconnect());
 
             // if we're setting currently selected, it's unplugged, there is none plugged
             // reset the UI to the default controller and stop
@@ -591,37 +568,26 @@ public static class ControllerManager
         // update target controller
         targetController = controller;
         targetController.InputsUpdated += UpdateInputs;
-        targetController.MovementsUpdated += UpdateMovements;
         targetController.Plug();
 
         if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
-            targetController.Rumble(targetController.GetUserIndex() + 1);
+            targetController.Rumble();
 
         if (SettingsManager.GetBoolean("HIDcloakonconnect"))
-            targetController.Hide();
+        {
+            // we shouldn't hide steam controller on connect
+            if (targetController is not SteamController)
+                targetController.Hide();
+        }
 
         // update settings
         SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
-
-        // warn service a new controller has arrived
-        PipeClient.SendMessage(
-            new PipeClientControllerConnect(targetController.ToString(), targetController.Capabilities));
 
         // check applicable scenarios
         CheckControllerScenario();
 
         // raise event
         ControllerSelected?.Invoke(targetController);
-    }
-
-    private static void OnClientConnected()
-    {
-        // warn service a new controller has arrived
-        if (targetController is null)
-            return;
-
-        PipeClient.SendMessage(
-            new PipeClientControllerConnect(targetController.ToString(), targetController.Capabilities));
     }
 
     public static IController GetTargetController()
@@ -664,6 +630,19 @@ public static class ControllerManager
         // pass inputs to Inputs manager
         InputsManager.UpdateReport(buttonState);
 
+        // pass to SensorsManager for sensors value reading
+        SensorFamily sensorSelection = (SensorFamily)SettingsManager.GetInt("SensorSelection");
+        switch(sensorSelection)
+        {
+            case SensorFamily.Windows:
+            case SensorFamily.SerialUSBIMU:
+                SensorsManager.UpdateReport(controllerState);
+                break;
+        }
+
+        // pass to MotionManager for calculations
+        MotionManager.UpdateReport(controllerState);
+
         // pass inputs to Overlay Model
         MainWindow.overlayModel.UpdateReport(controllerState);
 
@@ -674,21 +653,7 @@ public static class ControllerManager
         if (ControllerMuted)
             return;
 
-        // check if motion trigger is pressed
-        var currentProfile = ProfileManager.GetCurrent();
-        controllerState.MotionTriggered = (currentProfile.MotionMode == MotionMode.Off &&
-                                           buttonState.ContainsTrue(currentProfile.MotionTrigger)) ||
-                                          (currentProfile.MotionMode == MotionMode.On &&
-                                           !buttonState.ContainsTrue(currentProfile.MotionTrigger));
-
-        // pass inputs to service
-        PipeClient.SendMessage(new PipeClientInputs(controllerState));
-    }
-
-    private static void UpdateMovements(ControllerMovements Movements)
-    {
-        // pass movements to service
-        PipeClient.SendMessage(new PipeClientMovements(Movements));
+        VirtualManager.UpdateInputs(controllerState);
     }
 
     internal static IController GetEmulatedController()
@@ -726,19 +691,10 @@ public static class ControllerManager
         return false;
     }
 
-    #region PipeServer
-
-    static private void OnServerMessage(PipeMessage message)
+    private static void VirtualManager_ControllerSelected(IController Controller)
     {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_CONTROLLER_CONNECT:
-                virtualControllerCreated = true;
-            break;
-        }
+        virtualControllerCreated = true;
     }
-
-    #endregion
 
     #region events
 

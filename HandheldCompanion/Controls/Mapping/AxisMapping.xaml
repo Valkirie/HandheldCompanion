@@ -71,7 +71,7 @@
                     d:Visibility="Visible"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
 
                             <!--  Improve circularity  -->
@@ -280,7 +280,7 @@
                     d:Visibility="Visible"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
 
                             <!--  Auto rotate  -->
@@ -375,12 +375,6 @@
                                         Value="33" />
                                 </ui:SimpleStackPanel>
                             </Grid>
-
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
 
                             <!--  Separator  -->
                             <Separator

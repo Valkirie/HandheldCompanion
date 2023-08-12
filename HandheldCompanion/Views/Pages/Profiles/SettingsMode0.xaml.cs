@@ -4,12 +4,11 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using ControllerCommon;
-using ControllerCommon.Inputs;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
-using ControllerService.Sensors;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Inputs;
+using System.Numerics;
+using HandheldCompanion.Sensors;
 
 namespace HandheldCompanion.Views.Pages.Profiles;
 
@@ -30,7 +29,7 @@ public partial class SettingsMode0 : Page
     {
         this.Tag = Tag;
 
-        PipeClient.ServerMessage += OnServerMessage;
+        MotionManager.SettingsMode0Update += MotionManager_SettingsMode0Update;
 
         HotkeysManager.HotkeyCreated += TriggerCreated;
         InputsManager.TriggerUpdated += TriggerUpdated;
@@ -88,25 +87,11 @@ public partial class SettingsMode0 : Page
 
     public void Page_Closed()
     {
-        PipeClient.ServerMessage -= OnServerMessage;
     }
 
-    private void OnServerMessage(PipeMessage message)
+    private void MotionManager_SettingsMode0Update(Vector3 gyrometer)
     {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_SENSOR:
-                var sensor = (PipeSensor)message;
-
-                switch (sensor.sensorType)
-                {
-                    case SensorType.Girometer:
-                        Highlight_Thumb(Math.Max(Math.Max(Math.Abs(sensor.reading.Z), Math.Abs(sensor.reading.X)), Math.Abs(sensor.reading.Y)));
-                        break;
-                }
-
-                break;
-        }
+        Highlight_Thumb(Math.Max(Math.Max(Math.Abs(gyrometer.Z), Math.Abs(gyrometer.X)), Math.Abs(gyrometer.Y)));
     }
 
     private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

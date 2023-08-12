@@ -1,18 +1,14 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
-using ControllerCommon.Processor.AMD;
-using ControllerCommon.Utils;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Views;
-using PowerProfileUtils;
 using RTSSSharedMemoryNET;
 using Timer = System.Timers.Timer;
+using HandheldCompanion.Processors;
 
 namespace HandheldCompanion.Managers;
 

@@ -5,20 +5,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
-using ControllerCommon.Platforms;
-using ControllerCommon.Processor;
-using ControllerCommon.Utils;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
 using Windows.System.Diagnostics;
-using static ControllerCommon.WinAPI;
+using static HandheldCompanion.WinAPI;
 using static HandheldCompanion.Controls.ProcessEx;
 using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
@@ -341,10 +336,6 @@ public static class ProcessManager
             // Other
             case "bdagent.exe": // Bitdefender Agent
             case "monotificationux.exe":
-
-            // Controller service
-            case "controllerservice.exe":
-            case "controllerservice.dll":
                 return ProcessFilter.Restricted;
 
             // Desktop
@@ -452,6 +443,27 @@ public static class ProcessManager
                 var process = Process.GetProcessById(childId);
                 ProcessUtils.NtSuspendProcess(process.Handle);
             });
+    }
+
+    // A function that takes a Process as a parameter and returns true if it has any xinput related dlls in its modules
+    public static bool CheckXInput(Process process)
+    {
+        // Loop through the modules of the process
+        foreach (ProcessModule module in process.Modules)
+        {
+            // Get the name of the module
+            string moduleName = module.ModuleName.ToLower();
+
+            // Check if the name contains "xinput"
+            if (moduleName.Contains("xinput"))
+            {
+                // Return true if found
+                return true;
+            }
+        }
+
+        // Return false if not found
+        return false;
     }
 
     #region events

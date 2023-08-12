@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
+using HandheldCompanion;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using Force.Crc32;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
-using static ControllerCommon.Utils.ProcessUtils;
+using static HandheldCompanion.Utils.ProcessUtils;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using static ControllerCommon.Utils.XInputPlusUtils;
+using static HandheldCompanion.Utils.XInputPlusUtils;
 using System.ComponentModel;
 using System.Threading;
 using HandheldCompanion.Controls;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion;
 
@@ -96,12 +97,11 @@ public static class XInputPlus
 
     static XInputPlus()
     {
-        ExtractXInputPlusLibraries();
         ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
     }
 
     // this should be handled by the installer at some point.
-    private static void ExtractXInputPlusLibraries()
+    public static void ExtractXInputPlusLibraries()
     {
         if(!Directory.Exists(XInputPlusDir))
             Directory.CreateDirectory(XInputPlusDir);
@@ -134,16 +134,17 @@ public static class XInputPlus
     {
         try
         {
-            // get attached process
-            Process process = processEx.Process;
+            // get related profile
+            Profile profile = ProfileManager.GetProfileFromPath(processEx.Path, true);
 
-            var profile = ProfileManager.GetProfileFromPath(process.MainModule.FileName, true);
+            if (profile.XInputPlus != XInputPlusMethod.Injection)
+                return;
 
-            if (!string.IsNullOrEmpty(profile.Executable) && profile.XInputPlus == XInputPlusMethod.Injection)
-            {
-                WriteXInputPlusINI(XInputPlus_InjectorDir);
-                InjectXInputPlus(process);
-            }
+            if (!ProcessManager.CheckXInput(processEx.Process))
+                return;
+
+            WriteXInputPlusINI(XInputPlus_InjectorDir);
+            InjectXInputPlus(processEx.Process);
         }
         catch(Exception ex)
         {

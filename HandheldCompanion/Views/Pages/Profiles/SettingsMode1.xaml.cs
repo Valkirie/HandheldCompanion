@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using LiveCharts;
 using LiveCharts.Defaults;
 
@@ -29,7 +30,7 @@ public partial class SettingsMode1 : Page
 
         lvCartesianChart.DataTooltip = null;
 
-        PipeClient.ServerMessage += OnServerMessage;
+        MotionManager.SettingsMode1Update += MotionManager_SettingsMode1Update;
 
         SteeringLinearityPoints = new ChartValues<ObservablePoint>();
         for (var i = 0; i < SteeringArraySize; i++)
@@ -63,25 +64,11 @@ public partial class SettingsMode1 : Page
 
     public void Page_Closed()
     {
-        PipeClient.ServerMessage -= OnServerMessage;
     }
 
-    private void OnServerMessage(PipeMessage message)
+    private void MotionManager_SettingsMode1Update(Vector2 deviceAngle)
     {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_SENSOR:
-                var sensor = (PipeSensor)message;
-
-                switch (sensor.sensorType)
-                {
-                    case SensorType.Inclinometer:
-                        Rotate_Needle(-sensor.reading.Y);
-                        break;
-                }
-
-                break;
-        }
+        Rotate_Needle(-deviceAngle.Y);
     }
 
     private void Rotate_Needle(float y)

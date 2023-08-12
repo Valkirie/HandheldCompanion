@@ -6,9 +6,9 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ControllerCommon;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
+using HandheldCompanion;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Managers;
 
 namespace HandheldCompanion.Controls;

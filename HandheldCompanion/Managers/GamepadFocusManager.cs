@@ -7,10 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Xml.Linq;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
@@ -19,6 +17,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using Frame = Inkore.UI.WPF.Modern.Controls.Frame;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
+using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Managers
 {
@@ -389,6 +388,7 @@ namespace HandheldCompanion.Managers
                             {
                                 switch(focusedElement.Name)
                                 {
+                                    // deprecated, used for ui:NavigationView.FooterMenuItem
                                     case "b_ServiceStart":
                                     case "b_ServiceStop":
                                     case "b_ServiceInstall":

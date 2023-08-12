@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
 
 namespace HandheldCompanion.Managers;
@@ -201,6 +200,11 @@ public static class SettingsManager
     public static int GetInt(string name, bool temporary = false)
     {
         return Convert.ToInt32(GetProperty(name, temporary));
+    }
+
+    public static uint GetUInt(string name, bool temporary = false)
+    {
+        return Convert.ToUInt32(GetProperty(name, temporary));
     }
 
     public static DateTime GetDateTime(string name, bool temporary = false)

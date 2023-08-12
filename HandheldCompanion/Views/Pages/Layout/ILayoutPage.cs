@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using ControllerCommon;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
+using HandheldCompanion;
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+
 using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
 using Inkore.UI.WPF.Modern.Controls;
-using Layout = ControllerCommon.Layout;
+using Layout = HandheldCompanion.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -69,8 +70,22 @@ public class ILayoutPage : Page
 
             AxisMapping axisMapping = pair.Value;
 
+            bool isVisible = false;
+
             // update mapping visibility
-            if (!controller.HasSourceAxis(flags))
+            switch(flags)
+            {
+                default:
+                    if (controller.HasSourceAxis(flags))
+                        isVisible = true;
+                    break;
+                case AxisLayoutFlags.Gyroscope:
+                    if (controller.HasSourceAxis(flags) || MainWindow.CurrentDevice.HasMotionSensor())
+                        isVisible = true;
+                    break;
+            }
+
+            if (!isVisible)
                 axisMapping.Visibility = Visibility.Collapsed;
             else
             {

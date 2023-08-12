@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-using ControllerCommon.Pipes;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views.Classes;
+using static HandheldCompanion.DS4Touch;
 using Application = System.Windows.Application;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
@@ -123,7 +123,7 @@ public partial class OverlayTrackpad : OverlayWindow
 
         normalizedX += button == CursorButton.TouchRight ? 0.5d : 0.0d;
 
-        PipeClient.SendMessage(new PipeClientCursor
+        /* PipeClient.SendMessage(new PipeClientCursor
         {
             action = action,
             x = normalizedX,
@@ -131,6 +131,7 @@ public partial class OverlayTrackpad : OverlayWindow
             button = button,
             flags = flags
         });
+        */
     }
 
     private void Trackpad_PreviewTouchMove(object sender, TouchEventArgs e)
@@ -171,7 +172,7 @@ public partial class OverlayTrackpad : OverlayWindow
                 LeftTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
                 // send vibration (todo: make it a setting)
-                ControllerManager.GetTargetController()?.Rumble(1, 25, 0, 60);
+                ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
             }
                 break;
             case "RightTrackpad":
@@ -185,7 +186,7 @@ public partial class OverlayTrackpad : OverlayWindow
                 RightTrackpad.Opacity = TrackpadOpacity + TrackpadOpacityTouched;
 
                 // send vibration (todo: make it a setting)
-                ControllerManager.GetTargetController()?.Rumble(1, 0, 25, 60);
+                ControllerManager.GetTargetController()?.Rumble(); // (1, 25, 0, 60);
             }
                 break;
         }

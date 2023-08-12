@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Utils;
 using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
+using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Controls;
 

@@ -1,6 +1,4 @@
-﻿using ControllerCommon;
-using ControllerCommon.Controllers;
-using SharpDX.DirectInput;
+﻿using SharpDX.DirectInput;
 
 namespace HandheldCompanion.Controllers;
 

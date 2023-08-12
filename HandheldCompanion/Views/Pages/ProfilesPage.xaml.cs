@@ -4,24 +4,19 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using ControllerCommon;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Controls;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Views.Pages.Profiles;
 using Microsoft.Win32;
 using Inkore.UI.WPF.Modern.Controls;
-using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 using System.Timers;
-using static HandheldCompanion.Managers.SystemManager;
-using ControllerCommon.Processor.AMD;
-using static HandheldCompanion.XInputPlus;
-using static ControllerCommon.Utils.XInputPlusUtils;
+using static HandheldCompanion.Utils.XInputPlusUtils;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -504,7 +499,9 @@ public partial class ProfilesPage : Page
                     case ProfileErrorCode.None:
                         WarningBorder.Visibility = Visibility.Collapsed;
                         cB_Whitelist.IsEnabled = true;
-                        cB_Wrapper.IsEnabled = true;
+
+                        cB_Wrapper_Injection.IsEnabled = true;
+                        cB_Wrapper_Redirection.IsEnabled = true;
                         break;
 
                     case ProfileErrorCode.Running:              // application is running
@@ -514,14 +511,18 @@ public partial class ProfilesPage : Page
                         WarningBorder.Visibility = Visibility.Visible;
                         WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
                         cB_Whitelist.IsEnabled = false;
-                        cB_Wrapper.IsEnabled = false;
+
+                        cB_Wrapper_Injection.IsEnabled = true;
+                        cB_Wrapper_Redirection.IsEnabled = false;
                         break;
 
                     case ProfileErrorCode.MissingPermission:
                         WarningBorder.Visibility = Visibility.Visible;
                         WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
                         cB_Whitelist.IsEnabled = true;
-                        cB_Wrapper.IsEnabled = false;
+
+                        cB_Wrapper_Injection.IsEnabled = true;
+                        cB_Wrapper_Redirection.IsEnabled = false;
                         break;
                 }
             }
@@ -565,15 +566,17 @@ public partial class ProfilesPage : Page
 
     private void cB_Wrapper_SelectionChanged(object sender, RoutedEventArgs e)
     {
+        if (cB_Wrapper.SelectedIndex == -1)
+            return;
+
+        if (currentProfile is null)
+            return;
+
         // wait until lock is released
         if (updateLock)
             return;
 
-        int test = cB_Wrapper.SelectedIndex;
-
-        if (currentProfile is not null && cB_Wrapper.SelectedIndex > -1)
-            currentProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;
-        
+        currentProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;        
         RequestUpdate();
     }
 

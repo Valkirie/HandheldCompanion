@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
 using PrecisionTiming;
 using WindowsInput.Events;
 using static HandheldCompanion.Managers.InputsHotkey;
-using ButtonState = ControllerCommon.Inputs.ButtonState;
+using ButtonState = HandheldCompanion.Inputs.ButtonState;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;

@@ -72,7 +72,7 @@
                     d:Visibility="Visible"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
 
                             <!--  Inner deadzone  -->

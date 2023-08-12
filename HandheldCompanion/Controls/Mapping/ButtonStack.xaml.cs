@@ -1,5 +1,5 @@
-﻿using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Inputs;
 using Inkore.UI.WPF.Modern.Controls;
 using System.Collections.Generic;
 using System.Windows;

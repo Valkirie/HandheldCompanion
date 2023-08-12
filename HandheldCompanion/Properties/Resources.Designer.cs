@@ -268,6 +268,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
+        /// </summary>
+        public static string AutoRollYawSwapDesc {
+            get {
+                return ResourceManager.GetString("AutoRollYawSwapDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à A,B,X,Y.
         /// </summary>
         public static string ButtonsPage_ABXY {
@@ -575,15 +584,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à HD rumble.
-        /// </summary>
-        public static string ControllerPage_SteamDeckHDRumble {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamDeckHDRumble", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Use high-definition rumble engine, at the cost of higher CPU usage.
         /// </summary>
         public static string ControllerPage_SteamControllerHDRumbleDesc {
@@ -602,20 +602,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à HD rumble.
+        /// </summary>
+        public static string ControllerPage_SteamControllerHDRumble {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamControllerHDRumble", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Mute virtual controller.
         /// </summary>
-        public static string ControllerPage_SteamMuteController {
+        public static string ControllerPage_SteamControllerMute {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamMuteController", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_SteamControllerMute", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Mute virtual controller on steam related applications.
         /// </summary>
-        public static string ControllerPage_SteamMuteControllerDesc {
+        public static string ControllerPage_SteamControllerMuteDesc {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamMuteControllerDesc", resourceCulture);
+                return ResourceManager.GetString("ControllerPage_SteamControllerMuteDesc", resourceCulture);
             }
         }
         
@@ -689,6 +698,1203 @@ namespace HandheldCompanion.Properties {
             get {
                 object obj = ResourceManager.GetObject("empty_neptune", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ≈.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEO2_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Win.
+        /// </summary>
+        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Esc.
+        /// </summary>
+        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à KB.
+        /// </summary>
+        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ≈.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ≈.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à AYA.
+        /// </summary>
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ≈.
+        /// </summary>
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RC.
+        /// </summary>
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LC.
+        /// </summary>
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Cross.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Circle.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Square.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Triangle.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Share.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sony.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Options.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à A.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_A {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.A", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Always On.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_B {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.B", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Back.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Back {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Down.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadDown {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Left.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadLeft {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Right.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadRight {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Up.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_DPadUp {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Shoulder.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftShoulder {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftShoulder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Trigger.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_LeftTrigger {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Shoulder.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightShoulder {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightShoulder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Trigger.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_RightTrigger {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightTrigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Start.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Start {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à X.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_X {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Y.
+        /// </summary>
+        public static string Enum_GamepadButtonFlagsExt_Y {
+            get {
+                return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Y", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Emulated DualShock 4 controller.
+        /// </summary>
+        public static string Enum_HIDmode_DualShock4Controller {
+            get {
+                return ResourceManager.GetString("Enum.HIDmode.DualShock4Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à No emulated controller.
+        /// </summary>
+        public static string Enum_HIDmode_NoController {
+            get {
+                return ResourceManager.GetString("Enum.HIDmode.NoController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Emulated XBOX 360 controller.
+        /// </summary>
+        public static string Enum_HIDmode_Xbox360Controller {
+            get {
+                return ResourceManager.GetString("Enum.HIDmode.Xbox360Controller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Connected.
+        /// </summary>
+        public static string Enum_HIDstatus_Connected {
+            get {
+                return ResourceManager.GetString("Enum.HIDstatus.Connected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Disconnected.
+        /// </summary>
+        public static string Enum_HIDstatus_Disconnected {
+            get {
+                return ResourceManager.GetString("Enum.HIDstatus.Disconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Auto Roll Yaw Swap.
+        /// </summary>
+        public static string Enum_Input_AutoRollYawSwap {
+            get {
+                return ResourceManager.GetString("Enum.Input.AutoRollYawSwap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Joystick camera.
+        /// </summary>
+        public static string Enum_Input_JoystickCamera {
+            get {
+                return ResourceManager.GetString("Enum.Input.JoystickCamera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Joystick steering.
+        /// </summary>
+        public static string Enum_Input_JoystickSteering {
+            get {
+                return ResourceManager.GetString("Enum.Input.JoystickSteering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Player space.
+        /// </summary>
+        public static string Enum_Input_PlayerSpace {
+            get {
+                return ResourceManager.GetString("Enum.Input.PlayerSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Custom.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Custom {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Custom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Device.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Device {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Device", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Handheld Companion.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Handheld {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Handheld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Handheld Companion.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_HC {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.HC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Overlay.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Overlay {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Overlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Quick tools.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Quicktools {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Quicktools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Windows.
+        /// </summary>
+        public static string Enum_InputsHotkeyType_Windows {
+            get {
+                return ResourceManager.GetString("Enum.InputsHotkeyType.Windows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Auto Roll Yaw Swap.
+        /// </summary>
+        public static string Enum_MotionInput_AutoRollYawSwap {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Joystick Camera.
+        /// </summary>
+        public static string Enum_MotionInput_JoystickCamera {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.JoystickCamera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Joystick Steering.
+        /// </summary>
+        public static string Enum_MotionInput_JoystickSteering {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.JoystickSteering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Player Space.
+        /// </summary>
+        public static string Enum_MotionInput_PlayerSpace {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.PlayerSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Stick.
+        /// </summary>
+        public static string Enum_MotionOutput_LeftStick {
+            get {
+                return ResourceManager.GetString("Enum.MotionOutput.LeftStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Stick.
+        /// </summary>
+        public static string Enum_MotionOutput_RightStick {
+            get {
+                return ResourceManager.GetString("Enum.MotionOutput.RightStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à A.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à X.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Y.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à View.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à STEAM.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Menu.
+        /// </summary>
+        public static string Enum_NeptuneController_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left joystick.
+        /// </summary>
+        public static string Enum_Output_LeftStick {
+            get {
+                return ResourceManager.GetString("Enum.Output.LeftStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right joystick.
+        /// </summary>
+        public static string Enum_Output_RightStick {
+            get {
+                return ResourceManager.GetString("Enum.Output.RightStick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_Default {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Oops. This profile seems to be running. Some options requiring an executable may be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_IsRunning {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.IsRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Oops. It seems this profile does not have an executable. How is this even possible?.
+        /// </summary>
+        public static string Enum_ProfileErrorCode_MissingExecutable {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingExecutable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_MissingPath {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_MissingPermission {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPermission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nothing to see here..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_None {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled..
+        /// </summary>
+        public static string Enum_ProfileErrorCode_Running {
+            get {
+                return ResourceManager.GetString("Enum.ProfileErrorCode.Running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Default.
+        /// </summary>
+        public static string Enum_QualityOfServiceLevel_Default {
+            get {
+                return ResourceManager.GetString("Enum.QualityOfServiceLevel.Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Eco.
+        /// </summary>
+        public static string Enum_QualityOfServiceLevel_Eco {
+            get {
+                return ResourceManager.GetString("Enum.QualityOfServiceLevel.Eco", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à High.
+        /// </summary>
+        public static string Enum_QualityOfServiceLevel_High {
+            get {
+                return ResourceManager.GetString("Enum.QualityOfServiceLevel.High", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Command center.
+        /// </summary>
+        public static string Enum_ROGAlly_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Armory crate.
+        /// </summary>
+        public static string Enum_ROGAlly_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à M1 / M2.
+        /// </summary>
+        public static string Enum_ROGAlly_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Automatic.
+        /// </summary>
+        public static string Enum_ServiceStartMode_Automatic {
+            get {
+                return ResourceManager.GetString("Enum.ServiceStartMode.Automatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Disabled.
+        /// </summary>
+        public static string Enum_ServiceStartMode_Disabled {
+            get {
+                return ResourceManager.GetString("Enum.ServiceStartMode.Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Manual.
+        /// </summary>
+        public static string Enum_ServiceStartMode_Manual {
+            get {
+                return ResourceManager.GetString("Enum.ServiceStartMode.Manual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Options.
+        /// </summary>
+        public static string Enum_SteamDeck_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.SteamDeck.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à L2.
+        /// </summary>
+        public static string Enum_XInputController_AxisLayoutFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb.
+        /// </summary>
+        public static string Enum_XInputController_AxisLayoutFlags_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à R2.
+        /// </summary>
+        public static string Enum_XInputController_AxisLayoutFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb.
+        /// </summary>
+        public static string Enum_XInputController_AxisLayoutFlags_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à A.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à X.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Y.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B5.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B5 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B6.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B6 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B7.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B7 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à B8.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_B8 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à View.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Down.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_DPadDown {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Left.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_DPadLeft {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à PPad Right.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_DPadRight {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à DPad Up.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_DPadUp {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à LB.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à L2.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à L3.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L3 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à L4.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L4 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à L5.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_L5 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_LeftThumb {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb Down.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_LeftThumbDown {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb Left.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_LeftThumbLeft {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb Right.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_LeftThumbRight {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Left Thumb Up.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_LeftThumbUp {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à OEM1.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à OEM2.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à OEM3.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_OEM3 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à RB.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R1 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à R2.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R2 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à R3.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R3 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à R4.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R4 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à R5.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_R5 {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_RightThumb {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb Down.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_RightThumbDown {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb Left.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_RightThumbLeft {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb Right.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_RightThumbRight {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Right Thumb Up.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_RightThumbUp {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Guide.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Menu.
+        /// </summary>
+        public static string Enum_XInputController_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Start", resourceCulture);
             }
         }
         
@@ -1171,6 +2377,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à This input will operate as a simple joystick. This is intended for traditional joystick applications.
+        /// </summary>
+        public static string JoystickCameraDesc {
+            get {
+                return ResourceManager.GetString("JoystickCameraDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à LEFT JOYSTICK.
         /// </summary>
         public static string JoystickPage_Joystick_Left {
@@ -1203,6 +2418,15 @@ namespace HandheldCompanion.Properties {
         public static string JoystickPage_Joystick_Right_Buttons {
             get {
                 return ResourceManager.GetString("JoystickPage_Joystick_Right_Buttons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
+        /// </summary>
+        public static string JoystickSteeringDesc {
+            get {
+                return ResourceManager.GetString("JoystickSteeringDesc", resourceCulture);
             }
         }
         
@@ -1437,69 +2661,6 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_OK {
             get {
                 return ResourceManager.GetString("MainWindow_OK", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Deploy service.
-        /// </summary>
-        public static string MainWindow_serviceDeploy {
-            get {
-                return ResourceManager.GetString("MainWindow_serviceDeploy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Service manager.
-        /// </summary>
-        public static string MainWindow_ServiceManager {
-            get {
-                return ResourceManager.GetString("MainWindow_ServiceManager", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Oups. There was an issue while we tried to start the service..
-        /// </summary>
-        public static string MainWindow_ServiceManagerStartIssue {
-            get {
-                return ResourceManager.GetString("MainWindow_ServiceManagerStartIssue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Oups. There was an issue while we tried to stop the service..
-        /// </summary>
-        public static string MainWindow_ServiceManagerStopIssue {
-            get {
-                return ResourceManager.GetString("MainWindow_ServiceManagerStopIssue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Remove service.
-        /// </summary>
-        public static string MainWindow_serviceRemove {
-            get {
-                return ResourceManager.GetString("MainWindow_serviceRemove", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Start service.
-        /// </summary>
-        public static string MainWindow_serviceStart {
-            get {
-                return ResourceManager.GetString("MainWindow_serviceStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Stop service.
-        /// </summary>
-        public static string MainWindow_serviceStop {
-            get {
-                return ResourceManager.GetString("MainWindow_serviceStop", resourceCulture);
             }
         }
         
@@ -2058,6 +3219,15 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_ZDOPlusController {
             get {
                 return ResourceManager.GetString("OverlayPage_ZDOPlusController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à This input will operate as a joystick optimized for controlling a first or third person camera.
+        /// </summary>
+        public static string PlayerSpaceDesc {
+            get {
+                return ResourceManager.GetString("PlayerSpaceDesc", resourceCulture);
             }
         }
         
@@ -3638,42 +4808,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Yes.
-        /// </summary>
-        public static string SettingsPage_AutoStartPrimary {
-            get {
-                return ResourceManager.GetString("SettingsPage_AutoStartPrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à No.
-        /// </summary>
-        public static string SettingsPage_AutoStartSecondary {
-            get {
-                return ResourceManager.GetString("SettingsPage_AutoStartSecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
-        /// </summary>
-        public static string SettingsPage_AutoStartText {
-            get {
-                return ResourceManager.GetString("SettingsPage_AutoStartText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Warning.
-        /// </summary>
-        public static string SettingsPage_AutoStartTitle {
-            get {
-                return ResourceManager.GetString("SettingsPage_AutoStartTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Application backdrop.
         /// </summary>
         public static string SettingsPage_Backdrop {
@@ -3868,24 +5002,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_GeneralOptions {
             get {
                 return ResourceManager.GetString("SettingsPage_GeneralOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Halt with Companion.
-        /// </summary>
-        public static string SettingsPage_HaltWithCompanion {
-            get {
-                return ResourceManager.GetString("SettingsPage_HaltWithCompanion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Automatically turn off service when companion is closed.
-        /// </summary>
-        public static string SettingsPage_HaltWithCompanionDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_HaltWithCompanionDesc", resourceCulture);
             }
         }
         
@@ -4196,15 +5312,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Service options.
-        /// </summary>
-        public static string SettingsPage_ServiceOptions {
-            get {
-                return ResourceManager.GetString("SettingsPage_ServiceOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Settings.
         /// </summary>
         public static string SettingsPage_Settings {
@@ -4228,24 +5335,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_StartupTypeDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_StartupTypeDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Start with Companion.
-        /// </summary>
-        public static string SettingsPage_StartWithCompanion {
-            get {
-                return ResourceManager.GetString("SettingsPage_StartWithCompanion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Automatically turn on service when companion starts.
-        /// </summary>
-        public static string SettingsPage_StartWithCompanionDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_StartWithCompanionDesc", resourceCulture);
             }
         }
         
@@ -4421,7 +5510,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes.
+        ///   Recherche une chaîne localisée semblable à Yes.
         /// </summary>
         public static string SettingsPage_VirtualControllerForceOrderDependencyPrimary {
             get {
@@ -4430,7 +5519,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No.
+        ///   Recherche une chaîne localisée semblable à No.
         /// </summary>
         public static string SettingsPage_VirtualControllerForceOrderDependencySecondary {
             get {
@@ -4439,7 +5528,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
+        ///   Recherche une chaîne localisée semblable à Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
         /// </summary>
         public static string SettingsPage_VirtualControllerForceOrderDependencyText {
             get {
@@ -4448,7 +5537,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warning.
+        ///   Recherche une chaîne localisée semblable à Warning.
         /// </summary>
         public static string SettingsPage_VirtualControllerForceOrderDependencyTitle {
             get {
@@ -4457,7 +5546,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Controller is now cloaked and inputs forwarded to virtual controller.
+        ///   Recherche une chaîne localisée semblable à Controller is now cloaked and inputs forwarded to virtual controller.
         /// </summary>
         public static string ToastNewControllerEx {
             get {

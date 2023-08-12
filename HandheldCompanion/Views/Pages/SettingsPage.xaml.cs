@@ -3,25 +3,23 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.ServiceProcess;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ControllerCommon.Devices;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
+using HandheldCompanion.Devices;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
 using Inkore.UI.WPF.Modern;
 using Inkore.UI.WPF.Modern.Controls;
 using Inkore.UI.WPF.Modern.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using static ControllerCommon.Utils.DeviceUtils;
+using static HandheldCompanion.Utils.DeviceUtils;
 using static HandheldCompanion.Managers.UpdateManager;
 using Page = System.Windows.Controls.Page;
-using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
+using HandheldCompanion.Controllers;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -35,20 +33,6 @@ public partial class SettingsPage : Page
         InitializeComponent();
 
         // initialize components
-        foreach (var mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode =>
-                     mode >= ServiceStartMode.Automatic))
-        {
-            RadioButton radio = new() { Content = EnumUtils.GetDescriptionFromEnumValue(mode) };
-            switch (mode)
-            {
-                case ServiceStartMode.Disabled:
-                    radio.IsEnabled = false;
-                    break;
-            }
-
-            cB_StartupType.Items.Add(radio);
-        }
-
         cB_Language.Items.Add(new CultureInfo("en-US"));
         cB_Language.Items.Add(new CultureInfo("fr-FR"));
         cB_Language.Items.Add(new CultureInfo("de-DE"));
@@ -63,9 +47,9 @@ public partial class SettingsPage : Page
         UpdateDevice();
 
         // initialize manager(s)
-        MainWindow.serviceManager.Updated += OnServiceUpdate;
         MainWindow.updateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
         PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
@@ -79,6 +63,15 @@ public partial class SettingsPage : Page
     public SettingsPage(string? Tag) : this()
     {
         this.Tag = Tag;
+    }
+
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
+        });
     }
 
     private void HWiNFO_Updated(PlatformStatus status)
@@ -156,23 +149,21 @@ public partial class SettingsPage : Page
                     // default value
                     if (idx == -1)
                     {
-                        if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor))
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorController));
-                        else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor))
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorInternal));
-                        else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor))
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorExternal));
-                        else
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorNone));
+                            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
+                            {
+                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
+                            }
+                            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
+                            {
+                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorExternal));
+                            }
+                            else
+                            {
+                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
+                            }
 
                         return;
                     }
-
-                    cB_SensorSelection.SelectedIndex = idx;
 
                     cB_SensorSelection.SelectedIndex = idx;
 
@@ -222,12 +213,6 @@ public partial class SettingsPage : Page
                 case "ToastEnable":
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
                     break;
-                case "StartServiceWithCompanion":
-                    Toggle_ServiceStartup.IsOn = Convert.ToBoolean(value);
-                    break;
-                case "HaltServiceWithCompanion":
-                    Toggle_ServiceShutdown.IsOn = Convert.ToBoolean(value);
-                    break;
                 case "SensorPlacementUpsideDown":
                     Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
                     break;
@@ -249,13 +234,6 @@ public partial class SettingsPage : Page
                     break;
                 case "SensorPlacement":
                     UpdateUI_SensorPlacement(Convert.ToInt32(value));
-                    break;
-                case "ServiceStartMode":
-                    cB_StartupType.SelectedIndex = Convert.ToInt32(value);
-
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_StartupType_SelectionChanged(this, null);
                     break;
 
                 case "PlatformRTSSEnabled":
@@ -280,9 +258,8 @@ public partial class SettingsPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor);
-            SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor);
-            SensorController.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor);
+            SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
+            SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
         });
     }
 
@@ -293,7 +270,6 @@ public partial class SettingsPage : Page
 
     public void Page_Closed()
     {
-        MainWindow.serviceManager.Updated -= OnServiceUpdate;
     }
 
     private async void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)
@@ -330,35 +306,6 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
-    }
-
-    private void cB_StartupType_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
-    {
-        if (cB_StartupType.SelectedIndex == -1)
-            return;
-
-        ServiceStartMode mode;
-        switch (cB_StartupType.SelectedIndex)
-        {
-            case 0:
-                mode = ServiceStartMode.Automatic;
-                break;
-            default:
-            case 1:
-                mode = ServiceStartMode.Manual;
-                break;
-            case 2:
-                mode = ServiceStartMode.Disabled;
-                break;
-        }
-
-        MainWindow.serviceManager.SetStartType(mode);
-
-        // service was not found
-        if (!cB_StartupType.IsEnabled)
-            return;
-
-        SettingsManager.SetProperty("ServiceStartMode", cB_StartupType.SelectedIndex);
     }
 
     private void Toggle_CloseMinimizes_Toggled(object? sender, RoutedEventArgs? e)
@@ -419,11 +366,10 @@ public partial class SettingsPage : Page
             }
         }
 
-        // RunAtStartup and StartServiceWithCompanion required for this feature
+        // RunAtStartup is required for this feature
         if (Toggle_ForceVirtualControllerOrder.IsOn)
         {
             SettingsManager.SetProperty("RunAtStartup", true);
-            SettingsManager.SetProperty("StartServiceWithCompanion", true);
         }
             
 
@@ -548,43 +494,6 @@ public partial class SettingsPage : Page
     private void B_CheckUpdate_Click(object? sender, RoutedEventArgs? e)
     {
         new Thread(() => { MainWindow.updateManager.StartProcess(); }).Start();
-    }
-
-    private void Toggle_ServiceShutdown_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
-    }
-
-    private async void Toggle_ServiceStartup_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        if (!Toggle_ServiceStartup.IsOn && SettingsManager.GetBoolean("VirtualControllerForceOrder"))
-        {
-            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyTitle,
-                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyText,
-                ContentDialogButton.Primary, null,
-                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyPrimary,
-                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencySecondary);
-
-            await result;
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    SettingsManager.SetProperty("VirtualControllerForceOrder", false);
-                    break;
-                case ContentDialogResult.Secondary:
-                    Toggle_ServiceStartup.IsOn = true;
-                    break;
-            }
-        }
-
-        SettingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
     }
 
     private void cB_Language_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
@@ -777,6 +686,8 @@ public partial class SettingsPage : Page
         Grid_SensorPlacementVisualisation.IsEnabled =
             cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
+        // TODO: Implement me
+
         if (IsLoaded)
             SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
     }
@@ -808,55 +719,6 @@ public partial class SettingsPage : Page
         if (IsLoaded)
             SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
     }
-
-    #region serviceManager
-
-    private void OnServiceUpdate(ServiceControllerStatus status, int mode)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch (status)
-            {
-                case ServiceControllerStatus.Paused:
-                case ServiceControllerStatus.Stopped:
-                case ServiceControllerStatus.Running:
-                case ServiceControllerStatus.ContinuePending:
-                case ServiceControllerStatus.PausePending:
-                case ServiceControllerStatus.StartPending:
-                case ServiceControllerStatus.StopPending:
-                    cB_StartupType.IsEnabled = true;
-                    break;
-                default:
-                    cB_StartupType.IsEnabled = false;
-                    break;
-            }
-
-            if (mode != -1)
-            {
-                var serviceMode = (ServiceStartMode)mode;
-                switch (serviceMode)
-                {
-                    case ServiceStartMode.Automatic:
-                        cB_StartupType.SelectedIndex = 0;
-                        break;
-                    default:
-                    case ServiceStartMode.Manual:
-                        cB_StartupType.SelectedIndex = 1;
-                        break;
-                    case ServiceStartMode.Disabled:
-                        cB_StartupType.SelectedIndex = 2;
-                        break;
-                }
-
-                // only allow users to set those options when service mode is set to Manual
-                Toggle_ServiceStartup.IsEnabled = serviceMode != ServiceStartMode.Automatic;
-                Toggle_ServiceShutdown.IsEnabled = serviceMode != ServiceStartMode.Automatic;
-            }
-        });
-    }
-
-    #endregion
 
     private void Toggle_RTSS_Toggled(object sender, RoutedEventArgs e)
     {

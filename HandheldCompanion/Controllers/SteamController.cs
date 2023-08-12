@@ -1,5 +1,4 @@
-﻿using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
+﻿using HandheldCompanion.Inputs;
 using steam_hidapi.net.Hid;
 
 namespace HandheldCompanion.Controllers

@@ -1,13 +1,9 @@
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using ControllerCommon;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using SharpDX.XInput;
 
 namespace HandheldCompanion.Controllers;
@@ -115,8 +111,8 @@ public class XInputController : IController
             Inputs.ButtonState[ButtonFlags.LeftStickDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.LeftStickUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
 
-            Inputs.AxisState[AxisFlags.LeftThumbX] = Gamepad.LeftThumbX;
-            Inputs.AxisState[AxisFlags.LeftThumbY] = Gamepad.LeftThumbY;
+            Inputs.AxisState[AxisFlags.LeftStickX] = Gamepad.LeftThumbX;
+            Inputs.AxisState[AxisFlags.LeftStickY] = Gamepad.LeftThumbY;
 
             // Right Stick
             Inputs.ButtonState[ButtonFlags.RightStickLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
@@ -124,8 +120,8 @@ public class XInputController : IController
             Inputs.ButtonState[ButtonFlags.RightStickDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
             Inputs.ButtonState[ButtonFlags.RightStickUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
 
-            Inputs.AxisState[AxisFlags.RightThumbX] = Gamepad.RightThumbX;
-            Inputs.AxisState[AxisFlags.RightThumbY] = Gamepad.RightThumbY;
+            Inputs.AxisState[AxisFlags.RightStickX] = Gamepad.RightThumbX;
+            Inputs.AxisState[AxisFlags.RightStickY] = Gamepad.RightThumbY;
 
             Inputs.ButtonState[ButtonFlags.Special] = State.wButtons.HasFlag(XInputStateButtons.Xbox);
 
@@ -148,13 +144,6 @@ public class XInputController : IController
         return false;
     }
 
-    public override void SetVibrationStrength(double value, bool rumble)
-    {
-        base.SetVibrationStrength(value, rumble);
-        if (rumble)
-            Rumble();
-    }
-
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
         if (!IsConnected())
@@ -167,53 +156,21 @@ public class XInputController : IController
         Controller.SetVibration(vibration);
     }
 
-    public override void Rumble(int Loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue,
-        byte Duration = 125)
-    {
-        Task.Factory.StartNew(async () =>
-        {
-            for (var i = 0; i < Loop * 2; i++)
-            {
-                if (i % 2 == 0)
-                    SetVibration(LeftValue, RightValue);
-                else
-                    SetVibration(0, 0);
-
-                await Task.Delay(Duration);
-            }
-        });
-    }
-
     public override void Plug()
     {
         TimerManager.Tick += UpdateInputs;
-        PipeClient.ServerMessage += OnServerMessage;
         base.Plug();
     }
 
     public override void Unplug()
     {
         TimerManager.Tick -= UpdateInputs;
-        PipeClient.ServerMessage -= OnServerMessage;
         base.Unplug();
     }
 
     public override void Cleanup()
     {
         TimerManager.Tick -= UpdateInputs;
-    }
-
-    private void OnServerMessage(PipeMessage message)
-    {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_VIBRATION:
-            {
-                var e = (PipeClientVibration)message;
-                SetVibration(e.LargeMotor, e.SmallMotor);
-            }
-                break;
-        }
     }
 
     public override string GetGlyph(ButtonFlags button)

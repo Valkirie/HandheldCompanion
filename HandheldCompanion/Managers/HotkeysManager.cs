@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using Windows.System;
-using ControllerCommon.Controllers;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Properties;
@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
 using System.Threading.Tasks;
+using HandheldCompanion.Misc;
 
 namespace HandheldCompanion.Managers;
 

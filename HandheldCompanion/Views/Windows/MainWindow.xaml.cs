@@ -5,35 +5,29 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
-using ControllerCommon;
-using ControllerCommon.Controllers;
-using ControllerCommon.Devices;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
 using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
-using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
 namespace HandheldCompanion.Views;
 
@@ -63,18 +57,19 @@ public partial class MainWindow : GamepadWindow
 
     // manager(s) vars
     private static readonly List<Manager> _managers = new();
-    public static ServiceManager serviceManager;
     public static TaskManager taskManager;
     public static PerformanceManager performanceManager;
     public static UpdateManager updateManager;
 
-    public static string CurrentExe, CurrentPath, CurrentPathService;
+    public static string CurrentExe, CurrentPath;
 
     private static MainWindow CurrentWindow;
     public static FileVersionInfo fileVersionInfo;
 
     public static string InstallPath;
     public static string SettingsPath;
+    public static string CurrentPageName;
+
     private bool appClosing;
     private bool IsReady;
     private readonly NotifyIcon notifyIcon;
@@ -113,6 +108,9 @@ public partial class MainWindow : GamepadWindow
 
         Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
+        // initialize XInputWrapper
+        XInputPlus.ExtractXInputPlusLibraries();
+
         // initialize notifyIcon
         notifyIcon = new NotifyIcon
         {
@@ -137,14 +135,6 @@ public partial class MainWindow : GamepadWindow
         // paths
         CurrentExe = process.MainModule.FileName;
         CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
-        CurrentPathService = Path.Combine(CurrentPath, "ControllerService.exe");
-
-        // verifying HidHide is installed
-        if (!File.Exists(CurrentPathService))
-        {
-            LogManager.LogCritical("Controller Service executable is missing");
-            throw new InvalidOperationException();
-        }
 
         // initialize HidHide
         HidHide.RegisterApplication(CurrentExe);
@@ -156,18 +146,36 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
 
+        // workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
+        // todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
+        // https://dlcdnets.asus.com/pub/ASUS/IOTHMD/Image/Driver/Chipset/34644/BoschG-sensor_ROG_Bosch_Z_V1.0.1.7_34644.exe?model=ROG%20Ally%20(2023)
+
+        string currentDeviceType = CurrentDevice.GetType().Name;
+        switch (currentDeviceType)
+        {
+            case "AYANEOAIRPlus":
+            case "ROGAlly":
+                {
+                    LogManager.LogInformation("Restarting: {0}", CurrentDevice.InternalSensorName);
+
+                    if (CurrentDevice.RestartSensor())
+                    {
+                        // give the device some breathing space once restarted
+                        Thread.Sleep(500);
+
+                        LogManager.LogInformation("Successfully restarted: {0}", CurrentDevice.InternalSensorName);
+                    }
+                    else
+                        LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
+                }
+                break;
+        }
+
         if (SettingsManager.GetBoolean("FirstStart"))
         {
             // initialize splash screen on first start only
             splashScreen = new SplashScreen();
             splashScreen.Show();
-
-            // handle a few edge-cases on first start
-            if (CurrentDevice.GetType() == typeof(SteamDeck))
-            {
-                // we shouldn't hide the steam deck controller by default
-                SettingsManager.SetProperty("HIDcloakonconnect", false);
-            }
 
             // update FirstStart
             SettingsManager.SetProperty("FirstStart", false);
@@ -202,14 +210,18 @@ public partial class MainWindow : GamepadWindow
         PlatformManager.Start();
         OSDManager.Start();
         LayoutManager.Start();
-
-        ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.Start();
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
         PowerManager.Start();
 
         SystemManager.Start();
+        VirtualManager.Start();
+
+        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
+        InputsManager.Start();
+        SensorsManager.Start();
+        TimerManager.Start();
 
         // start managers asynchroneously
         foreach (var manager in _managers)
@@ -218,11 +230,6 @@ public partial class MainWindow : GamepadWindow
         // start setting last
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         SettingsManager.Start();
-
-        PipeClient.ServerMessage += OnServerMessage;
-        PipeClient.Connected += OnClientConnected;
-        PipeClient.Disconnected += OnClientDisconnected;
-        PipeClient.Open();
 
         // update Position and Size
         Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
@@ -248,12 +255,6 @@ public partial class MainWindow : GamepadWindow
         }
 
         return IntPtr.Zero;
-    }
-
-    private void ProcessManager_ForegroundChanged(Controls.ProcessEx processEx, Controls.ProcessEx backgroundEx)
-    {
-        // unset flag
-        SystemPending = false;
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -344,14 +345,6 @@ public partial class MainWindow : GamepadWindow
                 SettingsManager.SetProperty("DesktopLayoutEnabled", DesktopLayout, false, true);
                 break;
         }
-
-        if (PipeClient.IsConnected)
-        {
-            var settings = new PipeClientSettings();
-            settings.Settings.Add(name, Convert.ToString(value));
-
-            PipeClient.SendMessage(settings);
-        }
     }
 
     public void SwapWindowState()
@@ -415,47 +408,19 @@ public partial class MainWindow : GamepadWindow
     private void loadManagers()
     {
         // initialize managers
-        serviceManager = new ServiceManager("ControllerService", Properties.Resources.ServiceName,
-            Properties.Resources.ServiceDescription);
         taskManager = new TaskManager("HandheldCompanion", CurrentExe);
         performanceManager = new PerformanceManager();
         updateManager = new UpdateManager();
 
         // store managers
-        _managers.Add(serviceManager);
         _managers.Add(taskManager);
         _managers.Add(performanceManager);
         _managers.Add(updateManager);
-
-        serviceManager.Initialized += () =>
-        {
-            // listen for service update once initialized
-            serviceManager.Updated += OnServiceUpdate;
-
-            if (SettingsManager.GetBoolean("StartServiceWithCompanion"))
-            {
-                if (!serviceManager.Exists())
-                    serviceManager.CreateService(CurrentPathService);
-
-                _ = serviceManager.StartServiceAsync();
-            }
-        };
-        serviceManager.StartFailed += (status, message) =>
-        {
-            _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}",
-                $"{Properties.Resources.MainWindow_ServiceManagerStartIssue}\n\n{message}",
-                ContentDialogButton.Primary, null, $"{Properties.Resources.MainWindow_OK}");
-        };
-        serviceManager.StopFailed += status =>
-        {
-            _ = Dialog.ShowAsync($"{Properties.Resources.MainWindow_ServiceManager}",
-                $"{Properties.Resources.MainWindow_ServiceManagerStopIssue}", ContentDialogButton.Primary, null,
-                $"{Properties.Resources.MainWindow_OK}");
-        };
     }
 
     private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
     {
+        // todo: improve me
         CurrentDevice.PullSensors();
 
         aboutPage.UpdateDevice(device);
@@ -492,18 +457,6 @@ public partial class MainWindow : GamepadWindow
             case "QuickTools":
                 overlayquickTools.ToggleVisibility();
                 break;
-            case "ServiceStart":
-                _ = serviceManager.StartServiceAsync();
-                break;
-            case "ServiceStop":
-                _ = serviceManager.StopServiceAsync();
-                break;
-            case "ServiceInstall":
-                serviceManager.CreateService(CurrentPathService);
-                break;
-            case "ServiceDelete":
-                serviceManager.DeleteService();
-                break;
             case "Exit":
                 if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
                     SwapWindowState();
@@ -512,22 +465,6 @@ public partial class MainWindow : GamepadWindow
                 Close();
                 break;
         }
-    }
-
-    private void OnClientConnected()
-    {
-        // (re)send all local settings to server at once
-        var settings = new PipeClientSettings();
-
-        foreach (var values in SettingsManager.GetProperties())
-            settings.Settings.Add(values.Key, Convert.ToString(values.Value));
-
-        PipeClient.SendMessage(settings);
-    }
-
-    private void OnClientDisconnected()
-    {
-        // do something
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -543,6 +480,10 @@ public partial class MainWindow : GamepadWindow
     {
         if (IsReady)
             return;
+
+        // hide splashscreen
+        if (splashScreen is not null)
+            splashScreen.Close();
 
         // home page has loaded, display main window
         WindowState = SettingsManager.GetBoolean("StartMinimized")
@@ -577,136 +518,7 @@ public partial class MainWindow : GamepadWindow
         }
     }
 
-    #region PipeServer
-
-    private void OnServerMessage(PipeMessage message)
-    {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_TOAST:
-                var toast = (PipeServerToast)message;
-                ToastManager.SendToast(toast.title, toast.content, toast.image);
-                break;
-
-            case PipeCode.SERVER_SETTINGS:
-                var settings = (PipeServerSettings)message;
-                UpdateSettings(settings.Settings);
-                break;
-        }
-    }
-
-    #endregion
-
-    #region serviceManager
-
-    /*
-     * Stop
-     * Start
-     * Deploy
-     * Remove
-     */
-
-    private void OnServiceUpdate(ServiceControllerStatus status, int mode)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch ((ServiceStartMode)mode)
-            {
-                case ServiceStartMode.Disabled:
-                    b_ServiceStop.IsEnabled = false;
-                    b_ServiceStart.IsEnabled = false;
-                    b_ServiceInstall.IsEnabled = true;
-                    b_ServiceDelete.IsEnabled = false;
-
-                    if (notifyIcon.ContextMenuStrip is not null)
-                    {
-                        notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
-                        notifyIcon.ContextMenuStrip.Items[5].Enabled = true;
-                        notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
-                    }
-
-                    break;
-
-                default:
-                {
-                    switch (status)
-                    {
-                        case ServiceControllerStatus.Paused:
-                        case ServiceControllerStatus.Stopped:
-                            b_ServiceStop.IsEnabled = false;
-                            b_ServiceStart.IsEnabled = true;
-                            b_ServiceInstall.IsEnabled = false;
-                            b_ServiceDelete.IsEnabled = true;
-
-                            if (notifyIcon.ContextMenuStrip is not null)
-                            {
-                                notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[4].Enabled = true;
-                                notifyIcon.ContextMenuStrip.Items[5].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[6].Enabled = true;
-                            }
-
-                            break;
-                        case ServiceControllerStatus.Running:
-                            b_ServiceStop.IsEnabled = true;
-                            b_ServiceStart.IsEnabled = false;
-                            b_ServiceInstall.IsEnabled = false;
-                            b_ServiceDelete.IsEnabled = false;
-
-                            if (notifyIcon.ContextMenuStrip is not null)
-                            {
-                                notifyIcon.ContextMenuStrip.Items[3].Enabled = true;
-                                notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[5].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
-                            }
-
-                            break;
-                        case ServiceControllerStatus.ContinuePending:
-                        case ServiceControllerStatus.PausePending:
-                        case ServiceControllerStatus.StartPending:
-                        case ServiceControllerStatus.StopPending:
-                            b_ServiceStop.IsEnabled = false;
-                            b_ServiceStart.IsEnabled = false;
-                            b_ServiceInstall.IsEnabled = false;
-                            b_ServiceDelete.IsEnabled = false;
-
-                            if (notifyIcon.ContextMenuStrip is not null)
-                            {
-                                notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[5].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
-                            }
-
-                            break;
-                        default:
-                            b_ServiceStop.IsEnabled = false;
-                            b_ServiceStart.IsEnabled = false;
-                            b_ServiceInstall.IsEnabled = true;
-                            b_ServiceDelete.IsEnabled = false;
-
-                            if (notifyIcon.ContextMenuStrip is not null)
-                            {
-                                notifyIcon.ContextMenuStrip.Items[3].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[4].Enabled = false;
-                                notifyIcon.ContextMenuStrip.Items[5].Enabled = true;
-                                notifyIcon.ContextMenuStrip.Items[6].Enabled = false;
-                            }
-
-                            break;
-                    }
-                }
-                    break;
-            }
-        });
-    }
-
-    #endregion
-
-    private bool SystemPending;
+    // no code from the cases inside this function will be called on program start
     private async void OnSystemStatusChanged(PowerManager.SystemStatus status, PowerManager.SystemStatus prevStatus)
     {
         if (status == prevStatus)
@@ -715,58 +527,39 @@ public partial class MainWindow : GamepadWindow
         switch (status)
         {
             case PowerManager.SystemStatus.SystemReady:
+                // resume from sleep
+                // TODO: lower those delays?
+                if (prevStatus == PowerManager.SystemStatus.SystemPending)
                 {
-                    switch (prevStatus)
-                    {
-                        case PowerManager.SystemStatus.SystemBooting:
-                            // cold boot
-                            break;
-                        case PowerManager.SystemStatus.SystemPending:
-                            // resume from sleep
-                            break;
-                    }
-
-                    new Thread(() =>
-                    {
-                        // wait for all HIDs to be ready
-                        while (!CurrentDevice.IsReady())
-                            Thread.Sleep(500);
-
-                        // open current device (threaded to avoid device to hang)
-                        var success = CurrentDevice.Open();
-                        if (!success)
-                            LogManager.LogError("Failed to open device");
-
-                        // restore device settings
-                        CurrentDevice.SetFanControl(SettingsManager.GetBoolean("QuietModeToggled"));
-                        CurrentDevice.SetFanDuty(SettingsManager.GetDouble("QuietModeDuty"));
-
-                    }).Start();
+                    await Task.Delay(1000);
 
                     // restore inputs manager
-                    InputsManager.TriggerRaised += InputsManager_TriggerRaised;
                     InputsManager.Start();
 
                     // start timer manager
                     TimerManager.Start();
+
+                    // resume the virtual controller last
+                    VirtualManager.Resume();
+
+                    // restart IMU
+                    SensorsManager.Resume(true);
                 }
                 break;
-            case PowerManager.SystemStatus.SystemPending:
-                {
-                    // set flag
-                    SystemPending = true;
 
-                    // close current device
-                    CurrentDevice.Close();
+            case PowerManager.SystemStatus.SystemPending:
+                // sleep
+                {
+                    // stop the virtual controller
+                    VirtualManager.Pause();
 
                     // stop timer manager
                     TimerManager.Stop();
 
-                    // clear pipes
-                    PipeClient.ClearQueue();
+                    // stop sensors
+                    SensorsManager.Stop();
 
                     // pause inputs manager
-                    InputsManager.TriggerRaised -= InputsManager_TriggerRaised;
                     InputsManager.Stop();
                 }
                 break;
@@ -784,18 +577,6 @@ public partial class MainWindow : GamepadWindow
 
             switch (navItemTag)
             {
-                case "ServiceStart":
-                    _ = serviceManager.StartServiceAsync();
-                    return;
-                case "ServiceStop":
-                    _ = serviceManager.StopServiceAsync();
-                    return;
-                case "ServiceInstall":
-                    serviceManager.CreateService(CurrentPathService);
-                    return;
-                case "ServiceDelete":
-                    serviceManager.DeleteService();
-                    return;
                 default:
                     preNavItemTag = navItemTag;
                     break;
@@ -833,9 +614,6 @@ public partial class MainWindow : GamepadWindow
     {
         CurrentDevice.Close();
 
-        serviceManager.Stop();
-        performanceManager.Stop();
-
         notifyIcon.Visible = false;
         notifyIcon.Dispose();
 
@@ -843,8 +621,14 @@ public partial class MainWindow : GamepadWindow
         overlayTrackpad.Close();
         overlayquickTools.Close(true);
 
-        if (PipeClient.IsConnected)
-            PipeClient.Close();
+        // TODO: Make static
+        taskManager.Stop();
+        performanceManager.Stop();
+
+        VirtualManager.Stop();
+        SystemManager.Stop();
+        MotionManager.Stop();
+        SensorsManager.Stop();
 
         ControllerManager.Stop();
         InputsManager.Stop();
@@ -929,12 +713,6 @@ public partial class MainWindow : GamepadWindow
                     return;
             }
         }
-
-        // stop service with companion
-        if (SettingsManager.GetBoolean("HaltServiceWithCompanion"))
-            // only halt process if start mode isn't set to "Automatic"
-            if (serviceManager.type != ServiceStartMode.Automatic)
-                _ = serviceManager.StopServiceAsync();
     }
 
     private void Window_StateChanged(object sender, EventArgs e)
@@ -1016,17 +794,16 @@ public partial class MainWindow : GamepadWindow
 
         if (ContentFrame.SourcePageType is not null)
         {
-            var preNavPageType = ContentFrame.CurrentSourcePageType;
-            var preNavPageName = preNavPageType.Name;
-            PipeClient.SendMessage(new PipeNavigation(preNavPageName));
+            CurrentPageName = ContentFrame.CurrentSourcePageType.Name;
 
             var NavViewItem = navView.MenuItems
-                .OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag.Equals(preNavPageName));
+                .OfType<NavigationViewItem>()
+                .Where(n => n.Tag.Equals(CurrentPageName)).FirstOrDefault();
 
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;
 
-            navView.Header = new TextBlock { Text = (string)((Page)e.Content).Title };
+            navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title };
         }
     }
 

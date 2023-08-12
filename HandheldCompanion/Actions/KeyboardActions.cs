@@ -1,106 +1,66 @@
-﻿using System;
-using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
+using System;
 using WindowsInput.Events;
 
-namespace HandheldCompanion.Actions;
-
-[Serializable]
-public class KeyboardActions : IActions
+namespace HandheldCompanion.Actions
 {
-    public KeyboardActions()
+    [Serializable]
+    public class KeyboardActions : IActions
     {
-        ActionType = ActionType.Keyboard;
-        IsKeyDown = false;
+        public VirtualKeyCode Key;
 
-        Value = false;
-        prevValue = false;
-    }
+        // runtime variables
+        private bool IsKeyDown = false;
+        private KeyCode[] pressed;
 
-    public KeyboardActions(VirtualKeyCode key) : this()
-    {
-        Key = key;
-    }
+        // settings
+        public ModifierSet Modifiers = ModifierSet.None;
 
-    public VirtualKeyCode Key { get; set; }
-    private bool IsKeyDown { get; set; }
-    private KeyCode[] pressed;
-
-    // settings
-    public ModifierSet Modifiers = ModifierSet.None;
-
-    public override void Execute(ButtonFlags button, bool value, int longTime)
-    {
-        base.Execute(button, value, longTime);
-
-        if (Toggle)
+        public KeyboardActions()
         {
-            if ((bool)prevValue != value && value)
-                IsToggled = !IsToggled;
-        }
-        else
-        {
-            IsToggled = false;
+            this.ActionType = ActionType.Keyboard;
+
+            this.Value = false;
+            this.prevValue = false;
         }
 
-        if (Turbo)
+        public KeyboardActions(VirtualKeyCode key) : this()
         {
-            if (value || IsToggled)
-            {
-                if (TurboIdx % TurboDelay == 0)
-                    IsTurboed = !IsTurboed;
-
-                TurboIdx += Period;
-            }
-            else
-            {
-                IsTurboed = false;
-                TurboIdx = 0;
-            }
-        }
-        else
-        {
-            IsTurboed = false;
+            this.Key = key;
         }
 
-        // update previous value
-        prevValue = value;
-
-        // update value
-        if (Toggle && Turbo)
-            Value = IsToggled && IsTurboed;
-        else if (Toggle)
-            Value = IsToggled;
-        else if (Turbo)
-            Value = IsTurboed;
-        else
-            Value = value;
-
-        switch (Value)
+        public override void Execute(ButtonFlags button, bool value, int longTime)
         {
-            case true:
-            {
-                if (IsKeyDown)
-                    return;
+            base.Execute(button, value, longTime);
 
-                IsKeyDown = true;
-                pressed = ModifierMap[Modifiers];
-                KeyboardSimulator.KeyDown(pressed);
-                KeyboardSimulator.KeyDown(Key);
-            }
-                break;
-            case false:
+            switch (this.Value)
             {
-                if (!IsKeyDown)
-                    return;
+                case true:
+                    {
+                        if (IsKeyDown)
+                            return;
 
-                IsKeyDown = false;
-                KeyboardSimulator.KeyUp(Key);
-                KeyboardSimulator.KeyUp(pressed);
+                        IsKeyDown = true;
+                        pressed = ModifierMap[Modifiers];
+                        KeyboardSimulator.KeyDown(pressed);
+                        KeyboardSimulator.KeyDown(Key);
+                        SetHaptic(button, false);
+                    }
+                    break;
+                case false:
+                    {
+                        if (!IsKeyDown)
+                            return;
+
+                        IsKeyDown = false;
+                        KeyboardSimulator.KeyUp(Key);
+                        KeyboardSimulator.KeyUp(pressed);
+                        SetHaptic(button, true);
+                    }
+                    break;
             }
-                break;
         }
     }
 }

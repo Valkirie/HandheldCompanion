@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
-using ControllerCommon;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 
@@ -107,14 +106,14 @@ public class DS4Controller : DInputController
         Inputs.ButtonState[ButtonFlags.L2Full] = Inputs.AxisState[AxisFlags.L2] > Gamepad.TriggerThreshold * 8;
         Inputs.ButtonState[ButtonFlags.R2Full] = Inputs.AxisState[AxisFlags.R2] > Gamepad.TriggerThreshold * 8;
 
-        Inputs.AxisState[AxisFlags.LeftThumbX] =
+        Inputs.AxisState[AxisFlags.LeftStickX] =
             (short)Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
-        Inputs.AxisState[AxisFlags.LeftThumbY] =
+        Inputs.AxisState[AxisFlags.LeftStickY] =
             (short)Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue);
 
-        Inputs.AxisState[AxisFlags.RightThumbX] =
+        Inputs.AxisState[AxisFlags.RightStickX] =
             (short)Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
-        Inputs.AxisState[AxisFlags.RightThumbY] =
+        Inputs.AxisState[AxisFlags.RightStickY] =
             (short)Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
 
         base.UpdateInputs(ticks);

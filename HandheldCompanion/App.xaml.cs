@@ -4,11 +4,11 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Views;
-using static ControllerCommon.WinAPI;
+using static HandheldCompanion.WinAPI;
 
 namespace HandheldCompanion;
 

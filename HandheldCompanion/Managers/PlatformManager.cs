@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Timers;
 using System.Windows;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
+using HandheldCompanion;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Platforms;
 
 namespace HandheldCompanion.Managers;

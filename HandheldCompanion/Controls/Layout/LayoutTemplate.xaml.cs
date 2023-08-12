@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon;
-using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
+using HandheldCompanion;
+using HandheldCompanion.Actions;
+
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using Newtonsoft.Json;
+using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Controls;
 

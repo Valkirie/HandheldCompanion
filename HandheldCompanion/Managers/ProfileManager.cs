@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ControllerCommon;
-using ControllerCommon.Controllers;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static ControllerCommon.Utils.XInputPlusUtils;
+using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion.Managers;
 
@@ -161,9 +157,6 @@ public static class ProfileManager
             LogManager.LogInformation("Profile {0} applied", profile.Name);
             ToastManager.SendToast($"Profile {profile.Name} applied");
         }
-
-        // inform service
-        PipeClient.SendMessage(new PipeClientProfile(profile));
     }
 
     private static void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -309,8 +302,8 @@ public static class ProfileManager
                 case "0.16.0.5":
                 {
                     outputraw = outputraw.Replace(
-                        "\"System.Collections.Generic.SortedDictionary`2[[ControllerCommon.Inputs.ButtonFlags, ControllerCommon],[System.Boolean, System.Private.CoreLib]], System.Collections\"",
-                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[ControllerCommon.Inputs.ButtonFlags, ControllerCommon],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+                        "\"System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections\"",
+                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
                 }
                     break;
             }

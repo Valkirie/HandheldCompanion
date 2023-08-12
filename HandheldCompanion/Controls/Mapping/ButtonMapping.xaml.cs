@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Utils;
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+
+using HandheldCompanion.Utils;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Actions;
 using HandheldCompanion.Inputs;
@@ -127,36 +127,21 @@ public partial class ButtonMapping : IMapping
             else
                 this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
 
-            LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
-            Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
-            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
-            Toggle_Turbo.IsOn = this.Actions.Turbo;
-            Turbo_Slider.Value = this.Actions.TurboDelay;
-            Toggle_Toggle.IsOn = this.Actions.Toggle;
+            // button specific settings
         }
         else if (type == ActionType.Keyboard)
         {
             if (Actions is null || Actions is not KeyboardActions)
                 Actions = new KeyboardActions();
 
+            // use optimized lazily created list
             TargetComboBox.ItemsSource = keyList;
 
             foreach (var keyLabel in keyList)
                 if (keyLabel.Tag.Equals(((KeyboardActions)this.Actions).Key))
                     TargetComboBox.SelectedItem = keyLabel;
 
-            // settings
-            if (TargetComboBox.SelectedItem is not null)
-                PressComboBox.SelectedIndex = (int)this.Actions.PressType;
-            else
-                this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
-
-            LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
-            Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
-            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
-            Toggle_Turbo.IsOn = this.Actions.Turbo;
-            Turbo_Slider.Value = this.Actions.TurboDelay;
-            Toggle_Toggle.IsOn = this.Actions.Toggle;
+            // keyboard specific settings
             ModifierComboBox.SelectedIndex = (int)((KeyboardActions)this.Actions).Modifiers;
         }
         else if (type == ActionType.Mouse)
@@ -189,14 +174,24 @@ public partial class ButtonMapping : IMapping
             else
                 this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
 
-            LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
-            Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
-            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
-            Toggle_Turbo.IsOn = this.Actions.Turbo;
-            Turbo_Slider.Value = this.Actions.TurboDelay;
-            Toggle_Toggle.IsOn = this.Actions.Toggle;
+            // mouse specific settings
             ModifierComboBox.SelectedIndex = (int)((MouseActions)this.Actions).Modifiers;
         }
+
+        // press type is treated specially, it can be set before action 
+        if (TargetComboBox.SelectedItem is not null)
+            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+        else
+            this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+        Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+
+        // settings
+        LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
+        Toggle_Turbo.IsOn = this.Actions.Turbo;
+        Turbo_Slider.Value = this.Actions.TurboDelay;
+        Toggle_Toggle.IsOn = this.Actions.Toggle;
+        HapticModeComboBox.SelectedIndex = (int)this.Actions.HapticMode;
+        HapticStrengthComboBox.SelectedIndex = (int)this.Actions.HapticStrength;
 
         base.Update();
     }
@@ -240,6 +235,7 @@ public partial class ButtonMapping : IMapping
     public void Reset()
     {
         ActionComboBox.SelectedIndex = 0;
+        PressComboBox.SelectedIndex = 0;
         TargetComboBox.SelectedItem = null;
     }
 
@@ -251,6 +247,16 @@ public partial class ButtonMapping : IMapping
         this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
 
         Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+
+        base.Update();
+    }
+
+    private void LongPressDelaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        this.Actions.LongPressTime = (int)LongPressDelaySlider.Value;
 
         base.Update();
     }
@@ -277,7 +283,7 @@ public partial class ButtonMapping : IMapping
 
     private void Toggle_Turbo_Toggled(object sender, RoutedEventArgs e)
     {
-        if (Actions is null)
+        if (this.Actions is null)
             return;
 
         this.Actions.Turbo = Toggle_Turbo.IsOn;
@@ -287,7 +293,7 @@ public partial class ButtonMapping : IMapping
 
     private void Turbo_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (Actions is null)
+        if (this.Actions is null)
             return;
 
         this.Actions.TurboDelay = (int)Turbo_Slider.Value;
@@ -297,7 +303,7 @@ public partial class ButtonMapping : IMapping
 
     private void Toggle_Toggle_Toggled(object sender, RoutedEventArgs e)
     {
-        if (Actions is null)
+        if (this.Actions is null)
             return;
 
         this.Actions.Toggle = Toggle_Toggle.IsOn;
@@ -305,12 +311,23 @@ public partial class ButtonMapping : IMapping
         base.Update();
     }
 
-    private void LongPressDelaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void HapticMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (this.Actions is null)
             return;
 
-        this.Actions.LongPressTime = (int)LongPressDelaySlider.Value;
+        this.Actions.HapticMode = (HapticMode)HapticModeComboBox.SelectedIndex;
+        this.HapticStrengthComboBox.IsEnabled = Actions.HapticMode == HapticMode.Off ? false : true;
+
+        base.Update();
+    }
+
+    private void HapticStrength_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (this.Actions is null)
+            return;
+
+        this.Actions.HapticStrength = (HapticStrength)HapticStrengthComboBox.SelectedIndex;
 
         base.Update();
     }

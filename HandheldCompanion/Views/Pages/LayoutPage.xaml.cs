@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Devices;
-using ControllerCommon.Inputs;
-using ControllerCommon.Utils;
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
+
+using HandheldCompanion.Utils;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using Inkore.UI.WPF.Modern.Controls;
-using Layout = ControllerCommon.Layout;
+using Layout = HandheldCompanion.Layout;
 using Page = System.Windows.Controls.Page;
+using HandheldCompanion.Inputs;
+using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -90,6 +93,9 @@ public partial class LayoutPage : Page
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         MainWindow.controllerPage.HIDchanged += VirtualManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+
+        DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
     }
 
     private void ControllerManager_ControllerSelected(IController controller)
@@ -106,6 +112,15 @@ public partial class LayoutPage : Page
                 page.Item2.IsEnabled = page.Item1.IsEnabled();
             }
         });
+    }
+
+    private void DeviceManager_UsbDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    {
+        IController controller = ControllerManager.GetTargetController();
+
+        // lazy
+        if (controller is not null)
+            ControllerManager_ControllerSelected(controller);
     }
 
     // todo: fix me when migrated to NO-SERVICE

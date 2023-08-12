@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
-using ControllerCommon.Controllers;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
