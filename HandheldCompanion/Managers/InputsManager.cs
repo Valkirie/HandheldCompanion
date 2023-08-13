@@ -508,7 +508,7 @@ public static class InputsManager
         if (currentChord.State[ButtonFlags.RightPadClick])
         {
             currentChord.State[ButtonFlags.RightPadTouch] = false;
-            storedChord.State[ButtonFlags.LeftPadTouch] = false;
+            storedChord.State[ButtonFlags.RightPadTouch] = false;
             buttonState[ButtonFlags.RightPadTouch] = false;
         }
 

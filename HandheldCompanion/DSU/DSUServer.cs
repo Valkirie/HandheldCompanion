@@ -717,6 +717,12 @@ public class DSUServer
                 catch (SocketException)
                 {
                 }
+                catch (ObjectDisposedException)
+                {
+                }
+                catch (NullReferenceException)
+                {
+                }
                 finally
                 {
                     if (!sentAsync) CompletedSynchronousSocketEvent();

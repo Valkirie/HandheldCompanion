@@ -250,7 +250,7 @@ public partial class ControllerPage : Page
         // raise event
         HIDchanged?.Invoke(controllerMode);
 
-        SettingsManager.SetProperty("HIDmode", controllerMode, false, true);
+        SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
 
     }
 
@@ -262,7 +262,7 @@ public partial class ControllerPage : Page
         controllerStatus = (HIDstatus)cB_ServiceSwitch.SelectedIndex;
         UpdateControllerImage();
 
-        SettingsManager.SetProperty("HIDstatus", controllerStatus, false, true);
+        SettingsManager.SetProperty("HIDstatus", cB_ServiceSwitch.SelectedIndex);
     }
 
     private void Toggle_Cloaked_Toggled(object sender, RoutedEventArgs e)

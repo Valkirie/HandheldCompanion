@@ -241,26 +241,6 @@ public static class ControllerManager
         if (!details.isGaming)
             return;
 
-        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
-        {
-            if (!controller.IsPowerCycling)
-                return;
-
-            // hide new hid value
-            if (controller.IsHidden())
-                HidHide.HidePath(details.deviceInstanceId);
-
-            // unset flag
-            controller.IsPowerCycling = false;
-
-            // set flag
-            details.isHooked = true;
-
-            LogManager.LogDebug("DInput controller power-cycled: {0}", controller.ToString());
-
-            return;
-        }
-
         var directInput = new DirectInput();
         int VendorId = details.attributes.VendorID;
         int ProductId = details.attributes.ProductID;
@@ -413,10 +393,6 @@ public static class ControllerManager
 
         // XInput controller are handled elsewhere
         if (controller.GetType() == typeof(XInputController))
-            return;
-
-        // ignore the event if device is power cycling
-        if (controller.IsPowerCycling)
             return;
 
         // controller was unplugged

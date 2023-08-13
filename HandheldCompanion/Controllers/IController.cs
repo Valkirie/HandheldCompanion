@@ -342,6 +342,7 @@ public abstract class IController
         HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
         // set flag
+        powerCycle = this is XInputController;
         if (powerCycle)
         {
             IsPowerCycling = true;
@@ -366,6 +367,7 @@ public abstract class IController
         HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
         // set flag
+        powerCycle = this is XInputController;
         if (powerCycle)
         {
             IsPowerCycling = true;

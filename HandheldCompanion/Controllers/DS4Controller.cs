@@ -2,19 +2,42 @@
 using System.Windows.Media;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
+using static JSL;
 
 namespace HandheldCompanion.Controllers;
 
 public class DS4Controller : DInputController
 {
+    private int joyShockId;
+
     public DS4Controller()
     {
     }
 
     public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
     {
+        this.UserIndex = joystick.Properties.JoystickId;
+
+        // todo: check me
+        this.joyShockId = this.UserIndex - 1;
+
+        Capabilities |= ControllerCapabilities.MotionSensor;
+
+        // JSL
+        int connectedJoys = JslConnectDevices();
+        int[] joysHandle = new int[connectedJoys];
+        JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
+        JOY_SETTINGS settings = JslGetControllerInfoAndSettings(joyShockId);
+
+        int joyShockType = JslGetControllerType(joyShockId);
+        string joyShockName = joyShockNames[joyShockType];
+
+        // had the feeling this was causing some drifting
+        JslPauseContinuousCalibration(joyShockId);
+
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
         ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
@@ -23,7 +46,12 @@ public class DS4Controller : DInputController
 
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.LeftPadClick);
-        SourceButtons.Add(ButtonFlags.RightPadClick);
+        SourceButtons.Add(ButtonFlags.LeftPadTouch);
+        SourceButtons.Add(ButtonFlags.RightPadTouch);
+
+        SourceAxis.Add(AxisLayoutFlags.LeftPad);
+        SourceAxis.Add(AxisLayoutFlags.RightPad);
+        SourceAxis.Add(AxisLayoutFlags.Gyroscope);
     }
 
     public override void UpdateInputs(long ticks)
@@ -65,8 +93,40 @@ public class DS4Controller : DInputController
 
         Inputs.ButtonState[ButtonFlags.Special] = State.Buttons[12];
 
+        // Left Pad
         Inputs.ButtonState[ButtonFlags.LeftPadClick] = State.Buttons[13];
-        Inputs.ButtonState[ButtonFlags.RightPadClick] = State.Buttons[13];
+        Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(joyShockId);
+
+        if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+        {
+            float joyShockX0 = JslGetTouchX(joyShockId);
+            float joyShockY0 = JslGetTouchY(joyShockId);
+
+            Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(joyShockX0, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(joyShockY0, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+        }
+        else
+        {
+            Inputs.AxisState[AxisFlags.LeftPadX] = 0;
+            Inputs.AxisState[AxisFlags.LeftPadY] = 0;
+        }
+
+        // Right Pad
+        Inputs.ButtonState[ButtonFlags.RightPadTouch] = JslGetTouchDown(joyShockId, true);
+
+        if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
+        {
+            float joyShockX1 = JslGetTouchX(joyShockId, true);
+            float joyShockY1 = JslGetTouchY(joyShockId, true);
+
+            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(joyShockX1, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(joyShockY1, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+        }
+        else
+        {
+            Inputs.AxisState[AxisFlags.RightPadX] = 0;
+            Inputs.AxisState[AxisFlags.RightPadY] = 0;
+        }
 
         switch (State.PointOfViewControllers[0])
         {
@@ -116,6 +176,15 @@ public class DS4Controller : DInputController
         Inputs.AxisState[AxisFlags.RightStickY] =
             (short)Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
 
+        IMU_STATE joyShockState = JslGetIMUState(joyShockId);
+        Inputs.GyroState.Accelerometer.X = -joyShockState.accelX;
+        Inputs.GyroState.Accelerometer.Y = -joyShockState.accelY;
+        Inputs.GyroState.Accelerometer.Z = joyShockState.accelZ;
+
+        Inputs.GyroState.Gyroscope.X = joyShockState.gyroX;
+        Inputs.GyroState.Gyroscope.Y = -joyShockState.gyroY;
+        Inputs.GyroState.Gyroscope.Z = joyShockState.gyroZ;
+
         base.UpdateInputs(ticks);
     }
 
@@ -139,6 +208,11 @@ public class DS4Controller : DInputController
     public override void Cleanup()
     {
         TimerManager.Tick -= UpdateInputs;
+    }
+
+    public override void SetVibration(byte LargeMotor, byte SmallMotor)
+    {
+        JslSetRumble(joyShockId, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength));
     }
 
     public override string GetGlyph(ButtonFlags button)

@@ -123,15 +123,18 @@ public partial class OverlayTrackpad : OverlayWindow
 
         normalizedX += button == CursorButton.TouchRight ? 0.5d : 0.0d;
 
-        /* PipeClient.SendMessage(new PipeClientCursor
+        switch (action)
         {
-            action = action,
-            x = normalizedX,
-            y = normalizedY,
-            button = button,
-            flags = flags
-        });
-        */
+            case CursorAction.CursorUp:
+                DS4Touch.OnMouseUp(normalizedX, normalizedY, button, flags);
+                break;
+            case CursorAction.CursorDown:
+                DS4Touch.OnMouseDown(normalizedX, normalizedY, button, flags);
+                break;
+            case CursorAction.CursorMove:
+                DS4Touch.OnMouseMove(normalizedX, normalizedY, button, flags);
+                break;
+        }
     }
 
     private void Trackpad_PreviewTouchMove(object sender, TouchEventArgs e)
@@ -227,11 +230,11 @@ public partial class OverlayTrackpad : OverlayWindow
 
     private void LeftTrackpadClick_PreviewTouchDown(object sender, TouchEventArgs e)
     {
-        leftInput.Flags = 30;
+        DS4Touch.OutputClickButton = true;
     }
 
     private void RightTrackpadClick_PreviewTouchDown(object sender, TouchEventArgs e)
     {
-        rightInput.Flags = 30;
+        DS4Touch.OutputClickButton = true;
     }
 }

@@ -22,15 +22,15 @@ public static class DS4Touch
         TouchRight = 2
     }
 
-    private const int TOUCHPAD_WIDTH = 1920;
-    private const int TOUCHPAD_HEIGHT = 943;
+    public const int TOUCHPAD_WIDTH = 1920;
+    public const int TOUCHPAD_HEIGHT = 943;
+    public const int TOUCH_DISABLE = 128;
 
     private const int TOUCH0_ID = 1;
     private const int TOUCH1_ID = 2;
-    private const int TOUCH_DISABLE = 128;
 
-    public static TrackPadTouch LeftPadTouch = new(TOUCH0_ID);
-    public static TrackPadTouch RightPadTouch = new(TOUCH1_ID);
+    public static TrackPadTouch LeftPadTouch = new(TOUCH0_ID, true);
+    public static TrackPadTouch RightPadTouch = new(TOUCH1_ID, true);
     public static byte TouchPacketCounter;
 
     private static short TouchX, TouchY;
@@ -106,51 +106,53 @@ public static class DS4Touch
 
     public static void UpdateInputs(ControllerState Inputs)
     {
+        // Left Pad
         if (prevLeftPadTouch != Inputs.ButtonState[ButtonFlags.LeftPadTouch])
         {
             if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
             {
                 TouchPacketCounter++;
                 LeftPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
+                LeftPadTouch.IsActive = true;
             }
             else
             {
                 LeftPadTouch.RawTrackingNum |= TOUCH_DISABLE;
+                LeftPadTouch.IsActive = false;
             }
 
             prevLeftPadTouch = Inputs.ButtonState[ButtonFlags.LeftPadTouch];
         }
 
+        if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+        {
+            LeftPadTouch.X = (short)((Inputs.AxisState[AxisFlags.LeftPadX] + short.MaxValue) * TOUCHPAD_WIDTH / ushort.MaxValue);
+            LeftPadTouch.Y = (short)((-Inputs.AxisState[AxisFlags.LeftPadY] + short.MaxValue) * TOUCHPAD_HEIGHT / ushort.MaxValue);
+        }
+
+        // Right Pad
         if (prevRightPadTouch != Inputs.ButtonState[ButtonFlags.RightPadTouch])
         {
             if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
             {
                 TouchPacketCounter++;
                 RightPadTouch.RawTrackingNum &= ~TOUCH_DISABLE;
+                RightPadTouch.IsActive = true;
             }
             else
             {
                 RightPadTouch.RawTrackingNum |= TOUCH_DISABLE;
+                RightPadTouch.IsActive = false;
             }
 
             prevRightPadTouch = Inputs.ButtonState[ButtonFlags.RightPadTouch];
         }
 
-        if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
-        {
-            LeftPadTouch.X = (short)((Inputs.AxisState[AxisFlags.LeftPadX] + short.MaxValue) * TOUCHPAD_WIDTH /
-                                     ushort.MaxValue / 2.0f);
-            LeftPadTouch.Y = (short)((-Inputs.AxisState[AxisFlags.LeftPadY] + short.MaxValue) * TOUCHPAD_HEIGHT /
-                                     ushort.MaxValue);
-        }
-
         if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
         {
             RightPadTouch.X =
-                (short)((Inputs.AxisState[AxisFlags.RightPadX] + short.MaxValue) * TOUCHPAD_WIDTH / ushort.MaxValue /
-                    2.0f + 0.5f * TOUCHPAD_WIDTH);
-            RightPadTouch.Y = (short)((-Inputs.AxisState[AxisFlags.RightPadY] + short.MaxValue) * TOUCHPAD_HEIGHT /
-                                      ushort.MaxValue);
+                (short)((Inputs.AxisState[AxisFlags.RightPadX] + short.MaxValue) * TOUCHPAD_WIDTH / ushort.MaxValue);
+            RightPadTouch.Y = (short)((-Inputs.AxisState[AxisFlags.RightPadY] + short.MaxValue) * TOUCHPAD_HEIGHT / ushort.MaxValue);
         }
 
         if (prevLeftPadClick != Inputs.ButtonState[ButtonFlags.LeftPadClick] ||
@@ -174,10 +176,11 @@ public static class DS4Touch
         public short X;
         public short Y;
 
-        public TrackPadTouch(byte _Id)
+        public TrackPadTouch(byte _Id, bool disabled = false)
         {
             Id = _Id;
-            RawTrackingNum |= _Id + TOUCH_DISABLE;
+            if (disabled)
+                RawTrackingNum |= _Id + TOUCH_DISABLE;
         }
     }
 }

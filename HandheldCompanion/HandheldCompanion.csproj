@@ -211,6 +211,9 @@
     <None Update="GraphSettings.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="JoyShockLibrary.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Models\8BitDoLite2\LeftStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

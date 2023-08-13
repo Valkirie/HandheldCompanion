@@ -21,7 +21,6 @@ public class IMUGyrometer : IMUSensor
     {
         this.sensorFamily = sensorFamily;
         this.updateInterval = updateInterval;
-        centerTimer.Interval = updateInterval * 6;
 
         UpdateSensor();
     }
@@ -108,9 +107,9 @@ public class IMUGyrometer : IMUSensor
         {
             case SensorFamily.Controller:
                 {
-                    reading.X = reading_fixed.X = GyroRoll;
-                    reading.Y = reading_fixed.Y = GyroPitch;
-                    reading.Z = reading_fixed.Z = GyroYaw;
+                    reading.X = GyroRoll;
+                    reading.Y = GyroPitch;
+                    reading.Z = GyroYaw;
 
                     base.ReadingChanged();
                 }
@@ -120,14 +119,9 @@ public class IMUGyrometer : IMUSensor
 
     private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
     {
-        /*
-        this.reading.X = this.reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, IMU.DeltaSeconds);
-        this.reading.Y = this.reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, IMU.DeltaSeconds);
-        this.reading.Z = this.reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, IMU.DeltaSeconds);
-        */
-        reading.X = reading_fixed.X = AngularVelocityDeg.X;
-        reading.Y = reading_fixed.Y = AngularVelocityDeg.Y;
-        reading.Z = reading_fixed.Z = AngularVelocityDeg.Z;
+        reading.X = AngularVelocityDeg.X;
+        reading.Y = AngularVelocityDeg.Y;
+        reading.Z = AngularVelocityDeg.Z;
 
         base.ReadingChanged();
     }
@@ -152,9 +146,9 @@ public class IMUGyrometer : IMUSensor
                     break;
             }
 
-        reading.X = reading_fixed.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AngularVelocityAxis.X;
-        reading.Y = reading_fixed.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AngularVelocityAxis.Y;
-        reading.Z = reading_fixed.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AngularVelocityAxis.Z;
+        reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AngularVelocityAxis.X;
+        reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AngularVelocityAxis.Y;
+        reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AngularVelocityAxis.Z;
 
         base.ReadingChanged();
     }

@@ -4,6 +4,16 @@ namespace HandheldCompanion.Controllers;
 
 public class DInputController : IController
 {
+    protected static readonly string[] joyShockNames =
+    {
+            "Unknown",
+            "Joy-Con (L)",
+            "Joy-Con (R)",
+            "Pro Controller",
+            "DualShock 4",
+            "DualSense"
+    };
+
     public Joystick joystick;
     protected JoystickState State = new();
 

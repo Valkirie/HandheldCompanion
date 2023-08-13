@@ -108,9 +108,9 @@ public class IMUAccelerometer : IMUSensor
         {
             case SensorFamily.Controller:
                 {
-                    reading.X = reading_fixed.X = GyroAccelX;
-                    reading.Y = reading_fixed.Y = GyroAccelY;
-                    reading.Z = reading_fixed.Z = GyroAccelZ;
+                    reading.X = GyroAccelX;
+                    reading.Y = GyroAccelY;
+                    reading.Z = GyroAccelZ;
 
                     base.ReadingChanged();
                 }
@@ -120,9 +120,9 @@ public class IMUAccelerometer : IMUSensor
 
     private void ReadingChanged(Vector3 AccelerationG, Vector3 AngularVelocityDeg)
     {
-        reading.X = reading_fixed.X = (float)filter.axis1Filter.Filter(AccelerationG.X, MotionManager.DeltaSeconds);
-        reading.Y = reading_fixed.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, MotionManager.DeltaSeconds);
-        reading.Z = reading_fixed.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, MotionManager.DeltaSeconds);
+        reading.X = (float)filter.axis1Filter.Filter(AccelerationG.X, MotionManager.DeltaSeconds);
+        reading.Y = (float)filter.axis2Filter.Filter(AccelerationG.Y, MotionManager.DeltaSeconds);
+        reading.Z = (float)filter.axis3Filter.Filter(AccelerationG.Z, MotionManager.DeltaSeconds);
 
         base.ReadingChanged();
     }
@@ -147,9 +147,9 @@ public class IMUAccelerometer : IMUSensor
                     break;
             }
 
-        reading.X = reading_fixed.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AccelerationAxis.X;
-        reading.Y = reading_fixed.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AccelerationAxis.Y;
-        reading.Z = reading_fixed.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AccelerationAxis.Z;
+        reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AccelerationAxis.X;
+        reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AccelerationAxis.Y;
+        reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AccelerationAxis.Z;
 
         base.ReadingChanged();
     }
