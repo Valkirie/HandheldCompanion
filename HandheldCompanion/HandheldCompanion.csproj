@@ -212,7 +212,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="JoyShockLibrary.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Models\8BitDoLite2\LeftStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

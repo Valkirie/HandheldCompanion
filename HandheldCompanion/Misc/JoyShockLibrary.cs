@@ -50,8 +50,8 @@ public static class JSL
         public float gyroZ;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct JOY_SETTINGS
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public unsafe struct JOY_SETTINGS
     {
         public int gyroSpace;
         public int colour;
@@ -61,6 +61,8 @@ public static class JSL
         public bool isCalibrating;
         public bool autoCalibrationEnabled;
         public bool isConnected;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 512)]
+        public string path;
     }
 
     [StructLayout(LayoutKind.Sequential)]

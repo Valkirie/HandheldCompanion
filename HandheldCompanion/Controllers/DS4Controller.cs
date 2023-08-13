@@ -21,16 +21,28 @@ public class DS4Controller : DInputController
     {
         this.UserIndex = joystick.Properties.JoystickId;
 
-        // todo: check me
-        this.joyShockId = this.UserIndex - 1;
-
         Capabilities |= ControllerCapabilities.MotionSensor;
 
         // JSL
         int connectedJoys = JslConnectDevices();
         int[] joysHandle = new int[connectedJoys];
         JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
-        JOY_SETTINGS settings = JslGetControllerInfoAndSettings(joyShockId);
+
+        // scroll handles until we find matching device path
+        foreach(int i in joysHandle)
+        {
+            JOY_SETTINGS settings = JslGetControllerInfoAndSettings(i);
+
+            // fixme
+            string joyShockpath = $"V{settings.path}".ToUpper();
+            string detailsPath = details.Path.Replace(@"\", "").Replace("?HID#","");
+
+            if (joyShockpath.Equals(detailsPath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                joyShockId = i;
+                break;
+            }
+        }
 
         int joyShockType = JslGetControllerType(joyShockId);
         string joyShockName = joyShockNames[joyShockType];
