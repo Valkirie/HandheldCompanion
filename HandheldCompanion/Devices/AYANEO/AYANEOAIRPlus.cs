@@ -14,11 +14,6 @@ public class AYANEOAIRPlus : IDevice
         ProductIllustration = "device_aya_air";
         ProductModel = "AYANEOAir";
 
-        // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u
-        nTDP = new double[] { 15, 15, 20 };
-        cTDP = new double[] { 3, 33 };
-        GfxClock = new double[] { 100, 2200 };
-
         AngularVelocityAxis = new Vector3(1.0f, -1.0f, -1.0f);
         AngularVelocityAxisSwap = new SortedDictionary<char, char>
         {

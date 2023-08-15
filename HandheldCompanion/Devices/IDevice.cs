@@ -197,7 +197,10 @@ public abstract class IDevice
                             device = new AYANEO2();
                             break;
                         case "AB05-AMD":
-                            device = new AYANEOAIRPlus();
+                            device = new AYANEOAIRPlusAMD();
+                            break;
+                        case "AB05-Intel":
+                            device = new AYANEOAIRPlusIntel();
                             break;
                         case "AYANEO 2S":
                         case "GEEK 1S":
