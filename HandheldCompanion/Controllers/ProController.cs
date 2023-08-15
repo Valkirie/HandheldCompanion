@@ -54,6 +54,11 @@ public class ProController : JSController
         TimerManager.Tick -= UpdateInputs;
     }
 
+    public override void SetVibration(byte LargeMotor, byte SmallMotor)
+    {
+        // HD rumble isn't yet supported
+    }
+
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)
