@@ -34,15 +34,6 @@ public class ProController : JSController
 
         Inputs.ButtonState[ButtonFlags.Special2] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
 
-        iMU_STATE = JslGetIMUState(UserIndex);
-        Inputs.GyroState.Accelerometer.X = -iMU_STATE.accelX;
-        Inputs.GyroState.Accelerometer.Y = -iMU_STATE.accelY;
-        Inputs.GyroState.Accelerometer.Z = iMU_STATE.accelZ;
-
-        Inputs.GyroState.Gyroscope.X = iMU_STATE.gyroX;
-        Inputs.GyroState.Gyroscope.Y = -iMU_STATE.gyroY;
-        Inputs.GyroState.Gyroscope.Z = iMU_STATE.gyroZ;
-
         base.UpdateInputs(ticks);
     }
 

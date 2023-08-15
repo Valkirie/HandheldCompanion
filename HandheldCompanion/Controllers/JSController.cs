@@ -119,6 +119,16 @@ public class JSController : IController
 
         Inputs.AxisState[AxisFlags.RightStickX] = (short)InputUtils.MapRange(sTATE.stickRX, -1.0f, 1.0f, short.MinValue, short.MaxValue);
         Inputs.AxisState[AxisFlags.RightStickY] = (short)InputUtils.MapRange(sTATE.stickRY, -1.0f, 1.0f, short.MinValue, short.MaxValue);
+
+        // IMU
+        iMU_STATE = JslGetIMUState(UserIndex);
+        Inputs.GyroState.Accelerometer.X = -iMU_STATE.accelX;
+        Inputs.GyroState.Accelerometer.Y = -iMU_STATE.accelY;
+        Inputs.GyroState.Accelerometer.Z = iMU_STATE.accelZ;
+
+        Inputs.GyroState.Gyroscope.X = iMU_STATE.gyroX;
+        Inputs.GyroState.Gyroscope.Y = -iMU_STATE.gyroY;
+        Inputs.GyroState.Gyroscope.Z = iMU_STATE.gyroZ;
     }
 
     public override bool IsConnected()
