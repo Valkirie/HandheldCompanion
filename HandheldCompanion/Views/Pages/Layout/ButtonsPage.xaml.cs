@@ -16,7 +16,7 @@ namespace HandheldCompanion.Views.Pages
     {
         public static List<ButtonFlags> ABXY = new() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4, ButtonFlags.B5, ButtonFlags.B6, ButtonFlags.B7, ButtonFlags.B8 };
         public static List<ButtonFlags> BUMPERS = new() { ButtonFlags.L1, ButtonFlags.R1 };
-        public static List<ButtonFlags> MENU = new() { ButtonFlags.Back, ButtonFlags.Start, ButtonFlags.Special };
+        public static List<ButtonFlags> MENU = new() { ButtonFlags.Back, ButtonFlags.Start, ButtonFlags.Special, ButtonFlags.Special2 };
         public static List<ButtonFlags> BACKGRIPS = new() { ButtonFlags.L4, ButtonFlags.L5, ButtonFlags.R4, ButtonFlags.R5 };
         public static List<ButtonFlags> OEM = new() { ButtonFlags.OEM1, ButtonFlags.OEM2, ButtonFlags.OEM3, ButtonFlags.OEM4, ButtonFlags.OEM5, ButtonFlags.OEM6, ButtonFlags.OEM7, ButtonFlags.OEM8, ButtonFlags.OEM9, ButtonFlags.OEM10 };
 

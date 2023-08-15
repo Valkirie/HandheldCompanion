@@ -25,14 +25,16 @@ public class JSController : IController
             return;
 
         this.sSETTINGS = settings;
-
-        UserIndex = settings.playerNumber;
+        this.UserIndex = settings.playerNumber;
 
         if (details is null)
             return;
 
         Details = details;
         Details.isHooked = true;
+
+        // todo: implement a calibration button for JSController
+        JslStartContinuousCalibration(UserIndex);
 
         // ui
         DrawControls();

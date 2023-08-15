@@ -278,12 +278,18 @@ public static class ControllerManager
                 // device found
                 if (joyShockId != -1)
                 {
+                    // use handle
+                    settings.playerNumber = joyShockId;
+
                     JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
 
                     switch (joyShockType)
                     {
                         case JOY_TYPE.DualShock4:
                             controller = new DS4Controller(settings, details);
+                            break;
+                        case JOY_TYPE.ProController:
+                            controller = new ProController(settings, details);
                             break;
                     }
                 }

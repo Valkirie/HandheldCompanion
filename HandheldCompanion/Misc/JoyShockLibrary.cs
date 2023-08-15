@@ -154,4 +154,7 @@ public static class JSL
     public static extern float JslGetTouchX(int deviceId, bool secondTouch = false);
     [DllImport("JoyShockLibrary")]
     public static extern float JslGetTouchY(int deviceId, bool secondTouch = false);
+
+    [DllImport("JoyShockLibrary")]
+    public static extern void JslSetAutomaticCalibration(int deviceId, bool enabled);
 }

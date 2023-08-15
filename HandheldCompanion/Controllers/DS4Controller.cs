@@ -19,9 +19,6 @@ public class DS4Controller : JSController
     {
         Capabilities |= ControllerCapabilities.MotionSensor;
 
-        // had the feeling this was causing some drifting
-        JslPauseContinuousCalibration(UserIndex);
-
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
         ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));

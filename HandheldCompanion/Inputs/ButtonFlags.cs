@@ -87,5 +87,7 @@ public enum ButtonFlags : byte
     [Description("Volume Up")] VolumeUp = 60,
     [Description("Volume Down")] VolumeDown = 61,
 
-    Max = 62
+    Special2 = 62,
+
+    Max = 63
 }
