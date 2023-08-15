@@ -15,6 +15,7 @@ using SharpDX.XInput;
 using DeviceType = SharpDX.DirectInput.DeviceType;
 using HandheldCompanion.Inputs;
 using static HandheldCompanion.Utils.DeviceUtils;
+using static JSL;
 
 namespace HandheldCompanion.Managers;
 
@@ -241,118 +242,154 @@ public static class ControllerManager
         if (!details.isGaming)
             return;
 
-        var directInput = new DirectInput();
-        int VendorId = details.attributes.VendorID;
-        int ProductId = details.attributes.ProductID;
+        // initialize controller vars
+        IController controller = null;
 
         // UI thread (synchronous)
         // We need to wait for each controller to initialize and take (or not) its slot in the array
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // initialize controller vars
-            Joystick joystick = null;
-            IController controller = null;
+            // JoyShockLibrary
+            int connectedJoys = JslConnectDevices();
+            if (connectedJoys != 0)
+            {
+                int[] joysHandle = new int[connectedJoys];
+                JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
 
-            // search for the plugged controller
-            foreach (var deviceInstance in
-                     directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
-                try
+                // scroll handles until we find matching device path
+                int joyShockId = -1;
+                JOY_SETTINGS settings = new();
+
+                foreach (int i in joysHandle)
                 {
-                    // Instantiate the joystick
-                    var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                    var SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath,
-                        obj.InterfaceGuid.ToString());
+                    settings = JslGetControllerInfoAndSettings(i);
 
-                    // IG_ means it is an XInput controller and therefore is handled elsewhere
-                    if (lookup_joystick.Properties.InterfacePath.Contains("IG_",
-                            StringComparison.InvariantCultureIgnoreCase))
-                        continue;
+                    // fixme
+                    string joyShockpath = $"V{settings.path}".ToUpper();
+                    string detailsPath = details.Path.Replace(@"\", "").Replace("?HID#", "");
 
-                    if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                    if (joyShockpath.Equals(detailsPath, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        joystick = lookup_joystick;
+                        joyShockId = i;
                         break;
                     }
                 }
-                catch
-                {
-                }
 
-            if (joystick is not null)
-            {
-                // supported controller
-                VendorId = joystick.Properties.VendorId;
-                ProductId = joystick.Properties.ProductId;
+                // device found
+                if (joyShockId != -1)
+                {
+                    JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
+
+                    switch (joyShockType)
+                    {
+                        case JOY_TYPE.DualShock4:
+                            controller = new DS4Controller(settings, details);
+                            break;
+                    }
+                }
+                else
+                {
+                    // unsupported controller
+                    LogManager.LogError("Couldn't find matching JoyShock controller: VID:{0} and PID:{1}",
+                        details.GetVendorID(), details.GetProductID());
+                }
             }
             else
             {
-                // unsupported controller
-                LogManager.LogError("Couldn't find matching DInput controller: VID:{0} and PID:{1}",
-                    details.GetVendorID(), details.GetProductID());
-            }
+                // DInput
+                var directInput = new DirectInput();
+                int VendorId = details.attributes.VendorID;
+                int ProductId = details.attributes.ProductID;
 
-            // search for a supported controller
-            switch (VendorId)
-            {
-                // SONY
-                case 0x054C:
+                // initialize controller vars
+                Joystick joystick = null;
+
+                // search for the plugged controller
+                foreach (var deviceInstance in
+                         directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+                    try
                     {
-                        switch (ProductId)
+                        // Instantiate the joystick
+                        var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                        var SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath,
+                            obj.InterfaceGuid.ToString());
+
+                        // IG_ means it is an XInput controller and therefore is handled elsewhere
+                        if (lookup_joystick.Properties.InterfacePath.Contains("IG_",
+                                StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+
+                        if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            case 0x0268: // DualShock 3
-                            case 0x05C4: // DualShock 4
-                            case 0x09CC: // DualShock 4 (2nd Gen)
-                            case 0x0CE6: // DualSense
-                                controller = new DS4Controller(joystick, details);
-                                break;
+                            joystick = lookup_joystick;
+                            break;
                         }
                     }
-                    break;
-
-                // STEAM
-                case 0x28DE:
+                    catch
                     {
-                        switch (ProductId)
-                        {
-                            // WIRED STEAM CONTROLLER
-                            case 0x1102:
-                                // MI == 0 is virtual keyboards
-                                // MI == 1 is virtual mouse
-                                // MI == 2 is controller proper
-                                // No idea what's in case of more than one controller connected
-                                if (details.GetMI() == 2)
-                                    controller = new GordonController(details);
-                                break;
-                            // WIRELESS STEAM CONTROLLER
-                            case 0x1142:
-                                // MI == 0 is virtual keyboards
-                                // MI == 1-4 are 4 controllers
-                                // TODO: The dongle registers 4 controller devices, regardless how many are
-                                // actually connected. There is no easy way to check for connection without
-                                // actually talking to each controller. Handle only the first for now.
-                                if (details.GetMI() == 1)
-                                    controller = new GordonController(details);
-                                break;
-
-                            // STEAM DECK
-                            case 0x1205:
-                                controller = new NeptuneController(details);
-                                break;
-                        }
                     }
-                    break;
 
-                // NINTENDO
-                case 0x057E:
-                    {
-                        switch (ProductId)
+                if (joystick is not null)
+                {
+                    // supported controller
+                    VendorId = joystick.Properties.VendorId;
+                    ProductId = joystick.Properties.ProductId;
+                }
+                else
+                {
+                    // unsupported controller
+                    LogManager.LogError("Couldn't find matching DInput controller: VID:{0} and PID:{1}",
+                        details.GetVendorID(), details.GetProductID());
+                }
+
+                // search for a supported controller
+                switch (VendorId)
+                {
+                    // STEAM
+                    case 0x28DE:
                         {
-                            // Nintendo Wireless Gamepad
-                            case 0x2009:
-                                break;
+                            switch (ProductId)
+                            {
+                                // WIRED STEAM CONTROLLER
+                                case 0x1102:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1 is virtual mouse
+                                    // MI == 2 is controller proper
+                                    // No idea what's in case of more than one controller connected
+                                    if (details.GetMI() == 2)
+                                        controller = new GordonController(details);
+                                    break;
+                                // WIRELESS STEAM CONTROLLER
+                                case 0x1142:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1-4 are 4 controllers
+                                    // TODO: The dongle registers 4 controller devices, regardless how many are
+                                    // actually connected. There is no easy way to check for connection without
+                                    // actually talking to each controller. Handle only the first for now.
+                                    if (details.GetMI() == 1)
+                                        controller = new GordonController(details);
+                                    break;
+
+                                // STEAM DECK
+                                case 0x1205:
+                                    controller = new NeptuneController(details);
+                                    break;
+                            }
                         }
-                    }
-                    break;
+                        break;
+
+                    // NINTENDO
+                    case 0x057E:
+                        {
+                            switch (ProductId)
+                            {
+                                // Nintendo Wireless Gamepad
+                                case 0x2009:
+                                    break;
+                            }
+                        }
+                        break;
+                }
             }
 
             // unsupported controller

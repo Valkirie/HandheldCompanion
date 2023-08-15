@@ -4,16 +4,6 @@ namespace HandheldCompanion.Controllers;
 
 public class DInputController : IController
 {
-    protected static readonly string[] joyShockNames =
-    {
-            "Unknown",
-            "Joy-Con (L)",
-            "Joy-Con (R)",
-            "Pro Controller",
-            "DualShock 4",
-            "DualSense"
-    };
-
     public Joystick joystick;
     protected JoystickState State = new();
 
@@ -48,9 +38,9 @@ public class DInputController : IController
         var baseName = base.ToString();
         if (!string.IsNullOrEmpty(baseName))
             return baseName;
-        if (joystick is null)
-            return string.Empty;
-        return joystick.Information.ProductName;
+        if (!string.IsNullOrEmpty(joystick.Information.ProductName))
+            return joystick.Information.ProductName;
+        return $"DInput Controller {UserIndex}";
     }
 
     public override void UpdateInputs(long ticks)

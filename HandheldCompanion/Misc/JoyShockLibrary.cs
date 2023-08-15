@@ -78,6 +78,16 @@ public static class JSL
         public float t1Y;
     }
 
+    public enum JOY_TYPE
+    {
+        Unknown,
+        JoyConL,
+        JoyConR,
+        ProController,
+        DualShock4,
+        DualSense
+    };
+
     public delegate void EventCallback(int handle, JOY_SHOCK_STATE state, JOY_SHOCK_STATE lastState,
         IMU_STATE imuState, IMU_STATE lastImuState, float deltaTime);
 
@@ -87,6 +97,8 @@ public static class JSL
     public static extern int JslGetConnectedDeviceHandles(int[] deviceHandleArray, int size);
     [DllImport("JoyShockLibrary")]
     public static extern void JslDisconnectAndDisposeAll();
+    [DllImport("JoyShockLibrary")]
+    public static extern bool JslStillConnected(int deviceId);
 
     [DllImport("JoyShockLibrary", CallingConvention = CallingConvention.Cdecl)]
     public static extern JOY_SHOCK_STATE JslGetSimpleState(int deviceId);
