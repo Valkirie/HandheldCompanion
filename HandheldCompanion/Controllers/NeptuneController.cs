@@ -64,6 +64,7 @@ public class NeptuneController : SteamController
 
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);
+        SourceAxis.Add(AxisLayoutFlags.Gyroscope);
 
         RumblePeriod = (ushort)(TimerManager.GetPeriod() * 10);
     }
