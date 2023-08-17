@@ -145,6 +145,7 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
+        CurrentDevice.Open();
 
         // workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
         // todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
