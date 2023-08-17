@@ -405,7 +405,7 @@
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
-                                ShowAlpha="True" />
+                                Style="{StaticResource DefaultColorPickerStyle}" />
                         </DockPanel>
                     </Grid>
                 </Border>
