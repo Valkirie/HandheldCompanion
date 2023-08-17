@@ -297,14 +297,6 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
-            case WM_ACTIVATE:
-                {
-                    // WA_INACTIVE
-                    if (wParam == 0)
-                        handled = true;
-                }
-                break;
-
             case WM_MOUSEACTIVATE:
                 {
                     handled = true;
