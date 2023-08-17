@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using static HandheldCompanion.WinAPI;
 
 namespace HandheldCompanion;

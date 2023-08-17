@@ -1,4 +1,9 @@
-﻿using System;
+﻿using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Utils;
+using RTSSSharedMemoryNET;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,11 +12,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers.Desktop;
-using RTSSSharedMemoryNET;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;

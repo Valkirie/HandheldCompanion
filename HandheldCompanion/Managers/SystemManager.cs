@@ -1,20 +1,20 @@
-﻿using System;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Views;
+using Microsoft.Win32;
+using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using HandheldCompanion.Devices;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views;
-using Microsoft.Win32;
-using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 using System.Timers;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
-using HandheldCompanion.Misc;
 
 namespace HandheldCompanion.Managers;
 

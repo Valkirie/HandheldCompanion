@@ -1,10 +1,10 @@
+using HandheldCompanion.Managers;
+using HandheldCompanion.Views.Classes;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Views.Classes;
 using static HandheldCompanion.DS4Touch;
 using Application = System.Windows.Application;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;

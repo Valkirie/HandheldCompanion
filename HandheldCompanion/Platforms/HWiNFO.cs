@@ -1,4 +1,7 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -6,9 +9,6 @@ using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Processors;
 
 namespace HandheldCompanion.Platforms;
 

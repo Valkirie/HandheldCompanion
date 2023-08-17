@@ -1,4 +1,10 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Classes;
+using HandheldCompanion.Views.QuickPages;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,11 +14,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
 using Windows.System.Power;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views.QuickPages;
-using Inkore.UI.WPF.Modern.Controls;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using Application = System.Windows.Application;
@@ -23,7 +24,6 @@ using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using HandheldCompanion.Views.Classes;
 
 namespace HandheldCompanion.Views.Windows;
 

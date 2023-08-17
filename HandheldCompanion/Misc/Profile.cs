@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using HandheldCompanion.Properties;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;

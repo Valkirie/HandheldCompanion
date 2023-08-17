@@ -1,9 +1,3 @@
-using HandheldCompanion.Inputs;
-using System.Collections.Generic;
-using System.Numerics;
-
-using WindowsInput.Events;
-
 namespace HandheldCompanion.Devices;
 
 public class AYANEOAIRPlusIntel : AYANEOAIRPlus

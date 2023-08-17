@@ -1,3 +1,8 @@
+using Force.Crc32;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,11 +11,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
-using Force.Crc32;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 
 namespace HandheldCompanion;
 

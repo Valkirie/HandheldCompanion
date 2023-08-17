@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Inkore.UI.WPF.Modern.Controls;
+﻿using Inkore.UI.WPF.Modern.Controls;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Misc;
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-using Newtonsoft.Json;
 using HandheldCompanion.Inputs;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace HandheldCompanion;
 

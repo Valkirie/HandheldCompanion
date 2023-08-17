@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Win32.TaskScheduler;
+﻿using Microsoft.Win32.TaskScheduler;
+using System;
 
 namespace HandheldCompanion.Managers;
 

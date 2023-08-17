@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HandheldCompanion.Processors.Intel;
+using System;
 using System.Threading;
 using System.Timers;
-using HandheldCompanion.Processors.Intel;
 
 namespace HandheldCompanion.Processors;
 

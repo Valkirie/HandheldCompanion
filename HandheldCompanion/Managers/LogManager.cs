@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
+using System.Diagnostics;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace HandheldCompanion.Managers;

@@ -1,14 +1,14 @@
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Sensors;
+using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Windows.Devices.Sensors;
-using static HandheldCompanion.OpenLibSys;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Inputs;
 using static HandheldCompanion.OneEuroFilter;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Sensors;
+using static HandheldCompanion.OpenLibSys;
 
 namespace HandheldCompanion.Devices;
 

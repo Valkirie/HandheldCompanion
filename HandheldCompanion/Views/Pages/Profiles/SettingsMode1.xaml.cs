@@ -1,11 +1,11 @@
-﻿using System;
-using System.Numerics;
-using System.Windows;
-using System.Windows.Controls;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using LiveCharts;
 using LiveCharts.Defaults;
+using System;
+using System.Numerics;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.Pages.Profiles;
 

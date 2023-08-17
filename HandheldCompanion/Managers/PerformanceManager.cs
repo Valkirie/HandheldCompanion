@@ -1,14 +1,14 @@
+using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Views;
-using RTSSSharedMemoryNET;
 using Timer = System.Timers.Timer;
-using HandheldCompanion.Processors;
 
 namespace HandheldCompanion.Managers;
 

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Platforms;
+using System;
 using System.Diagnostics;
 using System.Timers;
 using System.Windows;
-using HandheldCompanion.Platforms;
 
 namespace HandheldCompanion.Managers;
 

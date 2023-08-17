@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PrecisionTiming;
+using RTSSSharedMemoryNET;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using PrecisionTiming;
-using RTSSSharedMemoryNET;
 using static HandheldCompanion.Platforms.HWiNFO;
 using static HandheldCompanion.Platforms.RTSS;
 

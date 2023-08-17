@@ -1,10 +1,10 @@
-﻿using System;
+﻿using HandheldCompanion.Processors;
+using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
-using HandheldCompanion.Processors;
-using HandheldCompanion.Views;
 
 namespace HandheldCompanion.Managers;
 

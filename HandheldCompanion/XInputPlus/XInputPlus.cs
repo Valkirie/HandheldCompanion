@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Force.Crc32;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using Force.Crc32;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Properties;
-using static HandheldCompanion.Utils.ProcessUtils;
 using System.IO.MemoryMappedFiles;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Reflection;
-using static HandheldCompanion.Utils.XInputPlusUtils;
-using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Threading;
-using HandheldCompanion.Controls;
+using static HandheldCompanion.Utils.ProcessUtils;
+using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion;
 

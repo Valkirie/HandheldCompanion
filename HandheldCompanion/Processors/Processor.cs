@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using HandheldCompanion.Managers;
+using System.Collections.Generic;
 using System.Management;
 using System.Timers;
-using HandheldCompanion.Managers;
 
 namespace HandheldCompanion.Processors;
 

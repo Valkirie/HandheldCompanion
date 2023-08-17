@@ -1,15 +1,14 @@
-﻿using System;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
-
-using HandheldCompanion.Utils;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using Inkore.UI.WPF.Modern.Controls;
 
 namespace HandheldCompanion.Controls;
 

@@ -1,13 +1,13 @@
+using HandheldCompanion.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using HandheldCompanion.Managers;
+using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.Utils.CommonUtils;
 using static HandheldCompanion.Utils.DeviceUtils;
-using static HandheldCompanion.OneEuroFilter;
 
 namespace HandheldCompanion.Sensors;
 

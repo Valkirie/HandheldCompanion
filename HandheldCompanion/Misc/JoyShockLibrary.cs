@@ -127,7 +127,7 @@ public static class JSL
 
     [DllImport("JoyShockLibrary")]
     public static extern void JslSetCallback(EventCallback callback);
-    
+
     [DllImport("JoyShockLibrary")]
     public static extern int JslGetControllerType(int deviceId);
     [DllImport("JoyShockLibrary")]
@@ -141,7 +141,7 @@ public static class JSL
     [DllImport("JoyShockLibrary")]
     public static extern void JslSetPlayerNumber(int deviceId, int number);
 
-    [DllImport("JoyShockLibrary")]
+    [DllImport("JoyShockLibrary", CallingConvention = CallingConvention.Cdecl)]
     public static extern JOY_SETTINGS JslGetControllerInfoAndSettings(int deviceId);
 
     // get touchpad

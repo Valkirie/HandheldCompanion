@@ -95,7 +95,7 @@ internal class ModelDS4 : IModel
                     break;
 
                 case ButtonFlags.LeftPadTouch:
-                // case ButtonFlags.RightPadTouch:
+                    // case ButtonFlags.RightPadTouch:
                     ButtonMap[button] = new() { Screen };
                     break;
             }

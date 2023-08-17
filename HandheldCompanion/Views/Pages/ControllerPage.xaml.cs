@@ -1,13 +1,13 @@
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -105,16 +105,11 @@ public partial class ControllerPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // Search for an existing controller, remove it
-            foreach (Border border in InputDevices.Children)
+            foreach (IController ctrl in InputDevices.Children)
             {
-                // pull controller from panel
-                var ctrl = (IController)border.Tag;
-                if (ctrl is null)
-                    continue;
-
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                 {
-                    InputDevices.Children.Remove(border);
+                    InputDevices.Children.Remove(ctrl);
                     break;
                 }
             }
@@ -142,9 +137,10 @@ public partial class ControllerPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // Add new controller to list if no existing controller was found
-            FrameworkElement control = Controller.GetControl();
+            IController control = Controller;
             InputDevices.Children.Add(control);
 
+            // todo: move me
             var ui_button_hook = Controller.GetButtonHook();
             ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
 
@@ -157,11 +153,16 @@ public partial class ControllerPage : Page
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
-        SteamControllerPanel.Visibility = Controller is SteamController ? Visibility.Visible : Visibility.Collapsed;
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            SteamControllerPanel.Visibility = Controller is SteamController ? Visibility.Visible : Visibility.Collapsed;
+        });
     }
 
     private void ControllerHookClicked(IController Controller)
     {
+        // todo: move me
         var path = Controller.GetContainerInstancePath();
         ControllerManager.SetTargetController(path);
 
@@ -170,6 +171,7 @@ public partial class ControllerPage : Page
 
     private void ControllerHideClicked(IController Controller)
     {
+        // todo: move me
         if (Controller.IsHidden())
             Controller.Unhide();
         else

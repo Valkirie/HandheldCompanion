@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using Nefarius.Drivers.HidHide;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using Nefarius.Drivers.HidHide;
-using Newtonsoft.Json;
 
 namespace HandheldCompanion;
 

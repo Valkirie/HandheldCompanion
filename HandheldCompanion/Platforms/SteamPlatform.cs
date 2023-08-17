@@ -1,14 +1,14 @@
-﻿using System;
+﻿using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Properties;
 
 namespace HandheldCompanion.Platforms;
 

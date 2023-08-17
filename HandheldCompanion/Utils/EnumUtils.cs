@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
+using System;
 using System.ComponentModel;
 using System.Linq;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
 
 namespace HandheldCompanion.Utils;
 

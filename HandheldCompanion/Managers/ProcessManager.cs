@@ -1,3 +1,6 @@
+using HandheldCompanion.Controls;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,12 +12,9 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
-using HandheldCompanion.Platforms;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
 using Windows.System.Diagnostics;
-using static HandheldCompanion.WinAPI;
 using static HandheldCompanion.Controls.ProcessEx;
+using static HandheldCompanion.WinAPI;
 using ThreadState = System.Diagnostics.ThreadState;
 using Timer = System.Timers.Timer;
 

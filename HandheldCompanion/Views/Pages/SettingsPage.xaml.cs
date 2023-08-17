@@ -1,3 +1,13 @@
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
+using Inkore.UI.WPF.Modern;
+using Inkore.UI.WPF.Modern.Controls;
+using Inkore.UI.WPF.Modern.Controls.Primitives;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -7,19 +17,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using HandheldCompanion.Devices;
-using HandheldCompanion.Platforms;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Misc;
-using Inkore.UI.WPF.Modern;
-using Inkore.UI.WPF.Modern.Controls;
-using Inkore.UI.WPF.Modern.Controls.Primitives;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using static HandheldCompanion.Utils.DeviceUtils;
 using static HandheldCompanion.Managers.UpdateManager;
+using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
-using HandheldCompanion.Controllers;
 
 namespace HandheldCompanion.Views.Pages;
 

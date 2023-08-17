@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,8 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;

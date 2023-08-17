@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using System;
 using System.Diagnostics;
 using System.IO;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
 
 namespace HandheldCompanion.Processors.Intel;
 

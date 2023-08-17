@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
-
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using Inkore.UI.WPF.Modern.Controls;
+using System.Collections.Generic;
+using System.Windows;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

@@ -1,16 +1,16 @@
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using HandheldCompanion.Platforms;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using Inkore.UI.WPF.Modern.Controls;
 using Page = System.Windows.Controls.Page;
-using HandheldCompanion.Processors;
-using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Views.QuickPages;
 

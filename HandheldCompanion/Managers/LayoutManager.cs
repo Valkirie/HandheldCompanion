@@ -1,16 +1,16 @@
-﻿using System;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views;
-using Newtonsoft.Json;
-using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Managers;
 

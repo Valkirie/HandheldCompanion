@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Windows;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace HandheldCompanion.Views.Pages;
 

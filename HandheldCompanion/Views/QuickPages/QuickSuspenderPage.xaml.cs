@@ -1,7 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using HandheldCompanion.Controls;
+﻿using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.QuickPages;
 

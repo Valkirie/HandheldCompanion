@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
 using PrecisionTiming;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using WindowsInput.Events;
 using static HandheldCompanion.Managers.InputsHotkey;
 using ButtonState = HandheldCompanion.Inputs.ButtonState;

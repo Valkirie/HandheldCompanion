@@ -1,11 +1,11 @@
-﻿using System;
-using System.Text;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
-using Microsoft.Win32.SafeHandles;
-using System.Security;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 
 namespace HandheldCompanion
 {

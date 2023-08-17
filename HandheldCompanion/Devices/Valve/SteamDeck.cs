@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;

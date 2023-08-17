@@ -1,6 +1,6 @@
-﻿using System.Numerics;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System.Numerics;
 
 namespace HandheldCompanion.Devices;
 

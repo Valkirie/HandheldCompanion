@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HandheldCompanion.Properties;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using HandheldCompanion.Properties;
 
 namespace HandheldCompanion.Managers;
 

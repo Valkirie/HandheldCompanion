@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System.Collections.Generic;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;

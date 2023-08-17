@@ -1,14 +1,14 @@
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Sensors;
+using HandheldCompanion.Utils;
 using System;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Inputs;
-using System.Numerics;
-using HandheldCompanion.Sensors;
 
 namespace HandheldCompanion.Views.Pages.Profiles;
 

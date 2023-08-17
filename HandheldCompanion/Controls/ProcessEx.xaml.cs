@@ -1,13 +1,13 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using HandheldCompanion.Platforms;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
 
 namespace HandheldCompanion.Controls;
 

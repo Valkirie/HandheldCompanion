@@ -1,20 +1,19 @@
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
-
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using Inkore.UI.WPF.Modern.Controls;
 using Page = System.Windows.Controls.Page;
-using HandheldCompanion.Inputs;
-using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace HandheldCompanion.Views.Pages;
 

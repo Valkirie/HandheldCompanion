@@ -1,22 +1,22 @@
-﻿using System;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Simulators;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using Inkore.UI.WPF.Modern.Controls;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using Windows.System;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Utils;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Properties;
-using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
-using Inkore.UI.WPF.Modern.Controls;
-using Newtonsoft.Json;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
-using HandheldCompanion.Misc;
 
 namespace HandheldCompanion.Managers;
 
@@ -138,26 +138,22 @@ public static class HotkeysManager
 
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // manage toggle type hotkeys
+        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
         {
-            // manage toggle type hotkeys
-            foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
-            {
-                if (!hotkey.inputsHotkey.IsToggle)
-                    continue;
+            if (!hotkey.inputsHotkey.IsToggle)
+                continue;
 
-                var toggle = Convert.ToBoolean(value);
-                hotkey.SetToggle(toggle);
-            }
+            var toggle = Convert.ToBoolean(value);
+            hotkey.SetToggle(toggle);
+        }
 
-            // manage settings type hotkeys
-            foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
-            {
-                var enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
-                hotkey.IsEnabled = enabled;
-            }
-        });
+        // manage settings type hotkeys
+        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
+        {
+            var enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
+            hotkey.IsEnabled = enabled;
+        }
     }
 
     private static void StartListening(Hotkey hotkey, ListenerType type)

@@ -1,22 +1,22 @@
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Pages.Profiles;
+using Inkore.UI.WPF.Modern.Controls;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views.Pages.Profiles;
-using Microsoft.Win32;
-using Inkore.UI.WPF.Modern.Controls;
-using Page = System.Windows.Controls.Page;
-using System.Timers;
 using static HandheldCompanion.Utils.XInputPlusUtils;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Processors;
-using HandheldCompanion.Inputs;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
 

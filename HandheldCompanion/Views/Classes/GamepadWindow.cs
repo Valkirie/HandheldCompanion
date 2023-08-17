@@ -1,9 +1,9 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
 
 namespace HandheldCompanion.Views.Classes
 {

@@ -1,8 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
+using System.Windows;
+using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

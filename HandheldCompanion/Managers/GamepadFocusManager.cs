@@ -1,4 +1,12 @@
-﻿using System;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using HandheldCompanion.Views.Classes;
+using HandheldCompanion.Views.Windows;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +15,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Xml.Linq;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Utils;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Views;
-using HandheldCompanion.Views.Classes;
-using HandheldCompanion.Views.Windows;
-using Inkore.UI.WPF.Modern.Controls;
 using Frame = Inkore.UI.WPF.Modern.Controls.Frame;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
-using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Managers
 {

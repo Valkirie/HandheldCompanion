@@ -1,6 +1,6 @@
-﻿using System;
+﻿using PrecisionTiming;
+using System;
 using System.Diagnostics;
-using PrecisionTiming;
 
 namespace HandheldCompanion.Managers;
 

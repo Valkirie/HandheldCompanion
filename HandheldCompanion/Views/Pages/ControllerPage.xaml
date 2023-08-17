@@ -37,7 +37,7 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Orientation="Horizontal"
-                            Spacing="18">
+                            Spacing="6">
                             <ComboBox
                                 Name="cB_ServiceSwitch"
                                 Width="Auto"

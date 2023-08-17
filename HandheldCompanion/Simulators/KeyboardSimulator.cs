@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Gma.System.MouseKeyHook;
+﻿using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard;
 using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Managers;
+using System;
+using System.Runtime.InteropServices;
 using WindowsInput.Events;
 
 namespace HandheldCompanion.Simulators;

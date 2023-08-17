@@ -1,5 +1,5 @@
-﻿using System;
-using HandheldCompanion.Misc;
+﻿using HandheldCompanion.Misc;
+using System;
 
 namespace HandheldCompanion.Presets;
 

@@ -1,3 +1,9 @@
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Models;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Classes;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -6,14 +12,8 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using HandheldCompanion.Controllers;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Models;
-using HandheldCompanion.Views.Classes;
 using NumQuaternion = System.Numerics.Quaternion;
 using NumVector3 = System.Numerics.Vector3;
-using HandheldCompanion.Inputs;
 
 namespace HandheldCompanion.Views.Windows;
 

@@ -1,10 +1,10 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using HandheldCompanion.Actions;
+﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
-using HandheldCompanion.Inputs;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Controls;
 
