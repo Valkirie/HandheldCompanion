@@ -1,7 +1,8 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
-using SharpDX.DirectInput;
+using System.Windows;
 using static JSL;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Controllers;
 
@@ -14,6 +15,8 @@ public class JSController : IController
     protected float TriggerThreshold = 0.12f;
     protected float LeftThumbDeadZone = 0.24f;
     protected float RightThumbDeadZone = 0.265f;
+
+    protected Timer calibrateTimer = new Timer(5000) { AutoReset = false };
 
     public JSController()
     {
@@ -33,12 +36,19 @@ public class JSController : IController
         Details = details;
         Details.isHooked = true;
 
-        // todo: implement a calibration button for JSController
-        JslStartContinuousCalibration(UserIndex);
+        // timer(s)
+        calibrateTimer.Elapsed += CalibrateTimer_Elapsed;
 
-        // ui
+        // Capabilities
+        Capabilities |= ControllerCapabilities.MotionSensor;
+        Capabilities |= ControllerCapabilities.Calibration;
+
+        // UI
+        InitializeComponent();
         DrawControls();
         RefreshControls();
+
+        Calibrate();
     }
 
     public override string ToString()
@@ -47,7 +57,7 @@ public class JSController : IController
         if (!string.IsNullOrEmpty(baseName))
             return baseName;
 
-        switch((JOY_TYPE)sSETTINGS.controllerType)
+        switch ((JOY_TYPE)sSETTINGS.controllerType)
         {
             case JOY_TYPE.DualShock4:
                 return "DualShock 4";
@@ -149,5 +159,42 @@ public class JSController : IController
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
         JslSetRumble(UserIndex, (byte)(SmallMotor * VibrationStrength), (byte)(LargeMotor * VibrationStrength));
+    }
+
+    protected override void Calibrate()
+    {
+        // start calibration
+        JslResetContinuousCalibration(UserIndex);
+        JslStartContinuousCalibration(UserIndex);
+
+        calibrateTimer.Start();
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ui_button_calibrate.Content = "Calibrating";
+            ui_button_calibrate.IsEnabled = false;
+        });
+    }
+
+    protected override void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
+    {
+        // start calibration
+        Calibrate();
+
+        base.ui_button_calibrate_Click(sender, e);
+    }
+
+    private void CalibrateTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        // stop calibration
+        JslPauseContinuousCalibration(UserIndex);
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ui_button_calibrate.Content = "Calibrate";
+            ui_button_calibrate.IsEnabled = true;
+        });
     }
 }

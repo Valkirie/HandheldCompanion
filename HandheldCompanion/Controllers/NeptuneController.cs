@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
-using SharpDX.XInput;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Inputs;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers;
 
@@ -44,6 +44,7 @@ public class NeptuneController : SteamController
         }
 
         // UI
+        InitializeComponent();
         DrawControls();
         RefreshControls();
 

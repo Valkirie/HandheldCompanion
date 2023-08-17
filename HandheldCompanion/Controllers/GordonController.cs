@@ -1,14 +1,14 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using SharpDX.XInput;
 using steam_hidapi.net;
 using steam_hidapi.net.Hid;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using HandheldCompanion.Inputs;
-using HandheldCompanion.Utils;
-using HandheldCompanion.Actions;
 
 namespace HandheldCompanion.Controllers
 {
@@ -39,7 +39,7 @@ namespace HandheldCompanion.Controllers
             ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-            // UI
+            InitializeComponent();
             DrawControls();
             RefreshControls();
 

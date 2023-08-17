@@ -1,10 +1,6 @@
-﻿using System;
-using System.Windows.Media;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using SharpDX.DirectInput;
-using SharpDX.XInput;
 using static JSL;
 
 namespace HandheldCompanion.Controllers;
@@ -17,8 +13,6 @@ public class ProController : JSController
 
     public ProController(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
-        Capabilities |= ControllerCapabilities.MotionSensor;
-
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.Special2);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);

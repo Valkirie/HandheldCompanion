@@ -1,9 +1,9 @@
-using System;
-using System.Runtime.InteropServices;
-using System.Windows.Media;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using SharpDX.XInput;
+using System;
+using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers;
 
@@ -19,11 +19,6 @@ public class XInputController : IController
 
     public XInputController()
     {
-        // UI
-        ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
-        ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
-        ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
-        ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
     }
 
     public XInputController(Controller controller, PnPDetails details) : this()
@@ -40,6 +35,13 @@ public class XInputController : IController
 
         Details.isHooked = true;
 
+        // UI
+        ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
+        ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
+        ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
+        ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
+
+        InitializeComponent();
         DrawControls();
         RefreshControls();
     }

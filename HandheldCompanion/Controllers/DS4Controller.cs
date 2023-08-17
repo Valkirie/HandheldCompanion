@@ -1,10 +1,7 @@
-﻿using System;
-using System.Windows.Media;
-using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using SharpDX.DirectInput;
-using SharpDX.XInput;
+using System.Windows.Media;
 using static JSL;
 
 namespace HandheldCompanion.Controllers;
@@ -17,8 +14,6 @@ public class DS4Controller : JSController
 
     public DS4Controller(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
-        Capabilities |= ControllerCapabilities.MotionSensor;
-
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
         ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 255, 73, 75)));
