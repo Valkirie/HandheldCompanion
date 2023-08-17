@@ -58,8 +58,11 @@ public static class JSL
         public int playerNumber;
         public int controllerType;
         public int splitType;
+        [MarshalAs(UnmanagedType.U1)]
         public bool isCalibrating;
+        [MarshalAs(UnmanagedType.U1)]
         public bool autoCalibrationEnabled;
+        [MarshalAs(UnmanagedType.U1)]
         public bool isConnected;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 512)]
         public string path;
@@ -141,7 +144,7 @@ public static class JSL
     [DllImport("JoyShockLibrary")]
     public static extern void JslSetPlayerNumber(int deviceId, int number);
 
-    [DllImport("JoyShockLibrary", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("JoyShockLibrary")]
     public static extern JOY_SETTINGS JslGetControllerInfoAndSettings(int deviceId);
 
     // get touchpad

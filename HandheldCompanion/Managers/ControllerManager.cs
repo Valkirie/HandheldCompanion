@@ -264,9 +264,9 @@ public static class ControllerManager
                 settings = JslGetControllerInfoAndSettings(i);
 
                 string joyShockpath = settings.path;
-                string detailsPath = details.Path.Replace(@"\", "");
+                string detailsPath = details.Path;
 
-                if (detailsPath.Contains(joyShockpath, StringComparison.InvariantCultureIgnoreCase))
+                if (detailsPath.Equals(joyShockpath, StringComparison.InvariantCultureIgnoreCase))
                 {
                     joyShockId = i;
                     break;
