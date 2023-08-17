@@ -6,21 +6,27 @@ using steam_hidapi.net;
 using steam_hidapi.net.Hid;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HandheldCompanion.Controllers;
 
 public class NeptuneController : SteamController
 {
-    private const short TrackPadInner = 21844;
-
-    public const sbyte RumbleMinIntensity = 8;
-    public const sbyte RumbleMaxIntensity = 12;
-    private readonly steam_hidapi.net.NeptuneController Controller;
-
+    private steam_hidapi.net.NeptuneController Controller;
     private NeptuneControllerInputEventArgs input;
 
-    private readonly ushort RumblePeriod = 8;
+    private const short TrackPadInner = 21844;
+
+    public byte FeedbackLargeMotor;
+    public byte FeedbackSmallMotor;
+
+    public const sbyte MinIntensity = -2;
+    public const sbyte MaxIntensity = 10;
+
+    // TODO: why not use TimerManager.Tick?
+    private Thread rumbleThread;
+    private bool rumbleThreadRunning;
 
     public NeptuneController(PnPDetails details) : base()
     {
@@ -66,8 +72,6 @@ public class NeptuneController : SteamController
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
-
-        RumblePeriod = (ushort)(TimerManager.GetPeriod() * 10);
     }
 
     public override string ToString()
@@ -288,6 +292,12 @@ public class NeptuneController : SteamController
         // disable lizard state
         Controller.RequestLizardMode(false);
 
+        // manage rumble thread
+        rumbleThreadRunning = true;
+        rumbleThread = new Thread(RumbleThreadLoop);
+        rumbleThread.IsBackground = true;
+        rumbleThread.Start();
+
         SetVirtualMuted(SettingsManager.GetBoolean("SteamControllerMute"));
 
         TimerManager.Tick += UpdateInputs;
@@ -301,6 +311,10 @@ public class NeptuneController : SteamController
         {
             // restore lizard state
             Controller.RequestLizardMode(true);
+
+            // kill rumble thread
+            rumbleThreadRunning = false;
+            rumbleThread.Join();
 
             // close controller
             Close();
@@ -333,11 +347,22 @@ public class NeptuneController : SteamController
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
-        GetHapticIntensity(LargeMotor, RumbleMinIntensity, RumbleMaxIntensity, out var leftIntensity);
-        Controller.SetHaptic((byte)SCHapticMotor.Left, (ushort)leftIntensity, RumblePeriod, 0);
+        this.FeedbackLargeMotor = LargeMotor;
+        this.FeedbackSmallMotor = SmallMotor;
+    }
 
-        GetHapticIntensity(SmallMotor, RumbleMinIntensity, RumbleMaxIntensity, out var rightIntensity);
-        Controller.SetHaptic((byte)SCHapticMotor.Right, (ushort)rightIntensity, RumblePeriod, 0);
+    private async void RumbleThreadLoop(object? obj)
+    {
+        while (rumbleThreadRunning)
+        {
+            if (GetHapticIntensity(FeedbackLargeMotor, MinIntensity, MaxIntensity, out var leftIntensity))
+                Controller.SetHaptic2(SCHapticMotor.Left, NCHapticStyle.Weak, leftIntensity);
+
+            if (GetHapticIntensity(FeedbackSmallMotor, MinIntensity, MaxIntensity, out var rightIntensity))
+                Controller.SetHaptic2(SCHapticMotor.Right, NCHapticStyle.Weak, rightIntensity);
+
+            await Task.Delay(TimerManager.GetPeriod() * 2);
+        }
     }
 
     public override void SetHaptic(HapticStrength strength, ButtonFlags button)
