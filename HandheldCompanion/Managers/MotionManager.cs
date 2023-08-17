@@ -6,6 +6,8 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Windows;
 
@@ -24,11 +26,13 @@ namespace HandheldCompanion.Managers
         private static Vector3[] gyroscope = new Vector3[2];
 
         private static SensorFusion sensorFusion = new();
-        private static MadgwickAHRS madgwickAHRS = new(0.01f, 0.1f);
+        private static MadgwickAHRS madgwickAHRS;
         private static Inclination inclination = new();
 
         private static double PreviousTotalMilliseconds;
         public static double DeltaSeconds;
+
+        private static IEnumerable<ButtonFlags> resetFlags = new List<ButtonFlags>() { ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4 };
 
         public static event SettingsMode0EventHandler SettingsMode0Update;
         public delegate void SettingsMode0EventHandler(Vector3 gyrometer);
@@ -46,6 +50,8 @@ namespace HandheldCompanion.Managers
 
         static MotionManager()
         {
+            float samplePeriod = TimerManager.GetPeriod() / 1000f;
+            madgwickAHRS = new(samplePeriod, 0.01f);
         }
 
         public static void Start()
@@ -63,6 +69,9 @@ namespace HandheldCompanion.Managers
         {
             SetupMotion(controllerState);
             CalculateMotion(controllerState);
+            
+            if (controllerState.ButtonState.Buttons.Intersect(resetFlags).Count() == 4)
+                madgwickAHRS.Reset();
         }
 
         // this function sets some basic motion settings, sensitivity and inverts

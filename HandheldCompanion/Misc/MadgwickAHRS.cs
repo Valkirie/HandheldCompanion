@@ -38,6 +38,11 @@ public class MadgwickAHRS
         Quaternion = new[] { 0f, 1f, 0f, 0f };
     }
 
+    public void Reset()
+    {
+        Quaternion = new[] { -0.4f, 1f, 0f, 0f };
+    }
+
     /// <summary>
     ///     Gets or sets the sample period.
     /// </summary>
