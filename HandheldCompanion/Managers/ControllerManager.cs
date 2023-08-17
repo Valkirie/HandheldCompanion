@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Controls;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using DeviceType = SharpDX.DirectInput.DeviceType;
-using HandheldCompanion.Inputs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
+using DeviceType = SharpDX.DirectInput.DeviceType;
 
 namespace HandheldCompanion.Managers;
 
@@ -37,6 +37,9 @@ public static class ControllerManager
 
     public static void Start()
     {
+        // Flushing possible JoyShocks...
+        JslDisconnectAndDisposeAll();
+
         DeviceManager.XUsbDeviceArrived += XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved += XUsbDeviceRemoved;
 
@@ -245,44 +248,42 @@ public static class ControllerManager
         // initialize controller vars
         IController controller = null;
 
-        // UI thread (synchronous)
-        // We need to wait for each controller to initialize and take (or not) its slot in the array
-        Application.Current.Dispatcher.Invoke(() =>
+        // JoyShockLibrary
+        int connectedJoys = JslConnectDevices();
+        if (connectedJoys != 0)
         {
-            // JoyShockLibrary
-            int connectedJoys = JslConnectDevices();
-            if (connectedJoys != 0)
+            int[] joysHandle = new int[connectedJoys];
+            JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
+
+            // scroll handles until we find matching device path
+            int joyShockId = -1;
+            JOY_SETTINGS settings = new();
+
+            foreach (int i in joysHandle)
             {
-                int[] joysHandle = new int[connectedJoys];
-                JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
+                settings = JslGetControllerInfoAndSettings(i);
 
-                // scroll handles until we find matching device path
-                int joyShockId = -1;
-                JOY_SETTINGS settings = new();
+                string joyShockpath = settings.path;
+                string detailsPath = details.Path.Replace(@"\", "");
 
-                foreach (int i in joysHandle)
+                if (detailsPath.Contains(joyShockpath, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    settings = JslGetControllerInfoAndSettings(i);
-
-                    // fixme
-                    string joyShockpath = $"V{settings.path}".ToUpper();
-                    string detailsPath = details.Path.Replace(@"\", "").Replace("?HID#", "");
-
-                    if (joyShockpath.Equals(detailsPath, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        joyShockId = i;
-                        break;
-                    }
+                    joyShockId = i;
+                    break;
                 }
+            }
 
-                // device found
-                if (joyShockId != -1)
+            // device found
+            if (joyShockId != -1)
+            {
+                // use handle
+                settings.playerNumber = joyShockId;
+
+                JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
+
+                // UI thread (sync)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    // use handle
-                    settings.playerNumber = joyShockId;
-
-                    JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
-
                     switch (joyShockType)
                     {
                         case JOY_TYPE.DualShock4:
@@ -292,62 +293,68 @@ public static class ControllerManager
                             controller = new ProController(settings, details);
                             break;
                     }
-                }
-                else
-                {
-                    // unsupported controller
-                    LogManager.LogError("Couldn't find matching JoyShock controller: VID:{0} and PID:{1}",
-                        details.GetVendorID(), details.GetProductID());
-                }
+                });
             }
             else
             {
-                // DInput
-                var directInput = new DirectInput();
-                int VendorId = details.attributes.VendorID;
-                int ProductId = details.attributes.ProductID;
+                // unsupported controller
+                LogManager.LogError("Couldn't find matching JoyShock controller: VID:{0} and PID:{1}",
+                    details.GetVendorID(), details.GetProductID());
+            }
+        }
+        else
+        {
 
-                // initialize controller vars
-                Joystick joystick = null;
+            // DInput
+            var directInput = new DirectInput();
+            int VendorId = details.attributes.VendorID;
+            int ProductId = details.attributes.ProductID;
 
-                // search for the plugged controller
-                foreach (var deviceInstance in
-                         directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
-                    try
-                    {
-                        // Instantiate the joystick
-                        var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                        var SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath,
-                            obj.InterfaceGuid.ToString());
+            // initialize controller vars
+            Joystick joystick = null;
 
-                        // IG_ means it is an XInput controller and therefore is handled elsewhere
-                        if (lookup_joystick.Properties.InterfacePath.Contains("IG_",
-                                StringComparison.InvariantCultureIgnoreCase))
-                            continue;
-
-                        if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            joystick = lookup_joystick;
-                            break;
-                        }
-                    }
-                    catch
-                    {
-                    }
-
-                if (joystick is not null)
+            // search for the plugged controller
+            foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+            {
+                try
                 {
-                    // supported controller
-                    VendorId = joystick.Properties.VendorId;
-                    ProductId = joystick.Properties.ProductId;
-                }
-                else
-                {
-                    // unsupported controller
-                    LogManager.LogError("Couldn't find matching DInput controller: VID:{0} and PID:{1}",
-                        details.GetVendorID(), details.GetProductID());
-                }
+                    // Instantiate the joystick
+                    var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
+                    var SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath,
+                        obj.InterfaceGuid.ToString());
 
+                    // IG_ means it is an XInput controller and therefore is handled elsewhere
+                    if (lookup_joystick.Properties.InterfacePath.Contains("IG_",
+                            StringComparison.InvariantCultureIgnoreCase))
+                        continue;
+
+                    if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        joystick = lookup_joystick;
+                        break;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            if (joystick is not null)
+            {
+                // supported controller
+                VendorId = joystick.Properties.VendorId;
+                ProductId = joystick.Properties.ProductId;
+            }
+            else
+            {
+                // unsupported controller
+                LogManager.LogError("Couldn't find matching DInput controller: VID:{0} and PID:{1}",
+                    details.GetVendorID(), details.GetProductID());
+            }
+
+            // UI thread (sync)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
                 // search for a supported controller
                 switch (VendorId)
                 {
@@ -396,37 +403,37 @@ public static class ControllerManager
                         }
                         break;
                 }
-            }
+            });
+        }
 
-            // unsupported controller
-            if (controller is null)
-            {
-                LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(),
-                    details.GetProductID());
-                return;
-            }
+        // unsupported controller
+        if (controller is null)
+        {
+            LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(),
+                details.GetProductID());
+            return;
+        }
 
-            // failed to initialize
-            if (controller.Details is null)
-                return;
+        // failed to initialize
+        if (controller.Details is null)
+            return;
 
-            if (!controller.IsConnected())
-                return;
+        if (!controller.IsConnected())
+            return;
 
-            // update or create controller
-            var path = controller.GetContainerInstancePath();
-            Controllers[path] = controller;
+        // update or create controller
+        var path = controller.GetContainerInstancePath();
+        Controllers[path] = controller;
 
-            // first controller logic
-            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-                SetTargetController(controller.GetContainerInstancePath());
+        // first controller logic
+        if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
+            SetTargetController(controller.GetContainerInstancePath());
 
-            // raise event
-            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller));
-            LogManager.LogDebug("DInput controller {0} plugged", controller.ToString());
+        // raise event
+        ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller));
+        LogManager.LogDebug("DInput controller {0} plugged", controller.ToString());
 
-            ToastManager.SendToast(controller.ToString(), "detected");
-        });
+        ToastManager.SendToast(controller.ToString(), "detected");
     }
 
     private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
@@ -491,9 +498,8 @@ public static class ControllerManager
         // A XInput controller
         Controller _controller = new(userIndex);
 
-        // UI thread (synchronous)
-        // We need to wait for each controller to initialize and take (or not) its slot in the array
-        Application.Current.Dispatcher.Invoke(() =>
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             XInputController controller = new(_controller, details);
 
