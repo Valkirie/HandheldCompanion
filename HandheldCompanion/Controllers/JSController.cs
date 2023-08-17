@@ -48,7 +48,7 @@ public class JSController : IController
         DrawControls();
         RefreshControls();
 
-        Calibrate();
+        JslSetAutomaticCalibration(UserIndex, true);
     }
 
     public override string ToString()

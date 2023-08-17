@@ -37,7 +37,7 @@
                 <Button Name="ui_button_hide"
                         Style="{DynamicResource AccentButtonStyle}" Width="100" FontSize="14" Margin="6,0,0,0" Click="ui_button_hide_Click"/>
                 <Button Name="ui_button_calibrate"
-                        Style="{DynamicResource AccentButtonStyle}" Width="100" FontSize="14" Margin="6,0,0,0" Visibility="Collapsed" Click="ui_button_calibrate_Click"/>
+                        Style="{DynamicResource AccentButtonStyle}" Width="100" FontSize="14" Margin="6,0,0,0" Visibility="Collapsed" Click="ui_button_calibrate_Click" Content="Calibrate"/>
             </DockPanel>
         </Grid>
     </Border>
