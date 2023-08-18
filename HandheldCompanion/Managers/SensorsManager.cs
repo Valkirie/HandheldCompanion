@@ -4,6 +4,7 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
+using Windows.UI.Popups;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers
@@ -34,11 +35,9 @@ namespace HandheldCompanion.Managers
 
         private static void ControllerManager_ControllerSelected(IController Controller)
         {
-            if (Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
-            {
-                // hardcoded, dangerous (0: none, 1: internal, 2: external, 3: controller)
-                SettingsManager.SetProperty("SensorSelection", 3);
-            }
+            // select controller as current sensor if current sensor selection is none
+            if (sensorFamily == SensorFamily.None && Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
         }
 
         private static void ControllerManager_ControllerUnplugged(IController Controller)
@@ -46,16 +45,12 @@ namespace HandheldCompanion.Managers
             if (sensorFamily != SensorFamily.Controller)
                 return;
 
-            if (!Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor))
+            // skip if controller isn't current or doesn't have motion sensor anyway
+            if (!Controller.HasMotionSensor() || Controller != ControllerManager.GetTargetController())
                 return;
-
-            // restore default sensor
-            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
-                SettingsManager.SetProperty("SensorSelection", 1);
-            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
-                SettingsManager.SetProperty("SensorSelection", 2);
-            else
-                SettingsManager.SetProperty("SensorSelection", 0);
+            
+            if (sensorFamily == SensorFamily.Controller)
+                PickNextSensor();
         }
 
         private static void DeviceManager_UsbDeviceRemoved(PnPDevice device, DeviceEventArgs obj)
@@ -65,12 +60,31 @@ namespace HandheldCompanion.Managers
 
             // If the USB Gyro is unplugged, close serial connection
             USBSensor.Close();
+
+            if (sensorFamily == SensorFamily.SerialUSBIMU)
+                PickNextSensor();
+        }
+        
+        private static void PickNextSensor()
+        {
+            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Windows);
+            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
+            else if (ControllerManager.GetTargetController() is not null && ControllerManager.GetTargetController().HasMotionSensor())
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
+            else
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.None);
         }
 
         private static void DeviceManager_UsbDeviceArrived(PnPDevice device, DeviceEventArgs obj)
         {
             // If USB Gyro is plugged, hook into it
             USBSensor = SerialUSBIMU.GetDefault();
+
+            // select serial usb as current sensor if current sensor selection is none
+            if (sensorFamily == SensorFamily.None)
+                SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.SerialUSBIMU);
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -97,25 +111,45 @@ namespace HandheldCompanion.Managers
                         if (sensorFamily == sensorSelection)
                             return;
 
-                        // In case current selection is USG Gyro, close serial connection
-                        if (sensorSelection == SensorFamily.SerialUSBIMU)
-                            if (USBSensor is not null)
-                                USBSensor.Close();
-
-                        sensorFamily = sensorSelection;
-
-                        // Establish serial port connection on selection change to USG Gyro
-                        if (sensorSelection == SensorFamily.SerialUSBIMU)
+                        switch(sensorFamily)
                         {
-                            USBSensor = SerialUSBIMU.GetDefault();
-
-                            if (USBSensor is null)
+                            case SensorFamily.Windows:
+                                StopListening();
                                 break;
-
-                            USBSensor.Open();
+                            case SensorFamily.SerialUSBIMU:
+                                if (USBSensor is not null)
+                                    USBSensor.Close();
+                                break;
+                            case SensorFamily.Controller:
+                                break;
                         }
 
-                        StopListening();
+                        // update current sensorFamily
+                        sensorFamily = sensorSelection;
+
+                        switch(sensorFamily)
+                        {
+                            case SensorFamily.Windows:
+                                break;
+                            case SensorFamily.SerialUSBIMU:
+                                {
+                                    USBSensor = SerialUSBIMU.GetDefault();
+
+                                    if (USBSensor is null)
+                                        break;
+
+                                    USBSensor.Open();
+
+                                    SerialPlacement placement = (SerialPlacement)SettingsManager.GetInt("SensorPlacement");
+                                    USBSensor.SetSensorPlacement(placement);
+                                    bool upsidedown = SettingsManager.GetBoolean("SensorPlacementUpsideDown");
+                                    USBSensor.SetSensorOrientation(upsidedown);
+                                }
+                                break;
+                            case SensorFamily.Controller:
+                                break;
+                        }
+
                         SetSensorFamily(sensorSelection);
                     }
                     break;
@@ -164,8 +198,12 @@ namespace HandheldCompanion.Managers
 
         public static void UpdateReport(ControllerState controllerState)
         {
-            if (sensorFamily == SensorFamily.None)
-                return;
+            switch(sensorFamily)
+            {
+                case SensorFamily.None:
+                case SensorFamily.Controller:
+                    return;
+            }
 
             if (Gyrometer is not null)
                 controllerState.GyroState.Gyroscope = Gyrometer.GetCurrentReading();
