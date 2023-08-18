@@ -286,6 +286,9 @@ public static class ControllerManager
                 {
                     switch (joyShockType)
                     {
+                        case JOY_TYPE.DualSense:
+                            controller = new DualSenseController(settings, details);
+                            break;
                         case JOY_TYPE.DualShock4:
                             controller = new DS4Controller(settings, details);
                             break;
