@@ -109,6 +109,16 @@ internal class ModelSteamDeck : IModel
                         case ButtonFlags.OEM3:
                             buttonMaterial = MaterialPlasticWhite;
                             break;
+
+                        case ButtonFlags.LeftStickTouch:
+                            buttonMaterial = MaterialPlasticBlack;
+                            LeftThumb = model3D;
+                            break;
+                        case ButtonFlags.RightStickTouch:
+                            buttonMaterial = MaterialPlasticBlack;
+                            RightThumb = model3D;
+                            break;
+
                         default:
                             buttonMaterial = MaterialPlasticDarkGrey;
                             break;

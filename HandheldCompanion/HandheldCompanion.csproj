@@ -268,10 +268,10 @@
     <None Update="Models\OneXPlayerMini\RightStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\LeftStickClick.obj">
+    <None Update="Models\SteamDeck\LeftStickTouch.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\RightStickClick.obj">
+    <None Update="Models\SteamDeck\RightStickTouch.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\ToyController\LeftStickClick.obj">
@@ -1606,13 +1606,13 @@
     <None Update="models\SteamDeck\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM2.obj">
+    <None Update="Models\SteamDeck\LeftStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM3.obj">
+    <None Update="Models\SteamDeck\RightStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM8.obj">
+    <None Update="Models\SteamDeck\LeftPadTouch.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\SteamDeck\L1.obj">
@@ -1636,22 +1636,22 @@
     <None Update="models\SteamDeck\OEM1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM4.obj">
+    <None Update="Models\SteamDeck\L4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM5.obj">
+    <None Update="Models\SteamDeck\L5.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM6.obj">
+    <None Update="Models\SteamDeck\R4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM7.obj">
+    <None Update="Models\SteamDeck\R5.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\SteamDeck\PowerButton.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM9.obj">
+    <None Update="Models\SteamDeck\RightPadTouch.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\SteamDeck\R1.obj">
