@@ -101,12 +101,10 @@ internal class ModelSteamDeck : IModel
                         case ButtonFlags.DPadRight:
                         case ButtonFlags.DPadDown:
                         case ButtonFlags.DPadLeft:
-                        case ButtonFlags.LeftStickClick:
-                        case ButtonFlags.RightStickClick:
                             buttonMaterial = MaterialPlasticBlack;
                             break;
-                        case ButtonFlags.OEM2:
-                        case ButtonFlags.OEM3:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
                             buttonMaterial = MaterialPlasticWhite;
                             break;
 
