@@ -145,7 +145,6 @@ public partial class MainWindow : GamepadWindow
         // initialize device
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
-        CurrentDevice.Open();
 
         // workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
         // todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
@@ -528,23 +527,36 @@ public partial class MainWindow : GamepadWindow
         switch (status)
         {
             case PowerManager.SystemStatus.SystemReady:
-                // resume from sleep
-                // TODO: lower those delays?
-                if (prevStatus == PowerManager.SystemStatus.SystemPending)
                 {
-                    await Task.Delay(1000);
+                    // resume from sleep
+                    if (prevStatus == PowerManager.SystemStatus.SystemPending)
+                    {
+                        // use device-specific delay
+                        await Task.Delay(CurrentDevice.ResumeDelay);
 
-                    // restore inputs manager
-                    InputsManager.Start();
+                        // restore inputs manager
+                        InputsManager.Start();
 
-                    // start timer manager
-                    TimerManager.Start();
+                        // start timer manager
+                        TimerManager.Start();
 
-                    // resume the virtual controller last
-                    VirtualManager.Resume();
+                        // resume the virtual controller last
+                        VirtualManager.Resume();
 
-                    // restart IMU
-                    SensorsManager.Resume(true);
+                        // restart IMU
+                        SensorsManager.Resume(true);
+                    }
+
+                    // open device, when ready
+                    new Thread(() =>
+                    {
+                        // wait for all HIDs to be ready
+                        while (!CurrentDevice.IsReady())
+                            Thread.Sleep(500);
+
+                        // open current device (threaded to avoid device to hang)
+                        CurrentDevice.Open();
+                    }).Start();
                 }
                 break;
 
@@ -562,6 +574,9 @@ public partial class MainWindow : GamepadWindow
 
                     // pause inputs manager
                     InputsManager.Stop();
+
+                    // close current device
+                    CurrentDevice.Open();
                 }
                 break;
         }

@@ -115,14 +115,7 @@ namespace HandheldCompanion.Managers
                             USBSensor.Open();
                         }
 
-                        // if required, halt gyrometer
-                        if (Gyrometer is not null)
-                            Gyrometer.StopListening();
-
-                        // if required, halt accelerometer
-                        if (Accelerometer is not null)
-                            Accelerometer?.StopListening();
-
+                        StopListening();
                         SetSensorFamily(sensorSelection);
                     }
                     break;
@@ -142,6 +135,8 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
+            StopListening();
+
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "SensorsManager");
@@ -154,6 +149,17 @@ namespace HandheldCompanion.Managers
 
             if (Accelerometer is not null)
                 Accelerometer.UpdateSensor();
+        }
+
+        private static void StopListening()
+        {
+            // if required, halt gyrometer
+            if (Gyrometer is not null)
+                Gyrometer.StopListening();
+
+            // if required, halt accelerometer
+            if (Accelerometer is not null)
+                Accelerometer?.StopListening();
         }
 
         public static void UpdateReport(ControllerState controllerState)

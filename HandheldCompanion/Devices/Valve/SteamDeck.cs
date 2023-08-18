@@ -62,8 +62,6 @@ public class SteamDeck : IDevice
         // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
         GfxClock = new double[] { 100, 1600 };
 
-        ResumeDelay = 14000;
-
         OEMChords.Add(new DeviceChord("...",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
