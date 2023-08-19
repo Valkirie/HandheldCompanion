@@ -2,8 +2,10 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Processors;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using static HandheldCompanion.Utils.ProcessUtils;
 using static HandheldCompanion.Utils.XInputPlusUtils;
 
@@ -127,7 +130,7 @@ public static class XInputPlus
         // todo: add support for xinputplus dinput libraries
     }
 
-    private static void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
+    private static async void ProcessManager_ProcessStarted(ProcessEx processEx, bool OnStartup)
     {
         try
         {
@@ -137,11 +140,20 @@ public static class XInputPlus
             if (profile.XInputPlus != XInputPlusMethod.Injection)
                 return;
 
-            if (!ProcessManager.CheckXInput(processEx.Process))
-                return;
+            int attempt = 0;
+            while (!ProcessManager.CheckXInput(processEx.Process))
+            {
+                attempt++;
 
-            WriteXInputPlusINI(XInputPlus_InjectorDir);
-            InjectXInputPlus(processEx.Process);
+                if (attempt == 10)
+                    return;
+
+                await Task.Delay(500);
+            }
+
+            bool x64bit = Is64bitProcess(processEx.Process);
+            WriteXInputPlusINI(XInputPlus_InjectorDir, x64bit);
+            InjectXInputPlus(processEx.Process, x64bit);
         }
         catch (Exception ex)
         {
@@ -149,7 +161,7 @@ public static class XInputPlus
         }
     }
 
-    public static void InjectXInputPlus(Process targetProcess)
+    public static void InjectXInputPlus(Process targetProcess, bool x64bit)
     {
         XInputPlusLoaderSetting setting = new XInputPlusLoaderSetting();
 
@@ -187,13 +199,7 @@ public static class XInputPlus
             string XInputInjectorDLL;
 
             // using this native api function because sometimes we can't access the exe (such as UWP games)
-            if (Is64bitProcess(targetProcess))
-                XInputInjectorDLL = XInputPlus_Injectorx64;
-            else
-                XInputInjectorDLL = XInputPlus_Injectorx86;
-
-            // don't inject too fast or risk crashing
-            Thread.Sleep(2000);
+            XInputInjectorDLL = x64bit ? XInputPlus_Injectorx64 : XInputPlus_Injectorx86;
 
             // using rundll32.exe because we can't load a 32 bit library in a 64 bit application
             string args = $"\"{XInputInjectorDLL}\",HookProcess {targetProcess.Id}";
@@ -206,12 +212,13 @@ public static class XInputPlus
     {
         var DirectoryPath = Path.GetDirectoryName(profile.Path);
 
-        WriteXInputPlusINI(DirectoryPath);
-
         // get binary type (x64, x86)
         BinaryType bt;
         GetBinaryType(profile.Path, out bt);
-        var x64 = bt == BinaryType.SCS_64BIT_BINARY;
+        bool x64bit = bt == BinaryType.SCS_64BIT_BINARY;
+
+        // prepare ini file
+        WriteXInputPlusINI(DirectoryPath, x64bit);
 
         for (var i = 0; i < 5; i++)
         {
@@ -233,10 +240,10 @@ public static class XInputPlus
             // check CRC32
             if (dllexist) inputData = File.ReadAllBytes(XInputPlusDLLTargetPath);
             var crc = Crc32Algorithm.Compute(inputData);
-            var is_x360ce = CRCs[x64] == crc;
+            var is_x360ce = CRCs[x64bit] == crc;
 
             // pull data from dll
-            var XInputPlusDLLSrcPath = x64 ? XInputPlus_XInputx64 : XInputPlus_XInputx86;
+            var XInputPlusDLLSrcPath = x64bit ? XInputPlus_XInputx64 : XInputPlus_XInputx86;
 
             if (dllexist && is_x360ce) continue; // skip to next file
 
@@ -308,7 +315,7 @@ public static class XInputPlus
             File.Delete(IniPath);
     }
 
-    public static void WriteXInputPlusINI(string directoryPath)
+    public static void WriteXInputPlusINI(string directoryPath, bool x64bit)
     {
         var IniPath = Path.Combine(directoryPath, "XInputPlus.ini");
 
@@ -318,7 +325,7 @@ public static class XInputPlus
         File.WriteAllText(IniPath, IniContent);
 
         // we need to define Controller index overwrite
-        XInputController controller = (XInputController)ControllerManager.GetVirtualControllers().FirstOrDefault(c => c.GetType() == typeof(XInputController));
+        XInputController controller = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
         if (controller is null)
             return;
 
@@ -328,6 +335,7 @@ public static class XInputPlus
         // make virtual controller new 1st controller
         var IniFile = new IniFile(IniPath);
         IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
+        IniFile.Write("FileVersion", x64bit ? "X64" : "X86", "Misc");
 
         // prepare index array and remove current index from it
         var userIndex = new List<int> { 1, 2, 3, 4 };
