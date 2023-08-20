@@ -322,29 +322,38 @@ public static class XInputPlus
         if (!CommonUtils.IsFileWritable(IniPath))
             return;
 
+        // prepare index array
+        List<int> userIndex = new() { 1, 2, 3, 4 };
+
+        // prepare IniFile
         File.WriteAllText(IniPath, IniContent);
-
-        // we need to define Controller index overwrite
-        XInputController controller = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
-        if (controller is null)
-            return;
-
-        // get virtual controller index
-        var idx = controller.GetUserIndex() + 1;
-
-        // make virtual controller new 1st controller
-        var IniFile = new IniFile(IniPath);
-        IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
+        IniFile IniFile = new IniFile(IniPath);
         IniFile.Write("FileVersion", x64bit ? "X64" : "X86", "Misc");
 
-        // prepare index array and remove current index from it
-        var userIndex = new List<int> { 1, 2, 3, 4 };
+        // reset controller index values
+        for (int i = 0; i < userIndex.Count; i++)
+            IniFile.Write($"Controller{i + 1}", "0", "ControllerNumber");
+
+        // we need to define Controller index overwrite
+        XInputController vController = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
+        if (vController is null)
+            return;
+
+        // get virtual controller index and update IniFile
+        int idx = vController.GetUserIndex() + 1;
+        IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
+
+        // remove virtual controller index from it
         userIndex.Remove(idx);
 
-        for (var i = 0; i < userIndex.Count; i++)
+        // remove all hidden physical controllers from the list
+        foreach(XInputController pController in ControllerManager.GetPhysicalControllers().OfType<XInputController>().Where(c => c.IsHidden()))
+            userIndex.Remove(pController.GetUserIndex() + 1);
+
+        for (int i = 0; i < userIndex.Count; i++)
         {
-            var ControllerIdx = userIndex[i];
-            IniFile.Write($"Controller{i + 2}", Convert.ToString(ControllerIdx), "ControllerNumber");
+            int cIdx = userIndex[i];
+            IniFile.Write($"Controller{i + 2}", Convert.ToString(cIdx), "ControllerNumber");
         }
 
         LogManager.LogDebug("XInputPlus INI wrote in {0}. Controller1 set to UserIndex: {1}",

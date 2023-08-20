@@ -425,6 +425,8 @@ public partial class ProfilesPage : Page
                 Toggle_EnableProfile.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile layout
                 Toggle_ControllerLayout.IsEnabled = !currentProfile.Default;
+                // prevent user from using Wrapper on default profile
+                cB_Wrapper.IsEnabled = !currentProfile.Default;
 
                 // Profile info
                 tB_ProfileName.Text = currentProfile.Name;
@@ -493,6 +495,8 @@ public partial class ProfilesPage : Page
                 ProfilesPageHotkey.DrawInput();
 
                 // display warnings
+                WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
+
                 switch (currentProfile.ErrorCode)
                 {
                     default:
@@ -500,6 +504,7 @@ public partial class ProfilesPage : Page
                         WarningBorder.Visibility = Visibility.Collapsed;
                         cB_Whitelist.IsEnabled = true;
 
+                        // wrapper
                         cB_Wrapper_Injection.IsEnabled = true;
                         cB_Wrapper_Redirection.IsEnabled = true;
                         break;
@@ -509,18 +514,19 @@ public partial class ProfilesPage : Page
                     case ProfileErrorCode.MissingPath:          // profile has no path
                     case ProfileErrorCode.Default:              // profile is default
                         WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
                         cB_Whitelist.IsEnabled = false;
+                        cB_Wrapper.IsEnabled = false;
 
-                        cB_Wrapper_Injection.IsEnabled = true;
+                        // wrapper
+                        cB_Wrapper_Injection.IsEnabled = false;
                         cB_Wrapper_Redirection.IsEnabled = false;
                         break;
 
                     case ProfileErrorCode.MissingPermission:
                         WarningBorder.Visibility = Visibility.Visible;
-                        WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
                         cB_Whitelist.IsEnabled = true;
 
+                        // wrapper
                         cB_Wrapper_Injection.IsEnabled = true;
                         cB_Wrapper_Redirection.IsEnabled = false;
                         break;
@@ -577,6 +583,17 @@ public partial class ProfilesPage : Page
             return;
 
         currentProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;
+
+        switch (currentProfile.XInputPlus)
+        {
+            case XInputPlusMethod.Injection:
+                cB_Whitelist.IsChecked = true;
+                break;
+            case XInputPlusMethod.Redirection:
+                cB_Whitelist.IsChecked = false;
+                break;
+        }
+
         RequestUpdate();
     }
 
