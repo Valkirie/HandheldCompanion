@@ -432,6 +432,14 @@ public static class ControllerManager
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
+        // power cycling logic
+        if (IsPowerCycling)
+        {
+            // hide new InstanceID (HID)
+            if (controller.IsHidden())
+                HidHide.HidePath(details.deviceInstanceId);
+        }
+
         // first controller logic
         if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
             SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
@@ -494,6 +502,14 @@ public static class ControllerManager
 
             // are we power cycling ?
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+            // power cycling logic
+            if (IsPowerCycling)
+            {
+                // hide new InstanceID (HID)
+                if (controller.IsHidden())
+                    HidHide.HidePath(details.deviceInstanceId);
+            }
 
             // first controller logic
             if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)

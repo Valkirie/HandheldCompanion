@@ -284,7 +284,6 @@ namespace HandheldCompanion.Controllers
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
             // set flag
-            powerCycle = this is not SteamController;
             if (powerCycle)
             {
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
@@ -309,7 +308,6 @@ namespace HandheldCompanion.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             // set flag
-            powerCycle = this is not SteamController;
             if (powerCycle)
             {
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
