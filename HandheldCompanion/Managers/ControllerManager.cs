@@ -22,6 +22,7 @@ namespace HandheldCompanion.Managers;
 public static class ControllerManager
 {
     private static readonly Dictionary<string, IController> Controllers = new();
+    public static readonly Dictionary<string, bool> PowerCyclers = new();
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -225,13 +226,13 @@ public static class ControllerManager
         if (Controllers.ContainsKey(path))
         {
             // last known controller still is plugged, set as target
-            SetTargetController(path);
+            SetTargetController(path, false);
         }
         else if (HasPhysicalController())
         {
             // no known controller, connect to first available
             path = GetPhysicalControllers().FirstOrDefault().GetContainerInstancePath();
-            SetTargetController(path);
+            SetTargetController(path, false);
         }
     }
 
@@ -412,7 +413,7 @@ public static class ControllerManager
         // unsupported controller
         if (controller is null)
         {
-            LogManager.LogError("Unsupported DInput controller: VID:{0} and PID:{1}", details.GetVendorID(),
+            LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(),
                 details.GetProductID());
             return;
         }
@@ -428,25 +429,31 @@ public static class ControllerManager
         var path = controller.GetContainerInstancePath();
         Controllers[path] = controller;
 
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
         // first controller logic
         if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-            SetTargetController(controller.GetContainerInstancePath());
+            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+
+        LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
 
         // raise event
-        ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller));
-        LogManager.LogDebug("DInput controller {0} plugged", controller.ToString());
+        ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
+
+        // remove controller from powercyclers
+        PowerCyclers[details.baseContainerDeviceInstanceId] = false;
 
         ToastManager.SendToast(controller.ToString(), "detected");
     }
 
     private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out var controller))
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
             return;
 
-        // XInput controller are handled elsewhere
-        if (controller.GetType() == typeof(XInputController))
-            return;
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);
@@ -455,48 +462,16 @@ public static class ControllerManager
         if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
             ClearTargetController();
 
-        LogManager.LogDebug("DInput controller {0} unplugged", controller.ToString());
+        LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
 
         // raise event
-        ControllerUnplugged?.Invoke(controller);
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
     private static void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
         // get details passed UserIndex
         UserIndex userIndex = (UserIndex)details.XInputUserIndex;
-
-        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
-        {
-            // check if controller is power cycling
-            if (!controller.IsPowerCycling)
-                return;
-
-            // cast to XInputController
-            XInputController xInputController = (XInputController)controller;
-
-            // hide new InstanceID (HID)
-            if (xInputController.IsHidden())
-                HidHide.HidePath(details.deviceInstanceId);
-
-            // unset flag
-            // todo: check if userIndex changes when controller is power cycling
-            xInputController.IsPowerCycling = false;
-
-            // update bounds controller
-            if (xInputController.GetUserIndex() != (int)userIndex)
-            {
-                xInputController.UpdateController(new Controller(userIndex));
-                LogManager.LogDebug("XInput controller {0} userIndex changed to {1}", xInputController.ToString(), userIndex);
-            }
-
-            // set flag
-            details.isHooked = true;
-
-            LogManager.LogDebug("XInput controller {0} has power-cycled", xInputController.ToString());
-
-            return;
-        }
 
         // A XInput controller
         Controller _controller = new(userIndex);
@@ -514,17 +489,23 @@ public static class ControllerManager
                 return;
 
             // update or create controller
-            var path = controller.GetContainerInstancePath();
+            string path = controller.GetContainerInstancePath();
             Controllers[path] = controller;
+
+            // are we power cycling ?
+            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
             // first controller logic
             if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-                SetTargetController(controller.GetContainerInstancePath());
+                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
 
             LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
 
             // raise event
-            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller));
+            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
+
+            // remove controller from powercyclers
+            PowerCyclers[details.baseContainerDeviceInstanceId] = false;
 
             ToastManager.SendToast(controller.ToString(), "detected");
         });
@@ -532,12 +513,11 @@ public static class ControllerManager
 
     private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out var controller))
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
             return;
 
-        // ignore the event if device is power cycling
-        if (controller.IsPowerCycling)
-            return;
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);
@@ -549,7 +529,7 @@ public static class ControllerManager
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
-        ControllerUnplugged?.Invoke(controller);
+        ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
     private static void ClearTargetController()
@@ -564,7 +544,7 @@ public static class ControllerManager
         }
     }
 
-    public static void SetTargetController(string baseContainerDeviceInstanceId)
+    public static void SetTargetController(string baseContainerDeviceInstanceId, bool IsPowerCycling)
     {
         // unplug current controller
         if (targetController is not null && targetController.IsPlugged())
@@ -584,7 +564,7 @@ public static class ControllerManager
         }
 
         // look for new controller
-        if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController? controller))
+        if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
             return;
 
         if (controller is null)
@@ -598,18 +578,21 @@ public static class ControllerManager
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
 
-        if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
-            targetController.Rumble();
-
-        if (SettingsManager.GetBoolean("HIDcloakonconnect"))
+        if (!IsPowerCycling)
         {
-            // we shouldn't hide steam controller on connect
-            if (targetController is not SteamController)
-                targetController.Hide();
-        }
+            if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
+                targetController.Rumble();
 
-        // update settings
-        SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
+            if (SettingsManager.GetBoolean("HIDcloakonconnect"))
+            {
+                // we shouldn't hide steam controller on connect
+                if (targetController is not SteamController)
+                    targetController.Hide();
+            }
+
+            // update settings
+            SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
+        }
 
         // check applicable scenarios
         CheckControllerScenario();
@@ -728,19 +711,15 @@ public static class ControllerManager
 
     public static event ControllerPluggedEventHandler ControllerPlugged;
 
-    public delegate void ControllerPluggedEventHandler(IController Controller, bool isHCVirtualController);
+    public delegate void ControllerPluggedEventHandler(IController Controller, bool isHCVirtualController, bool IsPowerCycling);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
 
-    public delegate void ControllerUnpluggedEventHandler(IController Controller);
+    public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling);
 
     public static event ControllerSelectedEventHandler ControllerSelected;
 
     public delegate void ControllerSelectedEventHandler(IController Controller);
-
-    public static event ServerControllerConnectEventHandler ServerControllerConnected;
-
-    public delegate void ServerControllerConnectEventHandler();
 
     public static event InputsUpdatedEventHandler InputsUpdated;
 

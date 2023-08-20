@@ -504,7 +504,7 @@ public static class ProfileManager
         }
     }
 
-    private static void ControllerManager_ControllerPlugged(IController Controller, bool isHCVirtualController)
+    private static void ControllerManager_ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
     {
         // we're only interest in virtual, XInput controllers
         if (Controller.GetType() != typeof(XInputController) || !Controller.IsVirtual())

@@ -97,7 +97,7 @@ public partial class ControllerPage : Page
     {
     }
 
-    private void ControllerUnplugged(IController Controller)
+    private void ControllerUnplugged(IController Controller, bool IsPowerCycling)
     {
         LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
 
@@ -118,7 +118,7 @@ public partial class ControllerPage : Page
         });
     }
 
-    private void ControllerPlugged(IController Controller, bool isHCVirtualController)
+    private void ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
     {
         // we assume this is HC virtual controller
         if (Controller.IsVirtual() && isHCVirtualController)
@@ -164,7 +164,7 @@ public partial class ControllerPage : Page
     {
         // todo: move me
         var path = Controller.GetContainerInstancePath();
-        ControllerManager.SetTargetController(path);
+        ControllerManager.SetTargetController(path, false);
 
         ControllerRefresh();
     }

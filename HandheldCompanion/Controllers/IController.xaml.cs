@@ -57,7 +57,6 @@ namespace HandheldCompanion.Controllers
         protected FontFamily DefaultFontFamily = new("Segeo WP");
 
         public PnPDetails Details;
-        public bool IsPowerCycling;
 
         // UI
         protected FontFamily GlyphFontFamily = new("PromptFont");
@@ -285,10 +284,10 @@ namespace HandheldCompanion.Controllers
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
 
             // set flag
-            powerCycle = this is XInputController;
+            powerCycle = this is not SteamController;
             if (powerCycle)
             {
-                IsPowerCycling = true;
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 Details.CyclePort();
             }
 
@@ -310,10 +309,10 @@ namespace HandheldCompanion.Controllers
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
 
             // set flag
-            powerCycle = this is XInputController;
+            powerCycle = this is not SteamController;
             if (powerCycle)
             {
-                IsPowerCycling = true;
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 Details.CyclePort();
             }
 

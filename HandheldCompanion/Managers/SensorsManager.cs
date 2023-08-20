@@ -40,7 +40,7 @@ namespace HandheldCompanion.Managers
                 SettingsManager.SetProperty("SensorSelection", (int)SensorFamily.Controller);
         }
 
-        private static void ControllerManager_ControllerUnplugged(IController Controller)
+        private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling)
         {
             if (sensorFamily != SensorFamily.Controller)
                 return;
