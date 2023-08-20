@@ -29,6 +29,10 @@ using Control = System.Windows.Controls.Control;
 using HandheldCompanion.Views.Classes;
 using ControllerCommon;
 using System.Diagnostics;
+using System.Windows.Threading;
+using ControllerCommon.Managers;
+using System.Globalization;
+using System.Threading;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -61,6 +65,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
+    private readonly DispatcherTimer clockUpdateTimer;
 
     private bool AutoHide;
     private bool isClosing;
@@ -80,6 +85,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
         PreviewKeyDown += HandleEsc;
         Deactivated += OverlayQuickTools_Deactivated;
+
+        clockUpdateTimer = new DispatcherTimer();
+        clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
 
         // create manager(s)
         PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -486,5 +494,31 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
+    private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (sender is not GamepadWindow window)
+        {
+            return;
+        }
+
+        if (window.Visibility == Visibility.Visible)
+        {
+            clockUpdateTimer.Start();
+            clockUpdateTimer.Tick += UpdateTime;
+        }
+        else
+        {
+            clockUpdateTimer.Stop();
+            clockUpdateTimer.Tick -= UpdateTime;
+        }
+    }
+
+    private void UpdateTime(object? sender, EventArgs e)
+    {
+        var timeFormat = CultureInfo.InstalledUICulture.DateTimeFormat.ShortTimePattern;
+        Time.Text = DateTime.Now.ToString(timeFormat);
+    }
+
     #endregion
+
 }
