@@ -559,9 +559,6 @@ public partial class ProfilesPage : Page
 
     private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
     {
-        // todo : move me to WPF
-        UniversalSettings.IsEnabled = (bool)!cB_Whitelist.IsChecked;
-
         // wait until lock is released
         if (updateLock)
             return;
