@@ -460,6 +460,10 @@ public static class ControllerManager
         if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
             return;
 
+        // XInput controller are handled elsewhere
+        if (controller.GetType() == typeof(XInputController))
+            return;
+
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
