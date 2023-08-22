@@ -381,8 +381,13 @@ public static class ProfileManager
 
         // prepare for writing
         var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
-        if (CommonUtils.IsFileWritable(profilePath))
-            File.WriteAllText(profilePath, jsonString);
+
+        try
+        {
+            if (CommonUtils.IsFileWritable(profilePath))
+                File.WriteAllText(profilePath, jsonString);
+        }
+        catch { }
     }
 
     private static void SanitizeProfile(Profile profile)

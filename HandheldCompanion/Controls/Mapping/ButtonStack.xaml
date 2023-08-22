@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:HandheldCompanion.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:Background="White"
     d:DesignWidth="800"
     mc:Ignorable="d">

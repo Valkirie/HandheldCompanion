@@ -10,8 +10,10 @@ namespace HandheldCompanion;
 [Serializable]
 public partial class Layout : ICloneable, IDisposable
 {
-    [JsonIgnore]
-    public bool fill;
+    public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = new();
+    public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
+
+    // gyro related
 
     public Layout()
     {
@@ -52,9 +54,6 @@ public partial class Layout : ICloneable, IDisposable
             }
         }
     }
-
-    public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = new();
-    public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
 
     public object Clone()
     {
@@ -100,10 +99,7 @@ public partial class Layout : ICloneable, IDisposable
     }
 
     #region events
-
     public event UpdatedEventHandler Updated;
-
     public delegate void UpdatedEventHandler(Layout layout);
-
     #endregion
 }

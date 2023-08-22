@@ -5,7 +5,7 @@
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:math="http://hexinnovation.com/math"
     xmlns:presets="clr-namespace:HandheldCompanion.Presets"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern">
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
 
     <Application.Resources>
         <ResourceDictionary>

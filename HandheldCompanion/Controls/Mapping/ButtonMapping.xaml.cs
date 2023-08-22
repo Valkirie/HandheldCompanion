@@ -115,6 +115,8 @@ public partial class ButtonMapping : IMapping
 
                 if (button.Equals(((ButtonActions)Actions).Button))
                     TargetComboBox.SelectedItem = buttonLabel;
+                else
+                    TargetComboBox.SelectedIndex = 0;
             }
 
             // settings
@@ -136,6 +138,8 @@ public partial class ButtonMapping : IMapping
             foreach (var keyLabel in keyList)
                 if (keyLabel.Tag.Equals(((KeyboardActions)this.Actions).Key))
                     TargetComboBox.SelectedItem = keyLabel;
+                else
+                    TargetComboBox.SelectedIndex = 0;
 
             // keyboard specific settings
             ModifierComboBox.SelectedIndex = (int)((KeyboardActions)this.Actions).Modifiers;
@@ -162,6 +166,8 @@ public partial class ButtonMapping : IMapping
 
                 if (mouseType.Equals(((MouseActions)Actions).MouseType))
                     TargetComboBox.SelectedItem = buttonLabel;
+                else
+                    TargetComboBox.SelectedIndex = 0;
             }
 
             // settings
