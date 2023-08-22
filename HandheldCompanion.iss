@@ -373,12 +373,12 @@ end;
   #define UseDotNet70
 #endif
 
-#define UseVC2005
-#define UseVC2008
-#define UseVC2010
-#define UseVC2012
-#define UseVC2013
-#define UseVC2015To2019
+;#define UseVC2005
+;#define UseVC2008
+;#define UseVC2010
+;#define UseVC2012
+;#define UseVC2013
+;#define UseVC2015To2019
 
 #define UseDirectX
 ; install ViGem first
