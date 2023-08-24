@@ -16,6 +16,9 @@ using System.Windows.Navigation;
 using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
+using System.Windows.Threading;
+using System.Globalization;
+using System.Threading;
 using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
@@ -24,6 +27,7 @@ using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -59,6 +63,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private bool AutoHide;
     private bool isClosing;
+    private readonly DispatcherTimer clockUpdateTimer;
 
     public QuickPerformancePage performancePage;
     private string preNavItemTag;
@@ -74,7 +79,10 @@ public partial class OverlayQuickTools : GamepadWindow
         Tag = "QuickTools";
 
         PreviewKeyDown += HandleEsc;
-        Deactivated += OverlayQuickTools_Deactivated;
+
+        clockUpdateTimer = new DispatcherTimer();
+        clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
+        clockUpdateTimer.Tick += UpdateTime;
 
         // create manager(s)
         PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -97,12 +105,6 @@ public partial class OverlayQuickTools : GamepadWindow
         // update Position and Size
         Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
         navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
-    }
-
-    private void OverlayQuickTools_Deactivated(object? sender, EventArgs e)
-    {
-        if (AutoHide)
-            ToggleVisibility();
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
@@ -229,10 +231,12 @@ public partial class OverlayQuickTools : GamepadWindow
                     remaining = $"{time.Minutes}min";
 
                 BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
+                BatteryIndicatorLifeRemaining.Visibility = Visibility.Visible;
             }
             else
             {
                 BatteryIndicatorLifeRemaining.Text = string.Empty;
+                BatteryIndicatorLifeRemaining.Visibility = Visibility.Collapsed;
             }
         });
     }
@@ -254,6 +258,7 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
+    private IntPtr prevWParam = new(0x0000000000000086);
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
@@ -270,7 +275,6 @@ public partial class OverlayQuickTools : GamepadWindow
                     if (hwndSource != null)
                         WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                     handled = true;
-                    InvokeGotGamepadWindowFocus();
                 }
                 break;
 
@@ -278,7 +282,19 @@ public partial class OverlayQuickTools : GamepadWindow
                 {
                     // prevent window from loosing its fancy style
                     if (wParam == 0 && (lParam == 0))
+                    {
+                        if (prevWParam != new IntPtr(0x0000000000000086))
+                            if (AutoHide && Visibility == Visibility.Visible)
+                                ToggleVisibility();
                         handled = true;
+                    }
+
+                    if (wParam == 1)
+                    {
+                        handled = true;
+                    }
+
+                    prevWParam = wParam;
                 }
                 break;
 
@@ -306,21 +322,6 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
-            case 641:
-            case 642:
-            case 32:
-            case 132:
-            case 512:
-            case 513:
-            case 514:
-            case 673:
-            case 674:
-            case 675:
-            case 13:
-            case 256:
-            case 257:
-                break;
-
             default:
                 // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
                 break;
@@ -346,13 +347,20 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Hidden:
                     Show();
                     Focus();
+
                     if (hwndSource != null)
                         WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+
                     InvokeGotGamepadWindowFocus();
+
+                    clockUpdateTimer.Start();
                     break;
                 case Visibility.Visible:
                     Hide();
+
                     InvokeLostGamepadWindowFocus();
+
+                    clockUpdateTimer.Stop();
                     break;
             }
         });
@@ -479,6 +487,12 @@ public partial class OverlayQuickTools : GamepadWindow
 
             // navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title, Margin = new Thickness(0,-24,0,0) };//, FontSize = 14 };
         }
+    }
+
+    private void UpdateTime(object? sender, EventArgs e)
+    {
+        var timeFormat = CultureInfo.InstalledUICulture.DateTimeFormat.ShortTimePattern;
+        Time.Text = DateTime.Now.ToString(timeFormat);
     }
 
     #endregion

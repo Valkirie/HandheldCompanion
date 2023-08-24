@@ -2030,4 +2030,61 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.ProController.ButtonFlags.Start" xml:space="preserve">
     <value>Plus</value>
   </data>
+  <data name="Enum.DS4Controller.AxisLayoutFlags.LeftPad" xml:space="preserve">
+    <value>Single-touch swipe</value>
+  </data>
+  <data name="Enum.DS4Controller.AxisLayoutFlags.RightPad" xml:space="preserve">
+    <value>Multi-touch swipe</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.LeftPadClick" xml:space="preserve">
+    <value>Single-touch click</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.LeftPadTouch" xml:space="preserve">
+    <value>Single-touch tap</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Multi-touch click</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Multi-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.AxisLayoutFlags.LeftPad" xml:space="preserve">
+    <value>Single-touch swipe</value>
+  </data>
+  <data name="Enum.DualSenseController.AxisLayoutFlags.RightPad" xml:space="preserve">
+    <value>Multi-touch swipe</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B1" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B2" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B3" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B4" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.LeftPadClick" xml:space="preserve">
+    <value>Single-touch click</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.LeftPadTouch" xml:space="preserve">
+    <value>Single-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Multi-touch click</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Multi-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
 </root>

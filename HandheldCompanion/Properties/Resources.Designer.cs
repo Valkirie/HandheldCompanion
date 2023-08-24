@@ -873,6 +873,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Single-touch swipe.
+        /// </summary>
+        public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.AxisLayoutFlags.LeftPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Multi-touch swipe.
+        /// </summary>
+        public static string Enum_DS4Controller_AxisLayoutFlags_RightPad {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.AxisLayoutFlags.RightPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cross.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_B1 {
@@ -918,6 +936,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Single-touch click.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_LeftPadClick {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.LeftPadClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Single-touch tap.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.LeftPadTouch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Multi-touch click.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_RightPadClick {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.RightPadClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Multi-touch tap.
+        /// </summary>
+        public static string Enum_DS4Controller_ButtonFlags_RightPadTouch {
+            get {
+                return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.RightPadTouch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Sony.
         /// </summary>
         public static string Enum_DS4Controller_ButtonFlags_Special {
@@ -932,6 +986,123 @@ namespace HandheldCompanion.Properties {
         public static string Enum_DS4Controller_ButtonFlags_Start {
             get {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Single-touch swipe.
+        /// </summary>
+        public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.AxisLayoutFlags.LeftPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Multi-touch swipe.
+        /// </summary>
+        public static string Enum_DualSenseController_AxisLayoutFlags_RightPad {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.AxisLayoutFlags.RightPad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Cross.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_B1 {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Circle.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_B2 {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Square.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_B3 {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Triangle.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_B4 {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Share.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_Back {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Single-touch click.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_LeftPadClick {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.LeftPadClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Single-touch tap.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.LeftPadTouch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Multi-touch click.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_RightPadClick {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.RightPadClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Multi-touch tap.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_RightPadTouch {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.RightPadTouch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sony.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_Special {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Special", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Options.
+        /// </summary>
+        public static string Enum_DualSenseController_ButtonFlags_Start {
+            get {
+                return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Start", resourceCulture);
             }
         }
         

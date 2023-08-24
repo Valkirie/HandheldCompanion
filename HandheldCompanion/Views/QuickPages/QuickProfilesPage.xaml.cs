@@ -1,3 +1,4 @@
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -58,11 +59,21 @@ public partial class QuickProfilesPage : Page
         foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
         {
             // create panel
-            var panel = new SimpleStackPanel
-            { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            ComboBoxItem comboBoxItem = new ComboBoxItem()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+            };
+
+            SimpleStackPanel simpleStackPanel = new SimpleStackPanel
+            {
+                Spacing = 6,
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
 
             // create icon
-            var icon = new FontIcon { Glyph = "" };
+            var icon = new FontIcon();
 
             switch (mode)
             {
@@ -81,46 +92,66 @@ public partial class QuickProfilesPage : Page
                     break;
             }
 
-            if (icon.Glyph != "")
-                panel.Children.Add(icon);
+            if (!string.IsNullOrEmpty(icon.Glyph))
+                simpleStackPanel.Children.Add(icon);
 
             // create textblock
             var description = EnumUtils.GetDescriptionFromEnumValue(mode);
             var text = new TextBlock { Text = description };
-            panel.Children.Add(text);
 
-            cB_Input.Items.Add(panel);
+            simpleStackPanel.Children.Add(text);
+
+            comboBoxItem.Content = simpleStackPanel;
+            cB_Input.Items.Add(comboBoxItem);
         }
 
-        foreach (var mode in (MotionOutput[])Enum.GetValues(typeof(MotionOutput)))
+        foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
         {
             // create panel
-            var panel = new SimpleStackPanel
-            { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            ComboBoxItem comboBoxItem = new ComboBoxItem()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+            };
+
+            SimpleStackPanel simpleStackPanel = new SimpleStackPanel
+            {
+                Spacing = 6,
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
 
             // create icon
-            var icon = new FontIcon { Glyph = "" };
+            var icon = new FontIcon();
 
             switch (mode)
             {
                 default:
-                case MotionOutput.RightStick:
+                case MotionOuput.RightStick:
                     icon.Glyph = "\uF109";
                     break;
-                case MotionOutput.LeftStick:
+                case MotionOuput.LeftStick:
                     icon.Glyph = "\uF108";
+                    break;
+                case MotionOuput.MoveCursor:
+                    icon.Glyph = "\uE962";
+                    break;
+                case MotionOuput.ScrollWheel:
+                    icon.Glyph = "\uEC8F";
                     break;
             }
 
-            if (icon.Glyph != "")
-                panel.Children.Add(icon);
+            if (!string.IsNullOrEmpty(icon.Glyph))
+                simpleStackPanel.Children.Add(icon);
 
             // create textblock
             var description = EnumUtils.GetDescriptionFromEnumValue(mode);
             var text = new TextBlock { Text = description };
-            panel.Children.Add(text);
 
-            cB_Output.Items.Add(panel);
+            simpleStackPanel.Children.Add(text);
+
+            comboBoxItem.Content = simpleStackPanel;
+            cB_Output.Items.Add(comboBoxItem);
         }
 
         // device settings
@@ -308,10 +339,39 @@ public partial class QuickProfilesPage : Page
                     // update profile name
                     CurrentProfileName.Text = currentProfile.Name;
 
-                    UMCToggle.IsOn = currentProfile.MotionEnabled;
-                    cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
-                    cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
-                    cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
+                    // update gyro actions
+                    if (currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+                    {
+                        StackProfileUMCSettings.Visibility = Visibility.Visible;
+                        cB_Input.SelectedIndex = (int)((GyroActions)currentAction).MotionInput;
+
+                        // IActions specific
+                        GridAntiDeadzone.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.LeftStick]).Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.RightStick]).Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.MoveCursor]).Visibility = currentAction is MouseActions ? Visibility.Visible : Visibility.Collapsed;
+                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.ScrollWheel]).Visibility = currentAction is MouseActions ? Visibility.Visible : Visibility.Collapsed;
+
+                        if (currentAction is AxisActions)
+                        {
+                            cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis - 1;
+                            SliderUMCAntiDeadzone.Value = ((AxisActions)currentAction).AxisAntiDeadZone;
+                        }
+                        else if (currentAction is MouseActions)
+                        {
+                            cB_Output.SelectedIndex = (int)((MouseActions)currentAction).MouseType - 2;
+                        }
+
+                        cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)((GyroActions)currentAction).MotionMode;
+
+                        // todo: improve me ?
+                        ProfilesPageHotkey.inputsChord.State = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
+                        ProfilesPageHotkey.DrawInput();
+                    }
+                    else
+                    {
+                        StackProfileUMCSettings.Visibility = Visibility.Collapsed;
+                    }
 
                     // TDP
                     TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
@@ -332,11 +392,6 @@ public partial class QuickProfilesPage : Page
                     AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
                     AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
 
-                    // Slider settings
-                    SliderUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
-                    SliderSensitivityX.Value = currentProfile.MotionSensivityX;
-                    SliderSensitivityY.Value = currentProfile.MotionSensivityY;
-
                     // EPP
                     EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
                     EPPSlider.Value = currentProfile.EPPOverrideValue;
@@ -348,10 +403,6 @@ public partial class QuickProfilesPage : Page
                     // CPU Core Count
                     CPUCoreToggle.IsOn = currentProfile.CPUCoreEnabled;
                     CPUCoreSlider.Value = currentProfile.CPUCoreCount;
-
-                    // todo: improve me ?
-                    ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
-                    ProfilesPageHotkey.DrawInput();
                 }
             });
         }
@@ -438,40 +489,12 @@ public partial class QuickProfilesPage : Page
         SubmitProfile(ProfileUpdateSource.Creation);
     }
 
-    private void UMCToggle_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (currentProfile is null)
-            return;
-
-        if (updateLock)
-            return;
-
-        currentProfile.MotionEnabled = UMCToggle.IsOn;
-        RequestUpdate();
-    }
-
     private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (cB_Input.SelectedIndex == -1)
             return;
 
         var input = (MotionInput)cB_Input.SelectedIndex;
-
-        // Check which input type is selected and automatically
-        // set the most used output joystick accordingly.
-        switch (input)
-        {
-            case MotionInput.PlayerSpace:
-            case MotionInput.JoystickCamera:
-                cB_Output.SelectedIndex = (int)MotionOutput.RightStick;
-                GridSensivity.Visibility = Visibility.Visible;
-                break;
-            case MotionInput.JoystickSteering:
-                cB_Output.SelectedIndex = (int)MotionOutput.LeftStick;
-                GridSensivity.Visibility = Visibility.Collapsed;
-                break;
-        }
-
         Text_InputHint.Text = Profile.InputDescription[input];
 
         if (currentProfile is null)
@@ -480,7 +503,10 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        ((GyroActions)currentAction).MotionInput = (MotionInput)cB_Input.SelectedIndex;
         RequestUpdate();
     }
 
@@ -492,7 +518,17 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        if (currentAction is AxisActions)
+        {
+            ((AxisActions)currentAction).Axis = (AxisLayoutFlags)(cB_Output.SelectedIndex + 1);
+        }
+        else if (currentAction is MouseActions)
+        {
+            ((MouseActions)currentAction).MouseType = (MouseActionsType)(cB_Output.SelectedIndex + 2);
+        }
         RequestUpdate();
     }
 
@@ -569,7 +605,12 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        currentProfile.MotionAntiDeadzone = (float)SliderUMCAntiDeadzone.Value;
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        if (currentAction is AxisActions)
+            ((AxisActions)currentAction).AxisAntiDeadZone = (int)SliderUMCAntiDeadzone.Value;
+
         RequestUpdate();
     }
 
@@ -621,12 +662,15 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
         // no Monitor on threaded calls ?
         switch (listener)
         {
             case "shortcutProfilesPage@":
             case "shortcutProfilesPage@@":
-                currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
+                ((GyroActions)currentAction).MotionTrigger = inputs.State.Clone() as ButtonState;
                 RequestUpdate();
                 break;
         }
@@ -640,7 +684,10 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        ((GyroActions)currentAction).MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
         RequestUpdate();
     }
 

@@ -100,18 +100,11 @@ public partial class Profile : ICloneable, IComparable
 
     public int SteeringAxis { get; set; } = 0; // 0 = Roll, 1 = Yaw
 
-    public bool MotionEnabled { get; set; }
-    public MotionInput MotionInput { get; set; } = MotionInput.JoystickCamera;
-    public MotionOutput MotionOutput { get; set; } = MotionOutput.RightStick;
-    public MotionMode MotionMode { get; set; } = MotionMode.Off;
-    public float MotionAntiDeadzone { get; set; } = 15.0f;
     public bool MotionInvertHorizontal { get; set; } // if true, invert horizontal axis
     public bool MotionInvertVertical { get; set; } // if false, invert vertical axis
     public float MotionSensivityX { get; set; } = 1.0f;
     public float MotionSensivityY { get; set; } = 1.0f;
     public SortedDictionary<double, double> MotionSensivityArray { get; set; } = new();
-
-    public ButtonState MotionTrigger { get; set; } = new();
 
     // steering
     public float SteeringMaxAngle { get; set; } = 30.0f;

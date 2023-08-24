@@ -23,11 +23,19 @@ public class DS4Controller : JSController
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.LeftPadClick);
         SourceButtons.Add(ButtonFlags.LeftPadTouch);
+        SourceButtons.Add(ButtonFlags.RightPadClick);
         SourceButtons.Add(ButtonFlags.RightPadTouch);
 
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+
+        TargetButtons.Add(ButtonFlags.LeftPadClick);
+        TargetButtons.Add(ButtonFlags.LeftPadTouch);
+        TargetButtons.Add(ButtonFlags.RightPadTouch);
+
+        TargetAxis.Add(AxisLayoutFlags.LeftPad);
+        TargetAxis.Add(AxisLayoutFlags.RightPad);
     }
 
     public override void UpdateInputs(long ticks)
@@ -39,8 +47,8 @@ public class DS4Controller : JSController
         base.UpdateState();
 
         // Left Pad
-        Inputs.ButtonState[ButtonFlags.LeftPadClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
         Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(UserIndex);
+        Inputs.ButtonState[ButtonFlags.LeftPadClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
 
         if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
         {
@@ -58,6 +66,7 @@ public class DS4Controller : JSController
 
         // Right Pad
         Inputs.ButtonState[ButtonFlags.RightPadTouch] = JslGetTouchDown(UserIndex, true);
+        Inputs.ButtonState[ButtonFlags.RightPadClick] = Inputs.ButtonState[ButtonFlags.LeftPadClick] && Inputs.ButtonState[ButtonFlags.RightPadTouch];
 
         if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
         {
@@ -114,11 +123,11 @@ public class DS4Controller : JSController
             case ButtonFlags.Start:
                 return "\u21E8";
             case ButtonFlags.L2Soft:
-                return "\u21DC";
+                return "\u21B2";
             case ButtonFlags.L2Full:
                 return "\u21B2";
             case ButtonFlags.R2Soft:
-                return "\u21DD";
+                return "\u21B3";
             case ButtonFlags.R2Full:
                 return "\u21B3";
             case ButtonFlags.Special:

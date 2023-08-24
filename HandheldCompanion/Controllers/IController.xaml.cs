@@ -35,17 +35,12 @@ namespace HandheldCompanion.Controllers
         ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
         ButtonFlags.L1, ButtonFlags.R1,
         ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
-        // DS4
-        ButtonFlags.LeftPadTouch, ButtonFlags.RightPadTouch,
-        ButtonFlags.LeftPadClick, ButtonFlags.RightPadClick,
     };
 
         public static readonly List<AxisLayoutFlags> TargetAxis = new()
     {
         AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
         AxisLayoutFlags.L2, AxisLayoutFlags.R2,
-        // DS4
-        AxisLayoutFlags.LeftPad, AxisLayoutFlags.RightPad,
     };
 
         public static readonly string defaultGlyph = "\u2753";

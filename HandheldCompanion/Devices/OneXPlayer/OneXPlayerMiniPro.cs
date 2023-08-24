@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using System.Collections.Generic;
 using System.Numerics;
+using WindowsInput.Events;
 
 namespace HandheldCompanion.Devices;
 
@@ -14,6 +16,26 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         GfxClock = new double[] { 100, 2200 };
 
         AccelerationAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+
+        OEMChords.Clear();
+
+        OEMChords.Add(new DeviceChord("Orange",
+            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+            new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.LMenu },
+            false, ButtonFlags.OEM1
+        ));
+
+        OEMChords.Add(new DeviceChord("Keyboard",
+            new List<KeyCode> { KeyCode.RControlKey, KeyCode.LWin, KeyCode.O },
+            new List<KeyCode> { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
+            false, ButtonFlags.OEM2
+        ));
+
+        OEMChords.Add(new DeviceChord("Function",
+            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            new List<KeyCode> { KeyCode.LWin, KeyCode.D },
+            false, ButtonFlags.OEM3
+        ));
     }
 
     public override bool Open()

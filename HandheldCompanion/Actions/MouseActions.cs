@@ -29,7 +29,7 @@ namespace HandheldCompanion.Actions
     }
 
     [Serializable]
-    public class MouseActions : IActions
+    public class MouseActions : GyroActions
     {
         public MouseActionsType MouseType;
 

@@ -1,3 +1,4 @@
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -29,7 +30,6 @@ public partial class ProfilesPage : Page
 
     private readonly SettingsMode0 page0 = new("SettingsMode0");
     private readonly SettingsMode1 page1 = new("SettingsMode1");
-    private Hotkey ProfilesPageHotkey = new(60);
 
     private LockObject updateLock = new();
     private LockObject layoutLock = new();
@@ -61,81 +61,8 @@ public partial class ProfilesPage : Page
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
 
-        HotkeysManager.HotkeyCreated += TriggerCreated;
-        InputsManager.TriggerUpdated += TriggerUpdated;
-
         MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
         MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
-
-        // draw input modes
-        foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
-        {
-            // create panel
-            var panel = new SimpleStackPanel
-            { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-            // create icon
-            var icon = new FontIcon { Glyph = "" };
-
-            switch (mode)
-            {
-                default:
-                case MotionInput.PlayerSpace:
-                    icon.Glyph = "\uF119";
-                    break;
-                case MotionInput.JoystickCamera:
-                    icon.Glyph = "\uE714";
-                    break;
-                case MotionInput.AutoRollYawSwap:
-                    icon.Glyph = "\uE7F8";
-                    break;
-                case MotionInput.JoystickSteering:
-                    icon.Glyph = "\uEC47";
-                    break;
-            }
-
-            if (icon.Glyph != "")
-                panel.Children.Add(icon);
-
-            // create textblock
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-            panel.Children.Add(text);
-
-            cB_Input.Items.Add(panel);
-        }
-
-        // draw output modes
-        foreach (var mode in (MotionOutput[])Enum.GetValues(typeof(MotionOutput)))
-        {
-            // create panel
-            var panel = new SimpleStackPanel
-            { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-            // create icon
-            var icon = new FontIcon { Glyph = "" };
-
-            switch (mode)
-            {
-                default:
-                case MotionOutput.RightStick:
-                    icon.Glyph = "\uF109";
-                    break;
-                case MotionOutput.LeftStick:
-                    icon.Glyph = "\uF108";
-                    break;
-            }
-
-            if (icon.Glyph != "")
-                panel.Children.Add(icon);
-
-            // create textblock
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-            panel.Children.Add(text);
-
-            cB_Output.Items.Add(panel);
-        }
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
@@ -371,7 +298,11 @@ public partial class ProfilesPage : Page
         if (currentProfile is null)
             return;
 
-        switch ((MotionInput)cB_Input.SelectedIndex)
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        // TODO: MOVE ME TO LAYOUT !
+        switch (((GyroActions)currentAction).MotionInput)
         {
             default:
             case MotionInput.JoystickCamera:
@@ -483,16 +414,6 @@ public partial class ProfilesPage : Page
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
 
-                // UMC settings
-                Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
-                cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
-                cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
-                tb_ProfileUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
-                cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
-
-                // todo: improve me ?
-                ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
-                ProfilesPageHotkey.DrawInput();
 
                 // display warnings
                 WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
@@ -533,6 +454,22 @@ public partial class ProfilesPage : Page
                 }
             }
         });
+
+        // prepare layout editor
+        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
+        {
+            Name = currentProfile.LayoutTitle,
+            Description = "Your modified layout for this executable.",
+            Author = Environment.UserName,
+            Executable = currentProfile.Executable,
+            Product = currentProfile.Name
+        };
+        layoutTemplate.Updated += Template_Updated;
+
+        using (new ScopedLock(layoutLock))
+        {
+            MainWindow.layoutPage.UpdateLayout(layoutTemplate);
+        }
     }
 
     private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -594,22 +531,6 @@ public partial class ProfilesPage : Page
         RequestUpdate();
     }
 
-    private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (currentProfile is null)
-            return;
-
-        // todo : move me to WPF
-        cB_Whitelist.IsEnabled = !Toggle_UniversalMotion.IsOn && !currentProfile.Default;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        currentProfile.MotionEnabled = Toggle_UniversalMotion.IsOn;
-        RequestUpdate();
-    }
-
     private void Expander_Expanded(object sender, RoutedEventArgs e)
     {
         ((Expander)sender).BringIntoView();
@@ -622,36 +543,6 @@ public partial class ProfilesPage : Page
             return;
 
         currentProfile.Enabled = Toggle_EnableProfile.IsOn;
-        RequestUpdate();
-    }
-
-    private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (cB_Input.SelectedIndex == -1)
-            return;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        // Check which input type is selected and automatically
-        // set the most used output joystick accordingly.
-        MotionInput input = (MotionInput)cB_Input.SelectedIndex;
-        switch (input)
-        {
-            case MotionInput.PlayerSpace:
-            case MotionInput.JoystickCamera:
-            case MotionInput.AutoRollYawSwap:
-                cB_Output.SelectedIndex = (int)MotionOutput.RightStick;
-                break;
-            case MotionInput.JoystickSteering:
-                cB_Output.SelectedIndex = (int)MotionOutput.LeftStick;
-                break;
-        }
-
-        Text_InputHint.Text = Profile.InputDescription[input];
-
-        currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
         RequestUpdate();
     }
 
@@ -801,55 +692,9 @@ public partial class ProfilesPage : Page
         RequestUpdate();
     }
 
-    private void TriggerCreated(Hotkey hotkey)
-    {
-        switch (hotkey.inputsHotkey.Listener)
-        {
-            case "shortcutProfilesPage@":
-                {
-                    var hotkeyBorder = hotkey.GetControl();
-                    if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                        return;
-
-                    // pull hotkey
-                    ProfilesPageHotkey = hotkey;
-
-                    UMC_Activator.Children.Add(hotkeyBorder);
-                }
-                break;
-        }
-    }
-
-    private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
-    {
-        switch (listener)
-        {
-            case "shortcutProfilesPage@":
-            case "shortcutProfilesPage@@":
-                currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
-                RequestUpdate();
-                break;
-        }
-    }
-
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
-        // prepare layout editor
-        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
-        {
-            Name = currentProfile.LayoutTitle,
-            Description = "Your modified layout for this executable.",
-            Author = Environment.UserName,
-            Executable = currentProfile.Executable,
-            Product = currentProfile.Name
-        };
-        layoutTemplate.Updated += Template_Updated;
-
-        using (new ScopedLock(layoutLock))
-        {
-            MainWindow.layoutPage.UpdateLayout(layoutTemplate);
-            MainWindow.NavView_Navigate(MainWindow.layoutPage);
-        }
+        MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
     private void Template_Updated(LayoutTemplate layoutTemplate)
@@ -857,9 +702,14 @@ public partial class ProfilesPage : Page
         // wait until lock is released
         if (layoutLock)
             return;
-
+        
         currentProfile.Layout = layoutTemplate.Layout;
-        currentProfile.LayoutTitle = layoutTemplate.Name;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            currentProfile.LayoutTitle = layoutTemplate.Name;
+        });
         RequestUpdate();
     }
 
@@ -1017,45 +867,6 @@ public partial class ProfilesPage : Page
             return;
 
         currentProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
-        RequestUpdate();
-    }
-
-    private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (cB_Output.SelectedIndex == -1)
-            return;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
-        RequestUpdate();
-    }
-
-    private void tb_ProfileUMCAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (!tb_ProfileUMCAntiDeadzone.IsInitialized)
-            return;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        currentProfile.MotionAntiDeadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
-        RequestUpdate();
-    }
-
-    private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1)
-            return;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
         RequestUpdate();
     }
 

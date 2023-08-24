@@ -97,8 +97,6 @@ public partial class TriggerMapping : IMapping
 
                 if (axis.Equals(((TriggerActions)Actions).Axis))
                     TargetComboBox.SelectedItem = buttonLabel;
-                else
-                    TargetComboBox.SelectedIndex = 0;
             }
         }
 

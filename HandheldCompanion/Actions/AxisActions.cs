@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace HandheldCompanion.Actions
 {
     [Serializable]
-    public class AxisActions : IActions
+    public class AxisActions : GyroActions
     {
         public AxisLayoutFlags Axis;
 

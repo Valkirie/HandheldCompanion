@@ -21,19 +21,18 @@ public enum MotionInput
     JoystickSteering = 3
 }
 
+public enum MotionOuput
+{
+    LeftStick = 0,
+    RightStick = 1,
+    MoveCursor = 2,
+    ScrollWheel = 3
+}
+
 public enum MotionMode
 {
     Off = 0,
     On = 1
-}
-
-public enum MotionOutput
-{
-    LeftStick = 0,
-
-    RightStick = 1
-    /* [Description("Mouse")]
-    Mouse = 2 */
 }
 
 public enum OverlayModelMode

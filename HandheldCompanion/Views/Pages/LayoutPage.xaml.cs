@@ -77,10 +77,16 @@ public partial class LayoutPage : Page
             axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
         }
 
-        foreach (AxisMapping axisMapping in joysticksPage.AxisMappings.Values.Union(trackpadsPage.AxisMappings.Values).Union(gyroPage.AxisMappings.Values))
+        foreach (AxisMapping axisMapping in joysticksPage.AxisMappings.Values.Union(trackpadsPage.AxisMappings.Values))
         {
             axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
             axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+        }
+
+        foreach (GyroMapping gyroMapping in gyroPage.GyroMappings.Values)
+        {
+            gyroMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
+            gyroMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
         }
 
         LayoutManager.Updated += LayoutManager_Updated;
@@ -356,6 +362,9 @@ public partial class LayoutPage : Page
                     var newLayout = layoutTemplate.Layout.Clone() as Layout;
                     currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
                     currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
+                    currentTemplate.Layout.GyroLayout = newLayout.GyroLayout;
+
+
                     currentTemplate.Name = layoutTemplate.Name;
                     currentTemplate.Description = layoutTemplate.Description;
                     currentTemplate.Guid = layoutTemplate.Guid; // not needed

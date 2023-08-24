@@ -52,6 +52,14 @@ namespace HandheldCompanion.Controllers
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
 
+            TargetButtons.Add(ButtonFlags.LeftPadClick);
+            TargetButtons.Add(ButtonFlags.RightPadClick);
+            TargetButtons.Add(ButtonFlags.LeftPadTouch);
+            TargetButtons.Add(ButtonFlags.RightPadTouch);
+
+            TargetAxis.Add(AxisLayoutFlags.LeftPad);
+            TargetAxis.Add(AxisLayoutFlags.RightPad);
+
             // This is a very original controller, it doesn't have few things
             SourceButtons.Remove(ButtonFlags.RightStickClick);
             SourceButtons.Remove(ButtonFlags.RightStickUp);

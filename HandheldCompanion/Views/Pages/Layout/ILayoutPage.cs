@@ -5,6 +5,7 @@ using HandheldCompanion.Inputs;
 using Inkore.UI.WPF.Modern.Controls;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Forms;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -16,6 +17,7 @@ public class ILayoutPage : Page
     public Dictionary<ButtonFlags, ButtonStack> ButtonStacks = new();
     public Dictionary<AxisLayoutFlags, AxisMapping> AxisMappings = new();
     public Dictionary<AxisLayoutFlags, TriggerMapping> TriggerMappings = new();
+    public Dictionary<AxisLayoutFlags, GyroMapping> GyroMappings = new();
 
     protected bool CheckController(IController controller, List<ButtonFlags> buttons)
     {
@@ -68,16 +70,7 @@ public class ILayoutPage : Page
             AxisMapping axisMapping = pair.Value;
 
             // update mapping visibility
-            bool isVisible = controller.HasSourceAxis(flags);
-
-            switch (flags)
-            {
-                case AxisLayoutFlags.Gyroscope:
-                    isVisible |= MainWindow.CurrentDevice.HasMotionSensor();
-                    break;
-            }
-
-            if (!isVisible)
+            if (!controller.HasSourceAxis(flags))
                 axisMapping.Visibility = Visibility.Collapsed;
             else
             {
@@ -108,6 +101,36 @@ public class ILayoutPage : Page
                 FontIcon newIcon = controller.GetFontIcon(flags);
                 string newLabel = controller.GetAxisName(flags);
                 axisMapping.UpdateIcon(newIcon, newLabel);
+            }
+        }
+
+        foreach (var pair in GyroMappings)
+        {
+            AxisLayoutFlags flags = pair.Key;
+            AxisLayout layout = AxisLayout.Layouts[flags];
+
+            GyroMapping gyroMapping = pair.Value;
+
+            // update mapping visibility
+            bool isVisible = controller.HasSourceAxis(flags);
+
+            switch (flags)
+            {
+                case AxisLayoutFlags.Gyroscope:
+                    isVisible |= MainWindow.CurrentDevice.HasMotionSensor();
+                    break;
+            }
+
+            if (!isVisible)
+                gyroMapping.Visibility = Visibility.Collapsed;
+            else
+            {
+                gyroMapping.Visibility = Visibility.Visible;
+
+                // update icon
+                FontIcon newIcon = controller.GetFontIcon(flags);
+                string newLabel = controller.GetAxisName(flags);
+                gyroMapping.UpdateIcon(newIcon, newLabel);
             }
         }
     }
@@ -160,6 +183,20 @@ public class ILayoutPage : Page
             TriggerMapping mapping = pair.Value;
 
             if (layout.AxisLayout.TryGetValue(axis, out IActions actions))
+            {
+                mapping.SetIActions(actions);
+                continue;
+            }
+
+            mapping.Reset();
+        }
+
+        foreach (var pair in GyroMappings)
+        {
+            AxisLayoutFlags axis = pair.Key;
+            GyroMapping mapping = pair.Value;
+
+            if (layout.GyroLayout.TryGetValue(axis, out IActions actions))
             {
                 mapping.SetIActions(actions);
                 continue;

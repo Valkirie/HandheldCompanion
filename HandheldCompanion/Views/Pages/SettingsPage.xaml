@@ -552,11 +552,13 @@
                     </Grid>
                 </Border>
 
-                <!--  Quicktools autohide  -->
+                <!-- Quicktools autohide  -->
+                <!-- Disabled until we figure out a way to make it work without having to actually click on the window -->
                 <Border
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Collapsed">
 
                     <Grid>
                         <Grid.ColumnDefinitions>

@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
+using LiveCharts.Wpf;
+using Microsoft.Win32.TaskScheduler;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ public partial class Layout : ICloneable, IDisposable
 {
     public SortedDictionary<ButtonFlags, List<IActions>> ButtonLayout { get; set; } = new();
     public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
+    public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = new();
 
     // gyro related
 
@@ -53,6 +56,9 @@ public partial class Layout : ICloneable, IDisposable
                     break;
             }
         }
+
+        // generic gyro mapping
+        GyroLayout[AxisLayoutFlags.Gyroscope] = new AxisActions { Axis = AxisLayoutFlags.RightStick, AxisAntiDeadZone = 15 };
     }
 
     public object Clone()
@@ -67,6 +73,7 @@ public partial class Layout : ICloneable, IDisposable
     {
         ButtonLayout.Clear();
         AxisLayout.Clear();
+        GyroLayout.Clear();
     }
 
     public void UpdateLayout()
@@ -82,7 +89,15 @@ public partial class Layout : ICloneable, IDisposable
 
     public void UpdateLayout(AxisLayoutFlags axis, IActions action)
     {
-        AxisLayout[axis] = action;
+        switch(axis)
+        {
+            default:
+                AxisLayout[axis] = action;
+                break;
+            case AxisLayoutFlags.Gyroscope:
+                GyroLayout[axis] = action;
+                break;
+        }
         Updated?.Invoke(this);
     }
 
@@ -94,7 +109,15 @@ public partial class Layout : ICloneable, IDisposable
 
     public void RemoveLayout(AxisLayoutFlags axis)
     {
-        AxisLayout.Remove(axis);
+        switch (axis)
+        {
+            default:
+                AxisLayout.Remove(axis);
+                break;
+            case AxisLayoutFlags.Gyroscope:
+                GyroLayout.Remove(axis);
+                break;
+        }
         Updated?.Invoke(this);
     }
 

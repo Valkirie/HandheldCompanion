@@ -99,8 +99,6 @@ public partial class AxisMapping : IMapping
 
                 if (axis.Equals(((AxisActions)Actions).Axis))
                     TargetComboBox.SelectedItem = buttonLabel;
-                else
-                    TargetComboBox.SelectedIndex = 0;
             }
 
             // settings
@@ -137,8 +135,6 @@ public partial class AxisMapping : IMapping
 
                 if (mouseType.Equals(((MouseActions)Actions).MouseType))
                     TargetComboBox.SelectedItem = buttonLabel;
-                else
-                    TargetComboBox.SelectedIndex = 0;
             }
 
             // settings

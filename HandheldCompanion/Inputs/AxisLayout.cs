@@ -14,7 +14,7 @@ public struct AxisLayout
     public static AxisLayout R2 = new(AxisLayoutFlags.R2, AxisFlags.R2);
     public static AxisLayout LeftPad = new(AxisLayoutFlags.LeftPad, AxisFlags.LeftPadX, AxisFlags.LeftPadY);
     public static AxisLayout RightPad = new(AxisLayoutFlags.RightPad, AxisFlags.RightPadX, AxisFlags.RightPadY);
-    public static AxisLayout Gyroscope = new AxisLayout(AxisLayoutFlags.Gyroscope, AxisFlags.GyroX, AxisFlags.GyroY);
+    public static AxisLayout Gyroscope = new(AxisLayoutFlags.Gyroscope, AxisFlags.GyroX, AxisFlags.GyroY);
 
     public static SortedDictionary<AxisLayoutFlags, AxisLayout> Layouts = new()
     {

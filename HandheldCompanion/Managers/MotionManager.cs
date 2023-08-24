@@ -24,6 +24,7 @@ namespace HandheldCompanion.Managers
 
         private static Vector3[] accelerometer = new Vector3[2];
         private static Vector3[] gyroscope = new Vector3[2];
+        private static GyroActions gyroAction = new();
 
         private static SensorFusion sensorFusion = new();
         private static MadgwickAHRS madgwickAHRS;
@@ -121,32 +122,30 @@ namespace HandheldCompanion.Managers
         {
             Profile current = ProfileManager.GetCurrent();
 
+            if (current.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
+                if (action is not null)
+                    gyroAction = action as GyroActions;
+
             // update timestamp
             double TotalMilliseconds = TimerManager.Stopwatch.Elapsed.TotalMilliseconds;
             DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000L;
             PreviousTotalMilliseconds = TotalMilliseconds;
 
-            // check if UMC is enabled
-            bool MotionEnabled = current.MotionEnabled;
-
             // check if motion trigger is pressed
             bool MotionTriggered =
-                (current.MotionMode == MotionMode.Off && controllerState.ButtonState.ContainsTrue(current.MotionTrigger)) ||
-                (current.MotionMode == MotionMode.On && !controllerState.ButtonState.ContainsTrue(current.MotionTrigger));
+                (gyroAction.MotionMode == MotionMode.Off && controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger)) ||
+                (gyroAction.MotionMode == MotionMode.On && !controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger));
 
-            bool MotionMapped = false;
-            if (current.Layout.AxisLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
-                if (action.ActionType != ActionType.Disabled)
-                    MotionMapped = true;
+            bool MotionMapped = action?.ActionType != ActionType.Disabled;
 
             // update sensorFusion, only when needed
-            if (MotionMapped && MotionTriggered && (current.MotionInput == MotionInput.PlayerSpace ||
-                                                    current.MotionInput == MotionInput.AutoRollYawSwap))
+            if (MotionMapped && MotionTriggered && (gyroAction.MotionInput == MotionInput.PlayerSpace ||
+                                                    gyroAction.MotionInput == MotionInput.AutoRollYawSwap))
             {
                 sensorFusion.UpdateReport(DeltaSeconds, gyroscope[(int)SensorIndex.Default], accelerometer[(int)SensorIndex.Default]);
             }
 
-            if ((MotionMapped && MotionTriggered && current.MotionInput == MotionInput.JoystickSteering)
+            if ((MotionMapped && MotionTriggered && gyroAction.MotionInput == MotionInput.JoystickSteering)
                 || MainWindow.CurrentPageName == "SettingsMode1")
             {
                 inclination.UpdateReport(accelerometer[(int)SensorIndex.Default]);
@@ -182,7 +181,7 @@ namespace HandheldCompanion.Managers
 
             // after this point the code only makes sense if we're actively using mapped gyro
             // if we are not, nullify the last state to remove drift
-            if (!MotionEnabled || !MotionTriggered || !MotionMapped)
+            if (!MotionTriggered || !MotionMapped)
             {
                 controllerState.AxisState[AxisFlags.GyroX] = 0;
                 controllerState.AxisState[AxisFlags.GyroY] = 0;
@@ -191,13 +190,13 @@ namespace HandheldCompanion.Managers
 
             Vector2 output;
 
-            switch (current.MotionInput)
+            switch (gyroAction.MotionInput)
             {
                 case MotionInput.PlayerSpace:
                 case MotionInput.AutoRollYawSwap:
                 case MotionInput.JoystickCamera:
                 default:
-                    switch (current.MotionInput)
+                    switch (gyroAction.MotionInput)
                     {
                         case MotionInput.PlayerSpace:
                             output = new Vector2((float)sensorFusion.CameraYawDelta, (float)sensorFusion.CameraPitchDelta);

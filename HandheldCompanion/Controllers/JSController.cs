@@ -105,7 +105,7 @@ public class JSController : IController
         Inputs.ButtonState[ButtonFlags.R2Soft] = sTATE.rTrigger > TriggerThreshold;
 
         Inputs.ButtonState[ButtonFlags.L2Full] = sTATE.lTrigger > TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R2Full] = sTATE.lTrigger > TriggerThreshold * 8;
+        Inputs.ButtonState[ButtonFlags.R2Full] = sTATE.rTrigger > TriggerThreshold * 8;
 
         Inputs.AxisState[AxisFlags.L2] = (short)InputUtils.MapRange(sTATE.lTrigger, 0.0f, 1.0f, byte.MinValue, byte.MaxValue);
         Inputs.AxisState[AxisFlags.R2] = (short)InputUtils.MapRange(sTATE.rTrigger, 0.0f, 1.0f, byte.MinValue, byte.MaxValue);

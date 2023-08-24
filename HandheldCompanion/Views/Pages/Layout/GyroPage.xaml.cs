@@ -21,10 +21,10 @@ namespace HandheldCompanion.Views.Pages
             // draw UI
             foreach (AxisLayoutFlags axis in Gyroscope)
             {
-                AxisMapping axisMapping = new AxisMapping(axis);
-                GyroscopePanel.Children.Add(axisMapping);
+                GyroMapping gyroMapping = new GyroMapping(axis);
+                GyroscopePanel.Children.Add(gyroMapping);
 
-                AxisMappings.Add(axis, axisMapping);
+                GyroMappings.Add(axis, gyroMapping);
             }
         }
 

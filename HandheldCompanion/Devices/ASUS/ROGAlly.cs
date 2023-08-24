@@ -27,7 +27,6 @@ public class ROGAlly : IDevice
         { 236, ButtonFlags.None }
     };
 
-    private bool previousWasEmpty;
     private IEnumerable<HidDevice> _hidDevices;
     private List<HidStream> _hidStreams = new();
 
@@ -196,6 +195,12 @@ public class ROGAlly : IDevice
             // get button
             var button = keyMapping[key];
 
+            // HID Report Item = hex = decimal
+            // Left or right paddle = A5 = 165
+            // Left OEM key = A6 = 166
+            // Right OEM key = 38 = 56
+            // Right OEM key hold = A7 and A8 = 167 and 168
+
             switch (key)
             {
                 case 236:
@@ -203,11 +208,7 @@ public class ROGAlly : IDevice
 
                 case 0:
                     {
-                        // two empty packets in a row means back button was released
-                        if (previousWasEmpty)
-                            KeyRelease(ButtonFlags.OEM3);
-
-                        previousWasEmpty = true;
+                        KeyRelease(ButtonFlags.OEM3);
                     }
                     return;
 
@@ -244,8 +245,6 @@ public class ROGAlly : IDevice
                     }
                     break;
             }
-
-            previousWasEmpty = false;
         }
     }
 }

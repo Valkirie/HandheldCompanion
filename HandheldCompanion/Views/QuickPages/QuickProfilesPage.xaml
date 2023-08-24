@@ -101,51 +101,9 @@
             <TextBlock
                 Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                Text="Universal motion control settings" />
+                Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
 
-            <Grid Name="StackProfileUMC">
-                <!--  Header  -->
-                <Border CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <ui:SimpleStackPanel Spacing="6">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="0.2*" MinWidth="80" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE759;" />
-
-                                <StackPanel Margin="12,0,0,0" Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCSettings}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_UMCSettingsDesc}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-                            </DockPanel>
-
-                            <ui:ToggleSwitch
-                                Name="UMCToggle"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="UMCToggle_Toggled" />
-                        </Grid>
-                    </ui:SimpleStackPanel>
-                </Border>
-            </Grid>
-
-            <Grid
-                Name="StackProfileUMCSettings"
-                d:Visibility="Visible"
-                Visibility="{Binding ElementName=UMCToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Name="StackProfileUMCSettings" d:Visibility="Visible">
 
                 <!--  Header  -->
                 <Border CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -179,17 +137,11 @@
                         <!--  Content  -->
                         <ComboBox
                             Name="cB_Input"
-                            Margin="6,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             SelectionChanged="cB_Input_SelectionChanged" />
 
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="420" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
                                     Style="{StaticResource BodyTextBlockStyle}"
@@ -206,17 +158,11 @@
                         <!--  Content  -->
                         <ComboBox
                             Name="cB_Output"
-                            Margin="6,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             SelectionChanged="cB_Output_SelectionChanged" />
 
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="420" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
                                     Style="{StaticResource BodyTextBlockStyle}"
@@ -233,7 +179,6 @@
                         <!--  Content  -->
                         <ComboBox
                             Name="cB_UMC_MotionDefaultOffOn"
-                            Margin="6,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
                             <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
@@ -244,17 +189,11 @@
                         <Grid
                             Name="UMC_Activator"
                             Width="Auto"
-                            Margin="6,0,0,0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center" />
 
                         <ui:SimpleStackPanel Name="GridAntiDeadzone" Spacing="6">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MinWidth="420" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
                                     <TextBlock
@@ -268,13 +207,11 @@
                             <!--  Content  -->
                             <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock
-                                    Width="35"
+                                    Width="17"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Text="{Binding Value, StringFormat=N0, ElementName=SliderUMCAntiDeadzone, Mode=OneWay}"
-                                    TextAlignment="Center" />
+                                    Text="{Binding Value, StringFormat=N0, ElementName=SliderUMCAntiDeadzone, Mode=OneWay}" />
                                 <TextBlock
-                                    Width="30"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
@@ -297,11 +234,6 @@
 
                         <ui:SimpleStackPanel Name="GridSensivity" Spacing="6">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MinWidth="420" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock
                                         Style="{StaticResource BodyTextBlockStyle}"
