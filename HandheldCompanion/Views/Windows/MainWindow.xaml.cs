@@ -124,12 +124,9 @@ public partial class MainWindow : GamepadWindow
 
         AddNotifyIconItem("Main Window");
         AddNotifyIconItem("Quick Tools");
+        
         AddNotifyIconSeparator();
 
-        foreach (NavigationViewItem item in navView.FooterMenuItems)
-            AddNotifyIconItem(item.Content.ToString(), item.Tag);
-
-        AddNotifyIconSeparator();
         AddNotifyIconItem("Exit");
 
         // paths
