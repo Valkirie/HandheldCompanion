@@ -176,6 +176,9 @@ public abstract class IDevice
                         case "AIR Pro":
                             device = new AYANEOAIRPro();
                             break;
+                        case "AIR 1S":
+                            device = new AYANEOAIR1S();
+                            break;
                         case "AIR Lite":
                             device = new AYANEOAIRLite();
                             break;
