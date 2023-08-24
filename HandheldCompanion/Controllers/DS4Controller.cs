@@ -134,6 +134,8 @@ public class DS4Controller : JSController
                 return "\uE000";
             case ButtonFlags.LeftPadClick:
             case ButtonFlags.RightPadClick:
+            case ButtonFlags.LeftPadTouch:
+            case ButtonFlags.RightPadTouch:
                 return "\u21E7";
         }
 
@@ -161,6 +163,9 @@ public class DS4Controller : JSController
                 return "\u21B2";
             case AxisLayoutFlags.R2:
                 return "\u21B3";
+            case AxisLayoutFlags.LeftPad:
+            case AxisLayoutFlags.RightPad:
+                return "\u21E7";
         }
 
         return base.GetGlyph(axis);
