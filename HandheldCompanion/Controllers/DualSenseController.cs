@@ -112,9 +112,9 @@ public class DualSenseController : JSController
             case ButtonFlags.R1:
                 return "\u21B1";
             case ButtonFlags.Back:
-                return "\u21E6";
+                return "\u2206";
             case ButtonFlags.Start:
-                return "\u21E8";
+                return "\u2208";
             case ButtonFlags.L2Soft:
                 return "\u21B2";
             case ButtonFlags.L2Full:
@@ -129,7 +129,7 @@ public class DualSenseController : JSController
             case ButtonFlags.RightPadClick:
             case ButtonFlags.LeftPadTouch:
             case ButtonFlags.RightPadTouch:
-                return "\u21E7";
+                return "\u2207";
         }
 
         return base.GetGlyph(button);
@@ -158,7 +158,7 @@ public class DualSenseController : JSController
                 return "\u21B3";
             case AxisLayoutFlags.LeftPad:
             case AxisLayoutFlags.RightPad:
-                return "\u21E7";
+                return "\u2207";
         }
 
         return base.GetGlyph(axis);
