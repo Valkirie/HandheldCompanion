@@ -189,7 +189,7 @@
                         <Grid
                             Name="UMC_Activator"
                             Width="Auto"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="Stretch"
                             VerticalAlignment="Center" />
 
                         <ui:SimpleStackPanel Name="GridAntiDeadzone" Spacing="6">

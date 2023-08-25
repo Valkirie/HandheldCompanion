@@ -23,7 +23,7 @@
         <UniformGrid
             Name="QuickHotkeys"
             VerticalAlignment="Top"
-            Columns="3">
+            Columns="4">
             <UniformGrid.Resources>
                 <Style TargetType="{x:Type ui:SimpleStackPanel}">
                     <Setter Property="Margin" Value="6" />
