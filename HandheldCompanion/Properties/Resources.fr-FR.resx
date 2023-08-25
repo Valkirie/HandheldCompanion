@@ -1030,7 +1030,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Change hotkey by pressing a button or a special key</value>
   </data>
   <data name="OverlayPage_DualSenseController" xml:space="preserve">
-    <value>Playstation DualSense</value>
+    <value>PlayStation DualSense</value>
   </data>
   <data name="OverlayPage_MotionActivated" xml:space="preserve">
     <value>Motion</value>
@@ -1372,7 +1372,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Automatic TDP</value>
   </data>
   <data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
-    <value>Automatic adjustement of TDP based on measured FPS and requested FPS target</value>
+    <value>Automatic adjustment of TDP based on measured FPS and requested FPS target</value>
   </data>
   <data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
     <value>Framerate target</value>

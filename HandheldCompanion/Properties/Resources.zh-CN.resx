@@ -1022,7 +1022,7 @@
     <value>输出指令：Alt + F4</value>
   </data>
   <data name="OverlayPage_DualSenseController" xml:space="preserve">
-    <value>Playstation DualSense</value>
+    <value>PlayStation DualSense</value>
   </data>
   <data name="OverlayPage_MotionActivated" xml:space="preserve">
     <value>体感</value>

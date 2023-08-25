@@ -404,7 +404,7 @@
     <value>Opzioni del controller</value>
   </data>
   <data name="OverlayPage_DualSenseController" xml:space="preserve">
-    <value>Playstation DualSense</value>
+    <value>PlayStation DualSense</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Controller emulato</value>
