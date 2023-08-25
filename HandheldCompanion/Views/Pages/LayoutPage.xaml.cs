@@ -345,8 +345,8 @@ public partial class LayoutPage : Page
         var layoutTemplate = (LayoutTemplate)parent.Content;
 
         var result = Dialog.ShowAsync(
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, currentTemplate.Name),
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, currentTemplate.Name),
+            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
+            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
             $"{Properties.Resources.ProfilesPage_Yes}");
