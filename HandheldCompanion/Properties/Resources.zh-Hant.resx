@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!-- 
+  <!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,1896 +59,2205 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="metadata">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" />
-							</xsd:sequence>
-							<xsd:attribute name="name" use="required" type="xsd:string" />
-							<xsd:attribute name="type" type="xsd:string" />
-							<xsd:attribute name="mimetype" type="xsd:string" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="assembly">
-						<xsd:complexType>
-							<xsd:attribute name="alias" type="xsd:string" />
-							<xsd:attribute name="name" type="xsd:string" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>2.0</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="AboutPage_About" xml:space="preserve">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_About" xml:space="preserve">
     <value>關於</value>
   </data>
-	<data name="AboutPage_AboutDescription" xml:space="preserve">
+  <data name="AboutPage_AboutDescription" xml:space="preserve">
     <value>Handheld Companion - 「掌機伴侶「 是一個集多種功能（虛擬手柄、體感控制、性能監控、懸浮窗等）於一體，來改善玩家掌機遊戲體驗的工具。掌機伴侶依賴於ViGEmBus驅動和ViGEmClient庫，以及內核態的HidHide過濾驅動。體感算法基於Jibbsmart的研究成果和GyroWiki上公開的信息。</value>
   </data>
-	<data name="AboutPage_Accelerometer" xml:space="preserve">
+  <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>加速計</value>
   </data>
-	<data name="AboutPage_Author" xml:space="preserve">
+  <data name="AboutPage_Author" xml:space="preserve">
     <value>作者</value>
   </data>
-	<data name="AboutPage_Contributors" xml:space="preserve">
+  <data name="AboutPage_Contributors" xml:space="preserve">
     <value>貢獻者</value>
   </data>
-	<data name="AboutPage_Description" xml:space="preserve">
+  <data name="AboutPage_Description" xml:space="preserve">
     <value>說明</value>
   </data>
-	<data name="AboutPage_Donate" xml:space="preserve">
+  <data name="AboutPage_Donate" xml:space="preserve">
     <value>捐贈</value>
   </data>
-	<data name="AboutPage_Gyrometer" xml:space="preserve">
+  <data name="AboutPage_Gyrometer" xml:space="preserve">
     <value>陀螺儀</value>
   </data>
-	<data name="AboutPage_Inclinometer" xml:space="preserve">
+  <data name="AboutPage_Inclinometer" xml:space="preserve">
     <value>傾斜計</value>
   </data>
-	<data name="AboutPage_NotApplicable" xml:space="preserve">
+  <data name="AboutPage_NotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
-	<data name="AboutPage_RelatedLinks" xml:space="preserve">
+  <data name="AboutPage_RelatedLinks" xml:space="preserve">
     <value>相關連結</value>
   </data>
-	<data name="AboutPage_SensorExternal" xml:space="preserve">
+  <data name="AboutPage_SensorExternal" xml:space="preserve">
     <value>外部</value>
   </data>
-	<data name="AboutPage_SensorInternal" xml:space="preserve">
+  <data name="AboutPage_SensorInternal" xml:space="preserve">
     <value>內部</value>
   </data>
-	<data name="AboutPage_SensorName" xml:space="preserve">
+  <data name="AboutPage_SensorName" xml:space="preserve">
     <value>傳感器名稱</value>
   </data>
-	<data name="AboutPage_SensorSpecification" xml:space="preserve">
+  <data name="AboutPage_SensorSpecification" xml:space="preserve">
     <value>傳感器參數</value>
   </data>
-	<data name="AboutPage_Service" xml:space="preserve">
+  <data name="AboutPage_Service" xml:space="preserve">
     <value>服務</value>
   </data>
-	<data name="AboutPage_SourceCode" xml:space="preserve">
+  <data name="AboutPage_SourceCode" xml:space="preserve">
     <value>原始碼</value>
   </data>
-	<data name="AboutPage_Version" xml:space="preserve">
+  <data name="AboutPage_Version" xml:space="preserve">
     <value>版本</value>
   </data>
-	<data name="AboutPage_Wiki" xml:space="preserve">
+  <data name="AboutPage_Wiki" xml:space="preserve">
     <value>維基百科</value>
   </data>
-	<data name="Administrator" xml:space="preserve">
+  <data name="Administrator" xml:space="preserve">
     <value>管理員</value>
   </data>
-	<data name="ControllerPage_CloakDevice" xml:space="preserve">
+  <data name="ControllerPage_CloakDevice" xml:space="preserve">
     <value>隱藏設備</value>
   </data>
-	<data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
+  <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
     <value>更改物理手柄對其他軟體的可見性</value>
   </data>
-	<data name="ControllerPage_Connect" xml:space="preserve">
+  <data name="ControllerPage_Connect" xml:space="preserve">
     <value>連接</value>
   </data>
-	<data name="ControllerPage_Controller" xml:space="preserve">
+  <data name="ControllerPage_Controller" xml:space="preserve">
     <value>手柄</value>
   </data>
-	<data name="ControllerPage_DeviceCloaking" xml:space="preserve">
+  <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>設備隱藏中</value>
   </data>
-	<data name="ControllerPage_Disconnect" xml:space="preserve">
+  <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>斷開連接</value>
   </data>
-	<data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_InputDevices" xml:space="preserve">
     <value>輸入設備</value>
   </data>
-	<data name="ControllerPage_UncloakOnClose" xml:space="preserve">
+  <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
     <value>自動解除隱藏</value>
   </data>
-	<data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
+  <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
     <value>退出掌機伴侶時解除實體手柄的隱藏</value>
   </data>
-	<data name="ControllerPage_VibrationStrength" xml:space="preserve">
+  <data name="ControllerPage_VibrationStrength" xml:space="preserve">
     <value>震動強度</value>
   </data>
-	<data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
     <value>改變手柄震動強度</value>
   </data>
-	<data name="InputsHotkey_decreaseTDP" xml:space="preserve">
+  <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
     <value>降低TDP</value>
   </data>
-	<data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
+  <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
     <value>將系統或當前的預設配置TDP降低1W</value>
   </data>
-	<data name="InputsHotkey_fallbackInput" xml:space="preserve">
+  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
     <value>點擊設置觸發方式</value>
   </data>
-	<data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
     <value>點擊設置輸出指令</value>
   </data>
-	<data name="InputsHotkey_increaseTDP" xml:space="preserve">
+  <data name="InputsHotkey_increaseTDP" xml:space="preserve">
     <value>增加TDP</value>
   </data>
-	<data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
+  <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
     <value>將系統或當前的預設配置TDP增加1W</value>
   </data>
-	<data name="InputsHotkey_overlayGamepad" xml:space="preserve">
+  <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
     <value>3D手柄覆蓋窗</value>
   </data>
-	<data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
+  <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
     <value>顯示/隱藏3D手柄預覽覆蓋窗</value>
   </data>
-	<data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
+  <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
     <value>虛擬觸控板</value>
   </data>
-	<data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
+  <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
     <value>顯示/隱藏虛擬觸控板</value>
   </data>
-	<data name="InputsHotkey_quickTools" xml:space="preserve">
+  <data name="InputsHotkey_quickTools" xml:space="preserve">
     <value>工具窗口</value>
   </data>
-	<data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
+  <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
     <value>顯示/隱藏工具窗口</value>
   </data>
-	<data name="InputsHotkey_shortcutCustom" xml:space="preserve">
+  <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
     <value>自定義快捷方式</value>
   </data>
-	<data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
     <value>自定義配置觸發方式與輸出指令</value>
   </data>
-	<data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
+  <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
     <value>顯示/隱藏桌面</value>
   </data>
-	<data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
     <value>輸出指令：Win + D</value>
   </data>
-	<data name="InputsHotkey_shortcutESC" xml:space="preserve">
+  <data name="InputsHotkey_shortcutESC" xml:space="preserve">
     <value>退出</value>
   </data>
-	<data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
     <value>輸出指令：Esc</value>
   </data>
-	<data name="InputsHotkey_shortcutExpand" xml:space="preserve">
+  <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
     <value>切換窗口/全屏模式</value>
   </data>
-	<data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
     <value>輸出指令：Alt + Enter</value>
   </data>
-	<data name="InputsHotkey_shortcutGuide" xml:space="preserve">
+  <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
     <value>XBOX/PS 按鍵</value>
   </data>
-	<data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
     <value>模擬Xbox菜單鍵或者索尼PS鍵</value>
   </data>
-	<data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
+  <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
     <value>虛擬鍵盤</value>
   </data>
-	<data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
     <value>顯示/隱藏虛擬鍵盤</value>
   </data>
-	<data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
+  <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
     <value>掌機伴侶主窗口</value>
   </data>
-	<data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
     <value>顯示/隱藏掌機伴侶主窗口</value>
   </data>
-	<data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
+  <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
     <value>任務管理器</value>
   </data>
-	<data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
     <value>輸出指令：Ctrl + Shift + Esc</value>
   </data>
-	<data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
+  <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
     <value>任務視圖</value>
   </data>
-	<data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
     <value>輸出指令：Win + Tab</value>
   </data>
-	<data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
+  <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
     <value>暫停任務</value>
   </data>
-	<data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
+  <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
     <value>暫停或繼續前台任務</value>
   </data>
-	<data name="MainWindow_HandheldCompanion" xml:space="preserve">
+  <data name="MainWindow_HandheldCompanion" xml:space="preserve">
     <value>掌機伴侶</value>
   </data>
-	<data name="MainWindow_navAbout" xml:space="preserve">
+  <data name="MainWindow_navAbout" xml:space="preserve">
     <value>關於</value>
   </data>
-	<data name="MainWindow_navController" xml:space="preserve">
+  <data name="MainWindow_navController" xml:space="preserve">
     <value>手柄</value>
   </data>
-	<data name="MainWindow_navOverlay" xml:space="preserve">
+  <data name="MainWindow_navOverlay" xml:space="preserve">
     <value>覆蓋窗</value>
   </data>
-	<data name="MainWindow_navProfiles" xml:space="preserve">
+  <data name="MainWindow_navProfiles" xml:space="preserve">
     <value>配置文件</value>
   </data>
-	<data name="MainWindow_OK" xml:space="preserve">
+  <data name="MainWindow_OK" xml:space="preserve">
     <value>確認</value>
   </data>
-	<data name="MainWindow_serviceDeploy" xml:space="preserve">
-    <value>安裝服務</value>
-  </data>
-	<data name="MainWindow_ServiceManager" xml:space="preserve">
-    <value>服務管理</value>
-  </data>
-	<data name="MainWindow_ServiceManagerStartIssue" xml:space="preserve">
-    <value>啟動服務時出錯了</value>
-  </data>
-	<data name="MainWindow_ServiceManagerStopIssue" xml:space="preserve">
-    <value>停止服務時出錯了</value>
-  </data>
-	<data name="MainWindow_serviceRemove" xml:space="preserve">
-    <value>卸載服務</value>
-  </data>
-	<data name="MainWindow_serviceStart" xml:space="preserve">
-    <value>啟動服務</value>
-  </data>
-	<data name="MainWindow_serviceStop" xml:space="preserve">
-    <value>停止服務</value>
-  </data>
-	<data name="MainWindow_Settings" xml:space="preserve">
+  <data name="MainWindow_Settings" xml:space="preserve">
     <value>設置</value>
   </data>
-	<data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
+  <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
     <value>八位堂 Lite 2</value>
   </data>
-	<data name="OverlayPage_Alignment" xml:space="preserve">
+  <data name="OverlayPage_Alignment" xml:space="preserve">
     <value>位置</value>
   </data>
-	<data name="OverlayPage_AlignmentDesc" xml:space="preserve">
+  <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
     <value>修改3D手柄預覽展示位置</value>
   </data>
-	<data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
+  <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
     <value>修改觸摸板展示位置</value>
   </data>
-	<data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
+  <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
     <value>始終在頂層</value>
   </data>
-	<data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
+  <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
     <value>開啟時，覆蓋窗將始終覆蓋在其他界面頂層</value>
   </data>
-	<data name="OverlayPage_BackButton" xml:space="preserve">
+  <data name="OverlayPage_BackButton" xml:space="preserve">
     <value>返回</value>
   </data>
-	<data name="OverlayPage_CameraAngle" xml:space="preserve">
+  <data name="OverlayPage_CameraAngle" xml:space="preserve">
     <value>方向</value>
   </data>
-	<data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
+  <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
     <value>3D手柄的面向方向配置</value>
   </data>
-	<data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
     <value>角度補正</value>
   </data>
-	<data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
     <value>設置角度補正值</value>
   </data>
-	<data name="OverlayPage_Color" xml:space="preserve">
+  <data name="OverlayPage_Color" xml:space="preserve">
     <value>背景顏色</value>
   </data>
-	<data name="OverlayPage_ColorDesc" xml:space="preserve">
+  <data name="OverlayPage_ColorDesc" xml:space="preserve">
     <value>更改3D手柄覆蓋窗背景顏色</value>
   </data>
-	<data name="OverlayPage_ControllerOptions" xml:space="preserve">
+  <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>3D手柄配置選項</value>
   </data>
-	<data name="OverlayPage_EmulatedController" xml:space="preserve">
+  <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>模擬手柄</value>
   </data>
-	<data name="OverlayPage_FaceCamera" xml:space="preserve">
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
     <value>展示角度</value>
   </data>
-	<data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
     <value>啟用後，3D手柄將緩慢旋轉至設定角度</value>
   </data>
-	<data name="OverlayPage_Listening" xml:space="preserve">
+  <data name="OverlayPage_Listening" xml:space="preserve">
     <value>偵聽中...</value>
   </data>
-	<data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
+  <data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
     <value>機械師HG510</value>
   </data>
-	<data name="OverlayPage_MainTrigger" xml:space="preserve">
+  <data name="OverlayPage_MainTrigger" xml:space="preserve">
     <value>主開關</value>
   </data>
-	<data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
+  <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
     <value>修改主開關</value>
   </data>
-	<data name="OverlayPage_N64Controller" xml:space="preserve">
+  <data name="OverlayPage_N64Controller" xml:space="preserve">
     <value>N64</value>
   </data>
-	<data name="OverlayPage_OEMController" xml:space="preserve">
+  <data name="OverlayPage_OEMController" xml:space="preserve">
     <value>實體手柄</value>
   </data>
-	<data name="OverlayPage_Opacity" xml:space="preserve">
+  <data name="OverlayPage_Opacity" xml:space="preserve">
     <value>不透明度</value>
   </data>
-	<data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
+  <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
     <value>更改3D手柄的不透明度</value>
   </data>
-	<data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
+  <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
     <value>修改虛擬觸摸板不透明度</value>
   </data>
-	<data name="OverlayPage_Overlay" xml:space="preserve">
+  <data name="OverlayPage_Overlay" xml:space="preserve">
     <value>覆蓋窗</value>
   </data>
-	<data name="OverlayPage_OverlayModel" xml:space="preserve">
+  <data name="OverlayPage_OverlayModel" xml:space="preserve">
     <value>3D手柄模型</value>
   </data>
-	<data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
+  <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
     <value>修改3D手柄模型</value>
   </data>
-	<data name="OverlayPage_OverlayPreview" xml:space="preserve">
+  <data name="OverlayPage_OverlayPreview" xml:space="preserve">
     <value>覆蓋窗預覽</value>
   </data>
-	<data name="OverlayPage_RenderSettings" xml:space="preserve">
+  <data name="OverlayPage_RenderSettings" xml:space="preserve">
     <value>渲染設置</value>
   </data>
-	<data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
+  <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
     <value>抗鋸齒</value>
   </data>
-	<data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
+  <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
     <value>啟用/禁用抗鋸齒</value>
   </data>
-	<data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
+  <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
     <value>更改3D手柄模型的渲染設置</value>
   </data>
-	<data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
+  <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
     <value>刷效率</value>
   </data>
-	<data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
+  <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
     <value>更改渲染刷新率（Hz）</value>
   </data>
-	<data name="OverlayPage_Size" xml:space="preserve">
+  <data name="OverlayPage_Size" xml:space="preserve">
     <value>大小</value>
   </data>
-	<data name="OverlayPage_SizeDesc" xml:space="preserve">
+  <data name="OverlayPage_SizeDesc" xml:space="preserve">
     <value>修改3D姿態展示大小</value>
   </data>
-	<data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
+  <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
     <value>修改觸摸板展示大小</value>
   </data>
-	<data name="OverlayPage_StartButton" xml:space="preserve">
+  <data name="OverlayPage_StartButton" xml:space="preserve">
     <value>開始</value>
   </data>
-	<data name="OverlayPage_ToyController" xml:space="preserve">
+  <data name="OverlayPage_ToyController" xml:space="preserve">
     <value>Fisher-Price controller</value>
   </data>
-	<data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
+  <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
     <value>觸摸板選項</value>
   </data>
-	<data name="OverlayPage_XboxOneController" xml:space="preserve">
+  <data name="OverlayPage_XboxOneController" xml:space="preserve">
     <value>Xbox One</value>
   </data>
-	<data name="OverlayPage_ZDOPlusController" xml:space="preserve">
+  <data name="OverlayPage_ZDOPlusController" xml:space="preserve">
     <value>ZD O+</value>
   </data>
-	<data name="Overlay_Overlay" xml:space="preserve">
+  <data name="Overlay_Overlay" xml:space="preserve">
     <value>覆蓋窗</value>
   </data>
-	<data name="ProcessEx_processResume" xml:space="preserve">
+  <data name="ProcessEx_processResume" xml:space="preserve">
     <value>繼續</value>
   </data>
-	<data name="ProcessEx_processSuspend" xml:space="preserve">
+  <data name="ProcessEx_processSuspend" xml:space="preserve">
     <value>暫停</value>
   </data>
-	<data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
+  <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
     <value>額外選項</value>
   </data>
-	<data name="SettingsMode0_AimingDownSights" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
     <value>ADS（Aiming down sights）靈敏度</value>
   </data>
-	<data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
     <value>啟動按鍵</value>
   </data>
-	<data name="SettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsDesc" xml:space="preserve">
     <value>按鍵以激活額外的ADS靈敏度</value>
   </data>
-	<data name="SettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+  <data name="SettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
     <value>靈敏度值</value>
   </data>
-	<data name="SettingsMode0_CameraOptions" xml:space="preserve">
+  <data name="SettingsMode0_CameraOptions" xml:space="preserve">
     <value>視角選項</value>
   </data>
-	<data name="SettingsMode0_CustomResponseCurve" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseCurve" xml:space="preserve">
     <value>自定義曲線</value>
   </data>
-	<data name="SettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
     <value>輸出至遊戲</value>
   </data>
-	<data name="SettingsMode0_CustomResponseIntensity" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponseIntensity" xml:space="preserve">
     <value>移動強度</value>
   </data>
-	<data name="SettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
     <value>加速</value>
   </data>
-	<data name="SettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
     <value>默認</value>
   </data>
-	<data name="SettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
     <value>預設選項</value>
   </data>
-	<data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+  <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
     <value>高精度</value>
   </data>
-	<data name="SettingsMode0_FlickDuration" xml:space="preserve">
+  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
     <value>轉向速度</value>
   </data>
-	<data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
+  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
     <value>180度轉向所需時間（毫秒為單位）</value>
   </data>
-	<data name="SettingsMode0_FlickStick" xml:space="preserve">
+  <data name="SettingsMode0_FlickStick" xml:space="preserve">
     <value>快速轉向（實驗性功能）</value>
   </data>
-	<data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
+  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
     <value>將視角快速轉向右搖杆方向，視野只會進行豎直方向（Y軸）旋轉</value>
   </data>
-	<data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
+  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
     <value>啟用快速轉向</value>
   </data>
-	<data name="SettingsMode0_Sensitivity" xml:space="preserve">
+  <data name="SettingsMode0_Sensitivity" xml:space="preserve">
     <value>靈敏度</value>
   </data>
-	<data name="SettingsMode0_SensitivityDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityDesc" xml:space="preserve">
     <value>修改水平（X軸）和豎直（Y軸）的搖杆輸出靈敏度</value>
   </data>
-	<data name="SettingsMode0_StickSensitivtity" xml:space="preserve">
+  <data name="SettingsMode0_StickSensitivtity" xml:space="preserve">
     <value>搖杆靈敏度</value>
   </data>
-	<data name="SettingsMode0_StickSensitivtityDesc" xml:space="preserve">
+  <data name="SettingsMode0_StickSensitivtityDesc" xml:space="preserve">
     <value>修改旋轉率</value>
   </data>
-	<data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
+  <data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
     <value>額外選項</value>
   </data>
-	<data name="SettingsMode1_Deadzone" xml:space="preserve">
+  <data name="SettingsMode1_Deadzone" xml:space="preserve">
     <value>死區</value>
   </data>
-	<data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
+  <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
     <value>改變方向盤死區角度，優化直線駕駛精度</value>
   </data>
-	<data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
+  <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>搖杆遊戲輸入</value>
   </data>
-	<data name="SettingsMode1_JoystickSteering" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteering" xml:space="preserve">
     <value>體感駕駛</value>
   </data>
-	<data name="SettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteeringOptions" xml:space="preserve">
     <value>體感駕駛選項</value>
   </data>
-	<data name="SettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+  <data name="SettingsMode1_JoystickSteeringPreview" xml:space="preserve">
     <value>體感駕駛預覽</value>
   </data>
-	<data name="SettingsMode1_MaxSteeringAngle" xml:space="preserve">
+  <data name="SettingsMode1_MaxSteeringAngle" xml:space="preserve">
     <value>最大轉向角度</value>
   </data>
-	<data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+  <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
     <value>修改最大轉向角度</value>
   </data>
-	<data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
+  <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
     <value>轉向線性度</value>
   </data>
-	<data name="SettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+  <data name="SettingsMode1_SteeringLinearityDesc" xml:space="preserve">
     <value>體感輸入和輸出轉向的映射比率。低比率在方向盤打滿時提供更高的精度，但在中心附近的精度較低。高比率在中心附近的精度更高，在方向盤打滿時的精度較低。1.0則為1比1線性映射。</value>
   </data>
-	<data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
+  <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
     <value>加速度計靈敏度</value>
   </data>
-	<data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
+  <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
     <value>設置設備加速度計的靈敏度</value>
   </data>
-	<data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
+  <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
     <value>額外選項</value>
   </data>
-	<data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
+  <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
     <value>手柄死區</value>
   </data>
-	<data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
+  <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
     <value>修改反遊戲死區百分比</value>
   </data>
-	<data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
+  <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
     <value>確認刪除？</value>
   </data>
-	<data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
+  <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
     <value>此項將會立即被刪除，你將無法撤回此操作</value>
   </data>
-	<data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
+  <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
     <value>確定覆蓋？</value>
   </data>
-	<data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
+  <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
     <value>此項將會被覆蓋，你將無法撤回此操作</value>
   </data>
-	<data name="ProfilesPage_BoostPower" xml:space="preserve">
+  <data name="ProfilesPage_BoostPower" xml:space="preserve">
     <value>增幅限制</value>
   </data>
-	<data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
+  <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
     <value>更改增幅限制</value>
   </data>
-	<data name="ProfilesPage_Cancel" xml:space="preserve">
+  <data name="ProfilesPage_Cancel" xml:space="preserve">
     <value>取消</value>
   </data>
-	<data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
+  <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
     <value>創建配置</value>
   </data>
-	<data name="ProfilesPage_Delete" xml:space="preserve">
+  <data name="ProfilesPage_Delete" xml:space="preserve">
     <value>刪除</value>
   </data>
-	<data name="ProfilesPage_DeleteProfile" xml:space="preserve">
+  <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
     <value>刪除配置</value>
   </data>
-	<data name="ProfilesPage_EnableProfile" xml:space="preserve">
+  <data name="ProfilesPage_EnableProfile" xml:space="preserve">
     <value>啟動配置</value>
   </data>
-	<data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
+  <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
     <value>將在指定應用運行時自動選擇相應配置。</value>
   </data>
-	<data name="ProfilesPage_GlobalSettings" xml:space="preserve">
+  <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
     <value>全局設置</value>
   </data>
-	<data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
+  <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
     <value>修改全局配置</value>
   </data>
-	<data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
+  <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
     <value>陀螺儀靈敏度</value>
   </data>
-	<data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
+  <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
     <value>設置設備陀螺儀的靈敏度</value>
   </data>
-	<data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
+  <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
     <value>體感駕駛軸</value>
   </data>
-	<data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
+  <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
     <value>你可以選用延豎直（Y軸）或者前後（Z軸）旋轉，來控制方向</value>
   </data>
-	<data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
+  <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
     <value>反轉水平軸</value>
   </data>
-	<data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
+  <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
     <value>反轉垂直軸</value>
   </data>
-	<data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
+  <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
     <value>體感設置</value>
   </data>
-	<data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
+  <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
     <value>變更體感的詳細設置</value>
   </data>
-	<data name="ProfilesPage_OK" xml:space="preserve">
+  <data name="ProfilesPage_OK" xml:space="preserve">
     <value>確認</value>
   </data>
-	<data name="ProfilesPage_PowerSettings" xml:space="preserve">
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>功耗設置</value>
   </data>
-	<data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
+  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
     <value>更改功耗限制</value>
   </data>
-	<data name="ProfilesPage_ProfileDetails" xml:space="preserve">
+  <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>配置詳情</value>
   </data>
-	<data name="ProfilesPage_ProfileName" xml:space="preserve">
+  <data name="ProfilesPage_ProfileName" xml:space="preserve">
     <value>配置名稱</value>
   </data>
-	<data name="ProfilesPage_ProfilePath" xml:space="preserve">
+  <data name="ProfilesPage_ProfilePath" xml:space="preserve">
     <value>配置路徑</value>
   </data>
-	<data name="ProfilesPage_Profiles" xml:space="preserve">
+  <data name="ProfilesPage_Profiles" xml:space="preserve">
     <value>配置</value>
   </data>
-	<data name="ProfilesPage_ProfileSelection" xml:space="preserve">
+  <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
     <value>配置選擇</value>
   </data>
-	<data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
+  <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
     <value>選擇你想要編輯的配置</value>
   </data>
-	<data name="ProfilesPage_ProfileSettings" xml:space="preserve">
+  <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
     <value>配置設置</value>
   </data>
-	<data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
+  <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
     <value>配置已更新</value>
   </data>
-	<data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
+  <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
     <value>已更新</value>
   </data>
-	<data name="ProfilesPage_Roll" xml:space="preserve">
+  <data name="ProfilesPage_Roll" xml:space="preserve">
     <value>前後（Z軸）</value>
   </data>
-	<data name="ProfilesPage_StyleofInput" xml:space="preserve">
+  <data name="ProfilesPage_StyleofInput" xml:space="preserve">
     <value>輸入形式</value>
   </data>
-	<data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
+  <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
     <value>實體手柄的輸入可以模擬成其他虛擬設備的輸出</value>
   </data>
-	<data name="ProfilesPage_StyleofOutput" xml:space="preserve">
+  <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
     <value>輸出類型</value>
   </data>
-	<data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
+  <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
     <value>選擇輸出的設備類型</value>
   </data>
-	<data name="ProfilesPage_SustainedPower" xml:space="preserve">
+  <data name="ProfilesPage_SustainedPower" xml:space="preserve">
     <value>持續功耗</value>
   </data>
-	<data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
+  <data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
     <value>更改持續功耗限制</value>
   </data>
-	<data name="ProfilesPage_TDPOverride" xml:space="preserve">
+  <data name="ProfilesPage_TDPOverride" xml:space="preserve">
     <value>TDP</value>
   </data>
-	<data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
+  <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
     <value>限制最大TDP</value>
   </data>
-	<data name="ProfilesPage_UMCEnable" xml:space="preserve">
+  <data name="ProfilesPage_UMCEnable" xml:space="preserve">
     <value>啟動通用體感控制</value>
   </data>
-	<data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
+  <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
     <value>默認關閉，按住按鍵啟動</value>
   </data>
-	<data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
+  <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
     <value>默認啟動，按住按鍵關閉</value>
   </data>
-	<data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
+  <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
     <value>體感啟動</value>
   </data>
-	<data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
+  <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
     <value>當體感默認關閉時, 按住按鍵以啟動體感操作
 當體感默認啟動時, 按住按鍵以關閉體感操作</value>
   </data>
-	<data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
+  <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>選擇體感的模擬輸出設備</value>
   </data>
-	<data name="ProfilesPage_UMCSettings" xml:space="preserve">
+  <data name="ProfilesPage_UMCSettings" xml:space="preserve">
     <value>通用體感控制設置</value>
   </data>
-	<data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
+  <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
     <value>將設備體感輸入模擬為虛擬手柄輸出</value>
   </data>
-	<data name="ProfilesPage_UpdateProfile" xml:space="preserve">
+  <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
     <value>更新配置</value>
   </data>
-	<data name="ProfilesPage_Whitelist" xml:space="preserve">
+  <data name="ProfilesPage_Whitelist" xml:space="preserve">
     <value>允許程序取得實體手柄輸入信號</value>
   </data>
-	<data name="ProfilesPage_Wrapper" xml:space="preserve">
+  <data name="ProfilesPage_Wrapper" xml:space="preserve">
     <value>擴展兼容性 (XInputPlus)</value>
   </data>
-	<data name="ProfilesPage_Yaw" xml:space="preserve">
+  <data name="ProfilesPage_Yaw" xml:space="preserve">
     <value>垂直（Y軸）</value>
   </data>
-	<data name="ProfilesPage_Yes" xml:space="preserve">
+  <data name="ProfilesPage_Yes" xml:space="preserve">
     <value>確認</value>
   </data>
-	<data name="QuickPerformancePage_GPUControl" xml:space="preserve">
+  <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
     <value>GPU頻率</value>
   </data>
-	<data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
+  <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
     <value>手動設置GPU頻率</value>
   </data>
-	<data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
+  <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
     <value> MHz</value>
   </data>
-	<data name="QuickPerformancePage_PowerMode" xml:space="preserve">
+  <data name="QuickPerformancePage_PowerMode" xml:space="preserve">
     <value>電源模式</value>
   </data>
-	<data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
+  <data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
     <value>平衡</value>
   </data>
-	<data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
+  <data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
     <value>設備的電源模式</value>
   </data>
-	<data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
+  <data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
     <value>節能</value>
   </data>
-	<data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
+  <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
     <value>高性能</value>
   </data>
-	<data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
+  <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
     <value>TDP</value>
   </data>
-	<data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
+  <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
     <value>限制處理器功耗以降低設備功耗</value>
   </data>
-	<data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
+  <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
     <value>TDP限制被預設配置控制</value>
   </data>
-	<data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
+  <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
     <value> W</value>
   </data>
-	<data name="QuickProfilesPage_Create" xml:space="preserve">
+  <data name="QuickProfilesPage_Create" xml:space="preserve">
     <value>創建配置</value>
   </data>
-	<data name="QuickProfilesPage_Waiting" xml:space="preserve">
+  <data name="QuickProfilesPage_Waiting" xml:space="preserve">
     <value>等待前台進程...</value>
   </data>
-	<data name="ServiceDescription" xml:space="preserve">
+  <data name="ServiceDescription" xml:space="preserve">
     <value>通過此服務提供虛擬手柄支持，如果啟用該服務，實體手柄將會對白名單以外的程序隱藏，如果該服務被禁用，虛擬手柄將會被移除，並且實體手柄將會取消隱藏</value>
   </data>
-	<data name="ServiceName" xml:space="preserve">
+  <data name="ServiceName" xml:space="preserve">
     <value>手柄服務</value>
   </data>
-	<data name="SettingsPage_AppLanguage" xml:space="preserve">
+  <data name="SettingsPage_AppLanguage" xml:space="preserve">
     <value>語言</value>
   </data>
-	<data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
+  <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
     <value>程序語音</value>
   </data>
-	<data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
+  <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
     <value>需要重啟</value>
   </data>
-	<data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
+  <data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
     <value>更改將在重啟應用後生效</value>
   </data>
-	<data name="SettingsPage_AppTheme" xml:space="preserve">
+  <data name="SettingsPage_AppTheme" xml:space="preserve">
     <value>應用主題</value>
   </data>
-	<data name="SettingsPage_AppThemeDesc" xml:space="preserve">
+  <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
     <value>深色或淺色主題</value>
   </data>
-	<data name="SettingsPage_AutoStartApp" xml:space="preserve">
+  <data name="SettingsPage_AutoStartApp" xml:space="preserve">
     <value>自啟動</value>
   </data>
-	<data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
+  <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
     <value>程序將在登入Windows時自動啟動</value>
   </data>
-	<data name="SettingsPage_Backdrop" xml:space="preserve">
+  <data name="SettingsPage_Backdrop" xml:space="preserve">
     <value>程序背景</value>
   </data>
-	<data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
+  <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
     <value>Acrylic</value>
   </data>
-	<data name="SettingsPage_BackdropDesc" xml:space="preserve">
+  <data name="SettingsPage_BackdropDesc" xml:space="preserve">
     <value>此程序的背景圖像</value>
   </data>
-	<data name="SettingsPage_BackdropMica" xml:space="preserve">
+  <data name="SettingsPage_BackdropMica" xml:space="preserve">
     <value>Mica</value>
   </data>
-	<data name="SettingsPage_BackdropNone" xml:space="preserve">
+  <data name="SettingsPage_BackdropNone" xml:space="preserve">
     <value>無</value>
   </data>
-	<data name="SettingsPage_BackdropTabbed" xml:space="preserve">
+  <data name="SettingsPage_BackdropTabbed" xml:space="preserve">
     <value>Tabbed</value>
   </data>
-	<data name="SettingsPage_CheckForUpdates" xml:space="preserve">
+  <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
     <value>檢查更新</value>
   </data>
-	<data name="SettingsPage_CloseMinimizes" xml:space="preserve">
+  <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
     <value>最小化代替退出</value>
   </data>
-	<data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
+  <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
     <value>當點擊右上角關閉按鈕時，程序將會以最小化代替退出</value>
   </data>
-	<data name="SettingsPage_Download" xml:space="preserve">
+  <data name="SettingsPage_Download" xml:space="preserve">
     <value>下載</value>
   </data>
-	<data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
+  <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
     <value>下載中 - </value>
   </data>
-	<data name="SettingsPage_EcoQoS" xml:space="preserve">
+  <data name="SettingsPage_EcoQoS" xml:space="preserve">
     <value>智能功耗策略</value>
   </data>
-	<data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
+  <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
     <value>限制不活躍或後台進程和應用程式，以提高能源效率</value>
   </data>
-	<data name="SettingsPage_GeneralOptions" xml:space="preserve">
+  <data name="SettingsPage_GeneralOptions" xml:space="preserve">
     <value>通用設置</value>
   </data>
-	<data name="SettingsPage_HaltWithCompanion" xml:space="preserve">
-    <value>自動關閉服務</value>
-  </data>
-	<data name="SettingsPage_HaltWithCompanionDesc" xml:space="preserve">
-    <value>程序退出時自動關閉服務</value>
-  </data>
-	<data name="SettingsPage_InstallNow" xml:space="preserve">
+  <data name="SettingsPage_InstallNow" xml:space="preserve">
     <value>立即安裝</value>
   </data>
-	<data name="SettingsPage_LastChecked" xml:space="preserve">
+  <data name="SettingsPage_LastChecked" xml:space="preserve">
     <value>上一次檢查: </value>
   </data>
-	<data name="SettingsPage_NotificationOptions" xml:space="preserve">
+  <data name="SettingsPage_NotificationOptions" xml:space="preserve">
     <value>通知設置</value>
   </data>
-	<data name="SettingsPage_OpenAppBackground" xml:space="preserve">
+  <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
     <value>最小化啟動</value>
   </data>
-	<data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
+  <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
     <value>應用啟動後將自動最小化至任務欄</value>
   </data>
-	<data name="SettingsPage_SensorExternal" xml:space="preserve">
+  <data name="SettingsPage_SensorExternal" xml:space="preserve">
     <value>外部傳感器</value>
   </data>
-	<data name="SettingsPage_SensorInternal" xml:space="preserve">
+  <data name="SettingsPage_SensorInternal" xml:space="preserve">
     <value>內置傳感器</value>
   </data>
-	<data name="SettingsPage_SensorOptions" xml:space="preserve">
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
     <value>傳感器選項</value>
   </data>
-	<data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
     <value>外部傳感器安裝方向</value>
   </data>
-	<data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
     <value>選擇外部傳感器安裝的方向</value>
   </data>
-	<data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
     <value>外置傳感器反向</value>
   </data>
-	<data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
     <value>外置傳感器面向方向相反，可能是C口轉接器的願意</value>
   </data>
-	<data name="SettingsPage_SensorSelection" xml:space="preserve">
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
     <value>傳感器</value>
   </data>
-	<data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
     <value>選擇傳感器信號來源</value>
   </data>
-	<data name="SettingsPage_ServiceOptions" xml:space="preserve">
-    <value>服務選項</value>
-  </data>
-	<data name="SettingsPage_Settings" xml:space="preserve">
+  <data name="SettingsPage_Settings" xml:space="preserve">
     <value>設置</value>
   </data>
-	<data name="SettingsPage_StartupType" xml:space="preserve">
+  <data name="SettingsPage_StartupType" xml:space="preserve">
     <value>啟動類型</value>
   </data>
-	<data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
+  <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
     <value>配置服務的啟動類型</value>
   </data>
-	<data name="SettingsPage_StartWithCompanion" xml:space="preserve">
-    <value>自動啟動服務</value>
-  </data>
-	<data name="SettingsPage_StartWithCompanionDesc" xml:space="preserve">
-    <value>程序啟動時自動啟動服務</value>
-  </data>
-	<data name="SettingsPage_TDPMax" xml:space="preserve">
+  <data name="SettingsPage_TDPMax" xml:space="preserve">
     <value>最高功耗</value>
   </data>
-	<data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
+  <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
     <value>最高處理器功耗（W）</value>
   </data>
-	<data name="SettingsPage_TDPMin" xml:space="preserve">
+  <data name="SettingsPage_TDPMin" xml:space="preserve">
     <value>最低功耗</value>
   </data>
-	<data name="SettingsPage_TDPMinDesc" xml:space="preserve">
+  <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
     <value>最低處理器功耗（W）</value>
   </data>
-	<data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
+  <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
     <value>cTDP強制更改</value>
   </data>
-	<data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
+  <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
     <value>允許最小和最大TDP參數超出CPU規格</value>
   </data>
-	<data name="SettingsPage_ThemeDark" xml:space="preserve">
+  <data name="SettingsPage_ThemeDark" xml:space="preserve">
     <value>深色</value>
   </data>
-	<data name="SettingsPage_ThemeLight" xml:space="preserve">
+  <data name="SettingsPage_ThemeLight" xml:space="preserve">
     <value>淺色</value>
   </data>
-	<data name="SettingsPage_ToastNotification" xml:space="preserve">
+  <data name="SettingsPage_ToastNotification" xml:space="preserve">
     <value>彈出通知</value>
   </data>
-	<data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
+  <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
     <value>Windows操作中心的通知</value>
   </data>
-	<data name="SettingsPage_UpdateAvailable" xml:space="preserve">
+  <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
     <value>有可用的更新</value>
   </data>
-	<data name="SettingsPage_UpdateCheck" xml:space="preserve">
+  <data name="SettingsPage_UpdateCheck" xml:space="preserve">
     <value>正在檢查更新...</value>
   </data>
-	<data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
+  <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
     <value>無法下載更新文件</value>
   </data>
-	<data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
+  <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
     <value>無法連接到GitHub</value>
   </data>
-	<data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
+  <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
     <value>無法找到更新文件</value>
   </data>
-	<data name="SettingsPage_UpdateWarning" xml:space="preserve">
+  <data name="SettingsPage_UpdateWarning" xml:space="preserve">
     <value>出現了一個問題</value>
   </data>
-	<data name="SettingsPage_UpToDate" xml:space="preserve">
+  <data name="SettingsPage_UpToDate" xml:space="preserve">
     <value>版本已是最新</value>
   </data>
-	<data name="ToastNewControllerEx" xml:space="preserve">
+  <data name="ToastNewControllerEx" xml:space="preserve">
     <value>實體手柄已被隱藏，輸入被映射到虛擬手柄</value>
   </data>
-	<data name="User" xml:space="preserve">
+  <data name="User" xml:space="preserve">
     <value>用戶</value>
   </data>
-	<data name="WarningElevated" xml:space="preserve">
+  <data name="WarningElevated" xml:space="preserve">
     <value>以管理員身份運行此工具以更改這些設置</value>
   </data>
-	<data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
     <value> %</value>
   </data>
-	<data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
     <value>強制停止</value>
   </data>
-	<data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
     <value>輸出指令：Alt + F4</value>
   </data>
 	<data name="OverlayPage_DualSenseController" xml:space="preserve">
     <value>PlayStation DualSense</value>
   </data>
-	<data name="OverlayPage_MotionActivated" xml:space="preserve">
+  <data name="OverlayPage_MotionActivated" xml:space="preserve">
     <value>體感</value>
   </data>
-	<data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
+  <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
     <value>3D手柄模型會根據陀螺儀方向旋轉</value>
   </data>
-	<data name="SettingsMode0_SensitivityX" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityX" xml:space="preserve">
     <value>水平（X軸）靈敏度</value>
   </data>
-	<data name="SettingsMode0_SensitivityXDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityXDesc" xml:space="preserve">
     <value>變更水平（X軸）的體感靈敏度</value>
   </data>
-	<data name="SettingsMode0_SensitivityY" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityY" xml:space="preserve">
     <value>豎直（Y軸）靈敏度</value>
   </data>
-	<data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
+  <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
     <value>變更豎直（Y軸）的體感靈敏度</value>
   </data>
-	<data name="ProfilesPage_SensitivityX" xml:space="preserve">
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
     <value>X</value>
   </data>
-	<data name="ProfilesPage_SensitivityY" xml:space="preserve">
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
     <value>Y</value>
   </data>
-	<data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
     <value>Boost</value>
   </data>
-	<data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
     <value>持續</value>
   </data>
-	<data name="AboutPage_Manufacturer" xml:space="preserve">
+  <data name="AboutPage_Manufacturer" xml:space="preserve">
     <value>製造商</value>
   </data>
-	<data name="AboutPage_Partner" xml:space="preserve">
+  <data name="AboutPage_Partner" xml:space="preserve">
     <value>合作夥伴</value>
   </data>
-	<data name="AboutPage_ProductName" xml:space="preserve">
+  <data name="AboutPage_ProductName" xml:space="preserve">
     <value>產品名</value>
   </data>
-	<data name="ButtonsPage_ABXY" xml:space="preserve">
+  <data name="ButtonsPage_ABXY" xml:space="preserve">
     <value>A B X Y</value>
   </data>
-	<data name="ButtonsPage_Back_Grips" xml:space="preserve">
+  <data name="ButtonsPage_Back_Grips" xml:space="preserve">
     <value>背鍵</value>
   </data>
-	<data name="ButtonsPage_Bumpers" xml:space="preserve">
+  <data name="ButtonsPage_Bumpers" xml:space="preserve">
     <value>肩鍵</value>
   </data>
-	<data name="ButtonsPage_Menu" xml:space="preserve">
+  <data name="ButtonsPage_Menu" xml:space="preserve">
     <value>菜單鍵</value>
   </data>
-	<data name="ButtonsPage_OEM" xml:space="preserve">
+  <data name="ButtonsPage_OEM" xml:space="preserve">
     <value>額外按鍵</value>
   </data>
-	<data name="ControllerPage_DesktopLayout" xml:space="preserve">
+  <data name="ControllerPage_DesktopLayout" xml:space="preserve">
     <value>桌面布局</value>
   </data>
-	<data name="ControllerPage_DesktopLayoutDefine" xml:space="preserve">
+  <data name="ControllerPage_DesktopLayoutDefine" xml:space="preserve">
     <value>配置桌面布局</value>
   </data>
-	<data name="ControllerPage_DesktopLayoutDefineController" xml:space="preserve">
+  <data name="ControllerPage_DesktopLayoutDefineController" xml:space="preserve">
     <value>在桌面模式下配置手柄布局</value>
   </data>
-	<data name="ControllerPage_DesktopLayoutEdit" xml:space="preserve">
+  <data name="ControllerPage_DesktopLayoutEdit" xml:space="preserve">
     <value>編輯</value>
   </data>
-	<data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
+  <data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
     <value>激活桌面布局</value>
   </data>
-	<data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
     <value>手柄設置</value>
   </data>
-	<data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
+  <data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
     <value>非遊戲手柄布局</value>
   </data>
-	<data name="ControllerPage_NoPhysicalControllerAction" xml:space="preserve">
+  <data name="ControllerPage_NoPhysicalControllerAction" xml:space="preserve">
     <value>或許你應該先連接一個手柄。</value>
   </data>
-	<data name="ControllerPage_NoPhysicalControllerDesc" xml:space="preserve">
+  <data name="ControllerPage_NoPhysicalControllerDesc" xml:space="preserve">
     <value>沒有連接到實體手柄。掌機伴侶沒辦法處理任何輸入請求</value>
   </data>
-	<data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
+  <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
     <value>請確保你連接了支持 XInput 或者 DInput 的設備</value>
   </data>
-	<data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
+  <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
     <value>沒有檢測到實體手柄</value>
   </data>
-	<data name="ControllerPage_NoPhysicalControllerWarning" xml:space="preserve">
+  <data name="ControllerPage_NoPhysicalControllerWarning" xml:space="preserve">
     <value>沒有連接實體手柄</value>
   </data>
-	<data name="ControllerPage_NoVirtualControllerAction" xml:space="preserve">
+  <data name="ControllerPage_NoVirtualControllerAction" xml:space="preserve">
     <value>請確保虛擬手柄服務已開啟並將狀態切換為「已連接」</value>
   </data>
-	<data name="ControllerPage_NoVirtualControllerDesc" xml:space="preserve">
+  <data name="ControllerPage_NoVirtualControllerDesc" xml:space="preserve">
     <value>實體手柄已被隱藏，並且沒有可用的虛擬手柄配置，程序可能無法收到任何輸入命令</value>
   </data>
-	<data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
+  <data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
     <value>沒檢測到虛擬手柄</value>
   </data>
-	<data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
+  <data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
     <value>請啟用虛擬手柄，或者解除實體手柄的隱藏</value>
   </data>
-	<data name="ControllerPage_PhysicalControllerHiddenDesc" xml:space="preserve">
+  <data name="ControllerPage_PhysicalControllerHiddenDesc" xml:space="preserve">
     <value>實體手柄已被隱藏，並且虛擬手柄未被啟用</value>
   </data>
-	<data name="ControllerPage_PhysicalControllerHiddenWarning" xml:space="preserve">
+  <data name="ControllerPage_PhysicalControllerHiddenWarning" xml:space="preserve">
     <value>實體手柄已被隱藏</value>
   </data>
-	<data name="ControllerPage_PhysicalControllerNotHiddenAction" xml:space="preserve">
+  <data name="ControllerPage_PhysicalControllerNotHiddenAction" xml:space="preserve">
     <value>請隱藏實體手柄，或者禁用虛擬手柄</value>
   </data>
-	<data name="ControllerPage_PhysicalControllerNotHiddenDesc" xml:space="preserve">
+  <data name="ControllerPage_PhysicalControllerNotHiddenDesc" xml:space="preserve">
     <value>實體手柄未被隱藏，並且虛擬手柄已啟用，程序可能會收到重複指令</value>
   </data>
-	<data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
+  <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
     <value>實體手柄未被隱藏</value>
   </data>
-	<data name="ControllerPage_SteamControllerHDRumble" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerHDRumble" xml:space="preserve">
     <value>高清震動</value>
   </data>
-	<data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>使用高清震動功能可能會占用更多CPU資源</value>
   </data>
-	<data name="ControllerPage_SteamControllerMute" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
     <value>禁用虛擬手柄</value>
   </data>
-	<data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>對Steam相關程序禁用虛擬手柄</value>
   </data>
-	<data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
+  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
     <value>Steam Deck 配置</value>
   </data>
-	<data name="ControllerPage_VibrateDevice" xml:space="preserve">
+  <data name="ControllerPage_VibrateDevice" xml:space="preserve">
     <value>手柄連接時震動提示</value>
   </data>
-	<data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
+  <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
     <value>手柄連接時實體手柄震動提示</value>
   </data>
-	<data name="DPadPage_DPad" xml:space="preserve">
+  <data name="DPadPage_DPad" xml:space="preserve">
     <value>方向鍵</value>
   </data>
-	<data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
+  <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
     <value>降低亮度</value>
   </data>
-	<data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
+  <data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
     <value>降低5%亮度</value>
   </data>
-	<data name="InputsHotkey_decreaseVolume" xml:space="preserve">
+  <data name="InputsHotkey_decreaseVolume" xml:space="preserve">
     <value>降低音量</value>
   </data>
-	<data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
+  <data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
     <value>降低5%音量</value>
   </data>
-	<data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
+  <data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
     <value>桌面布局</value>
   </data>
-	<data name="InputsHotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+  <data name="InputsHotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
     <value>激活桌面布局</value>
   </data>
-	<data name="InputsHotkey_increaseBrightness" xml:space="preserve">
+  <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
     <value>增加亮度</value>
   </data>
-	<data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
+  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
     <value>增加5%亮度</value>
   </data>
-	<data name="InputsHotkey_increaseVolume" xml:space="preserve">
+  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
     <value>增加音量</value>
   </data>
-	<data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
+  <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
     <value>增加5%音量</value>
   </data>
-	<data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
+  <data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
     <value>監控覆蓋窗</value>
   </data>
-	<data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
+  <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
     <value>顯示/隱藏性能監控覆蓋窗</value>
   </data>
-	<data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
+  <data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
     <value>風扇轉速</value>
   </data>
-	<data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
+  <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
     <value>將風扇轉速設置為手動配置風扇轉速</value>
   </data>
-	<data name="InputsHotkey_shortcutControlCenterDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutControlCenterDesc" xml:space="preserve">
     <value>顯示Windows操作中心</value>
   </data>
-	<data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
+  <data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
     <value>操作中心</value>
   </data>
-	<data name="InputsHotkey_shortcutPrintScreen" xml:space="preserve">
+  <data name="InputsHotkey_shortcutPrintScreen" xml:space="preserve">
     <value>截圖工具</value>
   </data>
-	<data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
+  <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
     <value>輸出指令：Windows + Shift + S</value>
   </data>
-	<data name="JoystickPage_Joystick_Left" xml:space="preserve">
+  <data name="JoystickPage_Joystick_Left" xml:space="preserve">
     <value>左搖杆</value>
   </data>
-	<data name="JoystickPage_Joystick_Left_Buttons" xml:space="preserve">
+  <data name="JoystickPage_Joystick_Left_Buttons" xml:space="preserve">
     <value>左搖杆按鍵指令</value>
   </data>
-	<data name="JoystickPage_Joystick_Right" xml:space="preserve">
+  <data name="JoystickPage_Joystick_Right" xml:space="preserve">
     <value>右搖杆</value>
   </data>
-	<data name="JoystickPage_Joystick_Right_Buttons" xml:space="preserve">
+  <data name="JoystickPage_Joystick_Right_Buttons" xml:space="preserve">
     <value>右搖杆按鍵指令</value>
   </data>
-	<data name="LayoutPage_ApplyTemplate" xml:space="preserve">
+  <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
     <value>應用模版</value>
   </data>
-	<data name="LayoutPage_Buttons" xml:space="preserve">
+  <data name="LayoutPage_Buttons" xml:space="preserve">
     <value>按鍵</value>
   </data>
-	<data name="LayoutPage_Cancel" xml:space="preserve">
+  <data name="LayoutPage_Cancel" xml:space="preserve">
     <value>取消</value>
   </data>
-	<data name="LayoutPage_Community" xml:space="preserve">
+  <data name="LayoutPage_Community" xml:space="preserve">
     <value>社區</value>
   </data>
-	<data name="LayoutPage_Confirm" xml:space="preserve">
+  <data name="LayoutPage_Confirm" xml:space="preserve">
     <value>確認</value>
   </data>
-	<data name="LayoutPage_Dpad" xml:space="preserve">
+  <data name="LayoutPage_Dpad" xml:space="preserve">
     <value>方向鍵</value>
   </data>
-	<data name="LayoutPage_ExportCurrentController" xml:space="preserve">
+  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
     <value>為當前手柄導出</value>
   </data>
-	<data name="LayoutPage_ExportLayout" xml:space="preserve">
+  <data name="LayoutPage_ExportLayout" xml:space="preserve">
     <value>導出布局</value>
   </data>
-	<data name="LayoutPage_Gyro" xml:space="preserve">
+  <data name="LayoutPage_Gyro" xml:space="preserve">
     <value>陀螺儀</value>
   </data>
-	<data name="LayoutPage_Joysticks" xml:space="preserve">
+  <data name="LayoutPage_Joysticks" xml:space="preserve">
     <value>搖杆</value>
   </data>
-	<data name="LayoutPage_LayoutAuthor" xml:space="preserve">
+  <data name="LayoutPage_LayoutAuthor" xml:space="preserve">
     <value>布局作者</value>
   </data>
-	<data name="LayoutPage_LayoutDesc" xml:space="preserve">
+  <data name="LayoutPage_LayoutDesc" xml:space="preserve">
     <value>布局描述</value>
   </data>
-	<data name="LayoutPage_LayoutTitle" xml:space="preserve">
+  <data name="LayoutPage_LayoutTitle" xml:space="preserve">
     <value>布局名稱</value>
   </data>
-	<data name="LayoutPage_SaveGameInfoLayout" xml:space="preserve">
+  <data name="LayoutPage_SaveGameInfoLayout" xml:space="preserve">
     <value>將遊戲信息與布局一同保存</value>
   </data>
-	<data name="LayoutPage_ShowCurrentControllerTemplates" xml:space="preserve">
+  <data name="LayoutPage_ShowCurrentControllerTemplates" xml:space="preserve">
     <value>只顯示當前手柄的布局模版</value>
   </data>
-	<data name="LayoutPage_TemplatePicker" xml:space="preserve">
+  <data name="LayoutPage_TemplatePicker" xml:space="preserve">
     <value>布局模版選擇器</value>
   </data>
-	<data name="LayoutPage_Templates" xml:space="preserve">
+  <data name="LayoutPage_Templates" xml:space="preserve">
     <value>模版</value>
   </data>
-	<data name="LayoutPage_Trackpads" xml:space="preserve">
+  <data name="LayoutPage_Trackpads" xml:space="preserve">
     <value>觸摸板</value>
   </data>
-	<data name="LayoutPage_Triggers" xml:space="preserve">
+  <data name="LayoutPage_Triggers" xml:space="preserve">
     <value>扳機</value>
   </data>
-	<data name="MainWindow_navHotkeys" xml:space="preserve">
+  <data name="MainWindow_navHotkeys" xml:space="preserve">
     <value>熱鍵</value>
   </data>
-	<data name="OverlayPage_Millisecond" xml:space="preserve">
+  <data name="OverlayPage_Millisecond" xml:space="preserve">
     <value>毫秒</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayLevel" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayLevel" xml:space="preserve">
     <value>覆蓋窗顯示模式</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayLevel_Disabled" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayLevel_Disabled" xml:space="preserve">
     <value>隱藏</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayLevel_Extended" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayLevel_Extended" xml:space="preserve">
     <value>通常</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayLevel_Full" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayLevel_Full" xml:space="preserve">
     <value>詳細</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
     <value>僅幀率</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayLevelDesc" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayLevelDesc" xml:space="preserve">
     <value>更改覆蓋窗顯示模式</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayUpdateRate" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayUpdateRate" xml:space="preserve">
     <value>更新頻率</value>
   </data>
-	<data name="OverlayPage_OverlayDisplayUpdateRateDesc" xml:space="preserve">
+  <data name="OverlayPage_OverlayDisplayUpdateRateDesc" xml:space="preserve">
     <value>更改性能覆蓋窗更新頻率</value>
   </data>
-	<data name="ProfilesPage_AutoTDP" xml:space="preserve">
+  <data name="ProfilesPage_AutoTDP" xml:space="preserve">
     <value>自動TDP</value>
   </data>
-	<data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
+  <data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
     <value>將根據檢測到的幀率與設定的目標幀率來動態調整TDP</value>
   </data>
-	<data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
+  <data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
     <value>目標幀率</value>
   </data>
-	<data name="ProfilesPage_AutoTDPFPSDesc" xml:space="preserve">
+  <data name="ProfilesPage_AutoTDPFPSDesc" xml:space="preserve">
     <value>自動TDP功能參考的目標幀率</value>
   </data>
-	<data name="ProfilesPage_ControllerLayout" xml:space="preserve">
+  <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
     <value>手柄布局</value>
   </data>
-	<data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
+  <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>更改虛擬手柄的布局</value>
   </data>
-	<data name="ProfilesPage_ControllerSettings" xml:space="preserve">
+  <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
     <value>手柄設置</value>
   </data>
-	<data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
+  <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
     <value>更改虛擬手柄的設置</value>
   </data>
-	<data name="ProfilesPage_CPU" xml:space="preserve">
+  <data name="ProfilesPage_CPU" xml:space="preserve">
     <value>CPU</value>
   </data>
-	<data name="ProfilesPage_EPP" xml:space="preserve">
+  <data name="ProfilesPage_EPP" xml:space="preserve">
     <value>EPP</value>
   </data>
-	<data name="ProfilesPage_EPPBalance" xml:space="preserve">
+  <data name="ProfilesPage_EPPBalance" xml:space="preserve">
     <value>CPU/GPU電源平衡分配</value>
   </data>
-	<data name="ProfilesPage_EPPDesc" xml:space="preserve">
+  <data name="ProfilesPage_EPPDesc" xml:space="preserve">
     <value>手動指定CPU/GPU電源平衡分配比例</value>
   </data>
-	<data name="ProfilesPage_FramerateLimit" xml:space="preserve">
+  <data name="ProfilesPage_FramerateLimit" xml:space="preserve">
     <value>限制幀率</value>
   </data>
-	<data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
+  <data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
     <value>限制程序的最大幀率</value>
   </data>
-	<data name="ProfilesPage_GPU" xml:space="preserve">
+  <data name="ProfilesPage_GPU" xml:space="preserve">
     <value>GPU</value>
   </data>
-	<data name="ProfilesPage_GPUMhz" xml:space="preserve">
+  <data name="ProfilesPage_GPUMhz" xml:space="preserve">
     <value>GPU最大頻率</value>
   </data>
-	<data name="ProfilesPage_GPUMhzDesc" xml:space="preserve">
+  <data name="ProfilesPage_GPUMhzDesc" xml:space="preserve">
     <value>設置GPU最大頻率（Mhz）</value>
   </data>
-	<data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
+  <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
     <value>左搖杆死區</value>
   </data>
-	<data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
+  <data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
     <value>調整左搖杆的內外死區</value>
   </data>
-	<data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
+  <data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
     <value>右搖杆死區</value>
   </data>
-	<data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
+  <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
     <value>調整右搖杆的內外死區</value>
   </data>
-	<data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
+  <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>目標功耗</value>
   </data>
-	<data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
+  <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
     <value>改善搖杆正圓度（Circularity ）</value>
   </data>
-	<data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
+  <data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
     <value>左搖杆正圓度</value>
   </data>
-	<data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
+  <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
     <value>右搖杆正圓度</value>
   </data>
-	<data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
+  <data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
     <value>左扳機死區</value>
   </data>
-	<data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
+  <data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
     <value>調整左扳機內外死區</value>
   </data>
-	<data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
+  <data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
     <value>右扳機死區</value>
   </data>
-	<data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
+  <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
     <value>調整右扳機內外死區</value>
   </data>
-	<data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
+  <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
     <value>體感死區</value>
   </data>
-	<data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
+  <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
     <value>補償遊戲內的微操作</value>
   </data>
-	<data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
+  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
     <value>斷開</value>
   </data>
-	<data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
+  <data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
     <value>幀率</value>
   </data>
-	<data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
     <value>自動應用桌面布局</value>
   </data>
-	<data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
     <value>當程序啟動時自動應用桌面布局</value>
   </data>
-	<data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
     <value>原生屏幕方向</value>
   </data>
-	<data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
     <value>某些功能可能會依賴原生屏幕方向來運作，如果這裡沒有被正確識別，請手動設置方向，然後點擊檢測</value>
   </data>
-	<data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
     <value>檢測</value>
   </data>
-	<data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
     <value>未設置</value>
   </data>
-	<data name="SettingsPage_ThemeDefault" xml:space="preserve">
+  <data name="SettingsPage_ThemeDefault" xml:space="preserve">
     <value>應用Windows系統設置</value>
   </data>
-	<data name="TrackPadsPage_Trackpad_Left" xml:space="preserve">
+  <data name="TrackPadsPage_Trackpad_Left" xml:space="preserve">
     <value>左觸摸板</value>
   </data>
-	<data name="TrackPadsPage_Trackpad_Left_Buttons" xml:space="preserve">
+  <data name="TrackPadsPage_Trackpad_Left_Buttons" xml:space="preserve">
     <value>左觸摸板按鍵</value>
   </data>
-	<data name="TrackPadsPage_Trackpad_Right" xml:space="preserve">
+  <data name="TrackPadsPage_Trackpad_Right" xml:space="preserve">
     <value>右觸摸板</value>
   </data>
-	<data name="TrackPadsPage_Trackpad_Right_Buttons" xml:space="preserve">
+  <data name="TrackPadsPage_Trackpad_Right_Buttons" xml:space="preserve">
     <value>右觸摸板按鍵</value>
   </data>
-	<data name="TriggersPage_Trigger_Left" xml:space="preserve">
+  <data name="TriggersPage_Trigger_Left" xml:space="preserve">
     <value>左扳機</value>
   </data>
-	<data name="TriggersPage_Trigger_Left_Button" xml:space="preserve">
+  <data name="TriggersPage_Trigger_Left_Button" xml:space="preserve">
     <value>左扳機按鍵</value>
   </data>
-	<data name="TriggersPage_Trigger_Right" xml:space="preserve">
+  <data name="TriggersPage_Trigger_Right" xml:space="preserve">
     <value>右扳機</value>
   </data>
-	<data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
+  <data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
     <value>右扳機按鍵</value>
   </data>
-	<data name="QuickProfilesPage_PowerLimitTarget" xml:space="preserve">
+  <data name="QuickProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>目標功耗限制</value>
   </data>
-	<data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
     <value>工具窗口選項</value>
   </data>
-	<data name="QuickPerformancePage_FanOverridePercentage" xml:space="preserve">
+  <data name="QuickPerformancePage_FanOverridePercentage" xml:space="preserve">
     <value>%</value>
   </data>
-	<data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
+  <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>設置CPU超頻模式</value>
   </data>
-	<data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
+  <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
     <value>CPU超頻</value>
   </data>
-	<data name="QuickPerformancePage_FanOverrideDesc" xml:space="preserve">
+  <data name="QuickPerformancePage_FanOverrideDesc" xml:space="preserve">
     <value>手動設置風扇轉速</value>
   </data>
-	<data name="QuickPerformancePage_FanOverride" xml:space="preserve">
+  <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>風扇轉速</value>
   </data>
-	<data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
     <value>調整顯示器的解析度與刷新率</value>
   </data>
-	<data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
     <value>顯示器解析度與刷新率</value>
   </data>
-	<data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
     <value>右上</value>
   </data>
-	<data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
     <value>左上</value>
   </data>
-	<data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
     <value>窗口位置</value>
   </data>
-	<data name="SettingsPage_QuickToolsWindowLocationBottomRight" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationBottomRight" xml:space="preserve">
     <value>右下</value>
   </data>
-	<data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
     <value>左下</value>
   </data>
-	<data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="SettingsPage_PowerOptions" xml:space="preserve">
     <value>電源選項</value>
   </data>
-	<data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
     <value>設置窗口位置</value>
   </data>
-	<data name="SettingsPage_ThirdPartyApps" xml:space="preserve">
+  <data name="SettingsPage_ThirdPartyApps" xml:space="preserve">
     <value>第三方應用</value>
   </data>
-	<data name="SettingsPage_SensorNone" xml:space="preserve">
+  <data name="SettingsPage_SensorNone" xml:space="preserve">
     <value>無</value>
   </data>
-	<data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
+  <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
     <value>工具窗口背景圖像</value>
   </data>
-	<data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
+  <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
     <value>當程序退出時自動退出RTSS</value>
   </data>
-	<data name="SettingsPage_HwInfoDesc" xml:space="preserve">
+  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
     <value>當應用退出時自動退出HWiNFO</value>
   </data>
-	<data name="SettingsPage_HwInfo" xml:space="preserve">
+  <data name="SettingsPage_HwInfo" xml:space="preserve">
     <value>HWiNFO</value>
   </data>
-	<data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
+  <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
     <value>默認</value>
   </data>
-	<data name="QuickProfilesPage_CurrentProfile" xml:space="preserve">
+  <data name="QuickProfilesPage_CurrentProfile" xml:space="preserve">
     <value>當前配置</value>
   </data>
-	<data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
+  <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
     <value>RTSS服務</value>
   </data>
-	<data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
+  <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
     <value>當工具窗口失焦時自動最小化</value>
   </data>
-	<data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
+  <data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
     <value>自動最小化</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>A</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
     <value>始終開啟</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
     <value>B</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
     <value>Back</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
     <value>下</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
     <value>左</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
     <value>右</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
     <value>上</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
     <value>左肩鍵</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
     <value>左搖杆按壓</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
     <value>左板機</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
     <value>右肩鍵</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
     <value>右搖杆按壓</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
     <value>右板機</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
     <value>Start</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
     <value>X</value>
   </data>
-	<data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
     <value>Y</value>
   </data>
-	<data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
     <value>模擬 DualShock4 手柄</value>
   </data>
-	<data name="Enum.HIDmode.NoController" xml:space="preserve">
+  <data name="Enum.HIDmode.NoController" xml:space="preserve">
     <value>無模擬手柄</value>
   </data>
-	<data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
     <value>模擬 XBOX 360 手柄</value>
   </data>
-	<data name="Enum.HIDstatus.Connected" xml:space="preserve">
+  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
     <value>已連接</value>
   </data>
-	<data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
     <value>未連接</value>
   </data>
-	<data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
+  <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
     <value>重力軸向切換</value>
   </data>
-	<data name="Enum.Input.JoystickCamera" xml:space="preserve">
+  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
     <value>體感視角</value>
   </data>
-	<data name="Enum.Input.JoystickSteering" xml:space="preserve">
+  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
     <value>體感駕駛</value>
   </data>
-	<data name="Enum.Input.PlayerSpace" xml:space="preserve">
+  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
     <value>玩家空間</value>
   </data>
-	<data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
     <value>掌機</value>
   </data>
-	<data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
     <value>浮窗</value>
   </data>
-	<data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
     <value>快捷工具</value>
   </data>
-	<data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
     <value>窗口</value>
   </data>
-	<data name="Enum.Output.LeftStick" xml:space="preserve">
+  <data name="Enum.Output.LeftStick" xml:space="preserve">
     <value>左搖杆</value>
   </data>
-	<data name="Enum.Output.RightStick" xml:space="preserve">
+  <data name="Enum.Output.RightStick" xml:space="preserve">
     <value>右搖杆</value>
   </data>
-	<data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
     <value>這是默認的全局配置。此配置將應用於沒有特定配置的應用程式。一些需要指定程序才可生效的選項可能被禁用。</value>
   </data>
-	<data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
     <value>這個配置正在運行。一些選項可能被禁用。</value>
   </data>
-	<data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
     <value>這個配置似乎沒有找到應用程式的可執行文件。</value>
   </data>
-	<data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
     <value>這個配置似乎沒有找到指定的路徑。</value>
   </data>
-	<data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
     <value>似乎你的權限不夠更改這裡的選項。請確保在管理員模式下啟動此程序。</value>
   </data>
-	<data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
     <value>這裡沒什麼東西。</value>
   </data>
-	<data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
     <value>默認</value>
   </data>
-	<data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
     <value>節能</value>
   </data>
-	<data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
     <value>高性能</value>
   </data>
-	<data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
+  <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
     <value>自動</value>
   </data>
-	<data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
+  <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
     <value>關閉</value>
   </data>
-	<data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
+  <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手動</value>
   </data>
-	<data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="JoystickCameraDesc" xml:space="preserve">
     <value>這個模式將反轉X軸，適用於將陀螺儀模擬滑鼠。</value>
   </data>
-	<data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="JoystickSteeringDesc" xml:space="preserve">
     <value>這個模式適用於一些賽車遊戲，陀螺儀輸入將模擬方向盤。</value>
   </data>
-	<data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="PlayerSpaceDesc" xml:space="preserve">
     <value>這個模式適用於第一人稱或第三人稱視角的遊戲，體感輸入將模擬玩家視角，</value>
   </data>
-	<data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
     <value>掌機伴侶</value>
   </data>
-	<data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-	<data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
     <value>≈</value>
   </data>
-	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-	<data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-	<data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
     <value>AYA</value>
   </data>
-	<data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
     <value>KB</value>
   </data>
-	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-	<data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-	<data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-	<data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-	<data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-	<data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
     <value>Win</value>
   </data>
-	<data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
     <value>Esc</value>
   </data>
-	<data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
     <value>RC</value>
   </data>
-	<data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
     <value>LC</value>
   </data>
-	<data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
     <value>M1 / M2</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
     <value>叉</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
     <value>圈</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
     <value>方</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
     <value>三角</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
     <value>Share</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.Special" xml:space="preserve">
     <value>Sony</value>
   </data>
-	<data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
     <value>Options</value>
   </data>
-	<data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
     <value>自定義</value>
   </data>
-	<data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
+  <data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
     <value>設備</value>
   </data>
-	<data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
     <value>重力切換模式</value>
   </data>
-	<data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
     <value>X軸反轉模式</value>
   </data>
-	<data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
     <value>方向盤模式</value>
   </data>
-	<data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
     <value>普通模式</value>
   </data>
-	<data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
+  <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
     <value>左搖杆</value>
   </data>
-	<data name="Enum.MotionOutput.RightStick" xml:space="preserve">
+  <data name="Enum.MotionOutput.RightStick" xml:space="preserve">
     <value>右搖杆</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
     <value>A</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.B2" xml:space="preserve">
     <value>B</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.B3" xml:space="preserve">
     <value>X</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.B4" xml:space="preserve">
     <value>Y</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
     <value>View</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
     <value>STEAM</value>
   </data>
-	<data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-	<data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
+  <data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
     <value>這個配置正在運行。一些選項可能被禁用。</value>
   </data>
-	<data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
     <value>Command center</value>
   </data>
-	<data name="Enum.ROGAlly.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.ROGAlly.ButtonFlags.OEM2" xml:space="preserve">
     <value>Armory crate</value>
   </data>
-	<data name="Enum.SteamDeck.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.SteamDeck.ButtonFlags.OEM1" xml:space="preserve">
     <value>Options</value>
   </data>
-	<data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
+  <data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
     <value>L2</value>
   </data>
-	<data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
+  <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
     <value>左搖杆</value>
   </data>
-	<data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
+  <data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
     <value>R2</value>
   </data>
-	<data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
+  <data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
     <value>右搖杆</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
     <value>A</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B2" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B2" xml:space="preserve">
     <value>B</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B3" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B3" xml:space="preserve">
     <value>X</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B4" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B4" xml:space="preserve">
     <value>Y</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B5" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B5" xml:space="preserve">
     <value>B5</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B6" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B6" xml:space="preserve">
     <value>B6</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B7" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B7" xml:space="preserve">
     <value>B7</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.B8" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.B8" xml:space="preserve">
     <value>B8</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.Back" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.Back" xml:space="preserve">
     <value>View</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
     <value>下方向鍵</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
     <value>左方向鍵</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
     <value>右方向鍵</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>上方向鍵</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
     <value>LB</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
     <value>LT</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
     <value>L3</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.L4" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.L4" xml:space="preserve">
     <value>L4</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.L5" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.L5" xml:space="preserve">
     <value>L5</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
     <value>左搖杆</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
     <value>左搖杆下推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
     <value>左搖杆左推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
     <value>左搖杆右推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
     <value>左搖杆上推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
     <value>OEM1</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.OEM2" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.OEM2" xml:space="preserve">
     <value>OEM2</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.OEM3" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.OEM3" xml:space="preserve">
     <value>OEM3</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
     <value>RB</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
     <value>RT</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
     <value>R3</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.R4" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.R4" xml:space="preserve">
     <value>R4</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.R5" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.R5" xml:space="preserve">
     <value>R5</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
     <value>左搖杆</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
     <value>左搖杆下推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
     <value>左搖杆左推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
     <value>左搖杆右推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
     <value>左搖杆上推</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
     <value>導航鍵</value>
   </data>
-	<data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
+  <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
+  </data>
+  <data name="Enum.DS4Controller.AxisLayoutFlags.LeftPad" xml:space="preserve">
+    <value>Single-touch swipe</value>
+  </data>
+  <data name="Enum.DS4Controller.AxisLayoutFlags.RightPad" xml:space="preserve">
+    <value>Multi-touch swipe</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.LeftPadClick" xml:space="preserve">
+    <value>Single-touch click</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.LeftPadTouch" xml:space="preserve">
+    <value>Single-touch tap</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Multi-touch click</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Multi-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.AxisLayoutFlags.LeftPad" xml:space="preserve">
+    <value>Single-touch swipe</value>
+  </data>
+  <data name="Enum.DualSenseController.AxisLayoutFlags.RightPad" xml:space="preserve">
+    <value>Multi-touch swipe</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B1" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B2" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B3" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B4" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.LeftPadClick" xml:space="preserve">
+    <value>Single-touch click</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.LeftPadTouch" xml:space="preserve">
+    <value>Single-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Multi-touch click</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Multi-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum.KeyFlags.A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.KeyFlags.Alt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="Enum.KeyFlags.Apostrophe" xml:space="preserve">
+    <value>Apostrophe</value>
+  </data>
+  <data name="Enum.KeyFlags.B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.KeyFlags.Backslash" xml:space="preserve">
+    <value>Backslash</value>
+  </data>
+  <data name="Enum.KeyFlags.Backspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="Enum.KeyFlags.C" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Enum.KeyFlags.Comma" xml:space="preserve">
+    <value>Comma</value>
+  </data>
+  <data name="Enum.KeyFlags.Control" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="Enum.KeyFlags.D" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="Enum.KeyFlags.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Enum.KeyFlags.E" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="Enum.KeyFlags.End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="Enum.KeyFlags.Enter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="Enum.KeyFlags.Equal" xml:space="preserve">
+    <value>Equal</value>
+  </data>
+  <data name="Enum.KeyFlags.Escape" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="Enum.KeyFlags.F" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="Enum.KeyFlags.F1" xml:space="preserve">
+    <value>F1</value>
+  </data>
+  <data name="Enum.KeyFlags.F10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="Enum.KeyFlags.F11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="Enum.KeyFlags.F12" xml:space="preserve">
+    <value>F12</value>
+  </data>
+  <data name="Enum.KeyFlags.F2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="Enum.KeyFlags.F3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="Enum.KeyFlags.F4" xml:space="preserve">
+    <value>F4</value>
+  </data>
+  <data name="Enum.KeyFlags.F5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="Enum.KeyFlags.F6" xml:space="preserve">
+    <value>F6</value>
+  </data>
+  <data name="Enum.KeyFlags.F7" xml:space="preserve">
+    <value>F7</value>
+  </data>
+  <data name="Enum.KeyFlags.F8" xml:space="preserve">
+    <value>F8</value>
+  </data>
+  <data name="Enum.KeyFlags.F9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="Enum.KeyFlags.G" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="Enum.KeyFlags.Grave" xml:space="preserve">
+    <value>Grave</value>
+  </data>
+  <data name="Enum.KeyFlags.H" xml:space="preserve">
+    <value>H</value>
+  </data>
+  <data name="Enum.KeyFlags.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum.KeyFlags.I" xml:space="preserve">
+    <value>I</value>
+  </data>
+  <data name="Enum.KeyFlags.Insert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Enum.KeyFlags.J" xml:space="preserve">
+    <value>J</value>
+  </data>
+  <data name="Enum.KeyFlags.K" xml:space="preserve">
+    <value>K</value>
+  </data>
+  <data name="Enum.KeyFlags.L" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum.KeyFlags.M" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Enum.KeyFlags.Minus" xml:space="preserve">
+    <value>Minus</value>
+  </data>
+  <data name="Enum.KeyFlags.N" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="Enum.KeyFlags.O" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="Enum.KeyFlags.P" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Enum.KeyFlags.Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Enum.KeyFlags.Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Enum.KeyFlags.Q" xml:space="preserve">
+    <value>Q</value>
+  </data>
+  <data name="Enum.KeyFlags.R" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum.KeyFlags.S" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Enum.KeyFlags.Semicolon" xml:space="preserve">
+    <value>Semicolon</value>
+  </data>
+  <data name="Enum.KeyFlags.Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="Enum.KeyFlags.Slash" xml:space="preserve">
+    <value>Slash</value>
+  </data>
+  <data name="Enum.KeyFlags.Space" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="Enum.KeyFlags.T" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="Enum.KeyFlags.Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Enum.KeyFlags.U" xml:space="preserve">
+    <value>U</value>
+  </data>
+  <data name="Enum.KeyFlags.V" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="Enum.KeyFlags.W" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="Enum.KeyFlags.X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.KeyFlags.Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.KeyFlags.Z" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="Enum.MotionOuput.LeftStick" xml:space="preserve">
+    <value>LeftStick</value>
+  </data>
+  <data name="Enum.MotionOuput.MoveCursor" xml:space="preserve">
+    <value>MoveCursor</value>
+  </data>
+  <data name="Enum.MotionOuput.RightStick" xml:space="preserve">
+    <value>RightStick</value>
+  </data>
+  <data name="Enum.MotionOuput.ScrollWheel" xml:space="preserve">
+    <value>ScrollWheel</value>
+  </data>
+  <data name="Enum.ProController.AxisLayoutFlags.L2" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="Enum.ProController.AxisLayoutFlags.R2" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B1" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B2" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B3" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B4" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Back" xml:space="preserve">
+    <value>Minus</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.L1" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.R1" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Special" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Special2" xml:space="preserve">
+    <value>Capture</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Start" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.LeftStick" xml:space="preserve">
+    <value>LeftStick</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
+    <value>RightStick</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Injection" xml:space="preserve">
+    <value>Injection (recommended)</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
+    <value>Redirection</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrder" xml:space="preserve">
+    <value>Improve virtual controller detection</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderDesc" xml:space="preserve">
+    <value>Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn't detect your inputs (requires device reboot).</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+    <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+    <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
 </root>
