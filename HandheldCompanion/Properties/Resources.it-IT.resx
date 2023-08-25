@@ -2278,4 +2278,46 @@
   <data name="Enum.KeyFlags.M" xml:space="preserve">
     <value>M</value>
   </data>
+  <data name="Controller_Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Controller_Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="Controller_Hide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="Controller_Unhide" xml:space="preserve">
+    <value>Unhide</value>
+  </data>
+  <data name="Controller_Virtual" xml:space="preserve">
+    <value>Virtual </value>
+  </data>
+  <data name="MainWindow_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="MainWindow_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MainWindow_MainWindow" xml:space="preserve">
+    <value>Main Window</value>
+  </data>
+  <data name="MainWindow_Navigate" xml:space="preserve">
+    <value>Navigate</value>
+  </data>
+  <data name="MainWindow_QuickTools" xml:space="preserve">
+    <value>Quick Tools</value>
+  </data>
+  <data name="MainWindow_Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
+    <value>External</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
+    <value>Are you sure you want to apply this template? All layout settings will be overridden.</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
+    <value>You can't undo this action. Previously applied template: {0}</value>
+  </data>
 </root>

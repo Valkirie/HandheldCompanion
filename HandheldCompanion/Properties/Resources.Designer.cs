@@ -332,6 +332,51 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connect.
+        /// </summary>
+        public static string Controller_Connect {
+            get {
+                return ResourceManager.GetString("Controller_Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        public static string Controller_Disconnect {
+            get {
+                return ResourceManager.GetString("Controller_Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide.
+        /// </summary>
+        public static string Controller_Hide {
+            get {
+                return ResourceManager.GetString("Controller_Hide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unhide.
+        /// </summary>
+        public static string Controller_Unhide {
+            get {
+                return ResourceManager.GetString("Controller_Unhide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual .
+        /// </summary>
+        public static string Controller_Virtual {
+            get {
+                return ResourceManager.GetString("Controller_Virtual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide controller on connect.
         /// </summary>
         public static string ControllerPage_CloakDevice {
@@ -3475,11 +3520,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string MainWindow_Back {
+            get {
+                return ResourceManager.GetString("MainWindow_Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        public static string MainWindow_Exit {
+            get {
+                return ResourceManager.GetString("MainWindow_Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
         public static string MainWindow_HandheldCompanion {
             get {
                 return ResourceManager.GetString("MainWindow_HandheldCompanion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main Window.
+        /// </summary>
+        public static string MainWindow_MainWindow {
+            get {
+                return ResourceManager.GetString("MainWindow_MainWindow", resourceCulture);
             }
         }
         
@@ -3511,6 +3583,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Navigate.
+        /// </summary>
+        public static string MainWindow_Navigate {
+            get {
+                return ResourceManager.GetString("MainWindow_Navigate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
         public static string MainWindow_navOverlay {
@@ -3534,6 +3615,24 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_OK {
             get {
                 return ResourceManager.GetString("MainWindow_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quick Tools.
+        /// </summary>
+        public static string MainWindow_QuickTools {
+            get {
+                return ResourceManager.GetString("MainWindow_QuickTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string MainWindow_Select {
+            get {
+                return ResourceManager.GetString("MainWindow_Select", resourceCulture);
             }
         }
         

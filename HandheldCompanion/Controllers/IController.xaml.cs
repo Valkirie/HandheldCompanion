@@ -144,7 +144,7 @@ namespace HandheldCompanion.Controllers
         protected void DrawControls()
         {
             // update name
-            ui_name.Text = (IsVirtual() ? "Virtual " : string.Empty) + ToString();
+            ui_name.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
 
             // virtual controller shouldn't be visible
             if (IsVirtual())
@@ -156,8 +156,8 @@ namespace HandheldCompanion.Controllers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                ui_button_hook.Content = IsPlugged() ? "Disconnect" : "Connect";
-                ui_button_hide.Content = IsHidden() ? "Unhide" : "Hide";
+                ui_button_hook.Content = IsPlugged() ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
+                ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
                 ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
             });
         }

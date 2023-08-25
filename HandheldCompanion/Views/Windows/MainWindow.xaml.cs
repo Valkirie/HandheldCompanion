@@ -122,12 +122,12 @@ public partial class MainWindow : GamepadWindow
 
         notifyIcon.DoubleClick += (sender, e) => { SwapWindowState(); };
 
-        AddNotifyIconItem("Main Window");
-        AddNotifyIconItem("Quick Tools");
+        AddNotifyIconItem(Properties.Resources.MainWindow_MainWindow);
+        AddNotifyIconItem(Properties.Resources.MainWindow_QuickTools);
         
         AddNotifyIconSeparator();
 
-        AddNotifyIconItem("Exit");
+        AddNotifyIconItem(Properties.Resources.MainWindow_Exit);
 
         // paths
         CurrentExe = process.MainModule.FileName;
@@ -285,10 +285,10 @@ public partial class MainWindow : GamepadWindow
                 default:
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUISelectDesc.Text = "Select";
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
 
                         GamepadUIBack.Visibility = Visibility.Visible;
-                        GamepadUIBackDesc.Text = "Back";
+                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
                     }
                     break;
 
@@ -302,7 +302,7 @@ public partial class MainWindow : GamepadWindow
                 case "NavigationViewItem":
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUISelectDesc.Text = "Navigate";
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
 
                         GamepadUIBack.Visibility = Visibility.Collapsed;
                     }
