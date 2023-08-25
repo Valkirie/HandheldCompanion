@@ -3718,7 +3718,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Playstation DualSense.
+        ///   Looks up a localized string similar to PlayStation DualSense.
         /// </summary>
         public static string OverlayPage_DualSenseController {
             get {
@@ -4177,6 +4177,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to apply this template? All layout settings will be overridden..
+        /// </summary>
+        public static string ProfilesPage_AreYouSureApplyTemplate1 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureApplyTemplate1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can&apos;t undo this action. Previously applied template: {0}.
+        /// </summary>
+        public static string ProfilesPage_AreYouSureApplyTemplate2 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_AreYouSureApplyTemplate2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete?.
         /// </summary>
         public static string ProfilesPage_AreYouSureDelete1 {
@@ -4222,7 +4240,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Automatic adjustement of TDP based on measured FPS and requested FPS target.
+        ///   Looks up a localized string similar to Automatic adjustment of TDP based on measured FPS and requested FPS target.
         /// </summary>
         public static string ProfilesPage_AutoTDPDesc {
             get {

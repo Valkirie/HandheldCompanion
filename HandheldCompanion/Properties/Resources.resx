@@ -2092,6 +2092,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>You can't undo this action. Previously applied template: {0}</value>
+  </data>
   <data name="Enum.KeyFlags.A" xml:space="preserve">
     <value>A</value>
   </data>
