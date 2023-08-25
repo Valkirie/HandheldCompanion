@@ -58,6 +58,7 @@
                         Name="OverlayDisplayLevelFull"
                         Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Full}"
                         IsEnabled="False" />
+                    <ComboBoxItem Name="OverlayDisplayLevelExternal" Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_External}" />
                 </ComboBox>
             </Border>
         </ui:SimpleStackPanel>

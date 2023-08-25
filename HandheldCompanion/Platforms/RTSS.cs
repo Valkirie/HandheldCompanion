@@ -170,7 +170,7 @@ public class RTSS : IPlatform
 
         do
         {
-            /* 
+            /*
              * loop until we either:
              * - got an RTSS entry
              * - process no longer exists
@@ -323,17 +323,21 @@ public class RTSS : IPlatform
         return current;
     }
 
-    private bool SetTargetFPS(int Limit)
+    public bool SetEnableOSD(bool enable)
     {
         if (!IsRunning())
             return false;
 
         try
         {
-            if (SetProfileProperty("FramerateLimit", Limit))
+            // Ensure Global profile is loaded
+            LoadProfile();
+
+            // Set EnableOSD as requested
+            if (SetProfileProperty("EnableOSD", enable ? 1 : 0))
             {
+                // Save and reload profile
                 SaveProfile();
-                UpdateSettings();
                 UpdateProfiles();
 
                 return true;
@@ -341,6 +345,35 @@ public class RTSS : IPlatform
         }
         catch
         {
+            LogManager.LogWarning("Failed to set OSD visibility settings in RTSS");
+        }
+
+        return false;
+    }
+
+    private bool SetTargetFPS(int Limit)
+    {
+        if (!IsRunning())
+            return false;
+
+        try
+        {
+            // Ensure Global profile is loaded
+            LoadProfile();
+
+            // Set Framerate Limit as requested
+            if (SetProfileProperty("FramerateLimit", Limit))
+            {
+                // Save and reload profile
+                SaveProfile();
+                UpdateProfiles();
+
+                return true;
+            }
+        }
+        catch
+        {
+            LogManager.LogWarning("Failed to set Framerate Limit in RTSS");
         }
 
         /*

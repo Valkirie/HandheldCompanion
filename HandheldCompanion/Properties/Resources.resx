@@ -767,7 +767,7 @@
     <value>Motion activation</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
-    <value>With motion input disabled, use selected button(s) to enable motion, 
+    <value>With motion input disabled, use selected button(s) to enable motion,
 with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
@@ -1447,6 +1447,9 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
     <value>Minimal</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
+    <value>External</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>Change the virtual controller layout</value>

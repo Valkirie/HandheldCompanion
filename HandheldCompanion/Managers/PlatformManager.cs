@@ -95,17 +95,18 @@ public static class PlatformManager
 
                         switch (level)
                         {
-                            case 0:
+                            case 0: // Disabled
                                 CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
                                 CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
                                 break;
                             default:
-                            case 1:
+                            case 1: // Minimal
                                 CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                                 CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
                                 break;
-                            case 2:
-                            case 3:
+                            case 2: // Extended
+                            case 3: // Full
+                            case 4: // External
                                 CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
                                 CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
                                 break;
@@ -121,10 +122,10 @@ public static class PlatformManager
 
     private static void MonitorPlatforms()
     {
-        /* 
-         * Dependencies: 
-         * HWInfo: OSD 
-         * RTSS: AutoTDP, framerate limiter, OSD 
+        /*
+         * Dependencies:
+         * HWInfo: OSD
+         * RTSS: AutoTDP, framerate limiter, OSD
          */
 
         // Check if the current needs are the same as the previous needs
@@ -137,7 +138,11 @@ public static class PlatformManager
             if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
+                {
+                    // Start and enable OSD
                     RTSS.Start();
+                    RTSS.SetEnableOSD(true);
+                }
             if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
             {
                 // This condition checks if OnScreenDisplayComplex is true
@@ -165,11 +170,15 @@ public static class PlatformManager
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
                     RTSS.Start();
+
+            // Only stop HWiNFO if it was running before
+            // Only stop HWiNFO if it is installed
             if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
-                // Only stop HWiNFO if it was running before
-                // Only stop HWiNFO if it is installed
                 if (HWiNFO.IsInstalled)
                     HWiNFO.Stop(true);
+
+            // Disable OSD
+            RTSS.SetEnableOSD(false);
         }
         else
         {
@@ -179,7 +188,12 @@ public static class PlatformManager
             {
                 // Only stop HWiNFO and RTSS if they were running before and if they are installed
                 if (HWiNFO.IsInstalled) HWiNFO.Stop(true);
-                if (RTSS.IsInstalled) RTSS.Stop();
+                if (RTSS.IsInstalled)
+                {
+                    // Disable OSD
+                    RTSS.SetEnableOSD(false);
+                    RTSS.Stop();
+                }
             }
         }
 

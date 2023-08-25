@@ -3898,6 +3898,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_External {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_External", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Full.
         /// </summary>
         public static string OverlayPage_OverlayDisplayLevel_Full {
@@ -4915,7 +4924,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to With motion input disabled, use selected button(s) to enable motion, 
+        ///   Looks up a localized string similar to With motion input disabled, use selected button(s) to enable motion,
         ///with motion input enabled, use selected button(s) to disable motion..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
