@@ -1085,6 +1085,7 @@
 
                                     <Grid IsEnabled="{Binding ElementName=Toggle_UniversalMotion, Path=IsOn}">
                                         <Button
+                                            Name="MotionControlAdditional"
                                             HorizontalAlignment="Stretch"
                                             Click="b_AdditionalSettings_Click"
                                             Content="{x:Static resx:Resources.ProfilesPage_AdditionalSettings}" />

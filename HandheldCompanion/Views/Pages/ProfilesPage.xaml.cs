@@ -322,18 +322,30 @@ public partial class ProfilesPage : Page
         if (cB_Profiles.SelectedItem is null)
             return;
 
-        // if an update is pending, execute it and stop timer
+        // if an update is pending, cut it short, it will distirb profile selection though
         if (UpdateTimer.Enabled)
         {
             UpdateTimer.Stop();
             SubmitProfile();
         }
 
-        // update current profile
-        var profile = (Profile)cB_Profiles.SelectedItem;
-        currentProfile = profile.Clone() as Profile;
+        currentProfile = (Profile)cB_Profiles.SelectedItem;
 
         DrawProfile();
+    }
+
+    private void UpdateMotionControlsVisibility()
+    {
+        bool MotionMapped = false;
+        if (currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
+            if (action.ActionType != ActionType.Disabled)
+                MotionMapped = true;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            MotionControlAdditional.IsEnabled = MotionMapped ? true : false;
+        });
     }
 
     private void DrawProfile()
@@ -346,10 +358,8 @@ public partial class ProfilesPage : Page
         {
             using (new ScopedLock(updateLock))
             {
-                // disable button if is default profile or application is running
-                b_DeleteProfile.IsEnabled =
-                    !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
-
+                // disable delete button if is default profile or running
+                b_DeleteProfile.IsEnabled = !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
                 // prevent user from renaming default profile
                 tB_ProfileName.IsEnabled = !currentProfile.Default;
                 // prevent user from disabling default profile
@@ -375,6 +385,8 @@ public partial class ProfilesPage : Page
                 cB_GyroSteering.SelectedIndex = currentProfile.SteeringAxis;
                 cB_InvertHorizontal.IsChecked = currentProfile.MotionInvertHorizontal;
                 cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
+
+                UpdateMotionControlsVisibility();
 
                 // Sustained TDP settings (slow, stapm, long)
                 TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
