@@ -121,7 +121,7 @@
     <value>Sobre</value>
   </data>
   <data name="AboutPage_AboutDescription" xml:space="preserve">
-    <value>Uma combinação de serviço Windows e aplicação otimizada com interface de toque para melhorar a experiência de seu computador de jogo portátil de mão. Os recursos incluem: controle de movimento conhecido também como controle giroscópico, simulação de controlador virtual, sobreposição de acesso rápido para ferramentas, touchpads virtuais, modelo 3D de controlador, sistema de perfis de configurações baseado na aplicação ativa. Handheld Companion depende do driver do ViGEmBus e bibliotecas ViGEmClient como também o filtro de driver do HidHide em modo kernel. Algoritmos de controle de movimentos são baseados no trabalho de Jibbsmart e informação disponível em GyroWiki.</value>
+    <value>Uma combinação de serviço Windows e aplicação otimizada com interface de toque para melhorar a experiência de seu computador de jogo portátil de mão. Os recursos incluem: controle de movimento conhecido também como controle giroscópico, simulação de controlador virtual, sobreposição de acesso rápido para ferramentas, touchpads virtuais, modelo 3D de controlador, sistema de perfis de configurações baseado na aplicação ativa. Handheld Companion depende do driver do ViGEmBus e bibliotecas ViGEmClient como também o filtro de driver do HidHide em modo kernel. Algoritmos de controle de movimentos são baseados no trabalho de Jibbsmart e informação disponível em GyroWiki. </value>
   </data>
   <data name="AboutPage_Accelerometer" xml:space="preserve">
     <value>Acelerômetro</value>
@@ -404,7 +404,7 @@
     <value>Opções de controle</value>
   </data>
   <data name="OverlayPage_DualSenseController" xml:space="preserve">
-    <value>Playstation DualSense</value>
+    <value>PlayStation DualSense</value>
   </data>
   <data name="OverlayPage_EmulatedController" xml:space="preserve">
     <value>Controle emulado</value>
