@@ -454,22 +454,6 @@ public partial class ProfilesPage : Page
                 }
             }
         });
-
-        // prepare layout editor
-        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
-        {
-            Name = currentProfile.LayoutTitle,
-            Description = "Your modified layout for this executable.",
-            Author = Environment.UserName,
-            Executable = currentProfile.Executable,
-            Product = currentProfile.Name
-        };
-        layoutTemplate.Updated += Template_Updated;
-
-        using (new ScopedLock(layoutLock))
-        {
-            MainWindow.layoutPage.UpdateLayout(layoutTemplate);
-        }
     }
 
     private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -694,22 +678,33 @@ public partial class ProfilesPage : Page
 
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
+        // prepare layout editor
+        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
+        {
+            Name = currentProfile.LayoutTitle,
+            Description = "Your modified layout for this executable.",
+            Author = Environment.UserName,
+            Executable = currentProfile.Executable,
+            Product = currentProfile.Name,
+        };
+        layoutTemplate.Updated += Template_Updated;
+
+        // no lock needed here, layout itself will block any events back by its own lock
+        MainWindow.layoutPage.UpdateLayout(layoutTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
     private void Template_Updated(LayoutTemplate layoutTemplate)
     {
-        // wait until lock is released
-        if (layoutLock)
-            return;
-        
-        currentProfile.Layout = layoutTemplate.Layout;
-
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             currentProfile.LayoutTitle = layoutTemplate.Name;
         });
+
+        currentProfile.Layout = layoutTemplate.Layout;
+        UpdateMotionControlsVisibility();
+
         RequestUpdate();
     }
 

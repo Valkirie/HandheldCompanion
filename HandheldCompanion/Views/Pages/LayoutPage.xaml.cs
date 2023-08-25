@@ -364,15 +364,13 @@ public partial class LayoutPage : Page
                     currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
                     currentTemplate.Layout.GyroLayout = newLayout.GyroLayout;
 
-
                     currentTemplate.Name = layoutTemplate.Name;
                     currentTemplate.Description = layoutTemplate.Description;
                     currentTemplate.Guid = layoutTemplate.Guid; // not needed
 
-                    UpdatePages();
-
                     // the whole layout has been updated without notification, trigger one
                     currentTemplate.Layout.UpdateLayout();
+
                     UpdatePages();
                 }
                 break;

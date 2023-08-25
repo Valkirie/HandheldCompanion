@@ -7,6 +7,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using WindowsInput.Native;
 
 namespace HandheldCompanion.Controls;
 
@@ -97,6 +98,9 @@ public partial class GyroMapping : IMapping
         base.SetIActions(actions);
 
         // update UI
+        GyroHotkey.inputsChord.State = ((GyroActions)actions).MotionTrigger.Clone() as ButtonState;
+        GyroHotkey.DrawInput();
+
         ActionComboBox.SelectedIndex = (int)actions.ActionType;
     }
 
@@ -135,6 +139,7 @@ public partial class GyroMapping : IMapping
                 {
                     Axis = AxisLayoutFlags.RightStick,
                     AxisAntiDeadZone = 15,
+                    MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState
                 };
             }
 
@@ -173,6 +178,7 @@ public partial class GyroMapping : IMapping
                     MouseType = MouseActionsType.Move,
                     Sensivity = 33,
                     Deadzone = 10,
+                    MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState
                 };
             }
 
@@ -209,10 +215,6 @@ public partial class GyroMapping : IMapping
             Axis2MouseDeadzone.Value = ((MouseActions)Actions).Deadzone;
             Axis2MouseAcceleration.Value = ((MouseActions)this.Actions).Acceleration;
         }
-
-        // todo: improve me ?
-        GyroHotkey.inputsChord.State = ((GyroActions)Actions).MotionTrigger.Clone() as ButtonState;
-        GyroHotkey.DrawInput();
 
         cB_Input.SelectedIndex = (int)((GyroActions)this.Actions).MotionInput;
         cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)((GyroActions)this.Actions).MotionMode;
@@ -480,6 +482,10 @@ public partial class GyroMapping : IMapping
             case "shortcutProfilesPage@":
             case "shortcutProfilesPage@@":
                 ((GyroActions)this.Actions).MotionTrigger = inputs.State.Clone() as ButtonState;
+
+                // recover previous motion trigger, if any
+                GyroHotkey.inputsChord.State = ((GyroActions)Actions).MotionTrigger.Clone() as ButtonState;
+                GyroHotkey.DrawInput();
                 break;
         }
 

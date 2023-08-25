@@ -329,7 +329,7 @@ public partial class QuickProfilesPage : Page
             }
 
             // update profile
-            currentProfile = profile.Clone() as Profile;
+            currentProfile = profile;
 
             // UI thread
             Application.Current.Dispatcher.BeginInvoke(() =>
