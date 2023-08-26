@@ -389,12 +389,11 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.17.0.0'
+#define MyAppVersion '0.18.0.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
 #define MyAppExeName "HandheldCompanion.exe"
-#define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
 
 #ifdef UseDotNet70
@@ -456,10 +455,10 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
+Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; Flags: runascurrentuser runhidden
+Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; Flags: runascurrentuser runhidden
 
 [UninstallRun]
-Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
-Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; RunOnceId: "DeleteService"; Flags: runascurrentuser runhidden
 Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
 
 [UninstallDelete]
@@ -467,12 +466,10 @@ Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 
 [Code]
-#include "./UpdateUninstallWizard.iss"       
-
+#include "./UpdateUninstallWizard.iss"
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
@@ -487,7 +484,6 @@ begin
       if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
         DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
       DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
-      DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
       exit;
     end
     else
@@ -507,7 +503,6 @@ begin
       if not(checkListBox.checked[applicationSettingsCheck]) then
       begin 
         DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
-        DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
       end; 
     end;   
                    
