@@ -340,6 +340,8 @@ public partial class QuickProfilesPage : Page
                 {
                     // update profile name
                     CurrentProfileName.Text = currentProfile.Name;
+                    Toggle_ControllerLayout.IsEnabled = currentProfile.Default ? false : true;
+                    Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
 
                     // gyro layout
                     if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -878,6 +880,19 @@ public partial class QuickProfilesPage : Page
             return;
 
         currentProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
+        RequestUpdate();
+    }
+
+    private void Toggle_ControllerLayout_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (currentProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        currentProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
         RequestUpdate();
     }
 }
