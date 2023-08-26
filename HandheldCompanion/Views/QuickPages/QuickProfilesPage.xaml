@@ -103,8 +103,7 @@
                 Style="{StaticResource BodyStrongTextBlockStyle}"
                 Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
 
-            <Grid Name="StackProfileUMCSettings" d:Visibility="Visible">
-
+            <Grid>
                 <!--  Header  -->
                 <Border CornerRadius="{DynamicResource ControlCornerRadius}">
 
@@ -115,12 +114,30 @@
                     </Border.IsEnabled>
 
                     <ui:SimpleStackPanel Spacing="6">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="420" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="{x:Static resx:Resources.ProfilesPage_StyleofOutput}"
+                                ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Static resx:Resources.ProfilesPage_UMCSelectionRightLeftDesc}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
 
+                        <!--  Content  -->
+                        <ComboBox
+                            Name="cB_Output"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            SelectionChanged="cB_Output_SelectionChanged" />
+
+                        <ui:SimpleStackPanel
+                            Name="StackProfileUMCSettings"
+                            d:Visibility="Visible"
+                            Spacing="6"
+                            Visibility="{Binding ElementName=cB_Output, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
                                     Style="{StaticResource BodyTextBlockStyle}"
@@ -130,39 +147,17 @@
                                     Name="Text_InputHint"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.ProfilesPage_StyleofInputTooltip}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
-                        </Grid>
 
-                        <!--  Content  -->
-                        <ComboBox
-                            Name="cB_Input"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectionChanged="cB_Input_SelectionChanged" />
+                            <!--  Content  -->
+                            <ComboBox
+                                Name="cB_Input"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                SelectionChanged="cB_Input_SelectionChanged" />
 
-                        <Grid>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock
-                                    Style="{StaticResource BodyTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_StyleofOutput}"
-                                    ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_UMCSelectionRightLeftDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Grid>
-
-                        <!--  Content  -->
-                        <ComboBox
-                            Name="cB_Output"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectionChanged="cB_Output_SelectionChanged" />
-
-                        <Grid>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
                                     Style="{StaticResource BodyTextBlockStyle}"
@@ -174,133 +169,133 @@
                                     Text="{x:Static resx:Resources.ProfilesPage_UMCMotionOnOffDesc}"
                                     TextWrapping="Wrap" />
                             </StackPanel>
-                        </Grid>
-
-                        <!--  Content  -->
-                        <ComboBox
-                            Name="cB_UMC_MotionDefaultOffOn"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
-                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
-                        </ComboBox>
-
-                        <!--  Content  -->
-                        <Grid
-                            Name="UMC_Activator"
-                            Width="Auto"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center" />
-
-                        <ui:SimpleStackPanel Name="GridAntiDeadzone" Spacing="6">
-                            <Grid>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-                            </Grid>
 
                             <!--  Content  -->
-                            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock
-                                    Width="17"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Value, StringFormat=N0, ElementName=SliderUMCAntiDeadzone, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
-                                <Slider
-                                    x:Name="SliderUMCAntiDeadzone"
-                                    Margin="8,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    AutoToolTipPrecision="0"
-                                    IsMoveToPointEnabled="True"
-                                    IsSnapToTickEnabled="True"
-                                    LargeChange="10"
-                                    Maximum="40"
-                                    SmallChange="1"
-                                    Style="{DynamicResource SliderStyle1}"
-                                    TickPlacement="BottomRight"
-                                    ValueChanged="SliderUMCAntiDeadzone_ValueChanged" />
-                            </DockPanel>
-                        </ui:SimpleStackPanel>
-
-                        <ui:SimpleStackPanel Name="GridSensivity" Spacing="6">
-                            <Grid>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.SettingsMode0_Sensitivity}"
-                                        ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.SettingsMode0_SensitivityDesc}"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-                            </Grid>
+                            <ComboBox
+                                Name="cB_UMC_MotionDefaultOffOn"
+                                HorizontalAlignment="Stretch"
+                                SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
+                                <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                            </ComboBox>
 
                             <!--  Content  -->
-                            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityX}" />
-                                <TextBlock
-                                    Width="30"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}"
-                                    TextAlignment="Center" />
-                                <Slider
-                                    x:Name="SliderSensitivityX"
-                                    Margin="8,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    AutoToolTipPrecision="1"
-                                    IsMoveToPointEnabled="True"
-                                    IsSnapToTickEnabled="True"
-                                    LargeChange="0.1"
-                                    Maximum="3.0"
-                                    Minimum="0.1"
-                                    SmallChange="0.1"
-                                    Style="{DynamicResource SliderStyle1}"
-                                    TickFrequency="0.1"
-                                    TickPlacement="BottomRight"
-                                    ValueChanged="SliderSensitivityX_ValueChanged"
-                                    Value="1" />
-                            </DockPanel>
+                            <Grid
+                                Name="UMC_Activator"
+                                Width="Auto"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center" />
 
-                            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityY}" />
-                                <TextBlock
-                                    Width="30"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}"
-                                    TextAlignment="Center" />
-                                <Slider
-                                    x:Name="SliderSensitivityY"
-                                    Margin="8,0,0,0"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    AutoToolTipPrecision="1"
-                                    IsMoveToPointEnabled="True"
-                                    IsSnapToTickEnabled="True"
-                                    LargeChange="0.1"
-                                    Maximum="3.0"
-                                    Minimum="0.1"
-                                    SmallChange="0.1"
-                                    Style="{DynamicResource SliderStyle1}"
-                                    TickFrequency="0.1"
-                                    TickPlacement="BottomRight"
-                                    ValueChanged="SliderSensitivityY_ValueChanged"
-                                    Value="1" />
-                            </DockPanel>
+                            <ui:SimpleStackPanel Name="GridAntiDeadzone" Spacing="6">
+                                <Grid>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzone}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_UMCAntiDeadzoneDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!--  Content  -->
+                                <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBlock
+                                        Width="17"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Value, StringFormat=N0, ElementName=SliderUMCAntiDeadzone, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
+                                    <Slider
+                                        x:Name="SliderUMCAntiDeadzone"
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        AutoToolTipPrecision="0"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="10"
+                                        Maximum="40"
+                                        SmallChange="1"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickPlacement="BottomRight"
+                                        ValueChanged="SliderUMCAntiDeadzone_ValueChanged" />
+                                </DockPanel>
+                            </ui:SimpleStackPanel>
+
+                            <ui:SimpleStackPanel Name="GridSensivity" Spacing="6">
+                                <Grid>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.SettingsMode0_Sensitivity}"
+                                            ToolTip="{x:Static resx:Resources.ProfilesPage_StyleofOutputTooltip}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.SettingsMode0_SensitivityDesc}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!--  Content  -->
+                                <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityX}" />
+                                    <TextBlock
+                                        Width="30"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                    <Slider
+                                        x:Name="SliderSensitivityX"
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        AutoToolTipPrecision="1"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="0.1"
+                                        Maximum="3.0"
+                                        Minimum="0.1"
+                                        SmallChange="0.1"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="0.1"
+                                        TickPlacement="BottomRight"
+                                        ValueChanged="SliderSensitivityX_ValueChanged"
+                                        Value="1" />
+                                </DockPanel>
+
+                                <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.ProfilesPage_SensitivityY}" />
+                                    <TextBlock
+                                        Width="30"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                    <Slider
+                                        x:Name="SliderSensitivityY"
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        AutoToolTipPrecision="1"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="0.1"
+                                        Maximum="3.0"
+                                        Minimum="0.1"
+                                        SmallChange="0.1"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="0.1"
+                                        TickPlacement="BottomRight"
+                                        ValueChanged="SliderSensitivityY_ValueChanged"
+                                        Value="1" />
+                                </DockPanel>
+                            </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Border>

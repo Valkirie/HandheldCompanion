@@ -198,7 +198,7 @@ public static class ControllerManager
             {
                 case "VibrationStrength":
                     uint VibrationStrength = Convert.ToUInt32(value);
-                    targetController?.SetVibrationStrength(VibrationStrength, IsInitialized);
+                    targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
                     break;
 
                 case "SteamControllerMute":

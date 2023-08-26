@@ -27,7 +27,7 @@ public partial class QuickProfilesPage : Page
 
     private LockObject updateLock = new();
 
-    private Hotkey ProfilesPageHotkey = new(61);
+    private Hotkey GyroHotkey = new(61);
     private Profile realProfile;
 
     public QuickProfilesPage(string Tag) : this()
@@ -55,6 +55,57 @@ public partial class QuickProfilesPage : Page
 
         MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
         MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+
+        foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
+        {
+            // create panel
+            ComboBoxItem comboBoxItem = new ComboBoxItem()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+            };
+
+            SimpleStackPanel simpleStackPanel = new SimpleStackPanel
+            {
+                Spacing = 6,
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // create icon
+            var icon = new FontIcon();
+
+            switch (mode)
+            {
+                case MotionOuput.Disabled:
+                    icon.Glyph = "\uE8D8";
+                    break;
+                case MotionOuput.RightStick:
+                    icon.Glyph = "\uF109";
+                    break;
+                case MotionOuput.LeftStick:
+                    icon.Glyph = "\uF108";
+                    break;
+                case MotionOuput.MoveCursor:
+                    icon.Glyph = "\uE962";
+                    break;
+                case MotionOuput.ScrollWheel:
+                    icon.Glyph = "\uEC8F";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(icon.Glyph))
+                simpleStackPanel.Children.Add(icon);
+
+            // create textblock
+            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
+            var text = new TextBlock { Text = description };
+
+            simpleStackPanel.Children.Add(text);
+
+            comboBoxItem.Content = simpleStackPanel;
+            cB_Output.Items.Add(comboBoxItem);
+        }
 
         foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
         {
@@ -103,55 +154,6 @@ public partial class QuickProfilesPage : Page
 
             comboBoxItem.Content = simpleStackPanel;
             cB_Input.Items.Add(comboBoxItem);
-        }
-
-        foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
-        {
-            // create panel
-            ComboBoxItem comboBoxItem = new ComboBoxItem()
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-            };
-
-            SimpleStackPanel simpleStackPanel = new SimpleStackPanel
-            {
-                Spacing = 6,
-                Orientation = Orientation.Horizontal,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            // create icon
-            var icon = new FontIcon();
-
-            switch (mode)
-            {
-                default:
-                case MotionOuput.RightStick:
-                    icon.Glyph = "\uF109";
-                    break;
-                case MotionOuput.LeftStick:
-                    icon.Glyph = "\uF108";
-                    break;
-                case MotionOuput.MoveCursor:
-                    icon.Glyph = "\uE962";
-                    break;
-                case MotionOuput.ScrollWheel:
-                    icon.Glyph = "\uEC8F";
-                    break;
-            }
-
-            if (!string.IsNullOrEmpty(icon.Glyph))
-                simpleStackPanel.Children.Add(icon);
-
-            // create textblock
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-
-            simpleStackPanel.Children.Add(text);
-
-            comboBoxItem.Content = simpleStackPanel;
-            cB_Output.Items.Add(comboBoxItem);
         }
 
         // device settings
@@ -339,38 +341,38 @@ public partial class QuickProfilesPage : Page
                     // update profile name
                     CurrentProfileName.Text = currentProfile.Name;
 
-                    // update gyro actions
-                    if (currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+                    // gyro layout
+                    if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
                     {
-                        StackProfileUMCSettings.Visibility = Visibility.Visible;
-                        cB_Input.SelectedIndex = (int)((GyroActions)currentAction).MotionInput;
-
-                        // IActions specific
+                        // no gyro layout available, mark as disabled
+                        cB_Output.SelectedIndex = (int)MotionOuput.Disabled;
+                    }
+                    else
+                    {
+                        // IActions
                         GridAntiDeadzone.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
-                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.LeftStick]).Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
-                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.RightStick]).Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
-                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.MoveCursor]).Visibility = currentAction is MouseActions ? Visibility.Visible : Visibility.Collapsed;
-                        ((ComboBoxItem)cB_Output.Items[(int)MotionOuput.ScrollWheel]).Visibility = currentAction is MouseActions ? Visibility.Visible : Visibility.Collapsed;
 
                         if (currentAction is AxisActions)
                         {
-                            cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis - 1;
+                            cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis;
                             SliderUMCAntiDeadzone.Value = ((AxisActions)currentAction).AxisAntiDeadZone;
                         }
                         else if (currentAction is MouseActions)
                         {
-                            cB_Output.SelectedIndex = (int)((MouseActions)currentAction).MouseType - 2;
+                            cB_Output.SelectedIndex = (int)((MouseActions)currentAction).MouseType - 1;
                         }
 
+                        // GyroActions
+                        cB_Input.SelectedIndex = (int)((GyroActions)currentAction).MotionInput;
                         cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)((GyroActions)currentAction).MotionMode;
 
+                        // todo: move me to layout ?
+                        SliderSensitivityX.Value = currentProfile.MotionSensivityX;
+                        SliderSensitivityY.Value = currentProfile.MotionSensivityY;
+
                         // todo: improve me ?
-                        ProfilesPageHotkey.inputsChord.State = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
-                        ProfilesPageHotkey.DrawInput();
-                    }
-                    else
-                    {
-                        StackProfileUMCSettings.Visibility = Visibility.Collapsed;
+                        GyroHotkey.inputsChord.State = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
+                        GyroHotkey.DrawInput();
                     }
 
                     // TDP
@@ -518,17 +520,39 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
-            return;
+        IActions newActions = null;
 
-        if (currentAction is AxisActions)
+        MotionOuput motionOuput = (MotionOuput)cB_Output.SelectedIndex;
+        switch (motionOuput)
         {
-            ((AxisActions)currentAction).Axis = (AxisLayoutFlags)(cB_Output.SelectedIndex + 1);
+            case MotionOuput.Disabled:
+                currentProfile.Layout.RemoveLayout(AxisLayoutFlags.Gyroscope);
+                break;
+            case MotionOuput.LeftStick:
+            case MotionOuput.RightStick:
+                newActions = new AxisActions()
+                {
+                    Axis = GyroActions.DefaultAxisLayoutFlags,
+                    AxisAntiDeadZone = GyroActions.DefaultAxisAntiDeadZone,
+                    MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState
+                };
+                break;
+            case MotionOuput.MoveCursor:
+            case MotionOuput.ScrollWheel:
+                newActions = new MouseActions()
+                {
+                    MouseType = GyroActions.DefaultMouseActionsType,
+                    Sensivity = GyroActions.DefaultSensivity,
+                    Deadzone = GyroActions.DefaultDeadzone,
+                    MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState
+                };
+                break;
         }
-        else if (currentAction is MouseActions)
-        {
-            ((MouseActions)currentAction).MouseType = (MouseActionsType)(cB_Output.SelectedIndex + 2);
-        }
+
+        // proper layout update
+        if (newActions is not null)
+            currentProfile.Layout.UpdateLayout(AxisLayoutFlags.Gyroscope, newActions);
+
         RequestUpdate();
     }
 
@@ -649,7 +673,7 @@ public partial class QuickProfilesPage : Page
                         return;
 
                     // pull hotkey
-                    ProfilesPageHotkey = hotkey;
+                    GyroHotkey = hotkey;
 
                     UMC_Activator.Children.Add(hotkeyBorder);
                 }

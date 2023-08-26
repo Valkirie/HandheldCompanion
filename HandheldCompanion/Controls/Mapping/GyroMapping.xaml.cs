@@ -137,8 +137,8 @@ public partial class GyroMapping : IMapping
                 // default values
                 Actions = new AxisActions()
                 {
-                    Axis = AxisLayoutFlags.RightStick,
-                    AxisAntiDeadZone = 15,
+                    Axis = GyroActions.DefaultAxisLayoutFlags,
+                    AxisAntiDeadZone = GyroActions.DefaultAxisAntiDeadZone,
                     MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState
                 };
             }
@@ -175,9 +175,9 @@ public partial class GyroMapping : IMapping
             {
                 Actions = new MouseActions()
                 {
-                    MouseType = MouseActionsType.Move,
-                    Sensivity = 33,
-                    Deadzone = 10,
+                    MouseType = GyroActions.DefaultMouseActionsType,
+                    Sensivity = GyroActions.DefaultSensivity,
+                    Deadzone = GyroActions.DefaultDeadzone,
                     MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState
                 };
             }

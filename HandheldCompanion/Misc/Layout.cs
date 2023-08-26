@@ -56,9 +56,6 @@ public partial class Layout : ICloneable, IDisposable
                     break;
             }
         }
-
-        // generic gyro mapping
-        GyroLayout[AxisLayoutFlags.Gyroscope] = new AxisActions { Axis = AxisLayoutFlags.RightStick, AxisAntiDeadZone = 15 };
     }
 
     public object Clone()

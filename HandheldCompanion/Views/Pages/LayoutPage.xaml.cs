@@ -283,14 +283,11 @@ public partial class LayoutPage : Page
         // TODO: Not entirely sure what is going on here, but the old templates were still sending
         // events. Shouldn't they be destroyed? Either there is a bug or I don't understand something
         // in C# (probably the latter). Either way this handles/fixes/workarounds the issue.
-        if (layoutTemplate.Layout == currentTemplate.Layout)
-            layoutTemplate.ClearDelegates();
-        else
-        {
-            currentTemplate.ClearDelegates();
+        if (layoutTemplate.Layout != currentTemplate.Layout)
             currentTemplate = layoutTemplate;
-            UpdatePages();
-        }
+
+        // Not lazyness, but we have bi-directional events from either LayoutPage or QuickProfilesPage
+        UpdatePages();
     }
 
     private void UpdatePages()

@@ -23,10 +23,11 @@ public enum MotionInput
 
 public enum MotionOuput
 {
-    LeftStick = 0,
-    RightStick = 1,
-    MoveCursor = 2,
-    ScrollWheel = 3
+    Disabled = 0,
+    LeftStick = 1,
+    RightStick = 2,
+    MoveCursor = 3,
+    ScrollWheel = 4
 }
 
 public enum MotionMode

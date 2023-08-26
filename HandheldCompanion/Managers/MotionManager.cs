@@ -122,6 +122,24 @@ namespace HandheldCompanion.Managers
         {
             Profile current = ProfileManager.GetCurrent();
 
+            if (MainWindow.overlayModel.Visibility == Visibility.Visible && MainWindow.overlayModel.MotionActivated)
+            {
+                Vector3 AngularVelocityRad = new(
+                    -InputUtils.deg2rad(gyroscope[(int)SensorIndex.Raw].X),
+                    -InputUtils.deg2rad(gyroscope[(int)SensorIndex.Raw].Y),
+                    -InputUtils.deg2rad(gyroscope[(int)SensorIndex.Raw].Z));
+                madgwickAHRS.UpdateReport(
+                    AngularVelocityRad.X,
+                    AngularVelocityRad.Y,
+                    AngularVelocityRad.Z,
+                    -accelerometer[(int)SensorIndex.Raw].X,
+                    accelerometer[(int)SensorIndex.Raw].Y,
+                    accelerometer[(int)SensorIndex.Raw].Z,
+                    DeltaSeconds);
+
+                OverlayModelUpdate?.Invoke(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion());
+            }
+
             if (current.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
                 if (action is not null)
                     gyroAction = action as GyroActions;
@@ -159,24 +177,6 @@ namespace HandheldCompanion.Managers
                 case "SettingsMode1":
                     SettingsMode1Update?.Invoke(inclination.Angles);
                     break;
-            }
-
-            if (MainWindow.overlayModel.Visibility == Visibility.Visible && MainWindow.overlayModel.MotionActivated)
-            {
-                Vector3 AngularVelocityRad = new(
-                    -InputUtils.deg2rad(gyroscope[(int)SensorIndex.Raw].X),
-                    -InputUtils.deg2rad(gyroscope[(int)SensorIndex.Raw].Y),
-                    -InputUtils.deg2rad(gyroscope[(int)SensorIndex.Raw].Z));
-                madgwickAHRS.UpdateReport(
-                    AngularVelocityRad.X,
-                    AngularVelocityRad.Y,
-                    AngularVelocityRad.Z,
-                    -accelerometer[(int)SensorIndex.Raw].X,
-                    accelerometer[(int)SensorIndex.Raw].Y,
-                    accelerometer[(int)SensorIndex.Raw].Z,
-                    DeltaSeconds);
-
-                OverlayModelUpdate?.Invoke(madgwickAHRS.GetEuler(), madgwickAHRS.GetQuaternion());
             }
 
             // after this point the code only makes sense if we're actively using mapped gyro

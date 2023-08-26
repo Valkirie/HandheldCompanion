@@ -338,7 +338,7 @@ public partial class ProfilesPage : Page
     {
         bool MotionMapped = false;
         if (currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
-            if (action.ActionType != ActionType.Disabled)
+            if (action is not null && action.ActionType != ActionType.Disabled)
                 MotionMapped = true;
 
         // UI thread (async)
@@ -465,6 +465,19 @@ public partial class ProfilesPage : Page
                         break;
                 }
             }
+
+            // prepare layout editor
+            LayoutTemplate layoutTemplate = new(currentProfile.Layout)
+            {
+                Name = currentProfile.LayoutTitle,
+                Description = "Your modified layout for this executable.",
+                Author = Environment.UserName,
+                Executable = currentProfile.Executable,
+                Product = currentProfile.Name,
+            };
+            layoutTemplate.Updated += Template_Updated;
+
+            MainWindow.layoutPage.UpdateLayout(layoutTemplate);
         });
     }
 
@@ -690,19 +703,6 @@ public partial class ProfilesPage : Page
 
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
-        // prepare layout editor
-        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
-        {
-            Name = currentProfile.LayoutTitle,
-            Description = "Your modified layout for this executable.",
-            Author = Environment.UserName,
-            Executable = currentProfile.Executable,
-            Product = currentProfile.Name,
-        };
-        layoutTemplate.Updated += Template_Updated;
-
-        // no lock needed here, layout itself will block any events back by its own lock
-        MainWindow.layoutPage.UpdateLayout(layoutTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
