@@ -99,7 +99,6 @@
 
         <ui:SimpleStackPanel
             Name="GridProfile"
-            IsEnabled="False"
             Spacing="10">
 
             <Expander HorizontalAlignment="Stretch" IsExpanded="True">

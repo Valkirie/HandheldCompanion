@@ -74,6 +74,9 @@ public static class ProfileManager
             UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
         }
 
+        // force apply default
+        ApplyProfile(GetDefault());
+
         IsInitialized = true;
         Initialized?.Invoke();
 
