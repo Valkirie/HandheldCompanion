@@ -703,6 +703,18 @@ public partial class ProfilesPage : Page
 
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
+        // prepare layout editor
+        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
+        {
+            Name = currentProfile.LayoutTitle,
+            Description = "Your modified layout for this executable.",
+            Author = Environment.UserName,
+            Executable = currentProfile.Executable,
+            Product = currentProfile.Name,
+        };
+        layoutTemplate.Updated += Template_Updated;
+
+        MainWindow.layoutPage.UpdateLayout(layoutTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
