@@ -1,8 +1,6 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
-using LiveCharts.Wpf;
-using Microsoft.Win32.TaskScheduler;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

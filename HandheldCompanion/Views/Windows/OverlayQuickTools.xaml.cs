@@ -18,7 +18,6 @@ using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using System.Windows.Threading;
 using System.Globalization;
-using System.Threading;
 using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
@@ -27,7 +26,6 @@ using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace HandheldCompanion.Views.Windows;
 

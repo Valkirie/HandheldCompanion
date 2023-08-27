@@ -5,7 +5,6 @@ using HandheldCompanion.Inputs;
 using Inkore.UI.WPF.Modern.Controls;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Forms;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

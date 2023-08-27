@@ -2,10 +2,8 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +13,6 @@ using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using static HandheldCompanion.Utils.ProcessUtils;
 using static HandheldCompanion.Utils.XInputPlusUtils;

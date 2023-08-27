@@ -4,7 +4,6 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Views;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
-using Windows.UI.Popups;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers
