@@ -425,6 +425,9 @@ public partial class QuickProfilesPage : Page
         {
             using (new ScopedLock(updateLock))
             {
+                // enable UI
+                GridProfile.IsEnabled = true;
+
                 ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
                 ProfileIcon.Source = processEx.imgSource;
 
@@ -438,6 +441,9 @@ public partial class QuickProfilesPage : Page
                 }
                 else
                 {
+                    // disable UI
+                    GridProfile.IsEnabled = false;
+
                     ProfileIcon.Source = null;
 
                     ProfileToggle.IsEnabled = false;

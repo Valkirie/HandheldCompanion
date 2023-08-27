@@ -97,7 +97,10 @@
 
         <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
-        <ui:SimpleStackPanel Name="GridProfile" Spacing="10">
+        <ui:SimpleStackPanel
+            Name="GridProfile"
+            IsEnabled="False"
+            Spacing="10">
 
             <Expander HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
