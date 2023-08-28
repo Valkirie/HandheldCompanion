@@ -1,9 +1,11 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using ControllerCommon.Pipes;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using LiveCharts;
 using LiveCharts.Defaults;
+using System;
+using System.Numerics;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.Pages.Profiles;
 
@@ -12,9 +14,10 @@ namespace HandheldCompanion.Views.Pages.Profiles;
 /// </summary>
 public partial class SettingsMode1 : Page
 {
+    private LockObject updateLock = new();
+
     private readonly int SteeringArraySize = 30;
     private readonly ChartValues<ObservablePoint> SteeringLinearityPoints;
-    private bool profileLock;
 
     public SettingsMode1()
     {
@@ -25,7 +28,9 @@ public partial class SettingsMode1 : Page
     {
         this.Tag = Tag;
 
-        PipeClient.ServerMessage += OnServerMessage;
+        lvCartesianChart.DataTooltip = null;
+
+        MotionManager.SettingsMode1Update += MotionManager_SettingsMode1Update;
 
         SteeringLinearityPoints = new ChartValues<ObservablePoint>();
         for (var i = 0; i < SteeringArraySize; i++)
@@ -42,17 +47,14 @@ public partial class SettingsMode1 : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // set lock
-            profileLock = true;
+            using (new ScopedLock(updateLock))
+            {
+                SliderDeadzoneAngle.Value = ProfilesPage.selectedProfile.SteeringDeadzone;
+                SliderPower.Value = ProfilesPage.selectedProfile.SteeringPower;
+                SliderSteeringAngle.Value = ProfilesPage.selectedProfile.SteeringMaxAngle;
 
-            SliderDeadzoneAngle.Value = ProfilesPage.currentProfile.SteeringDeadzone;
-            SliderPower.Value = ProfilesPage.currentProfile.SteeringPower;
-            SliderSteeringAngle.Value = ProfilesPage.currentProfile.SteeringMaxAngle;
-
-            lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.currentProfile.SteeringPower);
-
-            // release lock
-            profileLock = false;
+                lvLineSeriesValues.Values = GeneratePoints(ProfilesPage.selectedProfile.SteeringPower);
+            }
         });
     }
 
@@ -62,25 +64,11 @@ public partial class SettingsMode1 : Page
 
     public void Page_Closed()
     {
-        PipeClient.ServerMessage -= OnServerMessage;
     }
 
-    private void OnServerMessage(PipeMessage message)
+    private void MotionManager_SettingsMode1Update(Vector2 deviceAngle)
     {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_SENSOR:
-                var sensor = (PipeSensor)message;
-
-                switch (sensor.sensorType)
-                {
-                    case SensorType.Inclinometer:
-                        Rotate_Needle(-sensor.reading.Y);
-                        break;
-                }
-
-                break;
-        }
+        Rotate_Needle(-deviceAngle.Y);
     }
 
     private void Rotate_Needle(float y)
@@ -91,30 +79,39 @@ public partial class SettingsMode1 : Page
 
     private void SliderSteeringAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (ProfilesPage.currentProfile is null)
+        if (ProfilesPage.selectedProfile is null)
             return;
 
-        ProfilesPage.currentProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
+        if (updateLock)
+            return;
+
+        ProfilesPage.selectedProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
         ProfilesPage.RequestUpdate();
     }
 
     private void SliderPower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (ProfilesPage.currentProfile is null)
+        if (ProfilesPage.selectedProfile is null)
+            return;
+
+        if (updateLock)
             return;
 
         lvLineSeriesValues.Values = GeneratePoints(SliderPower.Value);
 
-        ProfilesPage.currentProfile.SteeringPower = (float)SliderPower.Value;
+        ProfilesPage.selectedProfile.SteeringPower = (float)SliderPower.Value;
         ProfilesPage.RequestUpdate();
     }
 
     private void SliderDeadzoneAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (ProfilesPage.currentProfile is null)
+        if (ProfilesPage.selectedProfile is null)
             return;
 
-        ProfilesPage.currentProfile.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;
+        if (updateLock)
+            return;
+
+        ProfilesPage.selectedProfile.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;
         ProfilesPage.RequestUpdate();
     }
 

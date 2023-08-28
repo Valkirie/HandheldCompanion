@@ -1,3 +1,9 @@
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Models;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Classes;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -6,13 +12,8 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Models;
-using HandheldCompanion.Views.Classes;
+using NumQuaternion = System.Numerics.Quaternion;
+using NumVector3 = System.Numerics.Vector3;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -34,7 +35,7 @@ public partial class OverlayModel : OverlayWindow
     private HIDmode HIDmode;
 
     private ControllerState Inputs = new();
-    
+
     private OverlayModelMode Modelmode;
     public bool MotionActivated = true;
 
@@ -52,8 +53,8 @@ public partial class OverlayModel : OverlayWindow
         InitializeComponent();
         this._hotkeyId = 1;
 
-        PipeClient.ServerMessage += OnServerMessage;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        MotionManager.OverlayModelUpdate += MotionManager_OverlayModelUpdate;
 
         // initialize timers
         UpdateTimer = new Timer(33);
@@ -220,8 +221,6 @@ public partial class OverlayModel : OverlayWindow
                     Show();
                     break;
             }
-
-            PipeClient.SendMessage(new PipeOverlay((int)Visibility));
         });
     }
 
@@ -234,31 +233,15 @@ public partial class OverlayModel : OverlayWindow
     private RotateTransform3D LeftJoystickRotateTransform;
     private RotateTransform3D RightJoystickRotateTransform;
 
-    private void OnServerMessage(PipeMessage message)
+    private void MotionManager_OverlayModelUpdate(NumVector3 euler, NumQuaternion quaternion)
     {
-        switch (message.code)
-        {
-            case PipeCode.SERVER_SENSOR:
-                {
-                    // prevent late PipeMessage to apply
-                    if (Visibility != Visibility.Visible)
-                        return;
+        // Add return here if motion is not wanted for 3D model
+        if (!MotionActivated)
+            return;
 
-                    // Add return here if motion is not wanted for 3D model
-                    if (!MotionActivated)
-                        return;
-
-                    var sensor = (PipeSensor)message;
-                    switch (sensor.sensorType)
-                    {
-                        case SensorType.Quaternion:
-                            DevicePose = new Quaternion(sensor.quaternion.W, sensor.quaternion.X, sensor.quaternion.Y, sensor.quaternion.Z);
-                            DevicePoseRad = new Vector3D(sensor.reading.X, sensor.reading.Y, sensor.reading.Z);
-                            break;
-                    }
-                }
-                break;
-        }
+        // TODO: why is the quaternion order shifted?
+        DevicePose = new Quaternion(quaternion.W, quaternion.X, quaternion.Y, quaternion.Z);
+        DevicePoseRad = new Vector3D(euler.X, euler.Y, euler.Z);
     }
 
     private void DrawModel(object? sender, EventArgs e)
@@ -303,11 +286,11 @@ public partial class OverlayModel : OverlayWindow
             Transform3DGroupModel.Children.Add(DeviceRotateTransform);
 
             // Determine diff angles
-            DiffAngle.X = InputUtils.Rad2Deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X -
+            DiffAngle.X = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X -
                           (float)DesiredAngleDeg.X;
-            DiffAngle.Y = InputUtils.Rad2Deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y -
+            DiffAngle.Y = InputUtils.rad2deg((float)DevicePoseRad.Y) - (float)FaceCameraObjectAlignment.Y -
                           (float)DesiredAngleDeg.Y;
-            DiffAngle.Z = InputUtils.Rad2Deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z -
+            DiffAngle.Z = InputUtils.rad2deg((float)DevicePoseRad.Z) - (float)FaceCameraObjectAlignment.Z -
                           (float)DesiredAngleDeg.Z;
 
             // Handle wrap around at -180 +180 position which is horizontal for steering
@@ -350,10 +333,10 @@ public partial class OverlayModel : OverlayWindow
             var ModelPoseXDeg = 0.0f;
 
             if (FaceCamera)
-                ModelPoseXDeg = InputUtils.Rad2Deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X;
+                ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X) - (float)FaceCameraObjectAlignment.X;
             else
                 // Not slowly rotate into view when face camera is off
-                ModelPoseXDeg = InputUtils.Rad2Deg((float)DevicePoseRad.X);
+                ModelPoseXDeg = InputUtils.rad2deg((float)DevicePoseRad.X);
 
             var ShoulderButtonsAngleDeg = 0.0f;
 
@@ -450,11 +433,11 @@ public partial class OverlayModel : OverlayWindow
 
             // JoystickLeftRing
             geometryModel3D = CurrentModel.LeftThumbRing.Children[0] as GeometryModel3D;
-            if (Inputs.AxisState[AxisFlags.LeftThumbX] != 0.0f || Inputs.AxisState[AxisFlags.LeftThumbY] != 0.0f)
+            if (Inputs.AxisState[AxisFlags.LeftStickX] != 0.0f || Inputs.AxisState[AxisFlags.LeftStickY] != 0.0f)
             {
                 // Adjust color
-                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbX] / (float)short.MaxValue),
-                    Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftThumbY] / (float)short.MaxValue));
+                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftStickX] / (float)short.MaxValue),
+                    Math.Abs(1 * Inputs.AxisState[AxisFlags.LeftStickY] / (float)short.MaxValue));
 
                 geometryModel3D.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.LeftThumbRing],
                     CurrentModel.HighlightMaterials[CurrentModel.LeftThumbRing],
@@ -462,8 +445,8 @@ public partial class OverlayModel : OverlayWindow
 
                 // Define and compute
                 var Transform3DGroupJoystickLeft = new Transform3DGroup();
-                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbX] / short.MaxValue;
-                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftThumbY] / short.MaxValue;
+                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftStickX] / short.MaxValue;
+                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.LeftStickY] / short.MaxValue;
 
                 // Rotation X
                 var ax3d = new AxisAngleRotation3D(new Vector3D(0, 0, 1), x);
@@ -510,11 +493,11 @@ public partial class OverlayModel : OverlayWindow
 
             // JoystickRightRing
             geometryModel3D = CurrentModel.RightThumbRing.Children[0] as GeometryModel3D;
-            if (Inputs.AxisState[AxisFlags.RightThumbX] != 0.0f || Inputs.AxisState[AxisFlags.RightThumbY] != 0.0f)
+            if (Inputs.AxisState[AxisFlags.RightStickX] != 0.0f || Inputs.AxisState[AxisFlags.RightStickY] != 0.0f)
             {
                 // Adjust color
-                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbX] / (float)short.MaxValue),
-                    Math.Abs(1 * Inputs.AxisState[AxisFlags.RightThumbY] / (float)short.MaxValue));
+                GradientFactor = Math.Max(Math.Abs(1 * Inputs.AxisState[AxisFlags.RightStickX] / (float)short.MaxValue),
+                    Math.Abs(1 * Inputs.AxisState[AxisFlags.RightStickY] / (float)short.MaxValue));
 
                 geometryModel3D.Material = GradientHighlight(CurrentModel.DefaultMaterials[CurrentModel.RightThumbRing],
                     CurrentModel.HighlightMaterials[CurrentModel.RightThumbRing],
@@ -522,8 +505,8 @@ public partial class OverlayModel : OverlayWindow
 
                 // Define and compute
                 var Transform3DGroupJoystickRight = new Transform3DGroup();
-                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbX] / short.MaxValue;
-                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightThumbY] /
+                var x = CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightStickX] / short.MaxValue;
+                var y = -1 * CurrentModel.JoystickMaxAngleDeg * Inputs.AxisState[AxisFlags.RightStickY] /
                         short.MaxValue;
 
                 // Rotation X

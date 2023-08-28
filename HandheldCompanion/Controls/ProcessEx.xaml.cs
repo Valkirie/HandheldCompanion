@@ -1,16 +1,13 @@
-﻿using System;
-using System.ComponentModel;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ControllerCommon;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using static HandheldCompanion.Managers.EnergyManager;
 
 namespace HandheldCompanion.Controls;
 
@@ -19,12 +16,6 @@ namespace HandheldCompanion.Controls;
 /// </summary>
 public partial class ProcessEx : UserControl, IDisposable
 {
-    public delegate void ChildProcessCreatedEventHandler(ProcessEx parent, int Id);
-
-    public delegate void MainThreadChangedEventHandler(ProcessEx process);
-
-    public delegate void TitleChangedEventHandler(ProcessEx process);
-
     public enum ProcessFilter
     {
         Allowed = 0,
@@ -39,7 +30,6 @@ public partial class ProcessEx : UserControl, IDisposable
     private string _Title;
 
     public ConcurrentList<int> Children = new();
-    private EfficiencyMode EfficiencyMode;
 
     public ProcessFilter Filter;
 
@@ -70,7 +60,7 @@ public partial class ProcessEx : UserControl, IDisposable
         Path = path;
 
         Executable = executable;
-        Title = executable; // temporary, will be overwritten by ProcessManager
+        MainWindowTitle = executable; // temporary, will be overwritten by ProcessManager
 
         Filter = filter;
         Platform = PlatformManager.GetPlatform(Process);
@@ -86,7 +76,7 @@ public partial class ProcessEx : UserControl, IDisposable
         }
     }
 
-    public string Title
+    public string MainWindowTitle
     {
         get => _Title;
 
@@ -121,52 +111,9 @@ public partial class ProcessEx : UserControl, IDisposable
         GC.SuppressFinalize(this); //now, the finalizer won't be called
     }
 
-    public event MainThreadChangedEventHandler MainThreadChanged;
-
-    public event TitleChangedEventHandler TitleChanged;
-
-    public event ChildProcessCreatedEventHandler ChildProcessCreated;
-
     public int GetProcessId()
     {
         return ProcessId;
-    }
-
-    private static ProcessThread GetMainThread(Process process)
-    {
-        ProcessThread mainThread = null;
-        var startTime = DateTime.MaxValue;
-
-        try
-        {
-            if (process.Threads is null || process.Threads.Count == 0)
-                return null;
-
-            foreach (ProcessThread thread in process.Threads)
-            {
-                if (thread.ThreadState != ThreadState.Running)
-                    continue;
-
-                if (thread.StartTime < startTime)
-                {
-                    startTime = thread.StartTime;
-                    mainThread = thread;
-                }
-            }
-
-            if (mainThread is null)
-                mainThread = process.Threads[0];
-        }
-        catch (Win32Exception)
-        {
-            // Access if denied
-        }
-        catch (InvalidOperationException)
-        {
-            // thread has exited
-        }
-
-        return mainThread;
     }
 
     public bool HasExited()
@@ -182,73 +129,38 @@ public partial class ProcessEx : UserControl, IDisposable
         if (Process.HasExited)
             return;
 
-        if (MainThread is null)
-        {
-            // refresh main thread
-            MainThread = GetMainThread(Process);
-
-            // raise event
-            MainThreadChanged?.Invoke(this);
-
-            // prevents null mainthread from passing
-            return;
-        }
-
-        var MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
-
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // refresh title
-            if (!string.IsNullOrEmpty(MainWindowTitle) && !MainWindowTitle.Equals(Title))
-            {
-                Title = MainWindowTitle;
-
-                // raise event
-                TitleChanged?.Invoke(this);
-            }
-
-            switch (EfficiencyMode)
-            {
-                default:
-                case EfficiencyMode.Default:
-                    QoSCheckBox.IsChecked = false;
-                    break;
-
-                case EfficiencyMode.Eco:
-                    QoSCheckBox.IsChecked = true;
-                    break;
-            }
-
             switch (MainThread.ThreadState)
             {
                 case ThreadState.Wait:
-                {
-                    // monitor if the process main thread was suspended or resumed
-                    if (MainThread.WaitReason != prevThreadWaitReason)
                     {
-                        prevThreadWaitReason = MainThread.WaitReason;
-
-                        switch (prevThreadWaitReason)
+                        // monitor if the process main thread was suspended or resumed
+                        if (MainThread.WaitReason != prevThreadWaitReason)
                         {
-                            case ThreadWaitReason.Suspended:
-                                SuspendToggle.IsOn = true;
-                                break;
+                            prevThreadWaitReason = MainThread.WaitReason;
 
-                            default:
-                                SuspendToggle.IsOn = false;
-                                break;
+                            switch (prevThreadWaitReason)
+                            {
+                                case ThreadWaitReason.Suspended:
+                                    SuspendToggle.IsOn = true;
+                                    break;
+
+                                default:
+                                    SuspendToggle.IsOn = false;
+                                    break;
+                            }
                         }
                     }
-                }
                     break;
 
                 case ThreadState.Terminated:
-                {
-                    // dispose from MainThread
-                    MainThread.Dispose();
-                    MainThread = null;
-                }
+                    {
+                        // dispose from MainThread
+                        MainThread.Dispose();
+                        MainThread = null;
+                    }
                     break;
             }
 
@@ -262,11 +174,6 @@ public partial class ProcessEx : UserControl, IDisposable
         return prevThreadWaitReason == ThreadWaitReason.Suspended;
     }
 
-    public EfficiencyMode GetEfficiencyMode()
-    {
-        return EfficiencyMode;
-    }
-
     public void RefreshChildProcesses()
     {
         // refresh all child processes
@@ -278,15 +185,7 @@ public partial class ProcessEx : UserControl, IDisposable
 
         // raise event on new children
         foreach (var pid in childs)
-        {
             Children.Add(pid);
-            ChildProcessCreated?.Invoke(this, pid);
-        }
-    }
-
-    public void SetEfficiencyMode(EfficiencyMode mode)
-    {
-        EfficiencyMode = mode;
     }
 
     private void SuspendToggle_Toggled(object sender, RoutedEventArgs e)
@@ -294,16 +193,18 @@ public partial class ProcessEx : UserControl, IDisposable
         switch (SuspendToggle.IsOn)
         {
             case true:
-            {
-                if (prevThreadWaitReason == ThreadWaitReason.Suspended)
-                    return;
+                {
+                    if (prevThreadWaitReason == ThreadWaitReason.Suspended)
+                        return;
 
-                ProcessManager.SuspendProcess(this);
-            }
+                    ProcessManager.SuspendProcess(this);
+                }
                 break;
             case false:
                 ProcessManager.ResumeProcess(this);
                 break;
         }
+
+        Refresh();
     }
 }

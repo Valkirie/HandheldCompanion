@@ -1,40 +1,30 @@
-﻿using System.Windows.Controls;
-using ControllerCommon.Actions;
+﻿using HandheldCompanion.Actions;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Controls;
 
 public class IMapping : UserControl
 {
-    protected readonly object updateLock = new();
-
     protected IActions Actions;
-    protected IActions prevActions;
-    protected object prevValue;
     protected object Value;
 
-    protected void Update()
+    protected virtual void Update()
     {
         // update axis mapping
-        if (Value != prevValue || Actions != prevActions)
-            Updated?.Invoke(Value, Actions);
-
-        prevValue = Value;
-        prevActions = Actions.Clone() as IActions;
+        Updated?.Invoke(Value, Actions);
     }
 
-    protected void Delete()
+    protected virtual void Delete()
     {
         Actions = null;
-        prevActions = null;
 
         Deleted?.Invoke(Value);
     }
 
-    protected void SetIActions(IActions actions)
+    protected virtual void SetIActions(IActions actions)
     {
         // update mapping IActions
         Actions = actions;
-        prevActions = actions.Clone() as IActions;
     }
 
     #region events

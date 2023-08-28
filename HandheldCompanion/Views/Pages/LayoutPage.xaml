@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerLayout}"
     d:Background="White"
     d:DesignHeight="1000"
@@ -66,8 +66,7 @@
             <ui:NavigationViewItem
                 Name="navTrackpads"
                 Content="{x:Static resx:Resources.LayoutPage_Trackpads}"
-                Tag="TrackpadsPage"
-                Visibility="Collapsed">
+                Tag="TrackpadsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEFA5;" />
                 </ui:NavigationViewItem.Icon>
@@ -77,8 +76,7 @@
                 Name="navGyro"
                 Content="{x:Static resx:Resources.LayoutPage_Gyro}"
                 IsEnabled="False"
-                Tag="GyroPage"
-                Visibility="Collapsed">
+                Tag="GyroPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;" />
                 </ui:NavigationViewItem.Icon>
@@ -209,7 +207,6 @@
 
                 </ui:SimpleStackPanel>
 
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Current Layout" />
                 <ui:Frame
                     Name="ContentFrame"
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"

@@ -1,11 +1,11 @@
+using HandheldCompanion.Devices;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using ControllerCommon.Devices;
-using Nefarius.Utilities.DeviceManagement.PnP;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -43,10 +43,10 @@ public partial class AboutPage : Page
 
             VersionValue.Text = MainWindow.fileVersionInfo.FileVersion;
 
-            SensorInternal.Text = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor)
+            SensorInternal.Text = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor)
                 ? MainWindow.CurrentDevice.InternalSensorName
                 : string.Empty;
-            SensorExternal.Text = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor)
+            SensorExternal.Text = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor)
                 ? MainWindow.CurrentDevice.ExternalSensorName
                 : string.Empty;
 

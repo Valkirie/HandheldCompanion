@@ -1,19 +1,18 @@
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Devices;
-using ControllerCommon.Inputs;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using Inkore.UI.WPF.Modern.Controls;
-using Layout = ControllerCommon.Layout;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -23,108 +22,148 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class LayoutPage : Page
 {
-    protected readonly object updateLock = new();
-
-    private readonly Dictionary<string, ILayoutPage> _pages;
+    private LayoutTemplate currentTemplate = new();
+    protected LockObject updateLock = new();
 
     // page vars
+    private Dictionary<string, (ILayoutPage, NavigationViewItem)> pages;
     private readonly ButtonsPage buttonsPage = new();
-
-    private LayoutTemplate currentTemplate = new();
     private readonly DpadPage dpadPage = new();
     private readonly GyroPage gyroPage = new();
     private readonly JoysticksPage joysticksPage = new();
-
-    private string preNavItemTag;
     private readonly TrackpadsPage trackpadsPage = new();
     private readonly TriggersPage triggersPage = new();
+
+    private NavigationView parentNavView;
+    private string preNavItemTag;
 
     public LayoutPage()
     {
         InitializeComponent();
     }
 
-    public LayoutPage(string Tag) : this()
+    public LayoutPage(string Tag, NavigationView parent) : this()
     {
         this.Tag = Tag;
-
-        // manage layout pages visibility
-        navTrackpads.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.Trackpads)
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-        
-        /* navGyro.Visibility = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor) ||
-                             MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor) ||
-                             MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor)
-            ? Visibility.Visible
-            : Visibility.Collapsed; */
+        this.parentNavView = parent;
 
         // create controller related pages
-        _pages = new Dictionary<string, ILayoutPage>
+        this.pages = new()
         {
             // buttons
-            { "ButtonsPage", buttonsPage },
-            { "DpadPage", dpadPage },
+            { "ButtonsPage", ( buttonsPage, navButtons ) },
+            { "DpadPage", ( dpadPage, navDpad ) },
 
             // triger
-            { "TriggersPage", triggersPage },
+            { "TriggersPage", ( triggersPage, navTriggers ) },
 
             // axis
-            { "JoysticksPage", joysticksPage },
-            { "TrackpadsPage", trackpadsPage },
+            { "JoysticksPage", ( joysticksPage, navJoysticks ) },
+            { "TrackpadsPage", ( trackpadsPage, navTrackpads ) },
 
             // gyro
-            { "GyroPage", gyroPage }
+            { "GyroPage", ( gyroPage, navGyro ) },
         };
 
-        foreach (var buttonMapping in buttonsPage.MappingButtons.Values.Union(dpadPage.MappingButtons.Values)
-                     .Union(triggersPage.MappingButtons.Values).Union(joysticksPage.MappingButtons.Values)
-                     .Union(trackpadsPage.MappingButtons.Values))
+        foreach (ButtonStack buttonStack in buttonsPage.ButtonStacks.Values.Union(dpadPage.ButtonStacks.Values).Union(triggersPage.ButtonStacks.Values).Union(joysticksPage.ButtonStacks.Values).Union(trackpadsPage.ButtonStacks.Values))
         {
-            buttonMapping.Updated += (sender, action) => ButtonMapping_Updated((ButtonFlags)sender, action);
-            buttonMapping.Deleted += sender => ButtonMapping_Deleted((ButtonFlags)sender);
+            buttonStack.Updated += (sender, actions) => ButtonMapping_Updated((ButtonFlags)sender, actions);
+            buttonStack.Deleted += (sender) => ButtonMapping_Deleted((ButtonFlags)sender);
         }
 
-        foreach (var AxisMapping in triggersPage.MappingTriggers.Values)
-        {
-            AxisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            AxisMapping.Deleted += sender => AxisMapping_Deleted((AxisLayoutFlags)sender);
-        }
-
-        foreach (var axisMapping in joysticksPage.MappingAxis.Values.Union(trackpadsPage.MappingAxis.Values))
+        foreach (TriggerMapping axisMapping in triggersPage.TriggerMappings.Values)
         {
             axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            axisMapping.Deleted += sender => AxisMapping_Deleted((AxisLayoutFlags)sender);
+            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+        }
+
+        foreach (AxisMapping axisMapping in joysticksPage.AxisMappings.Values.Union(trackpadsPage.AxisMappings.Values))
+        {
+            axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
+            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+        }
+
+        foreach (GyroMapping gyroMapping in gyroPage.GyroMappings.Values)
+        {
+            gyroMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
+            gyroMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
         }
 
         LayoutManager.Updated += LayoutManager_Updated;
         LayoutManager.Initialized += LayoutManager_Initialized;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        MainWindow.controllerPage.HIDchanged += VirtualManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        // auto-sort
-        // cB_Layouts.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
+        DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
+        ProfileManager.Updated += ProfileManager_Updated;
     }
 
-    private void ControllerManager_ControllerSelected(IController Controller)
+    private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
     {
-        RefreshLayoutList();
+        // update layout page if layout was updated elsewhere
+        // good enough
+        switch(source)
+        {
+            case ProfileUpdateSource.QuickProfilesPage:
+                {
+                    if (currentTemplate.Executable.Equals(profile.Executable))
+                        MainWindow.layoutPage.UpdateLayout(profile.Layout);
+                }
+                break;
+        }
+    }
 
-        // cascade update to (sub)pages (async)
-        Parallel.ForEach(_pages.Values,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism },
-            page => { page.UpdateController(Controller); });
+    private void ControllerManager_ControllerSelected(IController controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            RefreshLayoutList();
+
+            // cascade update to (sub)pages
+            foreach (var page in pages.Values)
+            {
+                page.Item1.UpdateController(controller);
+                page.Item2.IsEnabled = page.Item1.IsEnabled();
+            }
+        });
+    }
+
+    private void DeviceManager_UsbDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    {
+        IController controller = ControllerManager.GetTargetController();
+
+        // lazy
+        if (controller is not null)
+            ControllerManager_ControllerSelected(controller);
+    }
+
+    // todo: fix me when migrated to NO-SERVICE
+    private void VirtualManager_ControllerSelected(HIDmode HID)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // cascade update to (sub)pages
+            foreach (var page in pages.Values)
+                page.Item1.UpdateSelections();
+        });
     }
 
     private void LayoutManager_Initialized()
     {
-        RefreshLayoutList();
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            RefreshLayoutList();
+        });
     }
 
     private void LayoutManager_Updated(LayoutTemplate layoutTemplate)
     {
-        // UI thread
-        Application.Current.Dispatcher.Invoke(() =>
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // Get template separator index
             var idx = -1;
@@ -211,23 +250,23 @@ public partial class LayoutPage : Page
 
     private void ButtonMapping_Deleted(ButtonFlags button)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.RemoveLayout(button);
     }
 
-    private void ButtonMapping_Updated(ButtonFlags button, IActions action)
+    private void ButtonMapping_Updated(ButtonFlags button, List<IActions> actions)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
-        currentTemplate.Layout.UpdateLayout(button, action);
+        currentTemplate.Layout.UpdateLayout(button, actions);
     }
 
     private void AxisMapping_Deleted(AxisLayoutFlags axis)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.RemoveLayout(axis);
@@ -235,7 +274,7 @@ public partial class LayoutPage : Page
 
     private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
     {
-        if (Monitor.IsEntered(updateLock))
+        if (updateLock)
             return;
 
         currentTemplate.Layout.UpdateLayout(axis, action);
@@ -254,28 +293,42 @@ public partial class LayoutPage : Page
         ((Expander)sender).BringIntoView();
     }
 
-    public void UpdateLayout(LayoutTemplate layoutTemplate)
+    public void UpdateLayout(Layout layout)
     {
-        currentTemplate = layoutTemplate;
+        currentTemplate.Layout = layout;
+
+        UpdatePages();
+    }
+
+    public void UpdateLayoutTemplate(LayoutTemplate layoutTemplate)
+    {
+        // TODO: Not entirely sure what is going on here, but the old templates were still sending
+        // events. Shouldn't they be destroyed? Either there is a bug or I don't understand something
+        // in C# (probably the latter). Either way this handles/fixes/workarounds the issue.
+        if (layoutTemplate.Layout != currentTemplate.Layout)
+            currentTemplate = layoutTemplate;
+
         UpdatePages();
     }
 
     private void UpdatePages()
     {
-        if (Monitor.TryEnter(updateLock))
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // cascade update to (sub)pages (async)
-            Parallel.ForEach(_pages.Values,
-                new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism },
-                page => { page.Refresh(currentTemplate.Layout.ButtonLayout, currentTemplate.Layout.AxisLayout); });
+            // This is a very important lock, it blocks backward events to the layout when
+            // this is actually the backend that triggered the update. Notifications on higher
+            // levels (pages and mappings) could potentially be blocked for optimization.
+            using (new ScopedLock(updateLock))
+            {
+                // cascade update to (sub)pages
+                foreach (var page in pages.Values)
+                    page.Item1.Update(currentTemplate.Layout);
 
-            // clear layout selection
-            cB_Layouts.SelectedValue = null;
-
-            Monitor.Exit(updateLock);
-
-            currentTemplate.Layout.UpdateLayout();
-        }
+                // clear layout selection
+                cB_Layouts.SelectedValue = null;
+            }
+        });
     }
 
     private void cB_Layouts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -310,8 +363,8 @@ public partial class LayoutPage : Page
         var layoutTemplate = (LayoutTemplate)parent.Content;
 
         var result = Dialog.ShowAsync(
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite1, currentTemplate.Name),
-            string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, currentTemplate.Name),
+            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate1, currentTemplate.Name),
+            string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
             $"{Properties.Resources.ProfilesPage_Yes}");
@@ -321,18 +374,23 @@ public partial class LayoutPage : Page
         switch (result.Result)
         {
             case ContentDialogResult.Primary:
-            {
-                // do not overwrite currentTemplate and currentTemplate.Layout as a whole
-                // because they both have important Update notifitications set
-                var newLayout = layoutTemplate.Layout.Clone() as Layout;
-                currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
-                currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
-                currentTemplate.Name = layoutTemplate.Name;
-                currentTemplate.Description = layoutTemplate.Description;
-                currentTemplate.Guid = layoutTemplate.Guid; // not needed
+                {
+                    // do not overwrite currentTemplate and currentTemplate.Layout as a whole
+                    // because they both have important Update notifitications set
+                    var newLayout = layoutTemplate.Layout.Clone() as Layout;
+                    currentTemplate.Layout.AxisLayout = newLayout.AxisLayout;
+                    currentTemplate.Layout.ButtonLayout = newLayout.ButtonLayout;
+                    currentTemplate.Layout.GyroLayout = newLayout.GyroLayout;
 
-                UpdatePages();
-            }
+                    currentTemplate.Name = layoutTemplate.Name;
+                    currentTemplate.Description = layoutTemplate.Description;
+                    currentTemplate.Guid = layoutTemplate.Guid; // not needed
+
+                    // the whole layout has been updated without notification, trigger one
+                    currentTemplate.Layout.UpdateLayout();
+
+                    UpdatePages();
+                }
                 break;
         }
     }
@@ -415,30 +473,20 @@ public partial class LayoutPage : Page
         LayoutFlyout.Hide();
     }
 
-    #region UI
-
     private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
-        if (args.InvokedItemContainer is not null)
-        {
-            var navItem = (NavigationViewItem)args.InvokedItemContainer;
-            var navItemTag = (string)navItem.Tag;
+        if (args.InvokedItemContainer is null)
+            return;
 
-            switch (navItemTag)
-            {
-                default:
-                    preNavItemTag = navItemTag;
-                    break;
-            }
-
-            NavView_Navigate(preNavItemTag);
-        }
+        NavigationViewItem navItem = (NavigationViewItem)args.InvokedItemContainer;
+        preNavItemTag = (string)navItem.Tag;
+        NavView_Navigate(preNavItemTag);
     }
 
     public void NavView_Navigate(string navItemTag)
     {
-        var item = _pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
-        Page _page = item.Value;
+        var item = pages.FirstOrDefault(p => p.Key.Equals(navItemTag));
+        Page _page = item.Value.Item1;
 
         // Get the page type before navigation so you can prevent duplicate
         // entries in the backstack.
@@ -482,8 +530,10 @@ public partial class LayoutPage : Page
 
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;
+
+            string header = currentTemplate.Product.Length > 0 ?
+                    "Profile: " + currentTemplate.Product : "Layout: Desktop";
+            parentNavView.Header = new TextBlock() { Text = header };
         }
     }
-
-    #endregion
 }

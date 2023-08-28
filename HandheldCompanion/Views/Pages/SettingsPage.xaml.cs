@@ -1,25 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.ServiceProcess;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using ControllerCommon.Devices;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using Inkore.UI.WPF.Modern;
 using Inkore.UI.WPF.Modern.Controls;
 using Inkore.UI.WPF.Modern.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using static ControllerCommon.Utils.DeviceUtils;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using static HandheldCompanion.Managers.UpdateManager;
+using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
-using ServiceControllerStatus = ControllerCommon.Managers.ServiceControllerStatus;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -33,20 +33,6 @@ public partial class SettingsPage : Page
         InitializeComponent();
 
         // initialize components
-        foreach (var mode in ((ServiceStartMode[])Enum.GetValues(typeof(ServiceStartMode))).Where(mode =>
-                     mode >= ServiceStartMode.Automatic))
-        {
-            RadioButton radio = new() { Content = EnumUtils.GetDescriptionFromEnumValue(mode) };
-            switch (mode)
-            {
-                case ServiceStartMode.Disabled:
-                    radio.IsEnabled = false;
-                    break;
-            }
-
-            cB_StartupType.Items.Add(radio);
-        }
-
         cB_Language.Items.Add(new CultureInfo("en-US"));
         cB_Language.Items.Add(new CultureInfo("fr-FR"));
         cB_Language.Items.Add(new CultureInfo("de-DE"));
@@ -62,9 +48,9 @@ public partial class SettingsPage : Page
         UpdateDevice();
 
         // initialize manager(s)
-        MainWindow.serviceManager.Updated += OnServiceUpdate;
         MainWindow.updateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
         PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
@@ -78,6 +64,15 @@ public partial class SettingsPage : Page
     public SettingsPage(string? Tag) : this()
     {
         this.Tag = Tag;
+    }
+
+    private void ControllerManager_ControllerSelected(IController Controller)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
+        });
     }
 
     private void HWiNFO_Updated(PlatformStatus status)
@@ -122,63 +117,61 @@ public partial class SettingsPage : Page
             switch (name)
             {
                 case "MainWindowTheme":
-                {
-                    cB_Theme.SelectedIndex = Convert.ToInt32(value);
+                    {
+                        cB_Theme.SelectedIndex = Convert.ToInt32(value);
 
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_Theme_SelectionChanged(this, null);
-                }
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Theme_SelectionChanged(this, null);
+                    }
                     break;
                 case "MainWindowBackdrop":
-                {
-                    cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
+                    {
+                        cB_Backdrop.SelectedIndex = Convert.ToInt32(value);
 
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_Backdrop_SelectionChanged(this, null);
-                }
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_Backdrop_SelectionChanged(this, null);
+                    }
                     break;
                 case "QuicktoolsBackdrop":
-                {
-                    cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
+                    {
+                        cB_QuickToolsBackdrop.SelectedIndex = Convert.ToInt32(value);
 
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_QuickToolsBackdrop_SelectionChanged(this, null);
-                }
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_QuickToolsBackdrop_SelectionChanged(this, null);
+                    }
                     break;
                 case "SensorSelection":
-                {
-                    var idx = Convert.ToInt32(value);
-
-                    // default value
-                    if (idx == -1)
                     {
-                        if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor))
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorController));
-                        else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor))
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorInternal));
-                        else if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor))
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorExternal));
-                        else
-                            SettingsManager.SetProperty("SensorSelection",
-                                cB_SensorSelection.Items.IndexOf(SensorNone));
+                        var idx = Convert.ToInt32(value);
 
-                        return;
+                        // default value
+                        if (idx == -1)
+                        {
+                            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor))
+                            {
+                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorInternal));
+                            }
+                            else if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor))
+                            {
+                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorExternal));
+                            }
+                            else
+                            {
+                                SettingsManager.SetProperty(name, cB_SensorSelection.Items.IndexOf(SensorNone));
+                            }
+
+                            return;
+                        }
+
+                        cB_SensorSelection.SelectedIndex = idx;
+
+                        // bug: SelectionChanged not triggered when control isn't loaded
+                        if (!IsLoaded)
+                            cB_SensorSelection_SelectionChanged(this, null);
                     }
-
-                    cB_SensorSelection.SelectedIndex = idx;
-
-                    cB_SensorSelection.SelectedIndex = idx;
-
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_SensorSelection_SelectionChanged(this, null);
-                }
                     break;
                 case "RunAtStartup":
                     Toggle_AutoStart.IsOn = Convert.ToBoolean(value);
@@ -191,6 +184,9 @@ public partial class SettingsPage : Page
                     break;
                 case "DesktopProfileOnStart":
                     Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "VirtualControllerForceOrder":
+                    Toggle_ForceVirtualControllerOrder.IsOn = Convert.ToBoolean(value);
                     break;
                 case "NativeDisplayOrientation":
                     var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
@@ -218,12 +214,6 @@ public partial class SettingsPage : Page
                 case "ToastEnable":
                     Toggle_Notification.IsOn = Convert.ToBoolean(value);
                     break;
-                case "StartServiceWithCompanion":
-                    Toggle_ServiceStartup.IsOn = Convert.ToBoolean(value);
-                    break;
-                case "HaltServiceWithCompanion":
-                    Toggle_ServiceShutdown.IsOn = Convert.ToBoolean(value);
-                    break;
                 case "SensorPlacementUpsideDown":
                     Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
                     break;
@@ -245,16 +235,6 @@ public partial class SettingsPage : Page
                     break;
                 case "SensorPlacement":
                     UpdateUI_SensorPlacement(Convert.ToInt32(value));
-                    break;
-                case "UseEnergyStar":
-                    Toggle_EnergyStar.IsOn = Convert.ToBoolean(value);
-                    break;
-                case "ServiceStartMode":
-                    cB_StartupType.SelectedIndex = Convert.ToInt32(value);
-
-                    // bug: SelectionChanged not triggered when control isn't loaded
-                    if (!IsLoaded)
-                        cB_StartupType_SelectionChanged(this, null);
                     break;
 
                 case "PlatformRTSSEnabled":
@@ -279,9 +259,8 @@ public partial class SettingsPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.InternalSensor);
-            SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ExternalSensor);
-            SensorController.IsEnabled = MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.ControllerSensor);
+            SensorInternal.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.InternalSensor);
+            SensorExternal.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.ExternalSensor);
         });
     }
 
@@ -292,13 +271,32 @@ public partial class SettingsPage : Page
 
     public void Page_Closed()
     {
-        MainWindow.serviceManager.Updated -= OnServiceUpdate;
     }
 
-    private void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)
+    private async void Toggle_AutoStart_Toggled(object? sender, RoutedEventArgs? e)
     {
         if (!IsLoaded)
             return;
+
+        if (!Toggle_AutoStart.IsOn && SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+        {
+            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyTitle,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyText,
+                ContentDialogButton.Primary, null,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyPrimary,
+                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencySecondary);
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    SettingsManager.SetProperty("VirtualControllerForceOrder", false);
+                    break;
+                    Toggle_AutoStart.IsOn = true;
+                    break;
+            }
+        }
 
         SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
     }
@@ -309,35 +307,6 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("StartMinimized", Toggle_Background.IsOn);
-    }
-
-    private void cB_StartupType_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
-    {
-        if (cB_StartupType.SelectedIndex == -1)
-            return;
-
-        ServiceStartMode mode;
-        switch (cB_StartupType.SelectedIndex)
-        {
-            case 0:
-                mode = ServiceStartMode.Automatic;
-                break;
-            default:
-            case 1:
-                mode = ServiceStartMode.Manual;
-                break;
-            case 2:
-                mode = ServiceStartMode.Disabled;
-                break;
-        }
-
-        MainWindow.serviceManager.SetStartType(mode);
-
-        // service was not found
-        if (!cB_StartupType.IsEnabled)
-            return;
-
-        SettingsManager.SetProperty("ServiceStartMode", cB_StartupType.SelectedIndex);
     }
 
     private void Toggle_CloseMinimizes_Toggled(object? sender, RoutedEventArgs? e)
@@ -354,6 +323,58 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
+    }
+
+    private async void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
+    {
+        var ForceVirtualControllerOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
+
+        if (Toggle_ForceVirtualControllerOrder.IsOn && !ForceVirtualControllerOrder)
+        {
+            var physicalControllerInstanceIds = new StringCollection();
+            var physicalControllers = ControllerManager.GetPhysicalControllers();
+
+            foreach (var physicalController in physicalControllers)
+            {
+                physicalControllerInstanceIds.Add(physicalController.Details.baseContainerDeviceInstanceId);
+            }
+
+            SettingsManager.SetProperty("PhysicalControllerInstanceIds", physicalControllerInstanceIds);
+
+            var result = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderTitle}",
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderText}",
+                ContentDialogButton.Primary, null,
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderPrimary}",
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderSecondary}");
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    using (Process shutdown = new())
+                    {
+                        shutdown.StartInfo.FileName = "shutdown.exe";
+                        shutdown.StartInfo.Arguments = "-r -t 3";
+
+                        shutdown.StartInfo.UseShellExecute = false;
+                        shutdown.StartInfo.CreateNoWindow = true;
+                        shutdown.Start();
+                    }
+                    break;
+                case ContentDialogResult.Secondary:
+                    break;
+            }
+        }
+
+        // RunAtStartup is required for this feature
+        if (Toggle_ForceVirtualControllerOrder.IsOn)
+        {
+            SettingsManager.SetProperty("RunAtStartup", true);
+        }
+
+
+        SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
 
     private void Button_DetectNativeDisplayOrientation_Click(object sender, RoutedEventArgs? e)
@@ -376,96 +397,96 @@ public partial class SettingsPage : Page
                 case UpdateStatus.Failed: // lazy ?
                 case UpdateStatus.Updated:
                 case UpdateStatus.Initialized:
-                {
-                    if (updateFile is not null)
                     {
-                        updateFile.updateDownload.Visibility = Visibility.Visible;
+                        if (updateFile is not null)
+                        {
+                            updateFile.updateDownload.Visibility = Visibility.Visible;
 
-                        updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                        updateFile.updateInstall.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
-                        LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked +
-                                               MainWindow.updateManager.GetTime();
+                            updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                            updateFile.updateInstall.Visibility = Visibility.Collapsed;
+                        }
+                        else
+                        {
+                            LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
+                            LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked +
+                                                   MainWindow.updateManager.GetTime();
 
-                        LabelUpdateDate.Visibility = Visibility.Visible;
-                        GridUpdateSymbol.Visibility = Visibility.Visible;
-                        ProgressBarUpdate.Visibility = Visibility.Collapsed;
-                        B_CheckUpdate.IsEnabled = true;
+                            LabelUpdateDate.Visibility = Visibility.Visible;
+                            GridUpdateSymbol.Visibility = Visibility.Visible;
+                            ProgressBarUpdate.Visibility = Visibility.Collapsed;
+                            B_CheckUpdate.IsEnabled = true;
+                        }
                     }
-                }
                     break;
 
                 case UpdateStatus.Checking:
-                {
-                    LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
+                    {
+                        LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateCheck;
 
-                    GridUpdateSymbol.Visibility = Visibility.Collapsed;
-                    LabelUpdateDate.Visibility = Visibility.Collapsed;
-                    ProgressBarUpdate.Visibility = Visibility.Visible;
-                    B_CheckUpdate.IsEnabled = false;
-                }
+                        GridUpdateSymbol.Visibility = Visibility.Collapsed;
+                        LabelUpdateDate.Visibility = Visibility.Collapsed;
+                        ProgressBarUpdate.Visibility = Visibility.Visible;
+                        B_CheckUpdate.IsEnabled = false;
+                    }
                     break;
 
                 case UpdateStatus.Ready:
-                {
-                    ProgressBarUpdate.Visibility = Visibility.Collapsed;
-
-                    var updateFiles = (Dictionary<string, UpdateFile>)value;
-                    LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateAvailable;
-
-                    foreach (var update in updateFiles.Values)
                     {
-                        var border = update.Draw();
+                        ProgressBarUpdate.Visibility = Visibility.Collapsed;
 
-                        // Set download button action
-                        update.updateDownload.Click += (sender, e) =>
+                        var updateFiles = (Dictionary<string, UpdateFile>)value;
+                        LabelUpdate.Text = Properties.Resources.SettingsPage_UpdateAvailable;
+
+                        foreach (var update in updateFiles.Values)
                         {
-                            MainWindow.updateManager.DownloadUpdateFile(update);
-                        };
+                            var border = update.Draw();
 
-                        // Set button action
-                        update.updateInstall.Click += (sender, e) =>
-                        {
-                            MainWindow.updateManager.InstallUpdate(update);
-                        };
+                            // Set download button action
+                            update.updateDownload.Click += (sender, e) =>
+                            {
+                                MainWindow.updateManager.DownloadUpdateFile(update);
+                            };
 
-                        CurrentUpdates.Children.Add(border);
+                            // Set button action
+                            update.updateInstall.Click += (sender, e) =>
+                            {
+                                MainWindow.updateManager.InstallUpdate(update);
+                            };
+
+                            CurrentUpdates.Children.Add(border);
+                        }
                     }
-                }
                     break;
 
                 case UpdateStatus.Changelog:
-                {
-                    CurrentChangelog.Visibility = Visibility.Visible;
-                    CurrentChangelog.AppendText((string)value);
-                }
+                    {
+                        CurrentChangelog.Visibility = Visibility.Visible;
+                        CurrentChangelog.AppendText((string)value);
+                    }
                     break;
 
                 case UpdateStatus.Download:
-                {
-                    updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                    updateFile.updatePercentage.Visibility = Visibility.Visible;
-                }
+                    {
+                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                        updateFile.updatePercentage.Visibility = Visibility.Visible;
+                    }
                     break;
 
                 case UpdateStatus.Downloading:
-                {
-                    var progress = (int)value;
-                    updateFile.updatePercentage.Text =
-                        Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
-                }
+                    {
+                        var progress = (int)value;
+                        updateFile.updatePercentage.Text =
+                            Properties.Resources.SettingsPage_DownloadingPercentage + $"{value} %";
+                    }
                     break;
 
                 case UpdateStatus.Downloaded:
-                {
-                    updateFile.updateInstall.Visibility = Visibility.Visible;
+                    {
+                        updateFile.updateInstall.Visibility = Visibility.Visible;
 
-                    updateFile.updateDownload.Visibility = Visibility.Collapsed;
-                    updateFile.updatePercentage.Visibility = Visibility.Collapsed;
-                }
+                        updateFile.updateDownload.Visibility = Visibility.Collapsed;
+                        updateFile.updatePercentage.Visibility = Visibility.Collapsed;
+                    }
                     break;
             }
         });
@@ -474,22 +495,6 @@ public partial class SettingsPage : Page
     private void B_CheckUpdate_Click(object? sender, RoutedEventArgs? e)
     {
         new Thread(() => { MainWindow.updateManager.StartProcess(); }).Start();
-    }
-
-    private void Toggle_ServiceShutdown_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("HaltServiceWithCompanion", Toggle_ServiceShutdown.IsOn);
-    }
-
-    private void Toggle_ServiceStartup_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("StartServiceWithCompanion", Toggle_ServiceStartup.IsOn);
     }
 
     private void cB_Language_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
@@ -605,36 +610,6 @@ public partial class SettingsPage : Page
         }
     }
 
-    private async void Toggle_EnergyStar_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        if (Toggle_EnergyStar.IsOn)
-        {
-            // todo: localize me !
-            var result = Dialog.ShowAsync(
-                "Warning",
-                "EcoQoS is a new Quality of Service (QoS) level introduced to Windows, leading to better energy efficiency. Use at your own risk.",
-                ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
-
-            await result; // sync call
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    break;
-                default:
-                case ContentDialogResult.None:
-                    // restore previous state
-                    Toggle_EnergyStar.IsOn = false;
-                    return;
-            }
-        }
-
-        SettingsManager.SetProperty("UseEnergyStar", Toggle_EnergyStar.IsOn);
-    }
-
     private async void Toggle_cTDP_Toggled(object? sender, RoutedEventArgs? e)
     {
         if (!IsLoaded)
@@ -712,6 +687,8 @@ public partial class SettingsPage : Page
         Grid_SensorPlacementVisualisation.IsEnabled =
             cB_SensorSelection.SelectedIndex == (int)SensorFamily.SerialUSBIMU ? true : false;
 
+        // TODO: Implement me
+
         if (IsLoaded)
             SettingsManager.SetProperty("SensorSelection", cB_SensorSelection.SelectedIndex);
     }
@@ -729,11 +706,11 @@ public partial class SettingsPage : Page
     private void UpdateUI_SensorPlacement(int? SensorPlacement)
     {
         foreach (SimpleStackPanel panel in Grid_SensorPlacementVisualisation.Children)
-        foreach (Button button in panel.Children)
-            if (int.Parse((string)button.Tag) == SensorPlacement)
-                button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
-            else
-                button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
+            foreach (Button button in panel.Children)
+                if (int.Parse((string)button.Tag) == SensorPlacement)
+                    button.Background = (Brush)Application.Current.Resources["SystemControlForegroundAccentBrush"];
+                else
+                    button.Background = (Brush)Application.Current.Resources["SystemControlHighlightAltBaseLowBrush"];
     }
 
     private void Toggle_SensorPlacementUpsideDown_Toggled(object? sender, RoutedEventArgs? e)
@@ -743,55 +720,6 @@ public partial class SettingsPage : Page
         if (IsLoaded)
             SettingsManager.SetProperty("SensorPlacementUpsideDown", isUpsideDown);
     }
-
-    #region serviceManager
-
-    private void OnServiceUpdate(ServiceControllerStatus status, int mode)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch (status)
-            {
-                case ServiceControllerStatus.Paused:
-                case ServiceControllerStatus.Stopped:
-                case ServiceControllerStatus.Running:
-                case ServiceControllerStatus.ContinuePending:
-                case ServiceControllerStatus.PausePending:
-                case ServiceControllerStatus.StartPending:
-                case ServiceControllerStatus.StopPending:
-                    cB_StartupType.IsEnabled = true;
-                    break;
-                default:
-                    cB_StartupType.IsEnabled = false;
-                    break;
-            }
-
-            if (mode != -1)
-            {
-                var serviceMode = (ServiceStartMode)mode;
-                switch (serviceMode)
-                {
-                    case ServiceStartMode.Automatic:
-                        cB_StartupType.SelectedIndex = 0;
-                        break;
-                    default:
-                    case ServiceStartMode.Manual:
-                        cB_StartupType.SelectedIndex = 1;
-                        break;
-                    case ServiceStartMode.Disabled:
-                        cB_StartupType.SelectedIndex = 2;
-                        break;
-                }
-
-                // only allow users to set those options when service mode is set to Manual
-                Toggle_ServiceStartup.IsEnabled = serviceMode != ServiceStartMode.Automatic;
-                Toggle_ServiceShutdown.IsEnabled = serviceMode != ServiceStartMode.Automatic;
-            }
-        });
-    }
-
-    #endregion
 
     private void Toggle_RTSS_Toggled(object sender, RoutedEventArgs e)
     {

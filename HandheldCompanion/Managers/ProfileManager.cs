@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using ControllerCommon;
-using ControllerCommon.Controllers;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controllers;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static PInvoke.Kernel32;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using static HandheldCompanion.Utils.XInputPlusUtils;
 
 namespace HandheldCompanion.Managers;
 
@@ -78,6 +74,9 @@ public static class ProfileManager
             UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
         }
 
+        // force apply default
+        ApplyProfile(GetDefault());
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -117,15 +116,23 @@ public static class ProfileManager
 
     public static Profile GetProfileFromPath(string path, bool ignoreStatus)
     {
-        var profile =
-            profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+        // get profile from path
+        Profile profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
 
         if (profile is null)
-            return GetDefault();
+        {
+            // otherwise, get profile from executable
+            string fileName = Path.GetFileName(path);
+            profile = profiles.Values.FirstOrDefault(a => a.Executable.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
+
+            if (profile is null)
+                return GetDefault();
+        }
 
         // ignore profile status (enabled/disabled)
         if (ignoreStatus)
             return profile;
+
         return profile.Enabled ? profile : GetDefault();
     }
 
@@ -153,9 +160,6 @@ public static class ProfileManager
             LogManager.LogInformation("Profile {0} applied", profile.Name);
             ToastManager.SendToast($"Profile {profile.Name} applied");
         }
-
-        // inform service
-        PipeClient.SendMessage(new PipeClientProfile(profile));
     }
 
     private static void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -290,20 +294,20 @@ public static class ProfileManager
             switch (version.ToString())
             {
                 case "0.15.0.4":
-                {
-                    outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"",
-                        "Generic.SortedDictionary$1System.Collections\"");
-                    jObject = JObject.Parse(outputraw);
-                    jObject.Remove("MotionSensivityArray");
-                    outputraw = jObject.ToString();
-                }
+                    {
+                        outputraw = CommonUtils.RegexReplace(outputraw, "Generic.Dictionary(.*)System.Private.CoreLib\"",
+                            "Generic.SortedDictionary$1System.Collections\"");
+                        jObject = JObject.Parse(outputraw);
+                        jObject.Remove("MotionSensivityArray");
+                        outputraw = jObject.ToString();
+                    }
                     break;
                 case "0.16.0.5":
-                {
-                    outputraw = outputraw.Replace(
-                        "\"System.Collections.Generic.SortedDictionary`2[[ControllerCommon.Inputs.ButtonFlags, ControllerCommon],[System.Boolean, System.Private.CoreLib]], System.Collections\"",
-                        "\"System.Collections.Concurrent.ConcurrentDictionary`2[[ControllerCommon.Inputs.ButtonFlags, ControllerCommon],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
-                }
+                    {
+                        outputraw = outputraw.Replace(
+                            "\"System.Collections.Generic.SortedDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections\"",
+                            "\"System.Collections.Concurrent.ConcurrentDictionary`2[[HandheldCompanion.Inputs.ButtonFlags, HandheldCompanion],[System.Boolean, System.Private.CoreLib]], System.Collections.Concurrent\"");
+                    }
                     break;
             }
 
@@ -380,8 +384,13 @@ public static class ProfileManager
 
         // prepare for writing
         var profilePath = Path.Combine(ProfilesPath, profile.GetFileName());
-        if (CommonUtils.IsFileWritable(profilePath))
-            File.WriteAllText(profilePath, jsonString);
+
+        try
+        {
+            if (CommonUtils.IsFileWritable(profilePath))
+                File.WriteAllText(profilePath, jsonString);
+        }
+        catch { }
     }
 
     private static void SanitizeProfile(Profile profile)
@@ -493,16 +502,17 @@ public static class ProfileManager
 
         switch (profile.XInputPlus)
         {
-            case true:
+            case XInputPlusMethod.Redirection:
                 XInputPlus.RegisterApplication(profile);
                 break;
-            case false:
+            case XInputPlusMethod.Disabled:
+            case XInputPlusMethod.Injection:
                 XInputPlus.UnregisterApplication(profile);
                 break;
         }
     }
 
-    private static void ControllerManager_ControllerPlugged(IController Controller)
+    private static void ControllerManager_ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
     {
         // we're only interest in virtual, XInput controllers
         if (Controller.GetType() != typeof(XInputController) || !Controller.IsVirtual())

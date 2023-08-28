@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -16,21 +16,25 @@
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
 
-            <!--  LEFT TRACKPAD BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
-            <ui:SimpleStackPanel Name="LeftTrackpadButtonsPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridLeftPad" Spacing="6">
+                <!--  LEFT TRACKPAD BUTTONS  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
+                <ui:SimpleStackPanel Name="LeftTrackpadButtonsPanel" Spacing="6" />
 
-            <!--  LEFT TRACKPAD  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
-            <ui:SimpleStackPanel Name="LeftTrackpadPanel" Spacing="6" />
+                <!--  LEFT TRACKPAD  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
+                <ui:SimpleStackPanel Name="LeftTrackpadPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
-            <!--  RIGHT TRACKPAD BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
-            <ui:SimpleStackPanel Name="RightTrackpadButtonsPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridRightPad" Spacing="6">
+                <!--  RIGHT TRACKPAD BUTTONS  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
+                <ui:SimpleStackPanel Name="RightTrackpadButtonsPanel" Spacing="6" />
 
-            <!--  RIGHT TRACKPAD  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
-            <ui:SimpleStackPanel Name="RightTrackpadPanel" Spacing="6" />
+                <!--  RIGHT TRACKPAD  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
+                <ui:SimpleStackPanel Name="RightTrackpadPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
         </ui:SimpleStackPanel>
     </Grid>

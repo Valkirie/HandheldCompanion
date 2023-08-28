@@ -1,4 +1,9 @@
-﻿using System;
+﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Views;
+using Inkore.UI.WPF.Modern.Controls;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,11 +11,6 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Reflection;
-using ControllerCommon.Managers;
-using HandheldCompanion.Properties;
-using HandheldCompanion.Views;
-using Inkore.UI.WPF.Modern.Controls;
-using Newtonsoft.Json;
 
 namespace HandheldCompanion.Managers;
 

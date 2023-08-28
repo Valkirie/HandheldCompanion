@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -16,21 +16,25 @@
     <Grid Name="MainGrid">
         <ui:SimpleStackPanel Spacing="6">
 
-            <!--  LEFT JOYSTICK BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Left_Buttons}" />
-            <ui:SimpleStackPanel Name="LeftJoystickButtonsPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridLeftStick" Spacing="6">
+                <!--  LEFT JOYSTICK BUTTONS  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Left_Buttons}" />
+                <ui:SimpleStackPanel Name="LeftJoystickButtonsPanel" Spacing="6" />
 
-            <!--  LEFT JOYSTICK  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Left}" />
-            <ui:SimpleStackPanel Name="LeftJoystickPanel" Spacing="6" />
+                <!--  LEFT JOYSTICK  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Left}" />
+                <ui:SimpleStackPanel Name="LeftJoystickPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
-            <!--  RIGHT JOYSTICK BUTTONS  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Right_Buttons}" />
-            <ui:SimpleStackPanel Name="RightJoystickButtonsPanel" Spacing="6" />
+            <ui:SimpleStackPanel Name="gridRightStick" Spacing="6">
+                <!--  RIGHT JOYSTICK BUTTONS  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Right_Buttons}" />
+                <ui:SimpleStackPanel Name="RightJoystickButtonsPanel" Spacing="6" />
 
-            <!--  RIGHT JOYSTICK  -->
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Right}" />
-            <ui:SimpleStackPanel Name="RightJoystickPanel" Spacing="6" />
+                <!--  RIGHT JOYSTICK  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.JoystickPage_Joystick_Right}" />
+                <ui:SimpleStackPanel Name="RightJoystickPanel" Spacing="6" />
+            </ui:SimpleStackPanel>
 
         </ui:SimpleStackPanel>
     </Grid>

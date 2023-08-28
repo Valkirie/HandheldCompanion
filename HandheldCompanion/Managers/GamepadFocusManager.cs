@@ -1,26 +1,20 @@
-﻿using System;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using HandheldCompanion.Views.Classes;
+using HandheldCompanion.Views.Windows;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Xml.Linq;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
-using HandheldCompanion.Views.Classes;
-using HandheldCompanion.Views.Windows;
-using Inkore.UI.WPF.Modern.Controls;
 using Frame = Inkore.UI.WPF.Modern.Controls.Frame;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
@@ -65,7 +59,7 @@ namespace HandheldCompanion.Managers
 
             //_currentWindow.IsVisibleChanged += _currentWindow_IsVisibleChanged;
 
-            _currentWindow.GotGamepadWindowFocus +=  _currentWindow_GotGamepadWindowFocus;
+            _currentWindow.GotGamepadWindowFocus += _currentWindow_GotGamepadWindowFocus;
             _currentWindow.LostGamepadWindowFocus += _currentWindow_LostGamepadWindowFocus;
 
             _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
@@ -75,7 +69,7 @@ namespace HandheldCompanion.Managers
             _gamepadFrame.Navigated += ContentFrame_Navigated;
 
             // start listening to inputs
-            switch(SettingsManager.GetBoolean("DesktopProfileOnStart"))
+            switch (SettingsManager.GetBoolean("DesktopProfileOnStart"))
             {
                 case true:
                     ControllerManager.InputsUpdated -= InputsUpdated;
@@ -155,7 +149,7 @@ namespace HandheldCompanion.Managers
                     case "DesktopLayoutEnabled":
                         {
                             var value = SettingsManager.GetBoolean(name, true);
-                            switch(value)
+                            switch (value)
                             {
                                 case true:
                                     ControllerManager.InputsUpdated -= InputsUpdated;
@@ -255,10 +249,11 @@ namespace HandheldCompanion.Managers
 
         public Control FocusedElement(GamepadWindow window)
         {
-            IInputElement? keyboardFocused = Keyboard.FocusedElement;
+            IInputElement keyboardFocused = null;
 
-            if (!keyboardFocused.GetType().IsSubclassOf(typeof(Control)))
-                keyboardFocused = null;
+            if (Keyboard.FocusedElement is not null)
+                if (Keyboard.FocusedElement.GetType().IsSubclassOf(typeof(Control)))
+                    keyboardFocused = Keyboard.FocusedElement;
 
             if (keyboardFocused is null)
             {
@@ -268,7 +263,7 @@ namespace HandheldCompanion.Managers
                     keyboardFocused = _currentWindow;
             }
 
-            if(keyboardFocused.Focusable)
+            if (keyboardFocused.Focusable)
             {
                 Control controlFocused = (Control)keyboardFocused;
 
@@ -374,7 +369,7 @@ namespace HandheldCompanion.Managers
                 {
                     // lazy
                     // todo: implement proper RoutedEvent call
-                     switch (elementType)
+                    switch (elementType)
                     {
                         case "Button":
                             WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
@@ -391,8 +386,9 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
-                                switch(focusedElement.Name)
+                                switch (focusedElement.Name)
                                 {
+                                    // deprecated, used for ui:NavigationView.FooterMenuItem
                                     case "b_ServiceStart":
                                     case "b_ServiceStop":
                                     case "b_ServiceInstall":
@@ -469,7 +465,7 @@ namespace HandheldCompanion.Managers
                         case "ComboBox":
                             {
                                 ComboBox comboBox = (ComboBox)focusedElement;
-                                switch(comboBox.IsDropDownOpen)
+                                switch (comboBox.IsDropDownOpen)
                                 {
                                     case true:
                                         comboBox.IsDropDownOpen = false;
@@ -513,19 +509,19 @@ namespace HandheldCompanion.Managers
                         direction = WPFUtils.Direction.Right;
                     }
                 }
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickUp))
                 {
                     direction = WPFUtils.Direction.Up;
                 }
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickDown))
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickDown))
                 {
                     direction = WPFUtils.Direction.Down;
                 }
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickLeft))
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickLeft) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickLeft))
                 {
                     direction = WPFUtils.Direction.Left;
                 }
-                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftThumbRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
                 {
                     direction = WPFUtils.Direction.Right;
                 }
@@ -533,7 +529,7 @@ namespace HandheldCompanion.Managers
                 // navigation
                 if (direction != WPFUtils.Direction.None)
                 {
-                    switch(elementType)
+                    switch (elementType)
                     {
                         case "NavigationViewItem":
                             {
@@ -562,7 +558,7 @@ namespace HandheldCompanion.Managers
 
                         case "ComboBoxItem":
                             {
-                                switch(direction)
+                                switch (direction)
                                 {
                                     case WPFUtils.Direction.Up:
                                         WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.UP);

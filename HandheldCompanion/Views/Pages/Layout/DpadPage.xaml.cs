@@ -1,8 +1,8 @@
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
 using System.Collections.Generic;
 using System.Windows;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using HandheldCompanion.Controls;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -19,43 +19,29 @@ public partial class DpadPage : ILayoutPage
         InitializeComponent();
 
         // draw UI
-        foreach (var button in DPAD)
+        foreach (ButtonFlags button in DPAD)
         {
-            var buttonMapping = new ButtonMapping(button);
-            DpadStackPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            DpadStackPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
+    }
+
+    public override void UpdateController(IController controller)
+    {
+        base.UpdateController(controller);
+
+        bool dpad = CheckController(controller, DPAD);
+
+        gridDpad.Visibility = dpad ? Visibility.Visible : Visibility.Collapsed;
+
+        enabled = dpad;
     }
 
     public DpadPage(string Tag) : this()
     {
         this.Tag = Tag;
-    }
-
-    public override void UpdateController(IController Controller)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // controller based
-            foreach (var mapping in MappingButtons)
-            {
-                var button = mapping.Key;
-                var buttonMapping = mapping.Value;
-
-                // update mapping visibility
-                if (!Controller.HasSourceButton(button))
-                    buttonMapping.Visibility = Visibility.Collapsed;
-                else
-                    buttonMapping.Visibility = Visibility.Visible;
-
-                // update icon
-                var newIcon = Controller.GetFontIcon(button);
-                var newLabel = Controller.GetButtonName(button);
-                buttonMapping.UpdateIcon(newIcon, newLabel);
-            }
-        });
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)

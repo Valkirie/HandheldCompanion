@@ -1,18 +1,20 @@
-﻿using System;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Views;
+using Microsoft.Win32;
+using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
+using System.Timers;
 using System.Windows.Forms;
-using ControllerCommon.Devices;
-using ControllerCommon.Managers;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views;
-using Microsoft.Win32;
-using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
@@ -24,18 +26,28 @@ public static class SystemManager
     private static readonly MMDeviceEnumerator DevEnum;
     private static MMDevice multimediaDevice;
     private static readonly MMDeviceNotificationClient notificationClient;
-    private static bool VolumeSupport;
 
-    private static readonly ManagementEventWatcher EventWatcher;
+    private static readonly ManagementEventWatcher BrightnessWatcher;
     private static readonly ManagementScope Scope;
-    private static readonly bool BrightnessSupport;
 
+    private static bool VolumeSupport;
+    private static readonly bool BrightnessSupport;
     private static bool FanControlSupport;
+
+    private const int UpdateInterval = 1000;
+    private static readonly Timer ADLXTimer;
+    private static int prevRSRState = -2;
+    private static int prevRSRSharpness = -1;
 
     public static bool IsInitialized;
 
     static SystemManager()
     {
+        // ADLX
+        ADLXTimer = new Timer(UpdateInterval);
+        ADLXTimer.AutoReset = true;
+        ADLXTimer.Elapsed += ADLXTimer_Elapsed;
+
         // setup the multimedia device and get current volume value
         notificationClient = new MMDeviceNotificationClient();
         DevEnum = new MMDeviceEnumerator();
@@ -47,21 +59,38 @@ public static class SystemManager
         Scope.Connect();
 
         // creating the watcher
-        EventWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
-        EventWatcher.EventArrived += onWMIEvent;
+        BrightnessWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
+        BrightnessWatcher.EventArrived += onWMIEvent;
 
-        // start brightness watcher
-        EventWatcher.Start();
+        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
         // check if we have control over brightness
         BrightnessSupport = GetBrightness() != -1;
 
         if (MainWindow.CurrentDevice.IsOpen && MainWindow.CurrentDevice.IsSupported)
-            if (MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl))
+            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl))
                 FanControlSupport = true;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+    }
+
+    private static void ADLXTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        try
+        {
+            var RSRState = ADLXBackend.GetRSRState();
+            var RSRSharpness = ADLXBackend.GetRSRSharpness();
+
+            if ((RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+            {
+                RSRStateChanged?.Invoke(RSRState, RSRSharpness);
+
+                prevRSRState = RSRState;
+                prevRSRSharpness = RSRSharpness;
+            }
+        }
+        catch { }
     }
 
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
@@ -101,57 +130,57 @@ public static class SystemManager
         switch (name)
         {
             case "NativeDisplayOrientation":
-            {
-                var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
+                {
+                    var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
 
-                if (!IsInitialized)
-                    return;
+                    if (!IsInitialized)
+                        return;
 
-                var oldOrientation = ScreenOrientation.rotation;
-                ScreenOrientation = new ScreenRotation(ScreenOrientation.rotationUnnormalized, nativeOrientation);
+                    var oldOrientation = ScreenOrientation.rotation;
+                    ScreenOrientation = new ScreenRotation(ScreenOrientation.rotationUnnormalized, nativeOrientation);
 
-                if (oldOrientation != ScreenOrientation.rotation)
-                    // Though the real orientation didn't change, raise event because the interpretation of it changed
-                    DisplayOrientationChanged?.Invoke(ScreenOrientation);
-            }
+                    if (oldOrientation != ScreenOrientation.rotation)
+                        // Though the real orientation didn't change, raise event because the interpretation of it changed
+                        DisplayOrientationChanged?.Invoke(ScreenOrientation);
+                }
                 break;
             case "QuietModeEnabled":
-            {
-                var enabled = Convert.ToBoolean(value);
-                var toggled = SettingsManager.GetBoolean("QuietModeToggled");
+                {
+                    var enabled = Convert.ToBoolean(value);
+                    var toggled = SettingsManager.GetBoolean("QuietModeToggled");
 
-                if (!enabled && toggled)
-                    SettingsManager.SetProperty("QuietModeToggled", false);
-            }
+                    if (!enabled && toggled)
+                        SettingsManager.SetProperty("QuietModeToggled", false);
+                }
                 break;
             case "QuietModeToggled":
-            {
-                var toggled = Convert.ToBoolean(value);
+                {
+                    var toggled = Convert.ToBoolean(value);
 
-                // do not send command to device on startup if toggle is off
-                if (!SettingsManager.IsInitialized && !toggled)
-                    return;
+                    // do not send command to device on startup if toggle is off
+                    if (!SettingsManager.IsInitialized && !toggled)
+                        return;
 
-                MainWindow.CurrentDevice.SetFanControl(toggled);
+                    MainWindow.CurrentDevice.SetFanControl(toggled);
 
-                if (!toggled)
-                    return;
+                    if (!toggled)
+                        return;
 
-                var duty = SettingsManager.GetDouble("QuietModeDuty");
-                MainWindow.CurrentDevice.SetFanDuty(duty);
-            }
+                    var duty = SettingsManager.GetDouble("QuietModeDuty");
+                    MainWindow.CurrentDevice.SetFanDuty(duty);
+                }
                 break;
             case "QuietModeDuty":
-            {
-                var enabled = SettingsManager.GetBoolean("QuietModeEnabled");
-                var toggled = SettingsManager.GetBoolean("QuietModeToggled");
+                {
+                    var enabled = SettingsManager.GetBoolean("QuietModeEnabled");
+                    var toggled = SettingsManager.GetBoolean("QuietModeToggled");
 
-                if (!enabled || !toggled)
-                    return;
+                    if (!enabled || !toggled)
+                        return;
 
-                var duty = Convert.ToDouble(value);
-                MainWindow.CurrentDevice.SetFanDuty(duty);
-            }
+                    var duty = Convert.ToDouble(value);
+                    MainWindow.CurrentDevice.SetFanDuty(duty);
+                }
                 break;
         }
     }
@@ -161,45 +190,34 @@ public static class SystemManager
         switch (listener)
         {
             case "increaseBrightness":
-            {
-                var stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
-                var brightness = stepRoundDn * 5 + 5;
-                SetBrightness(brightness);
-            }
+                {
+                    var stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
+                    var brightness = stepRoundDn * 5 + 5;
+                    SetBrightness(brightness);
+                }
                 break;
             case "decreaseBrightness":
-            {
-                var stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
-                var brightness = stepRoundUp * 5 - 5;
-                SetBrightness(brightness);
-            }
+                {
+                    var stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
+                    var brightness = stepRoundUp * 5 - 5;
+                    SetBrightness(brightness);
+                }
                 break;
             case "increaseVolume":
-            {
-                var stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
-                var volume = stepRoundDn * 5 + 5;
-                SetVolume(volume);
-            }
+                {
+                    var stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
+                    var volume = stepRoundDn * 5 + 5;
+                    SetVolume(volume);
+                }
                 break;
             case "decreaseVolume":
-            {
-                var stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
-                var volume = stepRoundUp * 5 - 5;
-                SetVolume(volume);
-            }
+                {
+                    var stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
+                    var volume = stepRoundUp * 5 - 5;
+                    SetVolume(volume);
+                }
                 break;
         }
-    }
-
-    public static void Start()
-    {
-        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-        SystemEvents_DisplaySettingsChanged(null, null);
-
-        IsInitialized = true;
-        Initialized?.Invoke();
-
-        LogManager.LogInformation("{0} has started", "SystemManager");
     }
 
     private static void onWMIEvent(object sender, EventArrivedEventArgs e)
@@ -283,10 +301,29 @@ public static class SystemManager
         return ScreenOrientation;
     }
 
+    public static void Start()
+    {
+        // start brightness watcher
+        BrightnessWatcher.Start();
+        ADLXTimer.Start();
+
+        // force trigger events
+        SystemEvents_DisplaySettingsChanged(null, null);
+
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "SystemManager");
+    }
+
     public static void Stop()
     {
         if (!IsInitialized)
             return;
+
+        // stop brightness watcher
+        BrightnessWatcher.Stop();
+        ADLXTimer.Stop();
 
         DevEnum.UnregisterEndpointNotificationCallback(notificationClient);
 
@@ -598,6 +635,10 @@ public static class SystemManager
     #endregion
 
     #region events
+
+    public static event RSRStateChangedEventHandler RSRStateChanged;
+
+    public delegate void RSRStateChangedEventHandler(int RSRState, int RSRSharpness);
 
     public static event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
 

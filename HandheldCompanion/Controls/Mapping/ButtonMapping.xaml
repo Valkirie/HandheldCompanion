@@ -5,42 +5,53 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:Background="White"
     d:DesignHeight="1000"
     d:DesignWidth="800"
-    d:Visibility="Visible"
-    Visibility="Collapsed"
     mc:Ignorable="d">
 
-    <Expander Padding="15,12,12,12" HorizontalAlignment="Stretch">
+    <Expander HorizontalAlignment="Stretch">
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <ui:FontIcon
-                    Name="Icon"
-                    Height="40"
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    FontFamily="{DynamicResource PhoneFontFamilyNormal}"
-                    FontSize="14" />
-                <TextBlock
-                    Name="Name"
+                <DockPanel MinWidth="150">
+                    <ui:FontIcon
+                        Name="Icon"
+                        Height="40"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontFamily="{DynamicResource PhoneFontFamilyNormal}"
+                        FontSize="14" />
+                    <TextBlock
+                        Name="Name"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        FontSize="14" />
+                </DockPanel>
+
+                <ComboBox
+                    Name="PressComboBox"
                     Grid.Column="1"
-                    HorizontalAlignment="Left"
+                    Width="120"
                     VerticalAlignment="Center"
-                    FontSize="14" />
+                    SelectedIndex="0"
+                    SelectionChanged="Press_SelectionChanged">
+                    <ComboBoxItem Content="Short press" />
+                    <ComboBoxItem Content="Long press" />
+                </ComboBox>
 
                 <DockPanel Grid.Column="2" HorizontalAlignment="Right">
                     <ComboBox
                         Name="ActionComboBox"
                         Width="120"
+                        Margin="12,0,0,0"
                         VerticalAlignment="Center"
                         SelectedIndex="0"
                         SelectionChanged="Action_SelectionChanged">
@@ -63,14 +74,107 @@
             </Grid>
         </Expander.Header>
         <Expander.Content>
-            <StackPanel>
+            <ui:SimpleStackPanel Spacing="6">
+                <!--  Button 2 Button, Long press  -->
+                <Grid d:Visibility="Visible" Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+
+                    <ui:SimpleStackPanel Name="Button2ButtonPressDelay" Spacing="6">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Long press delay (ms, longest applies)" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, ElementName=LongPressDelaySlider, Mode=OneWay}" />
+                                    </Grid>
+
+                                    <Slider
+                                        x:Name="LongPressDelaySlider"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="2000"
+                                        Minimum="100"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="50"
+                                        ValueChanged="LongPressDelaySlider_ValueChanged"
+                                        Value="450" />
+
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
+                <!--  Button 2 Keyboard/Mouse, modifiers  -->
+                <Grid
+                    Name="Button2ButtonWithModifier"
+                    d:Visibility="Visible"
+                    Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4}">
+
+                    <ui:SimpleStackPanel Spacing="6">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" MinWidth="200" />
+                                    <ColumnDefinition Width="4*" MinWidth="180" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Modifier(s)" />
+
+                                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                                    <ComboBox
+                                        Name="ModifierComboBox"
+                                        Width="180"
+                                        VerticalAlignment="Center"
+                                        SelectedIndex="0"
+                                        SelectionChanged="Modifier_SelectionChanged">
+                                        <ComboBoxItem Content="None" />
+                                        <ComboBoxItem Content="Shift" />
+                                        <ComboBoxItem Content="Control" />
+                                        <ComboBoxItem Content="Alt" />
+                                        <ComboBoxItem Content="Shift + Control" />
+                                        <ComboBoxItem Content="Shift + Alt" />
+                                        <ComboBoxItem Content="Control + Alt" />
+                                        <ComboBoxItem Content="Shift + Control + Alt" />
+                                    </ComboBox>
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
                 <!--  Button 2 Button/Keyboard/Mouse  -->
                 <Grid
                     Name="Button2Button"
                     d:Visibility="Visible"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -98,8 +202,7 @@
                                 Opacity="0.25" />
 
                             <!--  Repeat rate (hidden)  -->
-                            <Grid d:Visibility="Visible"
-                                  Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid d:Visibility="Visible" Visibility="{Binding ElementName=Toggle_Turbo, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                 <ui:SimpleStackPanel Spacing="6">
 
@@ -126,7 +229,7 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         ValueChanged="Turbo_Slider_ValueChanged"
-                                        Value="90" />
+                                        Value="30" />
 
                                     <!--  Separator  -->
                                     <Separator
@@ -167,7 +270,65 @@
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
-            </StackPanel>
+
+                <!--  Button 2 Button, haptic  -->
+                <Grid
+                    Name="Button2ButtonHaptic"
+                    d:Visibility="Visible"
+                    Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|3|4}">
+
+                    <ui:SimpleStackPanel Spacing="6">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" MinWidth="200" />
+                                    <ColumnDefinition Width="8*" MinWidth="120" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Haptic feedback" />
+
+                                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                                    <ComboBox
+                                        Name="HapticModeComboBox"
+                                        Width="105"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        SelectedIndex="0"
+                                        SelectionChanged="HapticMode_SelectionChanged">
+                                        <ComboBoxItem Content="Off" />
+                                        <ComboBoxItem Content="Down" />
+                                        <ComboBoxItem Content="Up" />
+                                        <ComboBoxItem Content="Both" />
+                                    </ComboBox>
+                                    <ComboBox
+                                        Name="HapticStrengthComboBox"
+                                        Width="105"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        IsEnabled="False"
+                                        SelectedIndex="0"
+                                        SelectionChanged="HapticStrength_SelectionChanged">
+                                        <ComboBoxItem Content="Low" />
+                                        <ComboBoxItem Content="Medium" />
+                                        <ComboBoxItem Content="High" />
+                                    </ComboBox>
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
+                </Grid>
+
+            </ui:SimpleStackPanel>
         </Expander.Content>
     </Expander>
 </local:IMapping>

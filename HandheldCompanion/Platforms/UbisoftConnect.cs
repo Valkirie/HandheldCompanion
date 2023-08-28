@@ -1,9 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
 
 namespace HandheldCompanion.Platforms;
 

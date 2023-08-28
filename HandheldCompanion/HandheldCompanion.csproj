@@ -12,9 +12,10 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.16.2.5</Version>
+    <Version>0.18.0.1</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,11 +26,19 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>
@@ -63,11 +72,13 @@
     <None Remove="Resources\device_aya_2021.png" />
     <None Remove="Resources\device_aya_air.png" />
     <None Remove="Resources\device_aya_next.png" />
+    <None Remove="Resources\device_ayn_loki.png" />
     <None Remove="Resources\device_generic.png" />
     <None Remove="Resources\device_gpd3.png" />
     <None Remove="Resources\device_gpd4.png" />
     <None Remove="Resources\device_gpd_win2.png" />
     <None Remove="Resources\device_gpd_winmax2.png" />
+    <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_rog_ally.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
@@ -101,6 +112,7 @@
     <Resource Include="Resources\device_aokzoe_a1.png" />
     <Resource Include="Resources\device_aya_2.png" />
     <Resource Include="Resources\device_aya_air.png" />
+    <Resource Include="Resources\device_ayn_loki.png" />
     <Resource Include="Resources\device_generic.png" />
   </ItemGroup>
 
@@ -115,6 +127,7 @@
     <Resource Include="Resources\device_gpd4.png" />
     <Resource Include="Resources\device_gpd_win2.png" />
     <Resource Include="Resources\device_gpd_winmax2.png" />
+    <Resource Include="Resources\device_onexplayer_2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
     <Resource Include="Resources\device_rog_ally.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />
@@ -123,23 +136,46 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Crc32.NET" Version="1.2.0" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.24.0" />
+    <PackageReference Include="HidSharp" Version="2.1.0" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.0" />
-    <PackageReference Include="NAudio" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+    <PackageReference Include="NAudio" Version="2.2.0" />
+    <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.60" />
+    <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.14.305" />
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     <PackageReference Include="PixiEditor.ColorPicker" Version="3.3.1" />
+    <PackageReference Include="PrecisionTimer.NET" Version="2.2.5.3" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
+    <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
+    <PackageReference Include="System.IO.Ports" Version="7.0.0" />
+    <PackageReference Include="System.Management" Version="7.0.2" />
+    <PackageReference Include="WindowsAPICodePack" Version="7.0.4" />
+    <PackageReference Include="WindowsInput" Version="6.4.1" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ControllerCommon\ControllerCommon.csproj" />
-    <ProjectReference Include="..\ControllerService\ControllerService.csproj" />
-    <ProjectReference Include="..\neptune-hidapi.net\neptune-hidapi.net.csproj" />
+    <ProjectReference Include="..\steam-hidapi.net\steam-hidapi.net.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\Mapping\GyroMapping.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\Mapping\TriggerMapping.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -176,6 +212,99 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="GraphSettings.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="JoyShockLibrary.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\8BitDoLite2\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\8BitDoLite2\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\AYANEO 2021\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\AYANEO 2021\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\AYANEO Air\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\AYANEO Air\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\AYANEO NEXT\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\AYANEO NEXT\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\DS4\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\DS4\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\DualSense\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\DualSense\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\MachenikeHG510\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\MachenikeHG510\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\N64\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\N64\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\OneXPlayerMini\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\OneXPlayerMini\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\SteamDeck\LeftStickTouch.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\SteamDeck\RightStickTouch.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\ToyController\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\ToyController\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\XBOX360\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\XBOX360\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\XBOXOne\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\XBOXOne\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\ZDOPlus\LeftStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\ZDOPlus\RightStickClick.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="PerformanceMetrics.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\devcon.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1181,16 +1310,16 @@
     <None Update="Models\N64\B1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickRight.obj">
+    <None Update="Models\N64\RightStickRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\N64\B2.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickRight.obj">
+    <None Update="Models\N64\RightStickRight.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickDown.obj">
+    <None Update="Models\N64\RightStickDown.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\DPadDown.obj">
@@ -1244,10 +1373,10 @@
     <None Update="models\N64\Start.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickLeft.obj">
+    <None Update="Models\N64\RightStickLeft.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\N64\RStickUp.obj">
+    <None Update="Models\N64\RightStickUp.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\N64\Z.obj">
@@ -1481,13 +1610,13 @@
     <None Update="models\SteamDeck\Joystick-Right-Ring.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM2.obj">
+    <None Update="Models\SteamDeck\LeftStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM3.obj">
+    <None Update="Models\SteamDeck\RightStickClick.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM8.obj">
+    <None Update="Models\SteamDeck\LeftPadTouch.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\SteamDeck\L1.obj">
@@ -1511,22 +1640,22 @@
     <None Update="models\SteamDeck\OEM1.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM4.obj">
+    <None Update="Models\SteamDeck\L4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM5.obj">
+    <None Update="Models\SteamDeck\L5.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM6.obj">
+    <None Update="Models\SteamDeck\R4.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="models\SteamDeck\OEM7.obj">
+    <None Update="Models\SteamDeck\R5.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="models\SteamDeck\PowerButton.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Models\SteamDeck\OEM9.obj">
+    <None Update="Models\SteamDeck\RightPadTouch.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Models\SteamDeck\R1.obj">
@@ -2116,6 +2245,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\RTSSSharedMemoryNET.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ucrtbased.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="vcruntime140d.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="vcruntime140_1d.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="WinRing0x64.dll">

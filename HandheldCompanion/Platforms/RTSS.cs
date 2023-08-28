@@ -1,4 +1,9 @@
-﻿using System;
+﻿using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Utils;
+using RTSSSharedMemoryNET;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,14 +12,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using RTSSSharedMemoryNET;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;
@@ -184,10 +181,11 @@ public class RTSS : IPlatform
             {
                 appEntry = OSD.GetAppEntries().Where(x => (x.Flags & AppFlags.MASK) != AppFlags.None && x.ProcessId == ProcessId).FirstOrDefault();
             }
-            catch (Exception)
+            catch (FileNotFoundException)
             {
+                return;
             }
-            catch {}
+            catch { }
 
             await Task.Delay(1000);
         } while (appEntry is null && ProcessManager.HasProcess(ProcessId) && KeepAlive);
@@ -408,12 +406,7 @@ public class RTSS : IPlatform
             }
 
             if (GetProfileProperty("FramerateLimit", out int fpsLimit))
-            {
-                // reset tentative counter
-                Tentative = 0;
-
                 return fpsLimit;
-            }
         }
         catch
         {

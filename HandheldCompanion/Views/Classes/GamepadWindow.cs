@@ -1,17 +1,9 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using static PInvoke.User32;
 
 namespace HandheldCompanion.Views.Classes
 {
@@ -51,12 +43,13 @@ namespace HandheldCompanion.Views.Classes
         {
             LostGamepadWindowFocus?.Invoke();
         }
-#region events
+
+        #region events
         public event GotGamepadWindowFocusEventHandler GotGamepadWindowFocus;
         public delegate void GotGamepadWindowFocusEventHandler();
 
         public event LostGamepadWindowFocusEventHandler LostGamepadWindowFocus;
         public delegate void LostGamepadWindowFocusEventHandler();
-#endregion
+        #endregion
     }
 }

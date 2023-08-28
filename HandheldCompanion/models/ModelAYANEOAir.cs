@@ -1,7 +1,8 @@
+using HandheldCompanion.Inputs;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
+
 
 namespace HandheldCompanion.Models;
 
@@ -129,10 +130,12 @@ internal class ModelAYANEOAir : IModel
                         case ButtonFlags.DPadUp:
                         case ButtonFlags.DPadLeft:
                         case ButtonFlags.DPadRight:
-                        case ButtonFlags.L2:
-                        case ButtonFlags.R2:
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
+                        case ButtonFlags.L1:
+                        case ButtonFlags.L2Soft:
+                        case ButtonFlags.R1:
+                        case ButtonFlags.R2Soft:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
                         case ButtonFlags.OEM3:
                         case ButtonFlags.OEM4:
                             buttonMaterial = MaterialPlasticGreyDark;

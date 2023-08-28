@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.OverlayPage_Overlay}"
     d:Background="White"
     d:DesignHeight="1800"
@@ -406,7 +406,7 @@
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
-                                ShowAlpha="True" />
+                                Style="{StaticResource DefaultColorPickerStyle}" />
                         </DockPanel>
                     </Grid>
                 </Border>

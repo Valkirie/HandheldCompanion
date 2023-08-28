@@ -1,9 +1,10 @@
+using HandheldCompanion.Inputs;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
+
 
 namespace HandheldCompanion.Models;
 
@@ -91,6 +92,11 @@ internal class ModelDS4 : IModel
                         model3DGroup.Children.Add(model);
                     }
 
+                    break;
+
+                case ButtonFlags.LeftPadTouch:
+                    // case ButtonFlags.RightPadTouch:
+                    ButtonMap[button] = new() { Screen };
                     break;
             }
 
