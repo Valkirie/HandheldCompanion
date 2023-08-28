@@ -485,6 +485,11 @@ public static class ControllerManager
         // get details passed UserIndex
         UserIndex userIndex = (UserIndex)details.XInputUserIndex;
 
+        // device manager failed to retrieve actual userIndex
+        // use backup method
+        if (userIndex == UserIndex.Any)
+            userIndex = XInputController.TryGetUserIndex(details);
+
         // A XInput controller
         Controller _controller = new(userIndex);
 

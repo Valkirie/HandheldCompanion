@@ -2,6 +2,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using SharpDX.XInput;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 
@@ -172,6 +173,26 @@ public class XInputController : IController
     public override void Cleanup()
     {
         TimerManager.Tick -= UpdateInputs;
+    }
+
+    public static UserIndex TryGetUserIndex(PnPDetails details)
+    {
+        XInputCapabilitiesEx capabilitiesEx = new();
+
+        for (int idx = 0; idx < 4; idx++)
+        {
+            if (XInputGetCapabilitiesEx(1, idx, 0, ref capabilitiesEx) == 0)
+            {
+                if (capabilitiesEx.ProductId != details.attributes.ProductID || capabilitiesEx.VendorId != details.attributes.VendorID)
+                    continue;
+
+                var devices = DeviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
+                if (devices.FirstOrDefault() is not null)
+                    return (UserIndex)idx;
+            }
+        }
+
+        return SharpDX.XInput.UserIndex.Any;
     }
 
     public override string GetGlyph(ButtonFlags button)
