@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
     d:DesignHeight="1500"
@@ -28,23 +28,16 @@
                     Padding="15,12,12,12"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                    <Grid Name="ControllerGrid" IsEnabled="False">
+                    <Grid Name="ControllerGrid">
                         <Grid.Background>
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform" />
                         </Grid.Background>
-
-                        <ui:ProgressRing
-                            Name="navLoad"
-                            Width="50"
-                            Height="50"
-                            IsActive="True"
-                            Visibility="Hidden" />
 
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Orientation="Horizontal"
-                            Spacing="18">
+                            Spacing="6">
                             <ComboBox
                                 Name="cB_ServiceSwitch"
                                 Width="Auto"
@@ -281,7 +274,7 @@
                     </Border>
                 </ui:SimpleStackPanel>
 
-                <!--  Controller settings  -->
+                <!--  Virtual controller settings  -->
                 <ui:SimpleStackPanel Spacing="6">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
 
@@ -544,49 +537,11 @@
 
                 <!--  Steam Deck settings  -->
                 <ui:SimpleStackPanel
-                    Name="SteamDeckPanel"
+                    Name="SteamControllerPanel"
                     d:Visibility="Visible"
                     Spacing="6"
                     Visibility="Collapsed">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckSettings}" />
-
-                    <!--  Rumble engine  -->
-                    <Border
-                        Padding="15,12,12,12"
-                        Background="{DynamicResource ExpanderHeaderBackground}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
-                            <DockPanel>
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="Segoe MDL2 Assets"
-                                    Glyph="&#xE877;" />
-
-                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckHDRumble}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_SteamDeckHDRumbleDesc}"
-                                        TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
-                            </DockPanel>
-
-                            <ui:ToggleSwitch
-                                Name="Toggle_SDHDRumble"
-                                Grid.Column="1"
-                                HorizontalAlignment="Right"
-                                Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="Toggle_SDHDRumble_Toggled" />
-                        </Grid>
-                    </Border>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamControllerSettings}" />
 
                     <!--  Mute virtual controller  -->
                     <Border
@@ -608,21 +563,21 @@
                                     Glyph="&#xE789;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteController}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamControllerMute}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_SteamDeckMuteControllerDesc}"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamControllerMuteDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
                             <ui:ToggleSwitch
-                                Name="Toggle_SDMuteController"
+                                Name="Toggle_SCMuteController"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                Toggled="Toggle_SDMuteController_Toggled" />
+                                Toggled="Toggle_SCMuteController_Toggled" />
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

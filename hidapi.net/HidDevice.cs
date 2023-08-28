@@ -1,34 +1,29 @@
-﻿using System;
+﻿using hidapi.Native;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using hidapi.Native;
 
 namespace hidapi
 {
     public class HidDevice : IDisposable
     {
+        private ushort _vid, _pid, _inputBufferLen;
+        private short _mi;
         private IntPtr _deviceHandle;
-        private readonly object _lock = new object();
+        private object _lock = new object();
+        private bool _reading = false;
         private Thread _readThread;
-        private readonly ushort _vid;
-        private readonly ushort _pid;
-        private readonly ushort _inputBufferLen;
+        private long MillisecondsSinceEpoch => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        public bool IsDeviceValid => _deviceHandle != IntPtr.Zero;
+        public bool Reading => _reading;
         public Func<HidDeviceInputReceivedEventArgs, Task> OnInputReceived;
 
-        public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen = 64)
+        public HidDevice(ushort vendorId, ushort productId, ushort inputBufferLen = 64, short mi = -1)
         {
             _vid = vendorId;
             _pid = productId;
             _inputBufferLen = inputBufferLen;
-        }
-
-        private long MillisecondsSinceEpoch => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        public bool IsDeviceValid => _deviceHandle != IntPtr.Zero;
-        public bool Reading { get; private set; }
-
-        public void Dispose()
-        {
-            Close();
+            _mi = mi;
         }
 
         private void ThrowIfDeviceInvalid()
@@ -37,27 +32,39 @@ namespace hidapi
                 throw new HidDeviceInvalidException();
         }
 
-        public Task<bool> OpenDeviceAsync()
+        private static short GetMI(string path)
         {
-            return Task.Run(() => OpenDevice());
+            string low = path.ToLower();
+            int index = low.IndexOf("mi_");
+            if (index == -1)
+                return -1;
+            string mi = low.Substring(index + 3, 2);
+
+            if (short.TryParse(mi, out short number))
+                return number;
+
+            return -1;
         }
 
+        public Task<bool> OpenDeviceAsync() => Task.Run(() => OpenDevice());
         public bool OpenDevice()
         {
             lock (_lock)
             {
-                var devEnum = HidApiNative.hid_enumerate(_vid, _pid);
-                var deviceInfo = devEnum;
+                IntPtr devEnum = HidApiNative.hid_enumerate(_vid, _pid);
+                IntPtr deviceInfo = devEnum;
 
                 while (deviceInfo != IntPtr.Zero)
                 {
-                    var hidDeviceInfo = new HidDeviceInfo(deviceInfo);
+                    HidDeviceInfo hidDeviceInfo = new HidDeviceInfo(deviceInfo);
+                    if (_mi != -1 && _mi != GetMI(hidDeviceInfo.Path))
+                        goto next;
 
                     _deviceHandle = HidApiNative.hid_open_path(hidDeviceInfo.Path);
-
                     if (_deviceHandle != IntPtr.Zero)
                         break;
 
+                    next:
                     deviceInfo = hidDeviceInfo.NextDevicePtr;
                 }
 
@@ -66,27 +73,19 @@ namespace hidapi
             }
         }
 
-        public Task<byte[]> ReadAsync(int timeout = 100)
-        {
-            return Task.Run(() => Read(timeout));
-        }
-
+        public Task<byte[]> ReadAsync(int timeout = 100) => Task.Run(() => Read(timeout));
         public byte[] Read(int timeout = 100)
         {
             ThrowIfDeviceInvalid();
             lock (_lock)
             {
-                var buffer = new byte[_inputBufferLen];
-                var length = HidApiNative.hid_read_timeout(_deviceHandle, buffer, (uint)buffer.Length, timeout);
+                byte[] buffer = new byte[_inputBufferLen];
+                int length = HidApiNative.hid_read_timeout(_deviceHandle, buffer, (uint)buffer.Length, timeout);
                 return buffer;
             }
         }
 
-        public Task<int> ReadAsync(byte[] data)
-        {
-            return Task.Run(() => Read(data));
-        }
-
+        public Task<int> ReadAsync(byte[] data) => Task.Run(() => Read(data));
         public int Read(byte[] buffer, int timeout = 100)
         {
             if (buffer.Length < _inputBufferLen)
@@ -95,16 +94,12 @@ namespace hidapi
             ThrowIfDeviceInvalid();
             lock (_lock)
             {
-                var length = HidApiNative.hid_read_timeout(_deviceHandle, buffer, _inputBufferLen, timeout);
+                int length = HidApiNative.hid_read_timeout(_deviceHandle, buffer, _inputBufferLen, timeout);
                 return length;
             }
         }
 
-        public Task<byte[]> RequestFeatureReportAsync(byte[] request)
-        {
-            return Task.Run(() => RequestFeatureReport(request));
-        }
-
+        public Task<byte[]> RequestFeatureReportAsync(byte[] request) => Task.Run(() => RequestFeatureReport(request));
         public byte[] RequestFeatureReport(byte[] request)
         {
             if (request.Length > _inputBufferLen)
@@ -112,65 +107,67 @@ namespace hidapi
 
             ThrowIfDeviceInvalid();
 
-            var request_full = new byte[_inputBufferLen + 1];
+            byte[] request_full = new byte[_inputBufferLen + 1];
             Array.Copy(request, 0, request_full, 1, request.Length);
-            var response = new byte[_inputBufferLen + 1];
+            byte[] response = new byte[_inputBufferLen + 1];
 
-            var err = HidApiNative.hid_send_feature_report(_deviceHandle, request_full, (uint)(_inputBufferLen + 1));
-            if (err < 0) throw new Exception($"Could not send report to hid device. Error: {err}");
+            int err = HidApiNative.hid_send_feature_report(_deviceHandle, request_full, (uint)(_inputBufferLen + 1));
+            if (err < 0)
+                throw new Exception($"Could not send report to hid device. Error: {err}");
+
             err = HidApiNative.hid_get_feature_report(_deviceHandle, response, (uint)(_inputBufferLen + 1));
-            if (err < 0) throw new Exception($"Could not get report from hid device. Error: {err}");
+            if (err < 0)
+                throw new Exception($"Could not get report from hid device. Error: {err}");
 
             return response;
         }
 
-        private void ReadLoop()
-        {
-            var buffer = new byte[_inputBufferLen];
-            var len = 0;
-            while (Reading)
-            {
-                len = Read(buffer);
-                if (len > 0)
-                    if (OnInputReceived != null)
-                        _ = OnInputReceived(new HidDeviceInputReceivedEventArgs(this, buffer));
-            }
-        }
-
-        public Task WriteAsync(byte[] data)
-        {
-            return Task.Run(() => Write(data));
-        }
-
+        public Task WriteAsync(byte[] data) => Task.Run(() => Write(data));
         public void Write(byte[] data)
         {
             if (data.Length > _inputBufferLen)
                 throw new ArgumentException("Data length is greater than input buffer length.");
 
             ThrowIfDeviceInvalid();
-            var buffer = new byte[_inputBufferLen];
+            byte[] buffer = new byte[_inputBufferLen];
             Array.Copy(data, buffer, data.Length);
 
-            if (HidApiNative.hid_write(_deviceHandle, buffer, (uint)buffer.Length) < 0)
-                throw new Exception("Failed to write to HID device.");
+            int err = HidApiNative.hid_write(_deviceHandle, buffer, (uint)buffer.Length);
+            if (err < 0)
+                throw new Exception($"Failed to write to HID device. Error: {err}");
+        }
+
+        private void ReadLoop()
+        {
+            byte[] buffer = new byte[_inputBufferLen];
+            while (_reading)
+                if (Read(buffer) > 0 && OnInputReceived != null)
+                    _ = OnInputReceived(new HidDeviceInputReceivedEventArgs(this, buffer));
         }
 
         public void BeginRead()
         {
-            Reading = true;
-            _readThread = new Thread(ReadLoop);
+            _reading = true;
+            _readThread = new Thread(new ThreadStart(ReadLoop));
             _readThread.IsBackground = true;
             _readThread.Start();
         }
 
         public void EndRead()
         {
-            Reading = false;
+            _reading = false;
+            _readThread.Join();
+            _readThread = null;
         }
 
         public void Close()
         {
             HidApiNative.hid_close(_deviceHandle);
+        }
+
+        public void Dispose()
+        {
+            Close();
         }
     }
 }

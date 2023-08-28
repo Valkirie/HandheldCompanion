@@ -1,19 +1,16 @@
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Pipes;
-using SharpDX.XInput;
 
 namespace HandheldCompanion.Controllers;
 
 public class XInputController : IController
 {
-    private readonly Controller Controller;
+    private Controller Controller;
     private Gamepad Gamepad;
 
     private GamepadButtonFlags prevButtons;
@@ -23,14 +20,9 @@ public class XInputController : IController
 
     public XInputController()
     {
-        // UI
-        ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
-        ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
-        ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
-        ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
     }
 
-    public XInputController(Controller controller) : this()
+    public XInputController(Controller controller, PnPDetails details) : this()
     {
         Controller = controller;
         UserIndex = (int)controller.UserIndex;
@@ -38,31 +30,27 @@ public class XInputController : IController
         if (!IsConnected())
             return;
 
-        // pull data from xinput
-        var CapabilitiesEx = new XInputCapabilitiesEx();
-
-        if (XInputGetCapabilitiesEx(1, UserIndex, 0, ref CapabilitiesEx) == 0)
-        {
-            var ProductId = CapabilitiesEx.ProductId.ToString("X4");
-            var VendorId = CapabilitiesEx.VendorId.ToString("X4");
-
-            var devices = DeviceManager.GetDetails(CapabilitiesEx.VendorId, CapabilitiesEx.ProductId);
-            Details = devices.FirstOrDefault();
-        }
-
-        var BusInformation = new XInputBaseBusInformation();
-
-        if (XInputGetBaseBusInformation(UserIndex, ref BusInformation) == 0)
-        {
-        }
-
+        this.Details = details;
         if (Details is null)
             return;
 
         Details.isHooked = true;
 
+        // UI
+        ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
+        ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
+        ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
+        ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
+
+        InitializeComponent();
         DrawControls();
         RefreshControls();
+    }
+
+    public void UpdateController(Controller controller)
+    {
+        Controller = controller;
+        UserIndex = (int)controller.UserIndex;
     }
 
     public override string ToString()
@@ -79,70 +67,74 @@ public class XInputController : IController
         if (!IsConnected())
             return;
 
-        // update gamepad state
-        Gamepad = Controller.GetState().Gamepad;
+        try
+        {
+            // update gamepad state
+            Gamepad = Controller.GetState().Gamepad;
 
-        // update secret state
-        XInputGetStateSecret14(UserIndex, out State);
+            // update secret state
+            XInputGetStateSecret14(UserIndex, out State);
 
-        /*
-        if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
-            return;
-        */
+            /*
+            if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
+                return;
+            */
 
-        Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
+            Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
-        Inputs.ButtonState[ButtonFlags.B1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
-        Inputs.ButtonState[ButtonFlags.B2] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.B);
-        Inputs.ButtonState[ButtonFlags.B3] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.X);
-        Inputs.ButtonState[ButtonFlags.B4] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y);
+            Inputs.ButtonState[ButtonFlags.B1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
+            Inputs.ButtonState[ButtonFlags.B2] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.B);
+            Inputs.ButtonState[ButtonFlags.B3] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.X);
+            Inputs.ButtonState[ButtonFlags.B4] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Y);
 
-        Inputs.ButtonState[ButtonFlags.Start] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
-        Inputs.ButtonState[ButtonFlags.Back] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
+            Inputs.ButtonState[ButtonFlags.Start] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Start);
+            Inputs.ButtonState[ButtonFlags.Back] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
 
-        Inputs.ButtonState[ButtonFlags.L2] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
-        Inputs.ButtonState[ButtonFlags.R2] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.L2Soft] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold;
+            Inputs.ButtonState[ButtonFlags.R2Soft] = Gamepad.RightTrigger > Gamepad.TriggerThreshold;
 
-        Inputs.ButtonState[ButtonFlags.L3] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R3] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.L2Full] = Gamepad.LeftTrigger > Gamepad.TriggerThreshold * 8;
+            Inputs.ButtonState[ButtonFlags.R2Full] = Gamepad.RightTrigger > Gamepad.TriggerThreshold * 8;
 
-        Inputs.ButtonState[ButtonFlags.LeftThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
-        Inputs.ButtonState[ButtonFlags.RightThumb] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
+            Inputs.ButtonState[ButtonFlags.LeftStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
+            Inputs.ButtonState[ButtonFlags.RightStickClick] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
 
-        Inputs.ButtonState[ButtonFlags.L1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
-        Inputs.ButtonState[ButtonFlags.R1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
+            Inputs.ButtonState[ButtonFlags.L1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
+            Inputs.ButtonState[ButtonFlags.R1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 
-        Inputs.ButtonState[ButtonFlags.DPadUp] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp);
-        Inputs.ButtonState[ButtonFlags.DPadDown] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
-        Inputs.ButtonState[ButtonFlags.DPadLeft] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft);
-        Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
+            Inputs.ButtonState[ButtonFlags.DPadUp] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadUp);
+            Inputs.ButtonState[ButtonFlags.DPadDown] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
+            Inputs.ButtonState[ButtonFlags.DPadLeft] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadLeft);
+            Inputs.ButtonState[ButtonFlags.DPadRight] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.DPadRight);
 
-        // Left Stick
-        Inputs.ButtonState[ButtonFlags.LeftThumbLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftThumbRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftThumbDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.LeftThumbUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
+            // Left Stick
+            Inputs.ButtonState[ButtonFlags.LeftStickLeft] = Gamepad.LeftThumbX < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickRight] = Gamepad.LeftThumbX > Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickDown] = Gamepad.LeftThumbY < -Gamepad.LeftThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.LeftStickUp] = Gamepad.LeftThumbY > Gamepad.LeftThumbDeadZone;
 
-        Inputs.AxisState[AxisFlags.LeftThumbX] = Gamepad.LeftThumbX;
-        Inputs.AxisState[AxisFlags.LeftThumbY] = Gamepad.LeftThumbY;
+            Inputs.AxisState[AxisFlags.LeftStickX] = Gamepad.LeftThumbX;
+            Inputs.AxisState[AxisFlags.LeftStickY] = Gamepad.LeftThumbY;
 
-        // Right Stick
-        Inputs.ButtonState[ButtonFlags.RightThumbLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightThumbRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightThumbDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
-        Inputs.ButtonState[ButtonFlags.RightThumbUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
+            // Right Stick
+            Inputs.ButtonState[ButtonFlags.RightStickLeft] = Gamepad.RightThumbX < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickRight] = Gamepad.RightThumbX > Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickDown] = Gamepad.RightThumbY < -Gamepad.RightThumbDeadZone;
+            Inputs.ButtonState[ButtonFlags.RightStickUp] = Gamepad.RightThumbY > Gamepad.RightThumbDeadZone;
 
-        Inputs.AxisState[AxisFlags.RightThumbX] = Gamepad.RightThumbX;
-        Inputs.AxisState[AxisFlags.RightThumbY] = Gamepad.RightThumbY;
+            Inputs.AxisState[AxisFlags.RightStickX] = Gamepad.RightThumbX;
+            Inputs.AxisState[AxisFlags.RightStickY] = Gamepad.RightThumbY;
 
-        Inputs.ButtonState[ButtonFlags.Special] = State.wButtons.HasFlag(XInputStateButtons.Xbox);
+            Inputs.ButtonState[ButtonFlags.Special] = State.wButtons.HasFlag(XInputStateButtons.Xbox);
 
-        Inputs.AxisState[AxisFlags.L2] = Gamepad.LeftTrigger;
-        Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
+            Inputs.AxisState[AxisFlags.L2] = Gamepad.LeftTrigger;
+            Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
 
-        // update states
-        prevButtons = Gamepad.Buttons;
-        prevState = State;
+            // update states
+            prevButtons = Gamepad.Buttons;
+            prevState = State;
+        }
+        catch { }
 
         base.UpdateInputs(ticks);
     }
@@ -152,13 +144,6 @@ public class XInputController : IController
         if (Controller is not null)
             return Controller.IsConnected;
         return false;
-    }
-
-    public override void SetVibrationStrength(double value, bool rumble)
-    {
-        base.SetVibrationStrength(value, rumble);
-        if (rumble)
-            Rumble();
     }
 
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
@@ -173,48 +158,41 @@ public class XInputController : IController
         Controller.SetVibration(vibration);
     }
 
-    public override void Rumble(int Loop = 1, byte LeftValue = byte.MaxValue, byte RightValue = byte.MaxValue,
-        byte Duration = 125)
-    {
-        Task.Factory.StartNew(async () =>
-        {
-            for (var i = 0; i < Loop * 2; i++)
-            {
-                if (i % 2 == 0)
-                    SetVibration(LeftValue, RightValue);
-                else
-                    SetVibration(0, 0);
-
-                await Task.Delay(Duration);
-            }
-        });
-    }
-
     public override void Plug()
     {
         TimerManager.Tick += UpdateInputs;
-        PipeClient.ServerMessage += OnServerMessage;
         base.Plug();
     }
 
     public override void Unplug()
     {
         TimerManager.Tick -= UpdateInputs;
-        PipeClient.ServerMessage -= OnServerMessage;
         base.Unplug();
     }
 
-    private void OnServerMessage(PipeMessage message)
+    public override void Cleanup()
     {
-        switch (message.code)
+        TimerManager.Tick -= UpdateInputs;
+    }
+
+    public static UserIndex TryGetUserIndex(PnPDetails details)
+    {
+        XInputCapabilitiesEx capabilitiesEx = new();
+
+        for (int idx = 0; idx < 4; idx++)
         {
-            case PipeCode.SERVER_VIBRATION:
+            if (XInputGetCapabilitiesEx(1, idx, 0, ref capabilitiesEx) == 0)
             {
-                var e = (PipeClientVibration)message;
-                SetVibration(e.LargeMotor, e.SmallMotor);
+                if (capabilitiesEx.ProductId != details.attributes.ProductID || capabilitiesEx.VendorId != details.attributes.VendorID)
+                    continue;
+
+                var devices = DeviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
+                if (devices.FirstOrDefault() is not null)
+                    return (UserIndex)idx;
             }
-                break;
         }
+
+        return SharpDX.XInput.UserIndex.Any;
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -237,13 +215,13 @@ public class XInputController : IController
                 return "\u21FA";
             case ButtonFlags.Start:
                 return "\u21FB";
-            case ButtonFlags.L2:
+            case ButtonFlags.L2Soft:
                 return "\u21DC";
-            case ButtonFlags.L3:
+            case ButtonFlags.L2Full:
                 return "\u2196";
-            case ButtonFlags.R2:
+            case ButtonFlags.R2Soft:
                 return "\u21DD";
-            case ButtonFlags.R3:
+            case ButtonFlags.R2Full:
                 return "\u2197";
             case ButtonFlags.Special:
                 return "\uE001";
@@ -283,25 +261,32 @@ public class XInputController : IController
     [StructLayout(LayoutKind.Explicit)]
     protected struct XInputGamepad
     {
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(0)]
         public short wButtons;
 
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(2)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(2)]
         public byte bLeftTrigger;
 
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(3)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(3)]
         public byte bRightTrigger;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(4)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(4)]
         public short sThumbLX;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(6)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(6)]
         public short sThumbLY;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(8)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(8)]
         public short sThumbRX;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(10)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(10)]
         public short sThumbRY;
     }
 
@@ -316,13 +301,16 @@ public class XInputController : IController
     [StructLayout(LayoutKind.Explicit)]
     protected struct XInputCapabilities
     {
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(0)]
         private readonly byte Type;
 
-        [MarshalAs(UnmanagedType.I1)] [FieldOffset(1)]
+        [MarshalAs(UnmanagedType.I1)]
+        [FieldOffset(1)]
         public byte SubType;
 
-        [MarshalAs(UnmanagedType.I2)] [FieldOffset(2)]
+        [MarshalAs(UnmanagedType.I2)]
+        [FieldOffset(2)]
         public short Flags;
 
         [FieldOffset(4)] public XInputGamepad Gamepad;
@@ -353,6 +341,27 @@ public class XInputController : IController
         public short sThumbRY;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    protected struct XInputBaseBusInformation
+    {
+        [MarshalAs(UnmanagedType.U2)]
+        UInt16 VID;
+        [MarshalAs(UnmanagedType.U2)]
+        UInt16 PID;
+        [MarshalAs(UnmanagedType.U4)]
+        UInt32 a3;
+        [MarshalAs(UnmanagedType.U4)]
+        UInt32 Flags; // probably
+        [MarshalAs(UnmanagedType.U1)]
+        byte a4;
+        [MarshalAs(UnmanagedType.U1)]
+        byte a5;
+        [MarshalAs(UnmanagedType.U1)]
+        byte a6;
+        [MarshalAs(UnmanagedType.U1)]
+        byte reserved;
+    }
+
     [Flags]
     protected enum XInputStateButtons : ushort
     {
@@ -380,27 +389,6 @@ public class XInputController : IController
     protected static extern int XInputGetStateSecret14(int playerIndex, out XInputStateSecret struc);
 
     [DllImport("xinput1_4.dll", EntryPoint = "#104")]
-    public static extern int XInputGetBaseBusInformation(int dwUserIndex, ref XInputBaseBusInformation pInfo);
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct XInputBaseBusInformation
-    {
-        [MarshalAs(UnmanagedType.U2)]
-        UInt16 VID;
-        [MarshalAs(UnmanagedType.U2)]
-        UInt16 PID;
-        [MarshalAs(UnmanagedType.U4)]
-        UInt32 a3;
-        [MarshalAs(UnmanagedType.U4)]
-        UInt32 Flags; // probably
-        [MarshalAs(UnmanagedType.U1)]
-        byte a4;
-        [MarshalAs(UnmanagedType.U1)]
-        byte a5;
-        [MarshalAs(UnmanagedType.U1)]
-        byte a6;
-        [MarshalAs(UnmanagedType.U1)]
-        byte reserved;
-    }
+    protected static extern int XInputGetBaseBusInformation(int dwUserIndex, ref XInputBaseBusInformation pInfo);
     #endregion
 }

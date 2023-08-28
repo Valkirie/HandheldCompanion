@@ -1,7 +1,7 @@
-﻿using System;
+﻿using HandheldCompanion.Properties;
+using System;
 using System.Collections.Generic;
 using System.Windows.Media;
-using HandheldCompanion.Properties;
 
 namespace HandheldCompanion.Managers;
 

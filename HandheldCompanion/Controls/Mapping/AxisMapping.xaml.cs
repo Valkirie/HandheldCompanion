@@ -1,14 +1,12 @@
-﻿using System;
-using System.Threading;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Utils;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Managers;
-using Inkore.UI.WPF.Modern.Controls;
 
 namespace HandheldCompanion.Controls;
 
@@ -25,7 +23,6 @@ public partial class AxisMapping : IMapping
     public AxisMapping(AxisLayoutFlags axis) : this()
     {
         Value = axis;
-        prevValue = axis;
 
         Icon.Glyph = axis.ToString();
     }
@@ -42,8 +39,11 @@ public partial class AxisMapping : IMapping
             Icon.Foreground = newIcon.Foreground;
         else
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+    }
 
-        Update();
+    public void UpdateSelections()
+    {
+        Action_SelectionChanged(null, null);
     }
 
     internal void SetIActions(IActions actions)
@@ -63,10 +63,6 @@ public partial class AxisMapping : IMapping
 
         // we're not ready yet
         if (TargetComboBox is null)
-            return;
-
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
             return;
 
         // clear current dropdown values
@@ -134,7 +130,7 @@ public partial class AxisMapping : IMapping
 
                 // create a label, store MouseActionsType as Tag and Label as controller specific string
                 var buttonLabel = new Label
-                    { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
+                { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
                 TargetComboBox.Items.Add(buttonLabel);
 
                 if (mouseType.Equals(((MouseActions)Actions).MouseType))
@@ -147,6 +143,9 @@ public partial class AxisMapping : IMapping
             Axis2MouseRotation.Value = (((MouseActions)Actions).AxisInverted ? 180 : 0) +
                                        (((MouseActions)Actions).AxisRotated ? 90 : 0);
             Axis2MouseDeadzone.Value = ((MouseActions)Actions).Deadzone;
+            Axis2MouseAcceleration.Value = ((MouseActions)this.Actions).Acceleration;
+            Axis2MouseFiltering.IsOn = ((MouseActions)this.Actions).Filtering;
+            Axis2MouseFilterCutoff.Value = ((MouseActions)this.Actions).FilterCutoff;
         }
 
         base.Update();
@@ -160,46 +159,31 @@ public partial class AxisMapping : IMapping
         if (TargetComboBox.SelectedItem is null)
             return;
 
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
-            return;
-
         // generate IActions based on settings
         switch (Actions.ActionType)
         {
             case ActionType.Joystick:
-            {
-                var buttonLabel = TargetComboBox.SelectedItem as Label;
-                ((AxisActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
-            }
+                {
+                    var buttonLabel = TargetComboBox.SelectedItem as Label;
+                    ((AxisActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
+                }
                 break;
 
             case ActionType.Mouse:
-            {
-                var buttonLabel = TargetComboBox.SelectedItem as Label;
-                ((MouseActions)Actions).MouseType = (MouseActionsType)buttonLabel.Tag;
-            }
+                {
+                    var buttonLabel = TargetComboBox.SelectedItem as Label;
+                    ((MouseActions)Actions).MouseType = (MouseActionsType)buttonLabel.Tag;
+                }
                 break;
         }
 
         base.Update();
     }
 
-    private void Update()
-    {
-        // force full update
-        Action_SelectionChanged(null, null);
-        Target_SelectionChanged(null, null);
-    }
-
     public void Reset()
     {
-        if (Monitor.TryEnter(updateLock))
-        {
-            ActionComboBox.SelectedIndex = 0;
-            TargetComboBox.SelectedItem = null;
-            Monitor.Exit(updateLock);
-        }
+        ActionComboBox.SelectedIndex = 0;
+        TargetComboBox.SelectedItem = null;
     }
 
     private void Axis2AxisAutoRotate_Toggled(object sender, RoutedEventArgs e)
@@ -348,6 +332,52 @@ public partial class AxisMapping : IMapping
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).Deadzone = (int)Axis2MouseDeadzone.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Axis2MouseAcceleration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).Acceleration = (float)Axis2MouseAcceleration.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    // TODO: artificially convert to something more human readable?
+    private void Axis2MouseFiltering_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).Filtering = Axis2MouseFiltering.IsOn;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Axis2MouseFilterCutoff_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Mouse:
+                ((MouseActions)this.Actions).FilterCutoff = (float)Axis2MouseFilterCutoff.Value;
                 break;
         }
 

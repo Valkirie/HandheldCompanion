@@ -1,24 +1,22 @@
-﻿using System;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Simulators;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using Inkore.UI.WPF.Modern.Controls;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
 using Windows.System;
-using ControllerCommon.Controllers;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Properties;
-using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
-using Inkore.UI.WPF.Modern.Controls;
-using Newtonsoft.Json;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
-using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers;
 
@@ -140,26 +138,22 @@ public static class HotkeysManager
 
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        // manage toggle type hotkeys
+        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
         {
-            // manage toggle type hotkeys
-            foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals(name)))
-            {
-                if (!hotkey.inputsHotkey.IsToggle)
-                    continue;
+            if (!hotkey.inputsHotkey.IsToggle)
+                continue;
 
-                var toggle = Convert.ToBoolean(value);
-                hotkey.SetToggle(toggle);
-            }
+            var toggle = Convert.ToBoolean(value);
+            hotkey.SetToggle(toggle);
+        }
 
-            // manage settings type hotkeys
-            foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
-            {
-                var enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
-                hotkey.IsEnabled = enabled;
-            }
-        });
+        // manage settings type hotkeys
+        foreach (var hotkey in Hotkeys.Values.Where(item => item.inputsHotkey.Settings.Contains(name)))
+        {
+            var enabled = SettingsManager.GetBoolean(hotkey.inputsHotkey.Settings);
+            hotkey.IsEnabled = enabled;
+        }
     }
 
     private static void StartListening(Hotkey hotkey, ListenerType type)
@@ -173,20 +167,20 @@ public static class HotkeysManager
         switch (hotkey.IsPinned)
         {
             case false:
-            {
-                var count = CountPinned();
-
-                if (count >= PIN_LIMIT)
                 {
-                    _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
-                        $"You can't pin more than {PIN_LIMIT} hotkeys",
-                        ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+                    var count = CountPinned();
 
-                    return;
+                    if (count >= PIN_LIMIT)
+                    {
+                        _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
+                            $"You can't pin more than {PIN_LIMIT} hotkeys",
+                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+
+                        return;
+                    }
+
+                    hotkey.IsPinned = true;
                 }
-
-                hotkey.IsPinned = true;
-            }
                 break;
             case true:
                 hotkey.IsPinned = false;
@@ -326,62 +320,62 @@ public static class HotkeysManager
                         { VirtualKeyCode.LCONTROL, VirtualKeyCode.LSHIFT, VirtualKeyCode.ESCAPE });
                     break;
                 case "shortcutActionCenter":
-                {
-                    var uri = new Uri("ms-actioncenter");
-                    var success = Launcher.LaunchUriAsync(uri);
-                }
+                    {
+                        var uri = new Uri("ms-actioncenter");
+                        var success = Launcher.LaunchUriAsync(uri);
+                    }
                     break;
                 case "shortcutControlCenter":
-                {
-                    var uri = new Uri(
-                        "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true");
-                    var success = Launcher.LaunchUriAsync(uri);
-                }
+                    {
+                        var uri = new Uri(
+                            "ms-actioncenter:controlcenter/&suppressAnimations=false&showFooter=true&allowPageNavigation=true");
+                        var success = Launcher.LaunchUriAsync(uri);
+                    }
                     break;
                 case "shortcutPrintScreen":
                     KeyboardSimulator.KeyPress(
                         new[] { VirtualKeyCode.LWIN, VirtualKeyCode.LSHIFT, VirtualKeyCode.VK_S });
                     break;
                 case "suspendResumeTask":
-                {
-                    var sProcess = ProcessManager.GetLastSuspendedProcess();
+                    {
+                        var sProcess = ProcessManager.GetLastSuspendedProcess();
 
-                    if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
-                        break;
+                        if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
+                            break;
 
-                    if (sProcess.IsSuspended())
-                        ProcessManager.ResumeProcess(sProcess);
-                    else
-                        ProcessManager.SuspendProcess(fProcess);
-                }
+                        if (sProcess.IsSuspended())
+                            ProcessManager.ResumeProcess(sProcess);
+                        else
+                            ProcessManager.SuspendProcess(fProcess);
+                    }
                     break;
                 case "shortcutKillApp":
                     if (fProcess is not null) fProcess.Process.Kill();
                     break;
                 case "QuietModeToggled":
-                {
-                    var value = !SettingsManager.GetBoolean(listener);
-                    SettingsManager.SetProperty(listener, value);
+                    {
+                        var value = !SettingsManager.GetBoolean(listener);
+                        SettingsManager.SetProperty(listener, value);
 
-                    ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
-                }
+                        ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
+                    }
                     break;
 
                 case "OnScreenDisplayLevel":
-                {
-                    var value = !SettingsManager.GetBoolean(listener);
-                    SettingsManager.SetProperty(listener, value);
-                }
+                    {
+                        var value = !SettingsManager.GetBoolean(listener);
+                        SettingsManager.SetProperty(listener, value);
+                    }
                     break;
 
                 // temporary settings
                 case "DesktopLayoutEnabled":
-                {
-                    var value = !SettingsManager.GetBoolean(listener, true);
-                    SettingsManager.SetProperty(listener, value, false, true);
+                    {
+                        var value = !SettingsManager.GetBoolean(listener, true);
+                        SettingsManager.SetProperty(listener, value, false, true);
 
-                    ToastManager.SendToast("Desktop layout", $"is now {(value ? "enabled" : "disabled")}");
-                }
+                        ToastManager.SendToast("Desktop layout", $"is now {(value ? "enabled" : "disabled")}");
+                    }
                     break;
 
                 default:

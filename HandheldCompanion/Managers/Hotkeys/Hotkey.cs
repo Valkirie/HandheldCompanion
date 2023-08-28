@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using ControllerCommon.Controllers;
+﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
 using Inkore.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
 
@@ -175,16 +175,24 @@ public class Hotkey
 
     private void DrawGlyph()
     {
-        // update glyphs
-        mainControl.HotkeyIcon.FontFamily = quickControl.QuickIcon.FontFamily = inputsHotkey.fontFamily;
-        mainControl.HotkeyIcon.FontSize = quickControl.QuickIcon.FontSize = inputsHotkey.fontSize;
-        mainControl.HotkeyIcon.Glyph = quickControl.QuickIcon.Glyph = inputsHotkey.Glyph;
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // update glyphs
+            mainControl.HotkeyIcon.FontFamily = quickControl.QuickIcon.FontFamily = inputsHotkey.fontFamily;
+            mainControl.HotkeyIcon.FontSize = quickControl.QuickIcon.FontSize = inputsHotkey.fontSize;
+            mainControl.HotkeyIcon.Glyph = quickControl.QuickIcon.Glyph = inputsHotkey.Glyph;
+        });
     }
 
     private void DrawName()
     {
-        mainControl.HotkeyDesc.Text = inputsHotkey.GetDescription();
-        mainControl.HotkeyName.Text = quickControl.QuickName.Text = mainControl.HotkeyCustomName.Text = Name;
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            mainControl.HotkeyDesc.Text = inputsHotkey.GetDescription();
+            mainControl.HotkeyName.Text = quickControl.QuickName.Text = mainControl.HotkeyCustomName.Text = Name;
+        });
     }
 
     private void HotkeyErase_Click(object sender, RoutedEventArgs e)
@@ -266,69 +274,73 @@ public class Hotkey
 
     public void DrawInput()
     {
-        // mainButton content
-        SimpleStackPanel inputContent = new()
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            Orientation = Orientation.Horizontal,
-            Spacing = 6
-        };
-
-        mainControl.MainGrid.IsEnabled = true;
-        if (HasInput())
-        {
-            var controller = ControllerManager.GetTargetController();
-            if (controller is null)
-                controller = ControllerManager.GetEmulatedController();
-            var device = MainWindow.CurrentDevice;
-
-            foreach (var button in inputsChord.State.Buttons)
+            // mainButton content
+            SimpleStackPanel inputContent = new()
             {
-                UIElement? label = null;
+                Orientation = Orientation.Horizontal,
+                Spacing = 6
+            };
 
-                var fontIcon = controller.GetFontIcon(button);
-                // we display only one label, default one is not enough
-                if (fontIcon.Glyph != IController.defaultGlyph)
+            mainControl.MainGrid.IsEnabled = true;
+            if (HasInput())
+            {
+                var controller = ControllerManager.GetTargetController();
+                if (controller is null)
+                    controller = ControllerManager.GetEmulatedController();
+                var device = MainWindow.CurrentDevice;
+
+                foreach (var button in inputsChord.State.Buttons)
                 {
-                    if (fontIcon.Foreground is null)
-                        fontIcon.SetResourceReference(Control.ForegroundProperty,
-                            "SystemControlForegroundBaseMediumBrush");
+                    UIElement? label = null;
 
-                    label = fontIcon;
+                    var fontIcon = controller.GetFontIcon(button);
+                    // we display only one label, default one is not enough
+                    if (fontIcon.Glyph != IController.defaultGlyph)
+                    {
+                        if (fontIcon.Foreground is null)
+                            fontIcon.SetResourceReference(Control.ForegroundProperty,
+                                "SystemControlForegroundBaseMediumBrush");
+
+                        label = fontIcon;
+                    }
+
+                    if (label is null && device is not null)
+                    {
+                        Label buttonLabel = new() { Content = device.GetButtonName(button) };
+                        label = buttonLabel;
+                    }
+
+                    if (label is not null)
+                        inputContent.Children.Add(label);
                 }
 
-                if (label is null && device is not null)
+                TextBlock type = new()
                 {
-                    Label buttonLabel = new() { Content = device.GetButtonName(button) };
-                    label = buttonLabel;
-                }
+                    Text = inputsChord.InputsType.ToString(),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                type.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
 
-                if (label is not null)
-                    inputContent.Children.Add(label);
+                inputContent.Children.Add(type);
+            }
+            else
+            {
+                TextBlock fallback = new()
+                {
+                    Text = Resources.ResourceManager.GetString("InputsHotkey_fallbackInput")
+                };
+                fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+
+                // set fallback content
+                inputContent.Children.Add(fallback);
             }
 
-            TextBlock type = new()
-            {
-                Text = inputsChord.InputsType.ToString(),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            type.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
-
-            inputContent.Children.Add(type);
-        }
-        else
-        {
-            TextBlock fallback = new()
-            {
-                Text = Resources.ResourceManager.GetString("InputsHotkey_fallbackInput")
-            };
-            fallback.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-            // set fallback content
-            inputContent.Children.Add(fallback);
-        }
-
-        // update main button content
-        mainControl.HotkeyInput.Content = inputContent;
+            // update main button content
+            mainControl.HotkeyInput.Content = inputContent;
+        });
 
         DrawErase();
     }
@@ -356,24 +368,32 @@ public class Hotkey
 
     private void DrawPin()
     {
-        // update pin button
-        switch (IsPinned)
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            case true:
-                mainControl.HotkeyPin.Content = new FontIcon { Glyph = "\uE77A", FontSize = 14 };
-                mainControl.HotkeyPin.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
-                break;
-            case false:
-                mainControl.HotkeyPin.Content = new FontIcon { Glyph = "\uE840", FontSize = 14 };
-                mainControl.HotkeyPin.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
-                break;
-        }
+            // update pin button
+            switch (IsPinned)
+            {
+                case true:
+                    mainControl.HotkeyPin.Content = new FontIcon { Glyph = "\uE77A", FontSize = 14 };
+                    mainControl.HotkeyPin.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    break;
+                case false:
+                    mainControl.HotkeyPin.Content = new FontIcon { Glyph = "\uE840", FontSize = 14 };
+                    mainControl.HotkeyPin.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    break;
+            }
+        });
     }
 
     private void DrawErase()
     {
-        // update delete button status
-        mainControl.HotkeyErase.IsEnabled = HasInput() || HasOutput();
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // update delete button status
+            mainControl.HotkeyErase.IsEnabled = HasInput() || HasOutput();
+        });
     }
 
     public void Highlight()
@@ -383,15 +403,19 @@ public class Hotkey
 
     public void SetToggle(bool toggle)
     {
-        switch (toggle)
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            case true:
-                quickControl.QuickButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
-                break;
-            case false:
-                quickControl.QuickButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
-                break;
-        }
+            switch (toggle)
+            {
+                case true:
+                    quickControl.QuickButton.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                    break;
+                case false:
+                    quickControl.QuickButton.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+                    break;
+            }
+        });
     }
 
     public void ControllerSelected(IController controller)

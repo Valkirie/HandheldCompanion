@@ -1,11 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.Platforms;
+using System;
 using System.Diagnostics;
 using System.Timers;
 using System.Windows;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
-using HandheldCompanion.Platforms;
 
 namespace HandheldCompanion.Managers;
 
@@ -93,31 +90,31 @@ public static class PlatformManager
             switch (name)
             {
                 case "OnScreenDisplayLevel":
-                {
-                    var level = Convert.ToInt16(value);
-
-                    switch (level)
                     {
-                        case 0: // Disabled
-                            CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
-                            CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                            break;
-                        default:
-                        case 1: // Minimal
-                            CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                            CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                            break;
-                        case 2: // Extended
-                        case 3: // Full
-                        case 4: // External
-                            CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                            CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
-                            break;
-                    }
+                        var level = Convert.ToInt16(value);
 
-                    UpdateTimer.Stop();
-                    UpdateTimer.Start();
-                }
+                        switch (level)
+                        {
+                            case 0: // Disabled
+                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
+                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                                break;
+                            default:
+                            case 1: // Minimal
+                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                                break;
+                            case 2: // Extended
+                            case 3: // Full
+                            case 4: // External
+                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
+                                break;
+                        }
+
+                        UpdateTimer.Stop();
+                        UpdateTimer.Start();
+                    }
                     break;
             }
         });

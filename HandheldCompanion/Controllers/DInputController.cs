@@ -1,13 +1,10 @@
-﻿using ControllerCommon;
-using ControllerCommon.Controllers;
-using SharpDX.DirectInput;
+﻿using SharpDX.DirectInput;
 
 namespace HandheldCompanion.Controllers;
 
 public class DInputController : IController
 {
     public Joystick joystick;
-    protected JoystickState prevState = new();
     protected JoystickState State = new();
 
     public DInputController()
@@ -41,16 +38,13 @@ public class DInputController : IController
         var baseName = base.ToString();
         if (!string.IsNullOrEmpty(baseName))
             return baseName;
-        if (joystick is null)
-            return string.Empty;
-        return joystick.Information.ProductName;
+        if (!string.IsNullOrEmpty(joystick.Information.ProductName))
+            return joystick.Information.ProductName;
+        return $"DInput Controller {UserIndex}";
     }
 
     public override void UpdateInputs(long ticks)
     {
-        // update states
-        prevState = State;
-
         base.UpdateInputs(ticks);
     }
 

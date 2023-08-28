@@ -1,11 +1,13 @@
-﻿using System;
+﻿using ColorPicker;
+using ColorPicker.Models;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using Inkore.UI.WPF.Modern.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
@@ -132,11 +134,11 @@ public partial class OverlayPage : Page
     private void UpdateUI_ControllerPosition(int controllerAlignment)
     {
         foreach (SimpleStackPanel panel in OverlayControllerAlignment.Children)
-        foreach (Button button in panel.Children)
-            if (int.Parse((string)button.Tag) == controllerAlignment)
-                button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
-            else
-                button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
+            foreach (Button button in panel.Children)
+                if (int.Parse((string)button.Tag) == controllerAlignment)
+                    button.Style = Application.Current.FindResource("AccentButtonStyle") as Style;
+                else
+                    button.Style = Application.Current.FindResource("DefaultButtonStyle") as Style;
 
         switch (controllerAlignment)
         {
@@ -304,8 +306,18 @@ public partial class OverlayPage : Page
         SettingsManager.SetProperty("OverlayControllerOpacity", SliderControllerOpacity.Value);
     }
 
+    private Color prevSelectedColor = new();
     private void StandardColorPicker_ColorChanged(object sender, RoutedEventArgs e)
     {
+        // workaround: NotifyableColor is raising ColorChanged event infinitely
+        ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
+        if (prevSelectedColor == colorArgs.Color)
+        {
+            ColorPicker.Color = new NotifyableColor(new PickerControlBase());
+            return;
+        }
+        prevSelectedColor = colorArgs.Color;
+
         MainWindow.overlayModel.Background = new SolidColorBrush(ColorPicker.SelectedColor);
 
         if (!IsLoaded)

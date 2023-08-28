@@ -13,7 +13,7 @@
       {
         "Name": "File",
         "Args": {
-          "path": ".\\logs\\HandheldCompanion.log",
+          "path": ".\\logs\\HandheldCompanion-.log",
           "rollingInterval": "Day"
         }
       },

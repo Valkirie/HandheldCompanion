@@ -5,10 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.SettingsPage_Settings}"
     d:Background="White"
-    d:DesignHeight="2000"
+    d:DesignHeight="2400"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -244,6 +244,44 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_DesktopProfileOnStart_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Force virtual controller order  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="9*" MinWidth="200" />
+                            <ColumnDefinition MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE7B3;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ForceVirtualControllerOrder}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_ForceVirtualControllerOrderDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_ForceVirtualControllerOrder"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_ForceVirtualControllerOrder_Toggled" />
                     </Grid>
                 </Border>
 
@@ -514,11 +552,13 @@
                     </Grid>
                 </Border>
 
-                <!--  Quicktools autohide  -->
+                <!-- Quicktools autohide  -->
+                <!-- Disabled until we figure out a way to make it work without having to actually click on the window -->
                 <Border
                     Padding="15,12,12,12"
                     Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Collapsed">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -592,129 +632,6 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_Notification_Toggled" />
-                    </Grid>
-                </Border>
-            </ui:SimpleStackPanel>
-
-            <!--  Service options  -->
-            <ui:SimpleStackPanel Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ServiceOptions}" />
-
-                <!--  Toast notification  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE713;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_StartupType}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_StartupTypeDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ComboBox
-                            Name="cB_StartupType"
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Stretch"
-                            SelectionChanged="cB_StartupType_SelectionChanged" />
-                    </Grid>
-                </Border>
-
-                <!--  Start with Companion  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xEDB5;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_StartWithCompanion}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_StartWithCompanionDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_ServiceStartup"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsEnabled="False"
-                            IsOn="True"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_ServiceStartup_Toggled" />
-                    </Grid>
-                </Border>
-
-                <!--  Stop with Companion  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE71A;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanion}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_HaltWithCompanionDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_ServiceShutdown"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            IsEnabled="False"
-                            IsOn="True"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_ServiceShutdown_Toggled" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
@@ -996,44 +913,6 @@
             <!--  Power options  -->
             <ui:SimpleStackPanel Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_PowerOptions}" />
-
-                <!--  EnergyStar  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xEA95;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_EcoQoS}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_EcoQoSDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_EnergyStar"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_EnergyStar_Toggled" />
-                    </Grid>
-                </Border>
 
                 <!--  Configurable TDP  -->
                 <Border

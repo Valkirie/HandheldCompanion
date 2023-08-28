@@ -1,23 +1,23 @@
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Pages.Profiles;
+using Inkore.UI.WPF.Modern.Controls;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
-using ControllerCommon;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views.Pages.Profiles;
-using Microsoft.Win32;
-using Inkore.UI.WPF.Modern.Controls;
-using Layout = ControllerCommon.Layout;
+using static HandheldCompanion.Utils.XInputPlusUtils;
 using Page = System.Windows.Controls.Page;
-using System.Timers;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -26,14 +26,13 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ProfilesPage : Page
 {
-    public static Profile currentProfile;
+    // when set on start cannot be null anymore
+    public static Profile selectedProfile;
 
     private readonly SettingsMode0 page0 = new("SettingsMode0");
     private readonly SettingsMode1 page1 = new("SettingsMode1");
-    private Hotkey ProfilesPageHotkey = new(60);
 
-    private bool profileLock;
-    private bool layoutLock;
+    private LockObject updateLock = new();
 
     private const int UpdateInterval = 500;
     private static Timer UpdateTimer;
@@ -59,83 +58,11 @@ public partial class ProfilesPage : Page
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
-
-        HotkeysManager.HotkeyCreated += TriggerCreated;
-        InputsManager.TriggerUpdated += TriggerUpdated;
+        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
 
         MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
         MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
-
-        // draw input modes
-        foreach (var mode in (MotionInput[])Enum.GetValues(typeof(MotionInput)))
-        {
-            // create panel
-            var panel = new SimpleStackPanel
-                { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-            // create icon
-            var icon = new FontIcon { Glyph = "" };
-
-            switch (mode)
-            {
-                default:
-                case MotionInput.PlayerSpace:
-                    icon.Glyph = "\uF119";
-                    break;
-                case MotionInput.JoystickCamera:
-                    icon.Glyph = "\uE714";
-                    break;
-                case MotionInput.AutoRollYawSwap:
-                    icon.Glyph = "\uE7F8";
-                    break;
-                case MotionInput.JoystickSteering:
-                    icon.Glyph = "\uEC47";
-                    break;
-            }
-
-            if (icon.Glyph != "")
-                panel.Children.Add(icon);
-
-            // create textblock
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-            panel.Children.Add(text);
-
-            cB_Input.Items.Add(panel);
-        }
-
-        // draw output modes
-        foreach (var mode in (MotionOutput[])Enum.GetValues(typeof(MotionOutput)))
-        {
-            // create panel
-            var panel = new SimpleStackPanel
-                { Spacing = 6, Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-            // create icon
-            var icon = new FontIcon { Glyph = "" };
-
-            switch (mode)
-            {
-                default:
-                case MotionOutput.RightStick:
-                    icon.Glyph = "\uF109";
-                    break;
-                case MotionOutput.LeftStick:
-                    icon.Glyph = "\uF108";
-                    break;
-            }
-
-            if (icon.Glyph != "")
-                panel.Children.Add(icon);
-
-            // create textblock
-            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
-            var text = new TextBlock { Text = description };
-            panel.Children.Add(text);
-
-            cB_Output.Items.Add(panel);
-        }
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription("", ListSortDirection.Descending));
@@ -143,6 +70,33 @@ public partial class ProfilesPage : Page
         // device settings
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
         GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
+
+        // motherboard settings
+        CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
+    }
+
+    private void SystemManager_RSRStateChanged(int RSRState, int RSRSharpness)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            switch (RSRState)
+            {
+                case -1:
+                    RSRToggle.IsEnabled = false;
+                    break;
+                case 0:
+                    RSRToggle.IsEnabled = true;
+                    RSRToggle.IsOn = false;
+                    RSRSlider.Value = RSRSharpness;
+                    break;
+                case 1:
+                    RSRToggle.IsEnabled = true;
+                    RSRToggle.IsOn = true;
+                    RSRSlider.Value = RSRSharpness;
+                    break;
+            }
+        });
     }
 
     private void PerformanceManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
@@ -172,41 +126,35 @@ public partial class ProfilesPage : Page
             {
                 case "ConfigurableTDPOverrideDown":
                     {
-                        // set flag
-                        profileLock = true;
-
-                        TDPSlider.Minimum = (double)value;
-
-                        // release flag
-                        profileLock = false;
+                        using (new ScopedLock(updateLock))
+                        {
+                            TDPSlider.Minimum = (double)value;
+                        }
                     }
                     break;
                 case "ConfigurableTDPOverrideUp":
                     {
-                        // set flag
-                        profileLock = true;
-
-                        TDPSlider.Maximum = (double)value;
-
-                        // release flag
-                        profileLock = false;
+                        using (new ScopedLock(updateLock))
+                        {
+                            TDPSlider.Maximum = (double)value;
+                        }
                     }
                     break;
             }
         });
     }
 
-    private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
 
-            FramerateQuarter.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
-            FramerateThird.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
-            FramerateHalf.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
-            FramerateFull.Text = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
+            FramerateQuarter.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
+            FramerateThird.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
+            FramerateHalf.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
+            FramerateFull.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
         });
     }
 
@@ -232,11 +180,11 @@ public partial class ProfilesPage : Page
         if (openFileDialog.ShowDialog() == true)
             try
             {
-                var path = openFileDialog.FileName;
-                var folder = Path.GetDirectoryName(path);
+                string path = openFileDialog.FileName;
+                string folder = Path.GetDirectoryName(path);
 
-                var file = openFileDialog.SafeFileName;
-                var ext = Path.GetExtension(file);
+                string file = openFileDialog.SafeFileName;
+                string ext = Path.GetExtension(file);
 
                 switch (ext)
                 {
@@ -246,22 +194,57 @@ public partial class ProfilesPage : Page
                     case ".xml":
                         try
                         {
-                            var doc = new XmlDocument();
-                            doc.Load(path);
+                            XmlDocument doc = new XmlDocument();
+                            string UWPpath = string.Empty;
+                            string UWPfile = string.Empty;
 
-                            var Applications = doc.GetElementsByTagName("Applications");
-                            foreach (XmlNode node in Applications)
-                            foreach (XmlNode child in node.ChildNodes)
-                                if (child.Name.Equals("Application"))
-                                    if (child.Attributes is not null)
-                                        foreach (XmlAttribute attribute in child.Attributes)
-                                            switch (attribute.Name)
-                                            {
-                                                case "Executable":
-                                                    path = Path.Combine(folder, attribute.InnerText);
-                                                    file = Path.GetFileName(path);
-                                                    break;
-                                            }
+                            // check if MicrosoftGame.config exists
+                            string configPath = Path.Combine(folder, "MicrosoftGame.config");
+                            if (File.Exists(configPath))
+                            {
+                                doc.Load(configPath);
+
+                                XmlNodeList ExecutableList = doc.GetElementsByTagName("ExecutableList");
+                                foreach (XmlNode node in ExecutableList)
+                                    foreach (XmlNode child in node.ChildNodes)
+                                        if (child.Name.Equals("Executable"))
+                                            if (child.Attributes is not null)
+                                                foreach (XmlAttribute attribute in child.Attributes)
+                                                    switch (attribute.Name)
+                                                    {
+                                                        case "Name":
+                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                            UWPfile = Path.GetFileName(path);
+                                                            break;
+                                                    }
+                            }
+
+                            // either there was no config file, either we couldn't find an executable within it
+                            if (!File.Exists(UWPpath))
+                            {
+                                doc.Load(path);
+
+                                XmlNodeList Applications = doc.GetElementsByTagName("Applications");
+                                foreach (XmlNode node in Applications)
+                                    foreach (XmlNode child in node.ChildNodes)
+                                        if (child.Name.Equals("Application"))
+                                            if (child.Attributes is not null)
+                                                foreach (XmlAttribute attribute in child.Attributes)
+                                                    switch (attribute.Name)
+                                                    {
+                                                        case "Executable":
+                                                            UWPpath = Path.Combine(folder, attribute.InnerText);
+                                                            UWPfile = Path.GetFileName(path);
+                                                            break;
+                                                    }
+                            }
+
+                            // we're good to go
+                            if (File.Exists(UWPpath))
+                            {
+                                path = UWPpath;
+                                file = UWPfile;
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -312,10 +295,14 @@ public partial class ProfilesPage : Page
 
     private void b_AdditionalSettings_Click(object sender, RoutedEventArgs e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
-        switch ((MotionInput)cB_Input.SelectedIndex)
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        // TODO: MOVE ME TO LAYOUT !
+        switch (((GyroActions)currentAction).MotionInput)
         {
             default:
             case MotionInput.JoystickCamera:
@@ -335,140 +322,159 @@ public partial class ProfilesPage : Page
         if (cB_Profiles.SelectedItem is null)
             return;
 
-        // if an update is pending, execute it and stop timer
+        // if an update is pending, cut it short, it will distirb profile selection though
         if (UpdateTimer.Enabled)
         {
             UpdateTimer.Stop();
             SubmitProfile();
         }
 
-        // update current profile
-        var profile = (Profile)cB_Profiles.SelectedItem;
-        currentProfile = profile.Clone() as Profile;
+        selectedProfile = (Profile)cB_Profiles.SelectedItem;
 
         DrawProfile();
     }
 
+    private void UpdateMotionControlsVisibility()
+    {
+        bool MotionMapped = false;
+        if (selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
+            if (action is not null && action.ActionType != ActionType.Disabled)
+                MotionMapped = true;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            MotionControlAdditional.IsEnabled = MotionMapped ? true : false;
+        });
+    }
+
     private void DrawProfile()
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // set lock
-            profileLock = true;
-
-            // disable button if is default profile or application is running
-            b_DeleteProfile.IsEnabled =
-                !currentProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
-
-            // prevent user from renaming default profile
-            tB_ProfileName.IsEnabled = !currentProfile.Default;
-            // prevent user from disabling default profile
-            Toggle_EnableProfile.IsEnabled = !currentProfile.Default;
-            // prevent user from disabling default profile layout
-            Toggle_ControllerLayout.IsEnabled = !currentProfile.Default;
-
-            // Profile info
-            tB_ProfileName.Text = currentProfile.Name;
-            tB_ProfilePath.Text = currentProfile.Path;
-            Toggle_EnableProfile.IsOn = currentProfile.Enabled;
-
-            // Global settings
-            cB_Whitelist.IsChecked = currentProfile.Whitelisted;
-            cB_Wrapper.IsChecked = currentProfile.XInputPlus;
-
-            // Motion control settings
-            tb_ProfileGyroValue.Value = currentProfile.GyrometerMultiplier;
-            tb_ProfileAcceleroValue.Value = currentProfile.AccelerometerMultiplier;
-
-            cB_GyroSteering.SelectedIndex = currentProfile.SteeringAxis;
-            cB_InvertHorizontal.IsChecked = currentProfile.MotionInvertHorizontal;
-            cB_InvertVertical.IsChecked = currentProfile.MotionInvertVertical;
-
-            // Sustained TDP settings (slow, stapm, long)
-            TDPToggle.IsOn = currentProfile.TDPOverrideEnabled;
-            var TDP = currentProfile.TDPOverrideValues is not null
-                ? currentProfile.TDPOverrideValues
-                : MainWindow.CurrentDevice.nTDP;
-            TDPSlider.Value = TDP[(int)PowerType.Slow];
-
-            // define slider(s) min and max values based on device specifications
-            TDPSlider.Minimum = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
-            TDPSlider.Maximum = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
-
-            // Automatic TDP
-            AutoTDPToggle.IsOn = currentProfile.AutoTDPEnabled;
-            AutoTDPSlider.Value = (int)currentProfile.AutoTDPRequestedFPS;
-
-            // EPP
-            EPPToggle.IsOn = currentProfile.EPPOverrideEnabled;
-            EPPSlider.Value = currentProfile.EPPOverrideValue;
-
-            // GPU Clock control
-            GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
-            GPUSlider.Value = currentProfile.GPUOverrideValue != 0 ? currentProfile.GPUOverrideValue : 255 * 50;
-
-            // Framerate limit
-            FramerateToggle.IsOn = currentProfile.FramerateEnabled;
-            FramerateSlider.Value = currentProfile.FramerateValue;
-
-            // Layout settings
-            Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
-
-            // UMC settings
-            Toggle_UniversalMotion.IsOn = currentProfile.MotionEnabled;
-            cB_Input.SelectedIndex = (int)currentProfile.MotionInput;
-            cB_Output.SelectedIndex = (int)currentProfile.MotionOutput;
-            tb_ProfileUMCAntiDeadzone.Value = currentProfile.MotionAntiDeadzone;
-            cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)currentProfile.MotionMode;
-
-            // todo: improve me ?
-            ProfilesPageHotkey.inputsChord.State = currentProfile.MotionTrigger.Clone() as ButtonState;
-            ProfilesPageHotkey.DrawInput();
-
-            // display warnings
-            switch (currentProfile.ErrorCode)
+            using (new ScopedLock(updateLock))
             {
-                default:
-                case ProfileErrorCode.None:
-                    WarningBorder.Visibility = Visibility.Collapsed;
-                    cB_Whitelist.IsEnabled = true;
-                    cB_Wrapper.IsEnabled = true;
-                    break;
+                // disable delete button if is default profile or running
+                b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
+                // prevent user from renaming default profile
+                tB_ProfileName.IsEnabled = !selectedProfile.Default;
+                // prevent user from disabling default profile
+                Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
+                // prevent user from disabling default profile layout
+                Toggle_ControllerLayout.IsEnabled = !selectedProfile.Default;
+                // prevent user from using Wrapper on default profile
+                cB_Wrapper.IsEnabled = !selectedProfile.Default;
 
-                case ProfileErrorCode.Running:              // application is running
-                case ProfileErrorCode.MissingExecutable:    // profile has no executable
-                case ProfileErrorCode.MissingPath:          // profile has no path
-                case ProfileErrorCode.Default:              // profile is default
-                    WarningBorder.Visibility = Visibility.Visible;
-                    WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
-                    cB_Whitelist.IsEnabled = false;
-                    cB_Wrapper.IsEnabled = false;
-                    break;
+                // Profile info
+                tB_ProfileName.Text = selectedProfile.Name;
+                tB_ProfilePath.Text = selectedProfile.Path;
+                Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
-                case ProfileErrorCode.MissingPermission:
-                    WarningBorder.Visibility = Visibility.Visible;
-                    WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(currentProfile.ErrorCode);
-                    cB_Whitelist.IsEnabled = true;
-                    cB_Wrapper.IsEnabled = false;
-                    break;
+                // Global settings
+                cB_Whitelist.IsChecked = selectedProfile.Whitelisted;
+                cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
+
+                // Motion control settings
+                tb_ProfileGyroValue.Value = selectedProfile.GyrometerMultiplier;
+                tb_ProfileAcceleroValue.Value = selectedProfile.AccelerometerMultiplier;
+
+                cB_GyroSteering.SelectedIndex = selectedProfile.SteeringAxis;
+                cB_InvertHorizontal.IsChecked = selectedProfile.MotionInvertHorizontal;
+                cB_InvertVertical.IsChecked = selectedProfile.MotionInvertVertical;
+
+                UpdateMotionControlsVisibility();
+
+                // Sustained TDP settings (slow, stapm, long)
+                TDPToggle.IsOn = selectedProfile.TDPOverrideEnabled;
+                var TDP = selectedProfile.TDPOverrideValues is not null
+                    ? selectedProfile.TDPOverrideValues
+                    : MainWindow.CurrentDevice.nTDP;
+                TDPSlider.Value = TDP[(int)PowerType.Slow];
+
+                // define slider(s) min and max values based on device specifications
+                TDPSlider.Minimum = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
+                TDPSlider.Maximum = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
+
+                // Automatic TDP
+                AutoTDPToggle.IsOn = selectedProfile.AutoTDPEnabled;
+                AutoTDPSlider.Value = (int)selectedProfile.AutoTDPRequestedFPS;
+
+                // EPP
+                EPPToggle.IsOn = selectedProfile.EPPOverrideEnabled;
+                EPPSlider.Value = selectedProfile.EPPOverrideValue;
+
+                // RSR
+                RSRToggle.IsOn = selectedProfile.RSREnabled;
+                RSRSlider.Value = selectedProfile.RSRSharpness;
+
+                // CPU Core Count
+                CPUCoreToggle.IsOn = selectedProfile.CPUCoreEnabled;
+                CPUCoreSlider.Value = selectedProfile.CPUCoreCount;
+
+                // GPU Clock control
+                GPUToggle.IsOn = selectedProfile.GPUOverrideEnabled;
+                GPUSlider.Value = selectedProfile.GPUOverrideValue != 0 ? selectedProfile.GPUOverrideValue : 255 * 50;
+
+                // Framerate limit
+                FramerateToggle.IsOn = selectedProfile.FramerateEnabled;
+                FramerateSlider.Value = selectedProfile.FramerateValue;
+
+                // Layout settings
+                Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
+
+
+                // display warnings
+                WarningContent.Text = EnumUtils.GetDescriptionFromEnumValue(selectedProfile.ErrorCode);
+
+                switch (selectedProfile.ErrorCode)
+                {
+                    default:
+                    case ProfileErrorCode.None:
+                        WarningBorder.Visibility = Visibility.Collapsed;
+                        cB_Whitelist.IsEnabled = true;
+
+                        // wrapper
+                        cB_Wrapper_Injection.IsEnabled = true;
+                        cB_Wrapper_Redirection.IsEnabled = true;
+                        break;
+
+                    case ProfileErrorCode.Running:              // application is running
+                    case ProfileErrorCode.MissingExecutable:    // profile has no executable
+                    case ProfileErrorCode.MissingPath:          // profile has no path
+                    case ProfileErrorCode.Default:              // profile is default
+                        WarningBorder.Visibility = Visibility.Visible;
+                        cB_Whitelist.IsEnabled = false;
+                        cB_Wrapper.IsEnabled = false;
+
+                        // wrapper
+                        cB_Wrapper_Injection.IsEnabled = false;
+                        cB_Wrapper_Redirection.IsEnabled = false;
+                        break;
+
+                    case ProfileErrorCode.MissingPermission:
+                        WarningBorder.Visibility = Visibility.Visible;
+                        cB_Whitelist.IsEnabled = true;
+
+                        // wrapper
+                        cB_Wrapper_Injection.IsEnabled = true;
+                        cB_Wrapper_Redirection.IsEnabled = false;
+                        break;
+                }
             }
-
-            // release lock
-            profileLock = false;
         });
     }
 
     private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         var result = Dialog.ShowAsync(
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{currentProfile.Name}\"?",
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedProfile.Name}\"?",
             $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -478,7 +484,7 @@ public partial class ProfilesPage : Page
         switch (result.Result)
         {
             case ContentDialogResult.Primary:
-                ProfileManager.DeleteProfile(currentProfile);
+                ProfileManager.DeleteProfile(selectedProfile);
                 cB_Profiles.SelectedIndex = 0;
                 break;
         }
@@ -486,40 +492,38 @@ public partial class ProfilesPage : Page
 
     private void cB_Whitelist_Checked(object sender, RoutedEventArgs e)
     {
-        // todo : move me to WPF
-        UniversalSettings.IsEnabled = (bool)!cB_Whitelist.IsChecked;
-
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
+        selectedProfile.Whitelisted = (bool)cB_Whitelist.IsChecked;
         RequestUpdate();
     }
 
-    private void cB_Wrapper_Checked(object sender, RoutedEventArgs e)
+    private void cB_Wrapper_SelectionChanged(object sender, RoutedEventArgs e)
     {
-        // wait until lock is released
-        if (profileLock)
+        if (cB_Wrapper.SelectedIndex == -1)
             return;
 
-        currentProfile.XInputPlus = (bool)cB_Wrapper.IsChecked;
-        RequestUpdate();
-    }
-
-    private void Toggle_UniversalMotion_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
-
-        // todo : move me to WPF
-        cB_Whitelist.IsEnabled = !Toggle_UniversalMotion.IsOn && !currentProfile.Default;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.MotionEnabled = Toggle_UniversalMotion.IsOn;
+        selectedProfile.XInputPlus = (XInputPlusMethod)cB_Wrapper.SelectedIndex;
+
+        switch (selectedProfile.XInputPlus)
+        {
+            case XInputPlusMethod.Injection:
+                cB_Whitelist.IsChecked = true;
+                break;
+            case XInputPlusMethod.Redirection:
+                cB_Whitelist.IsChecked = false;
+                break;
+        }
+
         RequestUpdate();
     }
 
@@ -531,40 +535,10 @@ public partial class ProfilesPage : Page
     private void Toggle_EnableProfile_Toggled(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.Enabled = Toggle_EnableProfile.IsOn;
-        RequestUpdate();
-    }
-
-    private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (cB_Input.SelectedIndex == -1)
-            return;
-
-        // wait until lock is released
-        if (profileLock)
-            return;
-
-        // Check which input type is selected and automatically
-        // set the most used output joystick accordingly.
-        MotionInput input = (MotionInput)cB_Input.SelectedIndex;
-        switch (input)
-        {
-            case MotionInput.PlayerSpace:
-            case MotionInput.JoystickCamera:
-            case MotionInput.AutoRollYawSwap:
-                cB_Output.SelectedIndex = (int)MotionOutput.RightStick;
-                break;
-            case MotionInput.JoystickSteering:
-                cB_Output.SelectedIndex = (int)MotionOutput.LeftStick;
-                break;
-        }
-
-        Text_InputHint.Text = Profile.InputDescription[input];
-
-        currentProfile.MotionInput = (MotionInput)cB_Input.SelectedIndex;
+        selectedProfile.Enabled = Toggle_EnableProfile.IsOn;
         RequestUpdate();
     }
 
@@ -576,10 +550,10 @@ public partial class ProfilesPage : Page
             AutoTDPToggle.IsOn = false;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.TDPOverrideEnabled = TDPToggle.IsOn;
+        selectedProfile.TDPOverrideEnabled = TDPToggle.IsOn;
         RequestUpdate();
     }
 
@@ -589,10 +563,10 @@ public partial class ProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.TDPOverrideValues = new double[3]
+        selectedProfile.TDPOverrideValues = new double[3]
         {
             (int)TDPSlider.Value,
             (int)TDPSlider.Value,
@@ -603,36 +577,60 @@ public partial class ProfilesPage : Page
 
     private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            if (FramerateToggle.IsOn)
+            {
+                FramerateSlider_ValueChanged(null, null);
+            }
+            else
+            {
+                foreach (Control control in FramerateModeGrid.Children)
+                {
+                    if (control.GetType() != typeof(Label))
+                        continue;
+
+                    control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+                }
+            }
+        });
+
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.FramerateEnabled = FramerateToggle.IsOn;
+        selectedProfile.FramerateEnabled = FramerateToggle.IsOn;
         RequestUpdate();
     }
 
     private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (!FramerateSlider.IsInitialized)
-            return;
-
-        // wait until lock is released
-        if (profileLock)
-            return;
-
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var value = (int)FramerateSlider.Value;
 
-            foreach (TextBlock tb in FramerateModeGrid.Children)
-                tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+            foreach (Control control in FramerateModeGrid.Children)
+            {
+                if (control.GetType() != typeof(Label))
+                    continue;
 
-            var TextBlock = (TextBlock)FramerateModeGrid.Children[value];
-            TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+                control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+            }
+
+            Label Label = (Label)FramerateModeGrid.Children[value];
+            Label.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
         });
 
-        currentProfile.FramerateValue = (int)FramerateSlider.Value;
+        if (!FramerateSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.FramerateValue = (int)FramerateSlider.Value;
         RequestUpdate();
     }
 
@@ -644,10 +642,10 @@ public partial class ProfilesPage : Page
             TDPToggle.IsOn = false;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.AutoTDPEnabled = AutoTDPToggle.IsOn;
+        selectedProfile.AutoTDPEnabled = AutoTDPToggle.IsOn;
         RequestUpdate();
     }
 
@@ -657,20 +655,20 @@ public partial class ProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
+        selectedProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
         RequestUpdate();
     }
 
     private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.GPUOverrideEnabled = GPUToggle.IsOn;
+        selectedProfile.GPUOverrideEnabled = GPUToggle.IsOn;
         RequestUpdate();
     }
 
@@ -679,89 +677,55 @@ public partial class ProfilesPage : Page
         if (!GPUSlider.IsInitialized)
             return;
 
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
+        selectedProfile.GPUOverrideValue = (int)GPUSlider.Value;
         RequestUpdate();
-    }
-
-    private void TriggerCreated(Hotkey hotkey)
-    {
-        switch (hotkey.inputsHotkey.Listener)
-        {
-            case "shortcutProfilesPage@":
-            {
-                var hotkeyBorder = hotkey.GetControl();
-                if (hotkeyBorder is null || hotkeyBorder.Parent is not null)
-                    return;
-
-                // pull hotkey
-                ProfilesPageHotkey = hotkey;
-
-                UMC_Activator.Children.Add(hotkeyBorder);
-            }
-                break;
-        }
-    }
-
-    private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
-    {
-        switch (listener)
-        {
-            case "shortcutProfilesPage@":
-            case "shortcutProfilesPage@@":
-                currentProfile.MotionTrigger = inputs.State.Clone() as ButtonState;
-                RequestUpdate();
-                break;
-        }
     }
 
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
         // prepare layout editor
-        LayoutTemplate layoutTemplate = new(currentProfile.Layout)
+        LayoutTemplate layoutTemplate = new(selectedProfile.Layout)
         {
-            Name = currentProfile.LayoutTitle,
+            Name = selectedProfile.LayoutTitle,
             Description = "Your modified layout for this executable.",
             Author = Environment.UserName,
-            Executable = currentProfile.Executable,
-            Product = currentProfile.Name
+            Executable = selectedProfile.Executable,
+            Product = selectedProfile.Name,
         };
         layoutTemplate.Updated += Template_Updated;
 
-        // set lock
-        layoutLock = true;
-
-        MainWindow.layoutPage.UpdateLayout(layoutTemplate);
+        MainWindow.layoutPage.UpdateLayoutTemplate(layoutTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
-
-        // release lock
-        layoutLock = false;
     }
 
     private void Template_Updated(LayoutTemplate layoutTemplate)
     {
-        // wait until lock is released
-        if (layoutLock)
-            return;
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            selectedProfile.LayoutTitle = layoutTemplate.Name;
+        });
 
-        currentProfile.Layout = layoutTemplate.Layout;
-        currentProfile.LayoutTitle = layoutTemplate.Name;
+        selectedProfile.Layout = layoutTemplate.Layout;
+        UpdateMotionControlsVisibility();
+
         RequestUpdate();
     }
 
     private void EPPToggle_Toggled(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.EPPOverrideEnabled = EPPToggle.IsOn;
+        selectedProfile.EPPOverrideEnabled = EPPToggle.IsOn;
         RequestUpdate();
     }
 
@@ -771,10 +735,10 @@ public partial class ProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.EPPOverrideValue = (uint)EPPSlider.Value;
+        selectedProfile.EPPOverrideValue = (uint)EPPSlider.Value;
         RequestUpdate();
     }
 
@@ -846,10 +810,10 @@ public partial class ProfilesPage : Page
     private void tB_ProfileName_TextChanged(object sender, TextChangedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.Name = tB_ProfileName.Text;
+        selectedProfile.Name = tB_ProfileName.Text;
         RequestUpdate();
     }
 
@@ -859,10 +823,10 @@ public partial class ProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
+        selectedProfile.GyrometerMultiplier = (float)tb_ProfileGyroValue.Value;
         RequestUpdate();
     }
 
@@ -872,10 +836,10 @@ public partial class ProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.AccelerometerMultiplier = (float)tb_ProfileAcceleroValue.Value;
+        selectedProfile.AccelerometerMultiplier = (float)tb_ProfileAcceleroValue.Value;
         RequestUpdate();
     }
 
@@ -885,86 +849,47 @@ public partial class ProfilesPage : Page
             return;
 
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.SteeringAxis = cB_GyroSteering.SelectedIndex;
+        selectedProfile.SteeringAxis = cB_GyroSteering.SelectedIndex;
         RequestUpdate();
     }
 
     private void cB_InvertHorizontal_Checked(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.MotionInvertHorizontal = (bool)cB_InvertHorizontal.IsChecked;
+        selectedProfile.MotionInvertHorizontal = (bool)cB_InvertHorizontal.IsChecked;
         RequestUpdate();
     }
 
     private void cB_InvertVertical_Checked(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
-        currentProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
-        RequestUpdate();
-    }
-
-    private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (cB_Output.SelectedIndex == -1)
-            return;
-
-        // wait until lock is released
-        if (profileLock)
-            return;
-
-        currentProfile.MotionOutput = (MotionOutput)cB_Output.SelectedIndex;
-        RequestUpdate();
-    }
-
-    private void tb_ProfileUMCAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (!tb_ProfileUMCAntiDeadzone.IsInitialized)
-            return;
-
-        // wait until lock is released
-        if (profileLock)
-            return;
-
-        currentProfile.MotionAntiDeadzone = (float)tb_ProfileUMCAntiDeadzone.Value;
-        RequestUpdate();
-    }
-
-    private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1)
-            return;
-
-        // wait until lock is released
-        if (profileLock)
-            return;
-
-        currentProfile.MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+        selectedProfile.MotionInvertVertical = (bool)cB_InvertVertical.IsChecked;
         RequestUpdate();
     }
 
     private void Toggle_ControllerLayout_Toggled(object sender, RoutedEventArgs e)
     {
         // wait until lock is released
-        if (profileLock)
+        if (updateLock)
             return;
 
         // Layout settings
-        switch (currentProfile.Default)
+        switch (selectedProfile.Default)
         {
             case true:
-                currentProfile.LayoutEnabled = true;
+                selectedProfile.LayoutEnabled = true;
                 break;
             case false:
-                currentProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
+                selectedProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
                 break;
         }
         RequestUpdate();
@@ -972,15 +897,64 @@ public partial class ProfilesPage : Page
 
     public static void RequestUpdate()
     {
-        UpdateTimer.Stop();
-        UpdateTimer.Start();
+        if (UpdateTimer is not null)
+        {
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
+        }
     }
 
     public void SubmitProfile(ProfileUpdateSource source = ProfileUpdateSource.ProfilesPage)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
-        ProfileManager.UpdateOrCreateProfile(currentProfile, source);
+        ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+    }
+
+    private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RSREnabled = RSRToggle.IsOn;
+        RequestUpdate();
+    }
+
+    private void RSRSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!RSRSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RSRSharpness = (int)RSRSlider.Value;
+        RequestUpdate();
+    }
+
+    private void CPUCoreToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUCoreEnabled = CPUCoreToggle.IsOn;
+        RequestUpdate();
+    }
+
+    private void CPUCoreSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!CPUCoreSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
+        RequestUpdate();
     }
 }

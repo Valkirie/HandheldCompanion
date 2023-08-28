@@ -1,38 +1,31 @@
-﻿using System;
+﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Classes;
+using HandheldCompanion.Views.QuickPages;
+using Inkore.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Navigation;
 using Windows.System.Power;
-using ControllerCommon.Utils;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views.QuickPages;
-using Inkore.UI.WPF.Modern.Controls;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
+using System.Windows.Threading;
+using System.Globalization;
 using Application = System.Windows.Application;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
-using PowerManager = ControllerCommon.Managers.PowerManager;
+using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
-using Control = System.Windows.Controls.Control;
-using HandheldCompanion.Views.Classes;
-using ControllerCommon;
-using System.Diagnostics;
-using System.Windows.Threading;
-using ControllerCommon.Managers;
-using System.Globalization;
-using System.Threading;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -65,10 +58,10 @@ public partial class OverlayQuickTools : GamepadWindow
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
-    private readonly DispatcherTimer clockUpdateTimer;
 
     private bool AutoHide;
     private bool isClosing;
+    private readonly DispatcherTimer clockUpdateTimer;
 
     public QuickPerformancePage performancePage;
     private string preNavItemTag;
@@ -84,10 +77,10 @@ public partial class OverlayQuickTools : GamepadWindow
         Tag = "QuickTools";
 
         PreviewKeyDown += HandleEsc;
-        Deactivated += OverlayQuickTools_Deactivated;
 
         clockUpdateTimer = new DispatcherTimer();
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
+        clockUpdateTimer.Tick += UpdateTime;
 
         // create manager(s)
         PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -112,12 +105,6 @@ public partial class OverlayQuickTools : GamepadWindow
         navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
     }
 
-    private void OverlayQuickTools_Deactivated(object? sender, EventArgs e)
-    {
-        if (AutoHide)
-            ToggleVisibility();
-    }
-
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
         // UI thread (async)
@@ -126,15 +113,15 @@ public partial class OverlayQuickTools : GamepadWindow
             switch (name)
             {
                 case "QuickToolsLocation":
-                {
-                    var QuickToolsLocation = Convert.ToInt32(value);
-                    UpdateLocation(QuickToolsLocation);
-                }
+                    {
+                        var QuickToolsLocation = Convert.ToInt32(value);
+                        UpdateLocation(QuickToolsLocation);
+                    }
                     break;
                 case "QuickToolsAutoHide":
-                {
-                    AutoHide = Convert.ToBoolean(value);
-                }
+                    {
+                        AutoHide = Convert.ToBoolean(value);
+                    }
                     break;
             }
         });
@@ -152,39 +139,39 @@ public partial class OverlayQuickTools : GamepadWindow
         {
             // top, left
             case 0:
-            {
-                this.SetWindowPosition(WindowPositions.TopLeft, Screen.PrimaryScreen);
-                Top += Margin.Top;
-                Left += Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.TopLeft, Screen.PrimaryScreen);
+                    Top += Margin.Top;
+                    Left += Margin.Left;
+                }
                 break;
 
             // top, right
             case 1:
-            {
-                this.SetWindowPosition(WindowPositions.TopRight, Screen.PrimaryScreen);
-                Top += Margin.Top;
-                Left -= Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.TopRight, Screen.PrimaryScreen);
+                    Top += Margin.Top;
+                    Left -= Margin.Left;
+                }
                 break;
 
             // bottom, left
             case 2:
-            {
-                this.SetWindowPosition(WindowPositions.BottomLeft, Screen.PrimaryScreen);
-                Top -= Margin.Top;
-                Left += Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.BottomLeft, Screen.PrimaryScreen);
+                    Top -= Margin.Top;
+                    Left += Margin.Left;
+                }
                 break;
 
             // bottom, right
             default:
             case 3:
-            {
-                this.SetWindowPosition(WindowPositions.BottomRight, Screen.PrimaryScreen);
-                Top -= Margin.Top;
-                Left -= Margin.Left;
-            }
+                {
+                    this.SetWindowPosition(WindowPositions.BottomRight, Screen.PrimaryScreen);
+                    Top -= Margin.Top;
+                    Left -= Margin.Left;
+                }
                 break;
         }
 
@@ -210,15 +197,15 @@ public partial class OverlayQuickTools : GamepadWindow
                     KeyStatus = "Charging";
                     break;
                 default:
-                {
-                    var energy = SystemPowerManager.EnergySaverStatus;
-                    switch (energy)
                     {
-                        case EnergySaverStatus.On:
-                            KeyStatus = "Saver";
-                            break;
+                        var energy = SystemPowerManager.EnergySaverStatus;
+                        switch (energy)
+                        {
+                            case EnergySaverStatus.On:
+                                KeyStatus = "Saver";
+                                break;
+                        }
                     }
-                }
                     break;
             }
 
@@ -242,10 +229,12 @@ public partial class OverlayQuickTools : GamepadWindow
                     remaining = $"{time.Minutes}min";
 
                 BatteryIndicatorLifeRemaining.Text = $"({remaining} remaining)";
+                BatteryIndicatorLifeRemaining.Visibility = Visibility.Visible;
             }
             else
             {
                 BatteryIndicatorLifeRemaining.Text = string.Empty;
+                BatteryIndicatorLifeRemaining.Visibility = Visibility.Collapsed;
             }
         });
     }
@@ -267,6 +256,7 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
+    private IntPtr prevWParam = new(0x0000000000000086);
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         switch (msg)
@@ -283,7 +273,6 @@ public partial class OverlayQuickTools : GamepadWindow
                     if (hwndSource != null)
                         WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
                     handled = true;
-                    InvokeGotGamepadWindowFocus();
                 }
                 break;
 
@@ -291,7 +280,19 @@ public partial class OverlayQuickTools : GamepadWindow
                 {
                     // prevent window from loosing its fancy style
                     if (wParam == 0 && (lParam == 0))
+                    {
+                        if (prevWParam != new IntPtr(0x0000000000000086))
+                            if (AutoHide && Visibility == Visibility.Visible)
+                                ToggleVisibility();
                         handled = true;
+                    }
+
+                    if (wParam == 1)
+                    {
+                        handled = true;
+                    }
+
+                    prevWParam = wParam;
                 }
                 break;
 
@@ -319,21 +320,6 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
-            case 641:
-            case 642:
-            case 32:
-            case 132:
-            case 512:
-            case 513:
-            case 514:
-            case 673:
-            case 674:
-            case 675:
-            case 13:
-            case 256:
-            case 257:
-                break;
-
             default:
                 // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
                 break;
@@ -359,13 +345,20 @@ public partial class OverlayQuickTools : GamepadWindow
                 case Visibility.Hidden:
                     Show();
                     Focus();
+
                     if (hwndSource != null)
                         WPFUtils.SendMessage(hwndSource.Handle, WM_NCACTIVATE, WM_NCACTIVATE, 0);
+
                     InvokeGotGamepadWindowFocus();
+
+                    clockUpdateTimer.Start();
                     break;
                 case Visibility.Visible:
                     Hide();
+
                     InvokeLostGamepadWindowFocus();
+
+                    clockUpdateTimer.Stop();
                     break;
             }
         });
@@ -494,25 +487,6 @@ public partial class OverlayQuickTools : GamepadWindow
         }
     }
 
-    private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-        if (sender is not GamepadWindow window)
-        {
-            return;
-        }
-
-        if (window.Visibility == Visibility.Visible)
-        {
-            clockUpdateTimer.Start();
-            clockUpdateTimer.Tick += UpdateTime;
-        }
-        else
-        {
-            clockUpdateTimer.Stop();
-            clockUpdateTimer.Tick -= UpdateTime;
-        }
-    }
-
     private void UpdateTime(object? sender, EventArgs e)
     {
         var timeFormat = CultureInfo.InstalledUICulture.DateTimeFormat.ShortTimePattern;
@@ -520,5 +494,4 @@ public partial class OverlayQuickTools : GamepadWindow
     }
 
     #endregion
-
 }

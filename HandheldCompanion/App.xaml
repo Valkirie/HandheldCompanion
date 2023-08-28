@@ -5,12 +5,11 @@
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:math="http://hexinnovation.com/math"
     xmlns:presets="clr-namespace:HandheldCompanion.Presets"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern">
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
@@ -55,6 +54,7 @@
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/NavigationView.xaml" />
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/Slider.xaml" />
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/ToggleSwitch.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ColorPicker;component/Styles/DefaultColorPickerStyle.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
 

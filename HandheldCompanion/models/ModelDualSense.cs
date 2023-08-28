@@ -1,8 +1,9 @@
+using HandheldCompanion.Inputs;
 using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
+
 
 namespace HandheldCompanion.Models;
 
@@ -148,10 +149,12 @@ internal class ModelDualSense : IModel
                 {
                     switch (button)
                     {
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
-                        case ButtonFlags.L2:
-                        case ButtonFlags.R2:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
+                        case ButtonFlags.L1:
+                        case ButtonFlags.L2Soft:
+                        case ButtonFlags.R1:
+                        case ButtonFlags.R2Soft:
                         case ButtonFlags.Special:
                             buttonMaterial = MaterialPlasticBlack;
                             break;

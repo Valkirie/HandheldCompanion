@@ -1,11 +1,12 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using ControllerCommon.Devices;
-using ControllerCommon.Platforms;
+﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using Inkore.UI.WPF.Modern.Controls;
+using System;
+using System.Windows;
+using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;
@@ -42,7 +43,7 @@ public partial class QuickPerformancePage : Page
 
         // todo: move me ?
         SettingsManager.SetProperty("QuietModeEnabled",
-            MainWindow.CurrentDevice.Capacities.HasFlag(DeviceCapacities.FanControl));
+            MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl));
     }
 
     private void HWiNFO_Updated(PlatformStatus status)

@@ -1,3 +1,5 @@
+using HandheldCompanion.Inputs;
+using HelixToolkit.Wpf;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -5,8 +7,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
-using HelixToolkit.Wpf;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 
@@ -75,10 +75,10 @@ public abstract class IModel
                 switch (button)
                 {
                     // specific case, being both a button and a trigger
-                    case ButtonFlags.LeftThumb:
+                    case ButtonFlags.LeftStickClick:
                         LeftThumb = model;
                         break;
-                    case ButtonFlags.RightThumb:
+                    case ButtonFlags.RightStickClick:
                         RightThumb = model;
                         break;
                 }

@@ -1,8 +1,9 @@
+using HandheldCompanion.Inputs;
 using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using ControllerCommon.Inputs;
+
 
 namespace HandheldCompanion.Models;
 
@@ -100,14 +101,22 @@ internal class ModelSteamDeck : IModel
                         case ButtonFlags.DPadRight:
                         case ButtonFlags.DPadDown:
                         case ButtonFlags.DPadLeft:
-                        case ButtonFlags.LeftThumb:
-                        case ButtonFlags.RightThumb:
                             buttonMaterial = MaterialPlasticBlack;
                             break;
-                        case ButtonFlags.OEM2:
-                        case ButtonFlags.OEM3:
+                        case ButtonFlags.LeftStickClick:
+                        case ButtonFlags.RightStickClick:
                             buttonMaterial = MaterialPlasticWhite;
                             break;
+
+                        case ButtonFlags.LeftStickTouch:
+                            buttonMaterial = MaterialPlasticBlack;
+                            LeftThumb = model3D;
+                            break;
+                        case ButtonFlags.RightStickTouch:
+                            buttonMaterial = MaterialPlasticBlack;
+                            RightThumb = model3D;
+                            break;
+
                         default:
                             buttonMaterial = MaterialPlasticDarkGrey;
                             break;

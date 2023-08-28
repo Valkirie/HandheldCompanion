@@ -1,7 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
@@ -34,15 +32,15 @@ public class OverlayWindow : Window
 
         SizeChanged += (o, e) => { UpdatePosition(); };
 
-        IsVisibleChanged += OverlayWindow_IsVisibleChanged;
         Loaded += OverlayWindow_Loaded;
+        IsVisibleChanged += OverlayWindow_IsVisibleChanged;
     }
 
     private void OverlayWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         if (_hotkeyId == 0)
             return;
-        
+
         if (HotkeysManager.Hotkeys.TryGetValue(_hotkeyId, out Hotkey hotkey))
             hotkey.SetToggle(this.Visibility == Visibility.Visible ? true : false);
     }

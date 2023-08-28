@@ -1,4 +1,4 @@
-[![Download Latest](https://img.shields.io/github/downloads/Valkirie/HandheldCompanion/latest/total?style=flat-square&color=orange&label=Download%20Latest)](https://github.com/Valkirie/ControllerService/releases/latest)
+[![Download Latest](https://img.shields.io/github/downloads/Valkirie/HandheldCompanion/latest/total?style=flat-square&color=orange&label=Download%20Latest)](https://github.com/Valkirie/HandheldCompanion/releases/latest)
 [![discord](https://img.shields.io/discord/1054321983166365726?color=orange&label=Discord&logo=discord&logoColor=white&style=flat-square)](https://discord.gg/znHuywFz5M)
 [![YouTube Channel](https://img.shields.io/youtube/channel/subscribers/UCFLra6QVYJYeaWp2mGaq3Og?style=flat-square&color=orange&label=YouTube%20Channel&logo=youtube&logoColor=white)](https://www.youtube.com/channel/UCFLra6QVYJYeaWp2mGaq3Og)
 [![Donations](https://img.shields.io/badge/PayPal-00457C?style=flat-square&color=orange&label=Donations&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/BenjaminLSR)
@@ -6,7 +6,7 @@
 
 # Handheld Companion
 
-A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include:
+A touch optimized GUI to increase your handheld gaming computer experience. Features include:
 - Motion control a.k.a. gyro control through a device's inertial measurement unit (IMU, Gyroscope and Accelerometer) or external sensor. Settings availible for racing, 1st and 3rd person gaming and emulator support.
 - Quicktools overlay, with easy access to various settings and informatio such as TDP, Auto TDP, GPU, Screen Hz, Framelimiter, Resolution, Brightness, Volume, Powermode control and battery level.
 - Virtual controller simulation of [Microsoft Xbox 360 Controller](https://en.wikipedia.org/wiki/Xbox_360_controller) and [Sony DualShock 4 Controller](https://en.wikipedia.org/wiki/DualShock#DualShock_4).
@@ -119,7 +119,7 @@ Please respect that the GitHub issue tracker isn't a helpdesk. We offer a [Disco
 ### Donation
 If you would like to support this project, please consider making a donation to `BenjaminLSR` via [PayPal](https://www.paypal.com/paypalme/BenjaminLSR).
 
-Controller Service relies on `ViGEmBus` driver and `ViGEmClient` libraries as well as `HidHide` kernel-mode filter driver. Therefore, we strongly encourage you in donating to `Nefarius` via [PayPal](https://paypal.me/NefariusMaximus) for continued maintenance and development.
+Handheld Companion relies on `ViGEmBus` driver and `ViGEmClient` libraries as well as `HidHide` kernel-mode filter driver. Therefore, we strongly encourage you in donating to `Nefarius` via [PayPal](https://paypal.me/NefariusMaximus) for continued maintenance and development.
 
 ## Installation
 Installers are [available as an all-in-one setup](../../releases/latest).

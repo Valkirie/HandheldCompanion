@@ -5,7 +5,7 @@
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="Virtual Trackpads"
     d:Background="White"
     d:DesignHeight="720"
@@ -26,9 +26,9 @@
             Background="Black"
             CornerRadius="10"
             TouchDown="Trackpad_PreviewTouchDown"
+            TouchLeave="Trackpad_PreviewTouchUp"
             TouchMove="Trackpad_PreviewTouchMove"
-            TouchUp="Trackpad_PreviewTouchUp"
-            TouchLeave="Trackpad_PreviewTouchUp">
+            TouchUp="Trackpad_PreviewTouchUp">
             <Button
                 Name="LeftTrackpadClick"
                 Width="{Binding ActualWidth, ConverterParameter=x/4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"
@@ -52,9 +52,9 @@
             Background="Black"
             CornerRadius="10"
             TouchDown="Trackpad_PreviewTouchDown"
+            TouchLeave="Trackpad_PreviewTouchUp"
             TouchMove="Trackpad_PreviewTouchMove"
-            TouchUp="Trackpad_PreviewTouchUp"
-            TouchLeave="Trackpad_PreviewTouchUp">
+            TouchUp="Trackpad_PreviewTouchUp">
             <Button
                 Name="RightTrackpadClick"
                 Width="{Binding ActualWidth, ConverterParameter=x/4, Converter={StaticResource Math}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type FrameworkElement}}}"

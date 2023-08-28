@@ -231,12 +231,12 @@ end;
 procedure Dependency_AddDotNet70Desktop;
 begin
   // https://dotnet.microsoft.com/download/dotnet/7.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.0') then begin
+  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.10') then begin
     Dependency_Add('dotnet70desktop' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
       '.NET Desktop Runtime 7.0.0' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/d05a833c-2cf9-4d06-89ae-a0f3e10c5c91/c668ff42e23c2f67aa3d80227860585f/windowsdesktop-runtime-7.0.0-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/5b2fbe00-507e-450e-8b52-43ab052aadf2/79d54c3a19ce3fce314f2367cf4e3b21/windowsdesktop-runtime-7.0.0-win-x64.exe'),
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/9812249d-fc42-41ab-bd2e-6e858d5dd5a7/95fa5a1a77eace4482bcb98ede190003/windowsdesktop-runtime-7.0.10-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/747f4a98-2586-4bc6-b828-34f35e384a7d/44225cfd9d365855ec77d00c4812133c/windowsdesktop-runtime-7.0.10-win-x64.exe'),
       '', False, False);
   end;
 end;
@@ -373,12 +373,12 @@ end;
   #define UseDotNet70
 #endif
 
-#define UseVC2005
-#define UseVC2008
-#define UseVC2010
-#define UseVC2012
-#define UseVC2013
-#define UseVC2015To2019
+;#define UseVC2005
+;#define UseVC2008
+;#define UseVC2010
+;#define UseVC2012
+;#define UseVC2013
+;#define UseVC2015To2019
 
 #define UseDirectX
 ; install ViGem first
@@ -389,12 +389,11 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.16.2.5'
+#define MyAppVersion '0.18.0.1'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
 #define MyAppExeName "HandheldCompanion.exe"
-#define MySerExeName "ControllerService.exe"
 #define MyConfiguration "Release"
 
 #ifdef UseDotNet70
@@ -456,10 +455,10 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [Run]
+Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; Flags: runascurrentuser runhidden
+Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; Flags: runascurrentuser runhidden
 
 [UninstallRun]
-Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; RunOnceId: "StopService"; Flags: runascurrentuser runhidden
-Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; RunOnceId: "DeleteService"; Flags: runascurrentuser runhidden
 Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
 
 [UninstallDelete]
@@ -467,12 +466,10 @@ Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps"; Flags: uninsdeletekeyifempty
-Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\ControllerService.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\HandheldCompanion.exe"; ValueType: string; ValueName: "DumpFolder"; ValueData: "{userdocs}\HandheldCompanion\dumps"; Flags: uninsdeletekey
 
 [Code]
-#include "./UpdateUninstallWizard.iss"       
-
+#include "./UpdateUninstallWizard.iss"
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
@@ -487,7 +484,6 @@ begin
       if DirExists(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'))  then
         DelTree(ExpandConstant('{userdocs}\{#MyBuildId}\hotkeys'), True, True, True);
       DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
-      DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
       exit;
     end
     else
@@ -507,7 +503,6 @@ begin
       if not(checkListBox.checked[applicationSettingsCheck]) then
       begin 
         DelTree(ExpandConstant('{localappdata}\HandheldCompanion'), True, True, True);
-        DelTree(ExpandConstant('{localappdata}\ControllerService'), True, True, True);
       end; 
     end;   
                    
@@ -570,7 +565,6 @@ function InitializeSetup: Boolean;
 begin
 
 #ifdef UseDotNet70
-  Dependency_AddDotNet70;
   Dependency_AddDotNet70Desktop;
 #endif
 

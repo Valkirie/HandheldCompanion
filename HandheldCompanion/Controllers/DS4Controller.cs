@@ -1,20 +1,18 @@
-﻿using System;
+﻿using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Utils;
 using System.Windows.Media;
-using ControllerCommon;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using SharpDX.DirectInput;
-using SharpDX.XInput;
+using static JSL;
 
 namespace HandheldCompanion.Controllers;
 
-public class DS4Controller : DInputController
+public class DS4Controller : JSController
 {
     public DS4Controller()
     {
     }
 
-    public DS4Controller(Joystick joystick, PnPDetails details) : base(joystick, details)
+    public DS4Controller(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
     {
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 116, 139, 255)));
@@ -24,7 +22,20 @@ public class DS4Controller : DInputController
 
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.LeftPadClick);
+        SourceButtons.Add(ButtonFlags.LeftPadTouch);
         SourceButtons.Add(ButtonFlags.RightPadClick);
+        SourceButtons.Add(ButtonFlags.RightPadTouch);
+
+        SourceAxis.Add(AxisLayoutFlags.LeftPad);
+        SourceAxis.Add(AxisLayoutFlags.RightPad);
+        SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+
+        TargetButtons.Add(ButtonFlags.LeftPadClick);
+        TargetButtons.Add(ButtonFlags.LeftPadTouch);
+        TargetButtons.Add(ButtonFlags.RightPadTouch);
+
+        TargetAxis.Add(AxisLayoutFlags.LeftPad);
+        TargetAxis.Add(AxisLayoutFlags.RightPad);
     }
 
     public override void UpdateInputs(long ticks)
@@ -33,101 +44,45 @@ public class DS4Controller : DInputController
         if (!IsConnected())
             return;
 
-        try
-        {
-            // Poll events from joystick
-            joystick.Poll();
+        base.UpdateState();
 
-            // update gamepad state
-            State = joystick.GetCurrentState();
+        // Left Pad
+        Inputs.ButtonState[ButtonFlags.LeftPadTouch] = JslGetTouchDown(UserIndex);
+        Inputs.ButtonState[ButtonFlags.LeftPadClick] = BitwiseUtils.HasByteSet(sTATE.buttons, ButtonMaskCapture);
+
+        if (Inputs.ButtonState[ButtonFlags.LeftPadTouch])
+        {
+            float joyShockX0 = JslGetTouchX(UserIndex);
+            float joyShockY0 = JslGetTouchY(UserIndex);
+
+            Inputs.AxisState[AxisFlags.LeftPadX] = (short)InputUtils.MapRange(joyShockX0, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.LeftPadY] = (short)InputUtils.MapRange(joyShockY0, 0.0f, 1.0f, short.MaxValue, short.MinValue);
         }
-        catch
+        else
         {
-        }
-
-        /*
-        if (prevState.Buttons.Equals(State.Buttons) && prevState.PointOfViewControllers.Equals(State.PointOfViewControllers) && prevInjectedButtons.Equals(InjectedButtons))
-            return;
-        */
-
-        Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
-
-        Inputs.ButtonState[ButtonFlags.B1] = State.Buttons[1];
-        Inputs.ButtonState[ButtonFlags.B2] = State.Buttons[2];
-        Inputs.ButtonState[ButtonFlags.B3] = State.Buttons[0];
-        Inputs.ButtonState[ButtonFlags.B4] = State.Buttons[3];
-
-        Inputs.ButtonState[ButtonFlags.Back] = State.Buttons[8];
-        Inputs.ButtonState[ButtonFlags.Start] = State.Buttons[9];
-
-        Inputs.ButtonState[ButtonFlags.L2] = State.Buttons[6];
-        Inputs.ButtonState[ButtonFlags.R2] = State.Buttons[7];
-
-        Inputs.ButtonState[ButtonFlags.LeftThumb] = State.Buttons[10];
-        Inputs.ButtonState[ButtonFlags.RightThumb] = State.Buttons[11];
-
-        Inputs.ButtonState[ButtonFlags.L1] = State.Buttons[4];
-        Inputs.ButtonState[ButtonFlags.R1] = State.Buttons[5];
-
-        Inputs.ButtonState[ButtonFlags.Special] = State.Buttons[12];
-
-        Inputs.ButtonState[ButtonFlags.LeftPadClick] = State.Buttons[13];
-        Inputs.ButtonState[ButtonFlags.RightPadClick] = State.Buttons[13];
-
-        switch (State.PointOfViewControllers[0])
-        {
-            case 0:
-                Inputs.ButtonState[ButtonFlags.DPadUp] = true;
-                break;
-            case 4500:
-                Inputs.ButtonState[ButtonFlags.DPadUp] = true;
-                Inputs.ButtonState[ButtonFlags.DPadRight] = true;
-                break;
-            case 9000:
-                Inputs.ButtonState[ButtonFlags.DPadRight] = true;
-                break;
-            case 13500:
-                Inputs.ButtonState[ButtonFlags.DPadDown] = true;
-                Inputs.ButtonState[ButtonFlags.DPadRight] = true;
-                break;
-            case 18000:
-                Inputs.ButtonState[ButtonFlags.DPadDown] = true;
-                break;
-            case 22500:
-                Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
-                Inputs.ButtonState[ButtonFlags.DPadDown] = true;
-                break;
-            case 27000:
-                Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
-                break;
-            case 31500:
-                Inputs.ButtonState[ButtonFlags.DPadLeft] = true;
-                Inputs.ButtonState[ButtonFlags.DPadUp] = true;
-                break;
+            Inputs.AxisState[AxisFlags.LeftPadX] = 0;
+            Inputs.AxisState[AxisFlags.LeftPadY] = 0;
         }
 
-        Inputs.AxisState[AxisFlags.L2] = (short)(State.RotationX * byte.MaxValue / ushort.MaxValue);
-        Inputs.AxisState[AxisFlags.R2] = (short)(State.RotationY * byte.MaxValue / ushort.MaxValue);
+        // Right Pad
+        Inputs.ButtonState[ButtonFlags.RightPadTouch] = JslGetTouchDown(UserIndex, true);
+        Inputs.ButtonState[ButtonFlags.RightPadClick] = Inputs.ButtonState[ButtonFlags.LeftPadClick] && Inputs.ButtonState[ButtonFlags.RightPadTouch];
 
-        Inputs.ButtonState[ButtonFlags.L3] = Inputs.AxisState[AxisFlags.L2] > Gamepad.TriggerThreshold * 8;
-        Inputs.ButtonState[ButtonFlags.R3] = Inputs.AxisState[AxisFlags.R2] > Gamepad.TriggerThreshold * 8;
+        if (Inputs.ButtonState[ButtonFlags.RightPadTouch])
+        {
+            float joyShockX1 = JslGetTouchX(UserIndex, true);
+            float joyShockY1 = JslGetTouchY(UserIndex, true);
 
-        Inputs.AxisState[AxisFlags.LeftThumbX] =
-            (short)Math.Clamp(State.X - short.MaxValue, short.MinValue, short.MaxValue);
-        Inputs.AxisState[AxisFlags.LeftThumbY] =
-            (short)Math.Clamp(-State.Y + short.MaxValue, short.MinValue, short.MaxValue);
-
-        Inputs.AxisState[AxisFlags.RightThumbX] =
-            (short)Math.Clamp(State.Z - short.MaxValue, short.MinValue, short.MaxValue);
-        Inputs.AxisState[AxisFlags.RightThumbY] =
-            (short)Math.Clamp(-State.RotationZ + short.MaxValue, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange(joyShockX1, 0.0f, 1.0f, short.MinValue, short.MaxValue);
+            Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange(joyShockY1, 0.0f, 1.0f, short.MaxValue, short.MinValue);
+        }
+        else
+        {
+            Inputs.AxisState[AxisFlags.RightPadX] = 0;
+            Inputs.AxisState[AxisFlags.RightPadY] = 0;
+        }
 
         base.UpdateInputs(ticks);
-    }
-
-    public override bool IsConnected()
-    {
-        return joystick is null ? false : !joystick.IsDisposed;
     }
 
     public override void Plug()
@@ -140,6 +95,11 @@ public class DS4Controller : DInputController
     {
         TimerManager.Tick -= UpdateInputs;
         base.Unplug();
+    }
+
+    public override void Cleanup()
+    {
+        TimerManager.Tick -= UpdateInputs;
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -162,18 +122,20 @@ public class DS4Controller : DInputController
                 return "\u21E6";
             case ButtonFlags.Start:
                 return "\u21E8";
-            case ButtonFlags.L2:
-                return "\u21DC";
-            case ButtonFlags.L3:
+            case ButtonFlags.L2Soft:
                 return "\u21B2";
-            case ButtonFlags.R2:
-                return "\u21DD";
-            case ButtonFlags.R3:
+            case ButtonFlags.L2Full:
+                return "\u21B2";
+            case ButtonFlags.R2Soft:
+                return "\u21B3";
+            case ButtonFlags.R2Full:
                 return "\u21B3";
             case ButtonFlags.Special:
                 return "\uE000";
             case ButtonFlags.LeftPadClick:
             case ButtonFlags.RightPadClick:
+            case ButtonFlags.LeftPadTouch:
+            case ButtonFlags.RightPadTouch:
                 return "\u21E7";
         }
 
@@ -201,6 +163,9 @@ public class DS4Controller : DInputController
                 return "\u21B2";
             case AxisLayoutFlags.R2:
                 return "\u21B3";
+            case AxisLayoutFlags.LeftPad:
+            case AxisLayoutFlags.RightPad:
+                return "\u21E7";
         }
 
         return base.GetGlyph(axis);

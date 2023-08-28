@@ -1,19 +1,16 @@
-﻿using System;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using ControllerCommon;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using ControllerCommon.Utils;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Views;
-using Newtonsoft.Json;
 
 namespace HandheldCompanion.Managers;
 
@@ -59,7 +56,7 @@ internal static class LayoutManager
             EnableRaisingEvents = true,
             IncludeSubdirectories = true,
             Filter = "*.json",
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
         };
 
         ProfileManager.Applied += ProfileManager_Applied;
@@ -91,7 +88,9 @@ internal static class LayoutManager
 
         desktopLayout.Updated += DesktopLayout_Updated;
 
-        layoutWatcher.Created += LayoutWatcher_Created;
+        // TODO: overwritten layout will have different GUID so it will duplicate
+        layoutWatcher.Created += LayoutWatcher_Template;
+        layoutWatcher.Changed += LayoutWatcher_Template;
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -109,70 +108,67 @@ internal static class LayoutManager
         LogManager.LogInformation("{0} has stopped", "LayoutManager");
     }
 
-    private static void LayoutWatcher_Created(object sender, FileSystemEventArgs e)
+    // this event is called from non main thread and it creates LayoutTemplate which is a WPF element
+    private static void LayoutWatcher_Template(object sender, FileSystemEventArgs e)
     {
-        ProcessLayoutTemplate(e.FullPath);
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ProcessLayoutTemplate(e.FullPath);
+        });
     }
 
     private static Layout? ProcessLayout(string fileName)
     {
-        // UI thread (synchronous)
-        return Application.Current.Dispatcher.Invoke(() =>
+        Layout layout = null;
+
+        try
         {
-            Layout layout = null;
-
-            try
+            string outputraw = File.ReadAllText(fileName);
+            layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
             {
-                var outputraw = File.ReadAllText(fileName);
-                layout = JsonConvert.DeserializeObject<Layout>(outputraw, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
-            }
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Could not parse Layout {0}. {1}", fileName, ex.Message);
+        }
 
-            // failed to parse
-            if (layout is null)
-                LogManager.LogError("Could not parse Layout {0}", fileName);
+        // failed to parse
+        if (layout is null)
+            LogManager.LogError("Could not parse Layout {0}", fileName);
 
-            return layout;
-        });
+        return layout;
     }
 
     private static void ProcessLayoutTemplate(string fileName)
     {
-        // UI thread (synchronous)
-        Application.Current.Dispatcher.Invoke(() =>
+        LayoutTemplate layoutTemplate = null;
+
+        try
         {
-            LayoutTemplate layoutTemplate = null;
-
-            try
+            string outputraw = File.ReadAllText(fileName);
+            layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
             {
-                var outputraw = File.ReadAllText(fileName);
-                layoutTemplate = JsonConvert.DeserializeObject<LayoutTemplate>(outputraw, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-            }
-            catch (Exception ex)
-            {
-                LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
-            }
+                TypeNameHandling = TypeNameHandling.All
+            });
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Could not parse LayoutTemplate {0}. {1}", fileName, ex.Message);
+        }
 
-            // failed to parse
-            if (layoutTemplate is null || layoutTemplate.Layout is null)
-            {
-                LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
-                return;
-            }
+        // failed to parse
+        if (layoutTemplate is null || layoutTemplate.Layout is null)
+        {
+            LogManager.LogError("Could not parse LayoutTemplate {0}", fileName);
+            return;
+        }
 
-            // todo: implement deduplication
-            Templates.Add(layoutTemplate);
-            Updated?.Invoke(layoutTemplate);
-        });
+        // todo: implement deduplication
+        Templates.Add(layoutTemplate);
+        Updated?.Invoke(layoutTemplate);
     }
 
     private static void DesktopLayout_Updated(Layout layout)
@@ -243,17 +239,17 @@ internal static class LayoutManager
         switch (name)
         {
             case "DesktopLayoutEnabled":
-            {
-                switch (Convert.ToBoolean(value))
                 {
-                    case true:
-                        SetActiveLayout(desktopLayout);
-                        break;
-                    case false:
-                        SetActiveLayout(profileLayout);
-                        break;
+                    switch (Convert.ToBoolean(value))
+                    {
+                        case true:
+                            SetActiveLayout(desktopLayout);
+                            break;
+                        case false:
+                            SetActiveLayout(profileLayout);
+                            break;
+                    }
                 }
-            }
                 break;
         }
     }
@@ -301,6 +297,8 @@ internal static class LayoutManager
         if (currentLayout is null)
             return controllerState;
 
+        // TODO: this call is not from the main thread, SetActiveLayout is.
+        // proper lock needed here? volatile? Interlocked.Exchange()?
         // set lock
         updateLock = true;
 
@@ -308,124 +306,178 @@ internal static class LayoutManager
         // only buttons/axes mapped from the layout should be passed on
         ControllerState outputState = new();
 
+        // except the main gyroscope state that's not re-mappable (6 values)
+        outputState.GyroState = controllerState.GyroState;
+
         foreach (var buttonState in controllerState.ButtonState.State)
         {
-            var button = buttonState.Key;
-            var value = buttonState.Value;
+            ButtonFlags button = buttonState.Key;
+            bool value = buttonState.Value;
 
             // skip, if not mapped
-            if (!currentLayout.ButtonLayout.TryGetValue(button, out var action))
-            {
-                outputState.ButtonState[button] = value;
+            if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
                 continue;
-            }
 
-            if (action is null)
+            // Some long press logic. Unfortunately in case of long press actions are not 100%
+            // independent of eachother. When button is pressed that has long press mapped, short
+            // press should not be triggered on key down. It should only be triggered on keyup, but
+            // only if released before the long timer. If timer passed, short is ignored, long is
+            // pressed. Long story short :-), short press needs to be aware if long press exists.
+
+            // TODO: change to set of ranges so several independent long presses are possible
+            // if there are no long presses nothing changes
+            int maxLongTime = 0;
+            foreach (var action in actions)
+                if (action.PressType == PressType.Long)
+                    maxLongTime = Math.Max(maxLongTime, action.LongPressTime);
+
+            foreach (var action in actions)
             {
-                outputState.ButtonState[button] = value;
-                continue;
-            }
-
-            switch (action.ActionType)
-            {
-                // button to button
-                case ActionType.Button:
+                switch (action.ActionType)
                 {
-                    var bAction = action as ButtonActions;
-                    value |= outputState.ButtonState[bAction.Button];
+                    // button to button
+                    case ActionType.Button:
+                        {
+                            ButtonActions bAction = action as ButtonActions;
+                            bAction.Execute(button, value, maxLongTime);
 
-                    bAction.Execute(button, value);
-                    outputState.ButtonState[bAction.Button] = bAction.GetValue();
-                }
-                    break;
+                            bool outVal = bAction.GetValue() || outputState.ButtonState[bAction.Button];
+                            outputState.ButtonState[bAction.Button] = outVal;
+                        }
+                        break;
 
-                // button to keyboard key
-                case ActionType.Keyboard:
-                {
-                    var kAction = action as KeyboardActions;
-                    kAction.Execute(button, value);
-                }
-                    break;
+                    // button to keyboard key
+                    case ActionType.Keyboard:
+                        {
+                            KeyboardActions kAction = action as KeyboardActions;
+                            kAction.Execute(button, value, maxLongTime);
+                        }
+                        break;
 
-                // button to mouse click
-                case ActionType.Mouse:
-                {
-                    var mAction = action as MouseActions;
-                    mAction.Execute(button, value);
+                    // button to mouse click
+                    case ActionType.Mouse:
+                        {
+                            MouseActions mAction = action as MouseActions;
+                            mAction.Execute(button, value, maxLongTime);
+                        }
+                        break;
                 }
-                    break;
             }
         }
 
-        foreach (AxisLayoutFlags flags in Enum.GetValues(typeof(AxisLayoutFlags)))
+        foreach (var axisLayout in currentLayout.AxisLayout)
         {
+            AxisLayoutFlags flags = axisLayout.Key;
+
             // read origin values
-            var InLayout = AxisLayout.Layouts[flags];
-            var InAxisX = InLayout.GetAxisFlags('X');
-            var InAxisY = InLayout.GetAxisFlags('Y');
+            AxisLayout InLayout = AxisLayout.Layouts[flags];
+            AxisFlags InAxisX = InLayout.GetAxisFlags('X');
+            AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
 
             InLayout.vector.X = controllerState.AxisState[InAxisX];
             InLayout.vector.Y = controllerState.AxisState[InAxisY];
 
             // pull action
-            // skip, if not mapped
-            if (!currentLayout.AxisLayout.TryGetValue(flags, out var action))
-            {
-                outputState.AxisState[InAxisX] = controllerState.AxisState[InAxisX];
-                outputState.AxisState[InAxisY] = controllerState.AxisState[InAxisY];
-                continue;
-            }
+            IActions action = axisLayout.Value;
 
             if (action is null)
-            {
-                outputState.AxisState[InAxisX] = controllerState.AxisState[InAxisX];
-                outputState.AxisState[InAxisY] = controllerState.AxisState[InAxisY];
                 continue;
-            }
 
             switch (action.ActionType)
             {
                 case ActionType.Joystick:
-                {
-                    var aAction = action as AxisActions;
-                    aAction.Execute(InLayout);
+                    {
+                        AxisActions aAction = action as AxisActions;
+                        aAction.Execute(InLayout);
 
-                    // read output axis
-                    var OutLayout = AxisLayout.Layouts[aAction.Axis];
-                    var OutAxisX = OutLayout.GetAxisFlags('X');
-                    var OutAxisY = OutLayout.GetAxisFlags('Y');
+                        // read output axis
+                        AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
+                        AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
+                        AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                    outputState.AxisState[OutAxisX] =
-                        (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
-                    outputState.AxisState[OutAxisY] =
-                        (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
-                }
-                    break;
-
-                case ActionType.Mouse:
-                {
-                    var mAction = action as MouseActions;
-
-                    // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
-                    var touched = false;
-                    if (ControllerState.AxisTouchButtons.TryGetValue(InLayout.flags, out var touchButton))
-                        touched = controllerState.ButtonState[touchButton];
-
-                    mAction.Execute(InLayout, touched);
-                }
+                        outputState.AxisState[OutAxisX] =
+                            (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
+                        outputState.AxisState[OutAxisY] =
+                            (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
+                    }
                     break;
 
                 case ActionType.Trigger:
-                {
-                    var tAction = action as TriggerActions;
-                    tAction.Execute(InAxisY, (short)InLayout.vector.Y);
+                    {
+                        TriggerActions tAction = action as TriggerActions;
+                        tAction.Execute(InAxisY, (short)InLayout.vector.Y);
 
-                    // read output axis
-                    var OutLayout = AxisLayout.Layouts[tAction.Axis];
-                    var OutAxisY = OutLayout.GetAxisFlags('Y');
+                        // read output axis
+                        AxisLayout OutLayout = AxisLayout.Layouts[tAction.Axis];
+                        AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                    outputState.AxisState[OutAxisY] = tAction.GetValue();
-                }
+                        outputState.AxisState[OutAxisY] = (short)tAction.GetValue();
+                    }
+                    break;
+
+                case ActionType.Mouse:
+                    {
+                        MouseActions mAction = action as MouseActions;
+
+                        // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
+                        bool touched = false;
+                        if (ControllerState.AxisTouchButtons.TryGetValue(InLayout.flags, out ButtonFlags touchButton))
+                            touched = controllerState.ButtonState[touchButton];
+
+                        mAction.Execute(InLayout, touched);
+                    }
+                    break;
+            }
+        }
+
+        foreach (var axisLayout in currentLayout.GyroLayout)
+        {
+            AxisLayoutFlags flags = axisLayout.Key;
+
+            // read origin values
+            AxisLayout InLayout = AxisLayout.Layouts[flags];
+            AxisFlags InAxisX = InLayout.GetAxisFlags('X');
+            AxisFlags InAxisY = InLayout.GetAxisFlags('Y');
+
+            InLayout.vector.X = controllerState.AxisState[InAxisX];
+            InLayout.vector.Y = controllerState.AxisState[InAxisY];
+
+            // pull action
+            IActions action = axisLayout.Value;
+
+            if (action is null)
+                continue;
+
+            switch (action.ActionType)
+            {
+                case ActionType.Joystick:
+                    {
+                        AxisActions aAction = action as AxisActions;
+                        aAction.Execute(InLayout);
+
+                        // read output axis
+                        AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
+                        AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
+                        AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
+
+                        outputState.AxisState[OutAxisX] =
+                            (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
+                        outputState.AxisState[OutAxisY] =
+                            (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
+                    }
+                    break;
+
+                case ActionType.Mouse:
+                    {
+                        MouseActions mAction = action as MouseActions;
+
+                        // This buttonState check won't work here if UpdateInputs is event based, might need a rework in the future
+                        bool touched = false;
+                        if (ControllerState.AxisTouchButtons.TryGetValue(InLayout.flags, out ButtonFlags touchButton))
+                            touched = controllerState.ButtonState[touchButton];
+
+                        mAction.Execute(InLayout, touched);
+                    }
                     break;
             }
         }
@@ -439,11 +491,9 @@ internal static class LayoutManager
     #region events
 
     public static event InitializedEventHandler Initialized;
-
     public delegate void InitializedEventHandler();
 
     public static event UpdatedEventHandler Updated;
-
     public delegate void UpdatedEventHandler(LayoutTemplate layoutTemplate);
 
     #endregion

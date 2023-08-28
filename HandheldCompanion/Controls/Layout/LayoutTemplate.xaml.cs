@@ -1,14 +1,12 @@
-﻿using System;
+﻿using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using ControllerCommon;
-using ControllerCommon.Actions;
-using ControllerCommon.Inputs;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Actions;
-using HandheldCompanion.Controllers;
-using Newtonsoft.Json;
 
 namespace HandheldCompanion.Controls;
 
@@ -68,128 +66,126 @@ public partial class LayoutTemplate : UserControl, IComparable
         switch (Name)
         {
             case "Desktop":
-            {
-                Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                 {
+                    Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                     {
-                        AxisLayoutFlags.LeftThumb,
-                        new MouseActions { MouseType = MouseActionsType.Scroll, Sensivity = 25.0f }
-                    },
+                        {
+                            AxisLayoutFlags.LeftStick,
+                            new MouseActions { MouseType = MouseActionsType.Scroll }
+                        },
+                        {
+                            AxisLayoutFlags.RightStick,
+                            new MouseActions { MouseType = MouseActionsType.Move }
+                        },
+                        {
+                            AxisLayoutFlags.LeftPad,
+                            new MouseActions { MouseType = MouseActionsType.Scroll }
+                        },
+                        {
+                            AxisLayoutFlags.RightPad,
+                            new MouseActions { MouseType = MouseActionsType.Move }
+                        }
+                    };
+
+                    Layout.ButtonLayout = new()
                     {
-                        AxisLayoutFlags.RightThumb,
-                        new MouseActions { MouseType = MouseActionsType.Move, Sensivity = 25.0f }
-                    },
-                    {
-                        AxisLayoutFlags.LeftPad,
-                        new MouseActions { MouseType = MouseActionsType.Scroll, Sensivity = 25.0f }
-                    },
-                    {
-                        AxisLayoutFlags.RightPad,
-                        new MouseActions { MouseType = MouseActionsType.Move, Sensivity = 25.0f }
-                    }
-                };
+                        { ButtonFlags.B1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.RETURN } } },
+                        { ButtonFlags.B2, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.ESCAPE } } },
+                        { ButtonFlags.B3, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.PRIOR } } },
+                        { ButtonFlags.B4, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.NEXT } } },
 
-                Layout.ButtonLayout = new SortedDictionary<ButtonFlags, IActions>
-                {
-                    { ButtonFlags.B1, new KeyboardActions { Key = VirtualKeyCode.RETURN } },
-                    { ButtonFlags.B2, new KeyboardActions { Key = VirtualKeyCode.ESCAPE } },
-                    { ButtonFlags.B3, new KeyboardActions { Key = VirtualKeyCode.PRIOR } },
-                    { ButtonFlags.B4, new KeyboardActions { Key = VirtualKeyCode.NEXT } },
+                        { ButtonFlags.L1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.BACK } } },
+                        { ButtonFlags.R1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.SPACE } } },
 
-                    { ButtonFlags.L1, new KeyboardActions { Key = VirtualKeyCode.BACK } },
-                    { ButtonFlags.R1, new KeyboardActions { Key = VirtualKeyCode.SPACE } },
+                        { ButtonFlags.Back, new List<IActions> { new KeyboardActions() { Key = VirtualKeyCode.TAB, Modifiers = ModifierSet.Alt } } },
+                        { ButtonFlags.Start, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.TAB } } },
 
-                    { ButtonFlags.Back, new KeyboardActions { Key = VirtualKeyCode.MENU } },
-                    { ButtonFlags.Start, new KeyboardActions { Key = VirtualKeyCode.TAB } },
+                        { ButtonFlags.DPadUp, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.UP } } },
+                        { ButtonFlags.DPadDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.DOWN } } },
+                        { ButtonFlags.DPadLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.LEFT } } },
+                        { ButtonFlags.DPadRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.RIGHT } } },
 
-                    { ButtonFlags.DPadUp, new KeyboardActions { Key = VirtualKeyCode.UP } },
-                    { ButtonFlags.DPadDown, new KeyboardActions { Key = VirtualKeyCode.DOWN } },
-                    { ButtonFlags.DPadLeft, new KeyboardActions { Key = VirtualKeyCode.LEFT } },
-                    { ButtonFlags.DPadRight, new KeyboardActions { Key = VirtualKeyCode.RIGHT } },
+                        { ButtonFlags.L2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
+                        { ButtonFlags.R2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } },
 
-                    { ButtonFlags.L2, new MouseActions { MouseType = MouseActionsType.RightButton } },
-                    { ButtonFlags.R2, new MouseActions { MouseType = MouseActionsType.LeftButton } },
-
-                    { ButtonFlags.LeftPadClick, new MouseActions { MouseType = MouseActionsType.RightButton } },
-                    { ButtonFlags.RightPadClick, new MouseActions { MouseType = MouseActionsType.LeftButton } }
-                };
-            }
+                        { ButtonFlags.LeftPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
+                        { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
+                    };
+                }
                 break;
 
             case "Gamepad (Nintendo)":
-            {
-                Layout.ButtonLayout[ButtonFlags.B1] = new ButtonActions { Button = ButtonFlags.B2 };
-                Layout.ButtonLayout[ButtonFlags.B2] = new ButtonActions { Button = ButtonFlags.B1 };
-                Layout.ButtonLayout[ButtonFlags.B3] = new ButtonActions { Button = ButtonFlags.B4 };
-                Layout.ButtonLayout[ButtonFlags.B4] = new ButtonActions { Button = ButtonFlags.B3 };
-            }
+                {
+                    Layout.ButtonLayout[ButtonFlags.B1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B2 } };
+                    Layout.ButtonLayout[ButtonFlags.B2] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B1 } };
+                    Layout.ButtonLayout[ButtonFlags.B3] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B4 } };
+                    Layout.ButtonLayout[ButtonFlags.B4] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.B3 } };
+                }
                 break;
 
             case "Keyboard (WASD) and Mouse":
-            {
-                Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                 {
-                    { AxisLayoutFlags.LeftThumb, new EmptyActions() },
+                    Layout.AxisLayout = new SortedDictionary<AxisLayoutFlags, IActions>
                     {
-                        AxisLayoutFlags.RightThumb,
-                        new MouseActions { MouseType = MouseActionsType.Move, Sensivity = 25.0f }
-                    },
-                    { AxisLayoutFlags.LeftPad, new EmptyActions() },
+                        {
+                            AxisLayoutFlags.RightStick,
+                            new MouseActions { MouseType = MouseActionsType.Move }
+                        },
+                        {
+                            AxisLayoutFlags.RightPad,
+                            new MouseActions { MouseType = MouseActionsType.Move }
+                        }
+                    };
+
+                    Layout.ButtonLayout = new()
                     {
-                        AxisLayoutFlags.RightPad,
-                        new MouseActions { MouseType = MouseActionsType.Move, Sensivity = 25.0f }
-                    }
-                };
+                        { ButtonFlags.B1, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.SPACE } } },
+                        { ButtonFlags.B2, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_E } } },
+                        { ButtonFlags.B3, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_R } } },
+                        { ButtonFlags.B4, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_F } } },
 
-                Layout.ButtonLayout = new SortedDictionary<ButtonFlags, IActions>
-                {
-                    { ButtonFlags.B1, new KeyboardActions { Key = VirtualKeyCode.SPACE } },
-                    { ButtonFlags.B2, new KeyboardActions { Key = VirtualKeyCode.VK_E } },
-                    { ButtonFlags.B3, new KeyboardActions { Key = VirtualKeyCode.VK_R } },
-                    { ButtonFlags.B4, new KeyboardActions { Key = VirtualKeyCode.VK_F } },
+                        { ButtonFlags.L1, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } } },
+                        { ButtonFlags.R1, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollUp } } },
 
-                    { ButtonFlags.L1, new MouseActions { MouseType = MouseActionsType.ScrollDown, Sensivity = 25.0f } },
-                    { ButtonFlags.R1, new MouseActions { MouseType = MouseActionsType.ScrollUp, Sensivity = 25.0f } },
+                        { ButtonFlags.Back, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.TAB } } },
+                        { ButtonFlags.Start, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.ESCAPE } } },
 
-                    { ButtonFlags.Back, new KeyboardActions { Key = VirtualKeyCode.TAB } },
-                    { ButtonFlags.Start, new KeyboardActions { Key = VirtualKeyCode.ESCAPE } },
+                        { ButtonFlags.DPadUp, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_1 } } },
+                        { ButtonFlags.DPadDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_3 } } },
+                        { ButtonFlags.DPadLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_4 } } },
+                        { ButtonFlags.DPadRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_2 } } },
 
-                    { ButtonFlags.DPadUp, new KeyboardActions { Key = VirtualKeyCode.VK_1 } },
-                    { ButtonFlags.DPadDown, new KeyboardActions { Key = VirtualKeyCode.VK_3 } },
-                    { ButtonFlags.DPadLeft, new KeyboardActions { Key = VirtualKeyCode.VK_4 } },
-                    { ButtonFlags.DPadRight, new KeyboardActions { Key = VirtualKeyCode.VK_2 } },
+                        { ButtonFlags.L2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.RightButton } } },
+                        { ButtonFlags.R2Soft, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } },
 
-                    { ButtonFlags.L2, new MouseActions { MouseType = MouseActionsType.RightButton } },
-                    { ButtonFlags.R2, new MouseActions { MouseType = MouseActionsType.LeftButton } },
+                        { ButtonFlags.LeftStickUp, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_W } } },
+                        { ButtonFlags.LeftStickDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_S } } },
+                        { ButtonFlags.LeftStickLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_A } } },
+                        { ButtonFlags.LeftStickRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_D } } },
 
-                    { ButtonFlags.LeftThumbUp, new KeyboardActions { Key = VirtualKeyCode.VK_W } },
-                    { ButtonFlags.LeftThumbDown, new KeyboardActions { Key = VirtualKeyCode.VK_S } },
-                    { ButtonFlags.LeftThumbLeft, new KeyboardActions { Key = VirtualKeyCode.VK_A } },
-                    { ButtonFlags.LeftThumbRight, new KeyboardActions { Key = VirtualKeyCode.VK_D } },
+                        { ButtonFlags.LeftStickClick, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.LSHIFT } } },
+                        { ButtonFlags.RightStickClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } },
 
-                    { ButtonFlags.LeftThumb, new KeyboardActions { Key = VirtualKeyCode.LSHIFT } },
-                    { ButtonFlags.RightThumb, new MouseActions { MouseType = MouseActionsType.LeftButton } },
+                        { ButtonFlags.LeftPadClickUp, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_1 } } },
+                        { ButtonFlags.LeftPadClickDown, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_3 } } },
+                        { ButtonFlags.LeftPadClickLeft, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_4 } } },
+                        { ButtonFlags.LeftPadClickRight, new List<IActions>() { new KeyboardActions { Key = VirtualKeyCode.VK_2 } } },
 
-                    { ButtonFlags.LeftPadClickUp, new KeyboardActions { Key = VirtualKeyCode.VK_1 } },
-                    { ButtonFlags.LeftPadClickDown, new KeyboardActions { Key = VirtualKeyCode.VK_3 } },
-                    { ButtonFlags.LeftPadClickLeft, new KeyboardActions { Key = VirtualKeyCode.VK_4 } },
-                    { ButtonFlags.LeftPadClickRight, new KeyboardActions { Key = VirtualKeyCode.VK_2 } },
-
-                    { ButtonFlags.RightPadClick, new MouseActions { MouseType = MouseActionsType.LeftButton } }
-                };
-            }
+                        { ButtonFlags.RightPadClick, new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } } }
+                    };
+                }
                 break;
 
             case "Gamepad with Mouse Trackpad":
-            {
-                Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
-            }
+                {
+                    Layout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions { MouseType = MouseActionsType.Move };
+                }
                 break;
 
             case "Gamepad with Joystick Trackpad":
-            {
-                Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightThumb };
-            }
+                {
+                    Layout.AxisLayout[AxisLayoutFlags.RightPad] = new AxisActions { Axis = AxisLayoutFlags.RightStick };
+                }
                 break;
         }
     }
@@ -240,6 +236,11 @@ public partial class LayoutTemplate : UserControl, IComparable
     {
         var profile = (LayoutTemplate)obj;
         return profile.Name.CompareTo(Name);
+    }
+
+    public void ClearDelegates()
+    {
+        Updated = null;
     }
 
     private void Layout_Updated(Layout layout)

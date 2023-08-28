@@ -5,20 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:Background="White"
-    d:DesignHeight="1000"
+    d:DesignHeight="1500"
     d:DesignWidth="800"
-    d:Visibility="Visible"
-    Visibility="Collapsed"
     mc:Ignorable="d">
 
-    <Expander Padding="15,12,12,12" HorizontalAlignment="Stretch">
+    <Expander HorizontalAlignment="Stretch">
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="160" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
@@ -70,7 +68,7 @@
                     d:Visibility="Visible"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
 
                             <!--  Improve circularity  -->
@@ -198,7 +196,7 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
-                            <!--  Inner deadzone  -->
+                            <!--  Outer deadzone  -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
@@ -234,7 +232,7 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
-                            <!--  Inner deadzone  -->
+                            <!--  Anti deadzone  -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
                                     <Grid>
@@ -279,7 +277,7 @@
                     d:Visibility="Visible"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=4}">
 
-                    <ui:SimpleStackPanel Spacing="12">
+                    <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
 
                             <!--  Auto rotate  -->
@@ -370,7 +368,8 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
-                                        ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
+                                        ValueChanged="Axis2MousePointerSpeed_ValueChanged"
+                                        Value="33" />
                                 </ui:SimpleStackPanel>
                             </Grid>
 
@@ -380,6 +379,107 @@
                                 BorderThickness="0,1,0,0"
                                 Opacity="0.25" />
 
+                            <!--  Acceleration  -->
+                            <Grid>
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Acceleration" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, StringFormat=N2, ElementName=Axis2MouseAcceleration, Mode=OneWay}" />
+                                    </Grid>
+
+                                    <Slider
+                                        x:Name="Axis2MouseAcceleration"
+                                        AutoToolTipPrecision="2"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="2.00"
+                                        Minimum="1.00"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="0.05"
+                                        ValueChanged="Axis2MouseAcceleration_ValueChanged"
+                                        Value="1.00" />
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                            <!--  Filtering  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" MinWidth="200" />
+                                    <ColumnDefinition Width="8*" MinWidth="120" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Filtering (touchpad only)" />
+
+                                <ui:ToggleSwitch
+                                    Name="Axis2MouseFiltering"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                    Toggled="Axis2MouseFiltering_Toggled" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                            <!--  Filtering (hidden)  -->
+                            <Grid d:Visibility="Visible" Visibility="{Binding ElementName=Axis2MouseFiltering, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ui:SimpleStackPanel Spacing="6">
+                                    <Grid>
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="Filtering cutoff (less is more filter)" />
+                                        <TextBox
+                                            HorizontalAlignment="Right"
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, StringFormat=N3, ElementName=Axis2MouseFilterCutoff, Mode=OneWay}" />
+                                    </Grid>
+
+                                    <Slider
+                                        x:Name="Axis2MouseFilterCutoff"
+                                        AutoToolTipPrecision="3"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="0.1"
+                                        Minimum="0.01"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="0.005"
+                                        ValueChanged="Axis2MouseFilterCutoff_ValueChanged"
+                                        Value="0.05" />
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0"
+                                        Opacity="0.25" />
+
+                                </ui:SimpleStackPanel>
+                            </Grid>
+
                             <!--  Deadzone  -->
                             <Grid>
                                 <ui:SimpleStackPanel Spacing="6">
@@ -388,7 +488,7 @@
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Deadzone" />
+                                            Text="Deadzone (joystick only)" />
                                         <TextBox
                                             HorizontalAlignment="Right"
                                             HorizontalContentAlignment="Center"
@@ -405,7 +505,8 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
-                                        ValueChanged="Axis2MouseDeadzone_ValueChanged" />
+                                        ValueChanged="Axis2MouseDeadzone_ValueChanged"
+                                        Value="10" />
                                 </ui:SimpleStackPanel>
                             </Grid>
 

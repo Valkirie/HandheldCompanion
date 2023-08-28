@@ -1,16 +1,13 @@
+using HandheldCompanion.Misc;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using ControllerCommon;
-using ControllerCommon.Managers;
-using ControllerCommon.Processor;
-using ControllerCommon.Utils;
-using HandheldCompanion.Views;
-using PowerProfileUtils;
-using RTSSSharedMemoryNET;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -66,6 +63,7 @@ public class PerformanceManager : Manager
     private double AutoTDPTargetFPS;
     private bool cpuWatchdogPendingStop;
     private uint currentEPP = 50;
+    private int currentCoreCount;
     private double CurrentGfxClock;
 
     // powercfg
@@ -78,7 +76,7 @@ public class PerformanceManager : Manager
     private readonly double[] FPSHistory = new double[6];
     private bool gfxWatchdogPendingStop;
 
-    private Processor processor;
+    private Processor processor = new();
     private double ProcessValueFPSPrevious;
     private double StoredGfxClock;
 
@@ -112,6 +110,7 @@ public class PerformanceManager : Manager
         // initialize settings
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
 
+        currentCoreCount = Environment.ProcessorCount;
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
     }
 
@@ -120,16 +119,16 @@ public class PerformanceManager : Manager
         switch (name)
         {
             case "ConfigurableTDPOverrideDown":
-            {
-                TDPMin = Convert.ToDouble(value);
-                AutoTDP = (TDPMax + TDPMin) / 2.0d;
-            }
+                {
+                    TDPMin = Convert.ToDouble(value);
+                    AutoTDP = (TDPMax + TDPMin) / 2.0d;
+                }
                 break;
             case "ConfigurableTDPOverrideUp":
-            {
-                TDPMax = Convert.ToDouble(value);
-                AutoTDP = (TDPMax + TDPMin) / 2.0d;
-            }
+                {
+                    TDPMax = Convert.ToDouble(value);
+                    AutoTDP = (TDPMax + TDPMin) / 2.0d;
+                }
                 break;
         }
     }
@@ -174,6 +173,7 @@ public class PerformanceManager : Manager
         }
         else if (gfxWatchdog.Enabled)
         {
+            // restore default GPU clock
             StopGPUWatchdog(true);
             RestoreGPUClock(true);
         }
@@ -183,6 +183,38 @@ public class PerformanceManager : Manager
         {
             RequestEPP(profile.EPPOverrideValue);
         }
+        else if (currentEPP != 0x00000032)
+        {
+            // restore default EPP
+            RequestEPP(0x00000032);
+        }
+
+        // apply profile defined CPU Core Count
+        if (profile.CPUCoreEnabled)
+        {
+            RequestCPUCoreCount(profile.CPUCoreCount);
+        }
+        else if (currentCoreCount != Environment.ProcessorCount)
+        {
+            // restore default CPU Core Count
+            RequestCPUCoreCount(Environment.ProcessorCount);
+        }
+
+        // apply profile define RSR
+        try
+        {
+            if (profile.RSREnabled)
+            {
+                ADLXBackend.SetRSR(true);
+                ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
+            }
+            else if (ADLXBackend.GetRSRState() == 1)
+            {
+                ADLXBackend.SetRSR(false);
+                ADLXBackend.SetRSRSharpness(20);
+            }
+        }
+        catch { }
     }
 
     private void ProfileManager_Discarded(Profile profile)
@@ -215,6 +247,23 @@ public class PerformanceManager : Manager
             // restore default EPP
             RequestEPP(0x00000032);
         }
+
+        // (un)apply profile defined CPU Core Count
+        if (profile.CPUCoreEnabled)
+        {
+            RequestCPUCoreCount(100);
+        }
+
+        try
+        {
+            // restore default RSR
+            if (profile.RSREnabled)
+            {
+                ADLXBackend.SetRSR(false);
+                ADLXBackend.SetRSRSharpness(20);
+            }
+        }
+        catch { }
     }
 
     private void RestoreTDP(bool immediate)
@@ -648,7 +697,7 @@ public class PerformanceManager : Manager
         uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
         if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
             return;
-        
+
         LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
 
         // Set profile EPP
@@ -659,6 +708,40 @@ public class PerformanceManager : Manager
         EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
         if (EPP[0] != requestedEPP[0] || EPP[1] != requestedEPP[1])
             LogManager.LogWarning("Failed to set requested EPP");
+    }
+
+    public void RequestCPUCoreCount(int CoreCount)
+    {
+        currentCoreCount = CoreCount;
+
+        uint currentCoreCountPercent = (uint)((100.0d / MotherboardInfo.NumberOfCores) * CoreCount);
+
+        // Is the CPMINCORES value already correct?
+        uint[] CPMINCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
+        bool CPMINCORESReady = (CPMINCORES[0] == currentCoreCountPercent && CPMINCORES[1] == currentCoreCountPercent);
+
+        // Is the CPMAXCORES value already correct?
+        uint[] CPMAXCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES);
+        bool CPMAXCORESReady = (CPMAXCORES[0] == currentCoreCountPercent && CPMAXCORES[1] == currentCoreCountPercent);
+
+        if (CPMINCORESReady && CPMAXCORESReady)
+            return;
+
+        // Set profile CPMINCORES and CPMAXCORES
+        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES, currentCoreCountPercent, currentCoreCountPercent);
+        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES, currentCoreCountPercent, currentCoreCountPercent);
+
+        LogManager.LogInformation("User requested CoreCount: {0} ({1}%)", CoreCount, currentCoreCountPercent);
+
+        // Has the CPMINCORES value been applied?
+        CPMINCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
+        if (CPMINCORES[0] != currentCoreCountPercent || CPMINCORES[1] != currentCoreCountPercent)
+            LogManager.LogWarning("Failed to set requested CPMINCORES");
+
+        // Has the CPMAXCORES value been applied?
+        CPMAXCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES);
+        if (CPMAXCORES[0] != currentCoreCountPercent || CPMAXCORES[1] != currentCoreCountPercent)
+            LogManager.LogWarning("Failed to set requested CPMAXCORES");
     }
 
     public void RequestPerfBoostMode(bool value)
@@ -863,9 +946,9 @@ public class PerformanceManager : Manager
         switch (misc)
         {
             case "gfx_clk":
-            {
-                CurrentGfxClock = value;
-            }
+                {
+                    CurrentGfxClock = value;
+                }
                 break;
         }
     }

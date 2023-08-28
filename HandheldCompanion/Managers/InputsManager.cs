@@ -1,17 +1,16 @@
+using Gma.System.MouseKeyHook;
+using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Inputs;
+using HandheldCompanion.Simulators;
+using HandheldCompanion.Views;
+using PrecisionTiming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using ControllerCommon.Inputs;
-using ControllerCommon.Managers;
-using Gma.System.MouseKeyHook;
-using GregsStack.InputSimulatorStandard.Native;
-using HandheldCompanion.Simulators;
-using HandheldCompanion.Views;
-using PrecisionTiming;
 using WindowsInput.Events;
 using static HandheldCompanion.Managers.InputsHotkey;
-using ButtonState = ControllerCommon.Inputs.ButtonState;
+using ButtonState = HandheldCompanion.Inputs.ButtonState;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -163,20 +162,20 @@ public static class InputsManager
                     switch (chord.InputsType)
                     {
                         case InputsChordType.Click:
-                        {
-                            if (!hotkey.OnKeyDown && IsKeyDown)
-                                continue;
+                            {
+                                if (!hotkey.OnKeyDown && IsKeyDown)
+                                    continue;
 
-                            if (!hotkey.OnKeyUp && IsKeyUp)
-                                continue;
-                        }
+                                if (!hotkey.OnKeyUp && IsKeyUp)
+                                    continue;
+                            }
                             break;
 
                         case InputsChordType.Long:
-                        {
-                            if (IsKeyUp)
-                                continue;
-                        }
+                            {
+                                if (IsKeyUp)
+                                    continue;
+                            }
                             break;
                     }
 
@@ -371,6 +370,19 @@ public static class InputsManager
                 }
             }
         }
+        else
+        {
+            // manage AltGr
+            if (args.IsKeyUp)
+            {
+                switch (args.KeyValue)
+                {
+                    case 165:
+                        KeyboardSimulator.KeyUp((VirtualKeyCode)162);
+                        break;
+                }
+            }
+        }
 
         KeyboardResetTimer.Start();
     }
@@ -407,27 +419,18 @@ public static class InputsManager
         {
             var args = keys[i];
 
-            // improve me
-            var key = (VirtualKeyCode)args.KeyValue;
-            if (args.KeyValue == 0)
-            {
-                if (args.Control)
-                    key = VirtualKeyCode.LCONTROL;
-                else if (args.Alt)
-                    key = VirtualKeyCode.RMENU;
-                else if (args.Shift)
-                    key = VirtualKeyCode.RSHIFT;
-            }
-
             switch (args.IsKeyDown)
             {
                 case true:
-                    KeyboardSimulator.KeyDown(key);
+                    KeyboardSimulator.KeyDown(args);
                     break;
                 case false:
-                    KeyboardSimulator.KeyUp(key);
+                    KeyboardSimulator.KeyUp(args);
                     break;
             }
+
+            // clear buffer
+            BufferKeys.Remove(args);
         }
 
         // clear buffer
@@ -467,32 +470,32 @@ public static class InputsManager
     public static void UpdateReport(ButtonState buttonState)
     {
         // half-press should be removed if full-press is also present
-        if (currentChord.State[ButtonFlags.L3])
+        if (currentChord.State[ButtonFlags.L2Full])
         {
-            currentChord.State[ButtonFlags.L2] = false;
-            storedChord.State[ButtonFlags.L2] = false;
-            buttonState[ButtonFlags.L2] = false;
+            currentChord.State[ButtonFlags.L2Soft] = false;
+            storedChord.State[ButtonFlags.L2Soft] = false;
+            buttonState[ButtonFlags.L2Soft] = false;
         }
 
-        if (currentChord.State[ButtonFlags.R3])
+        if (currentChord.State[ButtonFlags.R2Full])
         {
-            currentChord.State[ButtonFlags.R2] = false;
-            storedChord.State[ButtonFlags.R2] = false;
-            buttonState[ButtonFlags.R2] = false;
+            currentChord.State[ButtonFlags.R2Soft] = false;
+            storedChord.State[ButtonFlags.R2Soft] = false;
+            buttonState[ButtonFlags.R2Soft] = false;
         }
 
-        if (currentChord.State[ButtonFlags.LeftThumb])
+        if (currentChord.State[ButtonFlags.LeftStickClick])
         {
-            currentChord.State[ButtonFlags.LeftThumbTouch] = false;
-            storedChord.State[ButtonFlags.LeftThumbTouch] = false;
-            buttonState[ButtonFlags.LeftThumbTouch] = false;
+            currentChord.State[ButtonFlags.LeftStickTouch] = false;
+            storedChord.State[ButtonFlags.LeftStickTouch] = false;
+            buttonState[ButtonFlags.LeftStickTouch] = false;
         }
 
-        if (currentChord.State[ButtonFlags.RightThumb])
+        if (currentChord.State[ButtonFlags.RightStickClick])
         {
-            currentChord.State[ButtonFlags.RightThumbTouch] = false;
-            storedChord.State[ButtonFlags.RightThumbTouch] = false;
-            buttonState[ButtonFlags.RightThumbTouch] = false;
+            currentChord.State[ButtonFlags.RightStickTouch] = false;
+            storedChord.State[ButtonFlags.RightStickTouch] = false;
+            buttonState[ButtonFlags.RightStickTouch] = false;
         }
 
         if (currentChord.State[ButtonFlags.LeftPadClick])
@@ -505,7 +508,7 @@ public static class InputsManager
         if (currentChord.State[ButtonFlags.RightPadClick])
         {
             currentChord.State[ButtonFlags.RightPadTouch] = false;
-            storedChord.State[ButtonFlags.LeftPadTouch] = false;
+            storedChord.State[ButtonFlags.RightPadTouch] = false;
             buttonState[ButtonFlags.RightPadTouch] = false;
         }
 

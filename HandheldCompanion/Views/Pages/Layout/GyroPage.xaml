@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:HandheldCompanion.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
@@ -14,6 +14,14 @@
     mc:Ignorable="d">
 
     <Grid Name="MainGrid">
-        <ui:SimpleStackPanel Spacing="6" />
+        <ui:SimpleStackPanel Spacing="6">
+
+            <ui:SimpleStackPanel Name="gridGyroscope" Spacing="6">
+                <!--  GYROSCOPE  -->
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="GYROSCOPE" />
+                <ui:SimpleStackPanel Name="GyroscopePanel" Spacing="6" />
+            </ui:SimpleStackPanel>
+
+        </ui:SimpleStackPanel>
     </Grid>
 </local:ILayoutPage>

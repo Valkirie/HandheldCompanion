@@ -1,8 +1,8 @@
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Controls;
+using HandheldCompanion.Inputs;
 using System.Collections.Generic;
 using System.Windows;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
-using HandheldCompanion.Controls;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -13,114 +13,74 @@ public partial class JoysticksPage : ILayoutPage
 {
     public static List<ButtonFlags> LeftThumbButtons = new()
     {
-        ButtonFlags.LeftThumb, ButtonFlags.LeftThumbTouch, ButtonFlags.LeftThumbUp, ButtonFlags.LeftThumbDown,
-        ButtonFlags.LeftThumbLeft, ButtonFlags.LeftThumbRight
+        ButtonFlags.LeftStickClick, ButtonFlags.LeftStickTouch, ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown,
+        ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight
     };
 
-    public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftThumb };
+    public static List<AxisLayoutFlags> LeftThumbAxis = new() { AxisLayoutFlags.LeftStick };
 
     public static List<ButtonFlags> RightThumbButtons = new()
     {
-        ButtonFlags.RightThumb, ButtonFlags.RightThumbTouch, ButtonFlags.RightThumbUp, ButtonFlags.RightThumbDown,
-        ButtonFlags.RightThumbLeft, ButtonFlags.RightThumbRight
+        ButtonFlags.RightStickClick, ButtonFlags.RightStickTouch, ButtonFlags.RightStickUp, ButtonFlags.RightStickDown,
+        ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
     };
 
-    public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightThumb };
+    public static List<AxisLayoutFlags> RightThumbAxis = new() { AxisLayoutFlags.RightStick };
 
     public JoysticksPage()
     {
         InitializeComponent();
 
         // draw UI
-        foreach (var button in LeftThumbButtons)
+        foreach (ButtonFlags button in LeftThumbButtons)
         {
-            var buttonMapping = new ButtonMapping(button);
-            LeftJoystickButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            LeftJoystickButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in LeftThumbAxis)
+        foreach (AxisLayoutFlags axis in LeftThumbAxis)
         {
-            var axisMapping = new AxisMapping(axis);
+            AxisMapping axisMapping = new AxisMapping(axis);
             LeftJoystickPanel.Children.Add(axisMapping);
 
-            MappingAxis.Add(axis, axisMapping);
+            AxisMappings.Add(axis, axisMapping);
         }
 
-        foreach (var button in RightThumbButtons)
+        foreach (ButtonFlags button in RightThumbButtons)
         {
-            var buttonMapping = new ButtonMapping(button);
-            RightJoystickButtonsPanel.Children.Add(buttonMapping);
+            ButtonStack panel = new(button);
+            RightJoystickButtonsPanel.Children.Add(panel);
 
-            MappingButtons.Add(button, buttonMapping);
+            ButtonStacks.Add(button, panel);
         }
 
-        foreach (var axis in RightThumbAxis)
+        foreach (AxisLayoutFlags axis in RightThumbAxis)
         {
-            var axisMapping = new AxisMapping(axis);
+            AxisMapping axisMapping = new AxisMapping(axis);
             RightJoystickPanel.Children.Add(axisMapping);
 
-            MappingAxis.Add(axis, axisMapping);
+            AxisMappings.Add(axis, axisMapping);
         }
+    }
+
+    public override void UpdateController(IController controller)
+    {
+        base.UpdateController(controller);
+
+        bool leftStick = CheckController(controller, LeftThumbAxis);
+        bool rightStick = CheckController(controller, RightThumbAxis);
+
+        gridLeftStick.Visibility = leftStick ? Visibility.Visible : Visibility.Collapsed;
+        gridRightStick.Visibility = rightStick ? Visibility.Visible : Visibility.Collapsed;
+
+        enabled = leftStick || rightStick;
     }
 
     public JoysticksPage(string Tag) : this()
     {
         this.Tag = Tag;
-    }
-
-    public override void UpdateController(IController Controller)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // controller based
-            foreach (var mapping in MappingButtons)
-            {
-                var button = mapping.Key;
-                var buttonMapping = mapping.Value;
-
-                // update mapping visibility
-                if (!Controller.HasSourceButton(button))
-                {
-                    buttonMapping.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    buttonMapping.Visibility = Visibility.Visible;
-
-                    // update icon
-                    var newIcon = Controller.GetFontIcon(button);
-                    var newLabel = Controller.GetButtonName(button);
-
-                    buttonMapping.UpdateIcon(newIcon, newLabel);
-                }
-            }
-
-            foreach (var mapping in MappingAxis)
-            {
-                var flags = mapping.Key;
-                var layout = AxisLayout.Layouts[flags];
-
-                var axisMapping = mapping.Value;
-
-                // update mapping visibility
-                if (!Controller.HasSourceAxis(flags))
-                {
-                    axisMapping.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    axisMapping.Visibility = Visibility.Visible;
-
-                    // update icon
-                    var newIcon = Controller.GetFontIcon(flags);
-                    var newLabel = Controller.GetAxisName(flags);
-                    axisMapping.UpdateIcon(newIcon, newLabel);
-                }
-            }
-        });
     }
 
     private void Page_Loaded(object sender, RoutedEventArgs e)

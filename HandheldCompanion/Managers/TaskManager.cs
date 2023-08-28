@@ -1,6 +1,5 @@
-﻿using System;
-using ControllerCommon.Managers;
-using Microsoft.Win32.TaskScheduler;
+﻿using Microsoft.Win32.TaskScheduler;
+using System;
 
 namespace HandheldCompanion.Managers;
 

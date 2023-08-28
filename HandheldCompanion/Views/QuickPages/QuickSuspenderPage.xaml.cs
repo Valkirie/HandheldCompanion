@@ -1,7 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using HandheldCompanion.Controls;
+﻿using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.QuickPages;
 
@@ -21,6 +21,10 @@ public partial class QuickSuspenderPage : Page
 
         ProcessManager.ProcessStarted += ProcessStarted;
         ProcessManager.ProcessStopped += ProcessStopped;
+
+        // get processes
+        foreach (ProcessEx processEx in ProcessManager.GetProcesses())
+            ProcessStarted(processEx, true);
     }
 
     private void ProcessStopped(ProcessEx processEx)

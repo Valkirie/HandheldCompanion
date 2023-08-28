@@ -5,13 +5,13 @@
     xmlns:common="clr-namespace:HandheldCompanion.Views.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="https://schemas.animasterstudios.com/lib/ui/wpf/modern"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="QuickTools"
-    Width="440"
+    Width="640"
     Height="720"
-    MinWidth="440"
+    MinWidth="640"
     MinHeight="450"
-    MaxWidth="440"
+    MaxWidth="640"
     Margin="12"
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -26,7 +26,6 @@
     ShowInTaskbar="False"
     Topmost="False"
     WindowStyle="ToolWindow"
-    IsVisibleChanged="Window_IsVisibleChanged"
     mc:Ignorable="d">
 
     <Grid>
@@ -89,14 +88,16 @@
                     </DockPanel>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem IsEnabled="False">
-                    <DockPanel VerticalAlignment="Center">
-                        <ui:FontIcon 
-                        Glyph="{x:Static ui:SegoeIcons.Recent}" />
+                    <DockPanel>
+                        <ui:FontIcon
+                            VerticalAlignment="Center"
+                            FontSize="21"
+                            Glyph="{x:Static ui:SegoeIcons.Recent}" />
                         <TextBlock
-                        Name="Time"
-                        Margin="2,0,0,0"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource CaptionTextBlockStyle}" />
+                            Name="Time"
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource CaptionTextBlockStyle}" />
                     </DockPanel>
                 </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>

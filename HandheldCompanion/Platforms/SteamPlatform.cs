@@ -1,16 +1,14 @@
-﻿using System;
+﻿using HandheldCompanion.Controls;
+using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ControllerCommon.Managers;
-using ControllerCommon.Platforms;
-using ControllerCommon.Utils;
-using HandheldCompanion.Controls;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
 
 namespace HandheldCompanion.Platforms;
 
@@ -34,7 +32,7 @@ public class SteamPlatform : IPlatform
 
         Name = "Steam";
         ExecutableName = "steam.exe";
-        
+
         // this is for detecting steam start/stop, for some reason steam.exe often doesn't work
         RunningName = "steamwebhelper.exe";
 

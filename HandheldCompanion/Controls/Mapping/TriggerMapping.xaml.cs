@@ -1,10 +1,10 @@
-﻿using System.Threading;
-using System.Windows.Controls;
-using ControllerCommon.Actions;
-using ControllerCommon.Controllers;
-using ControllerCommon.Inputs;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Controllers;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using Inkore.UI.WPF.Modern.Controls;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Controls;
 
@@ -21,7 +21,6 @@ public partial class TriggerMapping : IMapping
     public TriggerMapping(AxisLayoutFlags axis) : this()
     {
         Value = axis;
-        prevValue = axis;
 
         Icon.Glyph = axis.ToString();
     }
@@ -38,8 +37,11 @@ public partial class TriggerMapping : IMapping
             Icon.Foreground = newIcon.Foreground;
         else
             Icon.SetResourceReference(ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
+    }
 
-        Update();
+    public void UpdateSelections()
+    {
+        Action_SelectionChanged(null, null);
     }
 
     internal void SetIActions(IActions actions)
@@ -59,10 +61,6 @@ public partial class TriggerMapping : IMapping
 
         // we're not ready yet
         if (TargetComboBox is null)
-            return;
-
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
             return;
 
         // clear current dropdown values
@@ -102,6 +100,11 @@ public partial class TriggerMapping : IMapping
             }
         }
 
+        // settings
+        Trigger2TriggerInnerDeadzone.Value = ((TriggerActions)this.Actions).AxisDeadZoneInner;
+        Trigger2TriggerOuterDeadzone.Value = ((TriggerActions)this.Actions).AxisDeadZoneOuter;
+        Trigger2TriggerAntiDeadzone.Value = ((TriggerActions)this.Actions).AxisAntiDeadZone;
+
         base.Update();
     }
 
@@ -113,38 +116,68 @@ public partial class TriggerMapping : IMapping
         if (TargetComboBox.SelectedItem is null)
             return;
 
-        // we're busy
-        if (!Monitor.TryEnter(updateLock))
-            return;
-
         // generate IActions based on settings
         switch (Actions.ActionType)
         {
             case ActionType.Trigger:
-            {
-                var buttonLabel = TargetComboBox.SelectedItem as Label;
-                ((TriggerActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
-            }
+                {
+                    var buttonLabel = TargetComboBox.SelectedItem as Label;
+                    ((TriggerActions)Actions).Axis = (AxisLayoutFlags)buttonLabel.Tag;
+                }
                 break;
         }
 
         base.Update();
     }
 
-    private void Update()
+    private void Trigger2TriggerInnerDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        // force full update
-        Action_SelectionChanged(null, null);
-        Target_SelectionChanged(null, null);
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Trigger:
+                ((TriggerActions)this.Actions).AxisDeadZoneInner = (int)Trigger2TriggerInnerDeadzone.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Trigger2TriggerOuterDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Trigger:
+                ((TriggerActions)this.Actions).AxisDeadZoneOuter = (int)Trigger2TriggerOuterDeadzone.Value;
+                break;
+        }
+
+        base.Update();
+    }
+
+    private void Trigger2TriggerAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        switch (this.Actions.ActionType)
+        {
+            case ActionType.Trigger:
+                ((TriggerActions)this.Actions).AxisAntiDeadZone = (int)Trigger2TriggerAntiDeadzone.Value;
+                break;
+        }
+
+        base.Update();
     }
 
     public void Reset()
     {
-        if (Monitor.TryEnter(updateLock))
-        {
-            ActionComboBox.SelectedIndex = 0;
-            TargetComboBox.SelectedItem = null;
-            Monitor.Exit(updateLock);
-        }
+        ActionComboBox.SelectedIndex = 0;
+        TargetComboBox.SelectedItem = null;
     }
 }
