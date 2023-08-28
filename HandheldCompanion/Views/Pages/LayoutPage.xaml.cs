@@ -94,9 +94,24 @@ public partial class LayoutPage : Page
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         MainWindow.controllerPage.HIDchanged += VirtualManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
+        ProfileManager.Updated += ProfileManager_Updated;
+    }
+
+    private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
+    {
+        // update layout page if layout was updated elsewhere
+        // good enough
+        switch(source)
+        {
+            case ProfileUpdateSource.QuickProfilesPage:
+                {
+                    if (currentTemplate.Executable.Equals(profile.Executable))
+                        MainWindow.layoutPage.UpdateLayout(profile.Layout);
+                }
+                break;
+        }
     }
 
     private void ControllerManager_ControllerSelected(IController controller)
@@ -278,7 +293,14 @@ public partial class LayoutPage : Page
         ((Expander)sender).BringIntoView();
     }
 
-    public void UpdateLayout(LayoutTemplate layoutTemplate)
+    public void UpdateLayout(Layout layout)
+    {
+        currentTemplate.Layout = layout;
+
+        UpdatePages();
+    }
+
+    public void UpdateLayoutTemplate(LayoutTemplate layoutTemplate)
     {
         // TODO: Not entirely sure what is going on here, but the old templates were still sending
         // events. Shouldn't they be destroyed? Either there is a bug or I don't understand something
@@ -286,7 +308,6 @@ public partial class LayoutPage : Page
         if (layoutTemplate.Layout != currentTemplate.Layout)
             currentTemplate = layoutTemplate;
 
-        // Not lazyness, but we have bi-directional events from either LayoutPage or QuickProfilesPage
         UpdatePages();
     }
 

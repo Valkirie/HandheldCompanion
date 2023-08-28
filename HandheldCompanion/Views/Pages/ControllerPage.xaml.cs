@@ -324,7 +324,7 @@ public partial class ControllerPage : Page
             Executable = string.Empty,
             Product = string.Empty // UI might've set something here, nullify
         };
-        MainWindow.layoutPage.UpdateLayout(desktopTemplate);
+        MainWindow.layoutPage.UpdateLayoutTemplate(desktopTemplate);
         MainWindow.NavView_Navigate(MainWindow.layoutPage);
     }
 
