@@ -7,13 +7,14 @@
 //     le code est régénéré.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using System.Configuration;
 
 namespace HandheldCompanion.Properties {
-    
-    
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+
+
+    [SettingsProvider(typeof(CustomSettingsProvider))]
+    internal sealed partial class Settings : ApplicationSettingsBase
+    {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
