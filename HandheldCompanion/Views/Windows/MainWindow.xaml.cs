@@ -573,7 +573,7 @@ public partial class MainWindow : GamepadWindow
                     InputsManager.Stop();
 
                     // close current device
-                    CurrentDevice.Open();
+                    CurrentDevice.Close();
                 }
                 break;
         }
