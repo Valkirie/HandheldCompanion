@@ -609,11 +609,7 @@ public static class ControllerManager
                 targetController.Rumble();
 
             if (SettingsManager.GetBoolean("HIDcloakonconnect"))
-            {
-                // we shouldn't hide steam controller on connect
-                if (targetController is not SteamController)
-                    targetController.Hide();
-            }
+                targetController.Hide();
 
             // update settings
             SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);

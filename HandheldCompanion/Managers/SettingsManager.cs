@@ -37,6 +37,9 @@ public static class SettingsManager
         foreach (var property in properties)
             SettingValueChanged(property.Name, GetProperty(property.Name));
 
+        if (GetBoolean("FirstStart"))
+            SetProperty("FirstStart", false);
+
         IsInitialized = true;
         Initialized?.Invoke();
 

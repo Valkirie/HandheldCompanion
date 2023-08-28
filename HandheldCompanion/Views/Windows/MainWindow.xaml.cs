@@ -97,6 +97,9 @@ public partial class MainWindow : GamepadWindow
         // fix touch support
         var tablets = Tablet.TabletDevices;
 
+        // get first start
+        var FirstStart = SettingsManager.GetBoolean("FirstStart");
+
         // define current directory
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;
         SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -166,16 +169,21 @@ public partial class MainWindow : GamepadWindow
                         LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
                 }
                 break;
+
+            case "SteamDeck":
+                {
+                    // prevent Steam Deck controller from being hidden by default
+                    if (FirstStart)
+                        SettingsManager.SetProperty("HIDcloakonconnect", false);
+                }
+                break;
         }
 
-        if (SettingsManager.GetBoolean("FirstStart"))
+        // initialize splash screen on first start only
+        if (FirstStart)
         {
-            // initialize splash screen on first start only
             splashScreen = new SplashScreen();
             splashScreen.Show();
-
-            // update FirstStart
-            SettingsManager.SetProperty("FirstStart", false);
         }
 
         // load manager(s)
