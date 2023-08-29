@@ -63,8 +63,6 @@ jobs:
         if: inputs.releaseVersion != ''
         run: |
           (Get-Content -Path ./HandheldCompanion.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion.iss
-          (Get-Content -Path ./HandheldCompanion-Offline.iss) -replace "#define MyAppVersion `'\d+(?:\.\d+){3}`'", "#define MyAppVersion '${{ inputs.releaseVersion }}'" | Out-File ./HandheldCompanion-Offline.iss
-          (Get-Content -Path ./ControllerService/AssemblyInfo1.cs) -replace '\d+(?:\.\d+){3}', '${{ inputs.releaseVersion }}' | Out-File ./ControllerService/AssemblyInfo1.cs
           (Get-Content -Path ./HandheldCompanion/HandheldCompanion.csproj) -replace "<Version>\d+(?:\.\d+){3}</Version>", "<Version>${{ inputs.releaseVersion }}</Version>" | Out-File ./HandheldCompanion/HandheldCompanion.csproj
 
       - name: Install Innosetup
@@ -77,16 +75,9 @@ jobs:
       - name: Build Solution
         run: dotnet build ${{ env.SOLUTION_NAME }}.sln /p:Configuration=Release
 
-      - name: Rebuild ControllerService
-        run: dotnet build ${{ env.SOLUTION_NAME }}.sln /t:ControllerService:rebuild /p:Configuration=Release
-
       - name: Create Installer
         run: |
           iscc.exe ${{ env.SOLUTION_NAME }}.iss
-
-      - name: Create Offline Installer
-        run: |
-          iscc.exe ${{ env.SOLUTION_NAME }}-offline.iss
 
       - name: Create Release Pull Request
         if: inputs.releaseVersion != ''
@@ -108,4 +99,3 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             ./install/HandheldCompanion-${{ inputs.releaseVersion }}.exe
-            ./install/HandheldCompanion-${{ inputs.releaseVersion }}-offline.exe
