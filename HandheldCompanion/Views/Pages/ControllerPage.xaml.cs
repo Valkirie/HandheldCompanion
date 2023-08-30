@@ -109,17 +109,45 @@ public partial class ControllerPage : Page
             {
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                 {
-                    InputDevices.Children.Remove(ctrl);
-                    break;
+                    if (!IsPowerCycling)
+                    {
+                        InputDevices.Children.Remove(ctrl);
+                        ControllerRefresh();
+                        break;
+                    }
                 }
             }
-
-            ControllerRefresh();
         });
     }
 
     private void ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
     {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // Search for an existing controller, remove it
+            foreach (IController ctrl in InputDevices.Children)
+            {
+                if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
+                {
+                    InputDevices.Children.Remove(ctrl);
+                    break;
+                }
+            }
+
+            // Add new controller to list if no existing controller was found
+            InputDevices.Children.Add(Controller);
+
+            // todo: move me
+            var ui_button_hook = Controller.GetButtonHook();
+            ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
+
+            var ui_button_hide = Controller.GetButtonHide();
+            ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
+
+            ControllerRefresh();
+        });
+
         // we assume this is HC virtual controller
         if (Controller.IsVirtual() && isHCVirtualController)
         {
@@ -132,23 +160,6 @@ public partial class ControllerPage : Page
                 }
             }
         }
-
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // Add new controller to list if no existing controller was found
-            IController control = Controller;
-            InputDevices.Children.Add(control);
-
-            // todo: move me
-            var ui_button_hook = Controller.GetButtonHook();
-            ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
-
-            var ui_button_hide = Controller.GetButtonHide();
-            ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
-
-            ControllerRefresh();
-        });
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -177,7 +188,8 @@ public partial class ControllerPage : Page
         else
             Controller.Hide();
 
-        ControllerRefresh();
+        if (!ControllerManager.PowerCyclers.ContainsKey(Controller.GetContainerInstancePath()))
+            ControllerRefresh();
     }
 
     private void ControllerRefresh()

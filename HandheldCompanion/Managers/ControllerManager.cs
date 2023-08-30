@@ -179,8 +179,8 @@ public static class ControllerManager
 
         // uncloak on close, if requested
         if (SettingsManager.GetBoolean("HIDuncloakonclose"))
-            foreach (var controller in Controllers.Values)
-                controller.Unhide();
+            foreach (var controller in GetPhysicalControllers())
+                controller.Unhide(false);
 
         // unplug on close
         var target = GetTargetController();
@@ -433,26 +433,23 @@ public static class ControllerManager
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // power cycling logic
-        if (IsPowerCycling)
-        {
-            // hide new InstanceID (HID)
-            if (controller.IsHidden())
-                HidHide.HidePath(details.deviceInstanceId);
-        }
-
-        // first controller logic
-        if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+        // hide new InstanceID (HID)
+        if (IsPowerCycling && controller.IsHidden())
+            controller.HideHID();
 
         LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
 
         // raise event
         ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
 
-        // remove controller from powercyclers
-        PowerCyclers[details.baseContainerDeviceInstanceId] = false;
-
         ToastManager.SendToast(controller.ToString(), "detected");
+
+        // remove controller from powercyclers
+        PowerCyclers.Remove(controller.GetContainerInstancePath());
+
+        // first controller logic
+        if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
+            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
     }
 
     private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
@@ -466,6 +463,10 @@ public static class ControllerManager
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+        // unhide on remove 
+        if (!IsPowerCycling)
+            controller.UnhideHID();
 
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);
@@ -513,26 +514,23 @@ public static class ControllerManager
             PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
             // power cycling logic
-            if (IsPowerCycling)
-            {
-                // hide new InstanceID (HID)
-                if (controller.IsHidden())
-                    HidHide.HidePath(details.deviceInstanceId);
-            }
-
-            // first controller logic
-            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+            // hide new InstanceID (HID)
+            if (IsPowerCycling && controller.IsHidden())
+                controller.HideHID();
 
             LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
 
             // raise event
             ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
 
-            // remove controller from powercyclers
-            PowerCyclers[details.baseContainerDeviceInstanceId] = false;
-
             ToastManager.SendToast(controller.ToString(), "detected");
+
+            // remove controller from powercyclers
+            PowerCyclers.Remove(controller.GetContainerInstancePath());
+
+            // first controller logic
+            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
+                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
         });
     }
 
@@ -543,6 +541,10 @@ public static class ControllerManager
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+        // unhide on remove
+        if (!IsPowerCycling)
+            controller.UnhideHID();
 
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);

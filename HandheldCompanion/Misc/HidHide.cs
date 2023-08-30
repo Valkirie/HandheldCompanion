@@ -197,7 +197,8 @@ public static class HidHide
             if (process is null)
                 return null;
 
-            process.StartInfo.Arguments = $"--dev-gaming";
+            // using --dev-gaming sometimes doesn't report controllers or have empty BaseContainerDeviceInstancePath
+            process.StartInfo.Arguments = $"--dev-all";
             process.Start();
             process.WaitForExit(TimeSpan.FromSeconds(3));
             string jsonString = process.StandardOutput.ReadToEnd().Trim();

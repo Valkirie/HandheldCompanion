@@ -156,6 +156,9 @@ namespace HandheldCompanion.Controllers
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+                if (!IsEnabled)
+                    return;
+
                 ui_button_hook.Content = IsPlugged() ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
                 ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
@@ -266,23 +269,16 @@ namespace HandheldCompanion.Controllers
 
         public void Hide(bool powerCycle = true)
         {
-            if (IsHidden())
-                return;
-
-            // get HidHideDevice
-            HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
-            if (hideDevice is not null)
-                foreach (HidHideSubDevice subDevice in hideDevice.Devices)
-                    HidHide.HidePath(subDevice.DeviceInstancePath);
-
-            HidHide.HidePath(Details.deviceInstanceId);
-            HidHide.HidePath(Details.baseContainerDeviceInstanceId);
+            HideHID();
 
             // set flag
             if (powerCycle)
             {
+                IsEnabled = false;
+
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 Details.CyclePort();
+                return;
             }
 
             RefreshControls();
@@ -290,26 +286,47 @@ namespace HandheldCompanion.Controllers
 
         public void Unhide(bool powerCycle = true)
         {
-            if (!IsHidden())
-                return;
+            UnhideHID();
 
+            // set flag
+            if (powerCycle)
+            {
+                IsEnabled = false;
+
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+                Details.CyclePort();
+                return;
+            }
+
+            RefreshControls();
+        }
+
+        public void HideHID()
+        {
+            HidHide.HidePath(Details.baseContainerDeviceInstanceId);
+            HidHide.HidePath(Details.deviceInstanceId);
+
+            /*
+            // get HidHideDevice
+            HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
+            if (hideDevice is not null)
+                foreach (HidHideSubDevice subDevice in hideDevice.Devices)
+                    HidHide.HidePath(subDevice.DeviceInstancePath);
+            */
+        }
+
+        public void UnhideHID()
+        {
+            HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
+            HidHide.UnhidePath(Details.deviceInstanceId);
+
+            /*
             // get HidHideDevice
             HidHideDevice hideDevice = HidHide.GetHidHideDevice(Details.baseContainerDeviceInstanceId);
             if (hideDevice is not null)
                 foreach (HidHideSubDevice subDevice in hideDevice.Devices)
                     HidHide.UnhidePath(subDevice.DeviceInstancePath);
-
-            HidHide.UnhidePath(Details.deviceInstanceId);
-            HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
-
-            // set flag
-            if (powerCycle)
-            {
-                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
-                Details.CyclePort();
-            }
-
-            RefreshControls();
+            */
         }
 
         protected virtual void Calibrate()
