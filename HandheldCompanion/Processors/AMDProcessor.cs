@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Processors.AMD;
+﻿using HandheldCompanion.Helpers;
+using HandheldCompanion.Processors.AMD;
+using HandheldCompanion.Views;
 using System;
 using System.Threading;
 using System.Timers;
@@ -21,7 +23,6 @@ public class AMDProcessor : Processor
         else
         {
             family = RyzenAdj.get_cpu_family(ry);
-            IsInitialized = true;
 
             switch (family)
             {
@@ -36,6 +37,9 @@ public class AMDProcessor : Processor
                 case RyzenFamily.FAM_MENDOCINO:
                 case RyzenFamily.FAM_PHEONIX:
                     CanChangeGPU = true;
+                    break;
+                case RyzenFamily.FAM_VANGOGH:
+                    CanChangeGPU = VangoghGPU.Detect() == VangoghGPU.DetectionStatus.Detected;
                     break;
             }
 
@@ -58,6 +62,8 @@ public class AMDProcessor : Processor
                     CanChangeTDP = true;
                     break;
             }
+
+            IsInitialized = true;
         }
 
         foreach (var type in (PowerType[])Enum.GetValues(typeof(PowerType)))
@@ -167,18 +173,55 @@ public class AMDProcessor : Processor
     {
         if (Monitor.TryEnter(IsBusy))
         {
-            // reset default var
-            if (clock == 12750)
+            switch(family)
             {
-                Monitor.Exit(IsBusy);
-                return;
+                case RyzenFamily.FAM_VANGOGH:
+                    {
+                        using (var sd = VangoghGPU.Open())
+                        {
+                            if (sd is null)
+                            {
+                                base.SetGPUClock(clock, 1);
+                                return;
+                            }
+
+                            if (clock == 12750)
+                            {
+                                sd.HardMinGfxClock = (uint)MainWindow.CurrentDevice.GfxClock[0]; //hardMin
+                                sd.SoftMaxGfxClock = (uint)MainWindow.CurrentDevice.GfxClock[1]; //softMax
+                            }
+                            else
+                            {
+                                sd.HardMinGfxClock = (uint)clock; //hardMin
+                                sd.SoftMaxGfxClock = (uint)clock; //softMax
+                            }
+
+                            base.SetGPUClock(clock, 0);
+                        }
+                    }
+                    break;
+
+                default:
+                    {
+                        int error1, error2, error3;
+
+                        if (clock == 12750)
+                        {
+                            error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                            error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)MainWindow.CurrentDevice.GfxClock[0]);
+                            error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)MainWindow.CurrentDevice.GfxClock[1]);
+                        }
+                        else
+                        {
+                            error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
+                            error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)clock);
+                            error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)clock);
+                        }
+
+                        base.SetGPUClock(clock, error1 + error2 + error3);
+                    }
+                    break;
             }
-
-            var error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
-            var error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)clock);
-            var error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)clock);
-
-            base.SetGPUClock(clock, error1 + error2 + error3);
 
             Monitor.Exit(IsBusy);
         }
