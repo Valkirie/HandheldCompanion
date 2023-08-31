@@ -139,9 +139,8 @@ public static class PlatformManager
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
                 {
-                    // Start and enable OSD
+                    // Start RTSS
                     RTSS.Start();
-                    RTSS.SetEnableOSD(true);
                 }
             if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
             {
@@ -176,9 +175,6 @@ public static class PlatformManager
             if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
                 if (HWiNFO.IsInstalled)
                     HWiNFO.Stop(true);
-
-            // Disable OSD
-            RTSS.SetEnableOSD(false);
         }
         else
         {
@@ -190,8 +186,7 @@ public static class PlatformManager
                 if (HWiNFO.IsInstalled) HWiNFO.Stop(true);
                 if (RTSS.IsInstalled)
                 {
-                    // Disable OSD
-                    RTSS.SetEnableOSD(false);
+                    // Stop RTSS
                     RTSS.Stop();
                 }
             }

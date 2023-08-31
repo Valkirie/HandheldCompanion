@@ -228,6 +228,9 @@ public class RTSS : IPlatform
             if (GetTargetFPS() != RequestedFramerate)
                 SetTargetFPS(RequestedFramerate);
 
+            if (GetEnableOSD() != true)
+                SetEnableOSD(true);
+
             Monitor.Exit(updateLock);
         }
     }
@@ -321,6 +324,30 @@ public class RTSS : IPlatform
         var current = SetFlags(~flag, status ? flag : 0);
         UpdateSettings();
         return current;
+    }
+
+    public bool GetEnableOSD()
+    {
+        if (!IsRunning())
+            return false;
+
+        try
+        {
+            // load default profile
+            if (!ProfileLoaded)
+            {
+                LoadProfile();
+                ProfileLoaded = true;
+            }
+
+            if (GetProfileProperty("EnableOSD", out int enabled))
+                return Convert.ToBoolean(enabled);
+        }
+        catch
+        {
+        }
+
+        return false;
     }
 
     public bool SetEnableOSD(bool enable)
