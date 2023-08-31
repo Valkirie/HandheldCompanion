@@ -2327,4 +2327,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
+  <data name="ControllerPage_SteamXboxDriversAction" xml:space="preserve">
+    <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
+  </data>
+  <data name="ControllerPage_SteamXboxDriversDesc" xml:space="preserve">
+    <value>It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller</value>
+  </data>
+  <data name="ControllerPage_SteamXboxDriversWarning" xml:space="preserve">
+    <value>Steam Xbox Controller Enhanced Features Driver are installed</value>
+  </data>
 </root>

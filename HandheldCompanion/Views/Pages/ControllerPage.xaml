@@ -54,20 +54,14 @@
                 <ui:SimpleStackPanel Name="Hints" Spacing="6">
 
                     <!--  Has physical controller but none are connected  -->
-                    <Border
+                    <Expander
                         Name="HintsNoPhysicalConnected"
                         Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
                         d:Visibility="Visible"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
                         Visibility="Collapsed">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
+                        <Expander.Header>
                             <DockPanel>
                                 <ui:FontIcon
                                     Height="40"
@@ -86,31 +80,21 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerDesc}"
                                         TextWrapping="Wrap" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}"
-                                        TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
-                        </Grid>
-                    </Border>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}" TextWrapping="Wrap" />
+                    </Expander>
 
                     <!--  Has hidden physical controller but no virtual controller  -->
-                    <Border
+                    <Expander
                         Name="HintsNoVirtual"
                         Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
                         d:Visibility="Visible"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
                         Visibility="Collapsed">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
+                        <Expander.Header>
                             <DockPanel>
                                 <ui:FontIcon
                                     Height="40"
@@ -129,31 +113,21 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_NoVirtualControllerDesc}"
                                         TextWrapping="Wrap" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_NoVirtualControllerAction}"
-                                        TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
-                        </Grid>
-                    </Border>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_NoVirtualControllerAction}" TextWrapping="Wrap" />
+                    </Expander>
 
                     <!--  Has hidden Neptune controller but virtual controller is muted  -->
-                    <Border
+                    <Expander
                         Name="HintsNeptuneHidden"
                         Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
                         d:Visibility="Visible"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
                         Visibility="Collapsed">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
+                        <Expander.Header>
                             <DockPanel>
                                 <ui:FontIcon
                                     Height="40"
@@ -172,31 +146,21 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerHiddenDesc}"
                                         TextWrapping="Wrap" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerHiddenAction}"
-                                        TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
-                        </Grid>
-                    </Border>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerHiddenAction}" TextWrapping="Wrap" />
+                    </Expander>
 
                     <!--  Physical controller is not hidden and virtual controller detected  -->
-                    <Border
+                    <Expander
                         Name="HintsNotMuted"
                         Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
                         d:Visibility="Visible"
-                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
-                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
                         Visibility="Collapsed">
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="200" />
-                            </Grid.ColumnDefinitions>
-
+                        <Expander.Header>
                             <DockPanel>
                                 <ui:FontIcon
                                     Height="40"
@@ -206,24 +170,46 @@
                                     Glyph="&#xe7ba;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}" />
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenWarning}" />
                                     <TextBlock
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                                         TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}" TextWrapping="Wrap" />
+                    </Expander>
+
+                    <!--  Physical controller is not hidden and virtual controller detected  -->
+                    <Expander
+                        Name="HintsSteamXboxDrivers"
+                        Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe7ba;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversWarning}" />
                                     <TextBlock
-                                        Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversDesc}"
                                         TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
-                        </Grid>
-                    </Border>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversAction}" TextWrapping="Wrap" />
+                    </Expander>
                 </ui:SimpleStackPanel>
 
                 <!--  Input devices  -->

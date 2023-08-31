@@ -674,6 +674,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You might want to uninstall Steam Xbox Controller Enhanced Features Driver.
+        /// </summary>
+        public static string ControllerPage_SteamXboxDriversAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamXboxDriversAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller.
+        /// </summary>
+        public static string ControllerPage_SteamXboxDriversDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamXboxDriversDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver are installed.
+        /// </summary>
+        public static string ControllerPage_SteamXboxDriversWarning {
+            get {
+                return ResourceManager.GetString("ControllerPage_SteamXboxDriversWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unhide controller on close.
         /// </summary>
         public static string ControllerPage_UncloakOnClose {

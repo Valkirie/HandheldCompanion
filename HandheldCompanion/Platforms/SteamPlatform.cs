@@ -15,6 +15,7 @@ namespace HandheldCompanion.Platforms;
 public class SteamPlatform : IPlatform
 {
     private string RunningName;
+    public bool IsControllerDriverInstalled;
 
     private static readonly Regex ControllerBlacklistRegex =
         new("^(\\s*\"controller_blacklist\"\\s*\")([^\"]*)(\"\\s*)$");
@@ -58,6 +59,8 @@ public class SteamPlatform : IPlatform
             // check executable
             IsInstalled = File.Exists(ExecutablePath);
         }
+
+        IsControllerDriverInstalled = HasXboxDriversInstalled();
     }
 
     public void Start()
@@ -73,6 +76,11 @@ public class SteamPlatform : IPlatform
 
         // restore files even if Steam is still running
         RestoreFiles();
+    }
+
+    public bool HasXboxDriversInstalled()
+    {
+        return RegistryUtils.SearchForKeyValue(@"SYSTEM\CurrentControlSet\Enum\ROOT\SYSTEM", "Service", "steamxbox");
     }
 
     private void ReplaceFiles()

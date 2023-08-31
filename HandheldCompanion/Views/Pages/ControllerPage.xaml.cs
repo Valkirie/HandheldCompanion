@@ -18,14 +18,11 @@ namespace HandheldCompanion.Views.Pages;
 public partial class ControllerPage : Page
 {
     public delegate void HIDchangedEventHandler(HIDmode HID);
+    public event HIDchangedEventHandler HIDchanged;
 
     // controllers vars
     private HIDmode controllerMode = HIDmode.NoController;
     private HIDstatus controllerStatus = HIDstatus.Disconnected;
-
-    // pipe vars
-    private bool isConnected;
-    private bool isLoading;
 
     public ControllerPage()
     {
@@ -43,6 +40,8 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        PlatformManager.Initialized += PlatformManager_Initialized;
     }
 
     public ControllerPage(string Tag) : this()
@@ -50,7 +49,10 @@ public partial class ControllerPage : Page
         this.Tag = Tag;
     }
 
-    public event HIDchangedEventHandler HIDchanged;
+    private void PlatformManager_Initialized()
+    {
+        HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+    }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
     {

@@ -11,19 +11,23 @@ public static class PlatformManager
     private const int UpdateInterval = 1000;
 
     // gaming platforms
-    private static readonly SteamPlatform Steam = new();
-    private static readonly GOGGalaxy GOGGalaxy = new();
-    private static readonly UbisoftConnect UbisoftConnect = new();
+    public static readonly SteamPlatform Steam = new();
+    public static readonly GOGGalaxy GOGGalaxy = new();
+    public static readonly UbisoftConnect UbisoftConnect = new();
 
     // misc platforms
     public static RTSS RTSS = new();
     public static HWiNFO HWiNFO = new();
+
     private static Timer UpdateTimer;
 
     private static bool IsInitialized;
 
     private static PlatformNeeds CurrentNeeds = PlatformNeeds.None;
     private static PlatformNeeds PreviousNeeds = PlatformNeeds.None;
+
+    public static event InitializedEventHandler Initialized;
+    public delegate void InitializedEventHandler();
 
     public static void Start()
     {
@@ -60,6 +64,7 @@ public static class PlatformManager
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
 
         IsInitialized = true;
+        Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "PlatformManager");
     }
