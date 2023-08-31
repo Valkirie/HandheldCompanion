@@ -11,7 +11,7 @@ public class GOGGalaxy : IPlatform
     public GOGGalaxy()
     {
         Name = "GOG Galaxy";
-        ExecutableName = "GalaxyClient.exe";
+        ExecutableName = RunningName = "GalaxyClient.exe";
 
         // store specific modules
         Modules = new List<string>
@@ -42,7 +42,7 @@ public class GOGGalaxy : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (IsRunning())
+        if (IsRunning)
             return false;
 
         var process = Process.Start(new ProcessStartInfo
@@ -61,7 +61,7 @@ public class GOGGalaxy : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         KillProcess();

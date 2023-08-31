@@ -55,7 +55,7 @@ public class RTSS : IPlatform
         Url = "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html";
 
         Name = "RTSS";
-        ExecutableName = "RTSS.exe";
+        ExecutableName = RunningName = "RTSS.exe";
 
         // store specific modules
         Modules = new List<string>
@@ -111,7 +111,7 @@ public class RTSS : IPlatform
     public override bool Start()
     {
         // start RTSS if not running
-        if (!IsRunning())
+        if (!IsRunning)
             StartProcess();
         else
             // hook into current process
@@ -328,7 +328,7 @@ public class RTSS : IPlatform
 
     public bool GetEnableOSD()
     {
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         try
@@ -352,7 +352,7 @@ public class RTSS : IPlatform
 
     public bool SetEnableOSD(bool enable)
     {
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         try
@@ -380,7 +380,7 @@ public class RTSS : IPlatform
 
     private bool SetTargetFPS(int Limit)
     {
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         try
@@ -420,7 +420,7 @@ public class RTSS : IPlatform
 
     private int GetTargetFPS()
     {
-        if (!IsRunning())
+        if (!IsRunning)
             return 0;
 
         try
@@ -464,7 +464,7 @@ public class RTSS : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (IsRunning())
+        if (IsRunning)
             KillProcess();
 
         return base.StartProcess();
@@ -476,7 +476,7 @@ public class RTSS : IPlatform
             return false;
         if (!IsInstalled)
             return false;
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         KillProcess();

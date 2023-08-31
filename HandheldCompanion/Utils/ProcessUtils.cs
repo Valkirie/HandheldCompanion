@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Reflection;
@@ -105,6 +106,44 @@ public static class ProcessUtils
         CloseHandle(handle);
         if (!success) return null;
         return sb.ToString();
+    }
+
+    // A function that takes an executable name as a parameter and returns an array of Process objects
+    public static Process[] GetProcessesByExecutable(string executableName)
+    {
+        // Get all the processes running on the system
+        Process[] allProcesses = Process.GetProcesses();
+
+        // Create a list to store the matching processes
+        List<Process> matchingProcesses = new List<Process>();
+
+        // Loop through each process and check if its executable name matches the parameter
+        foreach (Process process in allProcesses)
+        {
+            try
+            {
+                // Get the full path of the process executable
+                string processPath = process.MainModule.FileName;
+
+                // Get the file name of the process executable
+                string processFileName = Path.GetFileName(processPath);
+
+                // Compare the file name with the parameter, ignoring case
+                if (string.Equals(processFileName, executableName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Add the process to the list of matching processes
+                    matchingProcesses.Add(process);
+                }
+            }
+            catch (Exception e)
+            {
+                // Ignore any exceptions that may occur when accessing the process properties
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        // Convert the list to an array and return it
+        return matchingProcesses.ToArray();
     }
 
     public static List<Process> GetChildProcesses(Process process)

@@ -13,7 +13,7 @@ public class UbisoftConnect : IPlatform
         PlatformType = PlatformType.UbisoftConnect;
 
         Name = "Ubisoft Connect";
-        ExecutableName = "UbisoftConnect.exe";
+        ExecutableName = RunningName = "UbisoftConnect.exe";
 
         // store specific modules
         Modules = new List<string>
@@ -45,7 +45,7 @@ public class UbisoftConnect : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (IsRunning())
+        if (IsRunning)
             return false;
 
         var process = Process.Start(new ProcessStartInfo
@@ -64,7 +64,7 @@ public class UbisoftConnect : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         KillProcess();

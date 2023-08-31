@@ -1,6 +1,7 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
@@ -42,6 +43,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.Initialized += PlatformManager_Initialized;
+        PlatformManager.Steam.Updated += Steam_Updated;
     }
 
     public ControllerPage(string Tag) : this()
@@ -52,6 +54,24 @@ public partial class ControllerPage : Page
     private void PlatformManager_Initialized()
     {
         HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+        Steam_Updated(PlatformManager.Steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+    }
+
+    private void Steam_Updated(PlatformStatus status)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            switch (status)
+            {
+                case PlatformStatus.Stopping:
+                    HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
+                    break;
+                case PlatformStatus.Started:
+                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.Steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+            }
+        });
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)

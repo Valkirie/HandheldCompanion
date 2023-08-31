@@ -29,7 +29,9 @@ public enum PlatformStatus
     Ready = 1,
     Started = 2,
     Stopped = 3,
-    Stalled = 4
+    Stalled = 4,
+    Starting = 5,
+    Stopping = 6,
 }
 
 public abstract class IPlatform : IDisposable
@@ -40,6 +42,7 @@ public abstract class IPlatform : IDisposable
 
     private Process _Process;
     protected string ExecutableName;
+    protected string RunningName;
     protected string ExecutablePath;
     protected Version ExpectedVersion;
 
@@ -70,12 +73,14 @@ public abstract class IPlatform : IDisposable
                 if (_Process is not null)
                     return _Process;
 
-                var processes = Process.GetProcessesByName(Name);
+                var processes = ProcessUtils.GetProcessesByExecutable(RunningName);
                 if (processes.Length == 0)
                     return null;
 
                 _Process = processes.FirstOrDefault();
                 _Process.EnableRaisingEvents = true;
+
+                SetStatus(PlatformStatus.Started);
 
                 _Process.Exited += _Process_Exited;
 
@@ -96,12 +101,31 @@ public abstract class IPlatform : IDisposable
         {
             _IsInstalled = value;
 
+            // raise event
             if (value)
-                // raise event
                 SetStatus(PlatformStatus.Ready);
             else
-                // raise event
                 SetStatus(PlatformStatus.Stalled);
+        }
+    }
+
+    public bool IsRunning
+    {
+        get
+        {
+            try
+            {
+                if (Process is null)
+                    return false;
+
+                SetStatus(PlatformStatus.Started);
+                return !Process.HasExited;
+            }
+            catch
+            {
+            }
+
+            return false;
         }
     }
 
@@ -134,12 +158,17 @@ public abstract class IPlatform : IDisposable
         if (_Process is null)
             return;
 
+        SetStatus(PlatformStatus.Stopped);
+
         _Process.Dispose();
         _Process = null;
     }
 
     protected void SetStatus(PlatformStatus status)
     {
+        if (Status == status)
+            return;
+
         Status = status;
         Updated?.Invoke(status);
     }
@@ -182,22 +211,6 @@ public abstract class IPlatform : IDisposable
         return false;
     }
 
-    public virtual bool IsRunning()
-    {
-        try
-        {
-            if (Process is null)
-                return false;
-
-            return !Process.HasExited;
-        }
-        catch
-        {
-        }
-
-        return false;
-    }
-
     public virtual bool Start()
     {
         KeepAlive = true;
@@ -206,9 +219,6 @@ public abstract class IPlatform : IDisposable
         if (PlatformWatchdog is not null)
             PlatformWatchdog.Start();
 
-        // raise event
-        SetStatus(PlatformStatus.Started);
-
         return true;
     }
 
@@ -216,15 +226,15 @@ public abstract class IPlatform : IDisposable
     {
         KeepAlive = false;
 
+        // raise event
+        SetStatus(PlatformStatus.Stopping);
+
         // stop watchdog
         if (PlatformWatchdog is not null)
             PlatformWatchdog.Stop();
 
         if (kill)
             KillProcess();
-
-        // raise event
-        SetStatus(PlatformStatus.Stopped);
 
         return true;
     }
@@ -267,6 +277,9 @@ public abstract class IPlatform : IDisposable
                 Tentative++;
 
                 LogManager.LogDebug("Starting {0}, tentative: {1}/{2}", GetType(), Tentative, MaxTentative);
+
+                // raise event
+                SetStatus(PlatformStatus.Starting);
 
                 process = Process.Start(new ProcessStartInfo
                 {
@@ -317,6 +330,10 @@ public abstract class IPlatform : IDisposable
         try
         {
             Process.Kill();
+
+            // raise event
+            SetStatus(PlatformStatus.Stopped);
+
             return true;
         }
         catch
@@ -433,7 +450,6 @@ public abstract class IPlatform : IDisposable
     #region events
 
     public event StartedEventHandler Updated;
-
     public delegate void StartedEventHandler(PlatformStatus status);
 
     #endregion

@@ -2,6 +2,8 @@
 using HandheldCompanion.Managers;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
+using Nefarius.Utilities.DeviceManagement.Drivers;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,12 +11,12 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 
 namespace HandheldCompanion.Platforms;
 
 public class SteamPlatform : IPlatform
 {
-    private string RunningName;
     public bool IsControllerDriverInstalled;
 
     private static readonly Regex ControllerBlacklistRegex =
@@ -33,8 +35,6 @@ public class SteamPlatform : IPlatform
 
         Name = "Steam";
         ExecutableName = "steam.exe";
-
-        // this is for detecting steam start/stop, for some reason steam.exe often doesn't work
         RunningName = "steamwebhelper.exe";
 
         // store specific modules
@@ -63,24 +63,57 @@ public class SteamPlatform : IPlatform
         IsControllerDriverInstalled = HasXboxDriversInstalled();
     }
 
-    public void Start()
+    public override bool Start()
     {
+        // hook into current process
+        if (IsRunning)
+            Process.Exited += Process_Exited;
+
         ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
-        ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+
+        return base.Start();
     }
 
-    public void Stop()
+    public override bool Stop(bool kill = false)
     {
         ProcessManager.ProcessStarted -= ProcessManager_ProcessStarted;
-        ProcessManager.ProcessStopped -= ProcessManager_ProcessStopped;
 
         // restore files even if Steam is still running
+        RestoreFiles();
+        
+        return base.Stop();
+    }
+
+    protected override void Process_Exited(object? sender, EventArgs e)
+    {
+        LogManager.LogDebug("Steam stopped, restoring files");
         RestoreFiles();
     }
 
     public bool HasXboxDriversInstalled()
     {
+        return FilterDrivers
+            .GetDeviceClassUpperFilters(DeviceClassIds.XnaComposite)
+            .Any(f => f.Equals("steamxbox"));
+
         return RegistryUtils.SearchForKeyValue(@"SYSTEM\CurrentControlSet\Enum\ROOT\SYSTEM", "Service", "steamxbox");
+    }
+
+    public bool HasDesktopProfileApplied()
+    {
+        string filePath = ControllerFiles.Keys.FirstOrDefault();
+        string configPath = Path.Combine(InstallPath, filePath);
+
+        if (!File.Exists(configPath))
+            return false;
+
+        string configText = File.ReadAllText(configPath);
+        string fileText = System.Text.Encoding.UTF8.GetString(Resources.empty_neptune, 0, Resources.empty_neptune.Length);
+
+        if (!configText.Equals(fileText, StringComparison.InvariantCultureIgnoreCase))
+            return true;
+
+        return false;
     }
 
     private void ReplaceFiles()
@@ -101,18 +134,11 @@ public class SteamPlatform : IPlatform
     {
         if (!OnStartup && processEx.Executable == RunningName)
         {
-            LogManager.LogDebug("Steam started, replacing files in 3 seconds");
             await Task.Delay(3000);
             ReplaceFiles();
-        }
-    }
 
-    private void ProcessManager_ProcessStopped(ProcessEx processEx)
-    {
-        if (processEx.Executable == RunningName)
-        {
-            LogManager.LogDebug("Steam stopped, restoring files");
-            RestoreFiles();
+            // hook into current process
+            Process.Exited += Process_Exited;
         }
     }
 
@@ -150,7 +176,7 @@ public class SteamPlatform : IPlatform
 
     public bool UpdateControllerBlacklist(ushort vendorId, ushort productId, bool add)
     {
-        if (IsRunning())
+        if (IsRunning)
             return false;
 
         if (!CommonUtils.IsFileWritable(SettingsPath))
@@ -221,7 +247,7 @@ public class SteamPlatform : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (IsRunning())
+        if (IsRunning)
             return false;
 
         var process = Process.Start(new ProcessStartInfo
@@ -241,7 +267,7 @@ public class SteamPlatform : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (!IsRunning())
+        if (!IsRunning)
             return false;
 
         var process = Process.Start(new ProcessStartInfo
