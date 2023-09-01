@@ -57,6 +57,7 @@ public class PerformanceManager : Manager
     private bool AutoTDPFirstRun = true;
     private int AutoTDPFPSSetpointMetCounter;
     private int AutoTDPFPSSmallDipCounter;
+    private double AutoTDPMax;
     private double TDPMax;
     private double TDPMin;
     private int AutoTDPProcessId;
@@ -127,6 +128,7 @@ public class PerformanceManager : Manager
             case "ConfigurableTDPOverrideUp":
                 {
                     TDPMax = Convert.ToDouble(value);
+                    if (AutoTDPMax == 0d) AutoTDPMax = TDPMax;
                     AutoTDP = (TDPMax + TDPMin) / 2.0d;
                 }
                 break;
@@ -138,16 +140,35 @@ public class PerformanceManager : Manager
         // apply profile defined TDP
         if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
         {
-            RequestTDP(profile.TDPOverrideValues);
-            StartTDPWatchdog();
+            if (!profile.AutoTDPEnabled)
+            {
+                // Manual TDP is set, use it and set max limit
+                RequestTDP(profile.TDPOverrideValues);
+                StartTDPWatchdog();
+                AutoTDPMax = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
+            }
+            else
+            {
+                // Both manual TDP and AutoTDP are on,
+                // use manual slider as the max limit for AutoTDP
+                AutoTDPMax = profile.TDPOverrideValues[0];
+                StopTDPWatchdog(true);
+            }
         }
         else if (cpuWatchdog.Enabled)
         {
             StopTDPWatchdog(true);
 
-            // restore default TDP (if not AutoTDP is enabled)
             if (!profile.AutoTDPEnabled)
+            {
+                // Neither manual TDP nor AutoTDP is enabled, restore default TDP
                 RestoreTDP(true);
+            }
+            else
+            {
+                // AutoTDP is enabled but manual override is not, use the settings max limit
+                AutoTDPMax = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
+            }
         }
 
         // apply profile defined AutoTDP
@@ -321,7 +342,7 @@ public class PerformanceManager : Manager
             else
                 AutoTDPFirstRun = false;
 
-            AutoTDP = Math.Clamp(AutoTDP, TDPMin, TDPMax);
+            AutoTDP = Math.Clamp(AutoTDP, TDPMin, AutoTDPMax);
 
             // Only update if we have a different TDP value to set
             if (AutoTDP != AutoTDPPrev)

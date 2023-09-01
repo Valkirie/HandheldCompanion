@@ -544,11 +544,6 @@ public partial class ProfilesPage : Page
 
     private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
     {
-        // TDP and AutoTDP are mutually exclusive
-        var toggled = TDPToggle.IsOn;
-        if (toggled)
-            AutoTDPToggle.IsOn = false;
-
         // wait until lock is released
         if (updateLock)
             return;
@@ -636,11 +631,6 @@ public partial class ProfilesPage : Page
 
     private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
     {
-        // TDP and AutoTDP are mutually exclusive
-        var toggled = AutoTDPToggle.IsOn;
-        if (toggled)
-            TDPToggle.IsOn = false;
-
         // wait until lock is released
         if (updateLock)
             return;

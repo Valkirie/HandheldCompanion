@@ -566,12 +566,7 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        // TDP and AutoTDP are mutually exclusive
-        var toggled = TDPToggle.IsOn;
-        if (toggled)
-            AutoTDPToggle.IsOn = false;
-
-        currentProfile.TDPOverrideEnabled = toggled;
+        currentProfile.TDPOverrideEnabled = TDPToggle.IsOn;
         RequestUpdate();
     }
 
@@ -600,12 +595,7 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
-        // TDP and AutoTDP are mutually exclusive
-        var toggled = AutoTDPToggle.IsOn;
-        if (toggled)
-            TDPToggle.IsOn = false;
-
-        currentProfile.AutoTDPEnabled = toggled;
+        currentProfile.AutoTDPEnabled = AutoTDPToggle.IsOn;
         AutoTDPRequestedFPSSlider.Value = currentProfile.AutoTDPRequestedFPS;
 
         RequestUpdate();
