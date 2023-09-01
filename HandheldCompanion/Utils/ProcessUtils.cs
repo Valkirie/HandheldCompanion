@@ -82,16 +82,13 @@ public static class ProcessUtils
     {
         try
         {
-            return process.MainModule.FileName;
-        }
-        catch
-        {
             var query = $"SELECT ExecutablePath, ProcessID FROM Win32_Process WHERE ProcessID = {process.Id}";
             ManagementObjectSearcher searcher = new(query);
 
             foreach (ManagementObject item in searcher.Get())
                 return Convert.ToString(item["ExecutablePath"]);
         }
+        catch {}
 
         return string.Empty;
     }
@@ -123,7 +120,10 @@ public static class ProcessUtils
             try
             {
                 // Get the full path of the process executable
-                string processPath = process.MainModule.FileName;
+                string processPath = GetPathToApp(process);
+
+                if (string.IsNullOrEmpty(processPath))
+                    continue;
 
                 // Get the file name of the process executable
                 string processFileName = Path.GetFileName(processPath);
