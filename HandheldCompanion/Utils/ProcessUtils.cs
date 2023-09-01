@@ -78,9 +78,18 @@ public static class ProcessUtils
         return AppProperties;
     }
 
-    public static string GetPathToApp(Process process)
+    public static string GetPathToApp(Process process, bool fast = true)
     {
-        try
+        if (fast)
+        {
+            try
+            {
+                // fast but might trigger Win32Exception
+                return process.MainModule.FileName;
+            }
+            catch { }
+        }
+        else
         {
             var query = $"SELECT ExecutablePath, ProcessID FROM Win32_Process WHERE ProcessID = {process.Id}";
             ManagementObjectSearcher searcher = new(query);
@@ -88,7 +97,6 @@ public static class ProcessUtils
             foreach (ManagementObject item in searcher.Get())
                 return Convert.ToString(item["ExecutablePath"]);
         }
-        catch {}
 
         return string.Empty;
     }
@@ -120,8 +128,7 @@ public static class ProcessUtils
             try
             {
                 // Get the full path of the process executable
-                string processPath = GetPathToApp(process);
-
+                string processPath = GetPathToApp(process.Id);
                 if (string.IsNullOrEmpty(processPath))
                     continue;
 
