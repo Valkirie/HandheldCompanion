@@ -274,7 +274,11 @@ namespace HandheldCompanion.Controllers
             // set flag
             if (powerCycle)
             {
-                IsEnabled = false;
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    IsEnabled = false;
+                });
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 Details.CyclePort();
@@ -291,7 +295,11 @@ namespace HandheldCompanion.Controllers
             // set flag
             if (powerCycle)
             {
-                IsEnabled = false;
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    IsEnabled = false;
+                });
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 Details.CyclePort();
