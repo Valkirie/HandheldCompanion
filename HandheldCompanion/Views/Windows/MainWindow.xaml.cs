@@ -66,9 +66,9 @@ public partial class MainWindow : GamepadWindow
     private static MainWindow CurrentWindow;
     public static FileVersionInfo fileVersionInfo;
 
-    public static string InstallPath;
-    public static string SettingsPath;
-    public static string CurrentPageName;
+    public static string InstallPath = string.Empty;
+    public static string SettingsPath = string.Empty;
+    public static string CurrentPageName = string.Empty;
 
     private bool appClosing;
     private bool IsReady;
