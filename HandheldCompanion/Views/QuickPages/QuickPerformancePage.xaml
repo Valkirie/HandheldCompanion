@@ -152,7 +152,7 @@
             CornerRadius="{DynamicResource ControlCornerRadius}"
             Visibility="{Binding ElementName=QuietModeToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+            <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                 <TextBlock
                     Width="35"
                     VerticalAlignment="Center"

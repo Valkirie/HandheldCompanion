@@ -160,6 +160,7 @@ public partial class GyroMapping : IMapping
                 TargetComboBox.SelectedIndex = 0;
 
             // settings
+            Slider_GyroWeight.Value = ((AxisActions)Actions).gyroWeight;
             Axis2AxisImproveCircularity.IsOn = ((AxisActions)Actions).ImproveCircularity;
             Axis2AxisAutoRotate.IsOn = ((AxisActions)Actions).AutoRotate;
             Axis2AxisRotation.Value = (((AxisActions)Actions).AxisInverted ? 180 : 0) +
@@ -448,6 +449,16 @@ public partial class GyroMapping : IMapping
             return;
 
         ((GyroActions)this.Actions).MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+
+        base.Update();
+    }
+
+    private void Slider_GyroWeight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (this.Actions is null)
+            return;
+
+        ((GyroActions)this.Actions).gyroWeight = (float)Slider_GyroWeight.Value;
 
         base.Update();
     }

@@ -101,6 +101,9 @@ public partial class LayoutPage : Page
 
     private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
     {
+        if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
+            return;
+
         // update layout page if layout was updated elsewhere
         // good enough
         switch(source)

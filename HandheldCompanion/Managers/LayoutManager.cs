@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -460,10 +461,22 @@ internal static class LayoutManager
                         AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
                         AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                        outputState.AxisState[OutAxisX] =
-                            (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
-                        outputState.AxisState[OutAxisY] =
-                            (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
+                        // Todo, this needs to be the joystick input, not the output state from last time which includes gyro already...
+                        Vector2 joystick = new Vector2(outputState.AxisState[OutAxisX], outputState.AxisState[OutAxisY]);
+                        Vector2 gyroscope = aAction.GetValue();
+
+                        // Reduce weight of motion addition based on stick position
+                        // The further the stick is from center the less motion is added
+
+                        // Todo: needs ImproveCircularity for joystick length instead of clamp for the 4 corners
+                        float joystickLength = Math.Clamp(joystick.Length() / short.MaxValue, 0 , 1); // Get the distance of the joystick from the center
+                        float factor = aAction.gyroWeight - joystickLength;
+                        Vector2 result = joystick + gyroscope * factor;
+                        
+                        // LogManager.LogDebug("Output adjustment, distance: {0:0.00}, factor: {1:0.00} joystick {2}, gyroscope {3}", joystickLength, factor, joystick, gyroscope);
+
+                        outputState.AxisState[OutAxisX] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
+                        outputState.AxisState[OutAxisY] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
                     }
                     break;
 

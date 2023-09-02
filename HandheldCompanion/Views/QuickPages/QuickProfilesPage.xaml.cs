@@ -353,11 +353,13 @@ public partial class QuickProfilesPage : Page
                     {
                         // IActions
                         GridAntiDeadzone.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                        GridGyroWeight.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
 
                         if (currentAction is AxisActions)
                         {
                             cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis;
                             SliderUMCAntiDeadzone.Value = ((AxisActions)currentAction).AxisAntiDeadZone;
+                            Slider_GyroWeight.Value = ((AxisActions)currentAction).gyroWeight;
                         }
                         else if (currentAction is MouseActions)
                         {
@@ -626,6 +628,23 @@ public partial class QuickProfilesPage : Page
 
         if (currentAction is AxisActions)
             ((AxisActions)currentAction).AxisAntiDeadZone = (int)SliderUMCAntiDeadzone.Value;
+
+        RequestUpdate();
+    }
+
+    private void Slider_GyroWeight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (currentProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        if (currentAction is AxisActions)
+            ((AxisActions)currentAction).gyroWeight = (float)Slider_GyroWeight.Value;
 
         RequestUpdate();
     }

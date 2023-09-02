@@ -160,7 +160,6 @@ public abstract class IPlatform : IDisposable
 
         SetStatus(PlatformStatus.Stopped);
 
-        _Process.Dispose();
         _Process = null;
     }
 

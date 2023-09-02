@@ -158,6 +158,60 @@
 
                     <ui:SimpleStackPanel Spacing="6">
                         <ui:SimpleStackPanel Spacing="6">
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
+                            <!--  Gyro Weight  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Gyrometer weight" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Modify the gyrometer weight when applied against joystick movements"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBlock
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Value, StringFormat=N1, ElementName=Slider_GyroWeight, Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                    <Slider
+                                        x:Name="Slider_GyroWeight"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        AutoToolTipPrecision="1"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        Maximum="2.0"
+                                        Minimum="1.0"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="0.1"
+                                        TickPlacement="BottomRight"
+                                        ValueChanged="Slider_GyroWeight_ValueChanged" />
+                                </DockPanel>
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator
+                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                BorderThickness="0,1,0,0"
+                                Opacity="0.25" />
+
                             <!--  Improve circularity  -->
                             <Grid>
                                 <Grid.ColumnDefinitions>

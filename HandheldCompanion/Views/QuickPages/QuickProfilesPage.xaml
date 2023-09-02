@@ -97,9 +97,7 @@
 
         <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
-        <ui:SimpleStackPanel
-            Name="GridProfile"
-            Spacing="10">
+        <ui:SimpleStackPanel Name="GridProfile" Spacing="10">
 
             <Expander HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
@@ -344,7 +342,7 @@
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 Text="{x:Static resx:Resources.ProfilesPage_EPPBalance}" />
-                            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
 
                                 <ui:SimpleStackPanel
                                     Margin="0,0,0,0"
@@ -427,7 +425,7 @@
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
-                            <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                            <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock
                                     Width="35"
                                     VerticalAlignment="Center"
@@ -618,14 +616,10 @@
                                 Margin="12,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
                                 <TextBlock
-                                    Width="17"
+                                    Width="30"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     Text="{Binding Value, StringFormat=N0, ElementName=SliderUMCAntiDeadzone, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_AntiDeadzoneUnitPercentage}" />
                                 <Slider
                                     x:Name="SliderUMCAntiDeadzone"
                                     Margin="8,0,0,0"
@@ -645,13 +639,56 @@
 
                         <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=GridAntiDeadzone, Path=Visibility}" />
 
+                        <!--  Gyro Weight  -->
+                        <Grid Name="GridGyroWeight">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Gyrometer weight" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Modify the gyrometer weight when applied against joystick movements"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <DockPanel
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock
+                                    Width="30"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Value, StringFormat=N1, ElementName=Slider_GyroWeight, Mode=OneWay}" />
+                                <Slider
+                                    x:Name="Slider_GyroWeight"
+                                    Margin="8,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    AutoToolTipPrecision="1"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    Maximum="2.0"
+                                    Minimum="1.0"
+                                    Style="{DynamicResource SliderStyle1}"
+                                    TickFrequency="0.1"
+                                    TickPlacement="BottomRight"
+                                    ValueChanged="Slider_GyroWeight_ValueChanged" />
+                            </DockPanel>
+                        </Grid>
+
+                        <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=GridGyroWeight, Path=Visibility}" />
+
                         <!--  Sensivity  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-
 
                             <StackPanel Orientation="Vertical">
                                 <TextBlock
@@ -668,7 +705,7 @@
                             <StackPanel Grid.Column="1" Margin="12,0,0,0">
                                 <StackPanel>
                                     <TextBlock Text="Horizontal sensitivity" />
-                                    <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock
                                             Width="30"
                                             HorizontalAlignment="Left"
@@ -697,7 +734,7 @@
 
                                 <StackPanel>
                                     <TextBlock Text="Vertical sensitivity" />
-                                    <DockPanel Margin="0,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
                                         <TextBlock
                                             Width="30"
                                             HorizontalAlignment="Left"
