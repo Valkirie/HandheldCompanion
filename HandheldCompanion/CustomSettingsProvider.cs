@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace HandheldCompanion
@@ -32,7 +33,30 @@ namespace HandheldCompanion
             base.Initialize(ApplicationName, config);
 
             // Get the path from the config parameter, or use a default value
-            UserConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName, "user.config");
+            string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
+            UserConfigPath = Path.Combine(SettingsPath, "user.config");
+
+            // search for latest user.config if we couldn't find current one
+            if (!File.Exists(UserConfigPath))
+            {
+                // create folder if doesn't exist
+                if (!Directory.Exists(SettingsPath))
+                    Directory.CreateDirectory(SettingsPath);
+
+                // get all the files with the name user.config in the specified directory and its subdirectories
+                string[] files = Directory.GetFiles(SettingsPath, "user.config", SearchOption.AllDirectories);
+
+                // if no files are found, return null
+                if (files.Length == 0)
+                    return;
+
+                // get the latest file using its write time
+                IOrderedEnumerable<string> sortedFiles = files.OrderByDescending(f => File.GetLastWriteTime(f));
+                string latestFile = sortedFiles.First();
+
+                // copy previous user.config to expected path
+                File.Copy(latestFile, UserConfigPath, true);
+            }
         }
 
         // Override the GetPropertyValues method to read the settings from the user.config file
