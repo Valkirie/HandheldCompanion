@@ -278,6 +278,7 @@ namespace HandheldCompanion.Controllers
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     IsEnabled = false;
+                    ProgressBarUpdate.Visibility = Visibility.Visible;
                 });
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
@@ -299,6 +300,7 @@ namespace HandheldCompanion.Controllers
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     IsEnabled = false;
+                    ProgressBarUpdate.Visibility = Visibility.Visible;
                 });
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
