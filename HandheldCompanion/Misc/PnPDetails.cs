@@ -29,7 +29,7 @@ public class PnPDetails : IDisposable
 
     // XInput
     public bool isXInput;
-    public byte XInputUserIndex;
+    public byte XInputUserIndex = byte.MaxValue;
 
     public void Dispose()
     {

@@ -452,28 +452,30 @@ public static class DeviceManager
             var deviceEx = FindDevice(SymLink);
             if (deviceEx is not null && deviceEx.isGaming)
             {
-                SafeFileHandle handle = CreateFileW(obj.SymLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
-
-                if (handle.IsInvalid)
-                    return;
-
-                byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
-                byte[] ledStateData = new byte[3];
-                uint len = 0;
-
-                if (!DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, gamepadStateRequest0101, gamepadStateRequest0101.Length, ledStateData, ledStateData.Length, ref len, 0))
-                    return;
-
-                byte ledState = ledStateData[2];
-
                 deviceEx.isXInput = true;
-                deviceEx.XInputUserIndex = XINPUT_LED_TO_PORT_MAP[ledState];
+
+                using (SafeFileHandle handle = CreateFileW(obj.SymLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0))
+                {
+                    if (handle.IsInvalid)
+                        goto Event;
+
+                    byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
+                    byte[] ledStateData = new byte[3];
+                    uint len = 0;
+
+                    if (!DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, gamepadStateRequest0101, gamepadStateRequest0101.Length, ledStateData, ledStateData.Length, ref len, 0))
+                        goto Event;
+
+                    byte ledState = ledStateData[2];
+                    deviceEx.XInputUserIndex = XINPUT_LED_TO_PORT_MAP[ledState];
+                }
 
                 LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
                     deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
 
                 // raise event
-                XUsbDeviceArrived?.Invoke(deviceEx, obj);
+                Event:
+                    XUsbDeviceArrived?.Invoke(deviceEx, obj);
             }
         }
         catch
