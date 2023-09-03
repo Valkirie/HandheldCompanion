@@ -456,25 +456,20 @@ internal static class LayoutManager
                         AxisActions aAction = action as AxisActions;
                         aAction.Execute(InLayout);
 
-                        // read output axis
+                        // Read output axis
                         AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
                         AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
                         AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                        // Todo, this needs to be the joystick input, not the output state from last time which includes gyro already...
                         Vector2 joystick = new Vector2(outputState.AxisState[OutAxisX], outputState.AxisState[OutAxisY]);
-                        Vector2 gyroscope = aAction.GetValue();
 
-                        // Reduce weight of motion addition based on stick position
-                        // The further the stick is from center the less motion is added
+                        // Reduce motion weight based on joystick position
+                        // Get the distance of the joystick from the center
+                        float joystickLength = Math.Clamp(joystick.Length() / short.MaxValue, 0, 1);
+                        float weightFactor = aAction.gyroWeight - joystickLength;
+                        Vector2 result = joystick + aAction.GetValue() * weightFactor;
 
-                        // Todo: needs ImproveCircularity for joystick length instead of clamp for the 4 corners
-                        float joystickLength = Math.Clamp(joystick.Length() / short.MaxValue, 0 , 1); // Get the distance of the joystick from the center
-                        float factor = aAction.gyroWeight - joystickLength;
-                        Vector2 result = joystick + gyroscope * factor;
-                        
-                        // LogManager.LogDebug("Output adjustment, distance: {0:0.00}, factor: {1:0.00} joystick {2}, gyroscope {3}", joystickLength, factor, joystick, gyroscope);
-
+                        // Apply clamping to the result to stay in range of joystick
                         outputState.AxisState[OutAxisX] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
                         outputState.AxisState[OutAxisY] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
                     }
