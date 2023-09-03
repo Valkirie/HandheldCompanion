@@ -16,6 +16,7 @@ namespace HandheldCompanion
         private const string NameAttribute = "name";
         private const string SerializeAsAttribute = "serializeAs";
         private const string ValueAttribute = "value";
+        private const string UserConfigFileName = "user.config";
 
         // Define a property to store the location of the user.config file
         public string UserConfigPath { get; set; }
@@ -34,7 +35,7 @@ namespace HandheldCompanion
 
             // Get the path from the config parameter, or use a default value
             string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
-            UserConfigPath = Path.Combine(SettingsPath, "user.config");
+            UserConfigPath = Path.Combine(SettingsPath, UserConfigFileName);
 
             // search for latest user.config if we couldn't find current one
             if (!File.Exists(UserConfigPath))
@@ -44,7 +45,7 @@ namespace HandheldCompanion
                     Directory.CreateDirectory(SettingsPath);
 
                 // get all the files with the name user.config in the specified directory and its subdirectories
-                string[] files = Directory.GetFiles(SettingsPath, "user.config", SearchOption.AllDirectories);
+                string[] files = Directory.GetFiles(SettingsPath, UserConfigFileName, SearchOption.AllDirectories);
 
                 // if no files are found, return null
                 if (files.Length == 0)
