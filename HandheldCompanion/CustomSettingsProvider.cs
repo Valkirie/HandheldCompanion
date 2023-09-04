@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Xml;
 
 namespace HandheldCompanion
@@ -36,28 +35,6 @@ namespace HandheldCompanion
             // Get the path from the config parameter, or use a default value
             string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
             UserConfigPath = Path.Combine(SettingsPath, UserConfigFileName);
-
-            // search for latest user.config if we couldn't find current one
-            if (!File.Exists(UserConfigPath))
-            {
-                // create folder if doesn't exist
-                if (!Directory.Exists(SettingsPath))
-                    Directory.CreateDirectory(SettingsPath);
-
-                // get all the files with the name user.config in the specified directory and its subdirectories
-                string[] files = Directory.GetFiles(SettingsPath, UserConfigFileName, SearchOption.AllDirectories);
-
-                // if no files are found, return null
-                if (files.Length == 0)
-                    return;
-
-                // get the latest file using its write time
-                IOrderedEnumerable<string> sortedFiles = files.OrderByDescending(f => File.GetLastWriteTime(f));
-                string latestFile = sortedFiles.First();
-
-                // copy previous user.config to expected path
-                File.Copy(latestFile, UserConfigPath, true);
-            }
         }
 
         // Override the GetPropertyValues method to read the settings from the user.config file
@@ -126,32 +103,36 @@ namespace HandheldCompanion
             // Loop through each setting in the collection
             foreach (SettingsPropertyValue value in collection)
             {
-                // Try to find a matching node in the user.config file
-                XmlNode node = document.SelectSingleNode(string.Format("/{0}/{1}/{2}[@{3}='{4}']", RootNodeName, SettingsNodeName, SettingNodeName, NameAttribute, value.Name));
-
-                // If a node is not found, create a new one and append it to the settings node
-                if (node == null)
+                try
                 {
-                    node = document.CreateElement(SettingNodeName);
-                    XmlAttribute nameAttribute = document.CreateAttribute(NameAttribute);
-                    nameAttribute.Value = value.Name;
-                    node.Attributes.Append(nameAttribute);
-                    XmlAttribute serializeAsAttribute = document.CreateAttribute(SerializeAsAttribute);
-                    serializeAsAttribute.Value = value.Property.SerializeAs.ToString();
-                    node.Attributes.Append(serializeAsAttribute);
-                    document.DocumentElement.SelectSingleNode(SettingsNodeName).AppendChild(node);
-                }
+                    // Try to find a matching node in the user.config file
+                    XmlNode node = document.SelectSingleNode(string.Format("/{0}/{1}/{2}[@{3}='{4}']", RootNodeName, SettingsNodeName, SettingNodeName, NameAttribute, value.Name));
 
-                // Set or update the value attribute of the node
-                XmlAttribute valueAttribute = node.Attributes[ValueAttribute];
-                if (valueAttribute == null)
-                {
-                    valueAttribute = document.CreateAttribute(ValueAttribute);
-                    node.Attributes.Append(valueAttribute);
-                }
+                    // If a node is not found, create a new one and append it to the settings node
+                    if (node == null)
+                    {
+                        node = document.CreateElement(SettingNodeName);
+                        XmlAttribute nameAttribute = document.CreateAttribute(NameAttribute);
+                        nameAttribute.Value = value.Name;
+                        node.Attributes.Append(nameAttribute);
+                        XmlAttribute serializeAsAttribute = document.CreateAttribute(SerializeAsAttribute);
+                        serializeAsAttribute.Value = value.Property.SerializeAs.ToString();
+                        node.Attributes.Append(serializeAsAttribute);
+                        document.DocumentElement.SelectSingleNode(SettingsNodeName).AppendChild(node);
+                    }
 
-                if (value.SerializedValue is not null)
-                    valueAttribute.Value = value.SerializedValue.ToString();
+                    // Set or update the value attribute of the node
+                    XmlAttribute valueAttribute = node.Attributes[ValueAttribute];
+                    if (valueAttribute == null)
+                    {
+                        valueAttribute = document.CreateAttribute(ValueAttribute);
+                        node.Attributes.Append(valueAttribute);
+                    }
+
+                    if (value.SerializedValue is not null)
+                        valueAttribute.Value = value.SerializedValue.ToString();
+                }
+                catch { }
             }
 
             // Save the user.config file
