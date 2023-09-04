@@ -272,6 +272,8 @@ namespace HandheldCompanion.Controllers
             HideHID();
 
             // set flag
+            powerCycle = powerCycle && this is not SteamController;
+
             if (powerCycle)
             {
                 // UI thread (async)
@@ -294,6 +296,8 @@ namespace HandheldCompanion.Controllers
             UnhideHID();
 
             // set flag
+            powerCycle = powerCycle && this is not SteamController;
+
             if (powerCycle)
             {
                 // UI thread (async)
