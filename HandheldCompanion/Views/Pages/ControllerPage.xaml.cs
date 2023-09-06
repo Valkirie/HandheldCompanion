@@ -65,6 +65,7 @@ public partial class ControllerPage : Page
             switch (status)
             {
                 case PlatformStatus.Stopping:
+                case PlatformStatus.Stopped:
                     HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
                     break;
                 case PlatformStatus.Started:

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
@@ -108,7 +109,7 @@ public class SteamPlatform : IPlatform
             return false;
 
         string configText = File.ReadAllText(configPath);
-        string fileText = System.Text.Encoding.UTF8.GetString(Resources.empty_neptune, 0, Resources.empty_neptune.Length);
+        string fileText = Encoding.UTF8.GetString(Resources.empty_neptune, 0, Resources.empty_neptune.Length);
 
         if (!configText.Equals(fileText, StringComparison.InvariantCultureIgnoreCase))
             return true;
