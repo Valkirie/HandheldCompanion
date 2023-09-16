@@ -441,6 +441,13 @@ public static class ProfileManager
         // refresh error code
         SanitizeProfile(profile);
 
+        // used to get and store a few previous values
+        XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
+        if (profiles.TryGetValue(profile.Path, out Profile prevProfile))
+        {
+            prevWrapper = prevProfile.XInputPlus;
+        }
+
         // update database
         profiles[profile.Path] = profile;
 
@@ -450,46 +457,50 @@ public static class ProfileManager
         if (source == ProfileUpdateSource.Serializer)
             return;
 
-        // apply profile (silently)
-        if (isCurrent)
-            ApplyProfile(profile, source);
-
         // do not update wrapper and cloaking from default profile
         if (!profile.Default)
         {
             // update wrapper
-            UpdateProfileWrapper(profile);
+            if (!UpdateProfileWrapper(profile))
+            {
+                // restore previous XInputPlus mode if failed to update
+                profile.XInputPlus = prevWrapper;
+                source = ProfileUpdateSource.Background;
+            }
 
             // update cloaking
             UpdateProfileCloaking(profile);
         }
 
+        // apply profile (silently)
+        if (isCurrent)
+            ApplyProfile(profile, source);
+
         // serialize profile
         SerializeProfile(profile);
     }
 
-    public static void UpdateProfileCloaking(Profile profile)
+    public static bool UpdateProfileCloaking(Profile profile)
     {
         switch (profile.ErrorCode)
         {
             case ProfileErrorCode.MissingExecutable:
             case ProfileErrorCode.MissingPath:
             case ProfileErrorCode.Default:
-                return;
+                return false;
         }
 
         switch (profile.Whitelisted)
         {
             case true:
-                HidHide.RegisterApplication(profile.Path);
-                break;
+                return HidHide.RegisterApplication(profile.Path);
+            default:
             case false:
-                HidHide.UnregisterApplication(profile.Path);
-                break;
+                return HidHide.UnregisterApplication(profile.Path);
         }
     }
 
-    public static void UpdateProfileWrapper(Profile profile)
+    public static bool UpdateProfileWrapper(Profile profile)
     {
         switch (profile.ErrorCode)
         {
@@ -497,18 +508,17 @@ public static class ProfileManager
             case ProfileErrorCode.MissingPath:
             case ProfileErrorCode.Running:
             case ProfileErrorCode.Default:
-                return;
+                return false;
         }
 
         switch (profile.XInputPlus)
         {
             case XInputPlusMethod.Redirection:
-                XInputPlus.RegisterApplication(profile);
-                break;
+                return XInputPlus.RegisterApplication(profile);
+            default:
             case XInputPlusMethod.Disabled:
             case XInputPlusMethod.Injection:
-                XInputPlus.UnregisterApplication(profile);
-                break;
+                return XInputPlus.UnregisterApplication(profile);
         }
     }
 

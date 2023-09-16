@@ -89,7 +89,7 @@ public static class HidHide
         return false;
     }
 
-    public static void UnregisterApplication(string fileName)
+    public static bool UnregisterApplication(string fileName)
     {
         try
         {
@@ -103,7 +103,7 @@ public static class HidHide
         catch
         {
             if (process is null)
-                return;
+                return false;
 
             process.StartInfo.Arguments = $"--app-unreg \"{fileName}\"";
             process.Start();
@@ -112,9 +112,11 @@ public static class HidHide
 
             LogManager.LogInformation("HideDevice RemoveApplicationPath: {0}", fileName);
         }
+
+        return true;
     }
 
-    public static void RegisterApplication(string fileName)
+    public static bool RegisterApplication(string fileName)
     {
         try
         {
@@ -128,7 +130,7 @@ public static class HidHide
         catch
         {
             if (process is null)
-                return;
+                return false;
 
             process.StartInfo.Arguments = $"--app-reg \"{fileName}\"";
             process.Start();
@@ -137,6 +139,8 @@ public static class HidHide
 
             LogManager.LogInformation("HideDevice AddApplicationPath: {0}", fileName);
         }
+
+        return true;
     }
 
     public static void SetCloaking(bool status)
