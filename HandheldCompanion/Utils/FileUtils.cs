@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Packaging;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
@@ -18,10 +19,8 @@ namespace HandheldCompanion.Utils
                     }
                 }
 
-                using (var fs = new FileStream(fileName, FileMode.Create))
-                {
-                    return fs.CanWrite;
-                }
+                string dirPath = Path.GetDirectoryName(fileName);
+                return IsDirectoryWritable(dirPath);
             }
             catch
             {
@@ -55,13 +54,13 @@ namespace HandheldCompanion.Utils
                     using (StreamReader sr = new StreamReader(fileName))
                     {
                         // If no exception is thrown, the file is being used
-                        return true;
+                        return false;
                     }
                 }
                 catch (IOException)
                 {
                     // If an exception is thrown, the file is not being used
-                    return false;
+                    return true;
                 }
             }
             else
