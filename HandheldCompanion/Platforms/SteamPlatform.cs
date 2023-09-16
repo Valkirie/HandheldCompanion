@@ -12,7 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Storage.Streams;
 
 namespace HandheldCompanion.Platforms;
 
@@ -180,7 +179,7 @@ public class SteamPlatform : IPlatform
         if (IsRunning)
             return false;
 
-        if (!CommonUtils.IsFileWritable(SettingsPath))
+        if (!FileUtils.IsFileWritable(SettingsPath))
             return false;
 
         try

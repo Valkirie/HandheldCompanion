@@ -219,7 +219,7 @@ internal static class LayoutManager
         });
 
         fileName = Path.Combine(LayoutsPath, $"{fileName}.json");
-        if (CommonUtils.IsFileWritable(fileName))
+        if (FileUtils.IsFileWritable(fileName))
             File.WriteAllText(fileName, jsonString);
     }
 
@@ -231,7 +231,7 @@ internal static class LayoutManager
         });
 
         string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
-        if (CommonUtils.IsFileWritable(fileName))
+        if (FileUtils.IsFileWritable(fileName))
             File.WriteAllText(fileName, jsonString);
     }
 

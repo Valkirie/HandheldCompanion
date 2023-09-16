@@ -369,7 +369,7 @@ public static class ProfileManager
                 ApplyProfile(GetDefault());
         }
 
-        File.Delete(profilePath);
+        FileUtils.FileDelete(profilePath);
     }
 
     public static void SerializeProfile(Profile profile)
@@ -387,7 +387,7 @@ public static class ProfileManager
 
         try
         {
-            if (CommonUtils.IsFileWritable(profilePath))
+            if (FileUtils.IsFileWritable(profilePath))
                 File.WriteAllText(profilePath, jsonString);
         }
         catch { }
@@ -411,7 +411,7 @@ public static class ProfileManager
             if (!File.Exists(profile.Path))
                 profile.ErrorCode |= ProfileErrorCode.MissingExecutable;
 
-            if (!CommonUtils.IsDirectoryWritable(processpath))
+            if (!FileUtils.IsDirectoryWritable(processpath))
                 profile.ErrorCode |= ProfileErrorCode.MissingPermission;
 
             if (ProcessManager.GetProcesses(profile.Executable).Capacity > 0)
@@ -450,22 +450,22 @@ public static class ProfileManager
         if (source == ProfileUpdateSource.Serializer)
             return;
 
-        // serialize profile
-        SerializeProfile(profile);
-
         // apply profile (silently)
         if (isCurrent)
             ApplyProfile(profile, source);
 
         // do not update wrapper and cloaking from default profile
-        if (profile.Default)
-            return;
+        if (!profile.Default)
+        {
+            // update wrapper
+            UpdateProfileWrapper(profile);
 
-        // update wrapper
-        UpdateProfileWrapper(profile);
+            // update cloaking
+            UpdateProfileCloaking(profile);
+        }
 
-        // update cloaking
-        UpdateProfileCloaking(profile);
+        // serialize profile
+        SerializeProfile(profile);
     }
 
     public static void UpdateProfileCloaking(Profile profile)

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 
@@ -78,107 +77,5 @@ public static class CommonUtils
                 throw;
             }
         }
-    }
-
-    public static bool IsFileWritable(string filePath, bool deleteMe = false)
-    {
-        try
-        {
-            if (File.Exists(filePath))
-            {
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    return fs.CanWrite;
-                }
-            }
-
-            var CanWrite = false;
-            using (var fs = new FileStream(filePath, FileMode.Create))
-            {
-                CanWrite = fs.CanWrite;
-            }
-
-            if (deleteMe)
-                File.Delete(filePath);
-
-            return CanWrite;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public static bool IsDirectoryWritable(string dirPath)
-    {
-        try
-        {
-            using (var fs = File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
-            {
-                return true;
-            }
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public static void SetDirectoryWritable(string processpath)
-    {
-        var rootDirectory = new DirectoryInfo(processpath);
-        var directorySecurity = rootDirectory.GetAccessControl();
-
-        var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-        var adminitrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
-
-        directorySecurity.AddAccessRule(
-            new FileSystemAccessRule(
-                everyone,
-                FileSystemRights.FullControl,
-                InheritanceFlags.None,
-                PropagationFlags.NoPropagateInherit,
-                AccessControlType.Allow));
-
-        directorySecurity.AddAccessRule(
-            new FileSystemAccessRule(
-                WindowsIdentity.GetCurrent().Name,
-                FileSystemRights.FullControl,
-                InheritanceFlags.None,
-                PropagationFlags.NoPropagateInherit,
-                AccessControlType.Allow));
-
-        directorySecurity.SetAccessRuleProtection(true, false);
-
-        rootDirectory.SetAccessControl(directorySecurity);
-    }
-
-    public static void SetFileWritable(string processpath)
-    {
-        var rootFile = new FileInfo(processpath);
-        var fileSecurity = rootFile.GetAccessControl();
-
-        var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-        var adminitrators = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
-
-        fileSecurity.AddAccessRule(
-            new FileSystemAccessRule(
-                everyone,
-                FileSystemRights.FullControl,
-                InheritanceFlags.None,
-                PropagationFlags.NoPropagateInherit,
-                AccessControlType.Allow));
-
-        fileSecurity.AddAccessRule(
-            new FileSystemAccessRule(
-                WindowsIdentity.GetCurrent().Name,
-                FileSystemRights.FullControl,
-                InheritanceFlags.None,
-                PropagationFlags.NoPropagateInherit,
-                AccessControlType.Allow));
-
-        fileSecurity.SetAccessRuleProtection(true, false);
-
-        rootFile.SetAccessControl(fileSecurity);
     }
 }

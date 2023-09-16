@@ -410,7 +410,7 @@ public abstract class IPlatform : IDisposable
         try
         {
             var configPath = Path.Combine(InstallPath, FilePath);
-            if (!CommonUtils.IsFileWritable(configPath))
+            if (!FileUtils.IsFileWritable(configPath))
                 return false;
 
             // file has already been overwritten
