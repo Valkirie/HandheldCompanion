@@ -35,6 +35,9 @@ namespace HandheldCompanion
             // Get the path from the config parameter, or use a default value
             string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
             UserConfigPath = Path.Combine(SettingsPath, UserConfigFileName);
+
+            if (!Directory.Exists(SettingsPath))
+                Directory.CreateDirectory(SettingsPath);
         }
 
         // Override the GetPropertyValues method to read the settings from the user.config file
