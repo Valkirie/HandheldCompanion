@@ -68,6 +68,11 @@ jobs:
       - name: Install Innosetup
         run: |
           choco install innosetup --version=${{ env.INNO_VERSION }} --force
+          
+      - name: Setup dotnet 8 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
 
       - name: Nuget Restore
         run: nuget restore ${{ env.SOLUTION_NAME }}.sln
