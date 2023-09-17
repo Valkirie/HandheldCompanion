@@ -75,7 +75,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Nuget Restore
-        run: nuget restore ${{ env.SOLUTION_NAME }}.sln
+        run: dotnet restore ${{ env.SOLUTION_NAME }}.sln
 
       - name: Build Solution
         run: dotnet build ${{ env.SOLUTION_NAME }}.sln /p:Configuration=Release
