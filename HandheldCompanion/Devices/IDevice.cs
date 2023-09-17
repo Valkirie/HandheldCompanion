@@ -273,6 +273,7 @@ public abstract class IDevice
                                 }
                                 break;
                             }
+                        case "ONEXPLAYER 2 PRO ARP23P":
                         case "ONEXPLAYER 2 PRO ARP23P EVA-01":
                             switch (Version)
                             {
