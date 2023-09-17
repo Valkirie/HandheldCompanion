@@ -205,9 +205,29 @@ public static class XInputPlus
         }
     }
 
-    public static void RegisterApplication(Profile profile)
+    private static bool CheckDeployment(string DirectoryPath)
     {
-        var DirectoryPath = Path.GetDirectoryName(profile.Path);
+        for (var i = 0; i < 5; i++)
+        {
+            string XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.dll");
+
+            // dll has a different naming format
+            if (i == 4)
+                XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, "xinput9_1_0.dll");
+
+            if (FileUtils.IsFileUsed(XInputPlusDLLTargetPath))
+                return false;
+
+            if (!FileUtils.IsFileWritable(XInputPlusDLLTargetPath))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static bool RegisterApplication(Profile profile)
+    {
+        string DirectoryPath = Path.GetDirectoryName(profile.Path);
 
         // get binary type (x64, x86)
         BinaryType bt;
@@ -215,109 +235,129 @@ public static class XInputPlus
         bool x64bit = bt == BinaryType.SCS_64BIT_BINARY;
 
         // prepare ini file
-        WriteXInputPlusINI(DirectoryPath, x64bit);
+        if (!WriteXInputPlusINI(DirectoryPath, x64bit))
+            return false;
 
-        for (var i = 0; i < 5; i++)
+        // check if dll files can be deployed
+        if (!CheckDeployment(DirectoryPath))
         {
-            var XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.dll");
-            var XInputPlusDLLTargetBackPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.back");
+            LogManager.LogError("XInputPlus, RegisterApplication failed: {0}", DirectoryPath);
+            return false;
+        }
 
-            // dll has a different naming format
-            if (i == 4)
+        // prepare dll files
+        try
+        {
+            for (var i = 0; i < 5; i++)
             {
-                XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, "xinput9_1_0.dll");
-                XInputPlusDLLTargetBackPath = Path.Combine(DirectoryPath, "xinput9_1_0.back");
-            }
+                string XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.dll");
+                string XInputPlusDLLTargetBackPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.back");
 
-            var dllexist = File.Exists(XInputPlusDLLTargetPath);
-            var backexist = File.Exists(XInputPlusDLLTargetBackPath);
+                // dll has a different naming format
+                if (i == 4)
+                {
+                    XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, "xinput9_1_0.dll");
+                    XInputPlusDLLTargetBackPath = Path.Combine(DirectoryPath, "xinput9_1_0.back");
+                }
 
-            byte[] inputData = { 0 };
+                bool dllexist = File.Exists(XInputPlusDLLTargetPath);
+                bool backexist = File.Exists(XInputPlusDLLTargetBackPath);
 
-            // check CRC32
-            if (dllexist) inputData = File.ReadAllBytes(XInputPlusDLLTargetPath);
-            var crc = Crc32Algorithm.Compute(inputData);
-            var is_x360ce = CRCs[x64bit] == crc;
+                byte[] inputData = { 0 };
 
-            // pull data from dll
-            var XInputPlusDLLSrcPath = x64bit ? XInputPlus_XInputx64 : XInputPlus_XInputx86;
+                // check CRC32
+                if (dllexist) inputData = File.ReadAllBytes(XInputPlusDLLTargetPath);
+                uint crc = Crc32Algorithm.Compute(inputData);
+                bool is_x360ce = CRCs[x64bit] == crc;
 
-            if (dllexist && is_x360ce) continue; // skip to next file
+                // pull data from dll
+                string XInputPlusDLLSrcPath = x64bit ? XInputPlus_XInputx64 : XInputPlus_XInputx86;
 
-            if (!dllexist)
-            {
-                //File.WriteAllBytes(dllpath, outputData);
-                File.Copy(XInputPlusDLLSrcPath, XInputPlusDLLTargetPath);
-            }
-            else if (dllexist && !is_x360ce)
-            {
-                // create backup of current dll
-                if (!backexist)
-                    File.Move(XInputPlusDLLTargetPath, XInputPlusDLLTargetBackPath, true);
+                if (dllexist && is_x360ce) continue; // skip to next file
 
-                // deploy wrapper
-                if (CommonUtils.IsFileWritable(XInputPlusDLLTargetPath))
+                if (!dllexist)
+                {
+                    //File.WriteAllBytes(dllpath, outputData);
+                    File.Copy(XInputPlusDLLSrcPath, XInputPlusDLLTargetPath);
+                }
+                else if (dllexist && !is_x360ce)
+                {
+                    // create backup of current dll
+                    if (!backexist)
+                        File.Move(XInputPlusDLLTargetPath, XInputPlusDLLTargetBackPath, true);
+
+                    // deploy wrapper
                     File.Copy(XInputPlusDLLSrcPath, XInputPlusDLLTargetPath, true);
+                }
             }
+
+            return true;
         }
-    }
-
-    public static void UnregisterApplication(Profile profile)
-    {
-        var DirectoryPath = Path.GetDirectoryName(profile.Path);
-        var IniPath = Path.Combine(DirectoryPath, "XInputPlus.ini");
-
-        // get binary type (x64, x86)
-        BinaryType bt;
-        GetBinaryType(profile.Path, out bt);
-        var x64 = bt == BinaryType.SCS_64BIT_BINARY;
-
-        for (var i = 0; i < 5; i++)
+        catch
         {
-            var XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.dll");
-            var XInputPlusDLLTargetBackupPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.back");
-
-            // dll has a different naming format
-            if (i == 4)
-            {
-                XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, "xinput9_1_0.dll");
-                XInputPlusDLLTargetBackupPath = Path.Combine(DirectoryPath, "xinput9_1_0.back");
-            }
-
-            var dllexist = File.Exists(XInputPlusDLLTargetPath);
-            var backexist = File.Exists(XInputPlusDLLTargetBackupPath);
-
-            byte[] inputData = { 0 };
-
-            // check CRC32
-            if (dllexist) inputData = File.ReadAllBytes(XInputPlusDLLTargetPath);
-            var crc = Crc32Algorithm.Compute(inputData);
-            var is_x360ce = CRCs[x64] == crc;
-
-            if (backexist)
-            {
-                // restore original DLL
-                File.Move(XInputPlusDLLTargetBackupPath, XInputPlusDLLTargetPath, true);
-            }
-            else
-            {
-                // clean up XInputPlus files
-                if (dllexist)
-                    File.Delete(XInputPlusDLLTargetPath);
-            }
+            return false;
         }
-
-        // remove XInputPlus INI file
-        if (File.Exists(IniPath))
-            File.Delete(IniPath);
     }
 
-    public static void WriteXInputPlusINI(string directoryPath, bool x64bit)
+    public static bool UnregisterApplication(Profile profile)
+    {
+        string DirectoryPath = Path.GetDirectoryName(profile.Path);
+
+        // check if dll files can be deployed
+        if (!CheckDeployment(DirectoryPath))
+        {
+            LogManager.LogError("XInputPlus, UnregisterApplication failed: {0}", DirectoryPath);
+            return false;
+        }
+
+        // remove dll files
+        try
+        {
+            for (var i = 0; i < 5; i++)
+            {
+                string XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.dll");
+                string XInputPlusDLLTargetBackupPath = Path.Combine(DirectoryPath, $"xinput1_{i + 1}.back");
+
+                // dll has a different naming format
+                if (i == 4)
+                {
+                    XInputPlusDLLTargetPath = Path.Combine(DirectoryPath, "xinput9_1_0.dll");
+                    XInputPlusDLLTargetBackupPath = Path.Combine(DirectoryPath, "xinput9_1_0.back");
+                }
+
+                bool dllexist = File.Exists(XInputPlusDLLTargetPath);
+                bool backexist = File.Exists(XInputPlusDLLTargetBackupPath);
+
+                if (backexist)
+                {
+                    // restore original DLL
+                    File.Move(XInputPlusDLLTargetBackupPath, XInputPlusDLLTargetPath, true);
+                }
+                else if (dllexist)
+                {
+                    // clean up XInputPlus files
+                    FileUtils.FileDelete(XInputPlusDLLTargetPath);
+                }
+            }
+
+            // remove XInputPlus INI file
+            string IniPath = Path.Combine(DirectoryPath, "XInputPlus.ini");
+            FileUtils.FileDelete(IniPath);
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static bool WriteXInputPlusINI(string directoryPath, bool x64bit)
     {
         var IniPath = Path.Combine(directoryPath, "XInputPlus.ini");
 
-        if (!CommonUtils.IsFileWritable(IniPath))
-            return;
+        if (!FileUtils.IsFileWritable(IniPath))
+            return false;
 
         // prepare index array
         List<int> userIndex = new() { 1, 2, 3, 4 };
@@ -334,7 +374,7 @@ public static class XInputPlus
         // we need to define Controller index overwrite
         XInputController vController = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
         if (vController is null)
-            return;
+            return false;
 
         // get virtual controller index and update IniFile
         int idx = vController.GetUserIndex() + 1;
@@ -355,6 +395,8 @@ public static class XInputPlus
 
         LogManager.LogDebug("XInputPlus INI wrote in {0}. Controller1 set to UserIndex: {1}",
             directoryPath, idx);
+
+        return true;
     }
 
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684139%28v=vs.85%29.aspx

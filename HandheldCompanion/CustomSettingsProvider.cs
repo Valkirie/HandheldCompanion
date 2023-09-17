@@ -15,6 +15,7 @@ namespace HandheldCompanion
         private const string NameAttribute = "name";
         private const string SerializeAsAttribute = "serializeAs";
         private const string ValueAttribute = "value";
+        private const string UserConfigFileName = "user.config";
 
         // Define a property to store the location of the user.config file
         public string UserConfigPath { get; set; }
@@ -32,7 +33,11 @@ namespace HandheldCompanion
             base.Initialize(ApplicationName, config);
 
             // Get the path from the config parameter, or use a default value
-            UserConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName, "user.config");
+            string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationName);
+            UserConfigPath = Path.Combine(SettingsPath, UserConfigFileName);
+
+            if (!Directory.Exists(SettingsPath))
+                Directory.CreateDirectory(SettingsPath);
         }
 
         // Override the GetPropertyValues method to read the settings from the user.config file
@@ -101,32 +106,36 @@ namespace HandheldCompanion
             // Loop through each setting in the collection
             foreach (SettingsPropertyValue value in collection)
             {
-                // Try to find a matching node in the user.config file
-                XmlNode node = document.SelectSingleNode(string.Format("/{0}/{1}/{2}[@{3}='{4}']", RootNodeName, SettingsNodeName, SettingNodeName, NameAttribute, value.Name));
-
-                // If a node is not found, create a new one and append it to the settings node
-                if (node == null)
+                try
                 {
-                    node = document.CreateElement(SettingNodeName);
-                    XmlAttribute nameAttribute = document.CreateAttribute(NameAttribute);
-                    nameAttribute.Value = value.Name;
-                    node.Attributes.Append(nameAttribute);
-                    XmlAttribute serializeAsAttribute = document.CreateAttribute(SerializeAsAttribute);
-                    serializeAsAttribute.Value = value.Property.SerializeAs.ToString();
-                    node.Attributes.Append(serializeAsAttribute);
-                    document.DocumentElement.SelectSingleNode(SettingsNodeName).AppendChild(node);
-                }
+                    // Try to find a matching node in the user.config file
+                    XmlNode node = document.SelectSingleNode(string.Format("/{0}/{1}/{2}[@{3}='{4}']", RootNodeName, SettingsNodeName, SettingNodeName, NameAttribute, value.Name));
 
-                // Set or update the value attribute of the node
-                XmlAttribute valueAttribute = node.Attributes[ValueAttribute];
-                if (valueAttribute == null)
-                {
-                    valueAttribute = document.CreateAttribute(ValueAttribute);
-                    node.Attributes.Append(valueAttribute);
-                }
+                    // If a node is not found, create a new one and append it to the settings node
+                    if (node == null)
+                    {
+                        node = document.CreateElement(SettingNodeName);
+                        XmlAttribute nameAttribute = document.CreateAttribute(NameAttribute);
+                        nameAttribute.Value = value.Name;
+                        node.Attributes.Append(nameAttribute);
+                        XmlAttribute serializeAsAttribute = document.CreateAttribute(SerializeAsAttribute);
+                        serializeAsAttribute.Value = value.Property.SerializeAs.ToString();
+                        node.Attributes.Append(serializeAsAttribute);
+                        document.DocumentElement.SelectSingleNode(SettingsNodeName).AppendChild(node);
+                    }
 
-                if (value.SerializedValue is not null)
-                    valueAttribute.Value = value.SerializedValue.ToString();
+                    // Set or update the value attribute of the node
+                    XmlAttribute valueAttribute = node.Attributes[ValueAttribute];
+                    if (valueAttribute == null)
+                    {
+                        valueAttribute = document.CreateAttribute(ValueAttribute);
+                        node.Attributes.Append(valueAttribute);
+                    }
+
+                    if (value.SerializedValue is not null)
+                        valueAttribute.Value = value.SerializedValue.ToString();
+                }
+                catch { }
             }
 
             // Save the user.config file

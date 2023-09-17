@@ -239,7 +239,7 @@ public static class HotkeysManager
         if (!File.Exists(settingsPath) || overwrite)
         {
             var jsonString = JsonConvert.SerializeObject(hotkey, Formatting.Indented);
-            if (CommonUtils.IsFileWritable(settingsPath))
+            if (FileUtils.IsFileWritable(settingsPath))
                 File.WriteAllText(settingsPath, jsonString);
         }
 

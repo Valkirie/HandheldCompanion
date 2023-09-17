@@ -1,6 +1,7 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
@@ -18,14 +19,11 @@ namespace HandheldCompanion.Views.Pages;
 public partial class ControllerPage : Page
 {
     public delegate void HIDchangedEventHandler(HIDmode HID);
+    public event HIDchangedEventHandler HIDchanged;
 
     // controllers vars
     private HIDmode controllerMode = HIDmode.NoController;
     private HIDstatus controllerStatus = HIDstatus.Disconnected;
-
-    // pipe vars
-    private bool isConnected;
-    private bool isLoading;
 
     public ControllerPage()
     {
@@ -43,6 +41,9 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+
+        PlatformManager.Initialized += PlatformManager_Initialized;
+        PlatformManager.Steam.Updated += Steam_Updated;
     }
 
     public ControllerPage(string Tag) : this()
@@ -50,7 +51,29 @@ public partial class ControllerPage : Page
         this.Tag = Tag;
     }
 
-    public event HIDchangedEventHandler HIDchanged;
+    private void PlatformManager_Initialized()
+    {
+        HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+        Steam_Updated(PlatformManager.Steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+    }
+
+    private void Steam_Updated(PlatformStatus status)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            switch (status)
+            {
+                case PlatformStatus.Stopping:
+                case PlatformStatus.Stopped:
+                    HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
+                    break;
+                case PlatformStatus.Started:
+                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.Steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+            }
+        });
+    }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
@@ -109,17 +132,45 @@ public partial class ControllerPage : Page
             {
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                 {
-                    InputDevices.Children.Remove(ctrl);
-                    break;
+                    if (!IsPowerCycling)
+                    {
+                        InputDevices.Children.Remove(ctrl);
+                        ControllerRefresh();
+                        break;
+                    }
                 }
             }
-
-            ControllerRefresh();
         });
     }
 
     private void ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
     {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // Search for an existing controller, remove it
+            foreach (IController ctrl in InputDevices.Children)
+            {
+                if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
+                {
+                    InputDevices.Children.Remove(ctrl);
+                    break;
+                }
+            }
+
+            // Add new controller to list if no existing controller was found
+            InputDevices.Children.Add(Controller);
+
+            // todo: move me
+            var ui_button_hook = Controller.GetButtonHook();
+            ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
+
+            var ui_button_hide = Controller.GetButtonHide();
+            ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
+
+            ControllerRefresh();
+        });
+
         // we assume this is HC virtual controller
         if (Controller.IsVirtual() && isHCVirtualController)
         {
@@ -132,23 +183,6 @@ public partial class ControllerPage : Page
                 }
             }
         }
-
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // Add new controller to list if no existing controller was found
-            IController control = Controller;
-            InputDevices.Children.Add(control);
-
-            // todo: move me
-            var ui_button_hook = Controller.GetButtonHook();
-            ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
-
-            var ui_button_hide = Controller.GetButtonHide();
-            ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
-
-            ControllerRefresh();
-        });
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -177,7 +211,8 @@ public partial class ControllerPage : Page
         else
             Controller.Hide();
 
-        ControllerRefresh();
+        if (!ControllerManager.PowerCyclers.ContainsKey(Controller.GetContainerInstancePath()))
+            ControllerRefresh();
     }
 
     private void ControllerRefresh()

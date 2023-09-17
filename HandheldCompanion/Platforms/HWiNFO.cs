@@ -63,7 +63,7 @@ public class HWiNFO : IPlatform
         Url = "https://www.hwinfo.com/files/hwi_742.exe";
 
         Name = "HWiNFO64";
-        ExecutableName = "HWiNFO64.exe";
+        ExecutableName = RunningName = "HWiNFO64.exe";
 
         // check if platform is installed
         InstallPath = RegistryUtils.GetString(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\HWiNFO64_is1",
@@ -117,7 +117,7 @@ public class HWiNFO : IPlatform
     {
         // start HWiNFO if not running or Shared Memory is disabled
         var hasSensorsSM = GetProperty("SensorsSM");
-        if (!IsRunning() || !hasSensorsSM)
+        if (!IsRunning || !hasSensorsSM)
         {
             StopProcess();
             StartProcess();
@@ -490,7 +490,7 @@ public class HWiNFO : IPlatform
         if (!IsInstalled)
             return false;
 
-        if (IsRunning())
+        if (IsRunning)
             KillProcess();
 
         // (re)set elements

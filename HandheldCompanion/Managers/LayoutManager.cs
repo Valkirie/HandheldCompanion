@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -218,7 +219,7 @@ internal static class LayoutManager
         });
 
         fileName = Path.Combine(LayoutsPath, $"{fileName}.json");
-        if (CommonUtils.IsFileWritable(fileName))
+        if (FileUtils.IsFileWritable(fileName))
             File.WriteAllText(fileName, jsonString);
     }
 
@@ -230,7 +231,7 @@ internal static class LayoutManager
         });
 
         string fileName = Path.Combine(TemplatesPath, $"{layoutTemplate.Name}_{layoutTemplate.Author}.json");
-        if (CommonUtils.IsFileWritable(fileName))
+        if (FileUtils.IsFileWritable(fileName))
             File.WriteAllText(fileName, jsonString);
     }
 
@@ -455,15 +456,22 @@ internal static class LayoutManager
                         AxisActions aAction = action as AxisActions;
                         aAction.Execute(InLayout);
 
-                        // read output axis
+                        // Read output axis
                         AxisLayout OutLayout = AxisLayout.Layouts[aAction.Axis];
                         AxisFlags OutAxisX = OutLayout.GetAxisFlags('X');
                         AxisFlags OutAxisY = OutLayout.GetAxisFlags('Y');
 
-                        outputState.AxisState[OutAxisX] =
-                            (short)Math.Clamp(outputState.AxisState[OutAxisX] + aAction.GetValue().X, short.MinValue, short.MaxValue);
-                        outputState.AxisState[OutAxisY] =
-                            (short)Math.Clamp(outputState.AxisState[OutAxisY] + aAction.GetValue().Y, short.MinValue, short.MaxValue);
+                        Vector2 joystick = new Vector2(outputState.AxisState[OutAxisX], outputState.AxisState[OutAxisY]);
+
+                        // Reduce motion weight based on joystick position
+                        // Get the distance of the joystick from the center
+                        float joystickLength = Math.Clamp(joystick.Length() / short.MaxValue, 0, 1);
+                        float weightFactor = aAction.gyroWeight - joystickLength;
+                        Vector2 result = joystick + aAction.GetValue() * weightFactor;
+
+                        // Apply clamping to the result to stay in range of joystick
+                        outputState.AxisState[OutAxisX] = (short)Math.Clamp(result.X, short.MinValue, short.MaxValue);
+                        outputState.AxisState[OutAxisY] = (short)Math.Clamp(result.Y, short.MinValue, short.MaxValue);
                     }
                     break;
 

@@ -11,19 +11,23 @@ public static class PlatformManager
     private const int UpdateInterval = 1000;
 
     // gaming platforms
-    private static readonly SteamPlatform Steam = new();
-    private static readonly GOGGalaxy GOGGalaxy = new();
-    private static readonly UbisoftConnect UbisoftConnect = new();
+    public static readonly SteamPlatform Steam = new();
+    public static readonly GOGGalaxy GOGGalaxy = new();
+    public static readonly UbisoftConnect UbisoftConnect = new();
 
     // misc platforms
     public static RTSS RTSS = new();
     public static HWiNFO HWiNFO = new();
+
     private static Timer UpdateTimer;
 
     private static bool IsInitialized;
 
     private static PlatformNeeds CurrentNeeds = PlatformNeeds.None;
     private static PlatformNeeds PreviousNeeds = PlatformNeeds.None;
+
+    public static event InitializedEventHandler Initialized;
+    public delegate void InitializedEventHandler();
 
     public static void Start()
     {
@@ -60,6 +64,7 @@ public static class PlatformManager
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
 
         IsInitialized = true;
+        Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "PlatformManager");
     }
@@ -139,9 +144,8 @@ public static class PlatformManager
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
                 {
-                    // Start and enable OSD
+                    // Start RTSS
                     RTSS.Start();
-                    RTSS.SetEnableOSD(true);
                 }
             if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
             {
@@ -176,9 +180,6 @@ public static class PlatformManager
             if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
                 if (HWiNFO.IsInstalled)
                     HWiNFO.Stop(true);
-
-            // Disable OSD
-            RTSS.SetEnableOSD(false);
         }
         else
         {
@@ -190,8 +191,7 @@ public static class PlatformManager
                 if (HWiNFO.IsInstalled) HWiNFO.Stop(true);
                 if (RTSS.IsInstalled)
                 {
-                    // Disable OSD
-                    RTSS.SetEnableOSD(false);
+                    // Stop RTSS
                     RTSS.Stop();
                 }
             }
