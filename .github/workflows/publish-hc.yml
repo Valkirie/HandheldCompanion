@@ -74,7 +74,7 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Nuget Restore
+      - name: Restore Solution
         run: dotnet restore ${{ env.SOLUTION_NAME }}.sln
 
       - name: Build Solution
