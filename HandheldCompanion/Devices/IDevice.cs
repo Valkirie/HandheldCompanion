@@ -2,6 +2,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
+using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ public enum DeviceCapabilities : ushort
     InternalSensor = 1,
     ExternalSensor = 2,
     FanControl = 4,
+    LEDControl = 8
 }
 
 public struct ECDetails
@@ -465,6 +467,30 @@ public abstract class IDevice
         ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
     }
 
+    public virtual float ReadFanDuty()
+    {
+        if (ECDetails.AddressControl == 0)
+            return 0;
+
+        // todo: implement me
+        return 0;
+    }
+
+    public virtual bool SetLedStatus(bool status)
+    {
+        return true;
+    }
+
+    public virtual bool SetLedBrightness(int brightness)
+    {
+        return true;
+    }
+
+    public virtual bool SetLedColor(string hexColor)
+    {
+        return true;
+    }
+
     [Obsolete("ECRamReadByte is deprecated, please use ECRamReadByte with ECDetails instead.")]
     public static byte ECRamReadByte(ushort address)
     {
@@ -548,5 +574,13 @@ public abstract class IDevice
     protected void KeyRelease(ButtonFlags button)
     {
         KeyReleased?.Invoke(button);
+    }
+
+    protected static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
+    {
+        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, new int[] { deviceId }).ToArray();
+        foreach (HidDevice device in HidDeviceList)
+            if (device.IsConnected && device.Capabilities.FeatureReportByteLength >= minFeatures)
+                yield return device;
     }
 }

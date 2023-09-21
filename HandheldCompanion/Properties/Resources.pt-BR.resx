@@ -1481,7 +1481,7 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
     <value>Inferior esquerdo</value>
   </data>
-  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Opções de energia</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">

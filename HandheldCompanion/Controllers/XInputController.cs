@@ -13,9 +13,6 @@ public class XInputController : IController
     private Controller Controller;
     private Gamepad Gamepad;
 
-    private GamepadButtonFlags prevButtons;
-    private XInputStateSecret prevState;
-
     private XInputStateSecret State;
 
     public XInputController()
@@ -75,11 +72,6 @@ public class XInputController : IController
             // update secret state
             XInputGetStateSecret14(UserIndex, out State);
 
-            /*
-            if (prevButtons.Equals(Gamepad.Buttons) && State.wButtons.Equals(prevState.wButtons) && prevInjectedButtons.Equals(InjectedButtons))
-                return;
-            */
-
             Inputs.ButtonState = InjectedButtons.Clone() as ButtonState;
 
             Inputs.ButtonState[ButtonFlags.B1] = Gamepad.Buttons.HasFlag(GamepadButtonFlags.A);
@@ -129,10 +121,6 @@ public class XInputController : IController
 
             Inputs.AxisState[AxisFlags.L2] = Gamepad.LeftTrigger;
             Inputs.AxisState[AxisFlags.R2] = Gamepad.RightTrigger;
-
-            // update states
-            prevButtons = Gamepad.Buttons;
-            prevState = State;
         }
         catch { }
 
@@ -193,6 +181,11 @@ public class XInputController : IController
         }
 
         return SharpDX.XInput.UserIndex.Any;
+    }
+
+    public override bool RestoreDrivers()
+    {
+        return Details.InstallCustomDriver("xusb22.inf");
     }
 
     public override string GetGlyph(ButtonFlags button)

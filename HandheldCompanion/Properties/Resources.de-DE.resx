@@ -1479,7 +1479,7 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
     <value>Unten Links</value>
   </data>
-  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Energie-Optionen</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">

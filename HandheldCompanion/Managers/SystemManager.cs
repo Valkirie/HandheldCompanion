@@ -182,6 +182,34 @@ public static class SystemManager
                     MainWindow.CurrentDevice.SetFanDuty(duty);
                 }
                 break;
+            case "LED":
+                {
+                    var toggled = Convert.ToBoolean(value);
+                    MainWindow.CurrentDevice.SetLedStatus(toggled);
+                }
+                break;
+            case "LEDBrightness":
+                {
+                    var toggled = SettingsManager.GetBoolean("LED");
+
+                    if (!toggled)
+                        return;
+
+                    var brightness = Convert.ToInt32(value);
+                    MainWindow.CurrentDevice.SetLedBrightness(brightness);
+                }
+                break;
+            case "LEDColor":
+                {
+                    var toggled = SettingsManager.GetBoolean("LED");
+
+                    if (!toggled)
+                        return;
+
+                    var color = Convert.ToString(value);
+                    MainWindow.CurrentDevice.SetLedColor(color);
+                }
+                break;
         }
     }
 

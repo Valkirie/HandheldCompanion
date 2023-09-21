@@ -1429,7 +1429,7 @@
   <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
     <value>Fondo de herramientas rápidas, none, mica, tabbed, acrylic</value>
   </data>
-  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Opciones de energía</value>
   </data>
   <data name="SettingsPage_HwInfoDesc" xml:space="preserve">

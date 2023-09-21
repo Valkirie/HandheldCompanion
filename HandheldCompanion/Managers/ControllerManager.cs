@@ -620,8 +620,10 @@ public static class ControllerManager
         // check applicable scenarios
         CheckControllerScenario();
 
-        // raise event
-        ControllerSelected?.Invoke(targetController);
+        // raise event, if controller is not about to be power cycled
+        PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
+        if (!IsPowerCycling)
+            ControllerSelected?.Invoke(targetController);
     }
 
     public static IController GetTargetController()

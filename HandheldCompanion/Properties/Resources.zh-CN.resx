@@ -1468,7 +1468,7 @@
   <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
     <value>左下</value>
   </data>
-  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>电源选项</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">

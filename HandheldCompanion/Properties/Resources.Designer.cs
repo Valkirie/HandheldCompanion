@@ -782,6 +782,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device.
+        /// </summary>
+        public static string DevicePage_Device {
+            get {
+                return ResourceManager.GetString("DevicePage_Device", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DIRECTIONAL PAD.
         /// </summary>
         public static string DPadPage_DPad {
@@ -3628,6 +3637,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device.
+        /// </summary>
+        public static string MainWindow_navDevice {
+            get {
+                return ResourceManager.GetString("MainWindow_navDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hotkeys.
         /// </summary>
         public static string MainWindow_navHotkeys {
@@ -6178,9 +6196,9 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Power options.
         /// </summary>
-        public static string SettingsPage_PowerOptions {
+        public static string DevicePage_PowerOptions {
             get {
-                return ResourceManager.GetString("SettingsPage_PowerOptions", resourceCulture);
+                return ResourceManager.GetString("DevicePage_PowerOptions", resourceCulture);
             }
         }
         

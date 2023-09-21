@@ -81,6 +81,9 @@ public static class SettingsManager
             case "OverlayControllerBackgroundColor":
                 value = Convert.ToString(value);
                 break;
+            case "LEDColor":
+                value = Convert.ToString(value);
+                break;
         }
 
         try

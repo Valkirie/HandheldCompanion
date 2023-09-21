@@ -212,5 +212,14 @@
     <Setting Name="DSUip" Type="System.String" Scope="User">
       <Value Profile="(Default)">127.0.0.1</Value>
     </Setting>
+    <Setting Name="LED" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LEDBrightness" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="LEDColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FFFFFF00</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

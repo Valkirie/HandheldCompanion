@@ -217,15 +217,6 @@ public partial class SettingsPage : Page
                 case "SensorPlacementUpsideDown":
                     Toggle_SensorPlacementUpsideDown.IsOn = Convert.ToBoolean(value);
                     break;
-                case "ConfigurableTDPOverride":
-                    Toggle_cTDP.IsOn = Convert.ToBoolean(value);
-                    break;
-                case "ConfigurableTDPOverrideDown":
-                    NumberBox_TDPMin.Value = Convert.ToDouble(value);
-                    break;
-                case "ConfigurableTDPOverrideUp":
-                    NumberBox_TDPMax.Value = Convert.ToDouble(value);
-                    break;
                 case "CurrentCulture":
                     cB_Language.SelectedItem = new CultureInfo((string)value);
 
@@ -608,72 +599,6 @@ public partial class SettingsPage : Page
         catch
         {
         }
-    }
-
-    private async void Toggle_cTDP_Toggled(object? sender, RoutedEventArgs? e)
-    {
-        if (!IsLoaded)
-            return;
-
-        if (Toggle_cTDP.IsOn)
-        {
-            // todo: localize me !
-            var result = Dialog.ShowAsync(
-                "Warning",
-                "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
-                ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
-
-            await result; // sync call
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    break;
-                default:
-                case ContentDialogResult.None:
-                    // restore previous state
-                    Toggle_cTDP.IsOn = false;
-                    return;
-            }
-        }
-
-        SettingsManager.SetProperty("ConfigurableTDPOverride", Toggle_cTDP.IsOn);
-        SettingsManager.SetProperty("ConfigurableTDPOverrideUp", NumberBox_TDPMax.Value);
-        SettingsManager.SetProperty("ConfigurableTDPOverrideDown", NumberBox_TDPMin.Value);
-    }
-
-    private void NumberBox_TDPMax_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-    {
-        var value = NumberBox_TDPMax.Value;
-        if (double.IsNaN(value))
-            return;
-
-        NumberBox_TDPMin.Maximum = value;
-
-        if (!IsLoaded)
-            return;
-
-        // update current device cTDP
-        MainWindow.CurrentDevice.cTDP[1] = value;
-
-        SettingsManager.SetProperty("ConfigurableTDPOverrideUp", value);
-    }
-
-    private void NumberBox_TDPMin_ValueChanged(NumberBox? sender, NumberBoxValueChangedEventArgs? args)
-    {
-        var value = NumberBox_TDPMin.Value;
-        if (double.IsNaN(value))
-            return;
-
-        NumberBox_TDPMax.Minimum = value;
-
-        if (!IsLoaded)
-            return;
-
-        // update current device cTDP
-        MainWindow.CurrentDevice.cTDP[0] = value;
-
-        SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
     }
 
     private void cB_SensorSelection_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
