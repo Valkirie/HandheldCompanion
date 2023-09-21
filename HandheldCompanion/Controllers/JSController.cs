@@ -192,7 +192,7 @@ public class JSController : IController
                     // await Task.Delay(1000);
                     // Details.InstallCustomDriver("hidbth.inf");
 
-                    Details.Uninstall();
+                    Details.Uninstall(false);
                     await Task.Delay(1000);
                     Devcon.Refresh();
                 });
