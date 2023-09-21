@@ -66,7 +66,7 @@ public static class HidHide
         try
         {
             var service = new HidHideControlService();
-            return service.BlockedInstanceIds.ToList();
+            return service.BlockedInstanceIds.Select(x => x.ToUpper()).ToList();
         }
         catch
         {
@@ -80,7 +80,7 @@ public static class HidHide
         try
         {
             var registered = GetRegisteredDevices();
-            return registered.Contains(InstanceId);
+            return registered.Contains(InstanceId.ToUpper());
         }
         catch
         {
@@ -143,7 +143,7 @@ public static class HidHide
         return true;
     }
 
-    public static void SetCloaking(bool status)
+    public static bool SetCloaking(bool status)
     {
         try
         {
@@ -153,13 +153,32 @@ public static class HidHide
         }
         catch
         {
+            if (process is null)
+                return false;
+
+            switch(status)
+            {
+                case true:
+                    process.StartInfo.Arguments = $"--cloak-on";
+                    break;
+                case false:
+                    process.StartInfo.Arguments = $"--cloak-off";
+                    break;
+            }
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
+
+            LogManager.LogInformation("HideDevice SetCloaking: {0}", status);
         }
+
+        return true;
     }
 
-    public static void UnhidePath(string deviceInstancePath)
+    public static bool UnhidePath(string deviceInstancePath)
     {
         if (string.IsNullOrEmpty(deviceInstancePath))
-            return;
+            return false;
 
         try
         {
@@ -172,13 +191,24 @@ public static class HidHide
         }
         catch
         {
+            if (process is null)
+                return false;
+
+            process.StartInfo.Arguments = $"--dev-unhide \"{deviceInstancePath}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
+
+            LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
         }
+
+        return true;
     }
 
-    public static void HidePath(string deviceInstancePath)
+    public static bool HidePath(string deviceInstancePath)
     {
         if (string.IsNullOrEmpty(deviceInstancePath))
-            return;
+            return false;
 
         try
         {
@@ -191,10 +221,21 @@ public static class HidHide
         }
         catch
         {
+            if (process is null)
+                return false;
+
+            process.StartInfo.Arguments = $"--dev-hide \"{deviceInstancePath}\"";
+            process.Start();
+            process.WaitForExit();
+            process.StandardOutput.ReadToEnd();
+
+            LogManager.LogInformation("HideDevice AddBlockedInstanceId: {0}", deviceInstancePath);
         }
+
+        return true;
     }
 
-    public static List<HidHideDevice> GetHidHideDevices()
+    public static List<HidHideDevice> GetHidHideDevices(string arg = "--dev-all")
     {
         try
         {

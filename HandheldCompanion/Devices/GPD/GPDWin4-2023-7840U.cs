@@ -1,6 +1,4 @@
 ﻿using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;

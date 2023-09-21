@@ -1,9 +1,11 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers;
@@ -183,9 +185,25 @@ public class XInputController : IController
         return SharpDX.XInput.UserIndex.Any;
     }
 
-    public override bool RestoreDrivers()
+    public override void CyclePort()
     {
-        return Details.InstallCustomDriver("xusb22.inf");
+        string enumerator = Details.GetEnumerator();
+        switch (enumerator)
+        {
+            default:
+            case "BTHENUM":
+                Task.Run(async () =>
+                {
+                    Details.Uninstall(true);    // Bluetooth XINPUT compatible input device
+                    Details.Uninstall(false);   // Bluetooth HID Device
+                    await Task.Delay(1000);
+                    Devcon.Refresh();
+                });
+                break;
+            case "USB":
+                base.CyclePort();
+                break;
+        }
     }
 
     public override string GetGlyph(ButtonFlags button)

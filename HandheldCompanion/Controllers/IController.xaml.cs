@@ -264,7 +264,7 @@ namespace HandheldCompanion.Controllers
 
         public bool IsHidden()
         {
-            var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
+            // var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
             var hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
             return /* hide_device || */ hide_base;
         }
@@ -275,6 +275,15 @@ namespace HandheldCompanion.Controllers
 
             if (powerCycle)
             {
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    IsEnabled = false;
+                    ProgressBarUpdate.Visibility = Visibility.Visible;
+                });
+
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+
                 CyclePort();
                 return;
             }
@@ -288,6 +297,15 @@ namespace HandheldCompanion.Controllers
 
             if (powerCycle)
             {
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    IsEnabled = false;
+                    ProgressBarUpdate.Visibility = Visibility.Visible;
+                });
+
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+
                 CyclePort();
                 return;
             }
@@ -295,32 +313,9 @@ namespace HandheldCompanion.Controllers
             RefreshControls();
         }
 
-        private void CyclePort()
+        public virtual void CyclePort()
         {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                IsEnabled = false;
-                ProgressBarUpdate.Visibility = Visibility.Visible;
-            });
-
-            ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
-
-            string enumerator = Details.GetEnumerator();
-            switch (enumerator)
-            {
-                default:
-                case "BTHENUM":
-                    Task.Run(async () =>
-                    {
-                        Details.InstallNullDrivers();
-                        Details.InstallCustomDriver("hidbth.inf");
-                    });
-                    break;
-                case "USB":
-                    Details.CyclePort();
-                    break;
-            }
+            Details.CyclePort();
         }
 
         public void HideHID()

@@ -1,5 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using System.Threading.Tasks;
 using System.Windows;
 using static JSL;
 using Timer = System.Timers.Timer;
@@ -175,6 +177,30 @@ public class JSController : IController
             ui_button_calibrate.Content = "Calibrating";
             ui_button_calibrate.IsEnabled = false;
         });
+    }
+
+    public override void CyclePort()
+    {
+        string enumerator = Details.GetEnumerator();
+        switch (enumerator)
+        {
+            default:
+            case "BTHENUM":
+                Task.Run(async () =>
+                {
+                    // Details.InstallNullDrivers();
+                    // await Task.Delay(1000);
+                    // Details.InstallCustomDriver("hidbth.inf");
+
+                    Details.Uninstall();
+                    await Task.Delay(1000);
+                    Devcon.Refresh();
+                });
+                break;
+            case "USB":
+                base.CyclePort();
+                break;
+        }
     }
 
     protected override void ui_button_calibrate_Click(object sender, RoutedEventArgs e)

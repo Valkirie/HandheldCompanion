@@ -169,6 +169,9 @@ public static class ControllerManager
 
         IsInitialized = false;
 
+        // Flushing possible JoyShocks...
+        JslDisconnectAndDisposeAll();
+
         DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
 
@@ -458,8 +461,11 @@ public static class ControllerManager
             return;
 
         // XInput controller are handled elsewhere
-        if (controller.GetType() == typeof(XInputController))
+        if (controller is XInputController)
             return;
+
+        if (controller is JSController)
+            JslDisconnect(controller.GetUserIndex());
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
@@ -574,7 +580,7 @@ public static class ControllerManager
     public static void SetTargetController(string baseContainerDeviceInstanceId, bool IsPowerCycling)
     {
         // unplug current controller
-        if (targetController is not null && targetController.IsPlugged())
+        if (targetController is not null)
         {
             string targetPath = targetController.GetContainerInstancePath();
 
@@ -605,25 +611,28 @@ public static class ControllerManager
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
 
+        // update settings
+        SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
+
         if (!IsPowerCycling)
         {
-            if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
-                targetController.Rumble();
-
             if (SettingsManager.GetBoolean("HIDcloakonconnect"))
                 targetController.Hide();
-
-            // update settings
-            SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
         }
 
         // check applicable scenarios
         CheckControllerScenario();
 
-        // raise event, if controller is not about to be power cycled
+        // check if controller is about to power cycle
         PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
+
         if (!IsPowerCycling)
-            ControllerSelected?.Invoke(targetController);
+        {
+            if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
+                targetController.Rumble();
+        }
+        
+        ControllerSelected?.Invoke(targetController);
     }
 
     public static IController GetTargetController()
