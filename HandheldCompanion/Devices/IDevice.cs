@@ -226,7 +226,18 @@ public abstract class IDevice
                             device = new GPDWin3();
                             break;
                         case "G1618-04":
-                            device = new GPDWin4();
+                            switch (Processor)
+                            {
+                                case "AMD Ryzen 7 6800U with Radeon Graphics":
+                                    device = new GPDWin4();
+                                    break;
+                                case "AMD Ryzen 5 7640U w/ Radeon 760M Graphics":
+                                    device = new GPDWin4_2023_7640U();
+                                    break;
+                                case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
+                                    device = new GPDWin4_2023_7840U();
+                                    break;
+                            }
                             break;
                         case "G1619-03":
                             device = new GPDWinMax2Intel();
