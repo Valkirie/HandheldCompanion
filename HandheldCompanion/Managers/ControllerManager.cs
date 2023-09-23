@@ -169,8 +169,8 @@ public static class ControllerManager
 
         IsInitialized = false;
 
-        // Flushing possible JoyShocks...
-        JslDisconnectAndDisposeAll();
+        // unplug on close
+        ClearTargetController();
 
         DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
         DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
@@ -185,9 +185,8 @@ public static class ControllerManager
             foreach (var controller in GetPhysicalControllers())
                 controller.Unhide(false);
 
-        // unplug on close
-        var target = GetTargetController();
-        target?.Unplug();
+        // Flushing possible JoyShocks...
+        JslDisconnectAndDisposeAll();
 
         LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
@@ -574,6 +573,9 @@ public static class ControllerManager
             targetController.Cleanup();
             targetController.Unplug();
             targetController = null;
+
+            // update HIDInstancePath
+            SettingsManager.SetProperty("HIDInstancePath", string.Empty);
         }
     }
 
@@ -611,13 +613,14 @@ public static class ControllerManager
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
 
-        // update settings
+        // update HIDInstancePath
         SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
 
         if (!IsPowerCycling)
         {
             if (SettingsManager.GetBoolean("HIDcloakonconnect"))
-                targetController.Hide();
+                if (!targetController.IsHidden())
+                    targetController.Hide();
         }
 
         // check applicable scenarios
@@ -630,6 +633,12 @@ public static class ControllerManager
         {
             if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
                 targetController.Rumble();
+        }
+        else
+        {
+            // stop listening to device while it's power cycled
+            // only usefull for Xbox One bluetooth controllers
+            targetController.Unplug();
         }
         
         ControllerSelected?.Invoke(targetController);

@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers;
@@ -185,6 +186,34 @@ public class XInputController : IController
         return SharpDX.XInput.UserIndex.Any;
     }
 
+    public override void Hide(bool powerCycle = true)
+    {
+        if (powerCycle)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
+            });
+        }
+
+        base.Hide(powerCycle);
+    }
+
+    public override void Unhide(bool powerCycle = true)
+    {
+        if (powerCycle)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
+            });
+        }
+
+        base.Unhide(powerCycle);
+    }
+
     public override void CyclePort()
     {
         string enumerator = Details.GetEnumerator();
@@ -194,10 +223,22 @@ public class XInputController : IController
             case "BTHENUM":
                 Task.Run(async () =>
                 {
-                    Details.Uninstall(true);    // Bluetooth XINPUT compatible input device
+                    /*
+                    // Bluetooth HID Device
+                    Details.InstallNullDrivers(false);
+                    Details.InstallCustomDriver("hidbth.inf", false);
+
+                    // Bluetooth XINPUT compatible input device
+                    Details.InstallNullDrivers(true);
+                    Details.InstallCustomDriver("xinputhid.inf", true);
+                    */
+
+                    /*
                     Details.Uninstall(false);   // Bluetooth HID Device
+                    Details.Uninstall(true);    // Bluetooth XINPUT compatible input device
                     await Task.Delay(1000);
                     Devcon.Refresh();
+                    */
                 });
                 break;
             case "USB":
