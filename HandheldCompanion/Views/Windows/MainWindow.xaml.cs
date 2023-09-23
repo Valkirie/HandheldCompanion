@@ -99,7 +99,7 @@ public partial class MainWindow : GamepadWindow
         var tablets = Tablet.TabletDevices;
 
         // get first start
-        var FirstStart = SettingsManager.GetBoolean("FirstStart");
+        bool FirstStart = SettingsManager.GetBoolean("FirstStart");
 
         // define current directory
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -185,6 +185,8 @@ public partial class MainWindow : GamepadWindow
         {
             splashScreen = new SplashScreen();
             splashScreen.Show();
+
+            SettingsManager.SetProperty("FirstStart", false);
         }
 
         // load manager(s)
