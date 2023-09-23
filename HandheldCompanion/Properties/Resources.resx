@@ -2351,4 +2351,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="MainWindow_navDevice" xml:space="preserve">
     <value>Device</value>
   </data>
+  <data name="ControllerPage_XInputControllerWarning" xml:space="preserve">
+    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+  </data>
 </root>
