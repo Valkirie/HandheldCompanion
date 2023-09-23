@@ -318,6 +318,10 @@ namespace HandheldCompanion.Controllers
             Details.CyclePort();
         }
 
+        public virtual void SetLightColor(byte R, byte G, byte B)
+        {
+        }
+
         public void HideHID()
         {
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);

@@ -5,6 +5,8 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
+using Inkore.UI.WPF.Modern;
+using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
@@ -13,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
 using DeviceType = SharpDX.DirectInput.DeviceType;
@@ -31,6 +34,8 @@ public static class ControllerManager
     private static FocusedWindow focusedWindows = FocusedWindow.None;
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
+
+    private static UISettings uiSettings;
 
     public static bool IsInitialized;
 
@@ -65,6 +70,9 @@ public static class ControllerManager
         // enable HidHide
         HidHide.SetCloaking(true);
 
+        uiSettings = new UISettings();
+        uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -73,6 +81,14 @@ public static class ControllerManager
         ControllerSelected?.Invoke(GetEmulatedController());
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    private static void OnColorValuesChanged(UISettings sender, object args)
+    {
+        var _systemBackground = uiSettings.GetColorValue(UIColorType.Background);
+        var _systemAccent = uiSettings.GetColorValue(UIColorType.Accent);
+
+        targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
     }
 
     [Flags]
@@ -570,6 +586,7 @@ public static class ControllerManager
         if (targetController is not null)
         {
             targetController.InputsUpdated -= UpdateInputs;
+            targetController.SetLightColor(0, 0, 0);
             targetController.Cleanup();
             targetController.Unplug();
             targetController = null;
@@ -612,6 +629,10 @@ public static class ControllerManager
         targetController = controller;
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
+
+        var _systemBackground = uiSettings.GetColorValue(UIColorType.Background);
+        var _systemAccent = uiSettings.GetColorValue(UIColorType.Accent);
+        targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
         // update HIDInstancePath
         SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
