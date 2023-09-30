@@ -33,6 +33,19 @@ public class GPDWin4_2023_7840U : IDevice
             { 'Z', 'Y' }
         };
 
+        // device specific capacities
+        Capabilities = DeviceCapabilities.FanControl;
+
+        ECDetails = new ECDetails
+        {
+            AddressControl = 0x275,
+            AddressDuty = 0x1809,
+            AddressRegistry = 0x4E,
+            AddressData = 0x4F,
+            ValueMin = 0,
+            ValueMax = 184
+        };
+
         // Note, OEM1 not configured as this device has it's own Menu button for guide button
 
         // Note, chords need to be manually configured in GPD app first by end user
