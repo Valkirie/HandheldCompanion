@@ -2,6 +2,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
+using HidLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ public enum DeviceCapabilities : ushort
     None = 0,
     InternalSensor = 1,
     ExternalSensor = 2,
-    FanControl = 4,
+    FanControl = 4
 }
 
 public struct ECDetails
@@ -224,7 +225,18 @@ public abstract class IDevice
                             device = new GPDWin3();
                             break;
                         case "G1618-04":
-                            device = new GPDWin4();
+                            switch (Processor)
+                            {
+                                case "AMD Ryzen 7 6800U with Radeon Graphics":
+                                    device = new GPDWin4();
+                                    break;
+                                case "AMD Ryzen 5 7640U w/ Radeon 760M Graphics":
+                                    device = new GPDWin4_2023_7640U();
+                                    break;
+                                case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
+                                    device = new GPDWin4_2023_7840U();
+                                    break;
+                            }
                             break;
                         case "G1619-03":
                             device = new GPDWinMax2Intel();
@@ -465,6 +477,15 @@ public abstract class IDevice
         ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
     }
 
+    public virtual float ReadFanDuty()
+    {
+        if (ECDetails.AddressControl == 0)
+            return 0;
+
+        // todo: implement me
+        return 0;
+    }
+
     [Obsolete("ECRamReadByte is deprecated, please use ECRamReadByte with ECDetails instead.")]
     public static byte ECRamReadByte(ushort address)
     {
@@ -548,5 +569,13 @@ public abstract class IDevice
     protected void KeyRelease(ButtonFlags button)
     {
         KeyReleased?.Invoke(button);
+    }
+
+    protected static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
+    {
+        HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, new int[] { deviceId }).ToArray();
+        foreach (HidDevice device in HidDeviceList)
+            if (device.IsConnected && device.Capabilities.FeatureReportByteLength >= minFeatures)
+                yield return device;
     }
 }

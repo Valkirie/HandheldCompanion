@@ -1,15 +1,18 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Devices.ASUS;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HidSharp;
-using HidSharp.Reports.Input;
+using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Management;
 using System.Numerics;
-using System.Threading.Tasks;
+using System.Text;
 using WindowsInput.Events;
+using Task = System.Threading.Tasks.Task;
 
 namespace HandheldCompanion.Devices;
 
@@ -27,8 +30,24 @@ public class ROGAlly : IDevice
         { 236, ButtonFlags.None }
     };
 
-    private IEnumerable<HidDevice> _hidDevices;
-    private List<HidStream> _hidStreams = new();
+    private HidDevice hidDevice;
+    private AsusACPI asusACPI;
+
+    private enum AuraMode
+    {
+        Static = 0,
+        Breathe = 1,
+        Cycle = 2,
+        Rainbow = 3,
+        Strobe = 4,
+    }
+
+    private enum AuraSpeed
+    {
+        Slow = 0xeb,
+        Medium = 0xf5,
+        Fast = 0xe1,
+    }
 
     public ROGAlly()
     {
@@ -62,6 +81,9 @@ public class ROGAlly : IDevice
             { 'Z', 'Y' }
         };
 
+        // device specific capacities
+        Capabilities = DeviceCapabilities.FanControl;
+
         OEMChords.Add(new DeviceChord("CC",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
@@ -84,71 +106,47 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        // set exclusive connection with highest priority
-        var deviceConfiguration = new OpenConfiguration();
-        deviceConfiguration.SetOption(OpenOption.Exclusive, true);
-        deviceConfiguration.SetOption(OpenOption.Transient, true);
-        deviceConfiguration.SetOption(OpenOption.Priority, OpenPriority.VeryHigh);
+        if (hidDevice is not null)
+            hidDevice.OpenDevice();
 
-        foreach (var _hidDevice in _hidDevices)
-        {
-            try
-            {
-                // connect to hid device
-                var _stream = _hidDevice.Open();
+        // try open asus ACPI
+        asusACPI = new AsusACPI();
+        if (asusACPI is null)
+            return false;
 
-                // add stream to array
-                _hidStreams.Add(_stream);
+        asusACPI.SubscribeToEvents(WatcherEventArrived);
 
-                // get descriptor
-                var deviceDescriptor = _hidDevice.GetReportDescriptor();
-
-                foreach (var inputReport in deviceDescriptor.InputReports)
-                {
-                    DeviceItemInputParser hiddeviceInputParser = inputReport.DeviceItem.CreateDeviceItemInputParser();
-                    HidDeviceInputReceiver hidDeviceInputReceiver = deviceDescriptor.CreateHidDeviceInputReceiver();
-
-                    // listen for event(s)
-                    hidDeviceInputReceiver.Received += (sender, e) =>
-                        InputReportReceiver_Received(_hidDevice, hiddeviceInputParser, hidDeviceInputReceiver);
-
-                    // start receiver
-                    hidDeviceInputReceiver.Start(_stream);
-
-                    LogManager.LogInformation("HID connected: {0}", _stream.Device.DevicePath);
-                }
-            }
-            catch
-            {
-                LogManager.LogError("HID error: {0}", _hidDevice.DevicePath);
-            }
-        }
         return true;
     }
 
     public override void Close()
     {
-        // close stream(s)
-        foreach (HidStream stream in _hidStreams)
-            stream.Close();
+        // close Asus ACPI
+        if (asusACPI is not null)
+            asusACPI.Close();
 
         // clear array
-        _hidStreams.Clear();
+        if (hidDevice is not null)
+            hidDevice.CloseDevice();        
 
         base.Close();
     }
+
+    public void WatcherEventArrived(object sender, EventArrivedEventArgs e)
+    {
+        if (e.NewEvent is null) return;
+        int EventID = int.Parse(e.NewEvent["EventID"].ToString());
+        LogManager.LogDebug("WMI event {0}", EventID);
+        HandleEvent((byte)EventID);
+    }
+
     public override bool IsReady()
     {
-        // get hid devices
-        _hidDevices = DeviceList.Local.GetHidDevices()
-            .Where(d => d.ProductID == _pid && d.VendorID == _vid);
-
-        var _hidDevice = _hidDevices.FirstOrDefault();
-
-        if (_hidDevice is null)
+        hidDevice = GetHidDevices(_vid, _pid).FirstOrDefault();
+        if (hidDevice is null)
             return false;
 
-        var pnpDevice = PnPDevice.GetDeviceByInterfaceId(_hidDevice.DevicePath);
+        var pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
         var device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
         var pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
@@ -156,6 +154,35 @@ public class ROGAlly : IDevice
         var parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
         return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+    }
+
+    public override void SetFanControl(bool enable)
+    {
+        if (!asusACPI.IsOpen())
+            return;
+
+        switch (enable)
+        {
+            case false:
+                asusACPI.DeviceSet(AsusACPI.PerformanceMode, (int)AsusMode.Turbo);
+                return;
+        }
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        if (!asusACPI.IsOpen())
+            return;
+
+        asusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
+        asusACPI.SetFanSpeed(AsusFan.GPU, Convert.ToByte(percent));
+    }
+
+    public override float ReadFanDuty()
+    {
+        int cpuFan = asusACPI.DeviceGet(AsusACPI.CPU_Fan);
+        int gpuFan = asusACPI.DeviceGet(AsusACPI.GPU_Fan);
+        return (cpuFan + gpuFan) / 2 * 100;
     }
 
     public override void SetKeyPressDelay(HIDmode controllerMode)
@@ -171,80 +198,63 @@ public class ROGAlly : IDevice
         }
     }
 
-    private void InputReportReceiver_Received(HidDevice hidDevice, DeviceItemInputParser hiddeviceInputParser,
-        HidDeviceInputReceiver hidDeviceInputReceiver)
+    private void HandleEvent(byte key)
     {
-        var inputReportBuffer = new byte[hidDevice.GetMaxInputReportLength()];
+        if (!keyMapping.ContainsKey(key))
+            return;
 
-        while (hidDeviceInputReceiver.TryRead(inputReportBuffer, 0, out var report))
+        // get button
+        var button = keyMapping[key];
+
+        // HID Report Item = hex = decimal
+        // Left or right paddle = A5 = 165
+        // Left OEM key = A6 = 166
+        // Right OEM key = 38 = 56
+        // Right OEM key hold = A7 and A8 = 167 and 168
+
+        switch (key)
         {
-            switch (report.ReportID)
-            {
-                case 90:
-                    break;
-                default:
-                    return;
-            }
-
-            if (!hiddeviceInputParser.TryParseReport(inputReportBuffer, 0, report)) continue;
-            var key = inputReportBuffer[1];
-
-            if (!keyMapping.ContainsKey(key))
+            case 236:
                 return;
 
-            // get button
-            var button = keyMapping[key];
+            case 0:
+                {
+                    KeyRelease(ButtonFlags.OEM3);
+                }
+                return;
 
-            // HID Report Item = hex = decimal
-            // Left or right paddle = A5 = 165
-            // Left OEM key = A6 = 166
-            // Right OEM key = 38 = 56
-            // Right OEM key hold = A7 and A8 = 167 and 168
-
-            switch (key)
-            {
-                case 236:
-                    return;
-
-                case 0:
+            case 56:
+            case 166:
+                {
+                    // OEM1 and OEM2 key needs a key press delay based on emulated controller
+                    Task.Run(async () =>
                     {
-                        KeyRelease(ButtonFlags.OEM3);
-                    }
-                    return;
+                        KeyPress(button);
+                        await Task.Delay(KeyPressDelay);
+                        KeyRelease(button);
+                    });
+                }
+                break;
 
-                case 56:
-                case 166:
+            case 165:
+            case 167:
+                KeyPress(button);
+                break;
+
+            case 168:
+                KeyRelease(button);
+                break;
+
+            default:
+                {
+                    Task.Run(async () =>
                     {
-                        // OEM1 and OEM2 key needs a key press delay based on emulated controller
-                        Task.Factory.StartNew(async () =>
-                        {
-                            KeyPress(button);
-                            await Task.Delay(KeyPressDelay);
-                            KeyRelease(button);
-                        });
-                    }
-                    break;
-
-                case 165:
-                case 167:
-                    KeyPress(button);
-                    break;
-
-                case 168:
-                    KeyRelease(button);
-                    break;
-
-                default:
-                    {
-                        Task.Factory.StartNew(async () =>
-                        {
-                            KeyPress(button);
-                            await Task.Delay(20);
-                            KeyRelease(button);
-                        });
-                    }
-                    break;
-            }
+                        KeyPress(button);
+                        await Task.Delay(20);
+                        KeyRelease(button);
+                    });
+                }
+                break;
         }
     }
 }

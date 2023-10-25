@@ -62,7 +62,7 @@
                         Visibility="Collapsed">
 
                         <Expander.Header>
-                            <DockPanel>
+                            <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
                                     Height="40"
                                     HorizontalAlignment="Center"
@@ -95,7 +95,7 @@
                         Visibility="Collapsed">
 
                         <Expander.Header>
-                            <DockPanel>
+                            <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
                                     Height="40"
                                     HorizontalAlignment="Center"
@@ -128,7 +128,7 @@
                         Visibility="Collapsed">
 
                         <Expander.Header>
-                            <DockPanel>
+                            <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
                                     Height="40"
                                     HorizontalAlignment="Center"
@@ -161,7 +161,7 @@
                         Visibility="Collapsed">
 
                         <Expander.Header>
-                            <DockPanel>
+                            <DockPanel Margin="0,12,12,12">
                                 <ui:FontIcon
                                     Height="40"
                                     HorizontalAlignment="Center"
@@ -211,7 +211,7 @@
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversAction}" TextWrapping="Wrap" />
                     </Expander>
 
-                    <!--  Steam Xbox Controller Enhanced Features Driver  -->
+                    <!--  Steam Desktop Layout  -->
                     <Expander
                         Name="HintsSteamNeptuneDeskop"
                         Padding="15,12,12,12"

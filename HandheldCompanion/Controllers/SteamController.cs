@@ -28,6 +28,20 @@ namespace HandheldCompanion.Controllers
             isVirtualMuted = mute;
         }
 
+        public override void Hide(bool powerCycle = true)
+        {
+            HideHID();
+
+            RefreshControls();
+        }
+
+        public override void Unhide(bool powerCycle = true)
+        {
+            UnhideHID();
+
+            RefreshControls();
+        }
+
         public override string GetGlyph(ButtonFlags button)
         {
             switch (button)

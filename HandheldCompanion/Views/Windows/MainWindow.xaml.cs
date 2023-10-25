@@ -43,6 +43,7 @@ public partial class MainWindow : GamepadWindow
     private static readonly Dictionary<string, Page> _pages = new();
 
     public static ControllerPage controllerPage;
+    public static DevicePage devicePage;
     public static ProfilesPage profilesPage;
     public static SettingsPage settingsPage;
     public static AboutPage aboutPage;
@@ -98,7 +99,7 @@ public partial class MainWindow : GamepadWindow
         var tablets = Tablet.TabletDevices;
 
         // get first start
-        var FirstStart = SettingsManager.GetBoolean("FirstStart");
+        bool FirstStart = SettingsManager.GetBoolean("FirstStart");
 
         // define current directory
         InstallPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -184,6 +185,8 @@ public partial class MainWindow : GamepadWindow
         {
             splashScreen = new SplashScreen();
             splashScreen.Show();
+
+            SettingsManager.SetProperty("FirstStart", false);
         }
 
         // load manager(s)
@@ -381,6 +384,7 @@ public partial class MainWindow : GamepadWindow
         controllerPage = new ControllerPage("controller");
         controllerPage.Loaded += ControllerPage_Loaded;
 
+        devicePage = new DevicePage("device");
         profilesPage = new ProfilesPage("profiles");
         settingsPage = new SettingsPage("settings");
         aboutPage = new AboutPage("about");
@@ -390,6 +394,7 @@ public partial class MainWindow : GamepadWindow
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
+        _pages.Add("DevicePage", devicePage);
         _pages.Add("ProfilesPage", profilesPage);
         _pages.Add("AboutPage", aboutPage);
         _pages.Add("OverlayPage", overlayPage);

@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern;
+using System.Windows;
 using System.Windows.Media;
 using static JSL;
 
@@ -95,6 +97,15 @@ public class DS4Controller : JSController
     {
         TimerManager.Tick -= UpdateInputs;
         base.Unplug();
+    }
+
+    public override void SetLightColor(byte R, byte G, byte B)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            JslSetLightColour(UserIndex, CommonUtils.rgb_to_int(R, G, B));
+        });
     }
 
     public override void Cleanup()

@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using System.Windows;
 using static JSL;
 
 namespace HandheldCompanion.Controllers;
@@ -88,6 +89,15 @@ public class DualSenseController : JSController
     {
         TimerManager.Tick -= UpdateInputs;
         base.Unplug();
+    }
+
+    public override void SetLightColor(byte R, byte G, byte B)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            JslSetLightColour(UserIndex, CommonUtils.rgb_to_int(R, G, B));
+        });
     }
 
     public override void Cleanup()

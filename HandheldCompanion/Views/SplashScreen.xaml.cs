@@ -12,10 +12,5 @@ namespace HandheldCompanion.Views
         {
             InitializeComponent();
         }
-
-        private void OverlayWindow_ActualThemeChanged(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
     }
 }

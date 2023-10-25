@@ -50,6 +50,13 @@ public static class CommonUtils
         return principal.IsInRole(WindowsBuiltInRole.Administrator);
     }
 
+    public static int rgb_to_int(byte led_r, byte led_g, byte led_b)
+    {
+        int colour = 0;
+        colour = (led_r << 16) | (led_g << 8) | led_b;
+        return colour;
+    }
+
     public static void OpenUrl(string url)
     {
         try

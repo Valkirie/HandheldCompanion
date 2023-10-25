@@ -2251,7 +2251,7 @@
   <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
     <value>Not set</value>
   </data>
-  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Power options</value>
   </data>
   <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">

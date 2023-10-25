@@ -206,8 +206,7 @@ namespace HandheldCompanion.Controllers
         public virtual void SetVibrationStrength(uint value, bool rumble = false)
         {
             VibrationStrength = value / 100.0d;
-            if (rumble)
-                Rumble();
+            if (rumble) Rumble();
         }
 
         public virtual void SetVibration(byte LargeMotor, byte SmallMotor)
@@ -223,11 +222,14 @@ namespace HandheldCompanion.Controllers
             return false;
         }
 
-        public virtual async void Rumble(int delay = 125)
+        public virtual void Rumble(int delay = 125)
         {
-            SetVibration(byte.MaxValue, byte.MaxValue);
-            await Task.Delay(delay);
-            SetVibration(0, 0);
+            Task.Run(async () =>
+            {
+                SetVibration(byte.MaxValue, byte.MaxValue);
+                await Task.Delay(delay);
+                SetVibration(0, 0);
+            });
         }
 
         public virtual bool IsPlugged()
@@ -262,17 +264,14 @@ namespace HandheldCompanion.Controllers
 
         public bool IsHidden()
         {
-            var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
+            // var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
             var hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
             return /* hide_device || */ hide_base;
         }
 
-        public void Hide(bool powerCycle = true)
+        public virtual void Hide(bool powerCycle = true)
         {
             HideHID();
-
-            // set flag
-            powerCycle = powerCycle && this is not SteamController;
 
             if (powerCycle)
             {
@@ -280,23 +279,21 @@ namespace HandheldCompanion.Controllers
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     IsEnabled = false;
-                    ProgressBarUpdate.Visibility = Visibility.Visible;
+                    ProgressBarPanel.Visibility = Visibility.Visible;
                 });
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
-                Details.CyclePort();
+
+                CyclePort();
                 return;
             }
 
             RefreshControls();
         }
 
-        public void Unhide(bool powerCycle = true)
+        public virtual void Unhide(bool powerCycle = true)
         {
             UnhideHID();
-
-            // set flag
-            powerCycle = powerCycle && this is not SteamController;
 
             if (powerCycle)
             {
@@ -304,15 +301,25 @@ namespace HandheldCompanion.Controllers
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     IsEnabled = false;
-                    ProgressBarUpdate.Visibility = Visibility.Visible;
+                    ProgressBarPanel.Visibility = Visibility.Visible;
                 });
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
-                Details.CyclePort();
+
+                CyclePort();
                 return;
             }
 
             RefreshControls();
+        }
+
+        public virtual void CyclePort()
+        {
+            Details.CyclePort();
+        }
+
+        public virtual void SetLightColor(byte R, byte G, byte B)
+        {
         }
 
         public void HideHID()
@@ -341,6 +348,11 @@ namespace HandheldCompanion.Controllers
                 foreach (HidHideSubDevice subDevice in hideDevice.Devices)
                     HidHide.UnhidePath(subDevice.DeviceInstancePath);
             */
+        }
+
+        public virtual bool RestoreDrivers()
+        {
+            return true;
         }
 
         protected virtual void Calibrate()

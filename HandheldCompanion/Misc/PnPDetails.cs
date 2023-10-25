@@ -60,31 +60,157 @@ public class PnPDetails : IDisposable
         return -1;
     }
 
+    public string GetEnumerator()
+    {
+        PnPDevice device = GetBasePnPDevice();
+        if (device is not null)
+            return device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+
+        return string.Empty;
+    }
+
     public UsbPnPDevice GetUsbPnPDevice()
     {
-        var pnpDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-        if (pnpDevice is null)
+        PnPDevice device = GetBasePnPDevice();
+        if (device is null)
             return null;
 
         // is this a USB device
-        var enumerator = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-        if (!Equals(enumerator, "USB"))
-            return null;
+        string enumerator = GetEnumerator();
 
-        return pnpDevice.ToUsbPnPDevice();
+        switch (enumerator)
+        {
+            default:
+            case "BTHENUM":
+                return null;
+            case "USB":
+                break;
+        }
+
+        return device.ToUsbPnPDevice();
+    }
+
+    public PnPDevice GetPnPDevice()
+    {
+        try
+        {
+            return PnPDevice.GetDeviceByInstanceId(deviceInstanceId);
+        }
+        catch { }
+
+        return null;
+    }
+
+    public PnPDevice GetBasePnPDevice()
+    {
+        try
+        {
+            return PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+        }
+        catch { }
+
+        return null;
     }
 
     public bool CyclePort()
     {
-        var usbDevice = GetUsbPnPDevice();
-
-        if (usbDevice is null)
-            return false;
+        UsbPnPDevice device = GetUsbPnPDevice();
 
         try
         {
-            usbDevice.CyclePort();
-            return true;
+            if (device is not null)
+            {
+                device.CyclePort();
+                return true;
+            }
+        }
+        catch { }
+
+        return false;
+    }
+
+    public bool InstallNullDrivers(bool basedevice = true)
+    {
+        PnPDevice device;
+
+        switch (basedevice)
+        {
+            case true:
+                device = GetBasePnPDevice();
+                break;
+            case false:
+                device = GetPnPDevice();
+                break;
+        }
+
+        try
+        {
+            if (device is not null)
+            {
+                device.InstallNullDriver();
+                return true;
+            }
+        }
+        catch { }
+
+        return false;
+    }
+
+    public bool InstallCustomDriver(string driverName, bool basedevice = true)
+    {
+        PnPDevice device;
+        
+        switch(basedevice)
+        {
+            case true:
+                device = GetBasePnPDevice();
+                break;
+            case false:
+                device = GetPnPDevice();
+                break;
+        }
+
+        try
+        {
+            if (device is not null)
+            {
+                device.InstallCustomDriver(driverName);
+                return true;
+            }
+        }
+        catch { }
+
+        return false;
+    }
+
+    public bool Uninstall(bool basedevice = true, bool parent = false)
+    {
+        PnPDevice device;
+
+        switch (basedevice)
+        {
+            case true:
+                device = GetBasePnPDevice();
+
+                if (parent)
+                {
+                    var parentId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+                    device = PnPDevice.GetDeviceByInstanceId(parentId);
+                }
+
+                break;
+            case false:
+                device = GetPnPDevice();
+                break;
+        }
+
+        try
+        {
+            if (device is not null)
+            {
+                device.Uninstall();
+                return true;
+            }
         }
         catch { }
 

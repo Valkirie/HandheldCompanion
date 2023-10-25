@@ -63,11 +63,19 @@
                 </DockPanel>
             </Grid>
 
-            <ui:ProgressBar
-                Name="ProgressBarUpdate"
+            <ui:SimpleStackPanel
+                Name="ProgressBarPanel"
                 d:Visibility="Visible"
-                IsIndeterminate="True"
-                Visibility="Collapsed" />
+                Spacing="6"
+                Visibility="Collapsed">
+                <ui:ProgressBar Name="ProgressBarUpdate" IsIndeterminate="True" />
+                <TextBlock
+                    Name="ProgressBarWarning"
+                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+            </ui:SimpleStackPanel>
         </StackPanel>
     </Border>
 </UserControl>

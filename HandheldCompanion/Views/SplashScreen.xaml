@@ -9,7 +9,6 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Width="450"
     Height="450"
-    ui:ThemeManager.ActualThemeChanged="OverlayWindow_ActualThemeChanged"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseAcrylicBackdrop="True"

@@ -1486,7 +1486,7 @@
   <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
     <value>Bottom left</value>
   </data>
-  <data name="SettingsPage_PowerOptions" xml:space="preserve">
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Power options</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">

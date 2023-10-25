@@ -1,0 +1,144 @@
+﻿<Page
+    x:Class="HandheldCompanion.Views.Pages.DevicePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Title="{x:Static resx:Resources.DevicePage_Device}"
+    d:Background="White"
+    d:DesignHeight="500"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+
+    <Grid Name="MainGrid" Margin="20">
+        <ui:SimpleStackPanel Spacing="24">
+            <!--  Power options  -->
+            <ui:SimpleStackPanel Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_PowerOptions}" />
+
+                <!--  Configurable TDP  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverride}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_TDPRangeOverrideDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_cTDP"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_cTDP_Toggled" />
+                    </Grid>
+                </Border>
+
+                <!--  Configurable TDP down  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMin}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_TDPMinDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:NumberBox
+                            Name="NumberBox_TDPMin"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Minimum="3"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="NumberBox_TDPMin_ValueChanged" />
+                    </Grid>
+                </Border>
+
+                <!--  Configurable TDP up  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE713;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_TDPMax}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_TDPMaxDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:NumberBox
+                            Name="NumberBox_TDPMax"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Maximum="64"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="NumberBox_TDPMax_ValueChanged" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
+        </ui:SimpleStackPanel>
+    </Grid>
+</Page>
