@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Devices.ASUS;
+using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -32,6 +32,19 @@ public class ROGAlly : IDevice
 
     private HidDevice hidDevice;
     private AsusACPI asusACPI;
+
+    private const byte INPUT_HID_ID = 0x5a;
+    private const byte AURA_HID_ID = 0x5d;
+    private const int ASUS_ID = 0x0b05;
+
+    public static readonly byte[] LED_INIT1 = new byte[] { AURA_HID_ID, 0xb9 };
+    public static readonly byte[] LED_INIT2 = Encoding.ASCII.GetBytes("]ASUS Tech.Inc.");
+    public static readonly byte[] LED_INIT3 = new byte[] { AURA_HID_ID, 0x05, 0x20, 0x31, 0, 0x1a };
+    public static readonly byte[] LED_INIT4 = Encoding.ASCII.GetBytes("^ASUS Tech.Inc.");
+    public static readonly byte[] LED_INIT5 = new byte[] { 0x5e, 0x05, 0x20, 0x31, 0, 0x1a };
+
+    static byte[] MESSAGE_APPLY = { AURA_HID_ID, 0xb4 };
+    static byte[] MESSAGE_SET = { AURA_HID_ID, 0xb5, 0, 0, 0 };
 
     private enum AuraMode
     {
@@ -83,6 +96,7 @@ public class ROGAlly : IDevice
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.LEDControl;
 
         OEMChords.Add(new DeviceChord("CC",
             new List<KeyCode>(), new List<KeyCode>(),
@@ -206,27 +220,21 @@ public class ROGAlly : IDevice
         // get button
         var button = keyMapping[key];
 
-        // HID Report Item = hex = decimal
-        // Left or right paddle = A5 = 165
-        // Left OEM key = A6 = 166
-        // Right OEM key = 38 = 56
-        // Right OEM key hold = A7 and A8 = 167 and 168
-
         switch (key)
         {
-            case 236:
-                return;
+            case 167:   // Armory crate: Hold
+                KeyPress(button);
+                break;
 
-            case 0:
-                {
-                    KeyRelease(ButtonFlags.OEM3);
-                }
-                return;
+            case 168:   // Armory crate: Hold, released
+                KeyRelease(button);
+                break;
 
-            case 56:
-            case 166:
+            default:
+            case 56:    // Armory crate: Click
+            case 165:   // Back paddles: Click
+            case 166:   // Command center: Click
                 {
-                    // OEM1 and OEM2 key needs a key press delay based on emulated controller
                     Task.Run(async () =>
                     {
                         KeyPress(button);
@@ -235,26 +243,116 @@ public class ROGAlly : IDevice
                     });
                 }
                 break;
-
-            case 165:
-            case 167:
-                KeyPress(button);
-                break;
-
-            case 168:
-                KeyRelease(button);
-                break;
-
-            default:
-                {
-                    Task.Run(async () =>
-                    {
-                        KeyPress(button);
-                        await Task.Delay(20);
-                        KeyRelease(button);
-                    });
-                }
-                break;
         }
+    }
+
+    public override bool SetLedStatus(bool status)
+    {
+        switch(status)
+        {
+            case true:
+                bool success1 = SetLedBrightness(SettingsManager.GetInt("LEDBrightness"));
+                bool success2 = SetLedColor(SettingsManager.GetString("LEDColor"));
+                return success1 && success2;
+            case false:
+                return SetLedBrightness(0);
+        }
+    }
+
+    public override bool SetLedBrightness(int brightness) 
+    {
+        //ROG ALly brightness range is: 0 - 3 range, 0 is off, convert from 0 - 100 % range
+        brightness = (int)Math.Round(brightness / 33.33);
+
+        Task.Run(async () =>
+        {
+            byte[] msg = { AURA_HID_ID, 0xba, 0xc5, 0xc4, (byte)brightness };
+            byte[] msgBackup = { INPUT_HID_ID, 0xba, 0xc5, 0xc4, (byte)brightness };
+
+            IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
+            foreach (HidDevice device in devices)
+            {
+                if (device is null || !device.IsConnected)
+                    return false;
+
+                device.OpenDevice();
+
+                if (device.ReadFeatureData(out byte[] data, AURA_HID_ID))
+                {
+                    device.WriteFeatureData(msg);
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (device.ReadFeatureData(out byte[] dataBackkup, INPUT_HID_ID))
+                {
+                    device.WriteFeatureData(msgBackup);
+                }
+                else
+                {
+                    return false;
+                }
+
+                device.CloseDevice();
+            }
+
+            return true;
+        });
+
+        return false;
+    }
+
+    public override bool SetLedColor(string hexColor)
+    {
+        // Remove the '#' character and convert the remaining string to a 32-bit integer
+        int argbValue = int.Parse(hexColor.Substring(1), System.Globalization.NumberStyles.HexNumber);
+        
+        // Create a Color object from the ARGB value
+        Color color = Color.FromArgb(argbValue);
+
+        // Apply the color for the left and right LED, with default auro mode settings
+        ApplyColor(AuraMode.Static, color, color, AuraSpeed.Slow);
+
+        return true;
+    }
+
+    private bool ApplyColor(AuraMode mode, Color color, Color color2, AuraSpeed speed)
+    {
+        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
+        foreach (HidDevice device in devices)
+        {
+            if (device is null || !device.IsConnected)
+                return false;
+
+            if (!device.ReadFeatureData(out byte[] data, AURA_HID_ID))
+                return false;
+
+            device.Write(AuraMessage(mode, color, color2, (int)speed));
+            device.Write(MESSAGE_APPLY);
+            device.Write(MESSAGE_SET);
+        }
+
+        return true;
+    }
+
+    private static byte[] AuraMessage(AuraMode mode, Color color, Color color2, int speed, bool mono = false)
+    {
+        byte[] msg = new byte[17];
+        msg[0] = AURA_HID_ID;
+        msg[1] = 0xb3;
+        msg[2] = 0x00; // Zone 
+        msg[3] = (byte)mode; // Aura Mode
+        msg[4] = color.R; // R
+        msg[5] = mono ? (byte)0 : color.G; // G
+        msg[6] = mono ? (byte)0 : color.B; // B
+        msg[7] = (byte)speed; // aura.speed as u8;
+        msg[8] = 0; // aura.direction as u8;
+        msg[9] = (mode == AuraMode.Breathe) ? (byte)1 : (byte)0;
+        msg[10] = color2.R; // R
+        msg[11] = mono ? (byte)0 : color2.G; // G
+        msg[12] = mono ? (byte)0 : color2.B; // B
+        return msg;
     }
 }
