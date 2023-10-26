@@ -206,51 +206,25 @@ public class ROGAlly : IDevice
         // get button
         var button = keyMapping[key];
 
-        // HID Report Item = hex = decimal
-        // Left or right paddle = A5 = 165
-        // Left OEM key = A6 = 166
-        // Right OEM key = 38 = 56
-        // Right OEM key hold = A7 and A8 = 167 and 168
-
         switch (key)
         {
-            case 236:
-                return;
-
-            case 0:
-                {
-                    KeyRelease(ButtonFlags.OEM3);
-                }
-                return;
-
-            case 56:
-            case 166:
-                {
-                    // OEM1 and OEM2 key needs a key press delay based on emulated controller
-                    Task.Run(async () =>
-                    {
-                        KeyPress(button);
-                        await Task.Delay(KeyPressDelay);
-                        KeyRelease(button);
-                    });
-                }
-                break;
-
-            case 165:
-            case 167:
+            case 167:   // Armory crate: Hold
                 KeyPress(button);
                 break;
 
-            case 168:
+            case 168:   // Armory crate: Hold, released
                 KeyRelease(button);
                 break;
 
             default:
+            case 56:    // Armory crate: Click
+            case 165:   // Back paddles: Click
+            case 166:   // Command center: Click
                 {
                     Task.Run(async () =>
                     {
                         KeyPress(button);
-                        await Task.Delay(20);
+                        await Task.Delay(KeyPressDelay);
                         KeyRelease(button);
                     });
                 }
