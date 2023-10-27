@@ -177,7 +177,7 @@ internal static class LayoutManager
         SerializeLayout(layout, desktopLayoutFile);
     }
 
-    private static void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
+    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         SetProfileLayout(profile);
     }

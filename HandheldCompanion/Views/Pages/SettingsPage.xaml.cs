@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,13 +53,13 @@ public partial class SettingsPage : Page
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
-        PlatformManager.RTSS.Updated += RTSS_Updated;
-        PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
+        PlatformManager.rTSS.Updated += RTSS_Updated;
+        PlatformManager.hWiNFO.Updated += HWiNFO_Updated;
 
         // force call
         // todo: make PlatformManager static
-        RTSS_Updated(PlatformManager.RTSS.Status);
-        HWiNFO_Updated(PlatformManager.HWiNFO.Status);
+        RTSS_Updated(PlatformManager.rTSS.Status);
+        HWiNFO_Updated(PlatformManager.hWiNFO.Status);
     }
 
     public SettingsPage(string? Tag) : this()
@@ -284,8 +285,6 @@ public partial class SettingsPage : Page
                 case ContentDialogResult.Primary:
                     SettingsManager.SetProperty("VirtualControllerForceOrder", false);
                     break;
-                    Toggle_AutoStart.IsOn = true;
-                    break;
             }
         }
 
@@ -318,20 +317,10 @@ public partial class SettingsPage : Page
 
     private async void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
     {
-        var ForceVirtualControllerOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
+        bool virtualControllerForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
 
-        if (Toggle_ForceVirtualControllerOrder.IsOn && !ForceVirtualControllerOrder)
+        if (Toggle_ForceVirtualControllerOrder.IsOn && !virtualControllerForceOrder)
         {
-            var physicalControllerInstanceIds = new StringCollection();
-            var physicalControllers = ControllerManager.GetPhysicalControllers();
-
-            foreach (var physicalController in physicalControllers)
-            {
-                physicalControllerInstanceIds.Add(physicalController.Details.baseContainerDeviceInstanceId);
-            }
-
-            SettingsManager.SetProperty("PhysicalControllerInstanceIds", physicalControllerInstanceIds);
-
             var result = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderTitle}",
                 $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderText}",
                 ContentDialogButton.Primary, null,
@@ -343,16 +332,21 @@ public partial class SettingsPage : Page
             switch (result.Result)
             {
                 case ContentDialogResult.Primary:
-                    using (Process shutdown = new())
                     {
-                        shutdown.StartInfo.FileName = "shutdown.exe";
-                        shutdown.StartInfo.Arguments = "-r -t 3";
+                        // update physical controller instance ids
+                        ControllerManager.UpdateSuspendedControllers();
 
-                        shutdown.StartInfo.UseShellExecute = false;
-                        shutdown.StartInfo.CreateNoWindow = true;
-                        shutdown.Start();
+                        using (Process shutdown = new())
+                        {
+                            shutdown.StartInfo.FileName = "shutdown.exe";
+                            shutdown.StartInfo.Arguments = "-r -t 3";
+
+                            shutdown.StartInfo.UseShellExecute = false;
+                            shutdown.StartInfo.CreateNoWindow = true;
+                            shutdown.Start();
+                        }
+                        break;
                     }
-                    break;
                 case ContentDialogResult.Secondary:
                     break;
             }
@@ -360,10 +354,7 @@ public partial class SettingsPage : Page
 
         // RunAtStartup is required for this feature
         if (Toggle_ForceVirtualControllerOrder.IsOn)
-        {
             SettingsManager.SetProperty("RunAtStartup", true);
-        }
-
 
         SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }

@@ -43,7 +43,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.Initialized += PlatformManager_Initialized;
-        PlatformManager.Steam.Updated += Steam_Updated;
+        PlatformManager.steam.Updated += Steam_Updated;
     }
 
     public ControllerPage(string Tag) : this()
@@ -53,8 +53,8 @@ public partial class ControllerPage : Page
 
     private void PlatformManager_Initialized()
     {
-        HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
-        Steam_Updated(PlatformManager.Steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+        HintsSteamXboxDrivers.Visibility = PlatformManager.steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+        Steam_Updated(PlatformManager.steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
     }
 
     private void Steam_Updated(PlatformStatus status)
@@ -69,7 +69,7 @@ public partial class ControllerPage : Page
                     HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
                     break;
                 case PlatformStatus.Started:
-                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.Steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
+                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
                     break;
             }
         });
@@ -143,7 +143,7 @@ public partial class ControllerPage : Page
         });
     }
 
-    private void ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
+    private void ControllerPlugged(IController Controller, bool IsPowerCycling)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
@@ -170,19 +170,6 @@ public partial class ControllerPage : Page
 
             ControllerRefresh();
         });
-
-        // we assume this is HC virtual controller
-        if (Controller.IsVirtual() && isHCVirtualController)
-        {
-            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
-            {
-                // enable physical controller(s) after virtual controller to ensure first order
-                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
-                {
-                    PnPUtil.EnableDevice(physicalControllerInstanceId);
-                }
-            }
-        }
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -231,7 +218,7 @@ public partial class ControllerPage : Page
             var target = ControllerManager.GetTargetController();
             var isPlugged = hasTarget && target.IsPlugged();
             var isHidden = hasTarget && target.IsHidden();
-            var isSteam = hasTarget && (target.GetType() == typeof(NeptuneController) || target.GetType() == typeof(GordonController));
+            var isSteam = hasTarget && (target is NeptuneController || target is GordonController);
             var isMuted = SettingsManager.GetBoolean("SteamControllerMute");
             var isForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
 

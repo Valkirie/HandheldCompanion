@@ -1447,10 +1447,10 @@
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>風扇轉速</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>調整顯示器的解析度與刷新率</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>顯示器解析度與刷新率</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1639,13 +1639,13 @@
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手動</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>這個模式將反轉X軸，適用於將陀螺儀模擬滑鼠。</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>這個模式適用於一些賽車遊戲，陀螺儀輸入將模擬方向盤。</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>這個模式適用於第一人稱或第三人稱視角的遊戲，體感輸入將模擬玩家視角，</value>
   </data>
   <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
@@ -2257,7 +2257,7 @@
   <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">

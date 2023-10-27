@@ -11,7 +11,7 @@ public static class MotherboardInfo
     private static readonly ManagementObjectSearcher motherboardSearcher =
         new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
 
-    private static readonly ManagementObjectSearcher processerSearcher =
+    private static readonly ManagementObjectSearcher processorSearcher =
         new("root\\CIMV2", "SELECT * FROM Win32_Processor");
 
     private static readonly ManagementObjectSearcher displaySearcher =
@@ -118,7 +118,7 @@ public static class MotherboardInfo
             if (_NumberOfCores != 0)
                 return _NumberOfCores;
 
-            foreach (ManagementObject queryObj in processerSearcher.Get())
+            foreach (ManagementObject queryObj in processorSearcher.Get())
             {
                 var query = queryObj["NumberOfCores"];
                 if (query is not null)
@@ -175,11 +175,11 @@ public static class MotherboardInfo
         }
     }
 
-    public static string Processor
+    public static string ProcessorName
     {
         get
         {
-            foreach (ManagementObject queryObj in processerSearcher.Get())
+            foreach (ManagementObject queryObj in processorSearcher.Get())
             {
                 var query = queryObj["Name"];
 
@@ -188,6 +188,26 @@ public static class MotherboardInfo
             }
 
             return string.Empty;
+        }
+    }
+
+    private static uint _ProcessorMaxClockSpeed = 3900;
+    public static uint ProcessorMaxClockSpeed
+    {
+        get
+        {
+            if (_ProcessorMaxClockSpeed != 0)
+                return _ProcessorMaxClockSpeed;
+
+            foreach (ManagementObject queryObj in processorSearcher.Get())
+            {
+                var query = queryObj["MaxClockSpeed"];
+                if (query is not null)
+                    if (uint.TryParse(query.ToString(), out var value))
+                        _ProcessorMaxClockSpeed = value;
+            }
+
+            return _ProcessorMaxClockSpeed;
         }
     }
 

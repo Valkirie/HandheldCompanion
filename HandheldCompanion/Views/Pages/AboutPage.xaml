@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="About"
     Title="{x:Static resx:Resources.AboutPage_About}"
     d:Background="White"
     d:DesignHeight="1000"

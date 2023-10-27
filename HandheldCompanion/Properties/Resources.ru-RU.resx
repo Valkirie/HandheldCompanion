@@ -1261,7 +1261,7 @@
   <data name="AboutPage_ProductName" xml:space="preserve">
     <value>Product name</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="ControllerPage_DesktopLayout" xml:space="preserve">
@@ -2029,7 +2029,7 @@
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
@@ -2089,7 +2089,7 @@
   <data name="LayoutPage_Triggers" xml:space="preserve">
     <value>Triggers</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
   </data>
   <data name="MainWindow_Back" xml:space="preserve">
@@ -2140,7 +2140,7 @@
   <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
     <value>Minimal</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
@@ -2185,10 +2185,10 @@
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>Set current CPU boost mode</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>Display resolution and refresh rate</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>Adjust main display resolution and refresh rate</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">

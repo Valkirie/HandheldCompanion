@@ -8,13 +8,15 @@ namespace HandheldCompanion.Utils;
 
 public static class EnumUtils
 {
-    public static string GetDescriptionFromEnumValue(Enum value, string prefix = "")
+    public static string GetDescriptionFromEnumValue(Enum value, string prefix = "", string suffix = "")
     {
         // return localized string if available
         var key = string.Empty;
 
         if (!string.IsNullOrEmpty(prefix))
             key = $"Enum.{prefix}.{value.GetType().Name}.{value}";
+        else if (!string.IsNullOrEmpty(suffix))
+            key = $"Enum.{value.GetType().Name}.{value}.{suffix}";
         else
             key = $"Enum.{value.GetType().Name}.{value}";
 

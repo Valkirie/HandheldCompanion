@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -63,11 +64,14 @@ public partial class OverlayQuickTools : GamepadWindow
     private bool isClosing;
     private readonly DispatcherTimer clockUpdateTimer;
 
-    public QuickPerformancePage performancePage;
-    private string preNavItemTag;
-    public QuickProfilesPage profilesPage;
+    public QuickHomePage homePage;
     public QuickSettingsPage settingsPage;
+    public QuickDevicePage devicePage;
+    public QuickPerformancePage performancePage;
+    public QuickProfilesPage profilesPage;
     public QuickSuspenderPage suspenderPage;
+
+    private string preNavItemTag;
 
     public OverlayQuickTools()
     {
@@ -90,13 +94,17 @@ public partial class OverlayQuickTools : GamepadWindow
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // create pages
-        performancePage = new QuickPerformancePage("quickperformance");
-        settingsPage = new QuickSettingsPage("quicksettings");
-        profilesPage = new QuickProfilesPage("quickprofiles");
-        suspenderPage = new QuickSuspenderPage("quicksuspender");
+        homePage = new("quickhome");
+        settingsPage = new("quicksettings");
+        devicePage = new("quickdevice");
+        performancePage = new("quickperformance");
+        profilesPage = new("quickprofiles");
+        suspenderPage = new("quicksuspender");
 
-        _pages.Add("QuickPerformancePage", performancePage);
+        _pages.Add("QuickHomePage", homePage);
         _pages.Add("QuickSettingsPage", settingsPage);
+        _pages.Add("QuickDevicePage", devicePage);
+        _pages.Add("QuickPerformancePage", performancePage);
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
 
@@ -250,8 +258,8 @@ public partial class OverlayQuickTools : GamepadWindow
         // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
         if (hwndSource != null)
         {
-            // hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+            // hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
@@ -381,6 +389,10 @@ public partial class OverlayQuickTools : GamepadWindow
 
         if (!isClosing)
             ToggleVisibility();
+        else
+        {
+            settingsPage.Close();
+        }
     }
 
     public void Close(bool v)
@@ -444,7 +456,7 @@ public partial class OverlayQuickTools : GamepadWindow
         // If navigation occurs on SelectionChanged, this isn't needed.
         // Because we use ItemInvoked to navigate, we need to call Navigate
         // here to load the home page.
-        preNavItemTag = "QuickSettingsPage";
+        preNavItemTag = "QuickHomePage";
         NavView_Navigate(preNavItemTag);
     }
 
@@ -483,7 +495,7 @@ public partial class OverlayQuickTools : GamepadWindow
             if (!(NavViewItem is null))
                 navView.SelectedItem = NavViewItem;
 
-            // navView.Header = new TextBlock() { Text = (string)((Page)e.Content).Title, Margin = new Thickness(0,-24,0,0) };//, FontSize = 14 };
+            navHeader.Text = ((Page)e.Content).Title;
         }
     }
 

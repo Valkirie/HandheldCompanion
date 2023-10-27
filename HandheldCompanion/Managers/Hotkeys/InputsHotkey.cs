@@ -116,11 +116,6 @@ public class InputsHotkey
 
         // Device specific hotkeys
         {
-            40,
-            new InputsHotkey(InputsHotkeyType.Device, "\uE9CA", "QuietModeToggled", "Segoe Fluent Icons", 20, false,
-                true, null, "QuietModeDisclosure", false, true)
-        },
-        {
             41,
             new InputsHotkey(InputsHotkeyType.Device, "\uE706", "increaseBrightness", "Segoe Fluent Icons", 20, true,
                 false, null, "HasBrightnessSupport")

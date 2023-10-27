@@ -352,15 +352,6 @@ public static class HotkeysManager
                 case "shortcutKillApp":
                     if (fProcess is not null) fProcess.Process.Kill();
                     break;
-                case "QuietModeToggled":
-                    {
-                        var value = !SettingsManager.GetBoolean(listener);
-                        SettingsManager.SetProperty(listener, value);
-
-                        ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
-                    }
-                    break;
-
                 case "OnScreenDisplayLevel":
                     {
                         var value = !SettingsManager.GetBoolean(listener);

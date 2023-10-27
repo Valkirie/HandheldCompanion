@@ -1497,10 +1497,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>Fan override</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>Adjust main display resolution and refresh rate</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>Display resolution and refresh rate</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1566,7 +1566,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
     <value>Redirection</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
@@ -1681,13 +1681,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>Manuel</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un simple joystick. Elle est destinée aux applications traditionnelles de joystick</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'un volant ou d'un jeu de course</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'une caméra à la première ou à la troisième personne</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">

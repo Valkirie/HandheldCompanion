@@ -144,44 +144,6 @@ public static class SystemManager
                         DisplayOrientationChanged?.Invoke(ScreenOrientation);
                 }
                 break;
-            case "QuietModeEnabled":
-                {
-                    var enabled = Convert.ToBoolean(value);
-                    var toggled = SettingsManager.GetBoolean("QuietModeToggled");
-
-                    if (!enabled && toggled)
-                        SettingsManager.SetProperty("QuietModeToggled", false);
-                }
-                break;
-            case "QuietModeToggled":
-                {
-                    var toggled = Convert.ToBoolean(value);
-
-                    // do not send command to device on startup if toggle is off
-                    if (!SettingsManager.IsInitialized && !toggled)
-                        return;
-
-                    MainWindow.CurrentDevice.SetFanControl(toggled);
-
-                    if (!toggled)
-                        return;
-
-                    var duty = SettingsManager.GetDouble("QuietModeDuty");
-                    MainWindow.CurrentDevice.SetFanDuty(duty);
-                }
-                break;
-            case "QuietModeDuty":
-                {
-                    var enabled = SettingsManager.GetBoolean("QuietModeEnabled");
-                    var toggled = SettingsManager.GetBoolean("QuietModeToggled");
-
-                    if (!enabled || !toggled)
-                        return;
-
-                    var duty = Convert.ToDouble(value);
-                    MainWindow.CurrentDevice.SetFanDuty(duty);
-                }
-                break;
             case "LED":
                 {
                     var toggled = Convert.ToBoolean(value);

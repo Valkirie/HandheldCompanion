@@ -1462,10 +1462,10 @@
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>Fan override</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>Adjust main display resolution and refresh rate</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>Display resolution and refresh rate</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1717,13 +1717,13 @@
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>単純なジョイスティックとして動作します。これは従来のジョイスティック アプリケーションを対象としています</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>ステアリング ホイールやレーシング ゲームの制御に最適化されたジョイスティックとして動作します</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>一人称または三人称カメラの制御に最適化されたジョイスティックとして動作します</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
@@ -2275,7 +2275,7 @@
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>Change the virtual controller layout</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">

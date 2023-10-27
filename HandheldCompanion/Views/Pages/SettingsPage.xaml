@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="Settings"
     Title="{x:Static resx:Resources.SettingsPage_Settings}"
     d:Background="White"
     d:DesignHeight="2400"

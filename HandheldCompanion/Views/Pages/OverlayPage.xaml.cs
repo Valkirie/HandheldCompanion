@@ -22,11 +22,11 @@ public partial class OverlayPage : Page
         InitializeComponent();
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        PlatformManager.RTSS.Updated += RTSS_Updated;
+        PlatformManager.rTSS.Updated += RTSS_Updated;
 
         // force call
         // todo: make PlatformManager static
-        RTSS_Updated(PlatformManager.RTSS.Status);
+        RTSS_Updated(PlatformManager.rTSS.Status);
     }
 
     public OverlayPage(string Tag) : this()

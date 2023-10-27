@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="Controller"
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
     d:DesignHeight="1500"

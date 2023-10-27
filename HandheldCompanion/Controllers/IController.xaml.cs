@@ -101,6 +101,11 @@ namespace HandheldCompanion.Controllers
             return Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
         }
 
+        public bool IsPhysical()
+        {
+            return !IsVirtual();
+        }
+
         public bool IsVirtual()
         {
             if (Details is not null)

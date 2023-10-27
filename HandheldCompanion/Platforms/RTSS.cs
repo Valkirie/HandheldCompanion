@@ -128,7 +128,7 @@ public class RTSS : IPlatform
             if (foregroundProcess is not null)
                 ProcessManager_ForegroundChanged(foregroundProcess, null);
 
-            ProfileManager_Applied(ProfileManager.GetCurrent(), ProfileUpdateSource.Background);
+            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
         return base.Start();
@@ -143,7 +143,7 @@ public class RTSS : IPlatform
         return base.Stop(kill);
     }
 
-    private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // apply profile defined framerate
         if (profile.FramerateEnabled)

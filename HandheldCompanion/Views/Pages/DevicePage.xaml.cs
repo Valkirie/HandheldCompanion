@@ -8,6 +8,16 @@ using System;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
 using System.Windows.Media;
+using LiveCharts.Defaults;
+using LiveCharts;
+using System.Windows.Input;
+using LiveCharts.Wpf.Charts.Base;
+using LiveCharts.Events;
+using LiveCharts.Wpf;
+using System.Diagnostics;
+using System.Linq;
+using LiveCharts.Helpers;
+using LiveCharts.Definitions.Series;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -16,6 +26,8 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class DevicePage : Page
     {
+        private Color prevSelectedColor = new();
+
         public DevicePage()
         {
             InitializeComponent();
@@ -142,7 +154,6 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("LED", Toggle_LED.IsOn, false, true);
         }
 
-        private Color prevSelectedColor = new();
         private void StandardColorPicker_ColorChanged(object sender, RoutedEventArgs e)
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely

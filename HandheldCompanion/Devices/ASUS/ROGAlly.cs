@@ -46,6 +46,8 @@ public class ROGAlly : IDevice
     static byte[] MESSAGE_APPLY = { AURA_HID_ID, 0xb4 };
     static byte[] MESSAGE_SET = { AURA_HID_ID, 0xb5, 0, 0, 0 };
 
+    public override bool IsOpen => hidDevice is not null && asusACPI is not null && asusACPI.IsOpen();
+
     private enum AuraMode
     {
         Static = 0,
@@ -97,6 +99,27 @@ public class ROGAlly : IDevice
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.LEDControl;
+
+        powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
+        {
+            Default = true,
+            OEMPowerMode = (int)AsusMode.Silent,
+            Guid = PowerMode.BetterBattery
+        };
+
+        powerProfileBalanced = new(Properties.Resources.PowerProfilePerformanceName, Properties.Resources.PowerProfilePerformanceDescription)
+        {
+            Default = true,
+            OEMPowerMode = (int)AsusMode.Performance,
+            Guid = PowerMode.BetterPerformance
+        };
+
+        powerProfileCool = new(Properties.Resources.PowerProfileTurboName, Properties.Resources.PowerProfileTurboDescription)
+        {
+            Default = true,
+            OEMPowerMode = (int)AsusMode.Turbo,
+            Guid = PowerMode.BestPerformance
+        };
 
         OEMChords.Add(new DeviceChord("CC",
             new List<KeyCode>(), new List<KeyCode>(),
@@ -170,22 +193,22 @@ public class ROGAlly : IDevice
         return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
     }
 
-    public override void SetFanControl(bool enable)
+    public override void SetFanControl(bool enable, int mode = 0)
     {
-        if (!asusACPI.IsOpen())
+        if (!IsOpen)
             return;
 
         switch (enable)
         {
             case false:
-                asusACPI.DeviceSet(AsusACPI.PerformanceMode, (int)AsusMode.Turbo);
+                asusACPI.DeviceSet(AsusACPI.PerformanceMode, mode);
                 return;
         }
     }
 
     public override void SetFanDuty(double percent)
     {
-        if (!asusACPI.IsOpen())
+        if (!IsOpen)
             return;
 
         asusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
@@ -194,6 +217,9 @@ public class ROGAlly : IDevice
 
     public override float ReadFanDuty()
     {
+        if (!IsOpen)
+            return 100.0f;
+
         int cpuFan = asusACPI.DeviceGet(AsusACPI.CPU_Fan);
         int gpuFan = asusACPI.DeviceGet(AsusACPI.GPU_Fan);
         return (cpuFan + gpuFan) / 2 * 100;

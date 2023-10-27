@@ -81,7 +81,7 @@ public class GPDWin4 : IDevice
         return defaultGlyph;
     }
 
-    public override void SetFanControl(bool enable)
+    public override void SetFanControl(bool enable, int mode = 0)
     {
         switch (enable)
         {

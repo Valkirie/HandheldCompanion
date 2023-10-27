@@ -14,7 +14,7 @@ public enum AsusFan
 
 public enum AsusMode
 {
-    Balanced = 0,
+    Performance = 0,
     Turbo = 1,
     Silent = 2
 }

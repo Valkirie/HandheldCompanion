@@ -20,10 +20,10 @@ namespace HandheldCompanion.Views.Classes
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
             // Track when objects are added and removed
-            if (visualAdded != null && visualAdded.GetType() == typeof(Control))
+            if (visualAdded != null && visualAdded is Control)
                 elements.Add((Control)visualAdded);
 
-            if (visualRemoved != null && visualRemoved.GetType() == typeof(Control))
+            if (visualRemoved != null && visualRemoved is Control)
                 elements.Remove((Control)visualRemoved);
 
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);

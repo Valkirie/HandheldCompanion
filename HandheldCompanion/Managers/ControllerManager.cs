@@ -12,6 +12,7 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -458,7 +459,7 @@ public static class ControllerManager
         LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
 
         // raise event
-        ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
+        ControllerPlugged?.Invoke(controller, IsPowerCycling);
 
         ToastManager.SendToast(controller.ToString(), "detected");
 
@@ -542,16 +543,28 @@ public static class ControllerManager
             LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
 
             // raise event
-            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
+            ControllerPlugged?.Invoke(controller, IsPowerCycling);
 
             ToastManager.SendToast(controller.ToString(), "detected");
 
             // remove controller from powercyclers
             PowerCyclers.Remove(controller.GetContainerInstancePath());
 
-            // first controller logic
-            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+            if (controller.IsPhysical())
+            {
+                // update physical controller instance ids
+                UpdateSuspendedControllers();
+
+                // first controller logic
+                if (GetTargetController() is null && DeviceManager.IsInitialized)
+                    SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+            }
+            else if (IsHCVirtualController(controller))
+            {
+                // enable physical controller(s) after virtual controller to ensure first order
+                if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+                    ResumePhysicalControllers();
+            }
         });
     }
 
@@ -695,6 +708,42 @@ public static class ControllerManager
         return Controllers.Values.ToList();
     }
 
+    public static void UpdateSuspendedControllers()
+    {
+        // store physical controller instance ids
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("PhysicalControllerInstanceIds");
+
+        // if list is empty
+        if (deviceInstanceIds is null)
+            deviceInstanceIds = new();
+
+        IEnumerable<IController> physicalControllers = GetPhysicalControllers().OfType<XInputController>();
+        foreach (IController physicalController in physicalControllers)
+        {
+            string deviceInstanceId = physicalController.Details.baseContainerDeviceInstanceId;
+            if (!deviceInstanceIds.Contains(deviceInstanceId))
+                deviceInstanceIds.Add(deviceInstanceId);
+        }
+
+        SettingsManager.SetProperty("PhysicalControllerInstanceIds", deviceInstanceIds);
+    }
+
+    public static void SuspendPhysicalControllers()
+    {
+        // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("PhysicalControllerInstanceIds");
+        foreach (string deviceInstanceId in deviceInstanceIds)
+            PnPUtil.DisableDevice(deviceInstanceId);
+    }
+
+    public static void ResumePhysicalControllers()
+    {
+        // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("PhysicalControllerInstanceIds");
+        foreach (string deviceInstanceId in deviceInstanceIds)
+            PnPUtil.EnableDevice(deviceInstanceId);
+    }
+
     private static void UpdateInputs(ControllerState controllerState)
     {
         ButtonState buttonState = controllerState.ButtonState.Clone() as ButtonState;
@@ -756,16 +805,6 @@ public static class ControllerManager
         return false;
     }
 
-    private static bool IsHCVirtualController(IController controller)
-    {
-        if (controller.IsVirtual() && virtualControllerCreated)
-        {
-            virtualControllerCreated = false;
-            return true;
-        }
-        return false;
-    }
-
     private static void VirtualManager_ControllerSelected(IController Controller)
     {
         virtualControllerCreated = true;
@@ -775,7 +814,7 @@ public static class ControllerManager
 
     public static event ControllerPluggedEventHandler ControllerPlugged;
 
-    public delegate void ControllerPluggedEventHandler(IController Controller, bool isHCVirtualController, bool IsPowerCycling);
+    public delegate void ControllerPluggedEventHandler(IController Controller, bool IsPowerCycling);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
 

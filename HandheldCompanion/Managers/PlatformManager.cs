@@ -11,13 +11,14 @@ public static class PlatformManager
     private const int UpdateInterval = 1000;
 
     // gaming platforms
-    public static readonly SteamPlatform Steam = new();
-    public static readonly GOGGalaxy GOGGalaxy = new();
-    public static readonly UbisoftConnect UbisoftConnect = new();
+    public static readonly SteamPlatform steam = new();
+    public static readonly GOGGalaxy gOGGalaxy = new();
+    public static readonly UbisoftConnect ubisoftConnect = new();
 
     // misc platforms
-    public static RTSS RTSS = new();
-    public static HWiNFO HWiNFO = new();
+    public static RTSS rTSS = new();
+    public static HWiNFO hWiNFO = new();
+    public static OpenHardwareMonitor openHardwareMonitor = new();
 
     private static Timer UpdateTimer;
 
@@ -31,33 +32,35 @@ public static class PlatformManager
 
     public static void Start()
     {
-        if (Steam.IsInstalled)
-        {
-            Steam.Start();
-        }
+        if (steam.IsInstalled)
+            steam.Start();
 
-        if (GOGGalaxy.IsInstalled)
+        if (gOGGalaxy.IsInstalled)
         {
             // do something
         }
 
-        if (UbisoftConnect.IsInstalled)
+        if (ubisoftConnect.IsInstalled)
         {
             // do something
         }
 
-        if (RTSS.IsInstalled)
+        if (rTSS.IsInstalled)
         {
             // do something
         }
 
-        if (HWiNFO.IsInstalled)
+        if (hWiNFO.IsInstalled)
         {
             // do something
         }
+
+        if (openHardwareMonitor.IsInstalled)
+            openHardwareMonitor.Start();
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
+        PowerProfileManager.Applied += PowerProfileManager_Applied;
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
@@ -69,7 +72,7 @@ public static class PlatformManager
         LogManager.LogInformation("{0} has started", "PlatformManager");
     }
 
-    private static void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
+    private static void PowerProfileManager_Applied(Misc.PowerProfile profile, UpdateSource source)
     {
         // AutoTDP
         if (profile.AutoTDPEnabled)
@@ -77,6 +80,12 @@ public static class PlatformManager
         else
             CurrentNeeds &= ~PlatformNeeds.AutoTDP;
 
+        UpdateTimer.Stop();
+        UpdateTimer.Start();
+    }
+
+    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
         // Framerate limiter
         if (profile.FramerateEnabled)
             CurrentNeeds |= PlatformNeeds.FramerateLimiter;
@@ -142,10 +151,10 @@ public static class PlatformManager
             // If OSD is needed, start RTSS and start HWiNFO only if OnScreenDisplayComplex is true
             if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
                 // Only start RTSS if it was not running before and if it is installed
-                if (RTSS.IsInstalled)
+                if (rTSS.IsInstalled)
                 {
                     // Start RTSS
-                    RTSS.Start();
+                    rTSS.Start();
                 }
             if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
             {
@@ -154,8 +163,8 @@ public static class PlatformManager
                 if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) ||
                     !PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
                     // Only start HWiNFO if it was not running before or if OnScreenDisplayComplex was false and if it is installed
-                    if (HWiNFO.IsInstalled)
-                        HWiNFO.Start();
+                    if (hWiNFO.IsInstalled)
+                        hWiNFO.Start();
             }
             else
             {
@@ -163,8 +172,8 @@ public static class PlatformManager
                 if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) &&
                     PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
                     // Only stop HWiNFO if it is installed
-                    if (HWiNFO.IsInstalled)
-                        HWiNFO.Stop(true);
+                    if (hWiNFO.IsInstalled)
+                        hWiNFO.Stop(true);
             }
         }
         else if (CurrentNeeds.HasFlag(PlatformNeeds.AutoTDP) || CurrentNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
@@ -172,14 +181,14 @@ public static class PlatformManager
             // If AutoTDP or framerate limiter is needed, start only RTSS and stop HWiNFO
             if (!PreviousNeeds.HasFlag(PlatformNeeds.AutoTDP) && !PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
                 // Only start RTSS if it was not running before and if it is installed
-                if (RTSS.IsInstalled)
-                    RTSS.Start();
+                if (rTSS.IsInstalled)
+                    rTSS.Start();
 
             // Only stop HWiNFO if it was running before
             // Only stop HWiNFO if it is installed
             if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
-                if (HWiNFO.IsInstalled)
-                    HWiNFO.Stop(true);
+                if (hWiNFO.IsInstalled)
+                    hWiNFO.Stop(true);
         }
         else
         {
@@ -188,11 +197,11 @@ public static class PlatformManager
                 PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
             {
                 // Only stop HWiNFO and RTSS if they were running before and if they are installed
-                if (HWiNFO.IsInstalled) HWiNFO.Stop(true);
-                if (RTSS.IsInstalled)
+                if (hWiNFO.IsInstalled) hWiNFO.Stop(true);
+                if (rTSS.IsInstalled)
                 {
                     // Stop RTSS
-                    RTSS.Stop();
+                    rTSS.Stop();
                 }
             }
         }
@@ -203,28 +212,31 @@ public static class PlatformManager
 
     public static void Stop()
     {
-        if (Steam.IsInstalled)
-            Steam.Stop();
+        if (steam.IsInstalled)
+            steam.Stop();
 
-        if (GOGGalaxy.IsInstalled)
-            GOGGalaxy.Dispose();
+        if (gOGGalaxy.IsInstalled)
+            gOGGalaxy.Dispose();
 
-        if (UbisoftConnect.IsInstalled)
-            UbisoftConnect.Dispose();
+        if (ubisoftConnect.IsInstalled)
+            ubisoftConnect.Dispose();
 
-        if (RTSS.IsInstalled)
+        if (rTSS.IsInstalled)
         {
             var killRTSS = SettingsManager.GetBoolean("PlatformRTSSEnabled");
-            RTSS.Stop(killRTSS);
-            RTSS.Dispose();
+            rTSS.Stop(killRTSS);
+            rTSS.Dispose();
         }
 
-        if (HWiNFO.IsInstalled)
+        if (hWiNFO.IsInstalled)
         {
             var killHWiNFO = SettingsManager.GetBoolean("PlatformHWiNFOEnabled");
-            HWiNFO.Stop(killHWiNFO);
-            HWiNFO.Dispose();
+            hWiNFO.Stop(killHWiNFO);
+            hWiNFO.Dispose();
         }
+
+        if (openHardwareMonitor.IsInstalled)
+            openHardwareMonitor.Stop();
 
         IsInitialized = false;
 
@@ -237,12 +249,12 @@ public static class PlatformManager
             return PlatformType.Windows;
 
         // is this process part of a specific platform
-        if (Steam.IsRelated(proc))
-            return Steam.PlatformType;
-        if (GOGGalaxy.IsRelated(proc))
-            return GOGGalaxy.PlatformType;
-        if (UbisoftConnect.IsRelated(proc))
-            return UbisoftConnect.PlatformType;
+        if (steam.IsRelated(proc))
+            return steam.PlatformType;
+        if (gOGGalaxy.IsRelated(proc))
+            return gOGGalaxy.PlatformType;
+        if (ubisoftConnect.IsRelated(proc))
+            return ubisoftConnect.PlatformType;
         return PlatformType.Windows;
     }
 

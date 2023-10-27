@@ -50,7 +50,7 @@
                     <!-- <Image Source="/Resources/icons/manette-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
-            
+
             <!--  Device icon  -->
             <ui:NavigationViewItem
                 Name="navDevice"
@@ -58,6 +58,17 @@
                 Tag="DevicePage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
+                    <!-- <Image Source="/Resources/icons/device-48.png" Margin="-10"/> -->
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!--  Performance icon  -->
+            <ui:NavigationViewItem
+                Name="navPerformance"
+                Content="{x:Static resx:Resources.MainWindow_navPerformance}"
+                Tag="PerformancePage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE945;" />
                     <!-- <Image Source="/Resources/icons/device-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
@@ -128,7 +139,7 @@
                 <common:TouchScrollViewer
                     x:Name="scrollViewer"
                     Grid.Row="0"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Stretch"
                     PanningMode="VerticalOnly">
                     <ui:Frame
                         Name="ContentFrame"

@@ -4,12 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="Device"
     Title="{x:Static resx:Resources.DevicePage_Device}"
     d:Background="White"
-    d:DesignHeight="500"
+    d:DesignHeight="1500"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -62,6 +64,7 @@
                 <!--  Configurable TDP down  -->
                 <Border
                     Padding="15,12,12,12"
+                    d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -102,6 +105,7 @@
                 <!--  Configurable TDP up  -->
                 <Border
                     Padding="15,12,12,12"
+                    d:Visibility="Visible"
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">

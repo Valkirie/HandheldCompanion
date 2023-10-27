@@ -44,6 +44,7 @@ public partial class MainWindow : GamepadWindow
 
     public static ControllerPage controllerPage;
     public static DevicePage devicePage;
+    public static PerformancePage performancePage;
     public static ProfilesPage profilesPage;
     public static SettingsPage settingsPage;
     public static AboutPage aboutPage;
@@ -205,6 +206,7 @@ public partial class MainWindow : GamepadWindow
         ToastManager.Start();
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
+        PowerProfileManager.Start();
         ProfileManager.Start();
 
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
@@ -252,14 +254,9 @@ public partial class MainWindow : GamepadWindow
         // windows shutting down event
         if (msg == WM_QUERYENDSESSION)
         {
+            // suspend all physical controllers (XInput) when the system shuts down
             if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
-            {
-                // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
-                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
-                {
-                    PnPUtil.DisableDevice(physicalControllerInstanceId);
-                }
-            }
+                ControllerManager.SuspendPhysicalControllers();
         }
 
         return IntPtr.Zero;
@@ -385,6 +382,7 @@ public partial class MainWindow : GamepadWindow
         controllerPage.Loaded += ControllerPage_Loaded;
 
         devicePage = new DevicePage("device");
+        performancePage = new PerformancePage("performance");
         profilesPage = new ProfilesPage("profiles");
         settingsPage = new SettingsPage("settings");
         aboutPage = new AboutPage("about");
@@ -395,6 +393,7 @@ public partial class MainWindow : GamepadWindow
         // store pages
         _pages.Add("ControllerPage", controllerPage);
         _pages.Add("DevicePage", devicePage);
+        _pages.Add("PerformancePage", performancePage);
         _pages.Add("ProfilesPage", profilesPage);
         _pages.Add("AboutPage", aboutPage);
         _pages.Add("OverlayPage", overlayPage);
@@ -661,6 +660,7 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.Stop();
         PlatformManager.Stop();
         OSDManager.Stop();
+        PowerProfileManager.Stop();
         ProfileManager.Stop();
         LayoutManager.Stop();
         PowerManager.Stop();

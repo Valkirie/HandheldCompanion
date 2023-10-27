@@ -129,10 +129,10 @@ public class SteamDeck : IDevice
 
     public override void Close()
     {
-        SetFanControl(false);
-
         inpOut.Dispose();
         inpOut = null;
+
+        base.Close();
     }
 
     private void SetGain(ushort gain)
@@ -153,7 +153,7 @@ public class SteamDeck : IDevice
         inpOut.WriteMemory(FRPR, data);
     }
 
-    public override void SetFanControl(bool enable)
+    public override void SetFanControl(bool enable, int mode = 0)
     {
         if (!IsOpen || !IsSupported)
             return;

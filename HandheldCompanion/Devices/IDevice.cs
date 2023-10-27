@@ -1,8 +1,10 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
+using Microsoft.Win32;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -70,16 +72,32 @@ public abstract class IDevice
     // device configurable TDP (down, up)
     public double[] cTDP = { 10, 25 };
 
-    public ECDetails ECDetails;
-
-    public string ExternalSensorName = string.Empty;
-
     // device GfxClock frequency limits
     public double[] GfxClock = { 100, 1800 };
-    public string InternalSensorName = string.Empty;
 
     // device nominal TDP (slow, fast)
     public double[] nTDP = { 15, 15, 20 };
+
+    // device maximum operating temperature
+    public double Tjmax = 100;
+
+    // power profile(s)
+    // we might want to create an array instead
+    public PowerProfile powerProfileQuiet;
+    public PowerProfile powerProfileBalanced = new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+    {
+        Default = true,
+        Guid = PowerMode.BetterPerformance
+    };
+    public PowerProfile powerProfileCool;
+
+    public List<double[]> fanPresets = new()
+    {
+        //               00, 10, 20, 30, 40, 50, 60, 70, 80, 90,  100�C
+        { new double[] { 20, 20, 20, 20, 20, 25, 30, 40, 70, 70,  100 } },  // Quiet
+        { new double[] { 20, 20, 20, 30, 40, 50, 70, 80, 90, 100, 100 } },  // Default
+        { new double[] { 40, 40, 40, 40, 40, 50, 70, 80, 90, 100, 100 } },  // Aggressive
+    };
 
     // trigger specific settings
     public List<DeviceChord> OEMChords = new();
@@ -91,10 +109,15 @@ public abstract class IDevice
     protected FontFamily GlyphFontFamily = new("PromptFont");
     protected const string defaultGlyph = "\u2753";
 
+    public ECDetails ECDetails;
+
+    public string ExternalSensorName = string.Empty;
+    public string InternalSensorName = string.Empty;
+
     public string ProductIllustration = "device_generic";
     public string ProductModel = "default";
 
-    // mininum delay before trying to emulate a virtual controller on system resume (milliseconds)
+    // minimum delay before trying to emulate a virtual controller on system resume (milliseconds)
     public short ResumeDelay = 1000;
 
     // key press delay to use for certain scenarios
@@ -131,7 +154,7 @@ public abstract class IDevice
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
         var Version = MotherboardInfo.Version;
-        var Processor = MotherboardInfo.Processor;
+        var Processor = MotherboardInfo.ProcessorName;
         var NumberOfCores = MotherboardInfo.NumberOfCores;
 
         switch (ManufacturerName)
@@ -464,15 +487,21 @@ public abstract class IDevice
         if (ECDetails.AddressDuty == 0)
             return;
 
+        if (!IsOpen)
+            return;
+
         var duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
         var data = Convert.ToByte(duty);
 
         ECRamDirectWrite(ECDetails.AddressDuty, ECDetails, data);
     }
 
-    public virtual void SetFanControl(bool enable)
+    public virtual void SetFanControl(bool enable, int mode = 0)
     {
         if (ECDetails.AddressControl == 0)
+            return;
+
+        if (!IsOpen)
             return;
 
         var data = Convert.ToByte(enable);

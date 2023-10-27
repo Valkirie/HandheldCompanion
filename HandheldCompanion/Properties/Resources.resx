@@ -1490,11 +1490,11 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
     <value>Set current CPU boost mode</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
-    <value>Display resolution and refresh rate</value>
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
+    <value>Display resolution</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
-    <value>Adjust main display resolution and refresh rate</value>
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
+    <value>Adjust main display resolution</value>
   </data>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>Fan override</value>
@@ -1574,7 +1574,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
     <value>Redirection</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
@@ -1772,13 +1772,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
@@ -2353,5 +2353,104 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ControllerPage_XInputControllerWarning" xml:space="preserve">
     <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+  </data>
+  <data name="MainWindow_navPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="PerformancePage_Device" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ProfilesPage_WrapperDesc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfilesPage_CPUMhz" xml:space="preserve">
+    <value>CPU Clock max frequency</value>
+  </data>
+  <data name="QuickPerformancePage_CPUControl" xml:space="preserve">
+    <value>Manual CPU Clock Control</value>
+  </data>
+  <data name="QuickPerformancePage_CPUControlDesc" xml:space="preserve">
+    <value>Sets the CPU to a fixed clock</value>
+  </data>
+  <data name="QuickPerformancePage_CPUUnit" xml:space="preserve">
+    <value> Mhz</value>
+  </data>
+  <data name="PowerProfileDefaultDescription" xml:space="preserve">
+    <value>Default power and fan speed for optimal performance, temperature, noise, and battery life.</value>
+  </data>
+  <data name="PowerProfileDefaultName" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="PowerProfileManualDescription" xml:space="preserve">
+    <value>User-defined power and fan speed.</value>
+  </data>
+  <data name="PowerProfileManualName" xml:space="preserve">
+    <value>Manual mode: {0}</value>
+  </data>
+  <data name="PowerProfilePerformanceDescription" xml:space="preserve">
+    <value>Balances performance, temperature and acoustic for any scenario.</value>
+  </data>
+  <data name="PowerProfilePerformanceName" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="PowerProfileSilentDescription" xml:space="preserve">
+    <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
+  </data>
+  <data name="PowerProfileSilentName" xml:space="preserve">
+    <value>Silent</value>
+  </data>
+  <data name="PowerProfileTurboDescription" xml:space="preserve">
+    <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
+  </data>
+  <data name="PowerProfileTurboName" xml:space="preserve">
+    <value>Turbo</value>
+  </data>
+  <data name="QuickDevicePage_Desc" xml:space="preserve">
+    <value>Settings, display profile</value>
+  </data>
+  <data name="QuickDevicePage_Title" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="QuickHomePage_Desc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickHomePage_Title" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="QuickPerformancePage_Desc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="QuickPerformancePage_Title" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="QuickProfilesPage_Desc" xml:space="preserve">
+    <value>Performance, motion control, graphics</value>
+  </data>
+  <data name="QuickProfilesPage_Title" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="QuickSettingsPage_Desc" xml:space="preserve">
+    <value>Preferred actions, device settings</value>
+  </data>
+  <data name="QuickSettingsPage_Title" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
+    <value>Suspend and resume apps</value>
+  </data>
+  <data name="QuickSuspenderPage_Title" xml:space="preserve">
+    <value>Suspender</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+    <value>Refresh rate</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+    <value>Adjust main refresh rate</value>
+  </data>
+  <data name="ProfilesPage_FanSettings" xml:space="preserve">
+    <value>Fan settings</value>
+  </data>
+  <data name="ProfilesPage_FanSettingsDesc" xml:space="preserve">
+    <value>Change the fan settings</value>
   </data>
 </root>

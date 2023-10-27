@@ -1,4 +1,7 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Timers;

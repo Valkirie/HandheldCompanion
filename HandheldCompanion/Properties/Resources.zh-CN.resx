@@ -1447,10 +1447,10 @@
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>风扇转速</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>调整显示器的分辨率与刷新率</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>显示器分辨率与刷新率</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1507,7 +1507,7 @@
   <data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
     <value>自动最小化</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>该模式适合笔记本或翻盖式掌机，可以根据该设备如何被握持（屏幕以90度角或者180度角打开）判断重力方向，来自动切换陀螺仪方向。</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
@@ -1642,13 +1642,13 @@
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手动</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>这个模式将反转X轴，适用于将陀螺仪模拟鼠标。</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>这个模式适用于一些赛车游戏，陀螺仪输入将模拟方向盘。</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>这个模式适用于第一人称或第三人称视角的游戏，体感输入将模拟玩家视角，</value>
   </data>
   <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
