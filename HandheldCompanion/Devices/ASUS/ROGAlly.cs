@@ -355,4 +355,21 @@ public class ROGAlly : IDevice
         msg[12] = mono ? (byte)0 : color2.B; // B
         return msg;
     }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\uE006";
+            case ButtonFlags.OEM2:
+                return "\uE005";
+            case ButtonFlags.OEM3:
+                return "\u2212";
+            case ButtonFlags.OEM4:
+                return "\u2213";
+        }
+
+        return defaultGlyph;
+    }
 }

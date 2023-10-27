@@ -295,9 +295,33 @@ public class Hotkey
                 foreach (var button in inputsChord.State.Buttons)
                 {
                     UIElement? label = null;
+                    var fontIcon = new FontIcon();
 
-                    var fontIcon = controller.GetFontIcon(button);
-                    // we display only one label, default one is not enough
+                    switch (button)
+                    {                           
+                        case Inputs.ButtonFlags.OEM1:
+                        case Inputs.ButtonFlags.OEM2:
+                        case Inputs.ButtonFlags.OEM3:
+                        case Inputs.ButtonFlags.OEM4:
+                        case Inputs.ButtonFlags.OEM5:
+                        case Inputs.ButtonFlags.OEM6:
+                        case Inputs.ButtonFlags.OEM7:
+                        case Inputs.ButtonFlags.OEM8:
+                        case Inputs.ButtonFlags.OEM9:
+                        case Inputs.ButtonFlags.OEM10:
+                            {
+                                //
+                                fontIcon = MainWindow.CurrentDevice.GetFontIcon(button);
+                            }
+                            break;
+                        default:
+                            {
+                                fontIcon = controller.GetFontIcon(button);
+                            }
+                            break;
+                    }
+                            
+                    // display only one label, default one is not enough
                     if (fontIcon.Glyph != IController.defaultGlyph)
                     {
                         if (fontIcon.Foreground is null)

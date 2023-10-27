@@ -53,4 +53,19 @@ public class AYANEO2021 : IDevice
             false, ButtonFlags.OEM3
         ));
     }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\uE008";
+            case ButtonFlags.OEM2:
+                return "\u242F";
+            case ButtonFlags.OEM3:
+                return "\u243D";
+        }
+
+        return defaultGlyph;
+    }
 }

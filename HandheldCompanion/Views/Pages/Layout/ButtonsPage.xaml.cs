@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace HandheldCompanion.Views.Pages
 {
@@ -90,7 +91,7 @@ namespace HandheldCompanion.Views.Pages
                     buttonStack.Visibility = Visibility.Visible;
 
                     // update icon
-                    FontIcon newIcon = controller.GetFontIcon(button);
+                    FontIcon newIcon = MainWindow.CurrentDevice.GetFontIcon(button);
                     string newLabel = MainWindow.CurrentDevice.GetButtonName(button);
                     buttonStack.UpdateIcon(newIcon, newLabel);
                 }

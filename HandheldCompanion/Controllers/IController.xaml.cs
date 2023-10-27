@@ -406,26 +406,6 @@ namespace HandheldCompanion.Controllers
                     return "\u21BD";
                 case ButtonFlags.RightStickRight:
                     return "\u21C1";
-                case ButtonFlags.OEM1:
-                    return "\u2780";
-                case ButtonFlags.OEM2:
-                    return "\u2781";
-                case ButtonFlags.OEM3:
-                    return "\u2782";
-                case ButtonFlags.OEM4:
-                    return "\u2783";
-                case ButtonFlags.OEM5:
-                    return "\u2784";
-                case ButtonFlags.OEM6:
-                    return "\u2785";
-                case ButtonFlags.OEM7:
-                    return "\u2786";
-                case ButtonFlags.OEM8:
-                    return "\u2787";
-                case ButtonFlags.OEM9:
-                    return "\u2788";
-                case ButtonFlags.OEM10:
-                    return "\u2789";
                 case ButtonFlags.VolumeUp:
                     return "\u21fe";
                 case ButtonFlags.VolumeDown:

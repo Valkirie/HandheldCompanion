@@ -29,22 +29,6 @@ public class AynLoki : IDevice
             { 'Z', 'Y' }
         };
 
-        // device specific capacities
-        /*
-        Capacities = DeviceCapacities.FanControl;
-
-        ECDetails = new ECDetails
-        {
-            AddressControl = 0x12C,
-            AddressDuty = 0x11,
-            AddressRegistry = 0x12,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 128
-        };
-
-        */
-
         OEMChords.Add(new DeviceChord("Guide",
             new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
             new List<KeyCode> { KeyCode.LButton, KeyCode.XButton2 },
@@ -56,5 +40,18 @@ public class AynLoki : IDevice
             new List<KeyCode> { KeyCode.T, KeyCode.LMenu, KeyCode.LShift, KeyCode.LControl },
             false, ButtonFlags.OEM2
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u220C";
+            case ButtonFlags.OEM2:
+                return "\u220D";
+        }
+
+        return defaultGlyph;
     }
 }

@@ -68,6 +68,17 @@ public class SteamDeck : IDevice
         ));
     }
 
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u21E4";
+        }
+
+        return defaultGlyph;
+    }
+
     public static ushort FirmwareVersion { get; private set; }
     public static byte BoardID { get; private set; }
     public static byte PDCS { get; private set; }

@@ -68,6 +68,19 @@ public class GPDWin4 : IDevice
         ));
     }
 
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u220E";
+            case ButtonFlags.OEM2:
+                return "\u220F";
+        }
+
+        return defaultGlyph;
+    }
+
     public override void SetFanControl(bool enable)
     {
         switch (enable)

@@ -56,6 +56,16 @@ namespace HandheldCompanion.Devices
                 false, ButtonFlags.OEM2
                 ));
         }
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.OEM2:
+                    return "\u2211";
+            }
+
+            return defaultGlyph;
+        }
 
         public override bool Open()
         {

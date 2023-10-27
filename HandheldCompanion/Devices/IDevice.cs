@@ -3,10 +3,12 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Windows.Media;
 using Windows.Devices.Sensors;
 using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
@@ -84,6 +86,10 @@ public abstract class IDevice
 
     // filter settings
     public OneEuroSettings oneEuroSettings = new(0.002d, 0.008d);
+
+    // UI
+    protected FontFamily GlyphFontFamily = new("PromptFont");
+    protected const string defaultGlyph = "\u2753";
 
     public string ProductIllustration = "device_generic";
     public string ProductModel = "default";
@@ -453,11 +459,6 @@ public abstract class IDevice
         return PnPUtil.RestartDevice(sensor.DeviceId);
     }
 
-    public string GetButtonName(ButtonFlags button)
-    {
-        return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
-    }
-
     public virtual void SetFanDuty(double percent)
     {
         if (ECDetails.AddressDuty == 0)
@@ -593,5 +594,57 @@ public abstract class IDevice
         foreach (HidDevice device in HidDeviceList)
             if (device.IsConnected && device.Capabilities.FeatureReportByteLength >= minFeatures)
                 yield return device;
+    }
+
+    public string GetButtonName(ButtonFlags button)
+    {
+        return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
+    }
+
+    public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
+    {
+        var FontIcon = new FontIcon
+        {
+            Glyph = GetGlyph(button),
+            FontSize = FontIconSize,
+            Foreground = null,
+        };
+
+        if (FontIcon.Glyph is not null)
+        {
+            FontIcon.FontFamily = GlyphFontFamily;
+            FontIcon.FontSize = 28;
+        }
+
+        return FontIcon;
+    }
+
+    public virtual string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u2780";
+            case ButtonFlags.OEM2:
+                return "\u2781";
+            case ButtonFlags.OEM3:
+                return "\u2782";
+            case ButtonFlags.OEM4:
+                return "\u2783";
+            case ButtonFlags.OEM5:
+                return "\u2784";
+            case ButtonFlags.OEM6:
+                return "\u2785";
+            case ButtonFlags.OEM7:
+                return "\u2786";
+            case ButtonFlags.OEM8:
+                return "\u2787";
+            case ButtonFlags.OEM9:
+                return "\u2788";
+            case ButtonFlags.OEM10:
+                return "\u2789";
+        }
+
+        return defaultGlyph;
     }
 }
