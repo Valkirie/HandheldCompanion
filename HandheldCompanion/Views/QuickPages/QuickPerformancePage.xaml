@@ -74,6 +74,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="CPUCoreSlider_ValueChanged" />
                         </DockPanel>
                     </StackPanel>
@@ -140,6 +141,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="TDPSlider_ValueChanged" />
                         </DockPanel>
                     </StackPanel>
@@ -210,6 +212,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="AutoTDPRequestedFPSSlider_ValueChanged"
                                 Value="30" />
                         </DockPanel>
@@ -270,6 +273,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="10"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="EPPSlider_ValueChanged" />
 
                                 <Grid Name="EPPGrid">
@@ -352,6 +356,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="100"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="CPUSlider_ValueChanged" />
                         </DockPanel>
                     </StackPanel>
@@ -418,6 +423,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="100"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="GPUSlider_ValueChanged" />
                         </DockPanel>
                     </StackPanel>

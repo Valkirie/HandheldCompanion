@@ -335,6 +335,7 @@
                                     SmallChange="1"
                                     Style="{DynamicResource SliderStyle1}"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="SliderUMCAntiDeadzone_ValueChanged" />
                             </DockPanel>
                         </Grid>
@@ -379,6 +380,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="0.1"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="Slider_GyroWeight_ValueChanged" />
                             </DockPanel>
                         </Grid>
@@ -429,6 +431,7 @@
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="0.1"
                                             TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             ValueChanged="SliderSensitivityX_ValueChanged"
                                             Value="1" />
                                     </DockPanel>
@@ -458,6 +461,7 @@
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="0.1"
                                             TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             ValueChanged="SliderSensitivityY_ValueChanged"
                                             Value="1" />
                                     </DockPanel>
@@ -550,6 +554,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="5"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="RSRSlider_ValueChanged" />
                             </DockPanel>
                         </StackPanel>
@@ -609,6 +614,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="1"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="FramerateSlider_ValueChanged" />
 
                                 <Grid Name="FramerateModeGrid">

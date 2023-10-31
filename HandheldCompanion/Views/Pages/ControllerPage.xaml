@@ -346,6 +346,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="5"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="SliderStrength_ValueChanged"
                                     Value="100" />
                             </DockPanel>

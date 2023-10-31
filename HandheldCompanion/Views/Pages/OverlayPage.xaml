@@ -118,6 +118,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="100"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderOnScreenUpdateRate_ValueChanged" />
                         </DockPanel>
                     </Grid>
@@ -315,6 +316,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="50"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderControllerSize_ValueChanged" />
                         </DockPanel>
                     </Grid>
@@ -369,6 +371,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.1"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderControllerOpacity_ValueChanged" />
                         </DockPanel>
                     </Grid>
@@ -548,6 +551,7 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="Slider_Framerate_ValueChanged" />
                                 </DockPanel>
                             </Grid>
@@ -679,6 +683,7 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
                                         TickPlacement="BottomRight"
+                                        ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="Slider_RestingPitch_ValueChanged" />
                                 </DockPanel>
                             </Grid>
@@ -794,6 +799,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="50"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderTrackpadsSize_ValueChanged" />
                         </DockPanel>
                     </Grid>
@@ -848,6 +854,7 @@
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="0.01"
                                 TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N2, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderTrackpadsOpacity_ValueChanged" />
                         </DockPanel>
                     </Grid>

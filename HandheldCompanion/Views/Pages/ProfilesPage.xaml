@@ -279,7 +279,7 @@
                                         <ColumnDefinition Width="5*" MinWidth="200" />
                                         <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
-                                  
+
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
@@ -393,6 +393,7 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="5"
                                                 TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                 ValueChanged="RSRSlider_ValueChanged" />
                                         </DockPanel>
                                     </StackPanel>
@@ -450,6 +451,7 @@
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             ValueChanged="FramerateSlider_ValueChanged" />
 
                                         <Grid Name="FramerateModeGrid">
@@ -601,6 +603,7 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                 ValueChanged="tb_ProfileGyroValue_ValueChanged"
                                                 Value="10" />
                                         </DockPanel>
@@ -649,6 +652,7 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                 ValueChanged="tb_ProfileAcceleroValue_ValueChanged"
                                                 Value="10" />
                                         </DockPanel>

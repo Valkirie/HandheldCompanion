@@ -238,6 +238,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="5"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="SliderLEDBrightness_ValueChanged"
                                     Value="100" />
                             </DockPanel>
@@ -366,6 +367,7 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="5"
                                                 TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                 ValueChanged="SliderLEDSpeed_ValueChanged"
                                                 Value="100" />
                                         </DockPanel>

@@ -98,6 +98,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="Trigger2TriggerInnerDeadzone_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -134,6 +135,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="Trigger2TriggerOuterDeadzone_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -169,6 +171,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="Trigger2TriggerAntiDeadzone_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>

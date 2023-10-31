@@ -211,6 +211,7 @@
                                 SmallChange="1"
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderBrightness_ValueChanged" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
@@ -256,6 +257,7 @@
                                 SmallChange="1"
                                 Style="{DynamicResource SliderStyle1}"
                                 TickFrequency="1"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 ValueChanged="SliderVolume_ValueChanged" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
