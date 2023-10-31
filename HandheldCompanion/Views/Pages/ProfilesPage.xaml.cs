@@ -4,7 +4,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages.Profiles;
 using Inkore.UI.WPF.Modern.Controls;
@@ -18,7 +17,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
 using static HandheldCompanion.Utils.XInputPlusUtils;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

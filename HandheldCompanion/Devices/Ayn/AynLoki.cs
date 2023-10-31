@@ -59,7 +59,7 @@ public class AynLoki : IDevice
         ));
     }
 
-    public override void SetFanControl(bool enable)
+    public override void SetFanControl(bool enable, int mode)
     {
         //LogManager.LogDebug("AynLoki Set Fan Control {0}", enable);
 
@@ -159,7 +159,6 @@ public class AynLoki : IDevice
         }
 
         return true;
-        ));
     }
 
     public override string GetGlyph(ButtonFlags button)

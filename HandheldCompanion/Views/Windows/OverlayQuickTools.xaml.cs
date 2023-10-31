@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -25,7 +24,6 @@ using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
-using SystemInformation = System.Windows.Forms.SystemInformation;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 
 namespace HandheldCompanion.Views.Windows;

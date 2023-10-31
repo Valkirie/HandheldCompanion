@@ -38,12 +38,12 @@ public class GPDWin4_2023_7640U : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x275,
-            AddressDuty = 0x1809,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 184
+            AddressFanControl = 0x275,
+            AddressFanDuty = 0x1809,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 184
         };
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button

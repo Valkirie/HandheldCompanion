@@ -1,32 +1,19 @@
-﻿using ColorPicker.Models;
-using ColorPicker;
-using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using Page = System.Windows.Controls.Page;
-using System.Windows.Media;
-using LiveCharts.Defaults;
 using LiveCharts;
 using System.Windows.Input;
-using LiveCharts.Wpf.Charts.Base;
-using LiveCharts.Events;
 using LiveCharts.Wpf;
-using System.Diagnostics;
 using System.Linq;
 using LiveCharts.Helpers;
 using LiveCharts.Definitions.Series;
-using SharpDX.XInput;
 using System.Windows.Controls;
-using System.ComponentModel;
-using System.Threading.Tasks;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Processors;
-using Microsoft.VisualBasic;
 using System.Timers;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Specialized;
 
 namespace HandheldCompanion.Views.Pages

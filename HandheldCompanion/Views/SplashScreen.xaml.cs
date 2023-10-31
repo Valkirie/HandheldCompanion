@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Views.Classes;
-using System.Windows;
 
 namespace HandheldCompanion.Views
 {

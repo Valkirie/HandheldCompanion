@@ -1,13 +1,8 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
-using LiveCharts.Wpf;
-using Microsoft.Win32;
 using System;
 using System.Timers;
 using System.Windows;

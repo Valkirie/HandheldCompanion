@@ -1,12 +1,6 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Platforms;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
 using System;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;

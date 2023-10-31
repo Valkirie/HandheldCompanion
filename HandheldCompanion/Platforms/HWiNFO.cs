@@ -597,8 +597,8 @@ public class HWiNFO : IPlatform
         public string szUnit;
 
         public double Value;
-        public double ValueMin;
-        public double ValueMax;
+        public double FanValueMin;
+        public double FanValueMax;
         public double ValueAvg;
 
         public override string ToString()

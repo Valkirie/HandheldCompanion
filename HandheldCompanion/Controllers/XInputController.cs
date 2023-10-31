@@ -1,6 +1,5 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Linq;

@@ -14,9 +14,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
-using System.Windows.Media;
 using Timer = System.Timers.Timer;
-using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers;
 
@@ -144,34 +142,6 @@ public static class SystemManager
                     if (oldOrientation != ScreenOrientation.rotation)
                         // Though the real orientation didn't change, raise event because the interpretation of it changed
                         DisplayOrientationChanged?.Invoke(ScreenOrientation);
-                }
-                break;
-            case "LED":
-                {
-                    var toggled = Convert.ToBoolean(value);
-                    MainWindow.CurrentDevice.SetLedStatus(toggled);
-                }
-                break;
-            case "LEDBrightness":
-                {
-                    var toggled = SettingsManager.GetBoolean("LED");
-
-                    if (!toggled)
-                        return;
-
-                    var brightness = Convert.ToInt32(value);
-                    MainWindow.CurrentDevice.SetLedBrightness(brightness);
-                }
-                break;
-            case "LEDColor":
-                {
-                    var toggled = SettingsManager.GetBoolean("LED");
-
-                    if (!toggled)
-                        return;
-
-                    var color = Convert.ToString(value);
-                    MainWindow.CurrentDevice.SetLedColor(color);
                 }
                 break;
         }

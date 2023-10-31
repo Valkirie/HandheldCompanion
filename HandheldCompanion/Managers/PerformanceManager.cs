@@ -2,7 +2,6 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using LiveCharts.Dtos;
 using RTSSSharedMemoryNET;
 using System;
 using System.Linq;

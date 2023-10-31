@@ -11,17 +11,6 @@ using Page = System.Windows.Controls.Page;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Windows.UI.ViewManagement;
-using System.Timers;
-using LiveCharts.Defaults;
-using LiveCharts;
-using System.Windows.Input;
-using LiveCharts.Wpf.Charts.Base;
-using LiveCharts.Events;
-using LiveCharts.Wpf;
-using System.Diagnostics;
-using System.Linq;
-using LiveCharts.Helpers;
-using LiveCharts.Definitions.Series;
 
 namespace HandheldCompanion.Views.Pages
 {

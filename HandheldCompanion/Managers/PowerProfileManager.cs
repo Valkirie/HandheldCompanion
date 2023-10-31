@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using HandheldCompanion.Utils;
 using LibreHardwareMonitor.Hardware;
-using System.Diagnostics;
-using System.Timers;
 
 namespace HandheldCompanion.Managers
 {

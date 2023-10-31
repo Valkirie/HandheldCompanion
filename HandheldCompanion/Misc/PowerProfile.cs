@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Page = System.Windows.Controls.Page;
 using System.Collections.Generic;
-using HandheldCompanion.Utils;
 
 namespace HandheldCompanion.Misc
 {

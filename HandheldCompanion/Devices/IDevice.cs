@@ -4,7 +4,6 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
-using Microsoft.Win32;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,8 @@ using System.Windows.Media;
 using Windows.Devices.Sensors;
 using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
+using static HandheldCompanion.Utils.DeviceUtils;
+using System.Threading;
 
 namespace HandheldCompanion.Devices;
 
@@ -31,8 +32,8 @@ public enum DeviceCapabilities : ushort
 public struct ECDetails
 {
     // Todo, remove comments
-    // ADDR_PORT="0x4e" <-- AddressRegistry should be called address port??
-    // DATA_PORT="0x4f" <-- AddressData should be called data port??
+    // ADDR_PORT="0x4e" <-- AddressStatusCommandPort should be called address port??
+    // DATA_PORT="0x4f" <-- AddressDataPort should be called data port??
 
     // Ayaneo LED control calls them EC_Data and EC_SC
     //private const uint EC_DATA = 0x62; // Data Port
@@ -59,6 +60,7 @@ public abstract class IDevice
     public delegate void PowerStatusChangedEventHandler(IDevice device);
 
     private static OpenLibSys openLibSys;
+    protected LockObject updateLock = new();
 
     private static IDevice device;
 
@@ -508,40 +510,38 @@ public abstract class IDevice
 
     public virtual void SetFanDuty(double percent)
     {
-        if (ECDetails.AddressDuty == 0)
+        if (ECDetails.AddressFanDuty == 0)
             return;
 
         if (!IsOpen)
             return;
 
-        var duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
+        var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
         var data = Convert.ToByte(duty);
 
-        ECRamDirectWrite(ECDetails.AddressDuty, ECDetails, data);
+        ECRamDirectWrite(ECDetails.AddressFanDuty, ECDetails, data);
     }
 
     public virtual void SetFanControl(bool enable, int mode = 0)
     {
-        if (ECDetails.AddressControl == 0)
+        if (ECDetails.AddressFanControl == 0)
             return;
 
         if (!IsOpen)
             return;
 
         var data = Convert.ToByte(enable);
-        ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
+        ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, data);
     }
 
     public virtual float ReadFanDuty()
     {
-        if (ECDetails.AddressControl == 0)
+        if (ECDetails.AddressFanControl == 0)
             return 0;
 
         // todo: implement me
         return 0;
     }
-
-    
 
     public virtual bool SetLedStatus(bool status)
     {

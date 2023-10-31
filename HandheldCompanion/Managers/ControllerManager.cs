@@ -5,8 +5,6 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
-using Inkore.UI.WPF.Modern;
-using Microsoft.Win32;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;

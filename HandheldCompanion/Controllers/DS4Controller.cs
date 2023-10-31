@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern;
 using System.Windows;
 using System.Windows.Media;
 using static JSL;

@@ -1,10 +1,8 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;

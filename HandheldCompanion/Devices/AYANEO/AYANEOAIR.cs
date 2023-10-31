@@ -1,10 +1,7 @@
-using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Windows.Media;
 using WindowsInput.Events;
-using static HandheldCompanion.Utils.DeviceUtils;
 namespace HandheldCompanion.Devices;
 
 public class AYANEOAIR : AYANEO.AYANEODevice

@@ -1,5 +1,4 @@
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;

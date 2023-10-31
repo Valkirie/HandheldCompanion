@@ -2,7 +2,6 @@
 using HandheldCompanion.Utils;
 using System.Windows.Forms;
 using System.Windows.Media;
-using Windows.System;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices.AYANEO
