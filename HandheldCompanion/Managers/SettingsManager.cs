@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Managers;
 
@@ -81,7 +82,7 @@ public static class SettingsManager
             case "OverlayControllerBackgroundColor":
                 value = Convert.ToString(value);
                 break;
-            case "LEDColor":
+            case "LEDMainColor":
                 value = Convert.ToString(value);
                 break;
         }
@@ -201,6 +202,26 @@ public static class SettingsManager
     public static bool GetBoolean(string name, bool temporary = false)
     {
         return Convert.ToBoolean(GetProperty(name, temporary));
+    }
+
+    public static Color GetColor(string name, bool temporary = false)
+    {
+        // Conver color, which is stored as a HEX string to a color datatype
+        string hexColor = Convert.ToString(GetProperty(name, temporary));
+
+        // Remove the '#' character and convert the remaining string to a 32-bit integer
+        var argbValue = int.Parse(hexColor.Substring(1), System.Globalization.NumberStyles.HexNumber);
+
+        // Extract alpha, red, green, and blue components
+        byte alpha = (byte)((argbValue >> 24) & 0xFF);
+        byte red = (byte)((argbValue >> 16) & 0xFF);
+        byte green = (byte)((argbValue >> 8) & 0xFF);
+        byte blue = (byte)(argbValue & 0xFF);
+
+        // Create a Color object from the extracted components
+        Color color = Color.FromArgb(alpha, red, green, blue);
+
+        return color;
     }
 
     public static int GetInt(string name, bool temporary = false)

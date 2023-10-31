@@ -32,12 +32,12 @@ public class OneXPlayerMini : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x44A,
-            AddressDuty = 0x44B,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 255
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 255
         };
 
         OEMChords.Add(new DeviceChord("Orange",

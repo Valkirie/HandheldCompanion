@@ -279,15 +279,11 @@
                                         <ColumnDefinition Width="5*" MinWidth="200" />
                                         <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_Wrapper}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_WrapperDesc}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
+                                  
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_Wrapper}" />
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                         <ComboBox

@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
+using Windows.UI.ViewManagement;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
@@ -81,6 +82,8 @@ public partial class MainWindow : GamepadWindow
     private WindowState prevWindowState;
     private SplashScreen splashScreen;
 
+    public static UISettings uiSettings;
+
     private const int WM_QUERYENDSESSION = 0x0011;
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
@@ -89,6 +92,9 @@ public partial class MainWindow : GamepadWindow
 
         fileVersionInfo = _fileVersionInfo;
         CurrentWindow = this;
+
+        // used by system manager, controller manager
+        uiSettings = new UISettings();
 
         // used by gamepad navigation
         Tag = "MainWindow";
@@ -224,6 +230,8 @@ public partial class MainWindow : GamepadWindow
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
         PowerManager.Start();
+
+        DynamicLightingManager.Start();
 
         SystemManager.Start();
         VirtualManager.Start();

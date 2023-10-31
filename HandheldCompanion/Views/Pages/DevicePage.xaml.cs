@@ -6,8 +6,12 @@ using HandheldCompanion.Misc;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
 using System.Windows.Media;
+using static HandheldCompanion.Utils.DeviceUtils;
+using Windows.UI.ViewManagement;
+using System.Timers;
 using LiveCharts.Defaults;
 using LiveCharts;
 using System.Windows.Input;
@@ -26,21 +30,32 @@ namespace HandheldCompanion.Views.Pages
     /// </summary>
     public partial class DevicePage : Page
     {
-        private Color prevSelectedColor = new();
+        private Color prevMainColor = new();
+        private Color prevSecondColor = new();
 
         public DevicePage()
         {
             InitializeComponent();
 
-            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            // Adjust UI element availability based on device capabilities
+            DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+            LEDBrightness.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness);
 
-            // Todo, not sure if this is the right way to do it?
-            LEDPanel.Visibility = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.LEDControl) ? Visibility.Visible : Visibility.Collapsed;
+            LEDSolidColor.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.SolidColor);
+            LEDBreathing.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Breathing);
+            LEDRainbow.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Rainbow);
+            LEDWave.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Wave);
+            LEDWheel.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Wheel);
+            LEDGradient.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Gradient);
+            LEDAmbilight.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Ambilight);
         }
 
         public DevicePage(string? Tag) : this()
         {
             this.Tag = Tag;
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
         }
 
         private void Page_Loaded(object? sender, RoutedEventArgs? e)
@@ -67,16 +82,57 @@ namespace HandheldCompanion.Views.Pages
                     case "ConfigurableTDPOverrideUp":
                         NumberBox_TDPMax.Value = Convert.ToDouble(value);
                         break;
-                    case "LED":
-                        Toggle_LED.IsOn = Convert.ToBoolean(value);
+                    case "LEDSettingsEnabled":
+                        UseDynamicLightingToggle.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LEDSettingsUseAccentColor":
+                        MatchAccentColor.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LEDSettingsLevel":
+                        {
+                            foreach (Control control in LEDSettingsLevel.Items)
+                            {
+                                if (control is not ComboBoxItem)
+                                    continue;
+
+                                ComboBoxItem comboBoxItem = (ComboBoxItem)control;
+                                if (Convert.ToInt32(comboBoxItem.Tag) == Convert.ToInt32(value))
+                                {
+                                    LEDSettingsLevel.SelectedItem = comboBoxItem;
+                                    break;
+                                }
+                            }
+                        }
                         break;
                     case "LEDBrightness":
                         SliderLEDBrightness.Value = Convert.ToDouble(value);
                         break;
-                    case "LEDColor":
-                        ColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
+                    case "LEDSpeed":
+                        SliderLEDSpeed.Value = Convert.ToDouble(value);
+                        break;
+                    case "LEDDirection":
+                        LEDDirection.SelectedIndex = Convert.ToInt32(value);
+                        break;
+                    case "LEDMainColor":
+                        MainColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
+                        break;
+                    case "LEDSecondColor":
+                        SecondColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(value));
+                        break;
+                    case "LEDAmbilightVerticalBlackBarDetection":
+                        Toggle_AmbilightVerticalBlackBarDetection.IsOn = Convert.ToBoolean(value);
                         break;
                 }
+            });
+        }
+
+        private void OnColorValuesChanged(UISettings sender, object args)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                if (MatchAccentColor.IsOn)
+                    SetAccentColor();
             });
         }
 
@@ -146,29 +202,80 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("ConfigurableTDPOverrideDown", value);
         }
 
-        private void Toggle_LED_Toggled(object sender, RoutedEventArgs e)
+        private void UseDynamicLightingToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LED", Toggle_LED.IsOn, false, true);
+            SettingsManager.SetProperty("LEDSettingsEnabled", UseDynamicLightingToggle.IsOn);
         }
 
-        private void StandardColorPicker_ColorChanged(object sender, RoutedEventArgs e)
+        private void MatchAccentColor_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            MainColorPicker.IsEnabled = !MatchAccentColor.IsOn;
+            SecondColorPicker.IsEnabled = !MatchAccentColor.IsOn;
+
+            if (MatchAccentColor.IsOn)
+                SetAccentColor();
+
+            SettingsManager.SetProperty("LEDSettingsUseAccentColor", MatchAccentColor.IsOn);
+        }
+
+        private void SetAccentColor()
+        {
+            MainColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(MainWindow.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
+            SecondColorPicker.SelectedColor = (Color)ColorConverter.ConvertFromString(Convert.ToString(MainWindow.uiSettings.GetColorValue(UIColorType.Accent).ToString()));
+
+            SettingsManager.SetProperty("LEDMainColor", MainColorPicker.SelectedColor);
+            SettingsManager.SetProperty("LEDSecondColor", MainColorPicker.SelectedColor);
+        }
+
+        private void LEDSettingsLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            ComboBoxItem comboBoxItem = (ComboBoxItem)LEDSettingsLevel.SelectedItem;
+            int level = Convert.ToInt32(comboBoxItem.Tag);
+
+            SettingsManager.SetProperty("LEDSettingsLevel", level);
+        }
+
+        private void MainColorPicker_ColorChanged(object sender, RoutedEventArgs e)
         {
             // workaround: NotifyableColor is raising ColorChanged event infinitely
             ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
-            if (prevSelectedColor == colorArgs.Color)
+            if (prevMainColor == colorArgs.Color)
             {
-                ColorPicker.Color = new NotifyableColor(new PickerControlBase());
+                MainColorPicker.Color = new NotifyableColor(new PickerControlBase());
                 return;
             }
-            prevSelectedColor = colorArgs.Color;
+            prevMainColor = colorArgs.Color;
+
+            if (!IsLoaded)
+                return;
+            
+            SettingsManager.SetProperty("LEDMainColor", prevMainColor.ToString());
+        }
+        
+        private void SecondColorPicker_ColorChanged(object sender, RoutedEventArgs e)
+        {
+            // workaround: NotifyableColor is raising ColorChanged event infinitely
+            ColorRoutedEventArgs colorArgs = (ColorRoutedEventArgs)e;
+            if (prevSecondColor == colorArgs.Color)
+            {
+                SecondColorPicker.Color = new NotifyableColor(new PickerControlBase());
+                return;
+            }
+            prevSecondColor = colorArgs.Color;
 
             if (!IsLoaded)
                 return;
 
-            SettingsManager.SetProperty("LEDColor", ColorPicker.SelectedColor);
+            SettingsManager.SetProperty("LEDSecondColor", prevSecondColor.ToString());
         }
 
         private void SliderLEDBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -177,12 +284,43 @@ namespace HandheldCompanion.Views.Pages
             if (double.IsNaN(value))
                 return;
 
-            SliderLEDBrightness.Value = value;
-
             if (!IsLoaded)
                 return;
 
             SettingsManager.SetProperty("LEDBrightness", value);
+        }
+
+        private async void Toggle_AmbilightVerticalBlackBarDetection_Toggled(object? sender, RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LEDAmbilightVerticalBlackBarDetection", Toggle_AmbilightVerticalBlackBarDetection.IsOn);
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ((Expander)sender).BringIntoView();
+        }
+
+        private void SliderLEDSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var value = SliderLEDSpeed.Value;
+            if (double.IsNaN(value))
+                return;
+
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LEDSpeed", value);
+        }
+
+        private void LEDDirection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LEDDirection", LEDDirection.SelectedIndex);
         }
     }
 }

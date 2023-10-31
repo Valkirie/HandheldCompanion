@@ -39,12 +39,12 @@ public class AOKZOEA1 : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x44A,
-            AddressDuty = 0x44B,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 184
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E, // 78
+            AddressDataPort = 0x4F,     // 79
+            FanValueMin = 0,
+            FanValueMax = 184
         };
 
         // Home

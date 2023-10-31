@@ -14,7 +14,9 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
+using System.Windows.Media;
 using Timer = System.Timers.Timer;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Managers;
 

@@ -24,24 +24,39 @@ public enum DeviceCapabilities : ushort
     InternalSensor = 1,
     ExternalSensor = 2,
     FanControl = 4,
-    LEDControl = 8
+    DynamicLighting = 8,
+    DynamicLightingBrightness = 16
 }
 
 public struct ECDetails
 {
-    public ushort AddressRegistry;
-    public ushort AddressData;
-    public ushort AddressControl;
-    public ushort AddressDuty;
+    // Todo, remove comments
+    // ADDR_PORT="0x4e" <-- AddressRegistry should be called address port??
+    // DATA_PORT="0x4f" <-- AddressData should be called data port??
 
-    public short ValueMin;
-    public short ValueMax;
+    // Ayaneo LED control calls them EC_Data and EC_SC
+    //private const uint EC_DATA = 0x62; // Data Port
+    //private const uint EC_SC = 0x66;   // Status/Command Port
+
+    public ushort AddressStatusCommandPort;  // Address of the register, In EC communication, the registry address specifies the type of data or command you want to access.
+    public ushort AddressDataPort;      // Address where the data needs to go to, When interacting with the EC, the data address is where you send or receive the actual data or commands you want to communicate with the EC.
+    public ushort AddressFanControl;   // Never used?
+    public ushort AddressFanDuty;      // Never used?
+
+    // https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/12_ACPI_Embedded_Controller_Interface_Specification/embedded-controller-register-descriptions.html
+    // The embedded controller contains three registers at two address locations: EC_SC and EC_DATA.
+    // EC_SC Status Command Register
+    // EC_DATA Data register
+
+    public short FanValueMin;
+    public short FanValueMax;
 }
 
 public abstract class IDevice
 {
     public delegate void KeyPressedEventHandler(ButtonFlags button);
     public delegate void KeyReleasedEventHandler(ButtonFlags button);
+    public delegate void PowerStatusChangedEventHandler(IDevice device);
 
     private static OpenLibSys openLibSys;
 
@@ -68,6 +83,14 @@ public abstract class IDevice
     };
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
+    public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
+
+    protected const byte EC_OBF = 0x01;  // Output Buffer Full
+    protected const byte EC_IBF = 0x02;  // Input Buffer Full
+    protected const byte EC_DATA = 0x62; // Data Port
+    protected const byte EC_SC = 0x66;   // Status/Command Port
+    protected const byte RD_EC = 0x80;   // Read Embedded Controller
+    protected const byte WR_EC = 0x81;   // Write Embedded Controller
 
     // device configurable TDP (down, up)
     public double[] cTDP = { 10, 25 };
@@ -137,6 +160,7 @@ public abstract class IDevice
 
     public event KeyPressedEventHandler KeyPressed;
     public event KeyReleasedEventHandler KeyReleased;
+    public event PowerStatusChangedEventHandler PowerStatusChanged;
 
     public string ManufacturerName = string.Empty;
     public string ProductName = string.Empty;
@@ -517,6 +541,8 @@ public abstract class IDevice
         return 0;
     }
 
+    
+
     public virtual bool SetLedStatus(bool status)
     {
         return true;
@@ -527,13 +553,13 @@ public abstract class IDevice
         return true;
     }
 
-    public virtual bool SetLedColor(string hexColor)
+    public virtual bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level)
     {
         return true;
     }
 
     [Obsolete("ECRamReadByte is deprecated, please use ECRamReadByte with ECDetails instead.")]
-    public static byte ECRamReadByte(ushort address)
+    public virtual byte ECRamReadByte(ushort address)
     {
         try
         {
@@ -547,28 +573,44 @@ public abstract class IDevice
         }
     }
 
-    public static byte ECRamReadByte(ushort address, ECDetails details)
+    [Obsolete("ECRamWriteByte is deprecated, please use ECRamDirectWrite with ECDetails instead.")]
+    public virtual bool ECRamWriteByte(ushort address, byte data)
+    {
+        try
+        {
+            openLibSys.WriteIoPortByte(address, data);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Couldn't write byte to address {0} using OpenLibSys. ErrorCode: {1}", address,
+                ex.Message);
+            return false;
+        }
+    }
+
+    public virtual byte ECRamReadByte(ushort address, ECDetails details)
     {
         var addr_upper = (byte)((address >> 8) & byte.MaxValue);
         var addr_lower = (byte)(address & byte.MaxValue);
 
         try
         {
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x11);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x11);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_upper);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x10);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x10);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_lower);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x12);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x12);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
 
-            return openLibSys.ReadIoPortByte(details.AddressData);
+            return openLibSys.ReadIoPortByte(details.AddressDataPort);
         }
         catch (Exception ex)
         {
@@ -577,27 +619,27 @@ public abstract class IDevice
         }
     }
 
-    public static bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
+    public virtual bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
     {
-        var addr_upper = (byte)((address >> 8) & byte.MaxValue);
-        var addr_lower = (byte)(address & byte.MaxValue);
+        byte addr_upper = (byte)((address >> 8) & byte.MaxValue);
+        byte addr_lower = (byte)(address & byte.MaxValue);
 
         try
         {
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x11);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x11);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_upper);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x10);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x10);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_lower);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x12);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, data);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x12);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, data);
             return true;
         }
         catch (Exception ex)
@@ -605,6 +647,37 @@ public abstract class IDevice
             LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
             return false;
         }
+    }
+
+    protected void ECRAMWrite(byte address, byte data)
+    {
+        SendECCommand(WR_EC);
+        SendECData(address);
+        SendECData(data);
+    }
+
+    protected void SendECCommand(byte command)
+    {
+        if (IsECReady())
+            ECRamWriteByte(EC_SC, command);
+    }
+
+    protected void SendECData(byte data)
+    {
+        if (IsECReady())
+            ECRamWriteByte(EC_DATA, data);
+    }
+
+    protected bool IsECReady()
+    {
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromMilliseconds(50));
+        while (DateTime.Now < timeout && (ECRamReadByte(EC_SC) & EC_IBF) != 0x0)
+            Thread.Sleep(1);
+
+        if (DateTime.Now <= timeout)
+            return true;
+
+        return false;
     }
 
     protected void KeyPress(ButtonFlags button)
@@ -615,6 +688,11 @@ public abstract class IDevice
     protected void KeyRelease(ButtonFlags button)
     {
         KeyReleased?.Invoke(button);
+    }
+
+    protected void PowerStatusChange(IDevice device)
+    {
+        PowerStatusChanged?.Invoke(device);
     }
 
     protected static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)

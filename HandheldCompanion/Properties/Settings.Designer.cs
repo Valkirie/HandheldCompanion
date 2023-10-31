@@ -16,7 +16,6 @@ namespace HandheldCompanion.Properties {
     [SettingsProvider(typeof(CustomSettingsProvider))]
     internal sealed partial class Settings : ApplicationSettingsBase
     {
-
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
         public static Settings Default {
@@ -866,18 +865,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool LED {
-            get {
-                return ((bool)(this["LED"]));
-            }
-            set {
-                this["LED"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("50")]
         public double LEDBrightness {
             get {
@@ -891,12 +878,72 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFF00")]
-        public string LEDColor {
+        public string LEDMainColor {
             get {
-                return ((string)(this["LEDColor"]));
+                return ((string)(this["LEDMainColor"]));
             }
             set {
-                this["LEDColor"] = value;
+                this["LEDMainColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDAmbilightVerticalBlackBarDetection {
+            get {
+                return ((bool)(this["LEDAmbilightVerticalBlackBarDetection"]));
+            }
+            set {
+                this["LEDAmbilightVerticalBlackBarDetection"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LEDSettingsLevel {
+            get {
+                return ((int)(this["LEDSettingsLevel"]));
+            }
+            set {
+                this["LEDSettingsLevel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LEDSettingsEnabled {
+            get {
+                return ((bool)(this["LEDSettingsEnabled"]));
+            }
+            set {
+                this["LEDSettingsEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFF00")]
+        public string LEDSecondColor {
+            get {
+                return ((string)(this["LEDSecondColor"]));
+            }
+            set {
+                this["LEDSecondColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDSettingsUseAccentColor {
+            get {
+                return ((bool)(this["LEDSettingsUseAccentColor"]));
+            }
+            set {
+                this["LEDSettingsUseAccentColor"] = value;
             }
         }
     }

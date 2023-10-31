@@ -36,8 +36,6 @@ public static class ControllerManager
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
 
-    private static UISettings uiSettings;
-
     public static bool IsInitialized;
 
     private static bool virtualControllerCreated;
@@ -68,11 +66,10 @@ public static class ControllerManager
         MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
         MainWindow.CurrentDevice.KeyReleased += CurrentDevice_KeyReleased;
 
+        MainWindow.uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
         // enable HidHide
         HidHide.SetCloaking(true);
-
-        uiSettings = new UISettings();
-        uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -86,8 +83,8 @@ public static class ControllerManager
 
     private static void OnColorValuesChanged(UISettings sender, object args)
     {
-        var _systemBackground = uiSettings.GetColorValue(UIColorType.Background);
-        var _systemAccent = uiSettings.GetColorValue(UIColorType.Accent);
+        var _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+        var _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
 
         targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
     }
@@ -643,8 +640,8 @@ public static class ControllerManager
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
 
-        var _systemBackground = uiSettings.GetColorValue(UIColorType.Background);
-        var _systemAccent = uiSettings.GetColorValue(UIColorType.Accent);
+        var _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+        var _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
         targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
         // update HIDInstancePath

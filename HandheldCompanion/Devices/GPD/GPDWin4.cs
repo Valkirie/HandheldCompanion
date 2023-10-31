@@ -24,12 +24,12 @@ public class GPDWin4 : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0xC311,
-            AddressDuty = 0xC880,
-            AddressRegistry = 0x2E,
-            AddressData = 0x2F,
-            ValueMin = 0,
-            ValueMax = 127
+            AddressFanControl = 0xC311,
+            AddressFanDuty = 0xC880,
+            AddressStatusCommandPort = 0x2E,
+            AddressDataPort = 0x2F,
+            FanValueMin = 0,
+            FanValueMax = 127
         };
 
         AngularVelocityAxis = new Vector3(-1.0f, -1.0f, 1.0f);
@@ -93,13 +93,13 @@ public class GPDWin4 : IDevice
 
     public override void SetFanDuty(double percent)
     {
-        if (ECDetails.AddressControl == 0)
+        if (ECDetails.AddressFanControl == 0)
             return;
 
-        var duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
+        var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
         var data = Convert.ToByte(duty);
 
-        ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
+        ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, data);
     }
 
     public override bool Open()

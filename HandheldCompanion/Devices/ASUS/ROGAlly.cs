@@ -6,13 +6,14 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Windows.Media;
 using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Text;
 using WindowsInput.Events;
 using Task = System.Threading.Tasks.Task;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -50,11 +51,11 @@ public class ROGAlly : IDevice
 
     private enum AuraMode
     {
-        Static = 0,
-        Breathe = 1,
-        Cycle = 2,
+        SolidColor = 0,
+        Breathing = 1,
+        Wheel = 2,
         Rainbow = 3,
-        Strobe = 4,
+        Wave = 4,
     }
 
     private enum AuraSpeed
@@ -62,6 +63,21 @@ public class ROGAlly : IDevice
         Slow = 0xeb,
         Medium = 0xf5,
         Fast = 0xe1,
+    }
+
+    private enum AuraDirection
+    {
+        Forward = 0,
+        Reverse = 1,
+    }
+
+    private enum LEDZone
+    {
+        All = 0,
+        JoystickLeftSideLeft = 1,
+        JoystickLeftSideRight = 2,
+        JoystickRightSideLeft = 3,
+        JoystickRightSideRight = 4,
     }
 
     public ROGAlly()
@@ -97,8 +113,16 @@ public class ROGAlly : IDevice
         };
 
         // device specific capacities
-        Capabilities = DeviceCapabilities.FanControl;
-        Capabilities |= DeviceCapabilities.LEDControl;
+        Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+
+        // dynamic lighting capacities
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
+        DynamicLightingCapabilities |= LEDLevel.Breathing;
+        DynamicLightingCapabilities |= LEDLevel.Rainbow;
+        DynamicLightingCapabilities |= LEDLevel.Wave;
+        DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
         powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
         {
@@ -272,19 +296,6 @@ public class ROGAlly : IDevice
         }
     }
 
-    public override bool SetLedStatus(bool status)
-    {
-        switch(status)
-        {
-            case true:
-                bool success1 = SetLedBrightness(SettingsManager.GetInt("LEDBrightness"));
-                bool success2 = SetLedColor(SettingsManager.GetString("LEDColor"));
-                return success1 && success2;
-            case false:
-                return SetLedBrightness(0);
-        }
-    }
-
     public override bool SetLedBrightness(int brightness) 
     {
         //ROG ALly brightness range is: 0 - 3 range, 0 is off, convert from 0 - 100 % range
@@ -330,21 +341,36 @@ public class ROGAlly : IDevice
         return false;
     }
 
-    public override bool SetLedColor(string hexColor)
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level)
     {
-        // Remove the '#' character and convert the remaining string to a 32-bit integer
-        int argbValue = int.Parse(hexColor.Substring(1), System.Globalization.NumberStyles.HexNumber);
-        
-        // Create a Color object from the ARGB value
-        Color color = Color.FromArgb(argbValue);
+        if (!DynamicLightingCapabilities.HasFlag(level))
+            return false;
 
-        // Apply the color for the left and right LED, with default auro mode settings
-        ApplyColor(AuraMode.Static, color, color, AuraSpeed.Slow);
+        // Apply the color for the left and right LED
+        AuraMode auraMode = AuraMode.SolidColor;
 
-        return true;
+        switch (level)
+        {
+            case LEDLevel.SolidColor:
+                auraMode = AuraMode.SolidColor;
+                break;
+            case LEDLevel.Breathing:
+                auraMode = AuraMode.Breathing;
+                break;
+            case LEDLevel.Rainbow:
+                auraMode = AuraMode.Rainbow;
+                break;
+            case LEDLevel.Wave:
+                auraMode = AuraMode.Wave;
+                break;
+            case LEDLevel.Ambilight:
+                return ApplyColorFast(MainColor, SecondaryColor);
+        }
+
+        return ApplyColor(auraMode, MainColor, SecondaryColor, AuraSpeed.Fast);
     }
 
-    private bool ApplyColor(AuraMode mode, Color color, Color color2, AuraSpeed speed)
+    private bool ApplyColor(AuraMode mode, Color MainColor, Color SecondaryColor, AuraSpeed speed = AuraSpeed.Slow, AuraDirection direction = AuraDirection.Forward)
     {
         IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
         foreach (HidDevice device in devices)
@@ -355,7 +381,7 @@ public class ROGAlly : IDevice
             if (!device.ReadFeatureData(out byte[] data, AURA_HID_ID))
                 return false;
 
-            device.Write(AuraMessage(mode, color, color2, (int)speed));
+            device.Write(AuraMessage(mode, MainColor, SecondaryColor, (int)speed));
             device.Write(MESSAGE_APPLY);
             device.Write(MESSAGE_SET);
         }
@@ -363,22 +389,45 @@ public class ROGAlly : IDevice
         return true;
     }
 
-    private static byte[] AuraMessage(AuraMode mode, Color color, Color color2, int speed, bool mono = false)
+    private bool ApplyColorFast(Color MainColor, Color SecondaryColor)
+    {
+        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
+        foreach (HidDevice device in devices)
+        {
+            if (device is null || !device.IsConnected)
+                return false;
+
+            if (!device.ReadFeatureData(out byte[] data, AURA_HID_ID))
+                return false;
+
+            // Left joystick
+            device.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickLeftSideLeft));
+            device.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickLeftSideRight));
+
+            // Right joystick
+            device.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickRightSideLeft));
+            device.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickRightSideRight));
+        }
+
+        return true;
+    }
+
+    private static byte[] AuraMessage(AuraMode mode, Color LEDColor1, Color LEDColor2, int speed, bool mono = false, int zone = 0, int direction = 0)
     {
         byte[] msg = new byte[17];
         msg[0] = AURA_HID_ID;
         msg[1] = 0xb3;
-        msg[2] = 0x00; // Zone 
+        msg[2] = (byte)zone; // Zone 
         msg[3] = (byte)mode; // Aura Mode
-        msg[4] = color.R; // R
-        msg[5] = mono ? (byte)0 : color.G; // G
-        msg[6] = mono ? (byte)0 : color.B; // B
+        msg[4] = LEDColor1.R; // R
+        msg[5] = mono ? (byte)0 : LEDColor1.G; // G
+        msg[6] = mono ? (byte)0 : LEDColor1.B; // B
         msg[7] = (byte)speed; // aura.speed as u8;
-        msg[8] = 0; // aura.direction as u8;
-        msg[9] = (mode == AuraMode.Breathe) ? (byte)1 : (byte)0;
-        msg[10] = color2.R; // R
-        msg[11] = mono ? (byte)0 : color2.G; // G
-        msg[12] = mono ? (byte)0 : color2.B; // B
+        msg[8] = (byte)direction; // aura.direction as u8;
+        msg[9] = (mode == AuraMode.Breathing) ? (byte)1 : (byte)0;
+        msg[10] = LEDColor2.R; // R
+        msg[11] = mono ? (byte)0 : LEDColor2.G; // G
+        msg[12] = mono ? (byte)0 : LEDColor2.B; // B
         return msg;
     }
 

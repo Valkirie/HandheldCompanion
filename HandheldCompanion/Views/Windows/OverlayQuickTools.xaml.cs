@@ -88,7 +88,6 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // create manager(s)
         PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
-        PowerManager_PowerStatusChanged(SystemInformation.PowerStatus);
 
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;

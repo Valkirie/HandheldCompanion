@@ -1,11 +1,14 @@
+using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Windows.Media;
 using WindowsInput.Events;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
-public class AYANEO2 : IDevice
+public class AYANEO2 : AYANEO.AYANEODevice
 {
     public AYANEO2()
     {
@@ -36,15 +39,16 @@ public class AYANEO2 : IDevice
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x44A,
-            AddressDuty = 0x44B,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 100
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 100
         };
 
         OEMChords.Add(new DeviceChord("Custom Key Top Right",

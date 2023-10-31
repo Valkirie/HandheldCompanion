@@ -791,11 +791,182 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ambilight Vertical Blackbar detection.
+        /// </summary>
+        public static string DevicePage_AmbilightVerticalBlackBarDetection {
+            get {
+                return ResourceManager.GetString("DevicePage_AmbilightVerticalBlackBarDetection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertical black bar detection for 4:3 aspect ratio games or videos.
+        /// </summary>
+        public static string DevicePage_AmbilightVerticalBlackBarDetectionDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_AmbilightVerticalBlackBarDetectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device.
         /// </summary>
         public static string DevicePage_Device {
             get {
                 return ResourceManager.GetString("DevicePage_Device", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Effects.
+        /// </summary>
+        public static string DevicePage_DynamicLighting {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ambilight.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Ambilight {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Ambilight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Breathing.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Breathing {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Breathing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Brightness.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Brightness {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Brightness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the brightness of your lights.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_BrightnessDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_BrightnessDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Direction.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_EffectDirection {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_EffectDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Effect speed.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_EffectSpeed {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_EffectSpeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gradient.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Gradient {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Gradient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main color.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_MainColorSelection {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_MainColorSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match my Windows accent color.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_MatchAccentColor {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_MatchAccentColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_None {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rainbow.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Rainbow {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Rainbow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Second color.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_SecondColorSelection {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_SecondColorSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solid Color.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_SolidColor {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_SolidColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wave.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Wave {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Wave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wheel.
+        /// </summary>
+        public static string DevicePage_DynamicLighting_Wheel {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLighting_Wheel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose color themes and effects for your lighting.
+        /// </summary>
+        public static string DevicePage_DynamicLightingDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_DynamicLightingDesc", resourceCulture);
             }
         }
         
