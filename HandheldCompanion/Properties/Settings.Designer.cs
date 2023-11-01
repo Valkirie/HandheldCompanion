@@ -946,5 +946,17 @@ namespace HandheldCompanion.Properties {
                 this["LEDSettingsUseAccentColor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double LEDSpeed {
+            get {
+                return ((double)(this["LEDSpeed"]));
+            }
+            set {
+                this["LEDSpeed"] = value;
+            }
+        }
     }
 }

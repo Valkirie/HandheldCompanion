@@ -351,7 +351,7 @@
                                             <TextBlock
                                                 Width="35"
                                                 VerticalAlignment="Center"
-                                                Text="{Binding Value, StringFormat=N0, ElementName=SliderLEDBrightness, Mode=OneWay}"
+                                                Text="{Binding Value, StringFormat=N0, ElementName=SliderLEDSpeed, Mode=OneWay}"
                                                 TextAlignment="Center" />
                                             <TextBlock VerticalAlignment="Center" Text="%" />
                                             <Slider
@@ -381,10 +381,11 @@
                                 </ui:SimpleStackPanel>
 
                                 <!--  Direction  -->
+                                <!--  Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|3|4|5}"  -->
                                 <ui:SimpleStackPanel
                                     d:Visibility="Visible"
                                     Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|3|4|5}">
+                                    Visibility="Collapsed">
 
                                     <Grid Height="40">
                                         <Grid.ColumnDefinitions>
@@ -418,7 +419,7 @@
                                 <ui:SimpleStackPanel
                                     d:Visibility="Visible"
                                     Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|4|5}">
+                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
 
                                     <!--  Match my Windows accent color  -->
                                     <Grid>
@@ -476,10 +477,11 @@
                                 </ui:SimpleStackPanel>
 
                                 <!--  Second color  -->
+                                <!--  Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|5}"  -->
                                 <ui:SimpleStackPanel
                                     d:Visibility="Visible"
                                     Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|4|5}">
+                                    Visibility="Collapsed">
 
                                     <!--  Second color  -->
                                     <Grid Height="40">

@@ -553,7 +553,7 @@ public abstract class IDevice
         return true;
     }
 
-    public virtual bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level)
+    public virtual bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
         return true;
     }

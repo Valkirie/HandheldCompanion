@@ -72,7 +72,7 @@ namespace HandheldCompanion.Devices.AYANEO
             ECRAMWrite(0x6d, (byte)joyStick);
         }
 
-        public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level)
+        public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed)
         {
             if (!DynamicLightingCapabilities.HasFlag(level))
                 return false;

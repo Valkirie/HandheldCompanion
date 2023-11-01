@@ -136,6 +136,7 @@ public static class DynamicLightingManager
             case "LEDMainColor":
             case "LEDSecondColor":
             case "LEDSettingsLevel":
+            case "LEDSpeed":
                 RequestUpdate();
                 break;
 
@@ -165,6 +166,7 @@ public static class DynamicLightingManager
         {
             LEDLevel LEDSettingsLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
             int LEDBrightness = SettingsManager.GetInt("LEDBrightness");
+            int LEDSpeed = SettingsManager.GetInt("LEDSpeed");
 
             // Set brightness and color based on settings
             MainWindow.CurrentDevice.SetLedBrightness(LEDBrightness);
@@ -182,7 +184,7 @@ public static class DynamicLightingManager
                         if (AmbilightTimer.Enabled)
                             AmbilightTimer.Stop();
 
-                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDMainColor, LEDSettingsLevel);
+                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDMainColor, LEDSettingsLevel, LEDSpeed);
                     }
                     break;
 
@@ -193,7 +195,7 @@ public static class DynamicLightingManager
                         if (AmbilightTimer.Enabled)
                             AmbilightTimer.Stop();
 
-                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel);
+                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel, LEDSpeed);
                     }
                     break;
 
@@ -212,6 +214,7 @@ public static class DynamicLightingManager
 
                             // Provide LEDs with initial brightness
                             MainWindow.CurrentDevice.SetLedBrightness(100);
+                            MainWindow.CurrentDevice.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
                         }
                     }
                     break;

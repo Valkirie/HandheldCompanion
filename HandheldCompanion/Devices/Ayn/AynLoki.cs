@@ -118,7 +118,7 @@ public class AynLoki : IDevice
         return fanSpeedPercentageActual;
     }
 
-    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level)
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed)
     {
         //LogManager.LogDebug("AynLoki Set LED color");
 

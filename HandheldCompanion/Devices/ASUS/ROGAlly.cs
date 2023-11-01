@@ -29,7 +29,7 @@ public class ROGAlly : IDevice
         { 168, ButtonFlags.OEM4 },
     };
 
-    private HidDevice hidDevice;
+    private Dictionary<byte, HidDevice> hidDevices = new();
     private AsusACPI asusACPI;
 
     private const byte INPUT_HID_ID = 0x5a;
@@ -45,7 +45,7 @@ public class ROGAlly : IDevice
     static byte[] MESSAGE_APPLY = { AURA_HID_ID, 0xb4 };
     static byte[] MESSAGE_SET = { AURA_HID_ID, 0xb5, 0, 0, 0 };
 
-    public override bool IsOpen => hidDevice is not null && hidDevice.IsOpen && asusACPI is not null && asusACPI.IsOpen();
+    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen && asusACPI is not null && asusACPI.IsOpen();
 
     private enum AuraMode
     {
@@ -119,7 +119,8 @@ public class ROGAlly : IDevice
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Breathing;
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
-        DynamicLightingCapabilities |= LEDLevel.Wave;
+        // DynamicLightingCapabilities |= LEDLevel.Wave;
+        DynamicLightingCapabilities |= LEDLevel.Wheel;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
         powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
@@ -163,15 +164,12 @@ public class ROGAlly : IDevice
     {
         var success = base.Open();
         if (!success)
-            return false;
+            return false;        
 
         // try open asus ACPI
         asusACPI = new AsusACPI();
         if (asusACPI is null)
             return false;
-
-        // deprecated
-        // asusACPI.SubscribeToEvents(WatcherEventArrived);
 
         return true;
     }
@@ -182,19 +180,11 @@ public class ROGAlly : IDevice
         if (asusACPI is not null)
             asusACPI.Close();
 
-        // clear array
-        if (hidDevice is not null)
+        // close devices
+        foreach(HidDevice hidDevice in hidDevices.Values)
             hidDevice.CloseDevice();        
 
         base.Close();
-    }
-
-    public void WatcherEventArrived(object sender, EventArrivedEventArgs e)
-    {
-        if (e.NewEvent is null) return;
-        int EventID = int.Parse(e.NewEvent["EventID"].ToString());
-        LogManager.LogDebug("WMI event {0}", EventID);
-        HandleEvent((byte)EventID);
     }
 
     public override bool IsReady()
@@ -205,23 +195,24 @@ public class ROGAlly : IDevice
             if (!device.IsConnected)
                 continue;
 
-            try
+            if (device.ReadFeatureData(out byte[] data, INPUT_HID_ID))
             {
                 device.OpenDevice();
                 device.MonitorDeviceEvents = true;
+
+                hidDevices[INPUT_HID_ID] = device;
+
+                Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
+                ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
             }
-            catch
+            else if (device.ReadFeatureData(out data, AURA_HID_ID))
             {
-                continue;
+                hidDevices[AURA_HID_ID] = device;
             }
-
-            Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
-            ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
-
-            hidDevice = device;
         }
 
-        if (hidDevice is null)
+        hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);
+        if (hidDevice is null || !hidDevice.IsConnected)
             return false;
 
         PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
@@ -239,16 +230,9 @@ public class ROGAlly : IDevice
         Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
         ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
 
-        switch(result.ReportId)
-        {
-            case 90:
-                {
-                    // get key
-                    byte key = result.Data[0];
-                    HandleEvent(key);                  
-                }
-                break;
-        }
+        // get key
+        byte key = result.Data[0];
+        HandleEvent(key);
     }
 
     public override void SetFanControl(bool enable, int mode = 0)
@@ -343,36 +327,12 @@ public class ROGAlly : IDevice
         Task.Run(async () =>
         {
             byte[] msg = { AURA_HID_ID, 0xba, 0xc5, 0xc4, (byte)brightness };
-            byte[] msgBackup = { INPUT_HID_ID, 0xba, 0xc5, 0xc4, (byte)brightness };
 
-            IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
-            foreach (HidDevice device in devices)
-            {
-                if (device is null || !device.IsConnected)
-                    return false;
+            hidDevices.TryGetValue(AURA_HID_ID, out HidDevice hidDevice);
+            if (hidDevice is null || !hidDevice.IsConnected)
+                return false;
 
-                device.OpenDevice();
-
-                if (device.ReadFeatureData(out byte[] data, AURA_HID_ID))
-                {
-                    device.WriteFeatureData(msg);
-                }
-                else
-                {
-                    return false;
-                }
-
-                if (device.ReadFeatureData(out byte[] dataBackkup, INPUT_HID_ID))
-                {
-                    device.WriteFeatureData(msgBackup);
-                }
-                else
-                {
-                    return false;
-                }
-
-                device.CloseDevice();
-            }
+            hidDevice.WriteFeatureData(msg);
 
             return true;
         });
@@ -380,7 +340,7 @@ public class ROGAlly : IDevice
         return false;
     }
 
-    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level)
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed)
     {
         if (!DynamicLightingCapabilities.HasFlag(level))
             return false;
@@ -402,56 +362,55 @@ public class ROGAlly : IDevice
             case LEDLevel.Wave:
                 auraMode = AuraMode.Wave;
                 break;
+            case LEDLevel.Wheel:
+                auraMode = AuraMode.Wheel;
+                break;
             case LEDLevel.Ambilight:
                 return ApplyColorFast(MainColor, SecondaryColor);
         }
 
-        return ApplyColor(auraMode, MainColor, SecondaryColor, AuraSpeed.Fast);
+        AuraSpeed auraSpeed = AuraSpeed.Fast;
+        if (speed <= 33)
+            auraSpeed = AuraSpeed.Slow;
+        else if (speed > 33 && speed <= 66)
+            auraSpeed = AuraSpeed.Medium;
+        else
+            auraSpeed = AuraSpeed.Fast;
+
+        return ApplyColor(auraMode, MainColor, SecondaryColor, auraSpeed);
     }
 
     private bool ApplyColor(AuraMode mode, Color MainColor, Color SecondaryColor, AuraSpeed speed = AuraSpeed.Slow, AuraDirection direction = AuraDirection.Forward)
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
-        foreach (HidDevice device in devices)
-        {
-            if (device is null || !device.IsConnected)
-                return false;
+        hidDevices.TryGetValue(AURA_HID_ID, out HidDevice hidDevice);
+        if (hidDevice is null || !hidDevice.IsConnected)
+            return false;
 
-            if (!device.ReadFeatureData(out byte[] data, AURA_HID_ID))
-                return false;
-
-            device.Write(AuraMessage(mode, MainColor, SecondaryColor, (int)speed));
-            device.Write(MESSAGE_APPLY);
-            device.Write(MESSAGE_SET);
-        }
+        hidDevice.Write(AuraMessage(mode, MainColor, SecondaryColor, speed, LEDZone.All));
+        hidDevice.Write(MESSAGE_APPLY);
+        hidDevice.Write(MESSAGE_SET);
 
         return true;
     }
 
     private bool ApplyColorFast(Color MainColor, Color SecondaryColor)
     {
-        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
-        foreach (HidDevice device in devices)
-        {
-            if (device is null || !device.IsConnected)
-                return false;
+        hidDevices.TryGetValue(AURA_HID_ID, out HidDevice hidDevice);
+        if (hidDevice is null || !hidDevice.IsConnected)
+            return false;
 
-            if (!device.ReadFeatureData(out byte[] data, AURA_HID_ID))
-                return false;
+        // Left joystick
+        hidDevice.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, AuraSpeed.Slow, LEDZone.JoystickLeftSideLeft));
+        hidDevice.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, AuraSpeed.Slow, LEDZone.JoystickLeftSideRight));
 
-            // Left joystick
-            device.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickLeftSideLeft));
-            device.Write(AuraMessage(AuraMode.SolidColor, MainColor, MainColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickLeftSideRight));
-
-            // Right joystick
-            device.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickRightSideLeft));
-            device.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, (int)AuraSpeed.Slow, false, (int)LEDZone.JoystickRightSideRight));
-        }
+        // Right joystick
+        hidDevice.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, AuraSpeed.Slow, LEDZone.JoystickRightSideLeft));
+        hidDevice.Write(AuraMessage(AuraMode.SolidColor, SecondaryColor, SecondaryColor, AuraSpeed.Slow, LEDZone.JoystickRightSideRight));
 
         return true;
     }
 
-    private static byte[] AuraMessage(AuraMode mode, Color LEDColor1, Color LEDColor2, int speed, bool mono = false, int zone = 0, int direction = 0)
+    private static byte[] AuraMessage(AuraMode mode, Color LEDColor1, Color LEDColor2, AuraSpeed speed, LEDZone zone, LEDDirection direction = LEDDirection.Up)
     {
         byte[] msg = new byte[17];
         msg[0] = AURA_HID_ID;
@@ -459,14 +418,14 @@ public class ROGAlly : IDevice
         msg[2] = (byte)zone; // Zone 
         msg[3] = (byte)mode; // Aura Mode
         msg[4] = LEDColor1.R; // R
-        msg[5] = mono ? (byte)0 : LEDColor1.G; // G
-        msg[6] = mono ? (byte)0 : LEDColor1.B; // B
+        msg[5] = LEDColor1.G; // G
+        msg[6] = LEDColor1.B; // B
         msg[7] = (byte)speed; // aura.speed as u8;
         msg[8] = (byte)direction; // aura.direction as u8;
         msg[9] = (mode == AuraMode.Breathing) ? (byte)1 : (byte)0;
         msg[10] = LEDColor2.R; // R
-        msg[11] = mono ? (byte)0 : LEDColor2.G; // G
-        msg[12] = mono ? (byte)0 : LEDColor2.B; // B
+        msg[11] = LEDColor2.G; // G
+        msg[12] = LEDColor2.B; // B
         return msg;
     }
 
