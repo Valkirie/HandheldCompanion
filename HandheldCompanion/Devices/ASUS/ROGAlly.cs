@@ -127,6 +127,7 @@ public class ROGAlly : IDevice
         {
             Default = true,
             OEMPowerMode = (int)AsusMode.Silent,
+            OSPowerMode = PowerMode.BetterBattery,
             Guid = PowerMode.BetterBattery
         };
 
@@ -134,6 +135,7 @@ public class ROGAlly : IDevice
         {
             Default = true,
             OEMPowerMode = (int)AsusMode.Performance,
+            OSPowerMode = PowerMode.BetterPerformance,
             Guid = PowerMode.BetterPerformance
         };
 
@@ -141,6 +143,7 @@ public class ROGAlly : IDevice
         {
             Default = true,
             OEMPowerMode = (int)AsusMode.Turbo,
+            OSPowerMode = PowerMode.BestPerformance,
             Guid = PowerMode.BestPerformance
         };
 

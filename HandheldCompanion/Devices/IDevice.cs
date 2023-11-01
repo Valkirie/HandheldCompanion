@@ -112,7 +112,8 @@ public abstract class IDevice
     public PowerProfile powerProfileBalanced = new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
     {
         Default = true,
-        Guid = PowerMode.BetterPerformance
+        Guid = PowerMode.BetterPerformance,
+        OSPowerMode = PowerMode.BetterPerformance,
     };
     public PowerProfile powerProfileCool;
 
