@@ -1,18 +1,14 @@
 ﻿using HandheldCompanion.Devices.ASUS;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Management;
 using System.Numerics;
-using System.Text;
 using WindowsInput.Events;
 using Task = System.Threading.Tasks.Task;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Devices;
 
@@ -21,33 +17,19 @@ public class ROGAlly : IDevice
     private readonly Dictionary<byte, ButtonFlags> keyMapping = new()
     {
         { 0, ButtonFlags.None },
-        { 56, ButtonFlags.OEM2 },
-        { 162, ButtonFlags.None },
         { 166, ButtonFlags.OEM1 },
+        { 56, ButtonFlags.OEM2 },
         { 165, ButtonFlags.OEM3 },
         { 167, ButtonFlags.OEM4 },
         { 168, ButtonFlags.OEM4 },
-        { 236, ButtonFlags.None }
     };
 
-    private HidDevice hidDevice;
+    private Dictionary<byte, HidDevice> hidDevices = new();
     private AsusACPI asusACPI;
 
-    private enum AuraMode
-    {
-        Static = 0,
-        Breathe = 1,
-        Cycle = 2,
-        Rainbow = 3,
-        Strobe = 4,
-    }
+    private const byte INPUT_HID_ID = 0x5a;
 
-    private enum AuraSpeed
-    {
-        Slow = 0xeb,
-        Medium = 0xf5,
-        Fast = 0xe1,
-    }
+    public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen && asusACPI is not null && asusACPI.IsOpen();
 
     public ROGAlly()
     {
@@ -106,15 +88,10 @@ public class ROGAlly : IDevice
         if (!success)
             return false;
 
-        if (hidDevice is not null)
-            hidDevice.OpenDevice();
-
         // try open asus ACPI
         asusACPI = new AsusACPI();
         if (asusACPI is null)
             return false;
-
-        asusACPI.SubscribeToEvents(WatcherEventArrived);
 
         return true;
     }
@@ -125,40 +102,60 @@ public class ROGAlly : IDevice
         if (asusACPI is not null)
             asusACPI.Close();
 
-        // clear array
-        if (hidDevice is not null)
-            hidDevice.CloseDevice();        
+        // close devices
+        foreach (HidDevice hidDevice in hidDevices.Values)
+            hidDevice.CloseDevice();
 
         base.Close();
     }
 
-    public void WatcherEventArrived(object sender, EventArrivedEventArgs e)
-    {
-        if (e.NewEvent is null) return;
-        int EventID = int.Parse(e.NewEvent["EventID"].ToString());
-        LogManager.LogDebug("WMI event {0}", EventID);
-        HandleEvent((byte)EventID);
-    }
-
     public override bool IsReady()
     {
-        hidDevice = GetHidDevices(_vid, _pid).FirstOrDefault();
-        if (hidDevice is null)
+        IEnumerable<HidDevice> devices = GetHidDevices(_vid, _pid);
+        foreach (HidDevice device in devices)
+        {
+            if (!device.IsConnected)
+                continue;
+
+            if (device.ReadFeatureData(out byte[] data, INPUT_HID_ID))
+            {
+                device.OpenDevice();
+                device.MonitorDeviceEvents = true;
+
+                hidDevices[INPUT_HID_ID] = device;
+
+                Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
+                ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
+            }
+        }
+
+        hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);
+        if (hidDevice is null || !hidDevice.IsConnected)
             return false;
 
-        var pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
-        var device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
+        PnPDevice pnpDevice = PnPDevice.GetDeviceByInterfaceId(hidDevice.DevicePath);
+        string device_parent = pnpDevice.GetProperty<string>(DevicePropertyKey.Device_Parent);
 
-        var pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
-        var parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
-        var parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
+        PnPDevice pnpParent = PnPDevice.GetDeviceByInstanceId(device_parent);
+        Guid parent_guid = pnpParent.GetProperty<Guid>(DevicePropertyKey.Device_ClassGuid);
+        string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
         return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
     }
 
+    private void OnReport(HidReport result, HidDevice device)
+    {
+        Task<HidReport> ReportDevice = Task.Run(async () => await device.ReadReportAsync());
+        ReportDevice.ContinueWith(t => OnReport(ReportDevice.Result, device));
+
+        // get key
+        byte key = result.Data[0];
+        HandleEvent(key);
+    }
+
     public override void SetFanControl(bool enable)
     {
-        if (!asusACPI.IsOpen())
+        if (!IsOpen)
             return;
 
         switch (enable)
@@ -171,7 +168,7 @@ public class ROGAlly : IDevice
 
     public override void SetFanDuty(double percent)
     {
-        if (!asusACPI.IsOpen())
+        if (!IsOpen)
             return;
 
         asusACPI.SetFanSpeed(AsusFan.CPU, Convert.ToByte(percent));
@@ -180,6 +177,9 @@ public class ROGAlly : IDevice
 
     public override float ReadFanDuty()
     {
+        if (!IsOpen)
+            return 100.0f;
+
         int cpuFan = asusACPI.DeviceGet(AsusACPI.CPU_Fan);
         int gpuFan = asusACPI.DeviceGet(AsusACPI.GPU_Fan);
         return (cpuFan + gpuFan) / 2 * 100;
@@ -204,10 +204,16 @@ public class ROGAlly : IDevice
             return;
 
         // get button
-        var button = keyMapping[key];
-
+        ButtonFlags button = keyMapping[key];
         switch (key)
         {
+            case 0:   // Back paddles: Release
+                {
+                    KeyRelease(ButtonFlags.OEM3);
+                }
+                return;
+
+            case 165:   // Back paddles: Press
             case 167:   // Armory crate: Hold
                 KeyPress(button);
                 break;
@@ -218,10 +224,9 @@ public class ROGAlly : IDevice
 
             default:
             case 56:    // Armory crate: Click
-            case 165:   // Back paddles: Click
             case 166:   // Command center: Click
                 {
-                    Task.Run(async () =>
+                    Task.Factory.StartNew(async () =>
                     {
                         KeyPress(button);
                         await Task.Delay(KeyPressDelay);
