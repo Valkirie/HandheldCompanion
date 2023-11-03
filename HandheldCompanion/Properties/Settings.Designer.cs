@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Configuration;
+
 namespace HandheldCompanion.Properties {
     
     
