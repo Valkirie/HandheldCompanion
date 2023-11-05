@@ -46,11 +46,11 @@
 
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem IsEnabled="False">
-                    <DockPanel>
+                    <DockPanel Height="40">
                         <ui:FontIcon
                             Name="BatteryIndicatorIcon"
                             VerticalAlignment="Center"
-                            FontSize="21" />
+                            FontSize="30" />
                         <TextBlock
                             Name="BatteryIndicatorPercentage"
                             Margin="2,0,0,0"
@@ -61,13 +61,12 @@
                             Margin="4,0,0,0"
                             VerticalAlignment="Center"
                             Style="{StaticResource BodyTextBlockStyle}" />
+                        <TextBlock
+                            Name="Time"
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}" />
                     </DockPanel>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem IsEnabled="False">
-                    <TextBlock
-                        Name="Time"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BodyTextBlockStyle}" />
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem IsEnabled="False" />
             </ui:NavigationView.FooterMenuItems>
