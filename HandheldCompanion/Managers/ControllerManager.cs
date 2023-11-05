@@ -735,6 +735,12 @@ public static class ControllerManager
     {
         // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("PhysicalControllerInstanceIds");
+        if (deviceInstanceIds.Count == 0)
+        {
+            List<string> pnpInstanceIds = PnPUtil.GetDevices("XnaComposite", "/Disabled");
+            deviceInstanceIds.AddRange(pnpInstanceIds.ToArray());
+        }
+
         foreach (string deviceInstanceId in deviceInstanceIds)
             PnPUtil.EnableDevice(deviceInstanceId);
     }

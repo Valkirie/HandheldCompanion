@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using WindowsInput.Native;
 
 namespace HandheldCompanion
 {
@@ -24,24 +28,57 @@ namespace HandheldCompanion
 
         public static bool RestartDevice(string InstanceId)
         {
-            var pnpResult = StartPnPUtil($"/restart-device \"{InstanceId}\"");
+            var pnpResult = GetPnPUtilResult($"/restart-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
+
         public static bool EnableDevice(string InstanceId)
         {
-            var pnpResult = StartPnPUtil($"/enable-device \"{InstanceId}\"");
+            var pnpResult = GetPnPUtilResult($"/enable-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
 
         public static bool DisableDevice(string InstanceId)
         {
-            var pnpResult = StartPnPUtil($"/disable-device \"{InstanceId}\"");
+            var pnpResult = GetPnPUtilResult($"/disable-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
 
-        private static PnPUtilResult StartPnPUtil(string arguments)
+        public static List<string> GetDevices(string className, string status = "/connected")
         {
-            using Process process = new();
+            // A list of string to store the Instance ID values
+            List<string> instanceIDs = new List<string>();
+
+            // A regular expression to match the Instance ID pattern
+            Regex regex = new Regex(@"Instance ID:\s+(.*)");
+
+            // Loop through each line of the input string
+            string input = GetPnPUtilOutput($"/enum-devices {status} /class {className}");
+            foreach (string line in input.Split('\r'))
+            {
+                // Try to match the line with the regular expression
+                Match match = regex.Match(line);
+
+                // If there is a match, add the Instance ID value to the list
+                if (match.Success)
+                {
+                    instanceIDs.Add(match.Groups[1].Value);
+                }
+            }
+
+            // Print the list of Instance ID values
+            Debug.WriteLine("The Instance ID values are:");
+            foreach (string id in instanceIDs)
+            {
+                Debug.WriteLine(id);
+            }
+
+            return instanceIDs;
+        }
+
+        private static Process StartPnPUtil(string arguments)
+        {
+            Process process = new();
 
             process.StartInfo.FileName = "pnputil.exe";
             process.StartInfo.Arguments = arguments;
@@ -52,11 +89,23 @@ namespace HandheldCompanion
             process.StartInfo.CreateNoWindow = true;
 
             process.Start();
-
-            var output = process.StandardOutput.ReadToEnd();
-
             process.WaitForExit();
 
+            return process;
+        }
+
+        private static string GetPnPUtilOutput(string arguments)
+        {
+            Process process = StartPnPUtil(arguments);
+            var output = process.StandardOutput.ReadToEnd();
+
+            return output;
+        }
+
+        private static PnPUtilResult GetPnPUtilResult(string arguments)
+        {
+            Process process = StartPnPUtil(arguments);
+            var output = process.StandardOutput.ReadToEnd();
             var exitCode = process.ExitCode;
 
             return new PnPUtilResult(exitCode, output);
