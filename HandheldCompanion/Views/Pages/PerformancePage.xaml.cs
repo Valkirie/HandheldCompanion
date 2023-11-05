@@ -333,14 +333,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void ButtonProfileEdit_Click(object sender, RoutedEventArgs e)
         {
-            PowerProfileSettingsDialog.Visibility = Visibility.Visible;
             PowerProfileSettingsDialog.ShowAsync();
-            PowerProfileSettingsDialog.Closed += PowerProfileSettingsDialog_Closed;
-        }
-
-        private void PowerProfileSettingsDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            PowerProfileSettingsDialog.Visibility = Visibility.Collapsed;
         }
 
         public void SelectionChanged(Guid guid)

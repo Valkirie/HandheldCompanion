@@ -107,8 +107,7 @@
                 CloseButtonClick="PowerProfileSettingsDialog_CloseButtonClick"
                 CloseButtonText="Cancel"
                 PrimaryButtonClick="PowerProfileSettingsDialog_PrimaryButtonClick"
-                PrimaryButtonText="Rename"
-                Visibility="Collapsed">
+                PrimaryButtonText="Rename">
                 <ui:SimpleStackPanel Spacing="6">
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Name" />
                     <TextBox
@@ -127,7 +126,10 @@
             </ui:ContentDialog>
 
             <!--  Power settings  -->
-            <ui:SimpleStackPanel Name="PowerPanel" Spacing="6">
+            <ui:SimpleStackPanel
+                Name="PowerPanel"
+                Margin="0,-20,0,0"
+                Spacing="6">
                 <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
                 <Border
