@@ -268,15 +268,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
-        /// </summary>
-        public static string Enum_MotionInput_AutoRollYawSwap_Desc {
-            get {
-                return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap.Desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A,B,X,Y.
         /// </summary>
         public static string ButtonsPage_ABXY {
@@ -2250,11 +2241,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
+        /// </summary>
+        public static string Enum_MotionInput_AutoRollYawSwap_Desc {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap.Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Joystick Camera.
         /// </summary>
         public static string Enum_MotionInput_JoystickCamera {
             get {
                 return ResourceManager.GetString("Enum.MotionInput.JoystickCamera", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
+        /// </summary>
+        public static string Enum_MotionInput_JoystickCamera_Desc {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.JoystickCamera.Desc", resourceCulture);
             }
         }
         
@@ -2268,11 +2277,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
+        /// </summary>
+        public static string Enum_MotionInput_JoystickSteering_Desc {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.JoystickSteering.Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Player Space.
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace {
             get {
                 return ResourceManager.GetString("Enum.MotionInput.PlayerSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
+        /// </summary>
+        public static string Enum_MotionInput_PlayerSpace_Desc {
+            get {
+                return ResourceManager.GetString("Enum.MotionInput.PlayerSpace.Desc", resourceCulture);
             }
         }
         
@@ -3547,15 +3574,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
-        /// </summary>
-        public static string Enum_MotionInput_JoystickCamera_Desc {
-            get {
-                return ResourceManager.GetString("Enum.MotionInput.JoystickCamera.Desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to LEFT JOYSTICK.
         /// </summary>
         public static string JoystickPage_Joystick_Left {
@@ -3588,15 +3606,6 @@ namespace HandheldCompanion.Properties {
         public static string JoystickPage_Joystick_Right_Buttons {
             get {
                 return ResourceManager.GetString("JoystickPage_Joystick_Right_Buttons", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
-        /// </summary>
-        public static string Enum_MotionInput_JoystickSteering_Desc {
-            get {
-                return ResourceManager.GetString("Enum.MotionInput.JoystickSteering.Desc", resourceCulture);
             }
         }
         
@@ -4483,15 +4492,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
-        /// </summary>
-        public static string Enum_MotionInput_PlayerSpace_Desc {
-            get {
-                return ResourceManager.GetString("Enum.MotionInput.PlayerSpace.Desc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Default power and fan speed for optimal performance, temperature, noise, and battery life..
         /// </summary>
         public static string PowerProfileDefaultDescription {
@@ -4834,11 +4834,38 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create a new power profile.
+        /// </summary>
+        public static string ProfilesPage_CreatePowerProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_CreatePowerProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create power profile.
+        /// </summary>
+        public static string ProfilesPage_CreatePowerProfileButton {
+            get {
+                return ResourceManager.GetString("ProfilesPage_CreatePowerProfileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string ProfilesPage_Delete {
             get {
                 return ResourceManager.GetString("ProfilesPage_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete power profile.
+        /// </summary>
+        public static string ProfilesPage_DeletePowerProfileButton {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DeletePowerProfileButton", resourceCulture);
             }
         }
         

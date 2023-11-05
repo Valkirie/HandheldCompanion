@@ -5,23 +5,32 @@ namespace HandheldCompanion;
 
 public static class MotherboardInfo
 {
-    private static readonly ManagementObjectSearcher baseboardSearcher =
-        new("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
+    private static readonly ManagementObjectSearcher baseboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
+    private static ManagementObjectCollection baseboardCollection;
 
-    private static readonly ManagementObjectSearcher motherboardSearcher =
-        new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
+    private static readonly ManagementObjectSearcher motherboardSearcher = new("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
+    private static ManagementObjectCollection motherboardCollection;
 
-    private static readonly ManagementObjectSearcher processorSearcher =
-        new("root\\CIMV2", "SELECT * FROM Win32_Processor");
+    private static readonly ManagementObjectSearcher processorSearcher = new("root\\CIMV2", "SELECT * FROM Win32_Processor");
+    private static ManagementObjectCollection processorCollection;
 
-    private static readonly ManagementObjectSearcher displaySearcher =
-        new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
+    private static readonly ManagementObjectSearcher displaySearcher = new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
+    private static ManagementObjectCollection displayCollection;
+
+    public static void UpdateMotherboard()
+    {
+        // slow task, don't call me more than once
+        baseboardCollection = baseboardSearcher.Get();
+        motherboardCollection = motherboardSearcher.Get();
+        processorCollection = processorSearcher.Get();
+        displayCollection = displaySearcher.Get();
+    }
 
     public static string Availability
     {
         get
         {
-            foreach (ManagementObject queryObj in motherboardSearcher.Get())
+            foreach (ManagementObject queryObj in motherboardCollection)
             {
                 var query = queryObj["Availability"];
                 if (query is not null)
@@ -38,7 +47,7 @@ public static class MotherboardInfo
         get
         {
             List<string> strings = new List<string>();
-            foreach (ManagementObject queryObj in displaySearcher.Get())
+            foreach (ManagementObject queryObj in displayCollection)
             {
                 var query = queryObj["Description"];
                 if (query is not null)
@@ -53,7 +62,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["HostingBoard"];
                 if (query is not null)
@@ -69,7 +78,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["InstallDate"];
                 if (query is not null)
@@ -84,7 +93,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Manufacturer"];
                 if (query is not null)
@@ -99,7 +108,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Model"];
                 if (query is not null)
@@ -118,7 +127,7 @@ public static class MotherboardInfo
             if (_NumberOfCores != 0)
                 return _NumberOfCores;
 
-            foreach (ManagementObject queryObj in processorSearcher.Get())
+            foreach (ManagementObject queryObj in processorCollection)
             {
                 var query = queryObj["NumberOfCores"];
                 if (query is not null)
@@ -134,7 +143,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["PartNumber"];
                 if (query is not null)
@@ -149,7 +158,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in motherboardSearcher.Get())
+            foreach (ManagementObject queryObj in motherboardCollection)
             {
                 var query = queryObj["PNPDeviceID"];
                 if (query is not null)
@@ -164,7 +173,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in motherboardSearcher.Get())
+            foreach (ManagementObject queryObj in motherboardCollection)
             {
                 var query = queryObj["PrimaryBusType"];
                 if (query is not null)
@@ -175,13 +184,45 @@ public static class MotherboardInfo
         }
     }
 
+    public static string ProcessorID
+    {
+        get
+        {
+            foreach (ManagementObject queryObj in processorCollection)
+            {
+                var query = queryObj["processorID"];
+
+                if (query is not null)
+                    return query.ToString().TrimEnd();
+            }
+
+            return string.Empty;
+        }
+    }
+
     public static string ProcessorName
     {
         get
         {
-            foreach (ManagementObject queryObj in processorSearcher.Get())
+            foreach (ManagementObject queryObj in processorCollection)
             {
                 var query = queryObj["Name"];
+
+                if (query is not null)
+                    return query.ToString().TrimEnd();
+            }
+
+            return string.Empty;
+        }
+    }
+
+    public static string ProcessorManufacturer
+    {
+        get
+        {
+            foreach (ManagementObject queryObj in processorCollection)
+            {
+                var query = queryObj["Manufacturer"];
 
                 if (query is not null)
                     return query.ToString().TrimEnd();
@@ -199,7 +240,7 @@ public static class MotherboardInfo
             if (_ProcessorMaxClockSpeed != 0)
                 return _ProcessorMaxClockSpeed;
 
-            foreach (ManagementObject queryObj in processorSearcher.Get())
+            foreach (ManagementObject queryObj in processorCollection)
             {
                 var query = queryObj["MaxClockSpeed"];
                 if (query is not null)
@@ -215,7 +256,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Product"];
                 if (query is not null)
@@ -230,7 +271,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Removable"];
                 if (query is not null)
@@ -246,7 +287,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Replaceable"];
                 if (query is not null)
@@ -262,7 +303,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in motherboardSearcher.Get())
+            foreach (ManagementObject queryObj in motherboardCollection)
             {
                 var query = queryObj["RevisionNumber"];
                 if (query is not null)
@@ -277,7 +318,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in motherboardSearcher.Get())
+            foreach (ManagementObject queryObj in motherboardCollection)
             {
                 var query = queryObj["SecondaryBusType"];
                 if (query is not null)
@@ -292,7 +333,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["SerialNumber"];
                 if (query is not null)
@@ -307,7 +348,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Status"];
                 if (query is not null)
@@ -322,7 +363,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in motherboardSearcher.Get())
+            foreach (ManagementObject queryObj in motherboardCollection)
             {
                 var query = queryObj["SystemName"];
                 if (query is not null)
@@ -337,7 +378,7 @@ public static class MotherboardInfo
     {
         get
         {
-            foreach (ManagementObject queryObj in baseboardSearcher.Get())
+            foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Version"];
                 if (query is not null)

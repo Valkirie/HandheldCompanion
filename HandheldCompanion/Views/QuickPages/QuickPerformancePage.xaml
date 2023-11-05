@@ -526,6 +526,19 @@
                     </DockPanel>
                 </Grid>
             </Border>
+
+            <Border Padding="0,12,0,12">
+                <Grid>
+                    <Button
+                        Name="Button_PowerSettings_Delete"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Click="Button_PowerSettings_Delete_Click"
+                        Style="{DynamicResource AccentButtonStyle}">
+                        <TextBlock Text="{x:Static resx:Resources.ProfilesPage_DeletePowerProfileButton}" />
+                    </Button>
+                </Grid>
+            </Border>
         </ui:SimpleStackPanel>
     </ui:SimpleStackPanel>
 </Page>

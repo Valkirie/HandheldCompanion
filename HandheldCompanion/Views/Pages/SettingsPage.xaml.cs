@@ -184,9 +184,6 @@ public partial class SettingsPage : Page
                 case "DesktopProfileOnStart":
                     Toggle_DesktopProfileOnStart.IsOn = Convert.ToBoolean(value);
                     break;
-                case "VirtualControllerForceOrder":
-                    Toggle_ForceVirtualControllerOrder.IsOn = Convert.ToBoolean(value);
-                    break;
                 case "NativeDisplayOrientation":
                     var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
 
@@ -311,50 +308,6 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("DesktopProfileOnStart", Toggle_DesktopProfileOnStart.IsOn);
-    }
-
-    private async void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
-    {
-        bool virtualControllerForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
-
-        if (Toggle_ForceVirtualControllerOrder.IsOn && !virtualControllerForceOrder)
-        {
-            var result = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderTitle}",
-                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderText}",
-                ContentDialogButton.Primary, null,
-                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderPrimary}",
-                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderSecondary}");
-
-            await result;
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    {
-                        // update physical controller instance ids
-                        ControllerManager.UpdateSuspendedControllers();
-
-                        using (Process shutdown = new())
-                        {
-                            shutdown.StartInfo.FileName = "shutdown.exe";
-                            shutdown.StartInfo.Arguments = "-r -t 3";
-
-                            shutdown.StartInfo.UseShellExecute = false;
-                            shutdown.StartInfo.CreateNoWindow = true;
-                            shutdown.Start();
-                        }
-                        break;
-                    }
-                case ContentDialogResult.Secondary:
-                    break;
-            }
-        }
-
-        // RunAtStartup is required for this feature
-        if (Toggle_ForceVirtualControllerOrder.IsOn)
-            SettingsManager.SetProperty("RunAtStartup", true);
-
-        SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
 
     private void Button_DetectNativeDisplayOrientation_Click(object sender, RoutedEventArgs? e)

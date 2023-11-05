@@ -66,6 +66,9 @@ namespace HandheldCompanion.Managers
 
         private static void OpenHardwareMonitor_CpuTemperatureChanged(double value)
         {
+            if (currentProfile is null || currentProfile.FanProfile is null)
+                return;
+
             // update fan profile
             currentProfile.FanProfile.SetTemperature(value);
 
@@ -84,6 +87,10 @@ namespace HandheldCompanion.Managers
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             PowerProfile powerProfile = GetProfile(profile.PowerProfile);
+            if (powerProfile is null)
+                return;
+
+            // update current profile
             currentProfile = powerProfile;
 
             // switch device fan mode
@@ -103,8 +110,12 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Discarded(Profile profile)
         {
-            PowerProfile powerProfile = GetProfile(profile.PowerProfile);
+            // reset current profile
             currentProfile = null;
+
+            PowerProfile powerProfile = GetProfile(profile.PowerProfile);
+            if (powerProfile is null)
+                return;
 
             Discarded?.Invoke(powerProfile);
         }
@@ -240,20 +251,5 @@ namespace HandheldCompanion.Managers
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
         #endregion
-    }
-
-    public class UpdateVisitor : IVisitor
-    {
-        public void VisitComputer(IComputer computer)
-        {
-            computer.Traverse(this);
-        }
-        public void VisitHardware(IHardware hardware)
-        {
-            hardware.Update();
-            foreach (IHardware subHardware in hardware.SubHardware) subHardware.Accept(this);
-        }
-        public void VisitSensor(ISensor sensor) { }
-        public void VisitParameter(IParameter parameter) { }
     }
 }

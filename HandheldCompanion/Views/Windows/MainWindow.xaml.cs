@@ -223,10 +223,15 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         DeviceManager.Start();
 
-        PlatformManager.Start();
         OSDManager.Start();
         LayoutManager.Start();
-        ProcessManager.Start();
+
+        // todo: improve overall threading logic
+        new Thread(() =>
+        {
+            PlatformManager.Start();
+            ProcessManager.Start();
+        }).Start();
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
         PowerManager.Start();

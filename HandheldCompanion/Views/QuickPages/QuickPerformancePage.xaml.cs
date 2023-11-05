@@ -3,7 +3,9 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -274,6 +276,9 @@ public partial class QuickPerformancePage : Page
                         break;
                 }
 
+                // we shouldn't allow users to modify some of default profile settings
+                Button_PowerSettings_Delete.IsEnabled = !selectedProfile.Default;
+
                 // page name
                 this.Title = selectedProfile.Name;
 
@@ -325,6 +330,13 @@ public partial class QuickPerformancePage : Page
             return;
 
         selectedProfile.TDPOverrideEnabled = TDPToggle.IsOn;
+        selectedProfile.TDPOverrideValues = new double[3]
+        {
+                TDPSlider.Value,
+                TDPSlider.Value,
+                TDPSlider.Value
+        };
+
         UpdateProfile();
     }
 
@@ -338,10 +350,11 @@ public partial class QuickPerformancePage : Page
 
         selectedProfile.TDPOverrideValues = new double[3]
         {
-                (int)TDPSlider.Value,
-                (int)TDPSlider.Value,
-                (int)TDPSlider.Value
+                TDPSlider.Value,
+                TDPSlider.Value,
+                TDPSlider.Value
         };
+
         UpdateProfile();
     }
 
@@ -430,6 +443,7 @@ public partial class QuickPerformancePage : Page
             return;
 
         selectedProfile.EPPOverrideEnabled = EPPToggle.IsOn;
+        selectedProfile.EPPOverrideValue = (uint)EPPSlider.Value;
         UpdateProfile();
     }
 
@@ -455,6 +469,7 @@ public partial class QuickPerformancePage : Page
             return;
 
         selectedProfile.CPUCoreEnabled = CPUCoreToggle.IsOn;
+        selectedProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
         UpdateProfile();
     }
 
@@ -488,5 +503,23 @@ public partial class QuickPerformancePage : Page
 
         selectedProfile.FanProfile.fanMode = (FanMode)FanMode.SelectedIndex;
         UpdateProfile();
+    }
+
+    private async void Button_PowerSettings_Delete_Click(object sender, RoutedEventArgs e)
+    {
+        var result = Dialog.ShowAsync(
+                $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedProfile.Name}\"?",
+                $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
+                ContentDialogButton.Primary,
+                $"{Properties.Resources.ProfilesPage_Cancel}",
+                $"{Properties.Resources.ProfilesPage_Delete}");
+        await result; // sync call
+
+        switch (result.Result)
+        {
+            case ContentDialogResult.Primary:
+                PowerProfileManager.DeleteProfile(selectedProfile);
+                break;
+        }
     }
 }

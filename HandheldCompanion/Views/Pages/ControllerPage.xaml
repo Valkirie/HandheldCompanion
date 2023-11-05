@@ -10,7 +10,7 @@
     Name="Controller"
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
-    d:DesignHeight="1500"
+    d:DesignHeight="1800"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -263,7 +263,7 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -361,8 +361,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -424,8 +424,8 @@
                             <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock
@@ -448,8 +448,8 @@
                                     BorderThickness="0,1,0,0" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock
@@ -483,8 +483,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -492,7 +492,7 @@
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE793;" />
+                                    Glyph="&#xED1A;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_CloakDevice}" />
@@ -521,8 +521,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -550,6 +550,44 @@
                                 Toggled="Toggle_Uncloak_Toggled" />
                         </Grid>
                     </Border>
+
+                    <!--  Force virtual controller order  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE772;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_ForceVirtualControllerOrder}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.SettingsPage_ForceVirtualControllerOrderDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch
+                                Name="Toggle_ForceVirtualControllerOrder"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_ForceVirtualControllerOrder_Toggled" />
+                        </Grid>
+                    </Border>
                 </ui:SimpleStackPanel>
 
                 <!--  Steam Deck settings  -->
@@ -568,8 +606,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>

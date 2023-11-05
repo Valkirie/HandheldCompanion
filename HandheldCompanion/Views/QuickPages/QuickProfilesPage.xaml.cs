@@ -8,6 +8,7 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -808,5 +809,15 @@ public partial class QuickProfilesPage : Page
 
         selectedProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
         UpdateProfile();
+    }
+
+    private void Button_PowerSettings_Create_Click(object sender, RoutedEventArgs e)
+    {
+        int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
+
+        string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
+        PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription);
+
+        PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
     }
 }

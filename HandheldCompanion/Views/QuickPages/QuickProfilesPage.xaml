@@ -140,7 +140,32 @@
                     </Grid>
                 </Expander.Header>
 
-                <ui:SimpleStackPanel Name="ProfileStack" Spacing="16" />
+                <ui:SimpleStackPanel Spacing="16">
+                    <ui:SimpleStackPanel Name="ProfileStack" Spacing="16" />
+
+                    <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="5*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="{x:Static resx:Resources.ProfilesPage_CreatePowerProfile}" />
+                        <Button
+                            Name="Button_PowerSettings_Create"
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Click="Button_PowerSettings_Create_Click">
+                            <TextBlock Text="{x:Static resx:Resources.ProfilesPage_CreatePowerProfileButton}" />
+                        </Button>
+
+                    </Grid>
+                </ui:SimpleStackPanel>
             </Expander>
 
             <Expander HorizontalAlignment="Stretch" IsExpanded="False">

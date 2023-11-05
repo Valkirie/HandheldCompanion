@@ -2510,4 +2510,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_FanSettingsDesc" xml:space="preserve">
     <value>Change the fan settings</value>
   </data>
+  <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
+    <value>Create a new power profile</value>
+  </data>
+  <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
+    <value>Create power profile</value>
+  </data>
+  <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
+    <value>Delete power profile</value>
+  </data>
 </root>

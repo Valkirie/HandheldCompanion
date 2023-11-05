@@ -1,9 +1,12 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,8 +56,12 @@ public partial class ControllerPage : Page
 
     private void PlatformManager_Initialized()
     {
-        HintsSteamXboxDrivers.Visibility = PlatformManager.steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
-        Steam_Updated(PlatformManager.steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            HintsSteamXboxDrivers.Visibility = PlatformManager.steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+            Steam_Updated(PlatformManager.steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+        });
     }
 
     private void Steam_Updated(PlatformStatus status)
@@ -107,6 +114,9 @@ public partial class ControllerPage : Page
                 case "HIDstatus":
                     cB_ServiceSwitch.SelectedIndex = Convert.ToInt32(value);
                     UpdateControllerImage();
+                    break;
+                case "VirtualControllerForceOrder":
+                    Toggle_ForceVirtualControllerOrder.IsOn = Convert.ToBoolean(value);
                     break;
             }
         });
@@ -357,6 +367,50 @@ public partial class ControllerPage : Page
 
         // temporary settings
         SettingsManager.SetProperty("DesktopLayoutEnabled", Toggle_DesktopLayout.IsOn, false, true);
+    }
+
+    private async void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
+    {
+        bool virtualControllerForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
+
+        if (Toggle_ForceVirtualControllerOrder.IsOn && !virtualControllerForceOrder)
+        {
+            var result = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderTitle}",
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderText}",
+                ContentDialogButton.Primary, null,
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderPrimary}",
+                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderSecondary}");
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    {
+                        // update physical controller instance ids
+                        ControllerManager.UpdateSuspendedControllers();
+
+                        using (Process shutdown = new())
+                        {
+                            shutdown.StartInfo.FileName = "shutdown.exe";
+                            shutdown.StartInfo.Arguments = "-r -t 3";
+
+                            shutdown.StartInfo.UseShellExecute = false;
+                            shutdown.StartInfo.CreateNoWindow = true;
+                            shutdown.Start();
+                        }
+                        break;
+                    }
+                case ContentDialogResult.Secondary:
+                    break;
+            }
+        }
+
+        // RunAtStartup is required for this feature
+        if (Toggle_ForceVirtualControllerOrder.IsOn)
+            SettingsManager.SetProperty("RunAtStartup", true);
+
+        SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)

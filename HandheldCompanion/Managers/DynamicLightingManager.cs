@@ -10,6 +10,7 @@ using SharpDX.Direct3D9;
 using HandheldCompanion.Views;
 using static HandheldCompanion.Utils.DeviceUtils;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 
 namespace HandheldCompanion.Managers;
 
@@ -33,9 +34,8 @@ public static class DynamicLightingManager
 
     private const int squareSize = 100;
     private const int squareStep = 10;
-    private const int squateStepSquare = squareStep * squareStep;
 
-    static readonly object _object = new object();
+    private static LockObject updateLock = new();
 
     private static bool VerticalBlackBarDetectionEnabled;
 
@@ -238,7 +238,7 @@ public static class DynamicLightingManager
             if (device is null)
                 return;
 
-            if (Monitor.TryEnter(_object))
+            using (new ScopedLock(updateLock))
             {
                 // Create a surface to capture the screen
                 using (Surface surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight, Format.A8R8G8B8, Pool.Scratch))
@@ -279,16 +279,13 @@ public static class DynamicLightingManager
                         previousColorRight = averageColorRight;
                     }
                 }
-
-                Monitor.Exit(_object);
             }
         }
-        catch (Exception ex)
+        catch
         {
-            LogManager.LogError("Ambilight try catch exception {0}", ex);
         }
-
     }
+
     private static Color CalculateColorAverage(int x, int y)
     {
         // Initialize the variables to store the sum of color values for the square

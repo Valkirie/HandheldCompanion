@@ -17,8 +17,6 @@ public enum PowerType
 
 public class Processor
 {
-    private static readonly ManagementClass managClass = new("win32_processor");
-
     private static Processor processor;
     private static string Manufacturer;
 
@@ -41,8 +39,9 @@ public class Processor
 
     public Processor()
     {
-        Name = GetProcessorDetails("Name");
-        ProcessorID = GetProcessorDetails("processorID");
+        Name = MotherboardInfo.ProcessorName;
+        ProcessorID = MotherboardInfo.ProcessorID;
+        Manufacturer = MotherboardInfo.ProcessorManufacturer;
 
         // write default miscs
         m_Misc["gfx_clk"] = m_PrevMisc["gfx_clk"] = 0;
@@ -52,8 +51,6 @@ public class Processor
     {
         if (processor is not null)
             return processor;
-
-        Manufacturer = GetProcessorDetails("Manufacturer");
 
         switch (Manufacturer)
         {
@@ -66,15 +63,6 @@ public class Processor
         }
 
         return processor;
-    }
-
-    private static string GetProcessorDetails(string value)
-    {
-        var managCollec = managClass.GetInstances();
-        foreach (ManagementObject managObj in managCollec)
-            return managObj.Properties[value].Value.ToString();
-
-        return string.Empty;
     }
 
     public virtual void Initialize()

@@ -177,6 +177,8 @@ public abstract class IDevice
         if (device is not null)
             return device;
 
+        MotherboardInfo.UpdateMotherboard();
+
         var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;

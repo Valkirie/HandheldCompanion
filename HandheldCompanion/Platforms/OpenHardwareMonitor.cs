@@ -25,12 +25,13 @@ namespace HandheldCompanion.Platforms
                 IsCpuEnabled = true,
                 IsGpuEnabled = true,
             };
-
-            computer.Open();
         }
 
         public override bool Start()
         {
+            // open computer, slow
+            computer.Open();
+
             updateTimer.Start();
 
             return base.Start();
@@ -56,8 +57,11 @@ namespace HandheldCompanion.Platforms
                 {
                     hardware.Update();
 
-                    foreach (var sensor in hardware.Sensors)
+                    foreach (ISensor? sensor in hardware.Sensors)
                     {
+                        if (sensor.Value is null)
+                            continue;
+
                         if (sensor.SensorType == SensorType.Temperature)
                         {
                             switch (sensor.Name)
@@ -67,18 +71,6 @@ namespace HandheldCompanion.Platforms
                                     CpuTemperatureChanged?.Invoke((double)sensor.Value);
                                     break;
                             }
-                        }
-                    }
-                }
-
-                if (hardware.HardwareType == HardwareType.GpuNvidia || hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuIntel)
-                {
-                    hardware.Update();
-                    foreach (var sensor in hardware.Sensors)
-                    {
-                        if (sensor.SensorType == SensorType.Temperature)
-                        {
-                            // do something
                         }
                     }
                 }

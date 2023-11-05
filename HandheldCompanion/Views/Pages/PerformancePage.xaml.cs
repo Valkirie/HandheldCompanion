@@ -307,19 +307,13 @@ namespace HandheldCompanion.Views.Pages
             int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
 
             string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
-            PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription)
-            {
-                TDPOverrideValues = MainWindow.CurrentDevice.nTDP,
-            };
+            PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription);
 
-            PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.ProfilesPage);
+            PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
         }
 
         private async void ButtonProfileDelete_Click(object sender, RoutedEventArgs e)
         {
-            // todo: check if power profile is being used by any profiles
-            // display it and migrate to default if deleted anyway
-
             var result = Dialog.ShowAsync(
                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedProfile.Name}\"?",
                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
@@ -339,14 +333,9 @@ namespace HandheldCompanion.Views.Pages
 
         private void ButtonProfileEdit_Click(object sender, RoutedEventArgs e)
         {
-            PowerProfileSettingsDialog.ShowAsync();
-            PowerProfileSettingsDialog.Opened += PowerProfileSettingsDialog_Opened;
-            PowerProfileSettingsDialog.Closed += PowerProfileSettingsDialog_Closed;
-        }
-
-        private void PowerProfileSettingsDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-        {
             PowerProfileSettingsDialog.Visibility = Visibility.Visible;
+            PowerProfileSettingsDialog.ShowAsync();
+            PowerProfileSettingsDialog.Closed += PowerProfileSettingsDialog_Closed;
         }
 
         private void PowerProfileSettingsDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
@@ -496,6 +485,13 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             selectedProfile.TDPOverrideEnabled = TDPToggle.IsOn;
+            selectedProfile.TDPOverrideValues = new double[3]
+            {
+                TDPSlider.Value,
+                TDPSlider.Value,
+                TDPSlider.Value
+            };
+
             UpdateProfile();
         }
 
@@ -510,10 +506,11 @@ namespace HandheldCompanion.Views.Pages
 
             selectedProfile.TDPOverrideValues = new double[3]
             {
-            (int)TDPSlider.Value,
-            (int)TDPSlider.Value,
-            (int)TDPSlider.Value
+                TDPSlider.Value,
+                TDPSlider.Value,
+                TDPSlider.Value
             };
+
             UpdateProfile();
         }
 
@@ -572,6 +569,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             selectedProfile.GPUOverrideEnabled = GPUToggle.IsOn;
+            selectedProfile.GPUOverrideValue = (int)GPUSlider.Value;
             UpdateProfile();
         }
 
@@ -598,6 +596,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             selectedProfile.EPPOverrideEnabled = EPPToggle.IsOn;
+            selectedProfile.EPPOverrideValue = (uint)EPPSlider.Value;
             UpdateProfile();
         }
 
@@ -621,6 +620,7 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             selectedProfile.CPUCoreEnabled = CPUCoreToggle.IsOn;
+            selectedProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
             UpdateProfile();
         }
 
