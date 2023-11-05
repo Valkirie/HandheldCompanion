@@ -203,6 +203,9 @@ public abstract class IDevice
                         case "AB05-AMD":
                             device = new AYANEOAIRPlusAMD();
                             break;
+                        case "AB05-Mendocino":
+                            device = new AYANEOAIRPlusAMDMendocino();
+                            break;
                         case "AB05-Intel":
                             device = new AYANEOAIRPlusIntel();
                             break;
