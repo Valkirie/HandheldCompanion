@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -447,9 +448,6 @@ public partial class OverlayQuickTools : GamepadWindow
         // Add handler for ContentFrame navigation.
         ContentFrame.Navigated += On_Navigated;
 
-        // NavView doesn't load any page by default, so load home page.
-        navView.SelectedItem = navView.MenuItems[0];
-
         // If navigation occurs on SelectionChanged, this isn't needed.
         // Because we use ItemInvoked to navigate, we need to call Navigate
         // here to load the home page.
@@ -480,20 +478,7 @@ public partial class OverlayQuickTools : GamepadWindow
     private void On_Navigated(object sender, NavigationEventArgs e)
     {
         navView.IsBackEnabled = ContentFrame.CanGoBack;
-
-        if (ContentFrame.SourcePageType is not null)
-        {
-            var preNavPageType = ContentFrame.CurrentSourcePageType;
-            var preNavPageName = preNavPageType.Name;
-
-            var NavViewItem = navView.MenuItems
-                .OfType<NavigationViewItem>().FirstOrDefault(n => n.Tag.Equals(preNavPageName));
-
-            if (!(NavViewItem is null))
-                navView.SelectedItem = NavViewItem;
-
-            navHeader.Text = ((Page)e.Content).Title;
-        }
+        navHeader.Text = ((Page)((ContentControl)sender).Content).Title;
     }
 
     private void UpdateTime(object? sender, EventArgs e)

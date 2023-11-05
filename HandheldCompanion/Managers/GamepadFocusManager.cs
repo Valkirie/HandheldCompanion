@@ -394,35 +394,21 @@ namespace HandheldCompanion.Managers
                             WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
                             break;
                         case "CheckBox":
-                            WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
+                            ((CheckBox)focusedElement).IsChecked = !((CheckBox)focusedElement).IsChecked;
                             break;
 
                         case "NavigationViewItem":
                             {
-                                switch (focusedElement.Name)
-                                {
-                                    // deprecated, used for ui:NavigationView.FooterMenuItem
-                                    case "b_ServiceStart":
-                                    case "b_ServiceStop":
-                                    case "b_ServiceInstall":
-                                    case "b_ServiceDelete":
-                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
-                                        return;
-                                    default:
-                                        {
-                                            // set state
-                                            _goingForward = true;
+                                // set state
+                                _goingForward = true;
 
-                                            if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
-                                                Focus(control);
-                                            else
-                                            {
-                                                // get the nearest non-navigation control
-                                                focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.elements);
-                                                Focus(focusedElement);
-                                            }
-                                        }
-                                        return;
+                                if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
+                                    Focus(control);
+                                else
+                                {
+                                    // get the nearest non-navigation control
+                                    focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.elements);
+                                    Focus(focusedElement);
                                 }
                             }
                             break;
@@ -463,8 +449,8 @@ namespace HandheldCompanion.Managers
                                     case "layout":
                                     case "SettingsMode0":
                                     case "SettingsMode1":
-                                    
-                                        // todo: shouldn't be hardcoded
+
+                                    // todo: shouldn't be hardcoded
                                     case "quickhome":
                                     case "quicksettings":
                                     case "quickdevice":
@@ -536,6 +522,20 @@ namespace HandheldCompanion.Managers
                             {
                                 if (_currentWindow is OverlayQuickTools)
                                     WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.ESCAPE);
+                            }
+                            break;
+                    }
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B4))
+                {
+                    switch (elementType)
+                    {
+                        case "Button":
+                            {
+                                // To get the first RadioButton in the list, if any
+                                RadioButton firstRadioButton = WPFUtils.FindChildren(focusedElement).FirstOrDefault(c => c is RadioButton) as RadioButton;
+                                if (firstRadioButton is not null)
+                                    firstRadioButton.IsChecked = true;
                             }
                             break;
                     }

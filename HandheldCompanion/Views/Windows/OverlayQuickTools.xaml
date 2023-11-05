@@ -31,57 +31,18 @@
     <Grid>
         <ui:NavigationView
             Name="navView"
-            Margin="0,-1,0,0"
+            Margin="0,1,0,0"
             BackRequested="navView_BackRequested"
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             ItemInvoked="navView_ItemInvoked"
             Loaded="navView_Loaded"
             PaneDisplayMode="Top"
-            SelectionFollowsFocus="Enabled"
-            Style="{DynamicResource NavigationViewStyle1}">
+            SelectionFollowsFocus="Enabled">
 
             <ui:NavigationView.Header>
-                <TextBlock x:Name="navHeader" Margin="-34,0,0,0" />
+                <TextBlock x:Name="navHeader" Margin="-34,-30,0,0" />
             </ui:NavigationView.Header>
-
-            <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem
-                    Name="navSettingsPage"
-                    Tag="QuickSettingsPage"
-                    Visibility="Collapsed">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-
-                <ui:NavigationViewItem
-                    Name="navDevicePage"
-                    Tag="QuickDevicePage"
-                    Visibility="Collapsed">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-
-                <ui:NavigationViewItem
-                    Name="navProfilesPage"
-                    Tag="QuickProfilesPage"
-                    Visibility="Collapsed">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE77B;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-
-                <ui:NavigationViewItem
-                    Name="navSuspenderPage"
-                    Tag="QuickSuspenderPage"
-                    Visibility="Collapsed">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE769;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-            </ui:NavigationView.MenuItems>
 
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem IsEnabled="False">
@@ -94,32 +55,26 @@
                             Name="BatteryIndicatorPercentage"
                             Margin="2,0,0,0"
                             VerticalAlignment="Center"
-                            Style="{StaticResource CaptionTextBlockStyle}" />
+                            Style="{StaticResource BodyTextBlockStyle}" />
                         <TextBlock
                             Name="BatteryIndicatorLifeRemaining"
                             Margin="4,0,0,0"
                             VerticalAlignment="Center"
-                            Style="{StaticResource CaptionTextBlockStyle}" />
+                            Style="{StaticResource BodyTextBlockStyle}" />
                     </DockPanel>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem IsEnabled="False">
-                    <DockPanel>
-                        <ui:FontIcon
-                            VerticalAlignment="Center"
-                            FontSize="21"
-                            Glyph="{x:Static ui:SegoeIcons.Recent}" />
-                        <TextBlock
-                            Name="Time"
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource CaptionTextBlockStyle}" />
-                    </DockPanel>
+                    <TextBlock
+                        Name="Time"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}" />
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem IsEnabled="False" />
             </ui:NavigationView.FooterMenuItems>
 
             <common:TouchScrollViewer
                 x:Name="scrollViewer"
-                Margin="0,12,0,12"
+                Margin="0,-20,0,12"
                 PanningMode="VerticalOnly">
                 <ui:Frame Name="ContentFrame" />
             </common:TouchScrollViewer>

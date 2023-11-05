@@ -3925,6 +3925,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle.
+        /// </summary>
+        public static string MainWindow_Toggle {
+            get {
+                return ResourceManager.GetString("MainWindow_Toggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
         public static string MainWindow_VirtualControllerForceOrderClosePrimary {

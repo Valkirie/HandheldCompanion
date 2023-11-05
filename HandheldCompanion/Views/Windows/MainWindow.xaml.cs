@@ -29,6 +29,7 @@ using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
+using RadioButton = System.Windows.Controls.RadioButton;
 
 namespace HandheldCompanion.Views;
 
@@ -280,17 +281,14 @@ public partial class MainWindow : GamepadWindow
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            GamepadUISelect.Glyph = Controller.GetGlyph(ButtonFlags.B1);
-            GamepadUISelect.Foreground = Controller.GetGlyphColor(ButtonFlags.B1);
-            if (GamepadUISelect.Foreground is null)
-                GamepadUISelect.SetResourceReference(ForegroundProperty,
-                    "SystemControlForegroundBaseMediumBrush");
+            GamepadUISelectIcon.Glyph = Controller.GetGlyph(ButtonFlags.B1);
+            GamepadUISelectIcon.Foreground = Controller.GetGlyphColor(ButtonFlags.B1);
 
-            GamepadUIBack.Glyph = Controller.GetGlyph(ButtonFlags.B2);
-            GamepadUIBack.Foreground = Controller.GetGlyphColor(ButtonFlags.B2);
-            if (GamepadUIBack.Foreground is null)
-                GamepadUIBack.SetResourceReference(ForegroundProperty,
-                    "SystemControlForegroundBaseMediumBrush");
+            GamepadUIBackIcon.Glyph = Controller.GetGlyph(ButtonFlags.B2);
+            GamepadUIBackIcon.Foreground = Controller.GetGlyphColor(ButtonFlags.B2);
+
+            GamepadUIToggleIcon.Glyph = Controller.GetGlyph(ButtonFlags.B4);
+            GamepadUIToggleIcon.Foreground = Controller.GetGlyphColor(ButtonFlags.B4);
         });
     }
 
@@ -306,10 +304,29 @@ public partial class MainWindow : GamepadWindow
                 default:
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
-
                         GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIToggle.Visibility = Visibility.Collapsed;
+
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
                         GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
+                    }
+                    break;
+
+                case "Button":
+                    {
+                        GamepadUISelect.Visibility = Visibility.Visible;
+                        GamepadUIBack.Visibility = Visibility.Visible;
+
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
+                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
+
+                        // To get the first RadioButton in the list, if any
+                        RadioButton firstRadioButton = WPFUtils.FindChildren(control).FirstOrDefault(c => c is RadioButton) as RadioButton;
+                        if (firstRadioButton is not null)
+                        {
+                            GamepadUIToggle.Visibility = Visibility.Visible;
+                            GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Toggle;
+                        }
                     }
                     break;
 
@@ -317,15 +334,17 @@ public partial class MainWindow : GamepadWindow
                     {
                         GamepadUISelect.Visibility = Visibility.Collapsed;
                         GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIToggle.Visibility = Visibility.Collapsed;
                     }
                     break;
 
                 case "NavigationViewItem":
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
-                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
-
                         GamepadUIBack.Visibility = Visibility.Collapsed;
+                        GamepadUIToggle.Visibility = Visibility.Collapsed;
+
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
                     }
                     break;
             }

@@ -161,10 +161,31 @@
                         Orientation="Horizontal"
                         Spacing="6">
 
-                        <!--  SELECT  -->
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                        <!--  Toggle  -->
+                        <ui:SimpleStackPanel
+                            Name="GamepadUIToggle"
+                            Orientation="Horizontal"
+                            Spacing="2">
                             <ui:FontIcon
-                                Name="GamepadUISelect"
+                                Name="GamepadUIToggleIcon"
+                                Height="40"
+                                VerticalAlignment="Center"
+                                FontFamily="PromptFont"
+                                FontSize="28" />
+                            <TextBlock
+                                Name="GamepadUIToggleDesc"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
+                        </ui:SimpleStackPanel>
+
+                        <!--  Select  -->
+                        <ui:SimpleStackPanel
+                            Name="GamepadUISelect"
+                            Orientation="Horizontal"
+                            Spacing="2">
+                            <ui:FontIcon
+                                Name="GamepadUISelectIcon"
                                 Height="40"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
@@ -172,14 +193,17 @@
                             <TextBlock
                                 Name="GamepadUISelectDesc"
                                 VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Visibility="{Binding Visibility, ElementName=GamepadUISelect}" />
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
                         </ui:SimpleStackPanel>
 
-                        <!--  BACK  -->
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                        <!--  Back  -->
+                        <ui:SimpleStackPanel
+                            Name="GamepadUIBack"
+                            Orientation="Horizontal"
+                            Spacing="2">
                             <ui:FontIcon
-                                Name="GamepadUIBack"
+                                Name="GamepadUIBackIcon"
                                 Height="40"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
@@ -187,8 +211,8 @@
                             <TextBlock
                                 Name="GamepadUIBackDesc"
                                 VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Visibility="{Binding Visibility, ElementName=GamepadUIBack}" />
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>
