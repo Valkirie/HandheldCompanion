@@ -212,6 +212,7 @@ public abstract class IDevice
                     }
                 }
                 break;
+
             case "AOKZOE":
                 {
                     switch (ProductName)
@@ -225,6 +226,7 @@ public abstract class IDevice
                     }
                 }
                 break;
+
             case "AYADEVICE":
             case "AYANEO":
                 {
@@ -376,6 +378,17 @@ public abstract class IDevice
                     {
                         case "Jupiter":
                             device = new SteamDeck();
+                            break;
+                    }
+                }
+                break;
+
+            case "LENOVO":
+                {
+                    switch (ProductName)
+                    {
+                        case "LNVNB161216":
+                            device = new LegionGo();
                             break;
                     }
                 }

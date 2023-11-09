@@ -325,21 +325,19 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
-  // https://www.microsoft.com/en-US/download/details.aspx?id=35
-  Dependency_Add('HidHide_1.2.98_x64.exe',
+  Dependency_Add('HidHide_1.4.186_x64.exe',
     '/quiet /norestart',
-    'HidHide Drivers v1.2.98',
-    'https://github.com/ViGEm/HidHide/releases/download/v1.2.98.0/HidHide_1.2.98_x64.exe',
+    'HidHide Drivers',
+    'https://github.com/nefarius/HidHide/releases/download/v1.4.186.0/HidHide_1.4.186_x64.exe',
     '', True, False);
 end;
 
 procedure Dependency_AddViGem;
 begin
-  // https://www.microsoft.com/en-US/download/details.aspx?id=35
-  Dependency_Add('ViGEmBus_1.21.442_x64_x86_arm64.exe',
+  Dependency_Add('ViGEmBus_1.22.0_x64_x86_arm64.exe',
     '/quiet /norestart',
-    'ViGEmBus Setup 1.21.442',
-    'https://github.com/ViGEm/ViGEmBus/releases/download/v1.21.442.0/ViGEmBus_1.21.442_x64_x86_arm64.exe',
+    'ViGEmBus Setup',
+    'https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
     '', True, False);
 end;
 

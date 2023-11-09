@@ -773,15 +773,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing..
-        /// </summary>
-        public static string ControllerPage_XInputControllerWarning {
-            get {
-                return ResourceManager.GetString("ControllerPage_XInputControllerWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ambilight Vertical Blackbar detection.
         /// </summary>
         public static string DevicePage_AmbilightVerticalBlackBarDetection {
@@ -2228,6 +2219,96 @@ namespace HandheldCompanion.Properties {
         public static string Enum_KeyFlags_Z {
             get {
                 return ResourceManager.GetString("Enum.KeyFlags.Z", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M2.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_B5 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse wheel click.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_B6 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse wheel up.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_B7 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse wheel down.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_B8 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y1.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_L4 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.L4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y2.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_L5 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.L5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M3.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_R4 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.R4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Y3.
+        /// </summary>
+        public static string Enum_LegionController_ButtonFlags_R5 {
+            get {
+                return ResourceManager.GetString("Enum.LegionController.ButtonFlags.R5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LegionR.
+        /// </summary>
+        public static string Enum_LegionGo_ButtonFlags_OEM1 {
+            get {
+                return ResourceManager.GetString("Enum.LegionGo.ButtonFlags.OEM1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LegionL.
+        /// </summary>
+        public static string Enum_LegionGo_ButtonFlags_OEM2 {
+            get {
+                return ResourceManager.GetString("Enum.LegionGo.ButtonFlags.OEM2", resourceCulture);
             }
         }
         
@@ -7245,6 +7326,24 @@ namespace HandheldCompanion.Properties {
             get {
                 object obj = ResourceManager.GetObject("xinput1_x86", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing..
+        /// </summary>
+        public static string XInputController_Warning_BTH {
+            get {
+                return ResourceManager.GetString("XInputController_Warning_BTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please wait a moment while we power cycle your controller..
+        /// </summary>
+        public static string XInputController_Warning_USB {
+            get {
+                return ResourceManager.GetString("XInputController_Warning_USB", resourceCulture);
             }
         }
         

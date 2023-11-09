@@ -269,8 +269,8 @@ namespace HandheldCompanion.Controllers
 
         public bool IsHidden()
         {
-            // var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
-            var hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
+            // bool hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
+            bool hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
             return /* hide_device || */ hide_base;
         }
 

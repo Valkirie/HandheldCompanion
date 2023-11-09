@@ -338,13 +338,8 @@ public static class ControllerManager
                 {
                     // Instantiate the joystick
                     var lookup_joystick = new Joystick(directInput, deviceInstance.InstanceGuid);
-                    var SymLink = DeviceManager.PathToInstanceId(lookup_joystick.Properties.InterfacePath,
+                    var SymLink = DeviceManager.SymLinkToInstanceId(lookup_joystick.Properties.InterfacePath,
                         obj.InterfaceGuid.ToString());
-
-                    // IG_ means it is an XInput controller and therefore is handled elsewhere
-                    if (lookup_joystick.Properties.InterfacePath.Contains("IG_",
-                            StringComparison.InvariantCultureIgnoreCase))
-                        continue;
 
                     if (SymLink.Equals(details.SymLink, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -514,7 +509,22 @@ public static class ControllerManager
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            XInputController controller = new(_controller, details);
+            XInputController controller;
+            switch(details.GetVendorID())
+            {
+                default:
+                    controller = new XInputController(_controller, details);
+                    break;
+
+                // LegionGo
+                case "0x17EF":
+                    controller = new LegionController(_controller, details);
+                    break;
+            }
+
+            // failed to detect
+            if (controller is null)
+                return;
 
             // failed to initialize
             if (controller.Details is null)

@@ -44,6 +44,18 @@ public class XInputController : IController
         InitializeComponent();
         DrawControls();
         RefreshControls();
+
+        string enumerator = Details.GetEnumerator();
+        switch (enumerator)
+        {
+            default:
+            case "BTHENUM":
+                ProgressBarWarning.Text = Properties.Resources.XInputController_Warning_BTH;
+                break;
+            case "USB":
+                ProgressBarWarning.Text = Properties.Resources.XInputController_Warning_USB;
+                break;
+        }
     }
 
     public void UpdateController(Controller controller)
@@ -57,10 +69,10 @@ public class XInputController : IController
         var baseName = base.ToString();
         if (!string.IsNullOrEmpty(baseName))
             return baseName;
-        return $"XInput Controller {UserIndex}";
+        return $"XInput Controller {(UserIndex)UserIndex}";
     }
 
-    public override void UpdateInputs(long ticks)
+    public virtual void UpdateInputs(long ticks, bool commit)
     {
         // skip if controller isn't connected
         if (!IsConnected())
@@ -126,7 +138,8 @@ public class XInputController : IController
         }
         catch { }
 
-        base.UpdateInputs(ticks);
+        if (commit)
+            base.UpdateInputs(ticks);
     }
 
     public override bool IsConnected()
@@ -150,13 +163,13 @@ public class XInputController : IController
 
     public override void Plug()
     {
-        TimerManager.Tick += UpdateInputs;
+        TimerManager.Tick += (ticks) => UpdateInputs(ticks, true);
         base.Plug();
     }
 
     public override void Unplug()
     {
-        TimerManager.Tick -= UpdateInputs;
+        TimerManager.Tick -= (ticks) => UpdateInputs(ticks, true);
         base.Unplug();
     }
 
@@ -187,29 +200,11 @@ public class XInputController : IController
 
     public override void Hide(bool powerCycle = true)
     {
-        if (powerCycle)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
-            });
-        }
-
         base.Hide(powerCycle);
     }
 
     public override void Unhide(bool powerCycle = true)
     {
-        if (powerCycle)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
-            });
-        }
-
         base.Unhide(powerCycle);
     }
 
