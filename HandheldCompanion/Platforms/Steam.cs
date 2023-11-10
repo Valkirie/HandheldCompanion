@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace HandheldCompanion.Platforms;
 
-public class SteamPlatform : IPlatform
+public class Steam : IPlatform
 {
     public bool IsControllerDriverInstalled;
 
@@ -29,7 +29,7 @@ public class SteamPlatform : IPlatform
         { @"controller_base\templates\controller_neptune_steamcontroller.vdf", Resources.empty_neptune },
     };
 
-    public SteamPlatform()
+    public Steam()
     {
         PlatformType = PlatformType.Steam;
 
@@ -252,11 +252,7 @@ public class SteamPlatform : IPlatform
 
         var process = Process.Start(new ProcessStartInfo
         {
-            FileName = ExecutablePath,
-            // ArgumentList = { "-gamepadui" },
-            WindowStyle = ProcessWindowStyle.Hidden,
-            UseShellExecute = false,
-            CreateNoWindow = true
+            FileName = ExecutablePath
         });
 
         return process is not null;

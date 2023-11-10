@@ -104,11 +104,11 @@ public class PerformanceManager : Manager
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
 
-        PlatformManager.hWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
-        PlatformManager.hWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
+        PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
+        PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
 
-        PlatformManager.rTSS.Hooked += RTSS_Hooked;
-        PlatformManager.rTSS.Unhooked += RTSS_Unhooked;
+        PlatformManager.RTSS.Hooked += RTSS_Hooked;
+        PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
 
         // initialize settings
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
@@ -366,7 +366,7 @@ public class PerformanceManager : Manager
             autoLock = true;
 
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
-            var processValueFPS = PlatformManager.rTSS.GetFramerate(AutoTDPProcessId);
+            var processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
 
             // Ensure realistic process values, prevent divide by 0
             processValueFPS = Math.Clamp(processValueFPS, 5, 500);

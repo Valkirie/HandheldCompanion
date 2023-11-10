@@ -27,7 +27,7 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(ProfilesPath))
                 Directory.CreateDirectory(ProfilesPath);
 
-            PlatformManager.openHardwareMonitor.CpuTemperatureChanged += OpenHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.OpenHardwareMonitor.CpuTemperatureChanged += OpenHardwareMonitor_CpuTemperatureChanged;
 
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;

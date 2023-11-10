@@ -8,6 +8,8 @@ using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -46,7 +48,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.Initialized += PlatformManager_Initialized;
-        PlatformManager.steam.Updated += Steam_Updated;
+        PlatformManager.Steam.Updated += Steam_Updated;
     }
 
     public ControllerPage(string Tag) : this()
@@ -59,8 +61,8 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            HintsSteamXboxDrivers.Visibility = PlatformManager.steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
-            Steam_Updated(PlatformManager.steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+            HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+            Steam_Updated(PlatformManager.Steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
         });
     }
 
@@ -76,7 +78,7 @@ public partial class ControllerPage : Page
                     HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
                     break;
                 case PlatformStatus.Started:
-                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
+                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.Steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
                     break;
             }
         });
@@ -416,5 +418,18 @@ public partial class ControllerPage : Page
     private void Expander_Expanded(object sender, RoutedEventArgs e)
     {
         ((Expander)sender).BringIntoView();
+    }
+
+    private void HintsSteamNeptuneDeskopButton_Click(object sender, RoutedEventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            PlatformManager.Steam.StopProcess();
+
+            while (PlatformManager.Steam.IsRunning)
+                await Task.Delay(1000);
+
+            PlatformManager.Steam.StartProcess();
+        });
     }
 }

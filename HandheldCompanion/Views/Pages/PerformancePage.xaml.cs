@@ -203,7 +203,7 @@ namespace HandheldCompanion.Views.Pages
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 StackProfileTDP.IsEnabled = CanChangeTDP;
-                StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.rTSS.IsInstalled;
+                StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.RTSS.IsInstalled;
 
                 StackProfileGPUClock.IsEnabled = CanChangeGPU;
             });

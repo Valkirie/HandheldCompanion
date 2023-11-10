@@ -41,7 +41,7 @@ public partial class QuickPerformancePage : Page
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        PlatformManager.rTSS.Updated += RTSS_Updated;
+        PlatformManager.RTSS.Updated += RTSS_Updated;
 
         MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
 
@@ -65,7 +65,7 @@ public partial class QuickPerformancePage : Page
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // force call
-        RTSS_Updated(PlatformManager.rTSS.Status);
+        RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
     private void HotkeysManager_CommandExecuted(string listener)
@@ -160,7 +160,7 @@ public partial class QuickPerformancePage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             StackProfileTDP.IsEnabled = CanChangeTDP;
-            StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.rTSS.IsInstalled;
+            StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.RTSS.IsInstalled;
 
             StackProfileGPUClock.IsEnabled = CanChangeGPU;
         });

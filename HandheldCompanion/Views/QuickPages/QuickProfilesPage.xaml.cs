@@ -160,10 +160,10 @@ public partial class QuickProfilesPage : Page
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
-        PlatformManager.rTSS.Updated += RTSS_Updated;
+        PlatformManager.RTSS.Updated += RTSS_Updated;
 
         // force call
-        RTSS_Updated(PlatformManager.rTSS.Status);
+        RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
     private void SystemManager_RSRStateChanged(int RSRState, int RSRSharpness)

@@ -23,13 +23,13 @@ public partial class QuickDevicePage : Page
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        PlatformManager.rTSS.Updated += RTSS_Updated;
-        PlatformManager.hWiNFO.Updated += HWiNFO_Updated;
+        PlatformManager.RTSS.Updated += RTSS_Updated;
+        PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
 
         // force call
         // todo: make PlatformManager static
-        RTSS_Updated(PlatformManager.rTSS.Status);
-        HWiNFO_Updated(PlatformManager.hWiNFO.Status);
+        RTSS_Updated(PlatformManager.RTSS.Status);
+        HWiNFO_Updated(PlatformManager.HWiNFO.Status);
     }
 
     private void HWiNFO_Updated(PlatformStatus status)
