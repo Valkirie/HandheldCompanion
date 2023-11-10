@@ -14,8 +14,21 @@ public class GPDWin4_2023_7840U : IDevice
 
         // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
         nTDP = new double[] { 15, 15, 28 };
-        cTDP = new double[] { 5, 28 };
+        cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };
+
+        // device specific capacities
+        Capabilities = DeviceCapabilities.FanControl;
+
+        ECDetails = new ECDetails
+        {
+            AddressFanControl = 0x275,
+            AddressFanDuty = 0x1809,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 184
+        };
 
         AngularVelocityAxis = new Vector3(1.0f, 1.0f, -1.0f);
         AngularVelocityAxisSwap = new SortedDictionary<char, char>
@@ -31,19 +44,6 @@ public class GPDWin4_2023_7840U : IDevice
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
-        };
-
-        // device specific capacities
-        Capabilities = DeviceCapabilities.FanControl;
-
-        ECDetails = new ECDetails
-        {
-            AddressFanControl = 0x275,
-            AddressFanDuty = 0x1809,
-            AddressStatusCommandPort = 0x4E,
-            AddressDataPort = 0x4F,
-            FanValueMin = 0,
-            FanValueMax = 184
         };
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button
@@ -71,9 +71,9 @@ public class GPDWin4_2023_7840U : IDevice
     {
         switch (button)
         {
-            case ButtonFlags.OEM1:
-                return "\u220E";
             case ButtonFlags.OEM2:
+                return "\u220E";
+            case ButtonFlags.OEM3:
                 return "\u220F";
         }
 

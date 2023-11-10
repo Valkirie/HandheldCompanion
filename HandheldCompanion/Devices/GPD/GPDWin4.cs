@@ -72,9 +72,9 @@ public class GPDWin4 : IDevice
     {
         switch (button)
         {
-            case ButtonFlags.OEM1:
-                return "\u220E";
             case ButtonFlags.OEM2:
+                return "\u220E";
+            case ButtonFlags.OEM3:
                 return "\u220F";
         }
 
