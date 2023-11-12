@@ -207,4 +207,9 @@ public partial class ProcessEx : UserControl, IDisposable
 
         Refresh();
     }
+
+    private void B_KillProcess_Clicked(object sender, RoutedEventArgs e)
+    {
+        Process.Kill();
+    }
 }
