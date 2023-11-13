@@ -506,7 +506,7 @@ begin
                    
     if not(keepHidhideCheckbox.Checked) then
     begin 
-      if(ShellExec('', 'msiexec.exe', '/X{27AF679E-48DB-4B49-A689-1D6A3A52C472} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+      if(ShellExec('', 'msiexec.exe', '/X{BE49B9DE-F8EB-4F54-B312-DD4B601985FC}', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
       begin
         log('Successfully executed Hidhide uninstaller');
         if(resultCode = 0) then
@@ -522,7 +522,7 @@ begin
            
     if not(keepVigemCheckbox.Checked) then
     begin 
-      if(ShellExec('', 'msiexec.exe', '/X{9C581C76-2D68-40F8-AA6F-94D3C5215C05} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then   
+      if(ShellExec('', 'msiexec.exe', '/X{966606F3-2745-49E9-BF15-5C3EAA4E9077}', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then   
       begin
         log('Successfully executed Vigem uninstaller');
         if(resultCode = 0) then
