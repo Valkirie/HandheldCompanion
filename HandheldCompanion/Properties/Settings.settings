@@ -189,9 +189,9 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="VirtualControllerForceOrder" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="PhysicalControllerInstanceIds" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="SuspendedController" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="HidModeDoNotShowAgain" Type="System.Boolean" Scope="User">
@@ -235,6 +235,9 @@
     </Setting>
     <Setting Name="LEDSpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="SuspendedDevices" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

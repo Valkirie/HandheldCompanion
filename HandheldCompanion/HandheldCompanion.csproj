@@ -166,6 +166,7 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />

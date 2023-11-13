@@ -20,6 +20,8 @@ public class PnPDetails : IDisposable
     public bool isHooked;
 
     public bool isVirtual;
+    public bool isPhysical => !isVirtual;
+
     public string Name;
     public string Path;
     public string SymLink;

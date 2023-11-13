@@ -268,9 +268,7 @@ public partial class MainWindow : GamepadWindow
         // windows shutting down event
         if (msg == WM_QUERYENDSESSION)
         {
-            // suspend all physical controllers (XInput) when the system shuts down
-            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
-                ControllerManager.SuspendPhysicalControllers();
+            // do something
         }
 
         return IntPtr.Zero;
@@ -499,9 +497,6 @@ public partial class MainWindow : GamepadWindow
                 overlayquickTools.ToggleVisibility();
                 break;
             case "Exit":
-                if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
-                    SwapWindowState();
-
                 appClosing = true;
                 Close();
                 break;
@@ -743,33 +738,6 @@ public partial class MainWindow : GamepadWindow
             e.Cancel = true;
             WindowState = WindowState.Minimized;
             return;
-        }
-
-        if (SettingsManager.GetBoolean("VirtualControllerForceOrder") && !CloseOverride)
-        {
-            // we have to cancel closing the window to be able to prompt the user
-            e.Cancel = true;
-
-            // warn user when attempting to close HC while using Improve virtual controller detection
-            var result = Dialog.ShowAsync(
-                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseTitle,
-                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseText,
-                ContentDialogButton.Primary, null,
-                Properties.Resources.MainWindow_VirtualControllerForceOrderClosePrimary,
-                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseSecondary);
-
-            await result;
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    CloseOverride = true;
-                    Close();
-                    break;
-                case ContentDialogResult.Secondary:
-                    appClosing = false;
-                    return;
-            }
         }
     }
 

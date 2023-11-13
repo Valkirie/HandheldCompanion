@@ -770,7 +770,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool VirtualControllerForceOrder {
             get {
                 return ((bool)(this["VirtualControllerForceOrder"]));
@@ -782,12 +782,13 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection PhysicalControllerInstanceIds {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SuspendedController {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["PhysicalControllerInstanceIds"]));
+                return ((string)(this["SuspendedController"]));
             }
             set {
-                this["PhysicalControllerInstanceIds"] = value;
+                this["SuspendedController"] = value;
             }
         }
         
@@ -956,6 +957,17 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["LEDSpeed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SuspendedDevices {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedDevices"]));
+            }
+            set {
+                this["SuspendedDevices"] = value;
             }
         }
     }

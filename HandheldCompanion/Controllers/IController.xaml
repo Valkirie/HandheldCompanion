@@ -25,10 +25,18 @@
 
                 <DockPanel>
                     <ui:FontIcon
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Glyph="&#xE7FC;" />
+                        VerticalAlignment="Center"
+                        FontFamily="PromptFont"
+                        FontSize="30"
+                        Glyph="&#x243C;" />
+
+                    <ui:FontIcon
+                        Name="ControllerIcon"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="PromptFont"
+                        FontSize="30"
+                        Glyph="&#x2680;" />
 
                     <TextBlock
                         Name="ui_name"

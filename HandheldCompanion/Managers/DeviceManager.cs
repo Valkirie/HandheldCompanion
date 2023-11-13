@@ -83,7 +83,9 @@ public static class DeviceManager
         HidDeviceListener.DeviceArrived += HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved += HidDevice_DeviceRemoved;
 
-        Refresh();
+        RefreshHID();
+        RefreshXInput();
+        RefreshDInput();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -111,13 +113,6 @@ public static class DeviceManager
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
 
         LogManager.LogInformation("{0} has stopped", "DeviceManager");
-    }
-
-    public static void Refresh()
-    {
-        RefreshHID();
-        RefreshXInput();
-        RefreshDInput();
     }
 
     private static void RefreshXInput()
@@ -180,6 +175,9 @@ public static class DeviceManager
         {
             details = PnPDevices.Values.FirstOrDefault(device => device.baseContainerDeviceInstanceId.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase));
 
+            if (details is not null)
+                return details;
+
             // look for parent
             try
             {
@@ -203,9 +201,11 @@ public static class DeviceManager
 
     private static void RefreshHID()
     {
-        var deviceIndex = 0;
+        int deviceIndex = 0;
         while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
         {
+            string SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString());
+
             PnPDevice children = PnPDevice.GetDeviceByInterfaceId(path);
 
             // get attributes
@@ -260,7 +260,7 @@ public static class DeviceManager
             PnPDetails details = new PnPDetails
             {
                 Path = path,
-                SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
+                SymLink = SymLink,
                 Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
                 deviceInstanceId = children.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
@@ -282,8 +282,7 @@ public static class DeviceManager
                 details.Name = DeviceDesc;
 
             // add or update device
-            if (!PnPDevices.ContainsKey(details.SymLink))
-                PnPDevices.TryAdd(details.SymLink, details);
+            PnPDevices[details.SymLink] = details;
         }
     }
 
@@ -414,14 +413,9 @@ public static class DeviceManager
         if (deviceEx is null)
             return;
 
-        // give system at least one second to initialize device
-        await Task.Delay(1000);
         if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
         {
-            // RefreshHID();
             LogManager.LogDebug("XUsbDevice {1} removed: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical");
-
-            // raise event
             XUsbDeviceRemoved?.Invoke(deviceEx, obj);
         }
     }
@@ -433,13 +427,18 @@ public static class DeviceManager
             string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
             if (IsInitialized)
-            {
-                // give system at least one second to initialize device
-                await Task.Delay(1000);
                 RefreshHID();
+
+            PnPDetails deviceEx = null;
+            int attempts = 0;
+
+            while (deviceEx is null && attempts < 30)
+            {
+                await Task.Delay(100);
+                deviceEx = FindDevice(InstanceId);
+                attempts++;
             }
 
-            PnPDetails deviceEx = FindDevice(InstanceId);
             if (deviceEx is not null && deviceEx.isGaming)
             {
                 deviceEx.isXInput = true;
@@ -467,6 +466,10 @@ public static class DeviceManager
                 Event:
                     XUsbDeviceArrived?.Invoke(deviceEx, obj);
             }
+            else
+            {
+                // do something
+            }
         }
         catch
         {
@@ -486,13 +489,11 @@ public static class DeviceManager
             if (deviceEx is null || deviceEx.isXInput)
                 return;
 
-            // give system at least one second to initialize device
-            await Task.Delay(1000);
-            PnPDevices.TryRemove(deviceEx.SymLink, out var value);
-
-            // RefreshHID();
-            LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
-            HidDeviceRemoved?.Invoke(deviceEx, obj);
+            if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+            {
+                LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
+                HidDeviceRemoved?.Invoke(deviceEx, obj);
+            }
         }
         catch
         {
@@ -507,18 +508,27 @@ public static class DeviceManager
             return;
 
         if (IsInitialized)
-        {
-            // give system at least one second to initialize device
-            await Task.Delay(1000);
             RefreshHID();
+
+        PnPDetails deviceEx = null;
+        int attempts = 0;
+
+        while (deviceEx is null && attempts < 30)
+        {
+            await Task.Delay(100);
+            deviceEx = FindDevice(InstanceId);
+            attempts++;
         }
 
-        PnPDetails deviceEx = FindDevice(InstanceId);
         if (deviceEx is not null && !deviceEx.isXInput)
         {
             LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
                 deviceEx.GetProductID(), deviceEx.deviceInstanceId);
             HidDeviceArrived?.Invoke(deviceEx, obj);
+        }
+        else
+        {
+            // do something
         }
     }
 

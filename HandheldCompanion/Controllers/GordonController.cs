@@ -39,7 +39,6 @@ namespace HandheldCompanion.Controllers
             ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-            InitializeComponent();
             DrawControls();
             RefreshControls();
 

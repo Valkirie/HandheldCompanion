@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Inputs;
+﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HidLibrary;
@@ -17,11 +18,9 @@ namespace HandheldCompanion.Devices;
 
 public class LegionGo : IDevice
 {
-    public Dictionary<byte, HidDevice> hidDevices = new();
+    public const byte MOUSE_HID_ID = 0x02;  // unk
+    public const byte TOUCH_HID_ID = 0x03;  // unk
     public const byte INPUT_HID_ID = 0x04;
-
-    private PnPDevice Touchpad;
-    private PnPDevice Mouse;
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
 
@@ -69,6 +68,15 @@ public class LegionGo : IDevice
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM2
         ));
+
+        // device specific layout
+        DefaultLayout.AxisLayout[AxisLayoutFlags.RightPad] = new MouseActions {MouseType = MouseActionsType.Move, Filtering = true, Sensivity = 15 };
+
+        DefaultLayout.ButtonLayout[ButtonFlags.RightPadClick] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.LeftButton } };
+        DefaultLayout.ButtonLayout[ButtonFlags.B5] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.R1 } };
+        DefaultLayout.ButtonLayout[ButtonFlags.B6] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.MiddleButton } };
+        DefaultLayout.ButtonLayout[ButtonFlags.B7] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollUp } };
+        DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
     }
 
     public override bool Open()
@@ -81,26 +89,18 @@ public class LegionGo : IDevice
         while(ControllerManager.PowerCyclers.Count > 0)
             Thread.Sleep(500);
 
-        // disable touchpad and mouse, until we find a better way to manage them
-        if (Touchpad is not null)
-            PnPUtil.DisableDevice(Touchpad.InstanceId);
-        if (Mouse is not null)
-            PnPUtil.DisableDevice(Mouse.InstanceId);
+        if (hidDevices.TryGetValue(MOUSE_HID_ID, out HidDevice mouseDevice))
+            SuspendDevice(mouseDevice.DevicePath);
+
+        if (hidDevices.TryGetValue(TOUCH_HID_ID, out HidDevice touchDevice))
+            SuspendDevice(touchDevice.DevicePath);
 
         return true;
     }
 
     public override void Close()
     {
-        // Legion XInput controller and other Legion devices shares the same USBHUB
-        while (ControllerManager.PowerCyclers.Count > 0)
-            Thread.Sleep(500);
-
-        // enable back touchpad and mouse, until we find a better way to manage them
-        if (Touchpad is not null)
-            PnPUtil.EnableDevice(Touchpad.InstanceId);
-        if (Mouse is not null)
-            PnPUtil.EnableDevice(Mouse.InstanceId);
+        ResumeDevices();
 
         // close devices
         foreach (KeyValuePair<byte, HidDevice> hidDevice in hidDevices)
@@ -122,18 +122,12 @@ public class LegionGo : IDevice
             if (!device.IsConnected)
                 continue;
 
-            if (device.Description.Equals("HID-compliant vendor-defined device"))
-            {
-                hidDevices[INPUT_HID_ID] = device;
-            }
-            else if (device.Description.Equals("HID-compliant mouse"))
-            {
-                Mouse = PnPDevice.GetDeviceByInterfaceId(device.DevicePath);
-            }
-            else if (device.Description.Equals("HID-compliant touch pad"))
-            {
-                Touchpad = PnPDevice.GetDeviceByInterfaceId(device.DevicePath);
-            }
+            if (device.Capabilities.InputReportByteLength == 64)
+                hidDevices[INPUT_HID_ID] = device;  // HID-compliant vendor-defined device
+            else if (device.Capabilities.InputReportByteLength == 20)
+                hidDevices[TOUCH_HID_ID] = device;   // HID-compliant touch pad
+            else if (device.Capabilities.InputReportByteLength == 7)
+                hidDevices[MOUSE_HID_ID] = device; // HID-compliant mouse
         }
 
         hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);

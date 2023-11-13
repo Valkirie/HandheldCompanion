@@ -50,7 +50,6 @@ public class NeptuneController : SteamController
         }
 
         // UI
-        InitializeComponent();
         DrawControls();
         RefreshControls();
 

@@ -3,6 +3,7 @@ using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using System;
+using System.Threading;
 
 namespace HandheldCompanion.Managers
 {
@@ -15,13 +16,13 @@ namespace HandheldCompanion.Managers
         private static DSUServer DSUServer;
 
         // settings vars
-        private static HIDmode HIDmode = HIDmode.NoController;
-        private static HIDstatus HIDstatus = HIDstatus.Disconnected;
+        public static HIDmode HIDmode = HIDmode.NoController;
+        public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         public static bool IsInitialized;
 
         public static event ControllerSelectedEventHandler ControllerSelected;
-        public delegate void ControllerSelectedEventHandler(IController Controller);
+        public delegate void ControllerSelectedEventHandler(HIDmode mode);
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -51,6 +52,10 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
+            // todo: improve me !!
+            while (!ControllerManager.IsInitialized)
+                Thread.Sleep(250);
+
             IsInitialized = true;
             Initialized?.Invoke();
 
@@ -72,9 +77,6 @@ namespace HandheldCompanion.Managers
 
         public static void Resume()
         {
-            // reset vigem
-            ResetViGEm();
-
             // create new ViGEm client
             vClient = new ViGEmClient();
 
@@ -84,6 +86,7 @@ namespace HandheldCompanion.Managers
 
         public static void Pause()
         {
+            // reset vigem
             ResetViGEm();
         }
 
@@ -122,7 +125,7 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-        private static void SetControllerMode(HIDmode mode)
+        public static void SetControllerMode(HIDmode mode)
         {
             // do not disconnect if similar to previous mode
             if (HIDmode == mode && vTarget is not null)
@@ -150,7 +153,7 @@ namespace HandheldCompanion.Managers
                     break;
             }
 
-            ControllerSelected?.Invoke(ControllerManager.GetEmulatedController());
+            ControllerSelected?.Invoke(mode);
 
             // failed to initialize controller
             if (vTarget is null)
@@ -171,7 +174,7 @@ namespace HandheldCompanion.Managers
             HIDmode = mode;
         }
 
-        private static void SetControllerStatus(HIDstatus status)
+        public static void SetControllerStatus(HIDstatus status)
         {
             if (vTarget is null)
                 return;
@@ -220,6 +223,7 @@ namespace HandheldCompanion.Managers
             // dispose virtual controller
             if (vTarget is not null)
             {
+                vTarget.Disconnect();
                 vTarget.Dispose();
                 vTarget = null;
             }

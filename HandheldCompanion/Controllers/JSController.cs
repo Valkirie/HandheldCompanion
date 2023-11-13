@@ -46,7 +46,6 @@ public class JSController : IController
         Capabilities |= ControllerCapabilities.Calibration;
 
         // UI
-        InitializeComponent();
         DrawControls();
         RefreshControls();
 

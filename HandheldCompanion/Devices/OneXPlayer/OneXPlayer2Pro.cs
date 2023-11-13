@@ -1,8 +1,8 @@
 ﻿namespace HandheldCompanion.Devices;
 
-public class OneXPlayer2_7840U : OneXPlayer2
+public class OneXPlayer2Pro : OneXPlayer2
 {
-    public OneXPlayer2_7840U()
+    public OneXPlayer2Pro()
     {
         // device specific settings
         ProductIllustration = "device_onexplayer_2";

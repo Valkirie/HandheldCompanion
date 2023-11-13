@@ -265,24 +265,6 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        if (!Toggle_AutoStart.IsOn && SettingsManager.GetBoolean("VirtualControllerForceOrder"))
-        {
-            var result = Dialog.ShowAsync(Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyTitle,
-                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyText,
-                ContentDialogButton.Primary, null,
-                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencyPrimary,
-                Properties.Resources.SettingsPage_VirtualControllerForceOrderDependencySecondary);
-
-            await result;
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    SettingsManager.SetProperty("VirtualControllerForceOrder", false);
-                    break;
-            }
-        }
-
         SettingsManager.SetProperty("RunAtStartup", Toggle_AutoStart.IsOn);
     }
 

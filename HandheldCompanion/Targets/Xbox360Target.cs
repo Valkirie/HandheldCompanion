@@ -17,7 +17,7 @@ namespace HandheldCompanion.Targets
             // initialize controller
             HID = HIDmode.Xbox360Controller;
 
-            virtualController = VirtualManager.vClient.CreateXbox360Controller();
+            virtualController = VirtualManager.vClient.CreateXbox360Controller((ushort)new Random().Next(), (ushort)new Random().Next());
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
 

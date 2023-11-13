@@ -26,13 +26,7 @@ public class XInputController : IController
         Controller = controller;
         UserIndex = (int)controller.UserIndex;
 
-        if (!IsConnected())
-            return;
-
         this.Details = details;
-        if (Details is null)
-            return;
-
         Details.isHooked = true;
 
         // UI
@@ -41,7 +35,6 @@ public class XInputController : IController
         ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
         ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-        InitializeComponent();
         DrawControls();
         RefreshControls();
 
@@ -154,11 +147,11 @@ public class XInputController : IController
         if (!IsConnected())
             return;
 
-        var LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
-        var RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+        ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+        ushort RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
 
-        var vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
-        Controller.SetVibration(vibration);
+        Vibration vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
+        Controller?.SetVibration(vibration);
     }
 
     public override void Plug()
@@ -171,6 +164,12 @@ public class XInputController : IController
     {
         TimerManager.Tick -= (ticks) => UpdateInputs(ticks, true);
         base.Unplug();
+    }
+
+    public override void Dispose()
+    {
+        Unplug();
+        Controller = null;
     }
 
     public override void Cleanup()

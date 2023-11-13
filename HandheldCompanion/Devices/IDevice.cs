@@ -15,6 +15,9 @@ using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
 using System.Threading;
+using Nefarius.Utilities.DeviceManagement.PnP;
+using System.Collections.Specialized;
+using HandheldCompanion.Controls;
 
 namespace HandheldCompanion.Devices;
 
@@ -65,6 +68,7 @@ public abstract class IDevice
     private static IDevice device;
 
     protected ushort _vid, _pid;
+    public Dictionary<byte, HidDevice> hidDevices = new();
 
     public Vector3 AccelerationAxis = new(1.0f, 1.0f, 1.0f);
 
@@ -160,6 +164,8 @@ public abstract class IDevice
     public virtual bool IsOpen => openLibSys is not null;
 
     public virtual bool IsSupported => true;
+
+    public Layout DefaultLayout { get; set; } = LayoutTemplate.DefaultLayout.Layout;
 
     public event KeyPressedEventHandler KeyPressed;
     public event KeyReleasedEventHandler KeyReleased;
@@ -363,7 +369,7 @@ public abstract class IDevice
                             {
                                 default:
                                 case "Version 1.0":
-                                    device = new OneXPlayer2_7840U();
+                                    device = new OneXPlayer2Pro();
                                     break;
                             }
                             break;
@@ -717,12 +723,50 @@ public abstract class IDevice
         KeyReleased?.Invoke(button);
     }
 
+    protected void ResumeDevices()
+    {
+        List<string> successes = new();
+
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
+        foreach(string InstanceId in deviceInstanceIds)
+        {
+            if (PnPUtil.EnableDevice(InstanceId))
+                successes.Add(InstanceId);
+        }
+
+        foreach (string InstanceId in successes)
+            deviceInstanceIds.Remove(InstanceId);
+
+        SettingsManager.SetProperty("SuspendedDevices", deviceInstanceIds);
+    }
+
+    protected bool SuspendDevice(string InterfaceId)
+    {
+        PnPDevice pnPDevice = PnPDevice.GetDeviceByInterfaceId(InterfaceId);
+        if (pnPDevice is not null)
+        {
+            StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
+
+            if (deviceInstanceIds is null)
+                deviceInstanceIds = new();
+
+            if (!deviceInstanceIds.Contains(pnPDevice.InstanceId))
+                deviceInstanceIds.Add(pnPDevice.InstanceId);
+
+            SettingsManager.SetProperty("SuspendedDevices", deviceInstanceIds);
+
+            return PnPUtil.DisableDevice(pnPDevice.InstanceId);
+        }
+
+        return false;
+    }
+
     protected void PowerStatusChange(IDevice device)
     {
         PowerStatusChanged?.Invoke(device);
     }
 
-    protected static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
+    public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
     {
         HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, new int[] { deviceId }).ToArray();
         foreach (HidDevice device in HidDeviceList)

@@ -3,8 +3,11 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
+using Microsoft.Win32.SafeHandles;
+using SharpDX.XInput;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -46,9 +49,12 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        ControllerManager.Working += ControllerManager_Working;
 
         PlatformManager.Initialized += PlatformManager_Initialized;
         PlatformManager.Steam.Updated += Steam_Updated;
+
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
 
     public ControllerPage(string Tag) : this()
@@ -116,9 +122,6 @@ public partial class ControllerPage : Page
                 case "HIDstatus":
                     cB_ServiceSwitch.SelectedIndex = Convert.ToInt32(value);
                     UpdateControllerImage();
-                    break;
-                case "VirtualControllerForceOrder":
-                    Toggle_ForceVirtualControllerOrder.IsOn = Convert.ToBoolean(value);
                     break;
             }
         });
@@ -193,6 +196,24 @@ public partial class ControllerPage : Page
         });
     }
 
+    private void ControllerManager_Working(bool busy)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            ControllerGrid.IsEnabled = !busy;
+        });
+    }
+
+    private void VirtualManager_ControllerSelected(HIDmode mode)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            cB_HidMode.SelectedIndex = (int)mode;
+        });
+    }
+
     private void ControllerHookClicked(IController Controller)
     {
         // todo: move me
@@ -228,11 +249,10 @@ public partial class ControllerPage : Page
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
             var target = ControllerManager.GetTargetController();
-            var isPlugged = hasTarget && target.IsPlugged();
+            var isPlugged = hasTarget && target.IsPlugged;
             var isHidden = hasTarget && target.IsHidden();
             var isSteam = hasTarget && (target is NeptuneController || target is GordonController);
             var isMuted = SettingsManager.GetBoolean("SteamControllerMute");
-            var isForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
@@ -369,50 +389,6 @@ public partial class ControllerPage : Page
 
         // temporary settings
         SettingsManager.SetProperty("DesktopLayoutEnabled", Toggle_DesktopLayout.IsOn, false, true);
-    }
-
-    private async void Toggle_ForceVirtualControllerOrder_Toggled(object sender, RoutedEventArgs e)
-    {
-        bool virtualControllerForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
-
-        if (Toggle_ForceVirtualControllerOrder.IsOn && !virtualControllerForceOrder)
-        {
-            var result = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderTitle}",
-                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderText}",
-                ContentDialogButton.Primary, null,
-                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderPrimary}",
-                $"{Properties.Resources.SettingsPage_ForceVirtualControllerOrderSecondary}");
-
-            await result;
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    {
-                        // update physical controller instance ids
-                        ControllerManager.UpdateSuspendedControllers();
-
-                        using (Process shutdown = new())
-                        {
-                            shutdown.StartInfo.FileName = "shutdown.exe";
-                            shutdown.StartInfo.Arguments = "-r -t 3";
-
-                            shutdown.StartInfo.UseShellExecute = false;
-                            shutdown.StartInfo.CreateNoWindow = true;
-                            shutdown.Start();
-                        }
-                        break;
-                    }
-                case ContentDialogResult.Secondary:
-                    break;
-            }
-        }
-
-        // RunAtStartup is required for this feature
-        if (Toggle_ForceVirtualControllerOrder.IsOn)
-            SettingsManager.SetProperty("RunAtStartup", true);
-
-        SettingsManager.SetProperty("VirtualControllerForceOrder", Toggle_ForceVirtualControllerOrder.IsOn);
     }
 
     private void Expander_Expanded(object sender, RoutedEventArgs e)

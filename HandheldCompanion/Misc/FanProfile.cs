@@ -19,7 +19,7 @@ namespace HandheldCompanion.Misc
         public double[] fanSpeeds = { 20, 20, 20, 30, 40, 50, 70, 80, 90, 100, 100 };
 
         // A private variable to store the average temperature
-        private List<double> avgTemp;
+        private ConcurrentList<double> avgTemp;
 
         // A private variable to store the aggressivity level
         private int aggressivity;
