@@ -431,11 +431,13 @@ public static class DeviceManager
 
             while (deviceEx is null && attempts < 30)
             {
+                await Task.Delay(100);
+
                 if (IsInitialized)
                     RefreshHID();
 
-                await Task.Delay(100);
                 deviceEx = FindDevice(InstanceId);
+
                 attempts++;
             }
 
@@ -512,11 +514,13 @@ public static class DeviceManager
 
         while (deviceEx is null && attempts < 30)
         {
+            await Task.Delay(100);
+
             if (IsInitialized)
                 RefreshHID();
 
-            await Task.Delay(100);
             deviceEx = FindDevice(InstanceId);
+
             attempts++;
         }
 
