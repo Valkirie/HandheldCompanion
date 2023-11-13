@@ -426,15 +426,15 @@ public static class DeviceManager
         {
             string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
-            if (IsInitialized)
-                RefreshHID();
-
             PnPDetails deviceEx = null;
             int attempts = 0;
 
-            while (deviceEx is null && attempts < 30)
+            while (deviceEx is null && attempts < 3)
             {
-                await Task.Delay(100);
+                if (IsInitialized)
+                    RefreshHID();
+
+                await Task.Delay(1000);
                 deviceEx = FindDevice(InstanceId);
                 attempts++;
             }
@@ -507,15 +507,15 @@ public static class DeviceManager
         if (InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase))
             return;
 
-        if (IsInitialized)
-            RefreshHID();
-
         PnPDetails deviceEx = null;
         int attempts = 0;
 
-        while (deviceEx is null && attempts < 30)
+        while (deviceEx is null && attempts < 3)
         {
-            await Task.Delay(100);
+            if (IsInitialized)
+                RefreshHID();
+
+            await Task.Delay(1000);
             deviceEx = FindDevice(InstanceId);
             attempts++;
         }
