@@ -268,7 +268,7 @@ public static class InputsManager
         var Injected = (args.Flags & LLKHF_INJECTED) > 0;
         var InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
 
-        if (Injected || InjectedLL)
+        if ((Injected || InjectedLL) && currentType != ListenerType.Output)
             return;
 
         var hookKey = (KeyCode)args.KeyValue;
