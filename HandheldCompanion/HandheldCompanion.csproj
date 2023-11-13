@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -81,6 +81,7 @@
     <None Remove="Resources\device_legion_go.png" />
     <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
+    <None Remove="Resources\device_onexplayer_onexfly.png" />
     <None Remove="Resources\device_rog_ally.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
     <None Remove="Resources\droix.png" />
@@ -134,6 +135,7 @@
     <Resource Include="Resources\device_gpd_winmax2.png" />
     <Resource Include="Resources\device_onexplayer_2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
+    <Resource Include="Resources\device_onexplayer_onexfly.png" />
     <Resource Include="Resources\device_rog_ally.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />
     <Resource Include="Resources\droix.png" />
