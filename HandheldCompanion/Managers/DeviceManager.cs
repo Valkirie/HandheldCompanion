@@ -429,12 +429,12 @@ public static class DeviceManager
             PnPDetails deviceEx = null;
             int attempts = 0;
 
-            while (deviceEx is null && attempts < 3)
+            while (deviceEx is null && attempts < 30)
             {
                 if (IsInitialized)
                     RefreshHID();
 
-                await Task.Delay(1000);
+                await Task.Delay(100);
                 deviceEx = FindDevice(InstanceId);
                 attempts++;
             }
@@ -510,12 +510,12 @@ public static class DeviceManager
         PnPDetails deviceEx = null;
         int attempts = 0;
 
-        while (deviceEx is null && attempts < 3)
+        while (deviceEx is null && attempts < 30)
         {
             if (IsInitialized)
                 RefreshHID();
 
-            await Task.Delay(1000);
+            await Task.Delay(100);
             deviceEx = FindDevice(InstanceId);
             attempts++;
         }
