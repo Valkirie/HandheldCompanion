@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -255,7 +256,8 @@ public partial class ProfilesPage : Page
                 }
 
                 var profile = new Profile(path);
-                profile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
+                var toCloneLayout = ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout;
+                profile.Layout = toCloneLayout.Clone() as Layout;
                 profile.LayoutTitle = LayoutTemplate.DefaultLayout.Name;
                 profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 

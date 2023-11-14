@@ -532,6 +532,8 @@ public static class ProfileManager
             UpdateProfileWrapper(profile);
     }
 
+    public static Profile? GetProfileWithDefaultLayout() => profiles.Values.FirstOrDefault(p => p.Layout.IsDefaultLayout);
+
     #region events
 
     public static event DeletedEventHandler Deleted;

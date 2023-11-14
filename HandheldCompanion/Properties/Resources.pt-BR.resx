@@ -2321,4 +2321,7 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="ProfilesPage_GPU" xml:space="preserve">
     <value>GPU</value>
   </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Make this the default layout</value>
+  </data>
 </root>

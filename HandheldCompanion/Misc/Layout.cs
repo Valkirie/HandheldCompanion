@@ -14,6 +14,8 @@ public partial class Layout : ICloneable, IDisposable
     public SortedDictionary<AxisLayoutFlags, IActions> AxisLayout { get; set; } = new();
     public SortedDictionary<AxisLayoutFlags, IActions> GyroLayout { get; set; } = new();
 
+    public bool IsDefaultLayout { get; set; }
+
     // gyro related
 
     public Layout()
@@ -60,8 +62,12 @@ public partial class Layout : ICloneable, IDisposable
     {
         var jsonString = JsonConvert.SerializeObject(this, Formatting.Indented,
             new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
-        return JsonConvert.DeserializeObject<Layout>(jsonString,
+        var deserialized = JsonConvert.DeserializeObject<Layout>(jsonString,
             new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+
+        deserialized.IsDefaultLayout = false; // Clone shouldn't be default layout in case it is true
+        
+        return deserialized;
     }
 
     public void Dispose()
