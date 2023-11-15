@@ -34,6 +34,12 @@
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform" />
                         </Grid.Background>
 
+                        <ui:ProgressRing
+                            Name="ControllerLoading"
+                            Width="200"
+                            Height="200"
+                            Visibility="Collapsed" />
+
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"

@@ -201,6 +201,7 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
+            ControllerLoading.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
             ControllerGrid.IsEnabled = !busy;
         });
     }
