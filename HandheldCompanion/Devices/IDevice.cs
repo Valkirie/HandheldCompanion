@@ -731,7 +731,11 @@ public abstract class IDevice
         List<string> successes = new();
 
         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
-        foreach(string InstanceId in deviceInstanceIds)
+
+        if (deviceInstanceIds is null)
+            deviceInstanceIds = new();
+
+        foreach (string InstanceId in deviceInstanceIds)
         {
             if (PnPUtil.EnableDevice(InstanceId))
                 successes.Add(InstanceId);
