@@ -43,10 +43,10 @@ namespace HandheldCompanion.Controllers
         private bool dataThreadRunning;
 
         private byte[] Data = new byte[64];
-        public override bool IsReady => Data[40] == 0 ? false : true;
+        public override bool IsReady => GetStatus() == 0 ? false : true;
 
         public bool IsConnected => !IsWireless;
-        public bool IsWireless => Data[40] >= 40 && Data[40] <= 50;
+        public bool IsWireless => GetStatus() >= 40 && GetStatus() <= 50;
 
         private bool prevTouch = false;
         private Vector2 prevTouchVector = Vector2.Zero;
@@ -72,9 +72,13 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+
+            hidDevice = GetHidDevice();
+            if (hidDevice is not null)
+                hidDevice.OpenDevice();
         }
 
-        public override void Plug()
+        private HidDevice GetHidDevice()
         {
             IEnumerable<HidDevice> devices = IDevice.GetHidDevices(Details.attributes.VendorID, Details.attributes.ProductID, 0);
             foreach (HidDevice device in devices)
@@ -83,18 +87,36 @@ namespace HandheldCompanion.Controllers
                     continue;
 
                 if (device.Capabilities.InputReportByteLength == 64)
-                {
-                    hidDevice = device;  // HID-compliant vendor-defined device
-
-                    hidDevice.OpenDevice();
-                    break;
-                }
+                    return device;  // HID-compliant vendor-defined device
             }
 
-            dataThreadRunning = true;
-            dataThread = new Thread(dataThreadLoop);
-            dataThread.IsBackground = true;
-            dataThread.Start();
+            return null;
+        }
+
+        private byte GetStatus()
+        {
+            if (hidDevice is not null)
+            {
+                HidReport report = hidDevice.ReadReport();
+                if (report.Data is not null)
+                    return report.Data[40];
+            }
+
+            return 0;
+        }
+
+        public override void Plug()
+        {
+            hidDevice = GetHidDevice();
+            if (hidDevice is not null)
+            {
+                hidDevice.OpenDevice();
+
+                dataThreadRunning = true;
+                dataThread = new Thread(dataThreadLoop);
+                dataThread.IsBackground = true;
+                dataThread.Start();
+            }
 
             base.Plug();
         }
