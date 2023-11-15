@@ -86,6 +86,8 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B6] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.MiddleButton } };
         DefaultLayout.ButtonLayout[ButtonFlags.B7] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollUp } };
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
+
+        Init();
     }
 
     public override bool Open()
@@ -93,8 +95,6 @@ public class LegionGo : IDevice
         var success = base.Open();
         if (!success)
             return false;
-
-        Init();
 
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
@@ -124,8 +124,6 @@ public class LegionGo : IDevice
 
             device.CloseDevice();
         }
-
-        FreeSapientiaUsb();
 
         base.Close();
     }

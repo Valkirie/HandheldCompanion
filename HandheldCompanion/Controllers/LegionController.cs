@@ -39,8 +39,8 @@ namespace HandheldCompanion.Controllers
         private const byte FRONT_ID = 17;
         private const byte BACK_ID = 19;
 
-        private Thread rumbleThread;
-        private bool rumbleThreadRunning;
+        private Thread dataThread;
+        private bool dataThreadRunning;
 
         private byte[] Data = new byte[64];
         public override bool IsReady => Data[40] == 0 ? false : true;
@@ -72,7 +72,10 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+        }
 
+        public override void Plug()
+        {
             IEnumerable<HidDevice> devices = IDevice.GetHidDevices(Details.attributes.VendorID, Details.attributes.ProductID, 0);
             foreach (HidDevice device in devices)
             {
@@ -82,22 +85,16 @@ namespace HandheldCompanion.Controllers
                 if (device.Capabilities.InputReportByteLength == 64)
                 {
                     hidDevice = device;  // HID-compliant vendor-defined device
+
+                    hidDevice.OpenDevice();
                     break;
                 }
             }
-        }
 
-        public override void Plug()
-        {
-            if (hidDevice is not null)
-            {
-                hidDevice.OpenDevice();
-
-                rumbleThreadRunning = true;
-                rumbleThread = new Thread(RumbleThreadLoop);
-                rumbleThread.IsBackground = true;
-                rumbleThread.Start();
-            }
+            dataThreadRunning = true;
+            dataThread = new Thread(dataThreadLoop);
+            dataThread.IsBackground = true;
+            dataThread.Start();
 
             base.Plug();
         }
@@ -107,8 +104,8 @@ namespace HandheldCompanion.Controllers
             if (hidDevice is not null)
             {
                 // kill rumble thread
-                rumbleThreadRunning = false;
-                rumbleThread.Join();
+                dataThreadRunning = false;
+                dataThread.Join();
 
                 hidDevice.CloseDevice();
             }
@@ -190,10 +187,10 @@ namespace HandheldCompanion.Controllers
             base.UpdateInputs(ticks);
         }
 
-        private async void RumbleThreadLoop(object? obj)
+        private async void dataThreadLoop(object? obj)
         {
             // pull latest Data
-            while (rumbleThreadRunning)
+            while (dataThreadRunning)
             {
                 HidReport report = hidDevice.ReadReport();
                 if (report is not null)
