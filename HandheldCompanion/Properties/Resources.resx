@@ -2555,4 +2555,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.LegionController.ButtonFlags.B8" xml:space="preserve">
     <value>Mouse wheel down</value>
   </data>
+  <data name="IController_ControllerIndex" xml:space="preserve">
+    <value>Gamepad: {0}</value>
+  </data>
 </root>

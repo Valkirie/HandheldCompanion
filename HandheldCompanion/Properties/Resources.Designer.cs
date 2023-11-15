@@ -3187,6 +3187,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gamepad: {0}.
+        /// </summary>
+        public static string IController_ControllerIndex {
+            get {
+                return ResourceManager.GetString("IController_ControllerIndex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decrease brightness.
         /// </summary>
         public static string InputsHotkey_decreaseBrightness {

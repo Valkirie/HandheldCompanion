@@ -30,19 +30,14 @@
                         FontSize="30"
                         Glyph="&#x243C;" />
 
-                    <ui:FontIcon
-                        Name="ControllerIcon"
-                        Margin="12,0,0,0"
-                        VerticalAlignment="Center"
-                        FontFamily="PromptFont"
-                        FontSize="30"
-                        Glyph="&#x2680;" />
-
-                    <TextBlock
-                        Name="ui_name"
-                        Margin="12,0,0,0"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource BodyTextBlockStyle}" />
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Name="ControllerName" Style="{StaticResource BodyTextBlockStyle}" />
+                        <TextBlock
+                            Name="ControllerIndex"
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            TextWrapping="Wrap" />
+                    </ui:SimpleStackPanel>
                 </DockPanel>
 
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">

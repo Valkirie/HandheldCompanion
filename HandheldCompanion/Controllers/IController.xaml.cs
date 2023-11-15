@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HandheldCompanion.Controllers
 {
@@ -112,22 +113,7 @@ namespace HandheldCompanion.Controllers
             }
             set
             {
-                switch (value)
-                {
-                    case 0:
-                        ControllerIcon.Glyph = "\u2680";
-                        break;
-                    case 1:
-                        ControllerIcon.Glyph = "\u2681";
-                        break;
-                    case 2:
-                        ControllerIcon.Glyph = "\u2682";
-                        break;
-                    case 3:
-                        ControllerIcon.Glyph = "\u2683";
-                        break;
-                }
-
+                ControllerIndex.Text = string.Format(Properties.Resources.IController_ControllerIndex, (UserIndex)value);
                 _UserIndex = value;
             }
         }
@@ -197,7 +183,7 @@ namespace HandheldCompanion.Controllers
         protected void DrawControls()
         {
             // update name
-            ui_name.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
+            ControllerName.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
 
             // virtual controller shouldn't be visible
             if (IsVirtual())
