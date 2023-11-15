@@ -1,22 +1,16 @@
 ﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
-using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using HidLibrary;
 using SharpDX.XInput;
-using steam_hidapi.net;
-using steam_hidapi.net.Hid;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsInput.Native;
+using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 
 namespace HandheldCompanion.Controllers
 {

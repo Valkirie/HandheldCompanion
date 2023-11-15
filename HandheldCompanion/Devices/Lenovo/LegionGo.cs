@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using Windows.Devices.Input;
 using WindowsInput.Events;
 using Task = System.Threading.Tasks.Task;
+using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
+using System.Windows.Media;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -58,6 +61,12 @@ public class LegionGo : IDevice
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.None;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
+
+        // dynamic lighting capacities
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
+        DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
         OEMChords.Add(new DeviceChord("LegionR",
             new List<KeyCode>(), new List<KeyCode>(),
@@ -85,8 +94,13 @@ public class LegionGo : IDevice
         if (!success)
             return false;
 
+        Init();
+
+        lightProfileL = GetCurrentLightProfile(3);
+        lightProfileR = GetCurrentLightProfile(4);
+
         // Legion XInput controller and other Legion devices shares the same USBHUB
-        while(ControllerManager.PowerCyclers.Count > 0)
+        while (ControllerManager.PowerCyclers.Count > 0)
             Thread.Sleep(500);
 
         if (hidDevices.TryGetValue(MOUSE_HID_ID, out HidDevice mouseDevice))
@@ -110,6 +124,8 @@ public class LegionGo : IDevice
 
             device.CloseDevice();
         }
+
+        FreeSapientiaUsb();
 
         base.Close();
     }
@@ -142,6 +158,43 @@ public class LegionGo : IDevice
         string parent_instanceId = pnpParent.GetProperty<string>(DevicePropertyKey.Device_InstanceId);
 
         return DeviceHelper.IsDeviceAvailable(parent_guid, parent_instanceId);
+    }
+
+    private LightionProfile lightProfileL = new();
+    private LightionProfile lightProfileR = new();
+    public override bool SetLedBrightness(int brightness)
+    {
+        lightProfileL.brightness = brightness;
+        lightProfileR.brightness = brightness;
+
+        SetLightingEffectProfileID(3, lightProfileL);
+        SetLightingEffectProfileID(4, lightProfileR);
+
+        return true;
+    }
+
+    public override bool SetLedStatus(bool status)
+    {
+        SetLightingEnable(0, status);
+
+        return true;
+    }
+
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, DeviceUtils.LEDLevel level, int speed = 100)
+    {
+        lightProfileL.r = MainColor.R;
+        lightProfileL.g = MainColor.G;
+        lightProfileL.b = MainColor.B;
+        lightProfileL.speed = speed;
+        SetLightingEffectProfileID(3, lightProfileL);
+
+        lightProfileR.r = SecondaryColor.R;
+        lightProfileR.g = SecondaryColor.G;
+        lightProfileR.b = SecondaryColor.B;
+        lightProfileR.speed = speed;
+        SetLightingEffectProfileID(4, lightProfileR);
+
+        return true;
     }
 
     public override string GetGlyph(ButtonFlags button)
