@@ -518,37 +518,38 @@ public static class ControllerManager
         if (userIndex == UserIndex.Any)
             userIndex = XInputController.TryGetUserIndex(details);
 
-        if (true) // VirtualControllerForceOrder
+        if (details.isPhysical)
         {
-            if (details.isPhysical)
+            if (HasVirtualController())
             {
-                if (HasVirtualController())
-                {
-                    // physical controller arrived and is taking first slot, suspend it
-                    if (details.XInputUserIndex == (int)UserIndex.One)
-                        if (SuspendController(details.baseContainerDeviceInstanceId))
-                            return;
-                }
-                else
-                {
-                    // do something
-                }
+                // physical controller arrived and is taking first slot, suspend it
+                if (details.XInputUserIndex == (int)UserIndex.One)
+                    if (SuspendController(details.baseContainerDeviceInstanceId))
+                        return;
             }
-            else if (details.isVirtual)
+            else
+            {
+                // do something
+            }
+        }
+        else
+        {
+            // do we have a suspended controller
+            string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
+            if (!string.IsNullOrEmpty(baseContainerDeviceInstanceId))
+            {
+                // (re)enable physical controller(s) after virtual controller to ensure first order
+                // todo: maybe move this to any HID event happening ?
+                while (!ResumeController())
+                    await Task.Delay(1000);
+            }
+            else
             {
                 IController controller = GetFirstController();
-                if (controller is not null)
+                if (controller is not null && controller.IsPhysical())
                 {
-                    // virtual controller arrived and first slot is taken, suspend slot taker
                     controller.IsBusy = true;
                     SuspendController(controller.Details.baseContainerDeviceInstanceId);
-                }
-                else
-                {
-                    // (re)enable physical controller(s) after virtual controller to ensure first order
-                    // todo: maybe move this to any HID event happening ?
-                    while (!ResumeController())
-                        await Task.Delay(1000);
                 }
             }
         }
@@ -557,7 +558,7 @@ public static class ControllerManager
         Controller _controller = new(userIndex);
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(async () =>
         {
             XInputController controller;
             switch(details.GetVendorID())
@@ -572,21 +573,8 @@ public static class ControllerManager
                     break;
             }
 
-            // failed to detect
-            if (controller is null)
-                return;
-
-            int attempts = 0;
-            while (!controller.IsReady && attempts < 10)
-            {
-                attempts++;
-
-                Debug.WriteLine($"Controller: {controller} isn't ready yet.");
-                Task.Delay(250);
-            }
-
-            if (!controller.IsConnected())
-                return;
+            while (!controller.IsReady && _controller.IsConnected)
+                await Task.Delay(250);
 
             // update or create controller
             string path = controller.GetContainerInstancePath();
@@ -619,22 +607,19 @@ public static class ControllerManager
         });
     }
 
-    private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
         if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
             return;
 
-        if (true) // VirtualControllerForceOrder
+        // physical controller that was taking first slot was suspended/disconnected, attribute it to virtual controller
+        if (controller.IsPhysical() && VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
         {
-            // physical controller that was taking first slot was suspended/disconnected, attribute it to virtual controller
-            if (controller.IsPhysical() && VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
+            if ((UserIndex)controller.GetUserIndex() == UserIndex.One)
             {
-                if ((UserIndex)controller.GetUserIndex() == UserIndex.One)
-                {
-                    // restart virtual controller
-                    VirtualManager.Pause();
-                    VirtualManager.Resume();
-                }
+                // restart virtual controller
+                VirtualManager.Pause();
+                VirtualManager.Resume();
             }
         }
 
@@ -773,7 +758,7 @@ public static class ControllerManager
 
     public static XInputController GetFirstController()
     {
-        return GetPhysicalControllers().FirstOrDefault(c => c is XInputController && c.GetUserIndex() == 0) as XInputController;
+        return Controllers.Values.FirstOrDefault(c => c is XInputController && c.GetUserIndex() == 0) as XInputController;
     }
 
     public static List<IController> GetControllers()
@@ -896,16 +881,6 @@ public static class ControllerManager
             case HIDmode.DualShock4Controller:
                 return emptyDS4;
         }
-    }
-
-    private static bool IsHCVirtualController(XInputController controller)
-    {
-        if (controller.IsVirtual() && virtualControllerCreated)
-        {
-            virtualControllerCreated = false;
-            return true;
-        }
-        return false;
     }
 
     private static void VirtualManager_ControllerSelected(HIDmode mode)

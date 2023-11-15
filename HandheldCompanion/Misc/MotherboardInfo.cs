@@ -232,7 +232,7 @@ public static class MotherboardInfo
         }
     }
 
-    private static uint _ProcessorMaxClockSpeed = 3900;
+    private static uint _ProcessorMaxClockSpeed = 0;
     public static uint ProcessorMaxClockSpeed
     {
         get

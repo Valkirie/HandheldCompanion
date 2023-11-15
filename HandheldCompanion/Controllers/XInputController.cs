@@ -51,12 +51,6 @@ public class XInputController : IController
         }
     }
 
-    public void UpdateController(Controller controller)
-    {
-        Controller = controller;
-        UserIndex = (int)controller.UserIndex;
-    }
-
     public override string ToString()
     {
         var baseName = base.ToString();

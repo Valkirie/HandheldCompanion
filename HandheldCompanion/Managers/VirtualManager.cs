@@ -19,6 +19,9 @@ namespace HandheldCompanion.Managers
         public static HIDmode HIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
+        public static ushort ProductId = 0x28E;
+        public static ushort VendorId = 0x45E;
+
         public static bool IsInitialized;
 
         public static event ControllerSelectedEventHandler ControllerSelected;
@@ -149,7 +152,10 @@ namespace HandheldCompanion.Managers
                     vTarget = new DualShock4Target();
                     break;
                 case HIDmode.Xbox360Controller:
-                    vTarget = new Xbox360Target();
+                    // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
+                    VendorId = (ushort)new Random().Next();
+                    ProductId = (ushort)new Random().Next();
+                    vTarget = new Xbox360Target(VendorId, ProductId);
                     break;
             }
 
