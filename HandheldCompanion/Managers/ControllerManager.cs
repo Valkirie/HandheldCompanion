@@ -5,6 +5,7 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
+using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
@@ -520,16 +521,16 @@ public static class ControllerManager
 
         if (details.isPhysical)
         {
-            if (HasVirtualController())
+            // wait for virtual manager to wake up
+            if (VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
+                while (!HasVirtualController())
+                    await Task.Delay(250);
+
                 // physical controller arrived and is taking first slot, suspend it
                 if (details.XInputUserIndex == (int)UserIndex.One)
                     if (SuspendController(details.baseContainerDeviceInstanceId))
                         return;
-            }
-            else
-            {
-                // do something
             }
         }
         else
@@ -539,9 +540,7 @@ public static class ControllerManager
             if (!string.IsNullOrEmpty(baseContainerDeviceInstanceId))
             {
                 // (re)enable physical controller(s) after virtual controller to ensure first order
-                // todo: maybe move this to any HID event happening ?
-                while (!ResumeController())
-                    await Task.Delay(1000);
+                ResumeController();
             }
             else
             {
@@ -607,21 +606,22 @@ public static class ControllerManager
         });
     }
 
-    private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
-            return;
-
-        // physical controller that was taking first slot was suspended/disconnected, attribute it to virtual controller
-        if (controller.IsPhysical() && VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
+        // do we have a controller pending revival ?
+        string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
+        if (details.baseContainerDeviceInstanceId == baseContainerDeviceInstanceId)
         {
-            if ((UserIndex)controller.GetUserIndex() == UserIndex.One)
+            if (VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
                 // restart virtual controller
                 VirtualManager.Pause();
                 VirtualManager.Resume();
             }
         }
+
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+            return;
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
@@ -630,8 +630,6 @@ public static class ControllerManager
         if (!IsPowerCycling)
             if (controller.IsReady)
                 controller.UnhideHID();
-
-        controller.Dispose();
 
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);
@@ -787,7 +785,6 @@ public static class ControllerManager
                     usbPnPDevice.CyclePort();
 
                     SettingsManager.SetProperty("SuspendedController", baseContainerDeviceInstanceId);
-
                     return true;
             }
         }
@@ -813,12 +810,24 @@ public static class ControllerManager
         {
             PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
             UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+            DriverMeta pnPDriver = null;
+
+            try
+            {
+                pnPDevice.GetCurrentDriver();
+            }
+            catch { }
 
             string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
             switch (enumerator)
             {
                 case "USB":
-                    pnPDevice.InstallCustomDriver("xusb22.inf", out bool rebootRequired);
+                    if (pnPDriver is null || pnPDriver.InfPath != "xusb22.inf")
+                    {
+                        usbPnPDevice.CyclePort();
+                        pnPDevice.InstallCustomDriver("xusb22.inf", out bool rebootRequired);
+                    }
+
                     SettingsManager.SetProperty("SuspendedController", string.Empty);
                     success = true;
                     break;

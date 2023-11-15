@@ -305,10 +305,6 @@ namespace HandheldCompanion.Controllers
             RefreshControls();
         }
 
-        public virtual void Dispose()
-        {
-        }
-
         // like Unplug but one that can be safely called when controller is already removed
         public virtual void Cleanup()
         {

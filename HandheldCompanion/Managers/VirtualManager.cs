@@ -153,8 +153,8 @@ namespace HandheldCompanion.Managers
                     break;
                 case HIDmode.Xbox360Controller:
                     // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
-                    VendorId = (ushort)new Random().Next();
-                    ProductId = (ushort)new Random().Next();
+                    VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
+                    ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
                     vTarget = new Xbox360Target(VendorId, ProductId);
                     break;
             }

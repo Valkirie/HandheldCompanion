@@ -160,12 +160,6 @@ public class XInputController : IController
         base.Unplug();
     }
 
-    public override void Dispose()
-    {
-        Unplug();
-        Controller = null;
-    }
-
     public override void Cleanup()
     {
         TimerManager.Tick -= UpdateInputs;
