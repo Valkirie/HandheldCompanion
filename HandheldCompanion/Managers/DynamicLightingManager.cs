@@ -22,10 +22,10 @@ public static class DynamicLightingManager
     private static Color previousColorLeft;
     private static Color previousColorRight;
 
-    private static readonly Timer AmbilightTimer;
     private static readonly Timer DynamicLightingTimer;
 
     private static Device device;
+    private static Surface surface;
     private static DataRectangle dataRectangle;
     private static IntPtr dataPointer;
 
@@ -34,8 +34,6 @@ public static class DynamicLightingManager
 
     private const int squareSize = 100;
     private const int squareStep = 10;
-
-    private static LockObject updateLock = new();
 
     private static bool VerticalBlackBarDetectionEnabled;
 
@@ -49,8 +47,8 @@ public static class DynamicLightingManager
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         MainWindow.CurrentDevice.PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
-        AmbilightTimer = new(33);   // 30 FPS (1000 / 30 = 33)
-        AmbilightTimer.Elapsed += AmbilightTimer_Elapsed;
+        rumbleThread = new Thread(RumbleThreadLoop);
+        rumbleThread.IsBackground = true;
 
         DynamicLightingTimer = new(125)
         {
@@ -72,8 +70,8 @@ public static class DynamicLightingManager
         if (!IsInitialized)
             return;
 
-        if (AmbilightTimer.Enabled)
-            AmbilightTimer.Stop();
+        rumbleThreadRunning = false;
+        rumbleThread.Join();
         
         ReleaseDirect3DDevice();
 
@@ -100,6 +98,9 @@ public static class DynamicLightingManager
         {
             // Create a device to access the screen
             device = new Device(new Direct3D(), 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.SoftwareVertexProcessing, new PresentParameters(screenWidth, screenHeight));
+
+            // Create a surface to capture the screen
+            surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight, Format.A8R8G8B8, Pool.Scratch);
         }
         catch (SharpDXException ex)
         {
@@ -181,8 +182,11 @@ public static class DynamicLightingManager
                 case LEDLevel.Breathing:
                 case LEDLevel.Rainbow:
                     {
-                        if (AmbilightTimer.Enabled)
-                            AmbilightTimer.Stop();
+                        if (rumbleThreadRunning)
+                        {
+                            rumbleThreadRunning = false;
+                            rumbleThread.Join();
+                        }
 
                         MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDMainColor, LEDSettingsLevel, LEDSpeed);
                     }
@@ -192,8 +196,11 @@ public static class DynamicLightingManager
                 case LEDLevel.Wheel:
                 case LEDLevel.Gradient:
                     {
-                        if (AmbilightTimer.Enabled)
-                            AmbilightTimer.Stop();
+                        if (rumbleThreadRunning)
+                        {
+                            rumbleThreadRunning = false;
+                            rumbleThread.Join();
+                        }
 
                         MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel, LEDSpeed);
                     }
@@ -202,7 +209,7 @@ public static class DynamicLightingManager
                 case LEDLevel.Ambilight:
                     {
                         // Start adjusting LED colors based on screen content
-                        if (!AmbilightTimer.Enabled)
+                        if (!rumbleThreadRunning)
                         {
                             // Reset color histories for next time
                             previousColorLeft = new Color();
@@ -210,7 +217,11 @@ public static class DynamicLightingManager
                             leftLedTracker.Reset();
                             rightLedTracker.Reset();
 
-                            AmbilightTimer.Start();
+                            rumbleThreadRunning = true;
+
+                            rumbleThread = new Thread(RumbleThreadLoop);
+                            rumbleThread.IsBackground = true;
+                            rumbleThread.Start();
 
                             // Provide LEDs with initial brightness
                             MainWindow.CurrentDevice.SetLedBrightness(100);
@@ -222,8 +233,11 @@ public static class DynamicLightingManager
         }
         else
         {
-            if (AmbilightTimer.Enabled)
-                AmbilightTimer.Stop();
+            if (rumbleThreadRunning)
+            {
+                rumbleThreadRunning = false;
+                rumbleThread.Join();
+            }
 
             // Set both brightness to 0 and color to black
             MainWindow.CurrentDevice.SetLedBrightness(0);
@@ -231,59 +245,60 @@ public static class DynamicLightingManager
         }
     }
 
-    private static void AmbilightTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    private static Thread rumbleThread;
+    private static bool rumbleThreadRunning;
+
+    private static void RumbleThreadLoop(object? obj)
     {
-        try
+        while (rumbleThreadRunning)
         {
-            if (device is null)
-                return;
-
-            using (new ScopedLock(updateLock))
+            try
             {
-                // Create a surface to capture the screen
-                using (Surface surface = Surface.CreateOffscreenPlain(device, screenWidth, screenHeight, Format.A8R8G8B8, Pool.Scratch))
+                // Capture the screen
+                device.GetFrontBufferData(0, surface);
+
+                // Lock the surface to access the pixel data
+                dataRectangle = surface.LockRectangle(LockFlags.None);
+
+                // Get the data pointer
+                dataPointer = dataRectangle.DataPointer;
+
+                // Apply vertical black bar detection if enabled
+                int VerticalBlackBarWidth = VerticalBlackBarDetectionEnabled ? DynamicLightingManager.VerticalBlackBarWidth() : 0;
+
+                Color currentColorLeft = CalculateColorAverage(1 + VerticalBlackBarWidth, 1);
+                Color currentColorRight = CalculateColorAverage(screenWidth - squareSize - VerticalBlackBarWidth, ((screenHeight / 2) - (squareSize / 2)));
+
+                // Unlock the surface
+                surface.UnlockRectangle();
+
+                leftLedTracker.AddColor(currentColorLeft);
+                rightLedTracker.AddColor(currentColorRight);
+
+                // Calculate the average colors based on previous colors for the left and right LEDs
+                Color averageColorLeft = leftLedTracker.CalculateAverageColor();
+                Color averageColorRight = rightLedTracker.CalculateAverageColor();
+
+                // Only send HID update instruction if the color is different
+                if (averageColorLeft != previousColorLeft && averageColorRight != previousColorRight)
                 {
-                    // Capture the screen
-                    device.GetFrontBufferData(0, surface);
+                    // Change LED colors of the device
+                    MainWindow.CurrentDevice.SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);
 
-                    // Lock the surface to access the pixel data
-                    dataRectangle = surface.LockRectangle(LockFlags.None);
-
-                    // Get the data pointer
-                    dataPointer = dataRectangle.DataPointer;
-
-                    // Apply vertical black bar detection if enabled
-                    int VerticalBlackBarWidth = VerticalBlackBarDetectionEnabled ? DynamicLightingManager.VerticalBlackBarWidth() : 0;
-
-                    Color currentColorLeft = CalculateColorAverage(1 + VerticalBlackBarWidth, 1);
-                    Color currentColorRight = CalculateColorAverage(screenWidth - squareSize - VerticalBlackBarWidth, ((screenHeight / 2) - (squareSize / 2)));
-
-                    // Unlock the surface
-                    surface.UnlockRectangle();
-
-                    leftLedTracker.AddColor(currentColorLeft);
-                    rightLedTracker.AddColor(currentColorRight);
-
-                    // Calculate the average colors based on previous colors for the left and right LEDs
-                    Color averageColorLeft = leftLedTracker.CalculateAverageColor();
-                    Color averageColorRight = rightLedTracker.CalculateAverageColor();
-
-                    // Only send HID update instruction if the color is different
-                    if (averageColorLeft != previousColorLeft && averageColorRight != previousColorRight)
-                    {
-                        // Change LED colors of the device
-                        MainWindow.CurrentDevice.SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);
-
-                        // Update the previous colors for next time
-                        previousColorLeft = averageColorLeft;
-                        previousColorRight = averageColorRight;
-                    }
+                    // Update the previous colors for next time
+                    previousColorLeft = averageColorLeft;
+                    previousColorRight = averageColorRight;
                 }
             }
+            catch { }
+
+            Thread.Sleep(33);
         }
-        catch
-        {
-        }
+    }
+
+    private static void AmbilightTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        
     }
 
     private static Color CalculateColorAverage(int x, int y)

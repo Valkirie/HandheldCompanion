@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
@@ -7,7 +8,7 @@ namespace HandheldCompanion.Misc
 {
     public class ColorTracker
     {
-        private Queue<Color> colorHistory = new Queue<Color>();
+        private ConcurrentQueue<Color> colorHistory = new();
 
         private const int BlackBorderThreshold = 3;
         private int historySize = 4; // Number of colors to track
@@ -19,16 +20,14 @@ namespace HandheldCompanion.Misc
 
             // Ensure the history does not exceed the specified size
             while (colorHistory.Count > historySize)
-            {
-                colorHistory.Dequeue();
-            }
+                colorHistory.TryDequeue(out Color result);
         }
 
         public void Reset()
         {
             // Reset the color history when ambilight
             // is no longer used so we start fresh next time
-            colorHistory = new Queue<Color>();
+            colorHistory = new();
         }
 
         public Color CalculateAverageColor()
