@@ -16,7 +16,7 @@
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-        <StackPanel>
+        <ui:SimpleStackPanel Spacing="12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -79,6 +79,6 @@
                     TextAlignment="Center"
                     TextWrapping="Wrap" />
             </ui:SimpleStackPanel>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </Border>
 </UserControl>

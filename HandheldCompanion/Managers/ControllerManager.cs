@@ -8,6 +8,7 @@ using HandheldCompanion.Views.Classes;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using SharpDX.Direct3D9;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -540,7 +541,15 @@ public static class ControllerManager
             if (!string.IsNullOrEmpty(baseContainerDeviceInstanceId))
             {
                 // (re)enable physical controller(s) after virtual controller to ensure first order
-                ResumeController();
+                int attempts = 0;
+                bool resumed = false;
+
+                while (!resumed && attempts < 3)
+                {
+                    resumed = ResumeController();
+                    await Task.Delay(1000);
+                    attempts++;
+                }
             }
             else
             {
@@ -557,10 +566,10 @@ public static class ControllerManager
         Controller _controller = new(userIndex);
 
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(async () =>
+        _ = Application.Current.Dispatcher.BeginInvoke(async () =>
         {
             XInputController controller;
-            switch(details.GetVendorID())
+            switch (details.GetVendorID())
             {
                 default:
                     controller = new XInputController(_controller, details);
