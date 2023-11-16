@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
@@ -58,6 +59,8 @@ public partial class QuickPerformancePage : Page
 
         // motherboard settings
         CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
+
+        FanModeSoftware.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl);
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;

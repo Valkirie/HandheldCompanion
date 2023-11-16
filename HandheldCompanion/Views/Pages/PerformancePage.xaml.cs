@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
@@ -63,6 +64,8 @@ namespace HandheldCompanion.Views.Pages
 
             // motherboard settings
             CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
+
+            FanModeSoftware.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl);
         }
 
         private void Page_Loaded(object? sender, RoutedEventArgs? e)
