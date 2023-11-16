@@ -1,16 +1,15 @@
+using HandheldCompanion.Misc;
+using HandheldCompanion.Views;
+using SharpDX;
+using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
-using SharpDX;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Windows.Media;
-using Timer = System.Timers.Timer;
-using System.Threading;
-using SharpDX.Direct3D9;
-using HandheldCompanion.Views;
 using static HandheldCompanion.Utils.DeviceUtils;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Utils;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 

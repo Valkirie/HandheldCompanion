@@ -215,28 +215,28 @@ begin
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
-procedure Dependency_AddDotNet70;
+procedure Dependency_AddDotNet80;
 begin
-  // https://dotnet.microsoft.com/download/dotnet/7.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 7.0.0') then begin
-    Dependency_Add('dotnet70' + Dependency_ArchSuffix + '.exe',
+  // https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+  if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 8.0.0') then begin
+    Dependency_Add('dotNet80' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Runtime 7.0.0' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/75c0d7c7-9f30-46fd-9675-a301f0e051f4/ec04d5cc40aa6537a4af21fad6bf8ba9/dotnet-runtime-7.0.0-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/87bc5966-97cc-498c-8381-bff4c43aafc6/baca88b989e7d2871e989d33a667d8e9/dotnet-runtime-7.0.0-win-x64.exe'),
+      '.NET Runtime 8.0.0' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/7f4d5cbc-4449-4ea5-9578-c467821f251f/b9b19f89d0642bf78f4b612c6a741637/dotnet-runtime-8.0.0-win-x64.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/593685c9-7e98-455a-8e34-4b8ad1be9489/6ccf85c6fc244428d61f74ca3aee0645/dotnet-runtime-8.0.0-win-x86.exe'),
       '', False, False);
   end;
 end;
 
-procedure Dependency_AddDotNet70Desktop;
+procedure Dependency_AddDotNet80Desktop;
 begin
-  // https://dotnet.microsoft.com/download/dotnet/7.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.10') then begin
-    Dependency_Add('dotnet70desktop' + Dependency_ArchSuffix + '.exe',
+  // https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 8.0.0') then begin
+    Dependency_Add('dotNet80desktop' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Desktop Runtime 7.0.0' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/9812249d-fc42-41ab-bd2e-6e858d5dd5a7/95fa5a1a77eace4482bcb98ede190003/windowsdesktop-runtime-7.0.10-win-x86.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/747f4a98-2586-4bc6-b828-34f35e384a7d/44225cfd9d365855ec77d00c4812133c/windowsdesktop-runtime-7.0.10-win-x64.exe'),
+      '.NET Desktop Runtime 8.0.0' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/b280d97f-25a9-4ab7-8a12-8291aa3af117/a37ed0e68f51fcd973e9f6cb4f40b1a7/windowsdesktop-runtime-8.0.0-win-x64.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/f9e3b581-059d-429f-9f0d-1d1167ff7e32/bd7661030cd5d66cd3eee0fd20b24540/windowsdesktop-runtime-8.0.0-win-x86.exe'),
       '', False, False);
   end;
 end;
@@ -368,7 +368,7 @@ end;
 ; requires netcorecheck.exe and netcorecheck_x64.exe (see download link below)
 #define UseNetCoreCheck
 #ifdef UseNetCoreCheck
-  #define UseDotNet70
+  #define UseDotNet80
 #endif
 
 ;#define UseVC2005
@@ -394,8 +394,8 @@ end;
 #define MyAppExeName "HandheldCompanion.exe"
 #define MyConfiguration "Release"
 
-#ifdef UseDotNet70
-	#define MyConfigurationExt "net7.0"
+#ifdef UseDotNet80
+	#define MyConfigurationExt "net8.0"
 #endif 
 
 AppName={#MyAppSetupName}
@@ -451,10 +451,6 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
-
-[Run]
-Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; Flags: runascurrentuser runhidden
-Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; Flags: runascurrentuser runhidden
 
 [UninstallRun]
 Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
@@ -562,8 +558,8 @@ end;
 function InitializeSetup: Boolean;
 begin
 
-#ifdef UseDotNet70
-  Dependency_AddDotNet70Desktop;
+#ifdef UseDotNet80
+  Dependency_AddDotNet80Desktop;
 #endif
 
 #ifdef UseVC2005

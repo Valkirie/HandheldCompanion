@@ -1,17 +1,10 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
-using Microsoft.Win32.SafeHandles;
-using SharpDX.XInput;
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;

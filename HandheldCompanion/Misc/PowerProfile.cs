@@ -1,13 +1,13 @@
 ﻿using HandheldCompanion.Managers;
-using System.Windows.Media;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Text.RegularExpressions;
-using System.IO;
+using System.Windows.Media;
 using Page = System.Windows.Controls.Page;
-using System.Collections.Generic;
 
 namespace HandheldCompanion.Misc
 {

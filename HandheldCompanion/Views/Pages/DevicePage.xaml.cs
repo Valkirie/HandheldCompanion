@@ -1,5 +1,5 @@
-﻿using ColorPicker.Models;
-using ColorPicker;
+﻿using ColorPicker;
+using ColorPicker.Models;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -7,10 +7,10 @@ using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Page = System.Windows.Controls.Page;
 using System.Windows.Media;
-using static HandheldCompanion.Utils.DeviceUtils;
 using Windows.UI.ViewManagement;
+using static HandheldCompanion.Utils.DeviceUtils;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {

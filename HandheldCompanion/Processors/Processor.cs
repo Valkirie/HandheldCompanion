@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using System.Collections.Generic;
-using System.Management;
 using System.Timers;
 
 namespace HandheldCompanion.Processors;

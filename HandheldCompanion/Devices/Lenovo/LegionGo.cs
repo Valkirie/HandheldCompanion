@@ -6,15 +6,11 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
-using Windows.Devices.Input;
-using WindowsInput.Events;
-using Task = System.Threading.Tasks.Task;
-using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using System.Windows.Media;
+using WindowsInput.Events;
+using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;

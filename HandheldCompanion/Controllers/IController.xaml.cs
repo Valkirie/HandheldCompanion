@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HandheldCompanion.Controllers
 {

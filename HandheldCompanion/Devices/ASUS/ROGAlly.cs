@@ -6,14 +6,13 @@ using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Windows.Media;
-using System.Management;
 using System.Numerics;
 using System.Text;
-using WindowsInput.Events;
-using Task = System.Threading.Tasks.Task;
-using static HandheldCompanion.Utils.DeviceUtils;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using WindowsInput.Events;
+using static HandheldCompanion.Utils.DeviceUtils;
+using Task = System.Threading.Tasks.Task;
 
 namespace HandheldCompanion.Devices;
 

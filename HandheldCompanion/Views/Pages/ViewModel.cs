@@ -1,9 +1,9 @@
-﻿using LiveCharts.Events;
-using LiveCharts;
+﻿using LiveCharts;
+using LiveCharts.Events;
 using System;
-using System.Windows.Input;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows.Input;
 
 namespace HandheldCompanion.Views.Pages
 {

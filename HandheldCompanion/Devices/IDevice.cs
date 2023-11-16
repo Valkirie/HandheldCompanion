@@ -1,3 +1,4 @@
+using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
@@ -5,19 +6,18 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Inkore.UI.WPF.Modern.Controls;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
 using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
-using System.Threading;
-using Nefarius.Utilities.DeviceManagement.PnP;
-using System.Collections.Specialized;
-using HandheldCompanion.Controls;
 
 namespace HandheldCompanion.Devices;
 

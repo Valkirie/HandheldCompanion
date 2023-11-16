@@ -10,7 +10,6 @@ using Inkore.UI.WPF.Modern.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Windows;

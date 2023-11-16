@@ -5,7 +5,6 @@ using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;

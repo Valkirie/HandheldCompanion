@@ -1,20 +1,20 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using Inkore.UI.WPF.Modern.Controls;
-using System;
-using System.Windows;
-using Page = System.Windows.Controls.Page;
-using LiveCharts;
-using System.Windows.Input;
-using LiveCharts.Wpf;
-using System.Linq;
-using LiveCharts.Helpers;
-using LiveCharts.Definitions.Series;
-using System.Windows.Controls;
-using HandheldCompanion.Utils;
 using HandheldCompanion.Processors;
-using System.Timers;
+using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
+using LiveCharts;
+using LiveCharts.Definitions.Series;
+using LiveCharts.Helpers;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages
 {

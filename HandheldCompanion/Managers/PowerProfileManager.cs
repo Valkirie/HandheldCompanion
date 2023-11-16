@@ -1,12 +1,11 @@
 ﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using HandheldCompanion.Utils;
-using LibreHardwareMonitor.Hardware;
 
 namespace HandheldCompanion.Managers
 {
