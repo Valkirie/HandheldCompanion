@@ -522,7 +522,7 @@ public static class ControllerManager
         if (details.isPhysical)
         {
             // wait for virtual manager to wake up
-            if (VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
+            if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
                 while (!HasVirtualController())
                     await Task.Delay(250);
@@ -606,16 +606,17 @@ public static class ControllerManager
         });
     }
 
-    private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
         // do we have a controller pending revival ?
         string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
         if (details.baseContainerDeviceInstanceId == baseContainerDeviceInstanceId)
         {
-            if (VirtualManager.HIDmode != HIDmode.NoController && VirtualManager.HIDstatus == HIDstatus.Connected)
+            if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
                 // restart virtual controller
                 VirtualManager.Pause();
+                await Task.Delay(1000);
                 VirtualManager.Resume();
             }
         }
