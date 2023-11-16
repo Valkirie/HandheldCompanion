@@ -253,18 +253,59 @@ namespace HandheldCompanion.Controllers
 
         // let the controller decide itself what motor to use for a specific button
         public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
-        { }
+        {
+            int delay;
+            switch (strength)
+            {
+                default:
+                case HapticStrength.Low:
+                    delay = 85;
+                    break;
+
+                case HapticStrength.Medium:
+                    delay = 105;
+                    break;
+
+                case HapticStrength.High:
+                    delay = 125;
+                    break;
+            }
+
+            switch (button)
+            {
+                case ButtonFlags.B1:
+                case ButtonFlags.B2:
+                case ButtonFlags.B3:
+                case ButtonFlags.B4:
+                case ButtonFlags.L1:
+                case ButtonFlags.L2Soft:
+                case ButtonFlags.Start:
+                case ButtonFlags.RightStickClick:
+                case ButtonFlags.RightPadClick:
+                    Rumble(delay, 0, byte.MaxValue);
+                    break;
+                default:
+                    Rumble(delay, byte.MaxValue, 0);
+                    break;
+            }
+        }
 
         public virtual bool IsConnected()
         {
             return false;
         }
 
-        public virtual void Rumble(int delay = 125)
+        private Task rumbleTask;
+        public virtual void Rumble(int delay = 125, byte LargeMotor = byte.MaxValue, byte SmallMotor = byte.MaxValue)
         {
-            Task.Run(async () =>
+            // If the current task is not null and not completed
+            if (rumbleTask != null && !rumbleTask.IsCompleted)
+                SetVibration(0, 0);
+
+            // Create a new task that executes the following code
+            rumbleTask = Task.Run(async () =>
             {
-                SetVibration(byte.MaxValue, byte.MaxValue);
+                SetVibration(LargeMotor, SmallMotor);
                 await Task.Delay(delay);
                 SetVibration(0, 0);
             });
