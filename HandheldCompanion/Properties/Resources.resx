@@ -1797,7 +1797,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>Armory crate</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
-    <value>M1 / M2</value>
+    <value>M1</value>
   </data>
   <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
     <value>Win</value>
@@ -2557,5 +2557,8 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>Gamepad: {0}</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM4" xml:space="preserve">
+    <value>M2</value>
   </data>
 </root>

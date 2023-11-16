@@ -1745,7 +1745,7 @@
     <value>Esc</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
-    <value>M1 / M2</value>
+    <value>M1</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>A</value>
@@ -2319,5 +2319,41 @@
   </data>
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>You can't undo this action. Previously applied template: {0}</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B5" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B6" xml:space="preserve">
+    <value>Mouse wheel click</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B7" xml:space="preserve">
+    <value>Mouse wheel up</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B8" xml:space="preserve">
+    <value>Mouse wheel down</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.L4" xml:space="preserve">
+    <value>Y1</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.L5" xml:space="preserve">
+    <value>Y2</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.R4" xml:space="preserve">
+    <value>M3</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.R5" xml:space="preserve">
+    <value>Y3</value>
+  </data>
+  <data name="Enum.LegionGo.ButtonFlags.OEM1" xml:space="preserve">
+    <value>LegionR</value>
+  </data>
+  <data name="Enum.LegionGo.ButtonFlags.OEM2" xml:space="preserve">
+    <value>LegionL</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM4" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="IController_ControllerIndex" xml:space="preserve">
+    <value>Gamepad: {0}</value>
   </data>
 </root>

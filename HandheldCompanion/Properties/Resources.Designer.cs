@@ -2736,11 +2736,20 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to M1 / M2.
+        ///   Looks up a localized string similar to M1.
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM3 {
             get {
                 return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to M2.
+        /// </summary>
+        public static string Enum_ROGAlly_ButtonFlags_OEM4 {
+            get {
+                return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM4", resourceCulture);
             }
         }
         
