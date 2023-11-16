@@ -526,8 +526,17 @@ public static class ControllerManager
 
                 // physical controller arrived and is taking first slot, suspend it
                 if (details.XInputUserIndex == (int)UserIndex.One)
+                {
                     if (SuspendController(details.baseContainerDeviceInstanceId))
+                    {
+                        // suspended physical controller
                         return;
+                    }
+                    else
+                    {
+                        // failed to suspend physical controller
+                    }
+                }
             }
         }
         else
@@ -540,10 +549,11 @@ public static class ControllerManager
                 int attempts = 0;
                 bool resumed = false;
 
-                while (!resumed && attempts < 3)
+                // give the controller 10 seconds to come back to half-life
+                while (!resumed && attempts < 10)
                 {
-                    resumed = ResumeController();
                     await Task.Delay(1000);
+                    resumed = ResumeController();
                     attempts++;
                 }
             }
@@ -552,8 +562,18 @@ public static class ControllerManager
                 IController controller = GetFirstController();
                 if (controller is not null && controller.IsPhysical())
                 {
+                    // force controller as busy, disable UI
                     controller.IsBusy = true;
-                    SuspendController(controller.Details.baseContainerDeviceInstanceId);
+
+                    if (SuspendController(controller.Details.baseContainerDeviceInstanceId))
+                    {
+                        // suspended physical controller
+                        return;
+                    }
+                    else
+                    {
+                        // failed to suspend physical controller
+                    }
                 }
             }
         }
