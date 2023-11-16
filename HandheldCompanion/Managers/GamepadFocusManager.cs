@@ -257,6 +257,7 @@ namespace HandheldCompanion.Managers
             control.Focus();
 
             ToolTipService.SetShowsToolTipOnKeyboardFocus(control, true);
+            control.BringIntoView();
         }
 
         public Control FocusedElement(GamepadWindow window)
