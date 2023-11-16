@@ -291,42 +291,23 @@ public static class InputsManager
             return;
         }
 
-        // simplified process for single key chords
-        switch (hookKey)
-        {
-            case KeyCode.F13:
-            case KeyCode.F14:
-            case KeyCode.F15:
-            case KeyCode.F16:
-            case KeyCode.F17:
-            case KeyCode.F18:
-            case KeyCode.F19:
-            case KeyCode.F20:
-            case KeyCode.F21:
-            case KeyCode.F22:
-            case KeyCode.F23:
-            case KeyCode.F24:
-                {
-                    foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
-                    {
-                        List<KeyCode> chord = pair.chords[args.IsKeyDown];
-                        if (chord.Contains(hookKey))
-                        {
-                            // calls current controller (if connected)
-                            IController controller = ControllerManager.GetTargetController();
-                            controller?.InjectState(pair.state, args.IsKeyDown, args.IsKeyUp);
-                            return;
-                        }
-                    }
-                }
-                break;
-        }
-
         foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
         {
             List<KeyCode> chord = pair.chords[args.IsKeyDown];
             if (KeyIndex >= chord.Count)
                 continue;
+
+            // simplified process for single key chords
+            if (chord.Count == 1)
+            {
+                if (chord[0] == hookKey)
+                {
+                    // calls current controller (if connected)
+                    IController controller = ControllerManager.GetTargetController();
+                    controller?.InjectState(pair.state, args.IsKeyDown, args.IsKeyUp);
+                    return;
+                }
+            }
 
             KeyCode chordKey = chord[KeyIndex];
             if (chordKey == hookKey)
