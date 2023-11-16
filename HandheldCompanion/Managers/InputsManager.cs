@@ -1,5 +1,6 @@
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
@@ -263,15 +264,15 @@ public static class InputsManager
 
     private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
     {
-        var args = (KeyEventArgsExt)e;
+        KeyEventArgsExt args = (KeyEventArgsExt)e;
 
-        var Injected = (args.Flags & LLKHF_INJECTED) > 0;
-        var InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
+        bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
+        bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
 
         if ((Injected || InjectedLL) && currentType != ListenerType.Output)
             return;
 
-        var hookKey = (KeyCode)args.KeyValue;
+        KeyCode hookKey = (KeyCode)args.KeyValue;
 
         KeyboardResetTimer.Stop();
         KeyUsed = false;
@@ -290,13 +291,44 @@ public static class InputsManager
             return;
         }
 
-        foreach (var pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
+        // simplified process for single key chords
+        switch (hookKey)
         {
-            var chord = pair.chords[args.IsKeyDown];
+            case KeyCode.F13:
+            case KeyCode.F14:
+            case KeyCode.F15:
+            case KeyCode.F16:
+            case KeyCode.F17:
+            case KeyCode.F18:
+            case KeyCode.F19:
+            case KeyCode.F20:
+            case KeyCode.F21:
+            case KeyCode.F22:
+            case KeyCode.F23:
+            case KeyCode.F24:
+                {
+                    foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
+                    {
+                        List<KeyCode> chord = pair.chords[args.IsKeyDown];
+                        if (chord.Contains(hookKey))
+                        {
+                            // calls current controller (if connected)
+                            IController controller = ControllerManager.GetTargetController();
+                            controller?.InjectState(pair.state, args.IsKeyDown, args.IsKeyUp);
+                            return;
+                        }
+                    }
+                }
+                break;
+        }
+
+        foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
+        {
+            List<KeyCode> chord = pair.chords[args.IsKeyDown];
             if (KeyIndex >= chord.Count)
                 continue;
 
-            var chordKey = chord[KeyIndex];
+            KeyCode chordKey = chord[KeyIndex];
             if (chordKey == hookKey)
             {
                 KeyUsed = true;
@@ -321,28 +353,28 @@ public static class InputsManager
             BufferKeys.Add(args);
 
             // search for matching triggers
-            var buffer_keys = GetChord(BufferKeys);
+            List<KeyCode> buffer_keys = GetChord(BufferKeys);
 
-            foreach (var chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
+            foreach (DeviceChord? chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
                          a.chords[args.IsKeyDown].Count == BufferKeys.Count))
             {
                 // compare ordered enumerable
-                var chord_keys = chord.GetChord(args.IsKeyDown);
+                List<KeyCode> chord_keys = chord.GetChord(args.IsKeyDown);
 
-                var existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
+                bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
                 if (existsCheck)
                 {
                     // reset index
                     KeyIndex = 0;
 
                     // check if inputs timestamp are too close from one to another
-                    var IsKeyUnexpected = args.IsKeyUp && string.IsNullOrEmpty(SpecialKey);
+                    bool IsKeyUnexpected = args.IsKeyUp && string.IsNullOrEmpty(SpecialKey);
 
                     // do not bother checking timing if key is already unexpected
                     if (!IsKeyUnexpected)
                     {
-                        var pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
-                        var prevTimestamp = prevKeys.TryGetValue(pair, out var key) ? key : TIME_SPAM;
+                        KeyValuePair<KeyCode, bool> pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
+                        int prevTimestamp = prevKeys.TryGetValue(pair, out var key) ? key : TIME_SPAM;
                         prevKeys[pair] = args.Timestamp;
 
                         // spamming
@@ -358,7 +390,7 @@ public static class InputsManager
                         return;
 
                     // calls current controller (if connected)
-                    var controller = ControllerManager.GetTargetController();
+                    IController controller = ControllerManager.GetTargetController();
                     controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
 
                     if (args.IsKeyDown)
