@@ -2302,4 +2302,7 @@
   <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Make this the default layout</value>
+  </data>
 </root>

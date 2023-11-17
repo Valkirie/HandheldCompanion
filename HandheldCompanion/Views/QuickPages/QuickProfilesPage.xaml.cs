@@ -484,7 +484,7 @@ public partial class QuickProfilesPage : Page
 
         // create profile
         currentProfile = new Profile(currentProcess.Path);
-        currentProfile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
+        currentProfile.Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout;
         currentProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
         currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
