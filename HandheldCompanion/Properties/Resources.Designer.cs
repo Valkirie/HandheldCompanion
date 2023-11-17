@@ -3835,6 +3835,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Make this the default layout.
+        /// </summary>
+        public static string LayoutPage_SetAsDefault {
+            get {
+                return ResourceManager.GetString("LayoutPage_SetAsDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show current controller templates only.
         /// </summary>
         public static string LayoutPage_ShowCurrentControllerTemplates {

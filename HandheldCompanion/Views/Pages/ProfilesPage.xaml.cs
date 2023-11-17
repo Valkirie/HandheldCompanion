@@ -11,6 +11,7 @@ using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -213,11 +214,11 @@ public partial class ProfilesPage : Page
                         break;
                 }
 
-                Profile profile = new Profile(path)
-                {
-                    Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
-                    LayoutTitle = LayoutTemplate.DefaultLayout.Name,
-                };
+                var profile = new Profile(path);
+                var toCloneLayout = ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout;
+                profile.Layout = toCloneLayout.Clone() as Layout;
+                profile.LayoutTitle = LayoutTemplate.DefaultLayout.Name;
+                profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                 var exists = false;
 

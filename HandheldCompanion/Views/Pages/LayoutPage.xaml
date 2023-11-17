@@ -114,91 +114,102 @@
                             IsEnabled="false" />
                     </ComboBox>
 
-                    <Grid>
-                        <CheckBox
-                            Name="CheckBoxDeviceLayouts"
-                            Checked="CheckBoxDeviceLayouts_Checked"
-                            Content="{x:Static resx:Resources.LayoutPage_ShowCurrentControllerTemplates}"
-                            IsChecked="True"
-                            Unchecked="CheckBoxDeviceLayouts_Checked" />
+                    <ui:SimpleStackPanel
+                        Orientation="Vertical"
+                        Spacing="6">
 
-                        <ui:SimpleStackPanel
-                            HorizontalAlignment="Right"
-                            Orientation="Horizontal"
-                            Spacing="6">
+                        <Grid>
+                            <CheckBox
+                                Name="CheckBoxDeviceLayouts"
+                                Checked="CheckBoxDeviceLayouts_Checked"
+                                Content="{x:Static resx:Resources.LayoutPage_ShowCurrentControllerTemplates}"
+                                IsChecked="True"
+                                Unchecked="CheckBoxDeviceLayouts_Checked" />
 
-                            <!--  Apply template  -->
-                            <Button
-                                Name="ButtonApplyLayout"
-                                Click="ButtonApplyLayout_Click"
-                                Content="{x:Static resx:Resources.LayoutPage_ApplyTemplate}"
-                                IsEnabled="False"
-                                Style="{DynamicResource AccentButtonStyle}" />
+                            <ui:SimpleStackPanel
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal"
+                                Spacing="6">
 
-                            <!--  Export layout  -->
-                            <Button Name="ButtonLayoutSettings" Content="Export layout">
-                                <ui:FlyoutService.Flyout>
-                                    <ui:Flyout
-                                        x:Name="LayoutFlyout"
-                                        AreOpenCloseAnimationsEnabled="True"
-                                        Opening="Flyout_Opening"
-                                        Placement="Left">
-                                        <ui:SimpleStackPanel Width="400" Spacing="24">
-                                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_ExportLayout}" />
+                                <!--  Apply template  -->
+                                <Button
+                                    Name="ButtonApplyLayout"
+                                    Click="ButtonApplyLayout_Click"
+                                    Content="{x:Static resx:Resources.LayoutPage_ApplyTemplate}"
+                                    IsEnabled="False"
+                                    Style="{DynamicResource AccentButtonStyle}" />
 
-                                            <ui:SimpleStackPanel Spacing="6">
-                                                <TextBox
-                                                    Name="LayoutTitle"
-                                                    HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutTitle}" />
-                                                <TextBox
-                                                    Name="LayoutDescription"
-                                                    HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutDesc}" />
-                                                <TextBox
-                                                    Name="LayoutAuthor"
-                                                    HorizontalAlignment="Stretch"
-                                                    ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutAuthor}" />
-                                                <CheckBox x:Name="ExportForCurrent" Content="{x:Static resx:Resources.LayoutPage_ExportCurrentController}" />
-                                                <CheckBox
-                                                    x:Name="SaveGameInfo"
-                                                    Click="SaveGameInfo_Toggled"
-                                                    Content="{x:Static resx:Resources.LayoutPage_SaveGameInfoLayout}"
-                                                    IsChecked="True" />
+                                <!--  Export layout  -->
+                                <Button Name="ButtonLayoutSettings" Content="Export layout">
+                                    <ui:FlyoutService.Flyout>
+                                        <ui:Flyout
+                                            x:Name="LayoutFlyout"
+                                            AreOpenCloseAnimationsEnabled="True"
+                                            Opening="Flyout_Opening"
+                                            Placement="Left">
+                                            <ui:SimpleStackPanel Width="400" Spacing="24">
+                                                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.LayoutPage_ExportLayout}" />
 
-                                                <!--  Separator  -->
-                                                <Separator
-                                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                                    BorderThickness="0,1,0,0"
-                                                    Opacity="0.25" />
-
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="5*" />
-                                                        <ColumnDefinition Width="0.5*" />
-                                                        <ColumnDefinition Width="5*" />
-                                                    </Grid.ColumnDefinitions>
-
-                                                    <Button
-                                                        Name="LayoutExportButton"
-                                                        Grid.Column="0"
+                                                <ui:SimpleStackPanel Spacing="6">
+                                                    <TextBox
+                                                        Name="LayoutTitle"
                                                         HorizontalAlignment="Stretch"
-                                                        Click="LayoutExportButton_Click"
-                                                        Content="{x:Static resx:Resources.LayoutPage_Confirm}" />
-                                                    <Button
-                                                        Name="LayoutCancelButton"
-                                                        Grid.Column="2"
+                                                        ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutTitle}" />
+                                                    <TextBox
+                                                        Name="LayoutDescription"
                                                         HorizontalAlignment="Stretch"
-                                                        Click="LayoutCancelButton_Click"
-                                                        Content="{x:Static resx:Resources.LayoutPage_Cancel}" />
-                                                </Grid>
+                                                        ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutDesc}" />
+                                                    <TextBox
+                                                        Name="LayoutAuthor"
+                                                        HorizontalAlignment="Stretch"
+                                                        ui:ControlHelper.Header="{x:Static resx:Resources.LayoutPage_LayoutAuthor}" />
+                                                    <CheckBox x:Name="ExportForCurrent" Content="{x:Static resx:Resources.LayoutPage_ExportCurrentController}" />
+                                                    <CheckBox
+                                                        x:Name="SaveGameInfo"
+                                                        Click="SaveGameInfo_Toggled"
+                                                        Content="{x:Static resx:Resources.LayoutPage_SaveGameInfoLayout}"
+                                                        IsChecked="True" />
+
+                                                    <!--  Separator  -->
+                                                    <Separator
+                                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                                        BorderThickness="0,1,0,0"
+                                                        Opacity="0.25" />
+
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="5*" />
+                                                            <ColumnDefinition Width="0.5*" />
+                                                            <ColumnDefinition Width="5*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Button
+                                                            Name="LayoutExportButton"
+                                                            Grid.Column="0"
+                                                            HorizontalAlignment="Stretch"
+                                                            Click="LayoutExportButton_Click"
+                                                            Content="{x:Static resx:Resources.LayoutPage_Confirm}" />
+                                                        <Button
+                                                            Name="LayoutCancelButton"
+                                                            Grid.Column="2"
+                                                            HorizontalAlignment="Stretch"
+                                                            Click="LayoutCancelButton_Click"
+                                                            Content="{x:Static resx:Resources.LayoutPage_Cancel}" />
+                                                    </Grid>
+                                                </ui:SimpleStackPanel>
                                             </ui:SimpleStackPanel>
-                                        </ui:SimpleStackPanel>
-                                    </ui:Flyout>
-                                </ui:FlyoutService.Flyout>
-                            </Button>
-                        </ui:SimpleStackPanel>
-                    </Grid>
+                                        </ui:Flyout>
+                                    </ui:FlyoutService.Flyout>
+                                </Button>
+                            </ui:SimpleStackPanel>
+                        </Grid>
+
+                        <CheckBox
+                            Name="CheckBoxDefaultLayout"
+                            Checked="CheckBoxDefaultLayout_Checked"
+                            Content="{x:Static resx:Resources.LayoutPage_SetAsDefault}"
+                            Unchecked="CheckBoxDefaultLayout_Checked" />
+                    </ui:SimpleStackPanel>
 
                     <!--  Separator  -->
                     <Separator

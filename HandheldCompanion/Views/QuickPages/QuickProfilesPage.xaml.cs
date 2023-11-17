@@ -506,9 +506,10 @@ public partial class QuickProfilesPage : Page
             return;
 
         // create profile
-        selectedProfile = new Profile(currentProcess.Path);
-        selectedProfile.Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout;
-        selectedProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
+        currentProfile = new Profile(currentProcess.Path);
+        currentProfile.Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout;
+        currentProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
+        currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
         // if an update is pending, execute it and stop timer
         if (UpdateTimer.Enabled)
