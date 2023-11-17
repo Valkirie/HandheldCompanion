@@ -112,6 +112,9 @@ public class LegionGo : IDevice
     {
         ResumeDevices();
 
+        PnPUtil.EnableDevices("HIDClass");
+        PnPUtil.EnableDevices("Mouse");
+
         // close devices
         foreach (KeyValuePair<byte, HidDevice> hidDevice in hidDevices)
         {

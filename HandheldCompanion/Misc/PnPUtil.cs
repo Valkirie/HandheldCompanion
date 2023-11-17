@@ -42,6 +42,12 @@ namespace HandheldCompanion
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
 
+        public static bool EnableDevices(string Class)
+        {
+            var pnpResult = GetPnPUtilResult($"/enable-device /class \"{Class}\"");
+            return pnpResult.ExitCode == ERROR_SUCCESS;
+        }
+
         public static List<string> GetDevices(string className, string status = "/connected")
         {
             // A list of string to store the Instance ID values
