@@ -17,14 +17,14 @@ public class AYANEO2021 : IDevice
         cTDP = new double[] { 3, 25 };
         GfxClock = new double[] { 100, 1750 };
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },

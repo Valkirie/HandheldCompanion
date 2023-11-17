@@ -12,14 +12,14 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
         cTDP = new double[] { 20, 64 };
         GfxClock = new double[] { 100, 1400 };
 
-        AngularVelocityAxis = new Vector3(1.0f, 1.0f, -1.0f);
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'Y' },
             { 'Y', 'Z' },
             { 'Z', 'X' }
         };
 
-        AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
     }
 }

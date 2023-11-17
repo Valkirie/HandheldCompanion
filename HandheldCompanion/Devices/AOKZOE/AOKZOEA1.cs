@@ -19,15 +19,15 @@ public class AOKZOEA1 : IDevice
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2200 };
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },

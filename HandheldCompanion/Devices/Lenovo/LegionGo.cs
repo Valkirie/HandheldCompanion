@@ -39,16 +39,16 @@ public class LegionGo : IDevice
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 100, 2700 };
 
-        AngularVelocityAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },

@@ -11,6 +11,6 @@ public class OneXPlayerMiniAMD : OneXPlayerMini
         cTDP = new double[] { 10, 25 };
         GfxClock = new double[] { 100, 2000 };
 
-        AccelerationAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
     }
 }

@@ -32,15 +32,15 @@ public class GPDWin4 : IDevice
             FanValueMax = 127
         };
 
-        AngularVelocityAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },

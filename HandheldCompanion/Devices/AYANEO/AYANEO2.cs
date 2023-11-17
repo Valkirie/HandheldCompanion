@@ -18,16 +18,16 @@ public class AYANEO2 : AYANEO.AYANEODevice
         cTDP = new double[] { 3, 33 };
         GfxClock = new double[] { 100, 2200 };
 
-        AngularVelocityAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },

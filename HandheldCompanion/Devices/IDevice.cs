@@ -70,18 +70,18 @@ public abstract class IDevice
     protected ushort _vid, _pid;
     public Dictionary<byte, HidDevice> hidDevices = new();
 
-    public Vector3 AccelerationAxis = new(1.0f, 1.0f, 1.0f);
+    public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
 
-    public SortedDictionary<char, char> AccelerationAxisSwap = new()
+    public SortedDictionary<char, char> AccelerometerAxisSwap = new()
     {
         { 'X', 'X' },
         { 'Y', 'Y' },
         { 'Z', 'Z' }
     };
 
-    public Vector3 AngularVelocityAxis = new(1.0f, 1.0f, 1.0f);
+    public Vector3 GyrometerAxis = new(1.0f, 1.0f, 1.0f);
 
-    public SortedDictionary<char, char> AngularVelocityAxisSwap = new()
+    public SortedDictionary<char, char> GyrometerAxisSwap = new()
     {
         { 'X', 'X' },
         { 'Y', 'Y' },

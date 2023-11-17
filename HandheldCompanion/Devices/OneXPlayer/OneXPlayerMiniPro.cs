@@ -15,7 +15,7 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2200 };
 
-        AccelerationAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
 
         OEMChords.Clear();
 

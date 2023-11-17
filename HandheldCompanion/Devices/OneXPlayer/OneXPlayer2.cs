@@ -19,16 +19,16 @@ namespace HandheldCompanion.Devices
             this.cTDP = new double[] { 4, 28 };
             this.GfxClock = new double[] { 100, 2200 };
 
-            AngularVelocityAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-            this.AngularVelocityAxisSwap = new()
+            GyrometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            this.GyrometerAxisSwap = new()
             {
                 { 'X', 'X' },
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
             };
 
-            AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-            this.AccelerationAxisSwap = new()
+            AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            this.AccelerometerAxisSwap = new()
             {
                 { 'X', 'X' },
                 { 'Y', 'Z' },
