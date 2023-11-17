@@ -422,7 +422,7 @@ public static class DeviceManager
 
         if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
         {
-            LogManager.LogDebug("XUsbDevice {1} removed: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical");
+            LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
             XUsbDeviceRemoved?.Invoke(deviceEx, obj);
         }
     }

@@ -564,23 +564,34 @@ public static class ControllerManager
             
             if (!resumed)
             {
-                IController controller = GetFirstController();
-                if (controller is not null && controller.IsPhysical())
+                if (details.XInputUserIndex != (int)UserIndex.One)
                 {
-                    // force controller as busy, disable UI
-                    controller.IsBusy = true;
+                    for (UserIndex idx = UserIndex.One; idx < UserIndex.Any; idx++)
+                    {
+                        IController controller = GetControllerFromSlot(idx);
+                        if (controller is not null && controller.IsPhysical())
+                        {
+                            // force controller as busy, disable UI
+                            controller.IsBusy = true;
 
-                    SettingsManager.SetProperty("SuspendedController", string.Empty);
-                    if (SuspendController(controller.Details.baseContainerDeviceInstanceId))
-                    {
-                        // suspended physical controller
-                        return;
-                    }
-                    else
-                    {
-                        // failed to suspend physical controller
+                            SettingsManager.SetProperty("SuspendedController", string.Empty);
+                            if (SuspendController(controller.Details.baseContainerDeviceInstanceId))
+                            {
+                                // suspended physical controller
+                                return;
+                            }
+                            else
+                            {
+                                // failed to suspend physical controller
+                            }
+                        }
                     }
                 }
+            }
+            else
+            {
+                // clear SuspendedController
+                SettingsManager.SetProperty("SuspendedController", string.Empty);
             }
         }
 
@@ -647,6 +658,7 @@ public static class ControllerManager
             {
                 // restart virtual controller
                 VirtualManager.Pause();
+                await Task.Delay(1000);
                 VirtualManager.Resume();
             }
         }
@@ -773,9 +785,9 @@ public static class ControllerManager
         return Controllers.Values.Where(a => a.IsVirtual()).ToList();
     }
 
-    public static XInputController GetFirstController()
+    public static XInputController GetControllerFromSlot(UserIndex userIndex = 0)
     {
-        return Controllers.Values.FirstOrDefault(c => c is XInputController && c.GetUserIndex() == 0) as XInputController;
+        return Controllers.Values.FirstOrDefault(c => c is XInputController && c.IsPhysical() && c.GetUserIndex() == (int)userIndex) as XInputController;
     }
 
     public static List<IController> GetControllers()
@@ -833,7 +845,7 @@ public static class ControllerManager
 
             try
             {
-                pnPDevice.GetCurrentDriver();
+                pnPDriver = pnPDevice.GetCurrentDriver();
             }
             catch { }
 
@@ -843,8 +855,6 @@ public static class ControllerManager
                 case "USB":
                     if (pnPDriver is null || pnPDriver.InfPath != "xusb22.inf")
                         pnPDevice.InstallCustomDriver("xusb22.inf", out bool rebootRequired);
-
-                    SettingsManager.SetProperty("SuspendedController", string.Empty);
                     success = true;
                     break;
             }
