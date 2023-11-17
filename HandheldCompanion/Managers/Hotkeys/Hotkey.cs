@@ -347,21 +347,25 @@ public class Hotkey
 
     private void DrawOutput()
     {
-        // update button content
-        switch (HasOutput())
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            case true:
-                mainControl.HotkeyOutput.Content =
-                    string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
-                mainControl.HotkeyOutput.SetResourceReference(Control.ForegroundProperty,
-                    "SystemControlForegroundBaseHighBrush");
-                break;
-            case false:
-                mainControl.HotkeyOutput.Content = Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
-                mainControl.HotkeyOutput.SetResourceReference(Control.ForegroundProperty,
-                    "SystemControlForegroundBaseMediumBrush");
-                break;
-        }
+            // update button content
+            switch (HasOutput())
+            {
+                case true:
+                    mainControl.HotkeyOutput.Content =
+                        string.Join(", ", inputsChord.OutputKeys.Where(key => key.IsKeyDown));
+                    mainControl.HotkeyOutput.SetResourceReference(Control.ForegroundProperty,
+                        "SystemControlForegroundBaseHighBrush");
+                    break;
+                case false:
+                    mainControl.HotkeyOutput.Content = Resources.ResourceManager.GetString("InputsHotkey_fallbackOutput");
+                    mainControl.HotkeyOutput.SetResourceReference(Control.ForegroundProperty,
+                        "SystemControlForegroundBaseMediumBrush");
+                    break;
+            }
+        });
 
         DrawErase();
     }
