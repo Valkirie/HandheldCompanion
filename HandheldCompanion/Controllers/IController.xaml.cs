@@ -60,7 +60,6 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
 
         public ControllerState Inputs = new();
-        public bool IsPlugged;
         public virtual bool IsReady => true;
 
         public bool IsBusy
@@ -197,7 +196,7 @@ namespace HandheldCompanion.Controllers
                 if (!IsEnabled)
                     return;
 
-                ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
+                // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
                 ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -316,19 +315,23 @@ namespace HandheldCompanion.Controllers
         {
             SetVibrationStrength(SettingsManager.GetUInt("VibrationStrength"));
 
-            IsPlugged = true;
-
             InjectedButtons.Clear();
 
-            RefreshControls();
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ui_button_hook.IsEnabled = false;
+            });
         }
 
         // this function cannot be called twice
         public virtual void Unplug()
         {
-            IsPlugged = false;
-
-            RefreshControls();
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ui_button_hook.IsEnabled = true;
+            });
         }
 
         // like Unplug but one that can be safely called when controller is already removed

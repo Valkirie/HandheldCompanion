@@ -183,10 +183,7 @@ public partial class ControllerPage : Page
     private void ControllerManager_ControllerSelected(IController Controller)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            SteamControllerPanel.Visibility = Controller is SteamController ? Visibility.Visible : Visibility.Collapsed;
-        });
+        ControllerRefresh();
     }
 
     private void ControllerManager_Working(bool busy)
@@ -243,10 +240,12 @@ public partial class ControllerPage : Page
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
             var target = ControllerManager.GetTargetController();
-            var isPlugged = hasTarget && target.IsPlugged;
+            var isPlugged = hasTarget;
             var isHidden = hasTarget && target.IsHidden();
             var isSteam = hasTarget && (target is NeptuneController || target is GordonController);
             var isMuted = SettingsManager.GetBoolean("SteamControllerMute");
+
+            SteamControllerPanel.Visibility = target is SteamController ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =

@@ -198,8 +198,12 @@ public static class DeviceManager
         return device;
     }
 
+    private static bool IsRefreshing;
     private static void RefreshHID()
     {
+        // set flag
+        IsRefreshing = true;
+
         int deviceIndex = 0;
         while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId, deviceIndex++))
         {
@@ -261,6 +265,7 @@ public static class DeviceManager
                 Path = path,
                 SymLink = SymLink,
                 Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
+                Enumerator = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
                 deviceInstanceId = children.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
                 isVirtual = parent.IsVirtual() || children.IsVirtual(),
@@ -283,6 +288,9 @@ public static class DeviceManager
             // add or update device
             PnPDevices[details.SymLink] = details;
         }
+
+        // set flag
+        IsRefreshing = false;
     }
 
     public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
@@ -430,14 +438,17 @@ public static class DeviceManager
 
             while (deviceEx is null && attempts < 30)
             {
-                await Task.Delay(100);
-
                 if (IsInitialized)
+                {
+                    while (IsRefreshing)
+                        await Task.Delay(100);
+
                     RefreshHID();
+                }
 
                 deviceEx = FindDevice(InstanceId);
-
                 attempts++;
+                await Task.Delay(100);
             }
 
             if (deviceEx is not null && deviceEx.isGaming)
@@ -513,14 +524,17 @@ public static class DeviceManager
 
         while (deviceEx is null && attempts < 30)
         {
-            await Task.Delay(100);
-
             if (IsInitialized)
+            {
+                while (IsRefreshing)
+                    await Task.Delay(100);
+
                 RefreshHID();
+            }
 
             deviceEx = FindDevice(InstanceId);
-
             attempts++;
+            await Task.Delay(100);
         }
 
         if (deviceEx is not null && !deviceEx.isXInput)

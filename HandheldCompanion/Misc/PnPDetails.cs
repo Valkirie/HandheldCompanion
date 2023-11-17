@@ -25,6 +25,7 @@ public class PnPDetails : IDisposable
     public string Name;
     public string Path;
     public string SymLink;
+    public string Enumerator;
 
     // dirty
     public int DeviceIdx;
@@ -64,11 +65,7 @@ public class PnPDetails : IDisposable
 
     public string GetEnumerator()
     {
-        PnPDevice device = GetBasePnPDevice();
-        if (device is not null)
-            return device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-
-        return string.Empty;
+        return Enumerator;
     }
 
     public UsbPnPDevice GetUsbPnPDevice()
@@ -78,9 +75,7 @@ public class PnPDetails : IDisposable
             return null;
 
         // is this a USB device
-        string enumerator = GetEnumerator();
-
-        switch (enumerator)
+        switch (Enumerator)
         {
             default:
             case "BTHENUM":

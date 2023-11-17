@@ -544,13 +544,14 @@ public static class ControllerManager
         }
         else
         {
+            bool resumed = false;
+
             // do we have a suspended controller
             string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
             if (!string.IsNullOrEmpty(baseContainerDeviceInstanceId))
             {
                 // (re)enable physical controller(s) after virtual controller to ensure first order
                 int attempts = 0;
-                bool resumed = false;
 
                 // give the controller 10 seconds to come back to half-life
                 while (!resumed && attempts < 10)
@@ -560,7 +561,8 @@ public static class ControllerManager
                     attempts++;
                 }
             }
-            else
+            
+            if (!resumed)
             {
                 IController controller = GetFirstController();
                 if (controller is not null && controller.IsPhysical())
@@ -568,6 +570,7 @@ public static class ControllerManager
                     // force controller as busy, disable UI
                     controller.IsBusy = true;
 
+                    SettingsManager.SetProperty("SuspendedController", string.Empty);
                     if (SuspendController(controller.Details.baseContainerDeviceInstanceId))
                     {
                         // suspended physical controller
@@ -644,7 +647,6 @@ public static class ControllerManager
             {
                 // restart virtual controller
                 VirtualManager.Pause();
-                await Task.Delay(1000);
                 VirtualManager.Resume();
             }
         }
@@ -657,8 +659,10 @@ public static class ControllerManager
 
         // unhide on remove
         if (!IsPowerCycling)
+        {
             if (controller.IsReady)
                 controller.UnhideHID();
+        }
 
         // controller was unplugged
         Controllers.Remove(details.baseContainerDeviceInstanceId);
@@ -691,23 +695,6 @@ public static class ControllerManager
 
     public static void SetTargetController(string baseContainerDeviceInstanceId, bool IsPowerCycling)
     {
-        // unplug current controller
-        if (targetController is not null)
-        {
-            string targetPath = targetController.GetContainerInstancePath();
-
-            ClearTargetController();
-
-            // if we're setting currently selected, it's unplugged, there is none plugged
-            // reset the UI to the default controller and stop
-            if (targetPath == baseContainerDeviceInstanceId)
-            {
-                // reset layout UI
-                ControllerSelected?.Invoke(GetEmulatedController());
-                return;
-            }
-        }
-
         // look for new controller
         if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
             return;
@@ -717,6 +704,9 @@ public static class ControllerManager
 
         if (controller.IsVirtual())
             return;
+
+        // clear current target
+        ClearTargetController();
 
         // update target controller
         targetController = controller;
@@ -833,7 +823,7 @@ public static class ControllerManager
         if (string.IsNullOrEmpty(baseContainerDeviceInstanceId))
             return true;
 
-        PowerCyclers[baseContainerDeviceInstanceId] = false;
+        PowerCyclers.Remove(baseContainerDeviceInstanceId);
 
         try
         {
@@ -852,10 +842,7 @@ public static class ControllerManager
             {
                 case "USB":
                     if (pnPDriver is null || pnPDriver.InfPath != "xusb22.inf")
-                    {
-                        usbPnPDevice.CyclePort();
                         pnPDevice.InstallCustomDriver("xusb22.inf", out bool rebootRequired);
-                    }
 
                     SettingsManager.SetProperty("SuspendedController", string.Empty);
                     success = true;
