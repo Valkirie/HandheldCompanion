@@ -214,11 +214,10 @@ public partial class ProfilesPage : Page
                         break;
                 }
 
-                var profile = new Profile(path);
-                var toCloneLayout = ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout;
+                Profile profile = new Profile(path);
+                Layout toCloneLayout = ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout;
                 profile.Layout = toCloneLayout.Clone() as Layout;
                 profile.LayoutTitle = LayoutTemplate.DefaultLayout.Name;
-                profile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
 
                 var exists = false;
 
