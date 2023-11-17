@@ -87,7 +87,6 @@ namespace HandheldCompanion
             process.StartInfo.CreateNoWindow = true;
 
             process.Start();
-            process.WaitForExit();
 
             return process;
         }
