@@ -508,6 +508,9 @@ public static class ControllerManager
 
     private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
+        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out _))
+            return;
+
         // get details passed UserIndex
         UserIndex userIndex = (UserIndex)details.XInputUserIndex;
 
