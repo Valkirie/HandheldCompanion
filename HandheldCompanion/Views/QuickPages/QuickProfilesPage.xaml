@@ -231,9 +231,68 @@
                                     TickPlacement="BottomRight"
                                     ValueChanged="TDPSlider_ValueChanged" />
                             </DockPanel>
+
+                        <!--  TDP On Battery Limit  -->
+                            <Grid Margin="0,8,0,0" d:Visibility="Visible" Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <DockPanel>
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xEBA9;" />
+
+                                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOnBattery}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_TDPOnBatteryDesc}"
+                                            TextWrapping="Wrap" />
+                                    </ui:SimpleStackPanel>
+                                </DockPanel>
+
+                                <ui:ToggleSwitch
+                                    Name="TDPOnBatteryToggle"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}" 
+                                    Toggled="TDPOnBatteryToggle_Toggled"/>
+                            </Grid>
+
+                            <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=TDPOnBatteryToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Static resx:Resources.QuickProfilesPage_PowerLimitTarget}" />
+                                <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBlock
+                                        Width="35"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Value, StringFormat=N0, ElementName=TDPOnBatterySlider, Mode=OneWay}"
+                                        TextAlignment="Center" />
+                                    <TextBlock
+                                        Width="30"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
+                                    <Slider
+                                        x:Name="TDPOnBatterySlider"
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        AutoToolTipPrecision="0"
+                                        IsMoveToPointEnabled="True"
+                                        IsSnapToTickEnabled="True"
+                                        LargeChange="5"
+                                        SmallChange="1"
+                                        Style="{DynamicResource SliderStyle1}"
+                                        TickFrequency="1"
+                                        TickPlacement="BottomRight"
+                                        ValueChanged="TDPOnBatterySlider_ValueChanged" />
+                                </DockPanel>
+                            </StackPanel>
                         </StackPanel>
                     </ui:SimpleStackPanel>
-
                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
                     <!--  Auto TDP  -->
