@@ -600,11 +600,6 @@ public class HWiNFO : IPlatform
         public double FanValueMin;
         public double FanValueMax;
         public double ValueAvg;
-
-        public override string ToString()
-        {
-            return string.Format("<C0>{0:00}<S1>{1}<S><C>", Value, szUnit);
-        }
     }
 
     public enum SENSOR_READING_TYPE

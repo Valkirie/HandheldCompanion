@@ -18,23 +18,6 @@ namespace HandheldCompanion.Platforms;
 
 public class RTSS : IPlatform
 {
-    public enum AppFlagsEx
-    {
-        None = 0x0,
-        OpenGL = 0x1,
-        DDraw = 0x2,
-        D3D8 = 0x3,
-        D3D9 = 0x4,
-        D3D9Ex = 0x5,
-        D3D10 = 0x6,
-        D3D11 = 0x7,
-        D3D12 = 0x8,
-        D3D12AFR = 0x9,
-        Vulkan = 0xA,
-        ProfileUpdateRequested = 0x10000000,
-        MASK = 0xF
-    }
-
     private const uint WM_APP = 0x8000;
     private const uint WM_RTSS_UPDATESETTINGS = WM_APP + 100;
     private const uint WM_RTSS_SHOW_PROPERTIES = WM_APP + 102;
