@@ -404,6 +404,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Controller management.
+        /// </summary>
+        public static string ControllerPage_ControllerManagement {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically manage your controllers for greater compatibility.
+        /// </summary>
+        public static string ControllerPage_ControllerManagementDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_ControllerManagementDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Desktop layout.
         /// </summary>
         public static string ControllerPage_DesktopLayout {
@@ -3898,6 +3916,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string MainWindow_ControllerManagementClosePrimary {
+            get {
+                return ResourceManager.GetString("MainWindow_ControllerManagementClosePrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string MainWindow_ControllerManagementCloseSecondary {
+            get {
+                return ResourceManager.GetString("MainWindow_ControllerManagementCloseSecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?.
+        /// </summary>
+        public static string MainWindow_ControllerManagementCloseText {
+            get {
+                return ResourceManager.GetString("MainWindow_ControllerManagementCloseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string MainWindow_ControllerManagementCloseTitle {
+            get {
+                return ResourceManager.GetString("MainWindow_ControllerManagementCloseTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MainWindow_Exit {
@@ -4038,42 +4092,6 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_Toggle {
             get {
                 return ResourceManager.GetString("MainWindow_Toggle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderClosePrimary {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderClosePrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderCloseSecondary {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseSecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderCloseText {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderCloseTitle {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseTitle", resourceCulture);
             }
         }
         
@@ -6590,6 +6608,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string SettingsPage_ControllerManagementDependencyPrimary {
+            get {
+                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyPrimary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string SettingsPage_ControllerManagementDependencySecondary {
+            get {
+                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencySecondary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
+        /// </summary>
+        public static string SettingsPage_ControllerManagementDependencyText {
+            get {
+                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string SettingsPage_ControllerManagementDependencyTitle {
+            get {
+                return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
         public static string SettingsPage_Download {
@@ -7198,42 +7252,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_UpToDate {
             get {
                 return ResourceManager.GetString("SettingsPage_UpToDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencyPrimary {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyPrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencySecondary {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencySecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencyText {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencyTitle {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyTitle", resourceCulture);
             }
         }
         

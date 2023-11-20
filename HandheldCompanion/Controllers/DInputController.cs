@@ -17,7 +17,7 @@ public class DInputController : IController
             return;
 
         this.joystick = joystick;
-        UserIndex = joystick.Properties.JoystickId;
+        UserIndex = (byte)joystick.Properties.JoystickId;
 
         if (details is null)
             return;

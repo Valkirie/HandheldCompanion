@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using System.Windows.Forms;
+using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
 
 namespace HandheldCompanion.Controllers
 {
@@ -51,7 +52,7 @@ namespace HandheldCompanion.Controllers
         private DateTime prevTouchTime = DateTime.Now;
         private const int DoubleClickWidth = 4;
 
-        public LegionController(Controller controller, PnPDetails details) : base(controller, details)
+        public LegionController(PnPDetails details) : base(details)
         {
             // Additional controller specific source buttons
             SourceButtons.Add(ButtonFlags.RightPadTouch);
@@ -73,11 +74,14 @@ namespace HandheldCompanion.Controllers
             hidDevice = GetHidDevice();
             if (hidDevice is not null)
                 hidDevice.OpenDevice();
+
+            //mode：1.XBOX 模式（默认）2.Nintendo 模式 XBOX 模式与 Nintendo 模式的区别仅 ABXY 按键布局不同
+            SetGamePadMode(0);
         }
 
         private HidDevice GetHidDevice()
         {
-            IEnumerable<HidDevice> devices = IDevice.GetHidDevices(Details.attributes.VendorID, Details.attributes.ProductID, 0);
+            IEnumerable<HidDevice> devices = IDevice.GetHidDevices(Details.VendorID, Details.ProductID, 0);
             foreach (HidDevice device in devices)
             {
                 if (!device.IsConnected)

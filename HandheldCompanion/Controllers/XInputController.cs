@@ -17,16 +17,12 @@ public class XInputController : IController
     private XInputStateSecret State;
 
     public XInputController()
-    {
-    }
+    { }
 
-    public XInputController(Controller controller, PnPDetails details) : this()
+    public XInputController(PnPDetails details)
     {
-        Controller = controller;
-        UserIndex = (int)controller.UserIndex;
-
-        this.Details = details;
-        Details.isHooked = true;
+        AttachController(details.XInputUserIndex);
+        AttachDetails(details);
 
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
@@ -140,11 +136,15 @@ public class XInputController : IController
         if (!IsConnected())
             return;
 
-        ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
-        ushort RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+        try
+        {
+            ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+            ushort RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
 
-        Vibration vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
-        Controller?.SetVibration(vibration);
+            Vibration vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
+            Controller.SetVibration(vibration);
+        }
+        catch { }
     }
 
     public override void Plug()
@@ -172,7 +172,7 @@ public class XInputController : IController
         {
             if (XInputGetCapabilitiesEx(1, idx, 0, ref capabilitiesEx) == 0)
             {
-                if (capabilitiesEx.ProductId != details.attributes.ProductID || capabilitiesEx.VendorId != details.attributes.VendorID)
+                if (capabilitiesEx.ProductId != details.ProductID || capabilitiesEx.VendorId != details.VendorID)
                     continue;
 
                 var devices = DeviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
@@ -182,6 +182,21 @@ public class XInputController : IController
         }
 
         return SharpDX.XInput.UserIndex.Any;
+    }
+
+    public void AttachController(byte userIndex)
+    {
+        if (UserIndex == userIndex)
+            return;
+
+        UserIndex = userIndex;
+        Controller = new((UserIndex)userIndex);
+    }
+
+    public void AttachDetails(PnPDetails details)
+    {
+        this.Details = details;
+        Details.isHooked = true;
     }
 
     public override void Hide(bool powerCycle = true)

@@ -34,11 +34,20 @@
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform" />
                         </Grid.Background>
 
-                        <ui:ProgressRing
+                        <ui:SimpleStackPanel
                             Name="ControllerLoading"
-                            Width="200"
-                            Height="200"
-                            Visibility="Collapsed" />
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            d:Visibility="Visible"
+                            Spacing="12"
+                            Visibility="Collapsed">
+                            <ui:ProgressRing Width="200" Height="200" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
+                                Style="{DynamicResource BaseTextBlockStyle}"
+                                Text="Give us a minute while we try to organize your controllers." />
+                        </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Right"
@@ -387,7 +396,7 @@
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE877;" />
+                                    Glyph="&#xe95f;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_VibrateDevice}" />
@@ -405,6 +414,44 @@
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="Toggle_Vibrate_Toggled" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Controller management  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xedab;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_ControllerManagement}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_ControllerManagementDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch
+                                Name="Toggle_ControllerManagement"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_ControllerManagement_Toggled" />
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

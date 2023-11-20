@@ -102,8 +102,8 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
         };
 
-        private int _UserIndex;
-        protected int UserIndex
+        private byte _UserIndex = 255;
+        protected byte UserIndex
         {
             get
             {
@@ -111,7 +111,12 @@ namespace HandheldCompanion.Controllers
             }
             set
             {
-                ControllerIndex.Text = string.Format(Properties.Resources.IController_ControllerIndex, (UserIndex)value);
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    ControllerIndex.Text = string.Format(Properties.Resources.IController_ControllerIndex, (UserIndex)value);
+                });
+
                 _UserIndex = value;
             }
         }
@@ -353,10 +358,11 @@ namespace HandheldCompanion.Controllers
             if (powerCycle)
             {
                 IsBusy = true;
-                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
 
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 CyclePort();
-                return;
+
+                IsBusy = false;
             }
 
             RefreshControls();
@@ -369,10 +375,11 @@ namespace HandheldCompanion.Controllers
             if (powerCycle)
             {
                 IsBusy = true;
-                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
 
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 CyclePort();
-                return;
+
+                IsBusy = false;
             }
 
             RefreshControls();
@@ -387,7 +394,7 @@ namespace HandheldCompanion.Controllers
         {
         }
 
-        public void HideHID()
+        protected void HideHID()
         {
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
             HidHide.HidePath(Details.deviceInstanceId);
@@ -401,7 +408,7 @@ namespace HandheldCompanion.Controllers
             */
         }
 
-        public void UnhideHID()
+        protected void UnhideHID()
         {
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
             HidHide.UnhidePath(Details.deviceInstanceId);

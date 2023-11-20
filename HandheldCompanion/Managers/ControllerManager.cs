@@ -8,25 +8,35 @@ using HandheldCompanion.Views.Classes;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using Nefarius.ViGEm.Client.Targets;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
 using DeviceType = SharpDX.DirectInput.DeviceType;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
 public static class ControllerManager
 {
-    private static readonly Dictionary<string, IController> Controllers = new();
-    public static readonly Dictionary<string, bool> PowerCyclers = new();
+    private static readonly ConcurrentDictionary<string, IController> Controllers = new();
+    public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
+
+    private static object updateLock = new();
+    private static Timer Watchdog;
+    private static bool ControllerManagement;
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -38,7 +48,12 @@ public static class ControllerManager
 
     public static bool IsInitialized;
 
-    private static bool virtualControllerCreated;
+    static ControllerManager()
+    {
+        Watchdog = new(2000);
+        Watchdog.Elapsed += Watchdog_Elapsed;
+        Watchdog.Enabled = false;
+    }
 
     public static void Start()
     {
@@ -60,7 +75,6 @@ public static class ControllerManager
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         VirtualManager.Vibrated += VirtualManager_Vibrated;
 
         MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
@@ -230,6 +244,27 @@ public static class ControllerManager
                         ((SteamController)target).SetVirtualMuted(Muted);
                     }
                     break;
+
+                case "ControllerManagement":
+                    {
+                        ControllerManagement = Convert.ToBoolean(value);
+                        switch(ControllerManagement)
+                        {
+                            case true:
+                                {                                    
+                                    if (!Watchdog.Enabled)
+                                        Watchdog.Start();
+                                }
+                                break;
+                            case false:
+                                {
+                                    if (Watchdog.Enabled)
+                                        Watchdog.Stop();
+                                }
+                                break;
+                        }
+                    }
+                    break;
             }
         });
     }
@@ -281,7 +316,7 @@ public static class ControllerManager
                 settings = JslGetControllerInfoAndSettings(i);
 
                 string joyShockpath = settings.path;
-                string detailsPath = details.Path;
+                string detailsPath = details.devicePath;
 
                 if (detailsPath.Equals(joyShockpath, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -327,8 +362,8 @@ public static class ControllerManager
 
             // DInput
             var directInput = new DirectInput();
-            int VendorId = details.attributes.VendorID;
-            int ProductId = details.attributes.ProductID;
+            int VendorId = details.VendorID;
+            int ProductId = details.ProductID;
 
             // initialize controller vars
             Joystick joystick = null;
@@ -457,7 +492,7 @@ public static class ControllerManager
         // power cycling logic
         // hide new InstanceID (HID)
         if (IsPowerCycling && controller.IsHidden())
-            controller.HideHID();
+            controller.Hide(false);
 
         LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
 
@@ -467,7 +502,7 @@ public static class ControllerManager
         ToastManager.SendToast(controller.ToString(), "detected");
 
         // remove controller from powercyclers
-        PowerCyclers.Remove(controller.GetContainerInstancePath());
+        PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
 
         // first controller logic
         if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
@@ -491,10 +526,10 @@ public static class ControllerManager
 
         // unhide on remove 
         if (!IsPowerCycling)
-            controller.UnhideHID();
+            controller.Unhide(false);
 
         // controller was unplugged
-        Controllers.Remove(details.baseContainerDeviceInstanceId);
+        Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
 
         // unplug controller, if needed
         if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
@@ -506,10 +541,86 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
+    private static void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        lock (updateLock)
+        {
+            // monitoring unexpected slot changes
+            foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details.isXInput))
+            {
+                byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath);
+                xInputController.AttachController(UserIndex);
+            }
+
+            if (HasVirtualController())
+            {
+                // check if it is first controller
+                IController controller = GetControllerFromSlot(UserIndex.One, false);
+
+                if (controller is null)
+                {
+                    Working?.Invoke(true);
+
+                    // suspend all physical controllers
+                    foreach(XInputController xInputController in GetPhysicalControllers())
+                        SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
+
+                    List<IXbox360Controller> placeholders = new();
+
+                    // fill all slots with virtual controllers
+                    for (UserIndex userIndex = UserIndex.One; userIndex <= UserIndex.Four; userIndex++)
+                    {
+                        // create a virtual controller
+                        IXbox360Controller tempController = VirtualManager.vClient.CreateXbox360Controller(VirtualManager.VendorId, VirtualManager.ProductId);
+                        placeholders.Add(tempController);
+                    }
+
+                    // connect all virtual controllers
+                    foreach (IXbox360Controller placeholder in placeholders)
+                    {
+                        placeholder.Connect();
+                        Task.Delay(1000);
+                    }
+
+                    // disconnect all virtual controllers
+                    foreach (IXbox360Controller placeholder in placeholders)
+                        placeholder.Disconnect();
+
+                    Task.Delay(1000);
+
+                    // create main virtual controller
+                    VirtualManager.Pause();
+                    Task.Delay(1000);
+                    VirtualManager.Resume();
+                }
+                else
+                {
+                    // resume all physical controllers
+                    StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+                    if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
+                        ResumeControllers();
+
+                    // force clear controllers array from temporary virtual controllers
+                    foreach(IController vController in GetVirtualControllers())
+                    {
+                        if (vController.Details.baseContainerDeviceInstanceId == controller.Details.baseContainerDeviceInstanceId)
+                            continue;
+
+                        Controllers.TryRemove(vController.Details.baseContainerDeviceInstanceId, out _);
+                    }
+
+                    Working?.Invoke(false);
+                }
+            }
+        }
+    }
+
     private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
-        if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out _))
-            return;
+        Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
+
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // get details passed UserIndex
         UserIndex userIndex = (UserIndex)details.XInputUserIndex;
@@ -519,174 +630,97 @@ public static class ControllerManager
         if (userIndex == UserIndex.Any)
             userIndex = XInputController.TryGetUserIndex(details);
 
-        if (details.isPhysical)
+        if (controller is not null)
         {
-            // wait for virtual manager to wake up
-            if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
-            {
-                while (!HasVirtualController())
-                    await Task.Delay(250);
+            ((XInputController)controller).AttachDetails(details);
+            ((XInputController)controller).AttachController((byte)userIndex);
 
-                // physical controller arrived and is taking first slot, suspend it
-                if (details.XInputUserIndex == (int)UserIndex.One)
-                {
-                    if (SuspendController(details.baseContainerDeviceInstanceId))
-                    {
-                        // suspended physical controller
-                        return;
-                    }
-                    else
-                    {
-                        // failed to suspend physical controller
-                    }
-                }
-            }
+            // hide new InstanceID (HID)
+            if (controller.IsHidden())
+                controller.Hide(false);
+
+            IsPowerCycling = true;
         }
         else
         {
-            bool resumed = false;
-
-            // do we have a suspended controller
-            string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
-            if (!string.IsNullOrEmpty(baseContainerDeviceInstanceId))
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                // (re)enable physical controller(s) after virtual controller to ensure first order
-                int attempts = 0;
-
-                // give the controller 10 seconds to come back to half-life
-                while (!resumed && attempts < 10)
+                switch (details.GetVendorID())
                 {
-                    await Task.Delay(1000);
-                    resumed = ResumeController();
-                    attempts++;
-                }
-            }
-            
-            if (!resumed)
-            {
-                if (details.XInputUserIndex != (int)UserIndex.One)
-                {
-                    for (UserIndex idx = UserIndex.One; idx < UserIndex.Any; idx++)
-                    {
-                        IController controller = GetControllerFromSlot(idx);
-                        if (controller is not null && controller.IsPhysical())
-                        {
-                            // force controller as busy, disable UI
-                            controller.IsBusy = true;
+                    default:
+                        controller = new XInputController(details);
+                        break;
 
-                            SettingsManager.SetProperty("SuspendedController", string.Empty);
-                            if (SuspendController(controller.Details.baseContainerDeviceInstanceId))
-                            {
-                                // suspended physical controller
-                                return;
-                            }
-                            else
-                            {
-                                // failed to suspend physical controller
-                            }
-                        }
-                    }
+                    // LegionGo
+                    case "0x17EF":
+                        controller = new LegionController(details);
+                        break;
                 }
-            }
-            else
-            {
-                // clear SuspendedController
-                SettingsManager.SetProperty("SuspendedController", string.Empty);
-            }
+            });
         }
 
-        // A XInput controller
-        Controller _controller = new(userIndex);
+        while (!controller.IsReady && controller.IsConnected())
+            await Task.Delay(250);
 
-        // UI thread (async)
-        _ = Application.Current.Dispatcher.BeginInvoke(async () =>
+        // update or create controller
+        string path = details.baseContainerDeviceInstanceId;
+        Controllers[path] = controller;
+
+        LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
+
+        // raise event
+        ControllerPlugged?.Invoke(controller, IsPowerCycling);
+
+        ToastManager.SendToast(controller.ToString(), "detected");
+
+        // remove controller from powercyclers
+        PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
+
+        // new controller logic
+        if (DeviceManager.IsInitialized)
         {
-            XInputController controller;
-            switch (details.GetVendorID())
-            {
-                default:
-                    controller = new XInputController(_controller, details);
-                    break;
+            if (controller.IsPhysical() && targetController is null)
+                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+        }
 
-                // LegionGo
-                case "0x17EF":
-                    controller = new LegionController(_controller, details);
-                    break;
-            }
-
-            while (!controller.IsReady && _controller.IsConnected)
-                await Task.Delay(250);
-
-            // update or create controller
-            string path = controller.GetContainerInstancePath();
-            Controllers[path] = controller;
-
-            // are we power cycling ?
-            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-
-            // power cycling logic
-            // hide new InstanceID (HID)
-            if (IsPowerCycling && controller.IsHidden())
-                controller.HideHID();
-
-            LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
-
-            // raise event
-            ControllerPlugged?.Invoke(controller, IsPowerCycling);
-
-            ToastManager.SendToast(controller.ToString(), "detected");
-
-            // remove controller from powercyclers
-            PowerCyclers.Remove(controller.GetContainerInstancePath());
-
-            if (controller.IsPhysical())
-            {
-                // first controller logic
-                if (GetTargetController() is null && DeviceManager.IsInitialized)
-                    SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
-            }
-        });
+        // restart watchdog
+        if (ControllerManagement)
+        {
+            Watchdog.Stop();
+            Watchdog.Start();
+        }
     }
 
     private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        // do we have a controller pending revival ?
-        string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
-        if (details.baseContainerDeviceInstanceId == baseContainerDeviceInstanceId)
-        {
-            if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
-            {
-                // restart virtual controller
-                VirtualManager.Pause();
-                await Task.Delay(1000);
-                VirtualManager.Resume();
-            }
-        }
-
         if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
             return;
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
-        // unhide on remove
+        // controller was unplugged
         if (!IsPowerCycling)
         {
-            if (controller.IsReady)
-                controller.UnhideHID();
+            controller.Unhide(false);
+            Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+
+            // controller is current target
+            if (targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+                ClearTargetController();
         }
-
-        // controller was unplugged
-        Controllers.Remove(details.baseContainerDeviceInstanceId);
-
-        // unplug controller, if needed
-        if (GetTargetController()?.GetContainerInstancePath() == controller.GetContainerInstancePath())
-            ClearTargetController();
 
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+
+        // restart watchdog
+        if (ControllerManagement)
+        {
+            Watchdog.Stop();
+            Watchdog.Start();
+        }
     }
 
     private static void ClearTargetController()
@@ -709,9 +743,6 @@ public static class ControllerManager
     {
         // look for new controller
         if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-            return;
-
-        if (controller is null)
             return;
 
         if (controller.IsVirtual())
@@ -750,14 +781,88 @@ public static class ControllerManager
             if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
                 targetController.Rumble();
         }
-        else
-        {
-            // stop listening to device while it's power cycled
-            // only usefull for Xbox One bluetooth controllers
-            targetController.Unplug();
-        }
         
         ControllerSelected?.Invoke(targetController);
+    }
+
+    public static bool SuspendController(string baseContainerDeviceInstanceId)
+    {
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+
+        if (deviceInstanceIds is null)
+            deviceInstanceIds = new();
+        else if (deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
+            return true;
+
+        try
+        {
+            PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+
+            string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+            switch (enumerator)
+            {
+                case "USB":
+                    pnPDevice.InstallNullDriver(out bool rebootRequired);
+                    usbPnPDevice.CyclePort();
+
+                    deviceInstanceIds.Add(baseContainerDeviceInstanceId);
+
+                    SettingsManager.SetProperty("SuspendedControllers", deviceInstanceIds);
+                    PowerCyclers[baseContainerDeviceInstanceId] = true;
+                    return true;
+            }
+        }
+        catch { }
+
+
+        return false;
+    }
+
+    public static bool ResumeControllers()
+    {
+        // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+
+        if (deviceInstanceIds is null || deviceInstanceIds.Count == 0)
+            return true;
+
+        foreach (string baseContainerDeviceInstanceId in deviceInstanceIds)
+        {
+            try
+            {
+                PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
+                UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+                DriverMeta pnPDriver = null;
+
+                try
+                {
+                    pnPDriver = pnPDevice.GetCurrentDriver();
+                }
+                catch { }
+
+                string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
+                switch (enumerator)
+                {
+                    case "USB":
+                        if (pnPDriver is null || pnPDriver.InfPath != "xusb22.inf")
+                        {
+                            pnPDevice.RemoveAndSetup();
+                            pnPDevice.InstallCustomDriver("xusb22.inf", out bool rebootRequired);
+                        }
+
+                        if (deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
+                            deviceInstanceIds.Remove(baseContainerDeviceInstanceId);
+
+                        SettingsManager.SetProperty("SuspendedControllers", deviceInstanceIds);
+                        PowerCyclers.TryRemove(baseContainerDeviceInstanceId, out _);
+                        return true;
+                }
+            }
+            catch { }
+        }
+
+        return false;
     }
 
     public static IController GetTargetController()
@@ -785,86 +890,14 @@ public static class ControllerManager
         return Controllers.Values.Where(a => a.IsVirtual()).ToList();
     }
 
-    public static XInputController GetControllerFromSlot(UserIndex userIndex = 0)
+    public static XInputController GetControllerFromSlot(UserIndex userIndex = 0, bool physical = true)
     {
-        return Controllers.Values.FirstOrDefault(c => c is XInputController && c.IsPhysical() && c.GetUserIndex() == (int)userIndex) as XInputController;
+        return Controllers.Values.FirstOrDefault(c => c is XInputController && ((physical && c.IsPhysical()) || !physical && c.IsVirtual()) && c.GetUserIndex() == (int)userIndex) as XInputController;
     }
 
     public static List<IController> GetControllers()
     {
         return Controllers.Values.ToList();
-    }
-
-    public static bool SuspendController(string baseContainerDeviceInstanceId)
-    {
-        Controller.SetReporting(false);
-        PowerCyclers[baseContainerDeviceInstanceId] = true;
-
-        // raise event
-        Working?.Invoke(true);
-
-        try
-        {
-            PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-
-            string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-            switch (enumerator)
-            {
-                case "USB":
-                    pnPDevice.InstallNullDriver(out bool rebootRequired);
-                    usbPnPDevice.CyclePort();
-
-                    SettingsManager.SetProperty("SuspendedController", baseContainerDeviceInstanceId);
-                    return true;
-            }
-        }
-        catch { }
-
-        return false;
-    }
-
-    public static bool ResumeController()
-    {
-        Controller.SetReporting(true);
-        bool success = false;
-
-        // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
-        string baseContainerDeviceInstanceId = SettingsManager.GetString("SuspendedController");
-
-        if (string.IsNullOrEmpty(baseContainerDeviceInstanceId))
-            return true;
-
-        PowerCyclers.Remove(baseContainerDeviceInstanceId);
-
-        try
-        {
-            PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
-            UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
-            DriverMeta pnPDriver = null;
-
-            try
-            {
-                pnPDriver = pnPDevice.GetCurrentDriver();
-            }
-            catch { }
-
-            string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-            switch (enumerator)
-            {
-                case "USB":
-                    if (pnPDriver is null || pnPDriver.InfPath != "xusb22.inf")
-                        pnPDevice.InstallCustomDriver("xusb22.inf", out bool rebootRequired);
-                    success = true;
-                    break;
-            }
-        }
-        catch { }
-
-        // raise event
-        Working?.Invoke(false);
-
-        return success;
     }
 
     private static void UpdateInputs(ControllerState controllerState)
@@ -916,11 +949,6 @@ public static class ControllerManager
             case HIDmode.DualShock4Controller:
                 return emptyDS4;
         }
-    }
-
-    private static void VirtualManager_ControllerSelected(HIDmode mode)
-    {
-        virtualControllerCreated = true;
     }
 
     #region events

@@ -2224,16 +2224,16 @@
   <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
     <value>RightStick</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
     <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
@@ -2263,16 +2263,16 @@
   <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
     <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="Enum.KeyFlags.M" xml:space="preserve">

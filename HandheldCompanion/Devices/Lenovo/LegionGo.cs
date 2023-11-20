@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -92,6 +93,13 @@ public class LegionGo : IDevice
         if (!success)
             return false;
 
+        SetQuickLightingEffect(0, 1);
+        SetQuickLightingEffect(3, 1);
+        SetQuickLightingEffect(4, 1);
+        SetQuickLightingEffectEnable(0, false);
+        SetQuickLightingEffectEnable(3, false);
+        SetQuickLightingEffectEnable(4, false);
+
         lightProfileL = GetCurrentLightProfile(3);
         lightProfileR = GetCurrentLightProfile(4);
 
@@ -177,7 +185,7 @@ public class LegionGo : IDevice
         return true;
     }
 
-    public override bool SetLedColor(Color MainColor, Color SecondaryColor, DeviceUtils.LEDLevel level, int speed = 100)
+    public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
         lightProfileL.r = MainColor.R;
         lightProfileL.g = MainColor.G;

@@ -127,7 +127,10 @@ namespace HandheldCompanion.Misc
         // A public method that returns the average temperature
         public double GetAverageTemperature()
         {
-            return this.avgTemp.Average();
+            if (this.avgTemp.Count != 0)
+                return this.avgTemp.Average();
+
+            return 50.0d;
         }
     }
 }

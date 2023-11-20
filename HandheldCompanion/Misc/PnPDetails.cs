@@ -7,46 +7,40 @@ using System.Runtime.InteropServices;
 namespace HandheldCompanion;
 
 [StructLayout(LayoutKind.Sequential)]
-public class PnPDetails : IDisposable
+public class PnPDetails
 {
-    public DateTimeOffset arrivalDate;
-
-    public Attributes attributes;
-    public string baseContainerDeviceInstanceId;
-    public Capabilities capabilities;
-
     public string deviceInstanceId;
+    public string baseContainerDeviceInstanceId;
+
     public bool isGaming;
     public bool isHooked;
 
     public bool isVirtual;
     public bool isPhysical => !isVirtual;
 
+    public string devicePath;
+    public string baseContainerDevicePath;
+
     public string Name;
-    public string Path;
     public string SymLink;
     public string Enumerator;
 
-    // dirty
-    public int DeviceIdx;
+    public ushort ProductID;
+    public ushort VendorID;
 
     // XInput
     public bool isXInput;
     public byte XInputUserIndex = byte.MaxValue;
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-    }
+    public int XInputDeviceIdx;
 
     public string GetProductID()
     {
-        return "0x" + attributes.ProductID.ToString("X4");
+        return "0x" + ProductID.ToString("X4");
     }
 
     public string GetVendorID()
     {
-        return "0x" + attributes.VendorID.ToString("X4");
+        return "0x" + VendorID.ToString("X4");
     }
 
     public short GetMI()

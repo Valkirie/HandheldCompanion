@@ -2227,16 +2227,16 @@
   <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
     <value>Stick Derecho</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
     <value>Sí</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
     <value>Es posible que la mejora de la detección del controlador virtual no funcione si cierras Handheld Companion. ¿Está seguro?</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
     <value>Aviso</value>
   </data>
   <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
@@ -2266,16 +2266,16 @@
   <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
     <value>Reinicio requerido</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
     <value>Sí</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
     <value>Si desactiva esta opción, también desactivará "Mejorar la detección de controladores virtuales". ¿Desea continuar?</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
     <value>Aviso</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">

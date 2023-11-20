@@ -99,6 +99,9 @@ public partial class ControllerPage : Page
                 case "HIDvibrateonconnect":
                     Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                     break;
+                case "ControllerManagement":
+                    Toggle_ControllerManagement.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "VibrationStrength":
                     SliderStrength.Value = Convert.ToDouble(value);
                     break;
@@ -158,13 +161,8 @@ public partial class ControllerPage : Page
         {
             // Search for an existing controller, remove it
             foreach (IController ctrl in InputDevices.Children)
-            {
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
-                {
-                    InputDevices.Children.Remove(ctrl);
-                    break;
-                }
-            }
+                    return;
 
             // Add new controller to list if no existing controller was found
             InputDevices.Children.Add(Controller);
@@ -222,8 +220,7 @@ public partial class ControllerPage : Page
         else
             Controller.Hide();
 
-        if (!ControllerManager.PowerCyclers.ContainsKey(Controller.GetContainerInstancePath()))
-            ControllerRefresh();
+        ControllerRefresh();
     }
 
     private void ControllerRefresh()
@@ -260,7 +257,7 @@ public partial class ControllerPage : Page
             HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller not hidden, and virtual controller
-            var notmuted = !isHidden && hasVirtual && !isMuted;
+            var notmuted = !isHidden && hasVirtual && (!isSteam || (isSteam && !isMuted));
             HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
         });
     }
@@ -358,6 +355,14 @@ public partial class ControllerPage : Page
             return;
 
         SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
+    }
+
+    private void Toggle_ControllerManagement_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("ControllerManagement", Toggle_ControllerManagement.IsOn);
     }
 
     private void Button_Layout_Click(object sender, RoutedEventArgs e)

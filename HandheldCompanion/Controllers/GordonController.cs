@@ -25,7 +25,7 @@ namespace HandheldCompanion.Controllers
             if (details is null)
                 return;
 
-            Controller = new(details.attributes.VendorID, details.attributes.ProductID, details.GetMI());
+            Controller = new(details.VendorID, details.ProductID, details.GetMI());
 
             // open controller
             Open();

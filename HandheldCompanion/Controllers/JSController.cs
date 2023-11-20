@@ -30,7 +30,7 @@ public class JSController : IController
             return;
 
         this.sSETTINGS = settings;
-        this.UserIndex = settings.playerNumber;
+        this.UserIndex = (byte)settings.playerNumber;
 
         if (details is null)
             return;

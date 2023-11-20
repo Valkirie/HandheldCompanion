@@ -38,7 +38,7 @@ public class NeptuneController : SteamController
 
         try
         {
-            Controller = new(details.attributes.VendorID, details.attributes.ProductID, details.GetMI());
+            Controller = new(details.VendorID, details.ProductID, details.GetMI());
 
             // open controller
             Open();

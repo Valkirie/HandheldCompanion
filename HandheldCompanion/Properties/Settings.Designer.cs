@@ -771,24 +771,23 @@ namespace HandheldCompanion.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool VirtualControllerForceOrder {
+        public bool ControllerManagement {
             get {
-                return ((bool)(this["VirtualControllerForceOrder"]));
+                return ((bool)(this["ControllerManagement"]));
             }
             set {
-                this["VirtualControllerForceOrder"] = value;
+                this["ControllerManagement"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SuspendedController {
+        public global::System.Collections.Specialized.StringCollection SuspendedControllers {
             get {
-                return ((string)(this["SuspendedController"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedControllers"]));
             }
             set {
-                this["SuspendedController"] = value;
+                this["SuspendedControllers"] = value;
             }
         }
         
