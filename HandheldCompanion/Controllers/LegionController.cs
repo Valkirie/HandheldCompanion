@@ -144,6 +144,11 @@ namespace HandheldCompanion.Controllers
 
             base.UpdateInputs(ticks, false);
 
+            // Potential Focus Switched instruction coming through from Legion Controllers
+            // We double check the validity of the received Data
+            if (Data[40] == 0)
+                return;
+
             FrontEnum frontButton = (FrontEnum)Data[FRONT_ID];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
             Inputs.ButtonState[ButtonFlags.OEM2] = frontButton.HasFlag(FrontEnum.LegionL);
