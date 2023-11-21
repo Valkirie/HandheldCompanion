@@ -969,5 +969,17 @@ namespace HandheldCompanion.Properties {
                 this["SuspendedDevices"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LegionControllerPassthrough {
+            get {
+                return ((bool)(this["LegionControllerPassthrough"]));
+            }
+            set {
+                this["LegionControllerPassthrough"] = value;
+            }
+        }
     }
 }

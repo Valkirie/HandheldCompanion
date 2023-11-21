@@ -1337,8 +1337,8 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Usar o motor de tremida de alta definição, ao custo de maior uso de CPU</value>
   </data>
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Configurações do Steam Deck</value>
+  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+    <value>Configurações do controlador</value>
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
     <value>Aplicar modelo</value>

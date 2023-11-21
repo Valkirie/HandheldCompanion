@@ -1176,8 +1176,8 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Verwendung einer HD-Rumble-Engine, auf Kosten einer höheren CPU-Auslastung</value>
   </data>
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Steam Controller Einstellungen</value>
+  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+    <value>Controller Einstellungen</value>
   </data>
   <data name="ControllerPage_VibrateDevice" xml:space="preserve">
     <value>Vibrieren, wenn Controller verbunden ist</value>

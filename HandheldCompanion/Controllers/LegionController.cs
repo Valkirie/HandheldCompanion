@@ -19,7 +19,7 @@ namespace HandheldCompanion.Controllers
     public class LegionController : XInputController
     {
         // Import the user32.dll library
-        [DllImport("user32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true)][return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref uint pvParam, uint fWinIni);
 
         [Flags]
@@ -42,17 +42,32 @@ namespace HandheldCompanion.Controllers
         }
 
         private HidDevice hidDevice;
-        private const byte FRONT_ID = 17;
-        private const byte BACK_ID = 19;
+        private const byte FRONT_IDX = 17;
+        private const byte BACK_IDX = 19;
+        private const byte STATUS_IDX = 0;
+        private const byte PING_IDX = 40;
 
         private Thread dataThread;
         private bool dataThreadRunning;
 
         private byte[] Data = new byte[64];
-        public override bool IsReady => GetStatus() == 0 ? false : true;
+        public override bool IsReady
+        {
+            get
+            {
+                byte status = GetStatus(STATUS_IDX);
+                return status == 25;
+            }
+        }
 
-        public bool IsConnected => !IsWireless;
-        public bool IsWireless => GetStatus() >= 40 && GetStatus() <= 50;
+        public bool IsWireless
+        {
+            get
+            {
+                byte status = GetStatus(PING_IDX);
+                return (status >= 40 && status <= 50);
+            }
+        }
 
         // Define some constants for the touchpad logic
         private uint LongPressTime = 1000; // The minimum time in milliseconds for a long press
@@ -118,13 +133,13 @@ namespace HandheldCompanion.Controllers
             return null;
         }
 
-        private byte GetStatus()
+        private byte GetStatus(int idx)
         {
             if (hidDevice is not null)
             {
                 HidReport report = hidDevice.ReadReport();
                 if (report.Data is not null)
-                    return report.Data[40];
+                    return report.Data[idx];
             }
 
             return 0;
@@ -173,11 +188,11 @@ namespace HandheldCompanion.Controllers
             if (Data[40] == 0)
                 return;
 
-            FrontEnum frontButton = (FrontEnum)Data[FRONT_ID];
+            FrontEnum frontButton = (FrontEnum)Data[FRONT_IDX];
             Inputs.ButtonState[ButtonFlags.OEM1] = frontButton.HasFlag(FrontEnum.LegionR);
             Inputs.ButtonState[ButtonFlags.OEM2] = frontButton.HasFlag(FrontEnum.LegionL);
 
-            BackEnum backButton = (BackEnum)Data[BACK_ID];
+            BackEnum backButton = (BackEnum)Data[BACK_IDX];
             Inputs.ButtonState[ButtonFlags.R4] = backButton.HasFlag(BackEnum.M3);
             Inputs.ButtonState[ButtonFlags.R5] = backButton.HasFlag(BackEnum.Y3);
             Inputs.ButtonState[ButtonFlags.L4] = backButton.HasFlag(BackEnum.Y1);
@@ -197,7 +212,9 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
             Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
-            HandleTouchpadInput(touched, TouchpadX, TouchpadY);
+            // handle touchpad if passthrough is off
+            if (GetTouchPadStatus() == 0)
+                HandleTouchpadInput(touched, TouchpadX, TouchpadY);
 
             /*
             Inputs.AxisState[AxisFlags.LeftStickX] += (short)InputUtils.MapRange(Data[29], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
@@ -220,7 +237,11 @@ namespace HandheldCompanion.Controllers
 
                 HidReport report = hidDevice.ReadReport();
                 if (report is not null)
-                    Data = report.Data;
+                {
+                    // check if packet is safe
+                    if (report.Data[STATUS_IDX] == 25)
+                        Data = report.Data;
+                }
             }
         }
 
@@ -345,6 +366,19 @@ namespace HandheldCompanion.Controllers
                     // Set the touchpad double tapped flag to false
                     touchpadDoubleTapped = false;
                 }
+            }
+        }
+
+        internal void SetPassthrough(bool enabled)
+        {
+            switch(enabled)
+            {
+                case true:
+                    SetTouchPadStatus(1);
+                    break;
+                case false:
+                    SetTouchPadStatus(0);
+                    break;
             }
         }
     }

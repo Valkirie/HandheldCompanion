@@ -485,6 +485,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Controller settings.
+        /// </summary>
+        public static string ControllerPage_DeviceSpecificSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_DeviceSpecificSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
         public static string ControllerPage_Disconnect {
@@ -499,6 +508,24 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_InputDevices {
             get {
                 return ResourceManager.GetString("ControllerPage_InputDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad passthrough.
+        /// </summary>
+        public static string ControllerPage_LegionGoPassthrough {
+            get {
+                return ResourceManager.GetString("ControllerPage_LegionGoPassthrough", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping.
+        /// </summary>
+        public static string ControllerPage_LegionGoPassthroughDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_LegionGoPassthroughDesc", resourceCulture);
             }
         }
         
@@ -670,15 +697,6 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_SteamControllerMuteDesc {
             get {
                 return ResourceManager.GetString("ControllerPage_SteamControllerMuteDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Steam Controller Settings.
-        /// </summary>
-        public static string ControllerPage_SteamControllerSettings {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamControllerSettings", resourceCulture);
             }
         }
         

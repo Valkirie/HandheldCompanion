@@ -112,6 +112,9 @@ public partial class ControllerPage : Page
                     Toggle_SCMuteController.IsOn = Convert.ToBoolean(value);
                     ControllerRefresh();
                     break;
+                case "LegionControllerPassthrough":
+                    Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "HIDmode":
                     cB_HidMode.SelectedIndex = Convert.ToInt32(value);
                     break;
@@ -242,7 +245,9 @@ public partial class ControllerPage : Page
             var isSteam = hasTarget && (target is NeptuneController || target is GordonController);
             var isMuted = SettingsManager.GetBoolean("SteamControllerMute");
 
-            SteamControllerPanel.Visibility = target is SteamController ? Visibility.Visible : Visibility.Collapsed;
+            DeviceSpecificPanel.Visibility = target is SteamController || target is LegionController ? Visibility.Visible : Visibility.Collapsed;
+            MuteVirtualController.Visibility = target is SteamController ? Visibility.Visible : Visibility.Collapsed;
+            TouchpadPassthrough.Visibility = target is LegionController ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
@@ -405,5 +410,13 @@ public partial class ControllerPage : Page
 
             PlatformManager.Steam.StartProcess();
         });
+    }
+
+    private void Toggle_TouchpadPassthrough_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
     }
 }

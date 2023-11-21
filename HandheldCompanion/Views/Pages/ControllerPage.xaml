@@ -618,14 +618,15 @@
 
                 <!--  Steam Deck settings  -->
                 <ui:SimpleStackPanel
-                    Name="SteamControllerPanel"
+                    Name="DeviceSpecificPanel"
                     d:Visibility="Visible"
                     Spacing="6"
                     Visibility="Collapsed">
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamControllerSettings}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSpecificSettings}" />
 
-                    <!--  Mute virtual controller  -->
+                    <!--  Mute virtual controller (Steam Deck)  -->
                     <Border
+                        Name="MuteVirtualController"
                         Padding="15,12,12,12"
                         Background="{DynamicResource ExpanderHeaderBackground}"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
@@ -659,6 +660,45 @@
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="Toggle_SCMuteController_Toggled" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Touchpad passthrough (Legion Go)  -->
+                    <Border
+                        Name="TouchpadPassthrough"
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe772;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch
+                                Name="Toggle_TouchpadPassthrough"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_TouchpadPassthrough_Toggled" />
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

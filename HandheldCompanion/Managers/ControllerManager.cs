@@ -266,6 +266,20 @@ public static class ControllerManager
                         }
                     }
                     break;
+
+                case "LegionControllerPassthrough":
+                    {
+                        IController target = GetTargetController();
+                        if (target is null)
+                            return;
+
+                        if (target is not LegionController)
+                            return;
+
+                        bool enabled = Convert.ToBoolean(value);
+                        ((LegionController)target).SetPassthrough(enabled);
+                    }
+                    break;
             }
         });
     }

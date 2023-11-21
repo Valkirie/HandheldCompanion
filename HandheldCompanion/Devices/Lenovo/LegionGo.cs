@@ -106,13 +106,12 @@ public class LegionGo : IDevice
         while (ControllerManager.PowerCyclers.Count > 0)
             Thread.Sleep(500);
 
-        SetTouchPadStatus(0);
-
         return true;
     }
 
     public override void Close()
     {
+        // restore default touchpad behavior
         SetTouchPadStatus(1);
 
         // close devices

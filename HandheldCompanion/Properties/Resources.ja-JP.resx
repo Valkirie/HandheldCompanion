@@ -1288,8 +1288,8 @@
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
   </data>
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Steam Deck Settings</value>
+  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+    <value>コントローラー設定</value>
   </data>
   <data name="DPadPage_DPad" xml:space="preserve">
     <value>DIRECTIONAL PAD</value>

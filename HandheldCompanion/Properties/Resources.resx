@@ -1373,8 +1373,8 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
   </data>
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Steam Controller Settings</value>
+  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+    <value>Controller settings</value>
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
     <value>Apply template</value>
@@ -2569,5 +2569,11 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   </data>
   <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
     <value>Automatically manage your controllers for greater compatibility</value>
+  </data>
+  <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
+    <value>Touchpad passthrough</value>
+  </data>
+  <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
+    <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
   </data>
 </root>
