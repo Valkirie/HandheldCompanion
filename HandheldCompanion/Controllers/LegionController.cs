@@ -70,6 +70,7 @@ namespace HandheldCompanion.Controllers
         }
 
         // Define some constants for the touchpad logic
+        private bool IsPassthrough = false;
         private uint LongPressTime = 1000; // The minimum time in milliseconds for a long press
         private const int MaxDistance = 40; // Maximum distance tolerance between touch and untouch in pixels
 
@@ -148,9 +149,11 @@ namespace HandheldCompanion.Controllers
         public override void Plug()
         {
             hidDevice = GetHidDevice();
-            if (hidDevice is not null)
+
+            if (hidDevice is not null && hidDevice.IsConnected)
             {
-                hidDevice.OpenDevice();
+                if (!hidDevice.IsOpen)
+                    hidDevice.OpenDevice();
 
                 dataThreadRunning = true;
                 dataThread = new Thread(dataThreadLoop);
@@ -169,7 +172,12 @@ namespace HandheldCompanion.Controllers
                 dataThreadRunning = false;
                 dataThread.Join();
 
-                hidDevice.CloseDevice();
+                if (hidDevice.IsConnected && hidDevice.IsOpen)
+                {
+                    hidDevice.CloseDevice();
+                    hidDevice.Dispose();
+                    hidDevice = null;
+                }
             }
 
             base.Unplug();
@@ -213,7 +221,7 @@ namespace HandheldCompanion.Controllers
             Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
             // handle touchpad if passthrough is off
-            if (GetTouchPadStatus() == 0)
+            if (!IsPassthrough)
                 HandleTouchpadInput(touched, TouchpadX, TouchpadY);
 
             /*
@@ -262,7 +270,6 @@ namespace HandheldCompanion.Controllers
             return base.GetGlyph(button);
         }
 
-        // Method to handle the touchpad input
         public void HandleTouchpadInput(bool touched, ushort x, ushort y)
         {
             // Convert the ushort values to Vector2
@@ -314,7 +321,7 @@ namespace HandheldCompanion.Controllers
                         float distance = Vector2.Distance(touchpadFirstPosition, touchpadPosition);
 
                         // If the duration is more than the long tap duration and the distance is less than the maximum distance
-                        if (duration >= LongPressTime && distance < MaxDistance)
+                        if (duration >= LongPressTime && duration < (LongPressTime + 100) && distance < MaxDistance)
                         {
                             // If the touchpad has not been long tapped before
                             if (!touchpadLongTapped)
@@ -380,6 +387,8 @@ namespace HandheldCompanion.Controllers
                     SetTouchPadStatus(0);
                     break;
             }
+
+            IsPassthrough = enabled;
         }
     }
 }
