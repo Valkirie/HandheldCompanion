@@ -31,7 +31,7 @@ public static class DynamicLightingManager
     private static int screenWidth;
     private static int screenHeight;
 
-    private const int squareSize = 100;
+    private static int squareSize = 100;
     private const int squareStep = 10;
 
     private static bool VerticalBlackBarDetectionEnabled;
@@ -86,6 +86,8 @@ public static class DynamicLightingManager
         // Get the primary screen dimensions
         screenWidth = resolution.Width;
         screenHeight = resolution.Height;
+
+        squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
         // (Re)create the Direct3D device
         InitializeDirect3DDevice();
