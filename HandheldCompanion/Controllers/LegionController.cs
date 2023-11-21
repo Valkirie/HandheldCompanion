@@ -5,15 +5,23 @@ using HidLibrary;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Controllers
 {
     public class LegionController : XInputController
     {
+        // Import the user32.dll library
+        [DllImport("user32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref uint pvParam, uint fWinIni);
+
         [Flags]
         private enum FrontEnum
         {
@@ -46,17 +54,28 @@ namespace HandheldCompanion.Controllers
         public bool IsConnected => !IsWireless;
         public bool IsWireless => GetStatus() >= 40 && GetStatus() <= 50;
 
-        private bool prevTouch = false;
-        private Vector2 prevTouchVector = Vector2.Zero;
-        private Vector2 currentTouchVector = Vector2.Zero;
-        private DateTime prevTouchTime = DateTime.Now;
-        private const int DoubleClickWidth = 4;
+        // Define some constants for the touchpad logic
+        private uint LongPressTime = 1000; // The minimum time in milliseconds for a long press
+        private const int MaxDistance = 40; // Maximum distance tolerance between touch and untouch in pixels
+
+        // Variables to store the touchpad state
+        private bool touchpadTouched = false; // Whether the touchpad is currently touched
+        private Vector2 touchpadPosition = Vector2.Zero; // The current position of the touchpad
+        private Vector2 touchpadFirstPosition = Vector2.Zero; // The first position of the touchpad when touched
+        private long touchpadStartTime = 0; // The start time of the touchpad when touched
+        private long touchpadEndTime = 0; // The end time of the touchpad when untouched
+        private bool touchpadDoubleTapped = false; // Whether the touchpad has been double tapped
+        private bool touchpadLongTapped = false; // Whether the touchpad has been long tapped
+
+        private long lastTap = 0;
+        private Vector2 lastTapPosition = Vector2.Zero; // The current position of the touchpad
 
         public LegionController(PnPDetails details) : base(details)
         {
             // Additional controller specific source buttons
             SourceButtons.Add(ButtonFlags.RightPadTouch);
             SourceButtons.Add(ButtonFlags.RightPadClick);
+            SourceButtons.Add(ButtonFlags.RightPadClickDown);
 
             SourceButtons.Add(ButtonFlags.R4);
             SourceButtons.Add(ButtonFlags.R5);
@@ -70,6 +89,9 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+
+            // get long press time from system settings
+            SystemParametersInfo(0x006A, 0, ref LongPressTime, 0);
         }
 
         public override void AttachDetails(PnPDetails details)
@@ -171,40 +193,11 @@ namespace HandheldCompanion.Controllers
 
             bool touched = (TouchpadX != 0 || TouchpadY != 0);
 
-            Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
             Inputs.ButtonState[ButtonFlags.RightPadTouch] = false;
+            Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
+            Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
-            if (touched)
-            {
-                if (!prevTouch)
-                {
-                    prevTouchVector = new(TouchpadX, TouchpadY);
-                    prevTouchTime = DateTime.Now;
-                    prevTouch = true;
-                }
-
-                Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
-
-                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)TouchpadX, 0, 1000, short.MinValue, short.MaxValue);
-                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-TouchpadY, 0, 1000, short.MinValue, short.MaxValue);
-
-                currentTouchVector = new(TouchpadX, TouchpadY);
-            }
-            else if (prevTouch)
-            {
-                Vector2 TouchDist = currentTouchVector - prevTouchVector;
-                if (TouchDist.Length() < DoubleClickWidth)
-                {
-                    TimeSpan TouchDiff = DateTime.Now - prevTouchTime;
-                    if (TouchDiff.TotalMilliseconds < SystemInformation.DoubleClickTime)
-                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
-                }
-
-                Inputs.AxisState[AxisFlags.RightPadX] = 0;
-                Inputs.AxisState[AxisFlags.RightPadY] = 0;
-
-                prevTouch = false;
-            }
+            HandleTouchpadInput(touched, TouchpadX, TouchpadY);
 
             /*
             Inputs.AxisState[AxisFlags.LeftStickX] += (short)InputUtils.MapRange(Data[29], byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
@@ -246,6 +239,113 @@ namespace HandheldCompanion.Controllers
             }
             
             return base.GetGlyph(button);
+        }
+
+        // Method to handle the touchpad input
+        public void HandleTouchpadInput(bool touched, ushort x, ushort y)
+        {
+            // Convert the ushort values to Vector2
+            Vector2 position = new Vector2(x, y);
+
+            // If the touchpad is touched
+            if (touched)
+            {
+                Inputs.AxisState[AxisFlags.RightPadX] = (short)InputUtils.MapRange((short)x, 0, 1000, short.MinValue, short.MaxValue);
+                Inputs.AxisState[AxisFlags.RightPadY] = (short)InputUtils.MapRange((short)-y, 0, 1000, short.MinValue, short.MaxValue);
+
+                // If the touchpad was not touched before
+                if (!touchpadTouched)
+                {
+                    // Set the touchpad state variables
+                    touchpadTouched = true;
+                    touchpadPosition = position;
+                    touchpadFirstPosition = position;
+                    touchpadStartTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+                    // Set the right pad touch flag to true
+                    Inputs.ButtonState[ButtonFlags.RightPadTouch] = true;
+
+                    long delay = touchpadStartTime - lastTap;
+                    float distance = Vector2.Distance(touchpadFirstPosition, lastTapPosition);
+
+                    if (delay < SystemInformation.DoubleClickTime && distance < MaxDistance * 5)
+                    {
+                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+                        touchpadDoubleTapped = true;
+                    }
+                }
+                // If the touchpad was touched before
+                else
+                {
+                    // Update the touchpad position
+                    touchpadPosition = position;
+
+                    // If the touchpad has been double tapped
+                    if (touchpadDoubleTapped)
+                    {
+                        // Keep the right pad click flag to true
+                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+                    }
+                    else
+                    {
+                        // Calculate the duration and the distance of the touchpad
+                        long duration = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - touchpadStartTime;
+                        float distance = Vector2.Distance(touchpadFirstPosition, touchpadPosition);
+
+                        // If the duration is more than the long tap duration and the distance is less than the maximum distance
+                        if (duration >= LongPressTime && distance < MaxDistance)
+                        {
+                            // If the touchpad has not been long tapped before
+                            if (!touchpadLongTapped)
+                            {
+                                // Set the right pad click down flag to true
+                                Inputs.ButtonState[ButtonFlags.RightPadClickDown] = true;
+
+                                // Set the touchpad long tapped flag to true
+                                touchpadLongTapped = true;
+                            }
+                        }
+                    }
+                }
+            }
+            // If the touchpad is not touched
+            else
+            {
+                Inputs.AxisState[AxisFlags.RightPadX] = 0;
+                Inputs.AxisState[AxisFlags.RightPadY] = 0;
+
+                // If the touchpad was touched before
+                if (touchpadTouched)
+                {
+                    // Set the touchpad state variables
+                    touchpadTouched = false;
+                    touchpadEndTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+                    // Set the right pad touch flag to false
+                    Inputs.ButtonState[ButtonFlags.RightPadTouch] = false;
+
+                    // Calculate the duration and the distance of the touchpad
+                    long duration = touchpadEndTime - touchpadStartTime;
+                    float distance = Vector2.Distance(touchpadFirstPosition, touchpadPosition);
+
+                    // If the duration is less than the short tap duration and the distance is less than the maximum distance
+                    if (duration < SystemInformation.DoubleClickTime && distance < MaxDistance)
+                    {
+                        // Set the right pad click flag to true
+                        Inputs.ButtonState[ButtonFlags.RightPadClick] = true;
+
+                        // Store tap time
+                        lastTap = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                        lastTapPosition = touchpadPosition;
+                    }
+
+                    // Set the touchpad long tapped flag to false
+                    touchpadLongTapped = false;
+
+                    // Set the touchpad double tapped flag to false
+                    touchpadDoubleTapped = false;
+                }
+            }
         }
     }
 }
