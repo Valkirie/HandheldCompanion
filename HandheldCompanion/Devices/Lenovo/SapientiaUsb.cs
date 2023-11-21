@@ -127,6 +127,15 @@ namespace HandheldCompanion.Devices.Lenovo
         //设置灯效配置页 device: 3为左手柄 4为右手柄 index 为 profile: 1：Lighting Profile 01; 2：Lighting Profile 02; 3：Lighting Profile 03
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern bool SetQuickLightingEffect(int device, int index);
+        //获取触摸板状态 tatus：0:关，1:开
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern int GetTouchPadStatus();
+        //设置触摸板状态 status：0:关，1:开
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SetTouchPadStatus(int iSwitch);
+        //恢复出厂设置 device: 1：RX，2：Dongle; 3:左手柄 4:右手柄
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SetDeviceDefault(int device);
 
         //导出类
 

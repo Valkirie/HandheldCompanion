@@ -18,8 +18,6 @@ namespace HandheldCompanion.Devices;
 
 public class LegionGo : IDevice
 {
-    public const byte MOUSE_HID_ID = 0x02;  // unk
-    public const byte TOUCH_HID_ID = 0x03;  // unk
     public const byte INPUT_HID_ID = 0x04;
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
@@ -107,21 +105,14 @@ public class LegionGo : IDevice
         while (ControllerManager.PowerCyclers.Count > 0)
             Thread.Sleep(500);
 
-        if (hidDevices.TryGetValue(MOUSE_HID_ID, out HidDevice mouseDevice))
-            SuspendDevice(mouseDevice.DevicePath);
-
-        if (hidDevices.TryGetValue(TOUCH_HID_ID, out HidDevice touchDevice))
-            SuspendDevice(touchDevice.DevicePath);
+        SetTouchPadStatus(0);
 
         return true;
     }
 
     public override void Close()
     {
-        ResumeDevices();
-
-        PnPUtil.EnableDevices("HIDClass");
-        PnPUtil.EnableDevices("Mouse");
+        SetTouchPadStatus(1);
 
         // close devices
         foreach (KeyValuePair<byte, HidDevice> hidDevice in hidDevices)
@@ -145,10 +136,6 @@ public class LegionGo : IDevice
 
             if (device.Capabilities.InputReportByteLength == 64)
                 hidDevices[INPUT_HID_ID] = device;  // HID-compliant vendor-defined device
-            else if (device.Capabilities.InputReportByteLength == 20)
-                hidDevices[TOUCH_HID_ID] = device;   // HID-compliant touch pad
-            else if (device.Capabilities.InputReportByteLength == 7)
-                hidDevices[MOUSE_HID_ID] = device; // HID-compliant mouse
         }
 
         hidDevices.TryGetValue(INPUT_HID_ID, out HidDevice hidDevice);

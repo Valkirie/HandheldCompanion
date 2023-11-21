@@ -70,13 +70,15 @@ namespace HandheldCompanion.Controllers
 
             SourceAxis.Add(AxisLayoutFlags.RightPad);
             SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+        }
+
+        public override void AttachDetails(PnPDetails details)
+        {
+            base.AttachDetails(details);
 
             hidDevice = GetHidDevice();
             if (hidDevice is not null)
                 hidDevice.OpenDevice();
-
-            //mode：1.XBOX 模式（默认）2.Nintendo 模式 XBOX 模式与 Nintendo 模式的区别仅 ABXY 按键布局不同
-            SetGamePadMode(0);
         }
 
         private HidDevice GetHidDevice()
@@ -220,6 +222,9 @@ namespace HandheldCompanion.Controllers
             // pull latest Data
             while (dataThreadRunning)
             {
+                if (hidDevice is null)
+                    continue;
+
                 HidReport report = hidDevice.ReadReport();
                 if (report is not null)
                     Data = report.Data;

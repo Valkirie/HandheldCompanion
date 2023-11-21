@@ -70,12 +70,15 @@ public static class DeviceManager
 
     public static void Start()
     {
+        // fail-safe
+        PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
+
         UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
         UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved += UsbDevice_DeviceRemoved;
 
         XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
-        XUsbDeviceListener.DeviceArrived += XUsbDevice_DeviceArrived;
+        XUsbDeviceListener.DeviceArrived += XUsbDevice_DeviceArrivedAsync;
         XUsbDeviceListener.DeviceRemoved += XUsbDevice_DeviceRemoved;
 
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
@@ -103,12 +106,15 @@ public static class DeviceManager
         UsbDeviceListener.DeviceRemoved -= UsbDevice_DeviceRemoved;
 
         XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
-        XUsbDeviceListener.DeviceArrived -= XUsbDevice_DeviceArrived;
+        XUsbDeviceListener.DeviceArrived -= XUsbDevice_DeviceArrivedAsync;
         XUsbDeviceListener.DeviceRemoved -= XUsbDevice_DeviceRemoved;
 
         HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
         HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
+
+        // fail-safe
+        PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
 
         LogManager.LogInformation("{0} has stopped", "DeviceManager");
     }
@@ -131,7 +137,7 @@ public static class DeviceManager
         // sort devices list
         devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
         foreach (var pair in devices)
-            XUsbDevice_DeviceArrived(new DeviceEventArgs
+            XUsbDevice_DeviceArrivedAsync(new DeviceEventArgs
             { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
     }
 
@@ -418,115 +424,131 @@ public static class DeviceManager
         return InstanceId;
     }
 
-    private static async void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
-    {
-        string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-        PnPDetails deviceEx = FindDevice(InstanceId);
-        if (deviceEx is null)
-            return;
-
-        if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
-        {
-            LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
-            XUsbDeviceRemoved?.Invoke(deviceEx, obj);
-        }
-        else
-        {
-            // do something
-        }
-    }
-
-    private static async void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
+    private static void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         try
         {
-            string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-            PnPDetails deviceEx = null;
-
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
-            while (DateTime.Now < timeout && deviceEx is null)
+            Task.Run(() =>
             {
-                deviceEx = FindDevice(InstanceId);
-                await Task.Delay(1);
-            }
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
+                    return;
 
-            if (deviceEx is not null && deviceEx.isGaming)
+                PnPDetails deviceEx = FindDevice(InstanceId);
+                if (deviceEx is null)
+                    return;
+
+                if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+                {
+                    LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+                    XUsbDeviceRemoved?.Invoke(deviceEx, obj);
+                }
+            });
+        }
+        catch { }
+    }
+
+    private static void XUsbDevice_DeviceArrivedAsync(DeviceEventArgs obj)
+    {
+        try
+        {
+            Task.Run(() =>
             {
-                deviceEx.isXInput = true;
-                deviceEx.baseContainerDevicePath = obj.SymLink;
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
+                    return;
 
-                if (deviceEx.Enumerator.Equals("USB"))
-                    deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink);
+                PnPDetails deviceEx = null;
 
-                if (deviceEx.XInputUserIndex == byte.MaxValue)
-                    deviceEx.XInputDeviceIdx = GetDeviceIndex(obj.SymLink);
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = FindDevice(InstanceId);
+                    Task.Delay(100);
+                }
 
-                LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
-                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+                if (deviceEx is not null && deviceEx.isGaming)
+                {
+                    deviceEx.isXInput = true;
+                    deviceEx.baseContainerDevicePath = obj.SymLink;
+
+                    if (deviceEx.Enumerator.Equals("USB"))
+                        deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink);
+
+                    if (deviceEx.XInputUserIndex == byte.MaxValue)
+                        deviceEx.XInputDeviceIdx = GetDeviceIndex(obj.SymLink);
+
+                    LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
+                        deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
 
                 // raise event
                 Event:
                     XUsbDeviceArrived?.Invoke(deviceEx, obj);
-            }
-            else
-            {
-                // do something
-            }
+                }
+            });
         }
         catch
         {
         }
     }
 
-    private static async void HidDevice_DeviceRemoved(DeviceEventArgs obj)
+    private static void HidDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         try
         {
-            string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-            PnPDetails deviceEx = FindDevice(InstanceId);
-
-            // skip if XInput
-            if (deviceEx is null || deviceEx.isXInput)
-                return;
-
-            if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+            Task.Run(() =>
             {
-                LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
-                HidDeviceRemoved?.Invoke(deviceEx, obj);
-            }
-            else
-            {
-                // do something
-            }
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
+                    return;
+
+                PnPDetails deviceEx = FindDevice(InstanceId);
+
+                // skip if XInput
+                if (deviceEx is null || deviceEx.isXInput)
+                    return;
+
+                if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+                {
+                    LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
+                    HidDeviceRemoved?.Invoke(deviceEx, obj);
+                }
+            });
         }
         catch
         {
         }
     }
 
-    private static async void HidDevice_DeviceArrived(DeviceEventArgs obj)
+    private static void HidDevice_DeviceArrived(DeviceEventArgs obj)
     {
-        string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-        PnPDetails deviceEx = null;
-
-        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
-        while (DateTime.Now < timeout && deviceEx is null)
+        try
         {
-            deviceEx = GetDetails(obj.SymLink);
-            await Task.Delay(1);
+            Task.Run(() =>
+            {
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
+                    return;
+
+                PnPDetails deviceEx = null;
+
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = GetDetails(obj.SymLink);
+                    Task.Delay(100);
+                }
+
+                // skip if XInput
+                if (deviceEx is null || deviceEx.isXInput)
+                    return;
+
+                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
+                    deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+                HidDeviceArrived?.Invoke(deviceEx, obj);
+            });
         }
-
-        // skip if XInput
-        if (deviceEx is null || deviceEx.isXInput)
-            return;
-
-        LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
-            deviceEx.GetProductID(), deviceEx.deviceInstanceId);
-        HidDeviceArrived?.Invoke(deviceEx, obj);
+        catch { }
     }
 
     private static void UsbDevice_DeviceRemoved(DeviceEventArgs obj)

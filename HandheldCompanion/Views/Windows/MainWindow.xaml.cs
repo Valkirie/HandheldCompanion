@@ -599,7 +599,7 @@ public partial class MainWindow : GamepadWindow
                 // sleep
                 {
                     // stop the virtual controller
-                    VirtualManager.Pause();
+                    VirtualManager.Suspend();
 
                     // stop timer manager
                     TimerManager.Stop();

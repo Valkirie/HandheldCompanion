@@ -19,8 +19,10 @@ namespace HandheldCompanion.Managers
         public static HIDmode HIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
-        public static ushort ProductId = 0x28E;
-        public static ushort VendorId = 0x45E;
+        public static ushort ProductId = 0x28E; // Xbox 360
+        public static ushort VendorId = 0x45E;  // Microsoft
+
+        public static ushort FakeVendorId = 0x76B;  // HC
 
         public static bool IsInitialized;
 
@@ -87,7 +89,7 @@ namespace HandheldCompanion.Managers
             SetControllerMode(HIDmode);
         }
 
-        public static void Pause()
+        public static void Suspend()
         {
             // reset vigem
             ResetViGEm();

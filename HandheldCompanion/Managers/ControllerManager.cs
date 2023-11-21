@@ -8,6 +8,7 @@ using HandheldCompanion.Views.Classes;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
@@ -93,6 +94,35 @@ public static class ControllerManager
         ControllerSelected?.Invoke(GetEmulatedController());
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+    }
+
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        IsInitialized = false;
+
+        // unplug on close
+        ClearTargetController();
+
+        DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+        DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+
+        DeviceManager.HidDeviceArrived -= HidDeviceArrived;
+        DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        // uncloak on close, if requested
+        if (SettingsManager.GetBoolean("HIDuncloakonclose"))
+            foreach (var controller in GetPhysicalControllers())
+                controller.Unhide(false);
+
+        // Flushing possible JoyShocks...
+        JslDisconnectAndDisposeAll();
+
+        LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
 
     private static void OnColorValuesChanged(UISettings sender, object args)
@@ -188,35 +218,6 @@ public static class ControllerManager
         // either main window or quicktools are focused
         if (focusedWindows != FocusedWindow.None)
             ControllerMuted = true;
-    }
-
-    public static void Stop()
-    {
-        if (!IsInitialized)
-            return;
-
-        IsInitialized = false;
-
-        // unplug on close
-        ClearTargetController();
-
-        DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
-        DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
-
-        DeviceManager.HidDeviceArrived -= HidDeviceArrived;
-        DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
-
-        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
-
-        // uncloak on close, if requested
-        if (SettingsManager.GetBoolean("HIDuncloakonclose"))
-            foreach (var controller in GetPhysicalControllers())
-                controller.Unhide(false);
-
-        // Flushing possible JoyShocks...
-        JslDisconnectAndDisposeAll();
-
-        LogManager.LogInformation("{0} has stopped", "ControllerManager");
     }
 
     private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -541,6 +542,7 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
+    private static List<IXbox360Controller> placeholders = new();
     private static void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         lock (updateLock)
@@ -556,22 +558,23 @@ public static class ControllerManager
             {
                 // check if it is first controller
                 IController controller = GetControllerFromSlot(UserIndex.One, false);
-
                 if (controller is null)
                 {
                     Working?.Invoke(true);
 
+                    // suspend virtual controller
+                    VirtualManager.Suspend();
+
                     // suspend all physical controllers
-                    foreach(XInputController xInputController in GetPhysicalControllers())
+                    foreach (XInputController xInputController in GetPhysicalControllers())
                         SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
 
-                    List<IXbox360Controller> placeholders = new();
-
                     // fill all slots with virtual controllers
+                    ViGEmClient viGEmClient = new();
                     for (UserIndex userIndex = UserIndex.One; userIndex <= UserIndex.Four; userIndex++)
                     {
                         // create a virtual controller
-                        IXbox360Controller tempController = VirtualManager.vClient.CreateXbox360Controller(VirtualManager.VendorId, VirtualManager.ProductId);
+                        IXbox360Controller tempController = viGEmClient.CreateXbox360Controller(VirtualManager.FakeVendorId, (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue));
                         placeholders.Add(tempController);
                     }
 
@@ -579,18 +582,21 @@ public static class ControllerManager
                     foreach (IXbox360Controller placeholder in placeholders)
                     {
                         placeholder.Connect();
-                        Task.Delay(1000);
+                        Task.Delay(500);
                     }
 
                     // disconnect all virtual controllers
                     foreach (IXbox360Controller placeholder in placeholders)
+                    {
                         placeholder.Disconnect();
+                        Task.Delay(500);
+                    }
 
-                    Task.Delay(1000);
+                    // clear array
+                    viGEmClient.Dispose();
+                    placeholders.Clear();
 
-                    // create main virtual controller
-                    VirtualManager.Pause();
-                    Task.Delay(1000);
+                    // resume virtual controller
                     VirtualManager.Resume();
                 }
                 else

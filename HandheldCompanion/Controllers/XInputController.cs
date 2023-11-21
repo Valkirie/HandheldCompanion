@@ -184,7 +184,7 @@ public class XInputController : IController
         return SharpDX.XInput.UserIndex.Any;
     }
 
-    public void AttachController(byte userIndex)
+    public virtual void AttachController(byte userIndex)
     {
         if (UserIndex == userIndex)
             return;
@@ -193,7 +193,7 @@ public class XInputController : IController
         Controller = new((UserIndex)userIndex);
     }
 
-    public void AttachDetails(PnPDetails details)
+    public virtual void AttachDetails(PnPDetails details)
     {
         this.Details = details;
         Details.isHooked = true;

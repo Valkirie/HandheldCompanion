@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -80,7 +81,7 @@ namespace HandheldCompanion
             return instanceIDs;
         }
 
-        private static Process StartPnPUtil(string arguments)
+        public static Process StartPnPUtil(string arguments)
         {
             Process process = new();
 
