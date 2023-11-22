@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Timers;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Timer = System.Timers.Timer;
@@ -34,7 +33,11 @@ public static class DynamicLightingManager
     private static int squareSize = 100;
     private const int squareStep = 10;
 
+    private static Thread ambilightThread;
+    private static bool ambilightThreadRunning;
+
     private static bool VerticalBlackBarDetectionEnabled;
+    private static object updateLock = new();
 
     static DynamicLightingManager()
     {
@@ -46,8 +49,8 @@ public static class DynamicLightingManager
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         MainWindow.CurrentDevice.PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
-        rumbleThread = new Thread(RumbleThreadLoop);
-        rumbleThread.IsBackground = true;
+        ambilightThread = new Thread(ambilightThreadLoop);
+        ambilightThread.IsBackground = true;
 
         DynamicLightingTimer = new(125)
         {
@@ -69,8 +72,8 @@ public static class DynamicLightingManager
         if (!IsInitialized)
             return;
 
-        rumbleThreadRunning = false;
-        rumbleThread.Join();
+        ambilightThreadRunning = false;
+        ambilightThread.Join();
         
         ReleaseDirect3DDevice();
 
@@ -90,7 +93,9 @@ public static class DynamicLightingManager
         squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
         // (Re)create the Direct3D device
+        StopAmbilight();
         InitializeDirect3DDevice();
+        StartAmbilight();
     }
 
     private static void InitializeDirect3DDevice()
@@ -183,11 +188,7 @@ public static class DynamicLightingManager
                 case LEDLevel.Breathing:
                 case LEDLevel.Rainbow:
                     {
-                        if (rumbleThreadRunning)
-                        {
-                            rumbleThreadRunning = false;
-                            rumbleThread.Join();
-                        }
+                        StopAmbilight();
 
                         MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDMainColor, LEDSettingsLevel, LEDSpeed);
                     }
@@ -197,11 +198,7 @@ public static class DynamicLightingManager
                 case LEDLevel.Wheel:
                 case LEDLevel.Gradient:
                     {
-                        if (rumbleThreadRunning)
-                        {
-                            rumbleThreadRunning = false;
-                            rumbleThread.Join();
-                        }
+                        StopAmbilight();
 
                         MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDSecondColor, LEDSettingsLevel, LEDSpeed);
                     }
@@ -210,19 +207,9 @@ public static class DynamicLightingManager
                 case LEDLevel.Ambilight:
                     {
                         // Start adjusting LED colors based on screen content
-                        if (!rumbleThreadRunning)
+                        if (!ambilightThreadRunning)
                         {
-                            // Reset color histories for next time
-                            previousColorLeft = new Color();
-                            previousColorRight = new Color();
-                            leftLedTracker.Reset();
-                            rightLedTracker.Reset();
-
-                            rumbleThreadRunning = true;
-
-                            rumbleThread = new Thread(RumbleThreadLoop);
-                            rumbleThread.IsBackground = true;
-                            rumbleThread.Start();
+                            StartAmbilight();
 
                             // Provide LEDs with initial brightness
                             MainWindow.CurrentDevice.SetLedBrightness(100);
@@ -234,11 +221,7 @@ public static class DynamicLightingManager
         }
         else
         {
-            if (rumbleThreadRunning)
-            {
-                rumbleThreadRunning = false;
-                rumbleThread.Join();
-            }
+            StopAmbilight();
 
             // Set both brightness to 0 and color to black
             MainWindow.CurrentDevice.SetLedBrightness(0);
@@ -246,12 +229,9 @@ public static class DynamicLightingManager
         }
     }
 
-    private static Thread rumbleThread;
-    private static bool rumbleThreadRunning;
-
-    private static void RumbleThreadLoop(object? obj)
+    private static void ambilightThreadLoop(object? obj)
     {
-        while (rumbleThreadRunning)
+        while (ambilightThreadRunning)
         {
             try
             {
@@ -297,9 +277,31 @@ public static class DynamicLightingManager
         }
     }
 
-    private static void AmbilightTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void StartAmbilight()
     {
-        
+        if (ambilightThreadRunning)
+            return;
+
+        // Reset color histories for next time
+        previousColorLeft = new Color();
+        previousColorRight = new Color();
+        leftLedTracker.Reset();
+        rightLedTracker.Reset();
+
+        ambilightThreadRunning = true;
+
+        ambilightThread = new Thread(ambilightThreadLoop);
+        ambilightThread.IsBackground = true;
+        ambilightThread.Start();
+    }
+
+    private static void StopAmbilight()
+    {
+        if (!ambilightThreadRunning)
+            return;
+
+        ambilightThreadRunning = false;
+        ambilightThread.Join();
     }
 
     private static Color CalculateColorAverage(int x, int y)
