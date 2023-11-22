@@ -763,12 +763,16 @@
   <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
     <value>Enabled, turn off with button(s)</value>
   </data>
+	<data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
+    <value>Toggle between enabled or disabled with button(s)</value>
+  </data>
   <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
     <value>Motion activation</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
-    <value>With motion input disabled, use selected button(s) to enable motion,
-with motion input enabled, use selected button(s) to disable motion.</value>
+    <value>With motion input disabled, hold selected button(s) to enable motion,
+with motion input enabled, hold selected button(s) to disable motion,
+with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>

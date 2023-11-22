@@ -91,10 +91,9 @@
                                     Name="cB_Input"
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
-                                    HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     HorizontalContentAlignment="Left"
-                                    SelectionChanged="cB_Input_SelectionChanged" />
+                                    SelectionChanged="cB_Input_SelectionChanged" Width="371" />
                             </Grid>
 
                             <!--  Separator  -->
@@ -136,6 +135,7 @@
                                         SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
                                         <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
                                         <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                                        <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
                                     </ComboBox>
                                 </ui:SimpleStackPanel>
                             </Grid>

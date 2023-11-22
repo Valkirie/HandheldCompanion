@@ -581,6 +581,7 @@
                                 SelectionChanged="cB_UMC_MotionDefaultOffOn_SelectionChanged">
                                 <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOff}" />
                                 <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionOn}" />
+                                <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_UMCMotionToggle}" />
                             </ComboBox>
                         </Grid>
 
