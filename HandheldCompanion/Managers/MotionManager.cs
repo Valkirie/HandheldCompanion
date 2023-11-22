@@ -146,7 +146,7 @@ namespace HandheldCompanion.Managers
 
             // update timestamp
             double TotalMilliseconds = TimerManager.Stopwatch.Elapsed.TotalMilliseconds;
-            DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000L;
+            DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000;
             PreviousTotalMilliseconds = TotalMilliseconds;
 
             //toggle motion when trigger is pressed
