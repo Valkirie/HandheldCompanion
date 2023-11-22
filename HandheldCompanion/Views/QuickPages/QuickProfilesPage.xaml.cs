@@ -11,8 +11,6 @@ using System;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
-
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;
@@ -262,7 +260,6 @@ public partial class QuickProfilesPage : Page
     private void HotkeysManager_CommandExecuted(string listener)
     {
         // UI thread (async)
-        bool PluggedInStatus = System.Windows.Forms.SystemInformation.PowerStatus.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online;
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             switch (listener)
@@ -271,16 +268,16 @@ public partial class QuickProfilesPage : Page
                     {
                         if (currentProfile is null || !currentProfile.TDPOverrideEnabled)
                             return;
-                        if(!PluggedInStatus && currentProfile.TDPOnBatteryEnabled) TDPOnBatterySlider.Value++;
-                        else TDPSlider.Value++;
+
+                        TDPSlider.Value++;
                     }
                     break;
                 case "decreaseTDP":
                     {
                         if (currentProfile is null || !currentProfile.TDPOverrideEnabled)
                             return;
-                        if (!PluggedInStatus && currentProfile.TDPOnBatteryEnabled) TDPOnBatterySlider.Value--;
-                        else TDPSlider.Value--;
+
+                        TDPSlider.Value--;
                     }
                     break;
             }
@@ -299,7 +296,6 @@ public partial class QuickProfilesPage : Page
                         using (new ScopedLock(updateLock))
                         {
                             TDPSlider.Minimum = (double)value;
-                            TDPOnBatterySlider.Minimum = (double)value;
                         }
                     }
                     break;
@@ -308,7 +304,6 @@ public partial class QuickProfilesPage : Page
                         using (new ScopedLock(updateLock))
                         {
                             TDPSlider.Maximum = (double)value;
-                            TDPOnBatterySlider.Maximum = (double)value;
                         }
                     }
                     break;
@@ -390,13 +385,6 @@ public partial class QuickProfilesPage : Page
                         ? currentProfile.TDPOverrideValues
                         : MainWindow.CurrentDevice.nTDP;
                     TDPSlider.Value = TDP[(int)PowerType.Slow];
-
-                    // TDP On Battery
-                    TDPOnBatteryToggle.IsOn = currentProfile.TDPOnBatteryEnabled;
-                    var TDPOnBattery = currentProfile.TDPOnBatteryValues is not null
-                        ? currentProfile.TDPOnBatteryValues
-                        : MainWindow.CurrentDevice.nTDP;
-                    TDPOnBatterySlider.Value = TDPOnBattery[(int)PowerType.Slow];
 
                     // GPU
                     GPUToggle.IsOn = currentProfile.GPUOverrideEnabled;
@@ -499,7 +487,6 @@ public partial class QuickProfilesPage : Page
         currentProfile.Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout;
         currentProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
         currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
-        currentProfile.TDPOnBatteryValues = MainWindow.CurrentDevice.nTDP;
 
         // if an update is pending, execute it and stop timer
         if (UpdateTimer.Enabled)
@@ -598,34 +585,6 @@ public partial class QuickProfilesPage : Page
                 (int)TDPSlider.Value,
                 (int)TDPSlider.Value,
                 (int)TDPSlider.Value
-        };
-        RequestUpdate();
-    }
-    private void TDPOnBatteryToggle_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (currentProfile is null)
-            return;
-
-        if (updateLock)
-            return;
-
-        currentProfile.TDPOnBatteryEnabled = TDPOnBatteryToggle.IsOn;
-        RequestUpdate();
-    }
-
-    private void TDPOnBatterySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (currentProfile is null)
-            return;
-
-        if (updateLock)
-            return;
-
-        currentProfile.TDPOnBatteryValues = new double[3]
-        {
-                (int)TDPOnBatterySlider.Value,
-                (int)TDPOnBatterySlider.Value,
-                (int)TDPOnBatterySlider.Value
         };
         RequestUpdate();
     }

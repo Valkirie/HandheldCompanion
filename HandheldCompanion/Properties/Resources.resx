@@ -2357,10 +2357,4 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Make this the default layout</value>
   </data>
-  <data name="ProfilesPage_TDPOnBattery" xml:space="preserve">
-    <value>TDP settings On Battery</value>
-  </data>
-  <data name="ProfilesPage_TDPOnBatteryDesc" xml:space="preserve">
-    <value>Using seperated TDP settings when On Battery</value>
-  </data>
 </root>

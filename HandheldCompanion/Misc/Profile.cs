@@ -123,8 +123,6 @@ public partial class Profile : ICloneable, IComparable
     // power
     public bool TDPOverrideEnabled { get; set; }
     public double[] TDPOverrideValues { get; set; }
-    public bool TDPOnBatteryEnabled { get; set; }
-    public double[] TDPOnBatteryValues { get; set; }
 
     public bool GPUOverrideEnabled { get; set; }
     public double GPUOverrideValue { get; set; }

@@ -4987,24 +4987,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TDP settings On Battery.
-        /// </summary>
-        public static string ProfilesPage_TDPOnBattery {
-            get {
-                return ResourceManager.GetString("ProfilesPage_TDPOnBattery", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Using seperated TDP settings when On Battery.
-        /// </summary>
-        public static string ProfilesPage_TDPOnBatteryDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_TDPOnBatteryDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Thermal Power (TDP) limit.
         /// </summary>
         public static string ProfilesPage_TDPOverride {
