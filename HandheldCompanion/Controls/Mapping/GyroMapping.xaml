@@ -91,9 +91,10 @@
                                     Name="cB_Input"
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     HorizontalContentAlignment="Left"
-                                    SelectionChanged="cB_Input_SelectionChanged" Width="371" />
+                                    SelectionChanged="cB_Input_SelectionChanged" />
                             </Grid>
 
                             <!--  Separator  -->
