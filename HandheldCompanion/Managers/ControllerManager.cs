@@ -562,9 +562,14 @@ public static class ControllerManager
         lock (updateLock)
         {
             // monitoring unexpected slot changes
-            foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details.isXInput))
+            foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
                 byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath);
+
+                // controller is not ready yet
+                if (UserIndex == byte.MaxValue)
+                    continue;
+
                 xInputController.AttachController(UserIndex);
             }
 
@@ -596,14 +601,14 @@ public static class ControllerManager
                     foreach (IXbox360Controller placeholder in placeholders)
                     {
                         placeholder.Connect();
-                        Task.Delay(500);
+                        Thread.Sleep(500);
                     }
 
                     // disconnect all virtual controllers
                     foreach (IXbox360Controller placeholder in placeholders)
                     {
                         placeholder.Disconnect();
-                        Task.Delay(500);
+                        Thread.Sleep(500);
                     }
 
                     // clear array

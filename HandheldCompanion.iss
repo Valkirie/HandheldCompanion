@@ -215,19 +215,6 @@ begin
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck' + Dependency_ArchSuffix + '.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
-procedure Dependency_AddDotNet80;
-begin
-  // https://dotnet.microsoft.com/en-us/download/dotnet/8.0
-  if not Dependency_IsNetCoreInstalled('Microsoft.NETCore.App 8.0.0') then begin
-    Dependency_Add('dotNet80' + Dependency_ArchSuffix + '.exe',
-      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
-      '.NET Runtime 8.0.0' + Dependency_ArchTitle,
-      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/7f4d5cbc-4449-4ea5-9578-c467821f251f/b9b19f89d0642bf78f4b612c6a741637/dotnet-runtime-8.0.0-win-x64.exe',
-	  'https://download.visualstudio.microsoft.com/download/pr/593685c9-7e98-455a-8e34-4b8ad1be9489/6ccf85c6fc244428d61f74ca3aee0645/dotnet-runtime-8.0.0-win-x86.exe'),
-      '', False, False);
-  end;
-end;
-
 procedure Dependency_AddDotNet80Desktop;
 begin
   // https://dotnet.microsoft.com/en-us/download/dotnet/8.0
@@ -325,17 +312,17 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
-  Dependency_Add('HidHide_1.4.186_x64.exe',
-    '/quiet /norestart',
+  Dependency_Add('HidHide_1.4.192_x64.exe',
+    '',
     'HidHide Drivers',
-    'https://github.com/nefarius/HidHide/releases/download/v1.4.186.0/HidHide_1.4.186_x64.exe',
+    'https://github.com/nefarius/HidHide/releases/download/v1.4.192.0/HidHide_1.4.192_x64.exe',
     '', True, False);
 end;
 
 procedure Dependency_AddViGem;
 begin
   Dependency_Add('ViGEmBus_1.22.0_x64_x86_arm64.exe',
-    '/quiet /norestart',
+    '',
     'ViGEmBus Setup',
     'https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
     '', True, False);
@@ -343,19 +330,19 @@ end;
 
 procedure Dependency_AddRTSS;
 begin
-  Dependency_Add('RTSSSetup734.exe',
+  Dependency_Add('RTSSSetup735Beta5.exe',
     '/S',
-    'RTSS Setup v7.3.4',
-    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup734.exe',
+    'RTSS Setup v7.3.5 Beta5',
+    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup735Beta5.exe',
     '', True, False);
 end;
 
 procedure Dependency_AddHWiNFO;
 begin
-  Dependency_Add('hwi_746.exe',
+  Dependency_Add('hwi_766.exe',
     '/silent',
-    'HWiNFO v7.4.6',
-    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/hwi_746.exe',
+    'HWiNFO v7.6.6',
+    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/hwi_766.exe',
     '', True, False);
 end;
 
@@ -387,7 +374,7 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.19.0.3'
+#define MyAppVersion '0.19.0.6'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -453,7 +440,7 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
 [UninstallRun]
-Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
+Filename: "C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
