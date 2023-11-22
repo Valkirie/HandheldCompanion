@@ -2,12 +2,15 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Pages;
+using Microsoft.Win32;
 using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
@@ -99,6 +102,9 @@ public class PerformanceManager : Manager
         autoWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
         autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
+        // Monitor Power Status
+        SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
 
@@ -113,6 +119,11 @@ public class PerformanceManager : Manager
 
         currentCoreCount = Environment.ProcessorCount;
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
+    }
+
+    private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+    {
+        ProfilesPage.RequestUpdate();
     }
 
     private void SettingsManagerOnSettingValueChanged(string name, object value)
@@ -140,10 +151,16 @@ public class PerformanceManager : Manager
         // apply profile defined TDP
         if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
         {
+            double[] TDPOverrideValues;
+            // Check if using TDP on Battery & is not Plugged in
+            bool PluggedInStatus = SystemInformation.PowerStatus.PowerLineStatus == PowerLineStatus.Online;
+            if (profile.TDPOnBatteryEnabled && profile.TDPOnBatteryValues is not null && !PluggedInStatus) TDPOverrideValues = profile.TDPOnBatteryValues;
+            else TDPOverrideValues = profile.TDPOverrideValues;
+
             if (!profile.AutoTDPEnabled)
             {
                 // Manual TDP is set, use it and set max limit
-                RequestTDP(profile.TDPOverrideValues);
+                RequestTDP(TDPOverrideValues);
                 StartTDPWatchdog();
                 AutoTDPMax = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
             }
@@ -151,7 +168,7 @@ public class PerformanceManager : Manager
             {
                 // Both manual TDP and AutoTDP are on,
                 // use manual slider as the max limit for AutoTDP
-                AutoTDPMax = profile.TDPOverrideValues[0];
+                AutoTDPMax = TDPOverrideValues[0];
                 StopTDPWatchdog(true);
             }
         }

@@ -130,6 +130,7 @@ public partial class ProfilesPage : Page
                         using (new ScopedLock(updateLock))
                         {
                             TDPSlider.Minimum = (double)value;
+                            TDPOnBatterySlider.Minimum = (double)value;
                         }
                     }
                     break;
@@ -138,6 +139,7 @@ public partial class ProfilesPage : Page
                         using (new ScopedLock(updateLock))
                         {
                             TDPSlider.Maximum = (double)value;
+                            TDPOnBatterySlider.Maximum = (double)value;
                         }
                     }
                     break;
@@ -401,6 +403,17 @@ public partial class ProfilesPage : Page
                 TDPSlider.Minimum = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
                 TDPSlider.Maximum = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
 
+                // Sustained TDP On Battery settings (slow, stapm, long)
+                TDPOnBatteryToggle.IsOn = selectedProfile.TDPOnBatteryEnabled;
+                var TDPOnBattery = selectedProfile.TDPOnBatteryValues is not null
+                    ? selectedProfile.TDPOnBatteryValues
+                    : MainWindow.CurrentDevice.nTDP;
+                TDPOnBatterySlider.Value = TDPOnBattery[(int)PowerType.Slow];
+
+                // define slider(s) min and max values based on device specifications
+                TDPOnBatterySlider.Minimum = SettingsManager.GetInt("ConfigurableTDPOverrideDown");
+                TDPOnBatterySlider.Maximum = SettingsManager.GetInt("ConfigurableTDPOverrideUp");
+
                 // Automatic TDP
                 AutoTDPToggle.IsOn = selectedProfile.AutoTDPEnabled;
                 AutoTDPSlider.Value = (int)selectedProfile.AutoTDPRequestedFPS;
@@ -568,6 +581,34 @@ public partial class ProfilesPage : Page
             (int)TDPSlider.Value,
             (int)TDPSlider.Value,
             (int)TDPSlider.Value
+        };
+        RequestUpdate();
+    }
+
+    private void TDPOnBatteryToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.TDPOnBatteryEnabled = TDPOnBatteryToggle.IsOn;
+        RequestUpdate();
+    }
+
+    private void TDPOnBatterySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!TDPOnBatterySlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.TDPOnBatteryValues = new double[3]
+        {
+            (int)TDPOnBatterySlider.Value,
+            (int)TDPOnBatterySlider.Value,
+            (int)TDPOnBatterySlider.Value
         };
         RequestUpdate();
     }
