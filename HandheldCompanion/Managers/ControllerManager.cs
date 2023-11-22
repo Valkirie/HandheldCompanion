@@ -811,8 +811,6 @@ public static class ControllerManager
 
         if (deviceInstanceIds is null)
             deviceInstanceIds = new();
-        else if (deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
-            return true;
 
         try
         {
