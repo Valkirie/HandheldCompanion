@@ -1,8 +1,7 @@
 ﻿using HandheldCompanion.Actions;
-using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
+using HandheldCompanion.Misc;
 using HidLibrary;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -18,6 +17,14 @@ namespace HandheldCompanion.Devices;
 
 public class LegionGo : IDevice
 {
+    public enum LegionMode
+    {
+        Quiet = 0,
+        Balance = 1,
+        Performance = 2,
+        Custom = 3,
+    }
+
     public const byte INPUT_HID_ID = 0x04;
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
@@ -63,6 +70,32 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
+        powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
+        {
+            Default = true,
+            OSPowerMode = PowerMode.BetterBattery,
+            OEMPowerMode = (int)LegionMode.Quiet,
+            Guid = PowerMode.BetterBattery
+        };
+
+        powerProfileBalanced = new(Properties.Resources.PowerProfilePerformanceName, Properties.Resources.PowerProfilePerformanceDescription)
+        {
+            Default = true,
+            OSPowerMode = PowerMode.BetterPerformance,
+            OEMPowerMode = (int)LegionMode.Balance,
+            Guid = PowerMode.BetterPerformance
+        };
+
+        powerProfileCool = new(Properties.Resources.PowerProfileTurboName, Properties.Resources.PowerProfileTurboDescription)
+        {
+            Default = true,
+            OSPowerMode = PowerMode.BestPerformance,
+            OEMPowerMode = (int)LegionMode.Performance,
+            Guid = PowerMode.BestPerformance
+        };
+
+        PowerProfileManager.Applied += PowerProfileManager_Applied;
+
         OEMChords.Add(new DeviceChord("LegionR",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
@@ -84,6 +117,17 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
 
         Init();
+    }
+
+    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    {
+        if (profile.OEMPowerMode == -1)
+            ECRAMWrite(0x0A, (byte)LegionMode.Custom);
+        else
+            ECRAMWrite(0x0A, (byte)profile.OEMPowerMode);
+
+        // Fan control: Default, Full (0, 1)
+        // ECRAMWrite(0x8A, 0);
     }
 
     public override bool Open()
