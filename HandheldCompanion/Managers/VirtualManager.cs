@@ -83,7 +83,8 @@ namespace HandheldCompanion.Managers
         public static void Resume()
         {
             // create new ViGEm client
-            vClient = new ViGEmClient();
+            if (vClient is null)
+                vClient = new ViGEmClient();
 
             // set controller mode
             SetControllerMode(HIDmode);

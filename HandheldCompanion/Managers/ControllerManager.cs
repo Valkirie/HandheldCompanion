@@ -39,6 +39,9 @@ public static class ControllerManager
     private static Timer Watchdog;
     private static bool ControllerManagement;
 
+    private static bool ControllerManagementSuccess = false;
+    private static int ControllerManagementAttempts = 0;
+
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
 
@@ -51,7 +54,7 @@ public static class ControllerManager
 
     static ControllerManager()
     {
-        Watchdog = new(2000);
+        Watchdog = new(3000);
         Watchdog.Elapsed += Watchdog_Elapsed;
         Watchdog.Enabled = false;
     }
@@ -561,6 +564,14 @@ public static class ControllerManager
     {
         lock (updateLock)
         {
+            // disable that setting if we failed three times
+            if (ControllerManagementAttempts == 3)
+            {
+                Working?.Invoke(2);
+                Watchdog.Stop();
+                SettingsManager.SetProperty("ControllerManagement", false);
+            }
+
             // monitoring unexpected slot changes
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
@@ -579,40 +590,41 @@ public static class ControllerManager
                 IController controller = GetControllerFromSlot(UserIndex.One, false);
                 if (controller is null)
                 {
-                    Working?.Invoke(true);
+                    Working?.Invoke(0);
+                    ControllerManagementAttempts++;
 
                     // suspend virtual controller
                     VirtualManager.Suspend();
 
                     // suspend all physical controllers
+                    // PnPUtil.StartPnPUtil(@"/delete-driver C:\Windows\INF\xusb22.inf /uninstall /force");
                     foreach (XInputController xInputController in GetPhysicalControllers())
                         SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
 
+                    // restore VirtualManager ViGEmClient
+                    VirtualManager.vClient = new();
+
                     // fill all slots with virtual controllers
-                    ViGEmClient viGEmClient = new();
                     for (UserIndex userIndex = UserIndex.One; userIndex <= UserIndex.Four; userIndex++)
                     {
                         // create a virtual controller
-                        IXbox360Controller tempController = viGEmClient.CreateXbox360Controller(VirtualManager.FakeVendorId, (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue));
+                        IXbox360Controller tempController = VirtualManager.vClient.CreateXbox360Controller(VirtualManager.FakeVendorId, (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue));
                         placeholders.Add(tempController);
                     }
 
                     // connect all virtual controllers
                     foreach (IXbox360Controller placeholder in placeholders)
-                    {
                         placeholder.Connect();
-                        Thread.Sleep(500);
-                    }
+
+                    Thread.Sleep(2000);
 
                     // disconnect all virtual controllers
                     foreach (IXbox360Controller placeholder in placeholders)
-                    {
                         placeholder.Disconnect();
-                        Thread.Sleep(500);
-                    }
+
+                    Thread.Sleep(2000);
 
                     // clear array
-                    viGEmClient.Dispose();
                     placeholders.Clear();
 
                     // resume virtual controller
@@ -621,20 +633,18 @@ public static class ControllerManager
                 else
                 {
                     // resume all physical controllers
+                    // PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
                     StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
                     if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
                         ResumeControllers();
 
-                    // force clear controllers array from temporary virtual controllers
-                    foreach(IController vController in GetVirtualControllers())
-                    {
-                        if (vController.Details.baseContainerDeviceInstanceId == controller.Details.baseContainerDeviceInstanceId)
-                            continue;
+                    // give us one extra loop to make sure we're good
+                    if (!ControllerManagementSuccess)
+                        ControllerManagementSuccess = true;
+                    else
+                        ControllerManagementAttempts = 0;
 
-                        Controllers.TryRemove(vController.Details.baseContainerDeviceInstanceId, out _);
-                    }
-
-                    Working?.Invoke(false);
+                    Working?.Invoke(1);
                 }
             }
         }
@@ -709,7 +719,7 @@ public static class ControllerManager
         }
 
         // restart watchdog
-        if (ControllerManagement)
+        if (ControllerManagement && controller.IsPhysical())
         {
             Watchdog.Stop();
             Watchdog.Start();
@@ -741,7 +751,7 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
 
         // restart watchdog
-        if (ControllerManagement)
+        if (ControllerManagement && controller.IsPhysical())
         {
             Watchdog.Stop();
             Watchdog.Start();
@@ -821,15 +831,24 @@ public static class ControllerManager
         {
             PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(baseContainerDeviceInstanceId);
             UsbPnPDevice usbPnPDevice = pnPDevice.ToUsbPnPDevice();
+            DriverMeta pnPDriver = null;
+
+            try
+            {
+                pnPDriver = pnPDevice.GetCurrentDriver();
+            }
+            catch { }
 
             string enumerator = pnPDevice.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
             switch (enumerator)
             {
                 case "USB":
-                    pnPDevice.InstallNullDriver(out bool rebootRequired);
+                    if (pnPDriver is not null)
+                        pnPDevice.InstallNullDriver(out bool rebootRequired);
                     usbPnPDevice.CyclePort();
 
-                    deviceInstanceIds.Add(baseContainerDeviceInstanceId);
+                    if (!deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
+                        deviceInstanceIds.Add(baseContainerDeviceInstanceId);
 
                     SettingsManager.SetProperty("SuspendedControllers", deviceInstanceIds);
                     PowerCyclers[baseContainerDeviceInstanceId] = true;
@@ -989,7 +1008,7 @@ public static class ControllerManager
     public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 
     public static event WorkingEventHandler Working;
-    public delegate void WorkingEventHandler(bool busy);
+    public delegate void WorkingEventHandler(int status);
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();

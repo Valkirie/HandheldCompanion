@@ -43,10 +43,10 @@
                             Visibility="Collapsed">
                             <ui:ProgressRing Width="200" Height="200" />
                             <TextBlock
+                                Name="ControllerLoadingText"
                                 HorizontalAlignment="Center"
                                 Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
-                                Style="{DynamicResource BaseTextBlockStyle}"
-                                Text="Give us a minute while we try to organize your controllers." />
+                                Style="{DynamicResource BaseTextBlockStyle}" />
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel

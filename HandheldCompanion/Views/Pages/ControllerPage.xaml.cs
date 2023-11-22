@@ -1,9 +1,12 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -187,14 +190,75 @@ public partial class ControllerPage : Page
         ControllerRefresh();
     }
 
-    private void ControllerManager_Working(bool busy)
+    private void ControllerManager_Working(int status)
     {
+        // status: 0:wip, 1:sucess, 2:failed
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            ControllerLoading.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
-            ControllerGrid.IsEnabled = !busy;
+            switch(status)
+            {
+                case 0:
+                    ControllerLoading.Visibility = Visibility.Visible;
+                    InputDevices.IsEnabled = false;
+                    ControllerGrid.IsEnabled = false;
+                    ControllerLoadingText.Text = GetRandomPhrase();
+                    break;
+                case 1:
+                case 2:
+                    ControllerLoading.Visibility = Visibility.Collapsed;
+                    InputDevices.IsEnabled = true;
+                    ControllerGrid.IsEnabled = true;
+                    break;
+            }
+
+            if (status == 2)
+            {
+                // todo: translate me
+                _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                    $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
+                    ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
+            }
         });
+    }
+
+    // A function that returns a random phrase from a list of phrases
+    public static string GetRandomPhrase()
+    {
+        // A list of phrases to be displayed by software while it reorders controllers
+        List<string> phrases = new List<string>()
+        {
+            "Reordering controllers in progress. Please wait a moment.",
+            "Hang on tight. We are reordering your controllers for optimal performance.",
+            "Your controllers are being reordered. This may take a few seconds.",
+            "Reordering controllers. Thank you for your patience.",
+            "One moment please. We are reordering your controllers to make them work better.",
+            "Reordering controllers. This will not affect your data or settings.",
+            "Please do not turn off your device. We are reordering your controllers.",
+            "Reordering controllers. Almost done.",
+            "Your controllers are being reordered. Please do not interrupt the process.",
+            "Reordering controllers. You will be notified when it is complete.",
+            "Reordering controllers. This is a routine maintenance task.",
+            "Your controllers are being reordered. This will improve your user experience.",
+            "Reordering controllers. No action is required from you.",
+            "Your controllers are being reordered. Please stand by.",
+            "Reordering controllers. This is a quick and easy process.",
+            "Your controllers are being reordered. You can continue using your device normally.",
+            "Reordering controllers. This will enhance your device's functionality.",
+            "Your controllers are being reordered. Please relax and enjoy the music.",
+            "Reordering controllers. This is a one-time operation.",
+            "Your controllers are being reordered. You will be amazed by the results."
+        };
+
+        // A random number generator
+        Random random = new Random();
+
+        // A random index between 0 and the number of phrases
+        int index = random.Next(phrases.Count);
+
+        // Return the phrase at the random index
+        return phrases[index];
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
