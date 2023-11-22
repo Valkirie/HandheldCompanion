@@ -35,6 +35,8 @@ public static class DynamicLightingManager
 
     private static Thread ambilightThread;
     private static bool ambilightThreadRunning;
+    private static int ambilightThreadDelay = defaultThreadDelay;
+    private const int defaultThreadDelay = 33;
 
     private static bool VerticalBlackBarDetectionEnabled;
     private static object updateLock = new();
@@ -215,6 +217,8 @@ public static class DynamicLightingManager
                             MainWindow.CurrentDevice.SetLedBrightness(100);
                             MainWindow.CurrentDevice.SetLedColor(Colors.Black, Colors.Black, LEDLevel.SolidColor);
                         }
+
+                        ambilightThreadDelay = (int)((double)defaultThreadDelay / 100.0d * LEDSpeed);
                     }
                     break;
             }
@@ -273,7 +277,7 @@ public static class DynamicLightingManager
             }
             catch { }
 
-            Thread.Sleep(33);
+            Thread.Sleep(ambilightThreadDelay);
         }
     }
 

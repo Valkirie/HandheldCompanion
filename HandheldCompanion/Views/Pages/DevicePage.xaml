@@ -331,7 +331,7 @@
                                 <ui:SimpleStackPanel
                                     d:Visibility="Visible"
                                     Spacing="6"
-                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5}">
+                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
 
                                     <Grid Height="40">
                                         <Grid.ColumnDefinitions>
@@ -362,7 +362,7 @@
                                                 IsSnapToTickEnabled="True"
                                                 LargeChange="10"
                                                 Maximum="100"
-                                                Minimum="0"
+                                                Minimum="10"
                                                 SmallChange="5"
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="5"
