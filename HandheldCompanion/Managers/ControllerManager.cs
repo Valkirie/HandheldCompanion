@@ -565,7 +565,7 @@ public static class ControllerManager
         lock (updateLock)
         {
             // monitoring unexpected slot changes
-            Dictionary<byte, bool> UserIndexes = new();
+            HashSet<byte> UserIndexes = new();
             bool XInputDrunk = false;
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
@@ -576,10 +576,9 @@ public static class ControllerManager
                     continue;
 
                 // that's not possible, XInput is drunk
-                if (UserIndexes.ContainsKey(UserIndex))
+                if (!UserIndexes.Add(UserIndex))
                     XInputDrunk = true;
 
-                UserIndexes.Add(UserIndex, true);
                 xInputController.AttachController(UserIndex);
             }
 
