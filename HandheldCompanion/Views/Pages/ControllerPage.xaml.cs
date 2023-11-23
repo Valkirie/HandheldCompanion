@@ -5,15 +5,20 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
+using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Page = System.Windows.Controls.Page;
+using Task = System.Threading.Tasks.Task;
 
 namespace HandheldCompanion.Views.Pages;
 
@@ -192,12 +197,11 @@ public partial class ControllerPage : Page
 
     private void ControllerManager_Working(int status)
     {
-        // status: 0:wip, 1:sucess, 2:failed
-
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(async () =>
         {
-            switch(status)
+            // status: 0:wip, 1:sucess, 2:failed
+            switch (status)
             {
                 case 0:
                     ControllerLoading.Visibility = Visibility.Visible;
@@ -216,11 +220,53 @@ public partial class ControllerPage : Page
             if (status == 2)
             {
                 // todo: translate me
-                _ = Dialog.ShowAsync($"{Properties.Resources.SettingsPage_UpdateWarning}",
+                var result = Dialog.ShowAsync(
+                    $"{Properties.Resources.SettingsPage_UpdateWarning}",
                     $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
-                    ContentDialogButton.Primary, string.Empty, $"{Properties.Resources.ProfilesPage_OK}");
+                    ContentDialogButton.Close,
+                    "Restart application",
+                    "Close");
+
+                await result; // sync call
+
+                switch (result.Result)
+                {
+                    default:
+                    case ContentDialogResult.Primary:
+                        Toggle_ControllerManagement.IsOn = false;
+                        break;
+                    case ContentDialogResult.None:
+                        {
+                            // The command to schedule the executable with Task Scheduler
+                            string exePath = Assembly.GetExecutingAssembly().Location.Replace("dll", "exe");
+                            string exeArgs = "";
+
+                            // Create a task name
+                            string taskName = "RestartHC";
+
+                            // Create a task definition using the TaskService class
+                            var td = TaskService.Instance.NewTask();
+                            td.RegistrationInfo.Description = "Run RestartHC";
+                            td.Principal.RunLevel = TaskRunLevel.Highest;
+
+                            // Create a trigger that runs the task once after 3 seconds
+                            var trigger = new TimeTrigger();
+                            trigger.StartBoundary = DateTime.Now.AddSeconds(3);
+                            td.Triggers.Add(trigger);
+
+                            // Create an action that executes the executable
+                            var action = new ExecAction(exePath, exeArgs);
+                            td.Actions.Add(action);
+
+                            // Register the task with the Task Scheduler
+                            TaskService.Instance.RootFolder.RegisterTaskDefinition(taskName, td);
+
+                            Environment.Exit(0);
+                        }
+                        break;
+                }
             }
-        });
+        });               
     }
 
     // A function that returns a random phrase from a list of phrases

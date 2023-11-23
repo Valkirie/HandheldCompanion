@@ -705,8 +705,6 @@ public partial class MainWindow : GamepadWindow
         Environment.Exit(0);
     }
 
-    bool CloseOverride = false;
-
     private async void Window_Closing(object sender, CancelEventArgs e)
     {
         // position and size settings

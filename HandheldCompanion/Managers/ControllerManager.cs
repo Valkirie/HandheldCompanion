@@ -54,7 +54,7 @@ public static class ControllerManager
 
     static ControllerManager()
     {
-        Watchdog = new(3000);
+        Watchdog = new(4000);
         Watchdog.Elapsed += Watchdog_Elapsed;
         Watchdog.Enabled = false;
     }
@@ -564,15 +564,9 @@ public static class ControllerManager
     {
         lock (updateLock)
         {
-            // disable that setting if we failed three times
-            if (ControllerManagementAttempts == 3)
-            {
-                Working?.Invoke(2);
-                Watchdog.Stop();
-                SettingsManager.SetProperty("ControllerManagement", false);
-            }
-
             // monitoring unexpected slot changes
+            Dictionary<byte, bool> UserIndexes = new();
+            bool XInputDrunk = false;
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
                 byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath);
@@ -581,7 +575,18 @@ public static class ControllerManager
                 if (UserIndex == byte.MaxValue)
                     continue;
 
+                // that's not possible, XInput is drunk
+                if (UserIndexes.ContainsKey(UserIndex))
+                    XInputDrunk = true;
+
+                UserIndexes.Add(UserIndex, true);
                 xInputController.AttachController(UserIndex);
+            }
+
+            if (XInputDrunk)
+            {
+                foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
+                    xInputController.AttachController(byte.MaxValue);
             }
 
             if (HasVirtualController())
@@ -590,61 +595,60 @@ public static class ControllerManager
                 IController controller = GetControllerFromSlot(UserIndex.One, false);
                 if (controller is null)
                 {
-                    Working?.Invoke(0);
-                    ControllerManagementAttempts++;
-
-                    // suspend virtual controller
-                    VirtualManager.Suspend();
-
-                    // suspend all physical controllers
-                    // PnPUtil.StartPnPUtil(@"/delete-driver C:\Windows\INF\xusb22.inf /uninstall /force");
-                    foreach (XInputController xInputController in GetPhysicalControllers())
-                        SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
-
-                    // restore VirtualManager ViGEmClient
-                    VirtualManager.vClient = new();
-
-                    // fill all slots with virtual controllers
-                    for (UserIndex userIndex = UserIndex.One; userIndex <= UserIndex.Four; userIndex++)
+                    // disable that setting if we failed three times
+                    if (ControllerManagementAttempts == 3)
                     {
-                        // create a virtual controller
-                        IXbox360Controller tempController = VirtualManager.vClient.CreateXbox360Controller(VirtualManager.FakeVendorId, (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue));
-                        placeholders.Add(tempController);
+                        // resume all physical controllers
+                        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+                        if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
+                            ResumeControllers();
+
+                        ControllerManagementSuccess = false;
+                        ControllerManagementAttempts = 0;
+                        Working?.Invoke(2);
+                        Watchdog.Stop();
                     }
+                    else
+                    {
+                        Working?.Invoke(0);
+                        ControllerManagementSuccess = false;
+                        ControllerManagementAttempts++;
 
-                    // connect all virtual controllers
-                    foreach (IXbox360Controller placeholder in placeholders)
-                        placeholder.Connect();
+                        // suspend virtual controller
+                        VirtualManager.Suspend();
 
-                    Thread.Sleep(2000);
+                        // suspend all physical controllers
+                        foreach (XInputController xInputController in GetPhysicalControllers())
+                            SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
 
-                    // disconnect all virtual controllers
-                    foreach (IXbox360Controller placeholder in placeholders)
-                        placeholder.Disconnect();
+                        // resume virtual controller
+                        VirtualManager.Resume();
 
-                    Thread.Sleep(2000);
+                        // resume all physical controllers
+                        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+                        if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
+                            ResumeControllers();
 
-                    // clear array
-                    placeholders.Clear();
-
-                    // resume virtual controller
-                    VirtualManager.Resume();
+                        // suspend and resume virtual controller
+                        VirtualManager.Suspend();
+                        VirtualManager.Resume();
+                    }
                 }
                 else
                 {
                     // resume all physical controllers
-                    // PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
                     StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
                     if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
                         ResumeControllers();
 
                     // give us one extra loop to make sure we're good
                     if (!ControllerManagementSuccess)
+                    {
                         ControllerManagementSuccess = true;
+                        Working?.Invoke(1);
+                    }
                     else
                         ControllerManagementAttempts = 0;
-
-                    Working?.Invoke(1);
                 }
             }
         }
@@ -822,6 +826,7 @@ public static class ControllerManager
 
     public static bool SuspendController(string baseContainerDeviceInstanceId)
     {
+        // PnPUtil.StartPnPUtil(@"/delete-driver C:\Windows\INF\xusb22.inf /uninstall /force");
         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
 
         if (deviceInstanceIds is null)
@@ -844,8 +849,10 @@ public static class ControllerManager
             {
                 case "USB":
                     if (pnPDriver is not null)
+                    {
                         pnPDevice.InstallNullDriver(out bool rebootRequired);
-                    usbPnPDevice.CyclePort();
+                            usbPnPDevice.CyclePort();
+                    }
 
                     if (!deviceInstanceIds.Contains(baseContainerDeviceInstanceId))
                         deviceInstanceIds.Add(baseContainerDeviceInstanceId);
@@ -863,7 +870,7 @@ public static class ControllerManager
 
     public static bool ResumeControllers()
     {
-        // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+        // PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
 
         if (deviceInstanceIds is null || deviceInstanceIds.Count == 0)

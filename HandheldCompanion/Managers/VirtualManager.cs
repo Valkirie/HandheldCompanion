@@ -139,7 +139,11 @@ namespace HandheldCompanion.Managers
 
             // disconnect current virtual controller
             if (vTarget is not null)
+            {
                 vTarget.Disconnect();
+                vTarget.Dispose();
+                vTarget = null;
+            }
 
             switch (mode)
             {
@@ -147,6 +151,7 @@ namespace HandheldCompanion.Managers
                 case HIDmode.NoController:
                     if (vTarget is not null)
                     {
+                        vTarget.Disconnect();
                         vTarget.Dispose();
                         vTarget = null;
                     }
