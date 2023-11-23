@@ -94,10 +94,19 @@ public static class DynamicLightingManager
 
         squareSize = (int)Math.Floor((decimal)screenWidth / 10);
 
-        // (Re)create the Direct3D device
-        StopAmbilight();
+        LEDLevel LEDSettingsLevel = (LEDLevel)SettingsManager.GetInt("LEDSettingsLevel");
+        bool ambilightOn = LEDSettingsLevel == LEDLevel.Ambilight;
+
+        // stop ambilight if running
+        if (ambilightOn)
+            StopAmbilight();
+
+        // (re)create the Direct3D device
         InitializeDirect3DDevice();
-        StartAmbilight();
+
+        // restart ambilight if it was running
+        if (ambilightOn)
+            StartAmbilight();
     }
 
     private static void InitializeDirect3DDevice()
