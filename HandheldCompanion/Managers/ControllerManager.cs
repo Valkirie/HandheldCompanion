@@ -559,7 +559,6 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
-    private static List<IXbox360Controller> placeholders = new();
     private static void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         lock (updateLock)

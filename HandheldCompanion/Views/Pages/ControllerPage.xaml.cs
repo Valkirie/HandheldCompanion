@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -195,6 +196,56 @@ public partial class ControllerPage : Page
         ControllerRefresh();
     }
 
+    private void SetVirtualControllerVisualIndex(int value)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            foreach (FrameworkElement frameworkElement in UserIndexPanel.Children)
+            {
+                if (frameworkElement is not Border)
+                    continue;
+
+                Border border = (Border)frameworkElement;
+                int idx = UserIndexPanel.Children.IndexOf(border);
+
+                if (idx == value)
+                    border.SetResourceReference(BackgroundProperty, "AccentAAFillColorDefaultBrush");
+                else
+                    border.SetResourceReference(BackgroundProperty, "SystemControlForegroundBaseLowBrush");
+            }
+        });
+    }
+
+    private int workingIdx = 0;
+    private Thread workingThread;
+    private bool workingThreadRunning;
+
+    private void workingThreadLoop(object? obj)
+    {
+        int maxIdx = 8;
+        int direction = 1; // 1 for increasing, -1 for decreasing
+
+        // UI thread (async)
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            maxIdx = UserIndexPanel.Children.Count;
+        });
+
+        while (workingThreadRunning)
+        {
+            workingIdx += direction; // increment or decrement the index
+            if (workingIdx == maxIdx - 1 || workingIdx == 0) // if the index reaches the limit or zero
+            {
+                direction = -direction; // reverse the direction
+            }
+
+            SetVirtualControllerVisualIndex(workingIdx);
+
+            Thread.Sleep(100);
+        }
+    }
+
     private void ControllerManager_Working(int status)
     {
         // UI thread (async)
@@ -207,15 +258,31 @@ public partial class ControllerPage : Page
                     ControllerLoading.Visibility = Visibility.Visible;
                     InputDevices.IsEnabled = false;
                     ControllerGrid.IsEnabled = false;
-                    ControllerLoadingText.Text = GetRandomPhrase();
+
+                    if (!workingThreadRunning)
+                    {
+                        workingThreadRunning = true;
+
+                        workingThread = new Thread(workingThreadLoop);
+                        workingThread.IsBackground = true;
+                        workingThread.Start();
+                    }
                     break;
                 case 1:
                 case 2:
-                    ControllerLoading.Visibility = Visibility.Collapsed;
+                    ControllerLoading.Visibility = Visibility.Hidden;
                     InputDevices.IsEnabled = true;
                     ControllerGrid.IsEnabled = true;
+
+                    if (workingThreadRunning)
+                    {
+                        workingThreadRunning = false;
+                        workingThread.Join();
+                    }
                     break;
             }
+
+            ControllerRefresh();
 
             if (status == 2)
             {
@@ -269,44 +336,6 @@ public partial class ControllerPage : Page
         });               
     }
 
-    // A function that returns a random phrase from a list of phrases
-    public static string GetRandomPhrase()
-    {
-        // A list of phrases to be displayed by software while it reorders controllers
-        List<string> phrases = new List<string>()
-        {
-            "Reordering controllers in progress. Please wait a moment.",
-            "Hang on tight. We are reordering your controllers for optimal performance.",
-            "Your controllers are being reordered. This may take a few seconds.",
-            "Reordering controllers. Thank you for your patience.",
-            "One moment please. We are reordering your controllers to make them work better.",
-            "Reordering controllers. This will not affect your data or settings.",
-            "Please do not turn off your device. We are reordering your controllers.",
-            "Reordering controllers. Almost done.",
-            "Your controllers are being reordered. Please do not interrupt the process.",
-            "Reordering controllers. You will be notified when it is complete.",
-            "Reordering controllers. This is a routine maintenance task.",
-            "Your controllers are being reordered. This will improve your user experience.",
-            "Reordering controllers. No action is required from you.",
-            "Your controllers are being reordered. Please stand by.",
-            "Reordering controllers. This is a quick and easy process.",
-            "Your controllers are being reordered. You can continue using your device normally.",
-            "Reordering controllers. This will enhance your device's functionality.",
-            "Your controllers are being reordered. Please relax and enjoy the music.",
-            "Reordering controllers. This is a one-time operation.",
-            "Your controllers are being reordered. You will be amazed by the results."
-        };
-
-        // A random number generator
-        Random random = new Random();
-
-        // A random index between 0 and the number of phrases
-        int index = random.Next(phrases.Count);
-
-        // Return the phrase at the random index
-        return phrases[index];
-    }
-
     private void VirtualManager_ControllerSelected(HIDmode mode)
     {
         // UI thread (async)
@@ -341,38 +370,46 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var hasPhysical = ControllerManager.HasPhysicalController();
-            var hasVirtual = ControllerManager.HasVirtualController();
-            var hasTarget = ControllerManager.GetTargetController() != null;
+            // we're busy
+            if (ControllerLoading.Visibility is Visibility.Visible)
+                return;
+
+            bool hasPhysical = ControllerManager.HasPhysicalController();
+            bool hasVirtual = ControllerManager.HasVirtualController();
+            bool hasTarget = ControllerManager.GetTargetController() != null;
 
             // check: do we have any plugged physical controller
             InputDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
-            var target = ControllerManager.GetTargetController();
-            var isPlugged = hasTarget;
-            var isHidden = hasTarget && target.IsHidden();
-            var isSteam = hasTarget && (target is NeptuneController || target is GordonController);
-            var isMuted = SettingsManager.GetBoolean("SteamControllerMute");
+            IController targetController = ControllerManager.GetTargetController();
+            IController virtualController = ControllerManager.GetVirtualControllers().FirstOrDefault();
+            int idx = virtualController is null ? -1 : virtualController.GetUserIndex();
+            SetVirtualControllerVisualIndex(idx);
 
-            DeviceSpecificPanel.Visibility = target is SteamController || target is LegionController ? Visibility.Visible : Visibility.Collapsed;
-            MuteVirtualController.Visibility = target is SteamController ? Visibility.Visible : Visibility.Collapsed;
-            TouchpadPassthrough.Visibility = target is LegionController ? Visibility.Visible : Visibility.Collapsed;
+            bool isPlugged = hasTarget;
+            bool isHidden = hasTarget && targetController.IsHidden();
+            bool isSteam = hasTarget && (targetController is NeptuneController || targetController is GordonController);
+            bool isMuted = SettingsManager.GetBoolean("SteamControllerMute");
+
+            DeviceSpecificPanel.Visibility = targetController is SteamController || targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
+            MuteVirtualController.Visibility = targetController is SteamController ? Visibility.Visible : Visibility.Collapsed;
+            TouchpadPassthrough.Visibility = targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
                 hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (not Neptune) hidden, but no virtual controller
-            var hiddenbutnovirtual = isHidden && !hasVirtual;
+            bool hiddenbutnovirtual = isHidden && !hasVirtual;
             HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
-            var neptunehidden = isHidden && isSteam && isMuted;
+            bool neptunehidden = isHidden && isSteam && isMuted;
             HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller not hidden, and virtual controller
-            var notmuted = !isHidden && hasVirtual && (!isSteam || (isSteam && !isMuted));
+            bool notmuted = !isHidden && hasVirtual && (!isSteam || (isSteam && !isMuted));
             HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
         });
     }

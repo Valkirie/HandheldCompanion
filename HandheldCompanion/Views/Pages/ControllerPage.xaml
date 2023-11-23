@@ -35,18 +35,24 @@
                         </Grid.Background>
 
                         <ui:SimpleStackPanel
-                            Name="ControllerLoading"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            d:Visibility="Visible"
-                            Spacing="12"
-                            Visibility="Collapsed">
-                            <ui:ProgressRing Width="200" Height="200" />
-                            <TextBlock
-                                Name="ControllerLoadingText"
-                                HorizontalAlignment="Center"
-                                Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
-                                Style="{DynamicResource BaseTextBlockStyle}" />
+                            Spacing="12">
+
+                            <ui:ProgressRing Name="ControllerLoading" Width="125" Height="125" />
+                            
+                            <ui:SimpleStackPanel Spacing="2" HorizontalAlignment="Left" Orientation="Horizontal" Name="UserIndexPanel">
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
 
                         <ui:SimpleStackPanel
