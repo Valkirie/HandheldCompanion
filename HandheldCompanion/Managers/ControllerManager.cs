@@ -587,66 +587,69 @@ public static class ControllerManager
                     xInputController.AttachController(byte.MaxValue);
             }
 
-            if (HasVirtualController())
+            if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
             {
-                // check if it is first controller
-                IController controller = GetControllerFromSlot(UserIndex.One, false);
-                if (controller is null)
+                if (HasVirtualController())
                 {
-                    // disable that setting if we failed three times
-                    if (ControllerManagementAttempts == 3)
+                    // check if it is first controller
+                    IController controller = GetControllerFromSlot(UserIndex.One, false);
+                    if (controller is null)
+                    {
+                        // disable that setting if we failed three times
+                        if (ControllerManagementAttempts == 3)
+                        {
+                            // resume all physical controllers
+                            StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+                            if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
+                                ResumeControllers();
+
+                            ControllerManagementSuccess = false;
+                            ControllerManagementAttempts = 0;
+                            Working?.Invoke(2);
+                            Watchdog.Stop();
+                        }
+                        else
+                        {
+                            Working?.Invoke(0);
+                            ControllerManagementSuccess = false;
+                            ControllerManagementAttempts++;
+
+                            // suspend virtual controller
+                            VirtualManager.Suspend();
+
+                            // suspend all physical controllers
+                            foreach (XInputController xInputController in GetPhysicalControllers())
+                                SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
+
+                            // resume virtual controller
+                            VirtualManager.Resume();
+
+                            // resume all physical controllers
+                            StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
+                            if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
+                                ResumeControllers();
+
+                            // suspend and resume virtual controller
+                            VirtualManager.Suspend();
+                            VirtualManager.Resume();
+                        }
+                    }
+                    else
                     {
                         // resume all physical controllers
                         StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
                         if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
                             ResumeControllers();
 
-                        ControllerManagementSuccess = false;
-                        ControllerManagementAttempts = 0;
-                        Working?.Invoke(2);
-                        Watchdog.Stop();
+                        // give us one extra loop to make sure we're good
+                        if (!ControllerManagementSuccess)
+                        {
+                            ControllerManagementSuccess = true;
+                            Working?.Invoke(1);
+                        }
+                        else
+                            ControllerManagementAttempts = 0;
                     }
-                    else
-                    {
-                        Working?.Invoke(0);
-                        ControllerManagementSuccess = false;
-                        ControllerManagementAttempts++;
-
-                        // suspend virtual controller
-                        VirtualManager.Suspend();
-
-                        // suspend all physical controllers
-                        foreach (XInputController xInputController in GetPhysicalControllers())
-                            SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
-
-                        // resume virtual controller
-                        VirtualManager.Resume();
-
-                        // resume all physical controllers
-                        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
-                        if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
-                            ResumeControllers();
-
-                        // suspend and resume virtual controller
-                        VirtualManager.Suspend();
-                        VirtualManager.Resume();
-                    }
-                }
-                else
-                {
-                    // resume all physical controllers
-                    StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
-                    if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
-                        ResumeControllers();
-
-                    // give us one extra loop to make sure we're good
-                    if (!ControllerManagementSuccess)
-                    {
-                        ControllerManagementSuccess = true;
-                        Working?.Invoke(1);
-                    }
-                    else
-                        ControllerManagementAttempts = 0;
                 }
             }
         }
