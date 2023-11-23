@@ -111,13 +111,25 @@ namespace HandheldCompanion.Controllers
             }
             set
             {
+                _UserIndex = value;
+
                 // UI thread (async)
                 Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    ControllerIndex.Text = string.Format(Properties.Resources.IController_ControllerIndex, (UserIndex)value);
-                });
+                    foreach(FrameworkElement frameworkElement in UserIndexPanel.Children)
+                    {
+                        if (frameworkElement is not Border)
+                            continue;
 
-                _UserIndex = value;
+                        Border border = (Border)frameworkElement;
+                        int idx = UserIndexPanel.Children.IndexOf(border);
+
+                        if (idx == value)
+                            border.SetResourceReference(BackgroundProperty, "AccentAAFillColorDefaultBrush");
+                        else
+                            border.SetResourceReference(BackgroundProperty, "SystemControlForegroundBaseLowBrush");
+                    }
+                });
             }
         }
 

@@ -30,13 +30,21 @@
                         FontSize="30"
                         Glyph="&#x243C;" />
 
-                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Name="ControllerName" Style="{StaticResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Name="ControllerIndex"
-                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            TextWrapping="Wrap" />
+                        
+                        <ui:SimpleStackPanel Spacing="2" HorizontalAlignment="Left" Orientation="Horizontal" Name="UserIndexPanel">
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                        </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </DockPanel>
 
