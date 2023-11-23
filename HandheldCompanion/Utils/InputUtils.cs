@@ -33,7 +33,8 @@ public enum MotionOuput
 public enum MotionMode
 {
     Off = 0,
-    On = 1
+    On = 1,
+    Toggle = 2
 }
 
 public enum OverlayModelMode

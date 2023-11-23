@@ -5599,12 +5599,22 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to With motion input disabled, use selected button(s) to enable motion,
-        ///with motion input enabled, use selected button(s) to disable motion..
+        ///   Looks up a localized string similar to With motion input disabled, hold selected button(s) to enable motion,
+        ///with motion input enabled, hold selected button(s) to disable motion,
+        ///with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_UMCMotionOnOffDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle between enabled or disabled with button(s).
+        /// </summary>
+        public static string ProfilesPage_UMCMotionToggle {
+            get {
+                return ResourceManager.GetString("ProfilesPage_UMCMotionToggle", resourceCulture);
             }
         }
         

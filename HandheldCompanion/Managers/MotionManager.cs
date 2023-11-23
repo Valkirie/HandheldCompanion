@@ -146,13 +146,34 @@ namespace HandheldCompanion.Managers
 
             // update timestamp
             double TotalMilliseconds = TimerManager.Stopwatch.Elapsed.TotalMilliseconds;
-            DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000L;
+            DeltaSeconds = (TotalMilliseconds - PreviousTotalMilliseconds) / 1000;
             PreviousTotalMilliseconds = TotalMilliseconds;
 
-            // check if motion trigger is pressed
+            //toggle motion when trigger is pressed
+            if (gyroAction.MotionMode == MotionMode.Toggle)
+            {
+                if (gyroAction.MotionTogglePressed)
+                {
+                    if (!controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger))
+                    {
+                        gyroAction.MotionTogglePressed = false; // disable debounce flag
+                    }
+                }
+                else
+                {
+                    if (controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger))
+                    {
+                        gyroAction.MotionToggleStatus = !gyroAction.MotionToggleStatus;
+                        gyroAction.MotionTogglePressed = true; // enable debounce flag
+                    }
+                }
+            }
+
+            // check if motion input is active
             bool MotionTriggered =
                 (gyroAction.MotionMode == MotionMode.Off && controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger)) ||
-                (gyroAction.MotionMode == MotionMode.On && !controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger));
+                (gyroAction.MotionMode == MotionMode.On && !controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger)) ||
+                (gyroAction.MotionMode == MotionMode.Toggle && gyroAction.MotionToggleStatus);
 
             bool MotionMapped = action?.ActionType != ActionType.Disabled;
 

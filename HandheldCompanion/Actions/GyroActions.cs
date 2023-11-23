@@ -9,6 +9,8 @@ namespace HandheldCompanion.Actions
     {
         public MotionInput MotionInput = MotionInput.JoystickCamera;
         public MotionMode MotionMode = MotionMode.Off;
+        public bool MotionToggleStatus = false;
+        public bool MotionTogglePressed = false; // for debouncing
 
         public ButtonState MotionTrigger = new();
 
