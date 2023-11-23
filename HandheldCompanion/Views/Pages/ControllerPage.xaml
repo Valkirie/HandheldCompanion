@@ -39,7 +39,7 @@
                             VerticalAlignment="Center"
                             Spacing="12">
 
-                            <ui:ProgressRing Name="ControllerLoading" Width="125" Height="125" />
+                            <ui:ProgressRing Name="ControllerLoading" Visibility="Hidden" Width="125" Height="125" />
                             
                             <ui:SimpleStackPanel Spacing="2" HorizontalAlignment="Left" Orientation="Horizontal" Name="UserIndexPanel">
                                 <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
