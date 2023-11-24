@@ -763,7 +763,7 @@
   <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
     <value>Enabled, turn off with button(s)</value>
   </data>
-	<data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
+  <data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
     <value>Toggle between enabled or disabled with button(s)</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
@@ -2579,5 +2579,11 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
     <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
+  </data>
+  <data name="ControllerPage_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ControllerPage_TryAgain" xml:space="preserve">
+    <value>Try again</value>
   </data>
 </root>

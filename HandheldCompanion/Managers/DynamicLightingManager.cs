@@ -39,7 +39,6 @@ public static class DynamicLightingManager
     private const int defaultThreadDelay = 33;
 
     private static bool VerticalBlackBarDetectionEnabled;
-    private static object updateLock = new();
 
     static DynamicLightingManager()
     {

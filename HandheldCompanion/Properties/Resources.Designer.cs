@@ -386,6 +386,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string ControllerPage_Close {
+            get {
+                return ResourceManager.GetString("ControllerPage_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
         public static string ControllerPage_Connect {
@@ -751,6 +760,15 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_SteamXboxDriversWarning {
             get {
                 return ResourceManager.GetString("ControllerPage_SteamXboxDriversWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try again.
+        /// </summary>
+        public static string ControllerPage_TryAgain {
+            get {
+                return ResourceManager.GetString("ControllerPage_TryAgain", resourceCulture);
             }
         }
         

@@ -8,8 +8,6 @@ using HandheldCompanion.Views.Classes;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using Nefarius.ViGEm.Client;
-using Nefarius.ViGEm.Client.Targets;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -19,14 +17,12 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
 using DeviceType = SharpDX.DirectInput.DeviceType;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
@@ -35,8 +31,8 @@ public static class ControllerManager
     private static readonly ConcurrentDictionary<string, IController> Controllers = new();
     public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
 
-    private static object updateLock = new();
-    private static Timer Watchdog;
+    private static Thread watchdogThread;
+    private static bool watchdogThreadRunning;
     private static bool ControllerManagement;
 
     private static bool ControllerManagementSuccess = false;
@@ -54,9 +50,8 @@ public static class ControllerManager
 
     static ControllerManager()
     {
-        Watchdog = new(4000);
-        Watchdog.Elapsed += Watchdog_Elapsed;
-        Watchdog.Enabled = false;
+        watchdogThread = new Thread(watchdogThreadLoop);
+        watchdogThread.IsBackground = true;
     }
 
     public static void Start()
@@ -255,15 +250,24 @@ public static class ControllerManager
                         switch(ControllerManagement)
                         {
                             case true:
-                                {                                    
-                                    if (!Watchdog.Enabled)
-                                        Watchdog.Start();
+                                {
+                                    if (!watchdogThreadRunning)
+                                    {
+                                        watchdogThreadRunning = true;
+
+                                        watchdogThread = new Thread(watchdogThreadLoop);
+                                        watchdogThread.IsBackground = true;
+                                        watchdogThread.Start();
+                                    }
                                 }
                                 break;
                             case false:
                                 {
-                                    if (Watchdog.Enabled)
-                                        Watchdog.Stop();
+                                    if (watchdogThreadRunning)
+                                    {
+                                        watchdogThreadRunning = false;
+                                        watchdogThread.Join();
+                                    }
                                 }
                                 break;
                         }
@@ -559,13 +563,14 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
-    private static void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void watchdogThreadLoop(object? obj)
     {
-        lock (updateLock)
+        while(watchdogThreadRunning)
         {
             // monitoring unexpected slot changes
             HashSet<byte> UserIndexes = new();
             bool XInputDrunk = false;
+
             foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
             {
                 byte UserIndex = DeviceManager.GetXInputIndexAsync(xInputController.Details.baseContainerDevicePath);
@@ -605,8 +610,12 @@ public static class ControllerManager
 
                             ControllerManagementSuccess = false;
                             ControllerManagementAttempts = 0;
+
                             Working?.Invoke(2);
-                            Watchdog.Stop();
+
+                            // suspend watchdog
+                            watchdogThreadRunning = false;
+                            watchdogThread.Join();
                         }
                         else
                         {
@@ -652,6 +661,8 @@ public static class ControllerManager
                     }
                 }
             }
+
+            Thread.Sleep(2000);
         }
     }
 
@@ -722,13 +733,6 @@ public static class ControllerManager
             if (controller.IsPhysical() && targetController is null)
                 SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
         }
-
-        // restart watchdog
-        if (ControllerManagement && controller.IsPhysical())
-        {
-            Watchdog.Stop();
-            Watchdog.Start();
-        }
     }
 
     private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
@@ -760,13 +764,6 @@ public static class ControllerManager
 
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
-
-        // restart watchdog
-        if (ControllerManagement && controller.IsPhysical())
-        {
-            Watchdog.Stop();
-            Watchdog.Start();
-        }
     }
 
     private static void ClearTargetController()

@@ -292,11 +292,11 @@ public partial class ControllerPage : Page
             {
                 // todo: translate me
                 var result = Dialog.ShowAsync(
-                    $"{Properties.Resources.SettingsPage_UpdateWarning}",
+                    Properties.Resources.SettingsPage_UpdateWarning,
                     $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
                     ContentDialogButton.Close,
-                    "Restart application",
-                    "Close");
+                    Properties.Resources.ControllerPage_TryAgain,
+                    Properties.Resources.ControllerPage_Close);
 
                 await result; // sync call
 
@@ -304,10 +304,15 @@ public partial class ControllerPage : Page
                 {
                     default:
                     case ContentDialogResult.Primary:
-                        Toggle_ControllerManagement.IsOn = false;
+                        {
+                            Toggle_ControllerManagement.IsOn = false;
+                        }
                         break;
                     case ContentDialogResult.None:
                         {
+                            Toggle_ControllerManagement.IsOn = true;
+
+                            /*
                             // The command to schedule the executable with Task Scheduler
                             string exePath = Assembly.GetExecutingAssembly().Location.Replace("dll", "exe");
                             string exeArgs = "";
@@ -333,6 +338,7 @@ public partial class ControllerPage : Page
                             TaskService.Instance.RootFolder.RegisterTaskDefinition(taskName, td);
 
                             Environment.Exit(0);
+                            */
                         }
                         break;
                 }
