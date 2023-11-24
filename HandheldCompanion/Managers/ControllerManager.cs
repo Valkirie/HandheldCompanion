@@ -733,7 +733,13 @@ public static class ControllerManager
 
     private static async void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+        IController controller = null;
+
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+        while (DateTime.Now < timeout && !Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+            await Task.Delay(100);
+
+        if (controller is null)
             return;
 
         // are we power cycling ?
