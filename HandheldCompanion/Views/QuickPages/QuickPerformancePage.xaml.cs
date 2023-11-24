@@ -44,6 +44,8 @@ public partial class QuickPerformancePage : Page
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
         MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
 
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
@@ -168,13 +170,25 @@ public partial class QuickPerformancePage : Page
         });
     }
 
-    /*
     private void PerformanceManager_EPPChanged(uint EPP)
     {
         // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() => { EPPSlider.Value = EPP; });
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            EPPSlider.Value = EPP;
+        });
     }
 
+    private void PerformanceManager_Initialized()
+    {
+        Processor processor = MainWindow.performanceManager.GetProcessor();
+        if (processor is null)
+            return;
+
+        PerformanceManager_StatusChanged(processor.CanChangeTDP, processor.CanChangeGPU);
+    }
+
+    /*
     private void PerformanceManager_PowerModeChanged(int idx)
     {
         // UI thread (async)

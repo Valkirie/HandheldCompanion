@@ -54,6 +54,7 @@ namespace HandheldCompanion.Views.Pages
 
             MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
             MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+            MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -219,6 +220,15 @@ namespace HandheldCompanion.Views.Pages
             {
                 EPPSlider.Value = EPP;
             });
+        }
+
+        private void PerformanceManager_Initialized()
+        {
+            Processor processor = MainWindow.performanceManager.GetProcessor();
+            if (processor is null)
+                return;
+
+            PerformanceManager_StatusChanged(processor.CanChangeTDP, processor.CanChangeGPU);
         }
 
         private void ChartOnDataClick(object sender, ChartPoint p)
