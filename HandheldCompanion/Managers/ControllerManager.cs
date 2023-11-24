@@ -806,8 +806,19 @@ public static class ControllerManager
         if (!IsPowerCycling)
         {
             if (SettingsManager.GetBoolean("HIDcloakonconnect"))
+            {
+                bool powerCycle = true;
+
+                if (targetController is LegionController)
+                {
+                    // todo:    Look for a byte within hid report that'd tend to mean both controllers are synced.
+                    //          Then I guess we could try and power cycle them.
+                    powerCycle = !((LegionController)targetController).IsWireless;
+                }
+
                 if (!targetController.IsHidden())
-                    targetController.Hide();
+                    targetController.Hide(powerCycle);
+            }
         }
 
         // check applicable scenarios
