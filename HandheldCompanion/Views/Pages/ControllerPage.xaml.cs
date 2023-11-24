@@ -145,8 +145,6 @@ public partial class ControllerPage : Page
 
     private void ControllerUnplugged(IController Controller, bool IsPowerCycling)
     {
-        LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
-
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
@@ -164,6 +162,9 @@ public partial class ControllerPage : Page
                 }
             }
         });
+
+        if (Controller.IsVirtual())
+            Controller.UserIndexChanged -= Controller_UserIndexChanged;
     }
 
     private void ControllerPlugged(IController Controller, bool IsPowerCycling)
@@ -188,6 +189,9 @@ public partial class ControllerPage : Page
 
             ControllerRefresh();
         });
+
+        if (Controller.IsVirtual())
+            Controller.UserIndexChanged += Controller_UserIndexChanged;
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
@@ -333,7 +337,12 @@ public partial class ControllerPage : Page
                         break;
                 }
             }
-        });               
+        });
+    }
+
+    private void Controller_UserIndexChanged(byte UserIndex)
+    {
+        SetVirtualControllerVisualIndex(UserIndex);
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)

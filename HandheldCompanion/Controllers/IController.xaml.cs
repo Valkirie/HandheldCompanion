@@ -112,6 +112,7 @@ namespace HandheldCompanion.Controllers
             set
             {
                 _UserIndex = value;
+                UserIndexChanged?.Invoke(value);
 
                 // UI thread (async)
                 Application.Current.Dispatcher.BeginInvoke(() =>
@@ -630,6 +631,9 @@ namespace HandheldCompanion.Controllers
         }
 
         #region events
+
+        public event UserIndexChangedEventHandler UserIndexChanged;
+        public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
         public event InputsUpdatedEventHandler InputsUpdated;
         public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
