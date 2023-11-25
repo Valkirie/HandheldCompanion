@@ -83,10 +83,7 @@ public class NeptuneController : SteamController
 
     public override string ToString()
     {
-        var baseName = base.ToString();
-        if (!string.IsNullOrEmpty(baseName))
-            return baseName;
-        return "Steam Controller Neptune";
+        return "Valve Software Steam Controller";
     }
 
     public override void UpdateInputs(long ticks)
