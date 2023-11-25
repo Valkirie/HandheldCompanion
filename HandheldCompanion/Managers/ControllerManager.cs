@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
@@ -365,6 +366,8 @@ public static class ControllerManager
                     // hide new InstanceID (HID)
                     if (controller.IsHidden())
                         controller.Hide(false);
+
+                    IsPowerCycling = true;
                 }
                 else
                 {
@@ -444,6 +447,8 @@ public static class ControllerManager
                 // hide new InstanceID (HID)
                 if (controller.IsHidden())
                     controller.Hide(false);
+
+                IsPowerCycling = true;
             }
             else
             {
@@ -549,8 +554,8 @@ public static class ControllerManager
 
             if (targetController is not null)
             {
-                Windows.UI.Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-                Windows.UI.Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+                Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+                Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
                 targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
             }
         }
@@ -771,8 +776,8 @@ public static class ControllerManager
 
             if (targetController is not null)
             {
-                Windows.UI.Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-                Windows.UI.Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+                Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+                Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
                 targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
             }
         }
@@ -841,8 +846,9 @@ public static class ControllerManager
         targetController = controller;
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
-        Windows.UI.Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-        Windows.UI.Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+        
+        Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+        Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
         targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
         // update HIDInstancePath
