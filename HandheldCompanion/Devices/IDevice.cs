@@ -399,6 +399,7 @@ public abstract class IDevice
                     switch (ProductName)
                     {
                         case "Jupiter":
+                        case "Galileo":
                             device = new SteamDeck();
                             break;
                     }

@@ -68,7 +68,19 @@ namespace HandheldCompanion.Platforms
                             {
                                 case "CPU Package":
                                 case "Core (Tctl/Tdie)":
-                                    CpuTemperatureChanged?.Invoke((double)sensor.Value);
+                                    {
+                                        double value = (double)sensor.Value;
+
+                                        // dirty
+                                        switch(MotherboardInfo.Product)
+                                        {
+                                            case "Galileo":
+                                                value /= 2.0d;
+                                                break;
+                                        }
+
+                                        CpuTemperatureChanged?.Invoke(value);
+                                    }
                                     break;
                             }
                         }

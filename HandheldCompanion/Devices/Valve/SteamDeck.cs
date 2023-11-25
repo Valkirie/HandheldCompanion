@@ -30,18 +30,21 @@ public class SteamDeck : IDevice
 
     public static readonly ushort[] SupportedFirmwares =
     {
-        0xB030 // 45104
+        0xB030, // 45104
+        0x1010, // 4112
     };
 
     public static readonly byte[] SupportedBoardID =
     {
-        6,
-        0xA
+        0x5,
+        0x6,
+        0xA,
     };
 
     public static readonly byte[] SupportedPDCS =
     {
-        0x2B // 43
+        0x2B, // 43
+        0x2F, // 47
     };
 
     private InpOut inpOut;

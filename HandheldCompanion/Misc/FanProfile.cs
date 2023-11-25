@@ -64,9 +64,7 @@ namespace HandheldCompanion.Misc
         {
             // Check if the temperature is within the range of 0°C to 100°C
             if (temp < 0 || temp > 100)
-            {
-                throw new ArgumentOutOfRangeException("Temperature must be within the range of 0°C to 100°C");
-            }
+                return 50.0d;
 
             // Find the two closest points that bracket the temperature
             int low = (int)Math.Floor(temp / fanSpeeds.Length);
@@ -113,9 +111,7 @@ namespace HandheldCompanion.Misc
         {
             // Check if the temperature is within the range of 0°C to 100°C
             if (temp < 0 || temp > 100)
-            {
-                throw new ArgumentOutOfRangeException("Temperature must be within the range of 0°C to 100°C");
-            }
+                return;
 
             // Update the average temperature using a weighted average formula based on the aggressivity level
             if (this.avgTemp.Count > aggressivity)
