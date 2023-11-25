@@ -50,8 +50,6 @@ public static class HotkeysManager
         InputsManager.TriggerRaised += TriggerRaised;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
-        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
     }
 
     public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
@@ -153,6 +151,9 @@ public static class HotkeysManager
         IsInitialized = true;
         Initialized?.Invoke();
 
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+
         LogManager.LogInformation("{0} has started", "HotkeysManager");
     }
 
@@ -162,6 +163,8 @@ public static class HotkeysManager
             return;
 
         IsInitialized = false;
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
 
         LogManager.LogInformation("{0} has stopped", "HotkeysManager");
     }
