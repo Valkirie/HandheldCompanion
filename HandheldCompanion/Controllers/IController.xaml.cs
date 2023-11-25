@@ -141,6 +141,12 @@ namespace HandheldCompanion.Controllers
             InitializeComponent();
         }
 
+        public virtual void AttachDetails(PnPDetails details)
+        {
+            this.Details = details;
+            Details.isHooked = true;
+        }
+
         public virtual void UpdateInputs(long ticks)
         {
             InputsUpdated?.Invoke(Inputs);
@@ -374,8 +380,6 @@ namespace HandheldCompanion.Controllers
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 CyclePort();
-
-                IsBusy = false;
             }
 
             RefreshControls();
@@ -391,8 +395,6 @@ namespace HandheldCompanion.Controllers
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
                 CyclePort();
-
-                IsBusy = false;
             }
 
             RefreshControls();

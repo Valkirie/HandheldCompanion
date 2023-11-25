@@ -193,12 +193,6 @@ public class XInputController : IController
         Controller = new((UserIndex)userIndex);
     }
 
-    public virtual void AttachDetails(PnPDetails details)
-    {
-        this.Details = details;
-        Details.isHooked = true;
-    }
-
     public override void Hide(bool powerCycle = true)
     {
         base.Hide(powerCycle);

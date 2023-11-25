@@ -30,24 +30,7 @@ public class NeptuneController : SteamController
 
     public NeptuneController(PnPDetails details) : base()
     {
-        if (details is null)
-            return;
-
-        Details = details;
-        Details.isHooked = true;
-
-        try
-        {
-            Controller = new(details.VendorID, details.ProductID, details.GetMI());
-
-            // open controller
-            Open();
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
-            return;
-        }
+        AttachDetails(details);
 
         // UI
         DrawControls();
@@ -79,6 +62,16 @@ public class NeptuneController : SteamController
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
+    }
+
+    public override void AttachDetails(PnPDetails details)
+    {
+        base.AttachDetails(details);
+
+        Controller = new(details.VendorID, details.ProductID, details.GetMI());
+
+        // open controller
+        Open();
     }
 
     public override string ToString()

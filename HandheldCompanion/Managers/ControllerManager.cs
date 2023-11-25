@@ -314,13 +314,15 @@ public static class ControllerManager
         targetController?.SetVibration(LargeMotor, SmallMotor);
     }
 
-    private static void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
+    private static async void HidDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
         if (!details.isGaming)
             return;
 
-        // initialize controller vars
-        IController controller = null;
+        Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
+
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // JoyShockLibrary
         int connectedJoys = JslConnectDevices();
@@ -355,22 +357,34 @@ public static class ControllerManager
 
                 JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
 
-                // UI thread (sync)
-                Application.Current.Dispatcher.Invoke(() =>
+                if (controller is not null)
                 {
-                    switch (joyShockType)
+                    ((JSController)controller).AttachDetails(details);
+                    ((JSController)controller).AttachJoySettings(settings);
+
+                    // hide new InstanceID (HID)
+                    if (controller.IsHidden())
+                        controller.Hide(false);
+                }
+                else
+                {
+                    // UI thread (sync)
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        case JOY_TYPE.DualSense:
-                            controller = new DualSenseController(settings, details);
-                            break;
-                        case JOY_TYPE.DualShock4:
-                            controller = new DS4Controller(settings, details);
-                            break;
-                        case JOY_TYPE.ProController:
-                            controller = new ProController(settings, details);
-                            break;
-                    }
-                });
+                        switch (joyShockType)
+                        {
+                            case JOY_TYPE.DualSense:
+                                controller = new DualSenseController(settings, details);
+                                break;
+                            case JOY_TYPE.DualShock4:
+                                controller = new DS4Controller(settings, details);
+                                break;
+                            case JOY_TYPE.ProController:
+                                controller = new ProController(settings, details);
+                                break;
+                        }
+                    });
+                }
             }
             else
             {
@@ -381,7 +395,6 @@ public static class ControllerManager
         }
         else
         {
-
             // DInput
             var directInput = new DirectInput();
             int VendorId = details.VendorID;
@@ -424,69 +437,80 @@ public static class ControllerManager
                     details.GetVendorID(), details.GetProductID());
             }
 
-            // UI thread (sync)
-            Application.Current.Dispatcher.Invoke(() =>
+            if (controller is not null)
             {
-                // search for a supported controller
-                switch (VendorId)
+                controller.AttachDetails(details);
+
+                // hide new InstanceID (HID)
+                if (controller.IsHidden())
+                    controller.Hide(false);
+            }
+            else
+            {
+                // UI thread (sync)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    // STEAM
-                    case 0x28DE:
-                        {
-                            switch (ProductId)
+                    // search for a supported controller
+                    switch (VendorId)
+                    {
+                        // STEAM
+                        case 0x28DE:
                             {
-                                // WIRED STEAM CONTROLLER
-                                case 0x1102:
-                                    // MI == 0 is virtual keyboards
-                                    // MI == 1 is virtual mouse
-                                    // MI == 2 is controller proper
-                                    // No idea what's in case of more than one controller connected
-                                    if (details.GetMI() == 2)
-                                        controller = new GordonController(details);
-                                    break;
-                                // WIRELESS STEAM CONTROLLER
-                                case 0x1142:
-                                    // MI == 0 is virtual keyboards
-                                    // MI == 1-4 are 4 controllers
-                                    // TODO: The dongle registers 4 controller devices, regardless how many are
-                                    // actually connected. There is no easy way to check for connection without
-                                    // actually talking to each controller. Handle only the first for now.
-                                    if (details.GetMI() == 1)
-                                        controller = new GordonController(details);
-                                    break;
+                                switch (ProductId)
+                                {
+                                    // WIRED STEAM CONTROLLER
+                                    case 0x1102:
+                                        // MI == 0 is virtual keyboards
+                                        // MI == 1 is virtual mouse
+                                        // MI == 2 is controller proper
+                                        // No idea what's in case of more than one controller connected
+                                        if (details.GetMI() == 2)
+                                            controller = new GordonController(details);
+                                        break;
+                                    // WIRELESS STEAM CONTROLLER
+                                    case 0x1142:
+                                        // MI == 0 is virtual keyboards
+                                        // MI == 1-4 are 4 controllers
+                                        // TODO: The dongle registers 4 controller devices, regardless how many are
+                                        // actually connected. There is no easy way to check for connection without
+                                        // actually talking to each controller. Handle only the first for now.
+                                        if (details.GetMI() == 1)
+                                            controller = new GordonController(details);
+                                        break;
 
-                                // STEAM DECK
-                                case 0x1205:
-                                    controller = new NeptuneController(details);
-                                    break;
+                                    // STEAM DECK
+                                    case 0x1205:
+                                        controller = new NeptuneController(details);
+                                        break;
+                                }
                             }
-                        }
-                        break;
+                            break;
 
-                    // NINTENDO
-                    case 0x057E:
-                        {
-                            switch (ProductId)
+                        // NINTENDO
+                        case 0x057E:
                             {
-                                // Nintendo Wireless Gamepad
-                                case 0x2009:
-                                    break;
+                                switch (ProductId)
+                                {
+                                    // Nintendo Wireless Gamepad
+                                    case 0x2009:
+                                        break;
+                                }
                             }
-                        }
-                        break;
+                            break;
 
-                    // LENOVO
-                    case 0x17EF:
-                        {
-                            switch (ProductId)
+                        // LENOVO
+                        case 0x17EF:
                             {
-                                case 0x6184:
-                                    break;
+                                switch (ProductId)
+                                {
+                                    case 0x6184:
+                                        break;
+                                }
                             }
-                        }
-                        break;
-                }
-            });
+                            break;
+                    }
+                });
+            }
         }
 
         // unsupported controller
@@ -497,24 +521,15 @@ public static class ControllerManager
             return;
         }
 
-        // failed to initialize
-        if (controller.Details is null)
-            return;
+        while (!controller.IsReady && controller.IsConnected())
+            await Task.Delay(250);
 
-        if (!controller.IsConnected())
-            return;
+        // set (un)busy
+        controller.IsBusy = false;
 
         // update or create controller
         var path = controller.GetContainerInstancePath();
         Controllers[path] = controller;
-
-        // are we power cycling ?
-        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
-
-        // power cycling logic
-        // hide new InstanceID (HID)
-        if (IsPowerCycling && controller.IsHidden())
-            controller.Hide(false);
 
         LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
 
@@ -526,14 +541,30 @@ public static class ControllerManager
         // remove controller from powercyclers
         PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
 
-        // first controller logic
-        if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
-            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+        // new controller logic
+        if (DeviceManager.IsInitialized)
+        {
+            if (controller.IsPhysical() && targetController is null)
+                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+
+            if (targetController is not null)
+            {
+                Windows.UI.Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+                Windows.UI.Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+                targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+            }
+        }
     }
 
-    private static void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    private static async void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
-        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+        IController controller = null;
+
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+        while (DateTime.Now < timeout && !Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+            await Task.Delay(100);
+
+        if (controller is null)
             return;
 
         // XInput controller are handled elsewhere
@@ -548,14 +579,16 @@ public static class ControllerManager
 
         // unhide on remove 
         if (!IsPowerCycling)
+        {
             controller.Unhide(false);
 
-        // controller was unplugged
-        Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+            // unplug controller, if needed
+            if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
+                ClearTargetController();
 
-        // unplug controller, if needed
-        if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
-            ClearTargetController();
+            // controller was unplugged
+            Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
+        }
 
         LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
 
@@ -713,6 +746,9 @@ public static class ControllerManager
         while (!controller.IsReady && controller.IsConnected())
             await Task.Delay(250);
 
+        // set (un)busy
+        controller.IsBusy = false;
+
         // update or create controller
         string path = details.baseContainerDeviceInstanceId;
         Controllers[path] = controller;
@@ -732,6 +768,13 @@ public static class ControllerManager
         {
             if (controller.IsPhysical() && targetController is null)
                 SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+
+            if (targetController is not null)
+            {
+                Windows.UI.Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+                Windows.UI.Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+                targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+            }
         }
     }
 
@@ -798,9 +841,8 @@ public static class ControllerManager
         targetController = controller;
         targetController.InputsUpdated += UpdateInputs;
         targetController.Plug();
-
-        var _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-        var _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+        Windows.UI.Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+        Windows.UI.Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
         targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
         // update HIDInstancePath
