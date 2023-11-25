@@ -4,6 +4,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using HidLibrary;
 using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -15,6 +16,7 @@ using System.Numerics;
 using System.Threading;
 using System.Windows.Media;
 using Windows.Devices.Sensors;
+using WindowsInput.Events;
 using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
 using static HandheldCompanion.Utils.DeviceUtils;
@@ -724,6 +726,17 @@ public abstract class IDevice
     protected void KeyRelease(ButtonFlags button)
     {
         KeyReleased?.Invoke(button);
+    }
+
+    public bool HasKey()
+    {
+        foreach (DeviceChord pair in OEMChords.Where(a => !a.silenced))
+        {
+            IEnumerable<KeyCode> chords = pair.chords.SelectMany(chord => chord.Value);
+            return chords.Any();
+        }
+
+        return false;
     }
 
     protected void ResumeDevices()
