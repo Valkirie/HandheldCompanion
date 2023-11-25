@@ -158,6 +158,24 @@ public static class InputsManager
                     if (hotkey is null)
                         continue;
 
+                    // special case HIDmode switch hotkey
+                    // required here in order to (immediatly) disable hotkey while HIDmode is being changed to avoid duplicates
+                    // this takes care of repeated keybinds actions
+                    if (hotkey.Listener == "shortcutChangeHIDMode")
+                    {
+                        var inputType = currentChord.InputsType;
+                        if ((inputType == InputsChordType.Click && IsKeyUp) || (inputType == InputsChordType.Long && IsKeyDown))
+                        {
+                            var hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
+                            foreach (var hidHotkey in hidHotkeys)
+                            {
+                                if (!hidHotkey.IsEnabled)
+                                    return false;
+                                System.Windows.Application.Current.Dispatcher.Invoke(() => { hidHotkey.IsEnabled = false; });
+                            }
+                        }
+                    }
+
                     var chord = Triggers[key];
                     switch (chord.InputsType)
                     {

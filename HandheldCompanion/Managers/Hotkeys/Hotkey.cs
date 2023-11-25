@@ -48,6 +48,13 @@ public class Hotkey
 
         quickControl.QuickButton.Click += async (e, sender) =>
         {
+            // special case HIDmode switch hotkey
+            // required here in order to (immediatly) disable hotkey while HIDmode is being changed to avoid duplicates
+            // this takes care of repeated button clicks
+            if (this.inputsHotkey.Listener == "shortcutChangeHIDMode")
+            {
+                this.IsEnabled = false;
+            }
             // workaround for gamepad navigation
             await Task.Delay(100);
             Summoned?.Invoke(this);

@@ -3142,6 +3142,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle emulated controller type.
+        /// </summary>
+        public static string InputsHotkey_shortcutChangeHIDMode {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 emulated controllers.
+        /// </summary>
+        public static string InputsHotkey_shortcutChangeHIDModeDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDModeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display Action center.
         /// </summary>
         public static string InputsHotkey_shortcutControlCenter {
