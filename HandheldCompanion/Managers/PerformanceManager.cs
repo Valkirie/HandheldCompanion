@@ -261,10 +261,10 @@ public class PerformanceManager : Manager
         {
             RequestCPUCoreCount(profile.CPUCoreCount);
         }
-        else if (currentCoreCount != Environment.ProcessorCount)
+        else if (currentCoreCount != MotherboardInfo.NumberOfCores)
         {
             // restore default CPU Core Count
-            RequestCPUCoreCount(Environment.ProcessorCount);
+            RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
         // apply profile define CPU Boost
@@ -311,10 +311,10 @@ public class PerformanceManager : Manager
             RequestEPP(0x00000032);
         }
 
-        // (un)apply profile defined CPU Core Count
+        // unapply profile defined CPU Core Count
         if (profile.CPUCoreEnabled)
         {
-            RequestCPUCoreCount(100);
+            RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
         // (un)apply profile define CPU Boost
