@@ -502,7 +502,6 @@ public class HWiNFO : IPlatform
         SetProperty("MinimalizeMainWnd", 1);
         SetProperty("MinimalizeSensors", 1);
         SetProperty("MinimalizeSensorsClose", 1);
-        SetProperty("SensorsSM", 1); // Shared Memory Support [12-HOUR LIMIT]
         SetProperty("ShowWelcomeAndProgress", 0);
         SetProperty("SensorsOnly", 1);
         SetProperty("AutoUpdateBetaDisable", 1);
