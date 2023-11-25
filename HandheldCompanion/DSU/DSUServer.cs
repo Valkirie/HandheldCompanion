@@ -378,10 +378,13 @@ public class DSUServer
         }
         catch
         {
+            if (udpSock is null)
+                return;
+
             var IOC_IN = 0x80000000;
             uint IOC_VENDOR = 0x18000000;
             var SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-            udpSock?.IOControl((int)SIO_UDP_CONNRESET, new[] { Convert.ToByte(false) }, null);
+            udpSock.IOControl((int)SIO_UDP_CONNRESET, new[] { Convert.ToByte(false) }, null);
         }
 
         //Start another receive as soon as we copied the data
@@ -394,22 +397,25 @@ public class DSUServer
 
     private void StartReceive()
     {
+        if (!running)
+            return;
+
+        if (udpSock is null)
+            return;
+
         try
         {
-            if (running)
-            {
-                //Start listening for a new message.
-                EndPoint newClientEP = new IPEndPoint(IPAddress.Any, 0);
-                udpSock?.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP,
-                    ReceiveCallback, udpSock);
-            }
+            //Start listening for a new message.
+            EndPoint newClientEP = new IPEndPoint(IPAddress.Any, 0);
+            udpSock.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP,
+                ReceiveCallback, udpSock);
         }
         catch
         {
             var IOC_IN = 0x80000000;
             uint IOC_VENDOR = 0x18000000;
             var SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-            udpSock?.IOControl((int)SIO_UDP_CONNRESET, new[] { Convert.ToByte(false) }, null);
+            udpSock.IOControl((int)SIO_UDP_CONNRESET, new[] { Convert.ToByte(false) }, null);
 
             StartReceive();
         }
@@ -420,9 +426,9 @@ public class DSUServer
         if (running)
             Stop();
 
-        udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         try
         {
+            udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpSock.Bind(new IPEndPoint(IPAddress.Any, port));
         }
         catch (SocketException)
