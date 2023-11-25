@@ -101,7 +101,7 @@ namespace HandheldCompanion.Managers
                     break;
                 case FanMode.Software:
                     MainWindow.CurrentDevice.SetFanControl(true);
-                    return;
+                    break;
             }
 
             Applied?.Invoke(powerProfile, source);
