@@ -1043,7 +1043,12 @@ public static class ControllerManager
 
         // controller is muted
         if (ControllerMuted)
-            return;
+        {
+            ControllerState emptyState = new ControllerState();
+            emptyState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
+
+            controllerState = emptyState;
+        }
 
         VirtualManager.UpdateInputs(controllerState);
     }
