@@ -103,7 +103,7 @@ public class OneXPlayerOneXFly : IDevice
             case ButtonFlags.OEM2:
                 return "\u2210";
             case ButtonFlags.OEM3:
-                return "\u24F7"; //Fix me after icon update
+                return "\u2219";
             case ButtonFlags.OEM4:
                 return "\u2212";
             case ButtonFlags.OEM5:
