@@ -2331,13 +2331,13 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
-  <data name="ControllerPage_SteamNeptuneDesktopAction" xml:space="preserve">
+  <data name="Hint_SteamNeptuneDesktopAction" xml:space="preserve">
     <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.</value>
   </data>
-  <data name="ControllerPage_SteamNeptuneDesktopDesc" xml:space="preserve">
+  <data name="Hint_SteamNeptuneDesktopDesc" xml:space="preserve">
     <value>It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input.</value>
   </data>
-  <data name="ControllerPage_SteamNeptuneDesktopWarning" xml:space="preserve">
+  <data name="Hint_SteamNeptuneDesktopWarning" xml:space="preserve">
     <value>Steam Desktop Layout is applied</value>
   </data>
   <data name="ControllerPage_SteamXboxDriversAction" xml:space="preserve">

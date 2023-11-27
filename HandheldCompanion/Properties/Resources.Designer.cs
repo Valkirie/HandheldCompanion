@@ -712,27 +712,27 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input..
         /// </summary>
-        public static string ControllerPage_SteamNeptuneDesktopAction {
+        public static string Hint_SteamNeptuneDesktopAction {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamNeptuneDesktopAction", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktopAction", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input..
         /// </summary>
-        public static string ControllerPage_SteamNeptuneDesktopDesc {
+        public static string Hint_SteamNeptuneDesktopDesc {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamNeptuneDesktopDesc", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktopDesc", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Steam Desktop Layout is applied.
         /// </summary>
-        public static string ControllerPage_SteamNeptuneDesktopWarning {
+        public static string Hint_SteamNeptuneDesktopWarning {
             get {
-                return ResourceManager.GetString("ControllerPage_SteamNeptuneDesktopWarning", resourceCulture);
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktopWarning", resourceCulture);
             }
         }
         

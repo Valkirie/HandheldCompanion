@@ -54,7 +54,6 @@ public partial class ControllerPage : Page
         ControllerManager.Working += ControllerManager_Working;
 
         PlatformManager.Initialized += PlatformManager_Initialized;
-        PlatformManager.Steam.Updated += Steam_Updated;
 
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
@@ -70,25 +69,6 @@ public partial class ControllerPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
-            Steam_Updated(PlatformManager.Steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
-        });
-    }
-
-    private void Steam_Updated(PlatformStatus status)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch (status)
-            {
-                case PlatformStatus.Stopping:
-                case PlatformStatus.Stopped:
-                    HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
-                    break;
-                case PlatformStatus.Started:
-                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.Steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
-                    break;
-            }
         });
     }
 
@@ -559,19 +539,6 @@ public partial class ControllerPage : Page
     private void Expander_Expanded(object sender, RoutedEventArgs e)
     {
         ((Expander)sender).BringIntoView();
-    }
-
-    private void HintsSteamNeptuneDeskopButton_Click(object sender, RoutedEventArgs e)
-    {
-        Task.Run(async () =>
-        {
-            PlatformManager.Steam.StopProcess();
-
-            while (PlatformManager.Steam.IsRunning)
-                await Task.Delay(1000);
-
-            PlatformManager.Steam.StartProcess();
-        });
     }
 
     private void Toggle_TouchpadPassthrough_Toggled(object sender, RoutedEventArgs e)

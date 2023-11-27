@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hints="clr-namespace:HandheldCompanion.Controls.Hints"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
@@ -39,19 +40,67 @@
                             VerticalAlignment="Center"
                             Spacing="12">
 
-                            <ui:ProgressRing Name="ControllerLoading" Visibility="Hidden" Width="125" Height="125" />
-                            
-                            <ui:SimpleStackPanel Spacing="2" HorizontalAlignment="Left" Orientation="Horizontal" Name="UserIndexPanel">
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                                <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <ui:ProgressRing
+                                Name="ControllerLoading"
+                                Width="125"
+                                Height="125"
+                                Visibility="Hidden" />
+
+                            <ui:SimpleStackPanel
+                                Name="UserIndexPanel"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal"
+                                Spacing="2">
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
                             </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
 
@@ -233,45 +282,8 @@
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversAction}" TextWrapping="Wrap" />
                     </Expander>
 
-                    <!--  Steam Desktop Layout  -->
-                    <Expander
-                        Name="HintsSteamNeptuneDeskop"
-                        Padding="15,12,12,12"
-                        HorizontalAlignment="Stretch"
-                        d:Visibility="Visible"
-                        Visibility="Collapsed">
-
-                        <Expander.Header>
-                            <Grid>
-                                <DockPanel Margin="0,12,12,12">
-                                    <ui:FontIcon
-                                        Height="40"
-                                        HorizontalAlignment="Center"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Glyph="&#xe7ba;" />
-
-                                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopWarning}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopDesc}"
-                                            TextWrapping="Wrap" />
-                                    </ui:SimpleStackPanel>
-                                </DockPanel>
-
-                                <Button
-                                    Name="HintsSteamNeptuneDeskopButton"
-                                    Width="140"
-                                    HorizontalAlignment="Right"
-                                    Click="HintsSteamNeptuneDeskopButton_Click"
-                                    Content="Restart Steam"
-                                    FontSize="14"
-                                    Style="{StaticResource AccentButtonStyle}" />
-                            </Grid>
-                        </Expander.Header>
-                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopAction}" TextWrapping="Wrap" />
-                    </Expander>
+                    <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
+                    <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
                 </ui:SimpleStackPanel>
 
                 <!--  Input devices  -->
