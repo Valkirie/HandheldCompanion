@@ -6,6 +6,7 @@ namespace HandheldCompanion.Platforms
     public class OpenHardwareMonitor : IPlatform
     {
         private Computer computer;
+        private string ProductName;
 
         private Timer updateTimer;
         private int updateInterval = 1000;
@@ -14,6 +15,8 @@ namespace HandheldCompanion.Platforms
         {
             Name = "OpenHardwareMonitor";
             IsInstalled = true;
+
+            ProductName = MotherboardInfo.Product;
 
             // watchdog to populate sensors
             updateTimer = new Timer(updateInterval) { Enabled = false };
@@ -72,7 +75,7 @@ namespace HandheldCompanion.Platforms
                                         double value = (double)sensor.Value;
 
                                         // dirty
-                                        switch(MotherboardInfo.Product)
+                                        switch(ProductName)
                                         {
                                             case "Galileo":
                                                 value /= 2.0d;
