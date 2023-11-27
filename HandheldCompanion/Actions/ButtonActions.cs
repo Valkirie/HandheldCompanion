@@ -24,9 +24,9 @@ namespace HandheldCompanion.Actions
             this.Button = button;
         }
 
-        public override void Execute(ButtonFlags button, bool value, int longTime)
+        public override void Execute(ButtonFlags button, bool value)
         {
-            base.Execute(button, value, longTime);
+            base.Execute(button, value);
 
             switch (this.Value)
             {
