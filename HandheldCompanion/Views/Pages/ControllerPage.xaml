@@ -282,6 +282,7 @@
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversAction}" TextWrapping="Wrap" />
                     </Expander>
 
+                    <hints:Hint_LegionGoDaemon d:Visibility="Visible" />
                     <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
                     <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
                 </ui:SimpleStackPanel>
