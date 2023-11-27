@@ -63,11 +63,11 @@ public class OneXPlayerMini : IDevice
         switch (button)
         {
             case ButtonFlags.OEM1:
-                return "\u24F5";
+                return "\u2219";
             case ButtonFlags.OEM2:
                 return "\u2210";
             case ButtonFlags.OEM3:
-                return "\u24F7";
+                return "\u2218";
         }
 
         return defaultGlyph;
