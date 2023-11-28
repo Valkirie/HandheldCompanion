@@ -2340,13 +2340,13 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Hint_SteamNeptuneDesktop" xml:space="preserve">
     <value>Steam Desktop Layout is applied</value>
   </data>
-  <data name="ControllerPage_SteamXboxDriversAction" xml:space="preserve">
+  <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
     <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
   </data>
-  <data name="ControllerPage_SteamXboxDriversDesc" xml:space="preserve">
+  <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
     <value>It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller</value>
   </data>
-  <data name="ControllerPage_SteamXboxDriversWarning" xml:space="preserve">
+  <data name="Hint_SteamXboxDrivers" xml:space="preserve">
     <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
   </data>
   <data name="DevicePage_Device" xml:space="preserve">
@@ -2612,5 +2612,14 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="Hint_SteamNeptuneAction" xml:space="preserve">
     <value>Restart Steam</value>
+  </data>
+  <data name="MainWindow_navNotifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="NotificationsPage_NothingToSee" xml:space="preserve">
+    <value>No notifications yet</value>
+  </data>
+  <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
+    <value>You have no notifications right now.</value>
   </data>
 </root>

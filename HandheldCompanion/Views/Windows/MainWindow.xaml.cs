@@ -52,6 +52,7 @@ public partial class MainWindow : GamepadWindow
     public static OverlayPage overlayPage;
     public static HotkeysPage hotkeysPage;
     public static LayoutPage layoutPage;
+    public static NotificationsPage notificationsPage;
 
     // overlay(s) vars
     public static OverlayModel overlayModel;
@@ -418,6 +419,8 @@ public partial class MainWindow : GamepadWindow
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
         layoutPage = new LayoutPage("layout", navView);
+        notificationsPage = new NotificationsPage("notifications");
+        notificationsPage.StatusChanged += NotificationsPage_LayoutUpdated;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
@@ -429,6 +432,7 @@ public partial class MainWindow : GamepadWindow
         _pages.Add("SettingsPage", settingsPage);
         _pages.Add("HotkeysPage", hotkeysPage);
         _pages.Add("LayoutPage", layoutPage);
+        _pages.Add("NotificationsPage", notificationsPage);
 
         // handle controllerPage events
         controllerPage.HIDchanged += HID => { overlayModel.UpdateHIDMode(HID); };
@@ -527,6 +531,17 @@ public partial class MainWindow : GamepadWindow
         prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
 
         IsReady = true;
+    }
+
+    private void NotificationsPage_LayoutUpdated(int status)
+    {
+        bool hasNotification = Convert.ToBoolean(status);
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            HasNotifications.Visibility = hasNotification ? Visibility.Visible : Visibility.Collapsed;
+        });
     }
 
     private void ControllerPage_HIDchanged(HIDmode controllerMode)
@@ -700,6 +715,7 @@ public partial class MainWindow : GamepadWindow
         overlayPage.Page_Closed();
         hotkeysPage.Page_Closed();
         layoutPage.Page_Closed();
+        notificationsPage.Page_Closed();
 
         // force kill application
         Environment.Exit(0);

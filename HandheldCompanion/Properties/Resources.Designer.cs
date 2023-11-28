@@ -710,33 +710,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You might want to uninstall Steam Xbox Controller Enhanced Features Driver.
-        /// </summary>
-        public static string ControllerPage_SteamXboxDriversAction {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamXboxDriversAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller.
-        /// </summary>
-        public static string ControllerPage_SteamXboxDriversDesc {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamXboxDriversDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver is installed.
-        /// </summary>
-        public static string ControllerPage_SteamXboxDriversWarning {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamXboxDriversWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Try again.
         /// </summary>
         public static string ControllerPage_TryAgain {
@@ -3321,6 +3294,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver is installed.
+        /// </summary>
+        public static string Hint_SteamXboxDrivers {
+            get {
+                return ResourceManager.GetString("Hint_SteamXboxDrivers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller.
+        /// </summary>
+        public static string Hint_SteamXboxDriversDesc {
+            get {
+                return ResourceManager.GetString("Hint_SteamXboxDriversDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You might want to uninstall Steam Xbox Controller Enhanced Features Driver.
+        /// </summary>
+        public static string Hint_SteamXboxDriversReadme {
+            get {
+                return ResourceManager.GetString("Hint_SteamXboxDriversReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap icon {
@@ -4141,6 +4141,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Notifications.
+        /// </summary>
+        public static string MainWindow_navNotifications {
+            get {
+                return ResourceManager.GetString("MainWindow_navNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
         public static string MainWindow_navOverlay {
@@ -4209,6 +4218,24 @@ namespace HandheldCompanion.Properties {
         public static string MainWindow_Toggle {
             get {
                 return ResourceManager.GetString("MainWindow_Toggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No notifications yet.
+        /// </summary>
+        public static string NotificationsPage_NothingToSee {
+            get {
+                return ResourceManager.GetString("NotificationsPage_NothingToSee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have no notifications right now..
+        /// </summary>
+        public static string NotificationsPage_NothingToSeeDesc {
+            get {
+                return ResourceManager.GetString("NotificationsPage_NothingToSeeDesc", resourceCulture);
             }
         }
         

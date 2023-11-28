@@ -252,39 +252,6 @@
                         </Expander.Header>
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}" TextWrapping="Wrap" />
                     </Expander>
-
-                    <!--  Steam Xbox Controller Enhanced Features Driver  -->
-                    <Expander
-                        Name="HintsSteamXboxDrivers"
-                        Padding="15,12,12,12"
-                        HorizontalAlignment="Stretch"
-                        d:Visibility="Visible"
-                        Visibility="Collapsed">
-
-                        <Expander.Header>
-                            <DockPanel Margin="0,12,12,12">
-                                <ui:FontIcon
-                                    Height="40"
-                                    HorizontalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xe7ba;" />
-
-                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversWarning}" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                        Style="{StaticResource CaptionTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversDesc}"
-                                        TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
-                            </DockPanel>
-                        </Expander.Header>
-                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversAction}" TextWrapping="Wrap" />
-                    </Expander>
-
-                    <hints:Hint_LegionGoDaemon d:Visibility="Visible" />
-                    <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
-                    <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
                 </ui:SimpleStackPanel>
 
                 <!--  Input devices  -->

@@ -47,7 +47,6 @@
                 Tag="ControllerPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
-                    <!-- <Image Source="/Resources/icons/manette-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -58,7 +57,6 @@
                 Tag="DevicePage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
-                    <!-- <Image Source="/Resources/icons/device-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -69,7 +67,6 @@
                 Tag="PerformancePage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE945;" />
-                    <!-- <Image Source="/Resources/icons/device-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -80,7 +77,6 @@
                 Tag="ProfilesPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;" />
-                    <!-- <Image Source="/Resources/icons/games-folder-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -91,7 +87,6 @@
                 Tag="OverlayPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
-                    <!-- <Image Source="/Resources/icons/calques-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -102,7 +97,29 @@
                 Tag="HotkeysPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF26B;" />
-                    <!-- <Image Source="/Resources/icons/ctrl-48.png" Margin="-10"/> -->
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!--  Notifications icon  -->
+            <ui:NavigationViewItem
+                Name="navNotifications"
+                Content="{x:Static resx:Resources.MainWindow_navNotifications}"
+                Tag="NotificationsPage">
+                <ui:NavigationViewItem.Icon>
+                    <Grid>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
+
+                        <Grid Name="HasNotifications" Margin="11,-11,-11,11">
+                            <ui:FontIcon
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="Red"
+                                Glyph="&#xF136;" />
+                            <ui:FontIcon
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="20"
+                                Glyph="&#xF13C;" />
+                        </Grid>
+                    </Grid>
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -113,7 +130,6 @@
                 Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                    <!-- <Image Source="/Resources/icons/info-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -124,7 +140,6 @@
                 Tag="SettingsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:SymbolIcon Symbol="Setting" />
-                    <!-- <Image Source="/Resources/icons/settings-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>

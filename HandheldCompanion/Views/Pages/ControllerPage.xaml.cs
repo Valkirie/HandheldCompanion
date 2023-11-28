@@ -53,23 +53,12 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.Working += ControllerManager_Working;
 
-        PlatformManager.Initialized += PlatformManager_Initialized;
-
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
 
     public ControllerPage(string Tag) : this()
     {
         this.Tag = Tag;
-    }
-
-    private void PlatformManager_Initialized()
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
-        });
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)

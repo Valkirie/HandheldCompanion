@@ -1,0 +1,63 @@
+﻿<Page
+    x:Class="HandheldCompanion.Views.Pages.NotificationsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hints="clr-namespace:HandheldCompanion.Controls.Hints"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="About"
+    Title="{x:Static resx:Resources.MainWindow_navNotifications}"
+    d:Background="White"
+    d:DesignHeight="1000"
+    d:DesignWidth="1000"
+    KeepAlive="True"
+    LayoutUpdated="Page_LayoutUpdated"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+
+    <ui:SimpleStackPanel Margin="20" Spacing="6">
+
+        <!--  WARNING: Nothing to see here  -->
+        <Border
+            Name="NothingToSee"
+            Padding="15,12,12,12"
+            d:Visibility="Visible"
+            ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+            Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+            CornerRadius="{DynamicResource ControlCornerRadius}"
+            Visibility="Visible">
+
+            <Grid>
+                <DockPanel>
+                    <ui:FontIcon
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                        Glyph="&#xe7ed;" />
+
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock
+                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{x:Static resx:Resources.NotificationsPage_NothingToSee}" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Static resx:Resources.NotificationsPage_NothingToSeeDesc}"
+                            TextWrapping="Wrap" />
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+            </Grid>
+        </Border>
+        <ui:SimpleStackPanel Name="Notifications" Spacing="6">
+
+            <hints:Hint_LegionGoDaemon d:Visibility="Visible" />
+            <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
+            <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
+            <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
+        </ui:SimpleStackPanel>
+    </ui:SimpleStackPanel>
+</Page>
