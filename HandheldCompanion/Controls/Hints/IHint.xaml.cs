@@ -26,8 +26,9 @@ namespace HandheldCompanion.Controls.Hints
         }
 
         protected virtual void HintActionButton_Click(object sender, RoutedEventArgs e)
-        {
-            // do something
-        }
+        { }
+
+        public virtual void Stop()
+        { }
     }
 }

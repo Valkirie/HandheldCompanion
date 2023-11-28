@@ -69,6 +69,13 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                IEnumerable<IHint> notifications = Notifications.Children.OfType<IHint>();
+                foreach(IHint hint in notifications)
+                    hint.Stop();
+            });
         }
 
         private void Page_LayoutUpdated(object sender, EventArgs e)

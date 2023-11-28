@@ -44,5 +44,10 @@ namespace HandheldCompanion.Controls.Hints
                 this.Visibility = HasXboxDriversInstalled ? Visibility.Visible : Visibility.Collapsed;
             });
         }
+
+        public override void Stop()
+        {
+            base.Stop();
+        }
     }
 }

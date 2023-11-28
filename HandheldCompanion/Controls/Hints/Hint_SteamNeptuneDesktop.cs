@@ -64,5 +64,10 @@ namespace HandheldCompanion.Controls.Hints
                 PlatformManager.Steam.StartProcess();
             });
         }
+
+        public override void Stop()
+        {
+            base.Stop();
+        }
     }
 }

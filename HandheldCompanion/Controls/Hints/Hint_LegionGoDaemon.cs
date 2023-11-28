@@ -73,5 +73,11 @@ namespace HandheldCompanion.Controls.Hints
             if (process != null && !process.HasExited)
                 process.Kill();
         }
+
+        public override void Stop()
+        {
+            taskTimer.Stop();
+            base.Stop();
+        }
     }
 }
