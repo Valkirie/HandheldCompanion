@@ -2331,13 +2331,13 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
-  <data name="Hint_SteamNeptuneDesktopAction" xml:space="preserve">
+  <data name="Hint_SteamNeptuneReadme" xml:space="preserve">
     <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.</value>
   </data>
   <data name="Hint_SteamNeptuneDesktopDesc" xml:space="preserve">
     <value>It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input.</value>
   </data>
-  <data name="Hint_SteamNeptuneDesktopWarning" xml:space="preserve">
+  <data name="Hint_SteamNeptuneDesktop" xml:space="preserve">
     <value>Steam Desktop Layout is applied</value>
   </data>
   <data name="ControllerPage_SteamXboxDriversAction" xml:space="preserve">
@@ -2585,5 +2585,32 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="ControllerPage_TryAgain" xml:space="preserve">
     <value>Try again</value>
+  </data>
+  <data name="Hint_LegionGoDaemon" xml:space="preserve">
+    <value>LSDaemon is active</value>
+  </data>
+  <data name="Hint_LegionGoDaemonReadme" xml:space="preserve">
+    <value>You should quit LSDaemon, so that the application can run properly and without any errors.</value>
+  </data>
+  <data name="Hint_LegionGoDaemonDesc" xml:space="preserve">
+    <value>It appears that LSDaemon is already active on your console. This may cause compatibility issues with the application.</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
+    <value>ASUS services are running</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckReadme" xml:space="preserve">
+    <value>You should disable ASUS services, so that the application can run smoothly and without any conflicts.</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
+    <value>It appears that ASUS services are already running on your device. This may interfere with the application.</value>
+  </data>
+  <data name="Hint_LegionGoDaemonAction" xml:space="preserve">
+    <value>Quit LSDaemon</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
+    <value>Disable ASUS services</value>
+  </data>
+  <data name="Hint_SteamNeptuneAction" xml:space="preserve">
+    <value>Restart Steam</value>
   </data>
 </root>

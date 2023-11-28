@@ -29,11 +29,11 @@ namespace HandheldCompanion.Controls.Hints
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
 
-            this.HintTitle.Text = Properties.Resources.Hint_SteamNeptuneDesktopWarning;
-            this.HintDescription.Text = Properties.Resources.Hint_SteamNeptuneDesktopDesc;
-            this.HintReadMe.Text = Properties.Resources.Hint_SteamNeptuneDesktopAction;
+            this.HintTitle.Text = Properties.Resources.Hint_LegionGoDaemon;
+            this.HintDescription.Text = Properties.Resources.Hint_LegionGoDaemonDesc;
+            this.HintReadMe.Text = Properties.Resources.Hint_LegionGoDaemonReadme;
 
-            this.HintActionButton.Content = $"Disable {taskName}";
+            this.HintActionButton.Content = Properties.Resources.Hint_LegionGoDaemonAction;
         }
 
         private void TaskTimer_Elapsed(object? sender, ElapsedEventArgs e)

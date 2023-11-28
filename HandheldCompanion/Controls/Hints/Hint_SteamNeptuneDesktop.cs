@@ -19,11 +19,11 @@ namespace HandheldCompanion.Controls.Hints
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
 
-            this.HintTitle.Text = Properties.Resources.Hint_SteamNeptuneDesktopWarning;
+            this.HintTitle.Text = Properties.Resources.Hint_SteamNeptuneDesktop;
             this.HintDescription.Text = Properties.Resources.Hint_SteamNeptuneDesktopDesc;
-            this.HintReadMe.Text = Properties.Resources.Hint_SteamNeptuneDesktopAction;
+            this.HintReadMe.Text = Properties.Resources.Hint_SteamNeptuneReadme;
 
-            this.HintActionButton.Content = "Restart Steam";
+            this.HintActionButton.Content = Properties.Resources.Hint_SteamNeptuneAction;
         }
 
         private void Steam_Updated(PlatformStatus status)

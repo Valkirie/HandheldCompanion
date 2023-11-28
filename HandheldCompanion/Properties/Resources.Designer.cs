@@ -710,33 +710,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input..
-        /// </summary>
-        public static string Hint_SteamNeptuneDesktopAction {
-            get {
-                return ResourceManager.GetString("Hint_SteamNeptuneDesktopAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input..
-        /// </summary>
-        public static string Hint_SteamNeptuneDesktopDesc {
-            get {
-                return ResourceManager.GetString("Hint_SteamNeptuneDesktopDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Steam Desktop Layout is applied.
-        /// </summary>
-        public static string Hint_SteamNeptuneDesktopWarning {
-            get {
-                return ResourceManager.GetString("Hint_SteamNeptuneDesktopWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You might want to uninstall Steam Xbox Controller Enhanced Features Driver.
         /// </summary>
         public static string ControllerPage_SteamXboxDriversAction {
@@ -3236,6 +3209,114 @@ namespace HandheldCompanion.Properties {
         public static string Enum_XInputController_ButtonFlags_Start {
             get {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LSDaemon is active.
+        /// </summary>
+        public static string Hint_LegionGoDaemon {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoDaemon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quit LSDaemon.
+        /// </summary>
+        public static string Hint_LegionGoDaemonAction {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoDaemonAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It appears that LSDaemon is already active on your console. This may cause compatibility issues with the application..
+        /// </summary>
+        public static string Hint_LegionGoDaemonDesc {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoDaemonDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should quit LSDaemon, so that the application can run properly and without any errors..
+        /// </summary>
+        public static string Hint_LegionGoDaemonReadme {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoDaemonReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ASUS services are running.
+        /// </summary>
+        public static string Hint_RogAllyServiceCheck {
+            get {
+                return ResourceManager.GetString("Hint_RogAllyServiceCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable ASUS services.
+        /// </summary>
+        public static string Hint_RogAllyServiceCheckAction {
+            get {
+                return ResourceManager.GetString("Hint_RogAllyServiceCheckAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It appears that ASUS services are already running on your device. This may interfere with the application..
+        /// </summary>
+        public static string Hint_RogAllyServiceCheckDesc {
+            get {
+                return ResourceManager.GetString("Hint_RogAllyServiceCheckDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should disable ASUS services, so that the application can run smoothly and without any conflicts..
+        /// </summary>
+        public static string Hint_RogAllyServiceCheckReadme {
+            get {
+                return ResourceManager.GetString("Hint_RogAllyServiceCheckReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart Steam.
+        /// </summary>
+        public static string Hint_SteamNeptuneAction {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Steam Desktop Layout is applied.
+        /// </summary>
+        public static string Hint_SteamNeptuneDesktop {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input..
+        /// </summary>
+        public static string Hint_SteamNeptuneDesktopDesc {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneDesktopDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input..
+        /// </summary>
+        public static string Hint_SteamNeptuneReadme {
+            get {
+                return ResourceManager.GetString("Hint_SteamNeptuneReadme", resourceCulture);
             }
         }
         

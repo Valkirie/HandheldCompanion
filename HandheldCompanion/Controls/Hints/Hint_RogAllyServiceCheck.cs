@@ -55,11 +55,11 @@ namespace HandheldCompanion.Controls.Hints
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
 
-            this.HintTitle.Text = Properties.Resources.Hint_SteamNeptuneDesktopWarning;
-            this.HintDescription.Text = Properties.Resources.Hint_SteamNeptuneDesktopDesc;
-            this.HintReadMe.Text = Properties.Resources.Hint_SteamNeptuneDesktopAction;
+            this.HintTitle.Text = Properties.Resources.Hint_RogAllyServiceCheck;
+            this.HintDescription.Text = Properties.Resources.Hint_RogAllyServiceCheckDesc;
+            this.HintReadMe.Text = Properties.Resources.Hint_RogAllyServiceCheckReadme;
 
-            this.HintActionButton.Content = "Disable service";
+            this.HintActionButton.Content = Properties.Resources.Hint_RogAllyServiceCheckAction;
         }
 
         private void ServiceTimer_Elapsed(object? sender, ElapsedEventArgs e)
