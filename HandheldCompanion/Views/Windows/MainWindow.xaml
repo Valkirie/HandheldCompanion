@@ -117,6 +117,7 @@
                             <ui:FontIcon
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="20"
+                                Foreground="White"
                                 Glyph="&#xF13C;" />
                         </Grid>
                     </Grid>

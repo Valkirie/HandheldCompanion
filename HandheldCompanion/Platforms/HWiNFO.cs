@@ -7,8 +7,10 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Windows;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Platforms;
 
@@ -115,11 +117,13 @@ public class HWiNFO : IPlatform
 
     public override bool Start()
     {
+        // not authorized
+        // var hasSensorsSM = GetProperty("SensorsSM");
+
         // start HWiNFO if not running or Shared Memory is disabled
-        var hasSensorsSM = GetProperty("SensorsSM");
-        if (!IsRunning || !hasSensorsSM)
+        if (!IsRunning) // || !hasSensorsSM)
         {
-            StopProcess();
+            // StopProcess();
             StartProcess();
         }
         else
@@ -159,56 +163,73 @@ public class HWiNFO : IPlatform
 
     private void Watchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        try
+        if (Monitor.TryEnter(updateLock))
         {
-            // check shared memory
-            MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
+            try
+            {
+                // check shared memory
+                MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
+            }
+            catch
+            {
+                // not authorized
+                // shared memory is disabled, halt process
+                /*
+                if (prevPoll_time != -1)
+                    StopProcess();
+                */
+
+                // raise event
+                // todo: implement a new hint
+                SetStatus(PlatformStatus.Stalled);
+                Monitor.Exit(updateLock);
+                return;
+            }
+
+            // we couldn't poll HWiNFO, halt process
+            if (HWiNFOMemory.poll_time == prevPoll_time)
+            {
+                // not authorized
+                // StopProcess();
+
+                // raise event
+                // todo: implement a new hint
+                SetStatus(PlatformStatus.Stalled);
+                Monitor.Exit(updateLock);
+                return;
+            }
+
+            // update poll time
+            if (HWiNFOMemory.poll_time != 0)
+                prevPoll_time = HWiNFOMemory.poll_time;
+
+            // reset tentative counter
+            Tentative = 0;
+
+            // connect to shared memory
+            if (MemoryMapped is null)
+                MemoryMapped = MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
+
+            // get accessor
+            if (MemoryAccessor is null)
+                MemoryAccessor =
+                    MemoryMapped.CreateViewAccessor(0L, Marshal.SizeOf(typeof(SharedMemory)), MemoryMappedFileAccess.Read);
+            MemoryAccessor.Read(0L, out HWiNFOMemory);
+
+            // we listed sensors already
+            if (HWiNFOSensors is null)
+            {
+                // (re)set sensors array
+                HWiNFOSensors = new ConcurrentDictionary<uint, Sensor>();
+
+                // populate sensors array
+                GetSensors();
+            }
+
+            MemoryTimer.Start();
+
+            Monitor.Exit(updateLock);
         }
-        catch
-        {
-            // shared memory is disabled, halt process
-            if (prevPoll_time != -1)
-                StopProcess();
-
-            // HWiNFO is loading
-            return;
-        }
-
-        // we couldn't poll HWiNFO, halt process
-        if (HWiNFOMemory.poll_time == prevPoll_time)
-        {
-            StopProcess();
-            return;
-        }
-
-        // update poll time
-        if (HWiNFOMemory.poll_time != 0)
-            prevPoll_time = HWiNFOMemory.poll_time;
-
-        // reset tentative counter
-        Tentative = 0;
-
-        // connect to shared memory
-        if (MemoryMapped is null)
-            MemoryMapped = MemoryMappedFile.OpenExisting(HWiNFO_SHARED_MEM_FILE_NAME, MemoryMappedFileRights.Read);
-
-        // get accessor
-        if (MemoryAccessor is null)
-            MemoryAccessor =
-                MemoryMapped.CreateViewAccessor(0L, Marshal.SizeOf(typeof(SharedMemory)), MemoryMappedFileAccess.Read);
-        MemoryAccessor.Read(0L, out HWiNFOMemory);
-
-        // we listed sensors already
-        if (HWiNFOSensors is null)
-        {
-            // (re)set sensors array
-            HWiNFOSensors = new ConcurrentDictionary<uint, Sensor>();
-
-            // populate sensors array
-            GetSensors();
-        }
-
-        MemoryTimer.Start();
     }
 
     public void GetSensors()
@@ -502,7 +523,10 @@ public class HWiNFO : IPlatform
         SetProperty("MinimalizeMainWnd", 1);
         SetProperty("MinimalizeSensors", 1);
         SetProperty("MinimalizeSensorsClose", 1);
-        SetProperty("SensorsSM", 1); // Shared Memory Support [12-HOUR LIMIT]
+
+        // not authorized
+        // SetProperty("SensorsSM", 1); // Shared Memory Support [12-HOUR LIMIT]
+
         SetProperty("ShowWelcomeAndProgress", 0);
         SetProperty("SensorsOnly", 1);
         SetProperty("AutoUpdateBetaDisable", 1);
@@ -631,11 +655,9 @@ public class HWiNFO : IPlatform
     #region events
 
     public event LimitChangedHandler PowerLimitChanged;
-
     public delegate void LimitChangedHandler(PowerType type, int limit);
 
     public event GPUFrequencyChangedHandler GPUFrequencyChanged;
-
     public delegate void GPUFrequencyChangedHandler(double value);
 
     #endregion
