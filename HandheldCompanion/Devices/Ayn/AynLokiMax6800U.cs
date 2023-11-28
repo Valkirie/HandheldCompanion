@@ -8,5 +8,6 @@ public class LokiMax6800U : AynLoki
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 28 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
     }
 }

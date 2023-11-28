@@ -12,5 +12,6 @@ public class OneXPlayer2Pro : OneXPlayer2
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 30 };
         GfxClock = new double[] { 100, 2700 };
+        CpuClock = 5100;
     }
 }

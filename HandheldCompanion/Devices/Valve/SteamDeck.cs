@@ -64,6 +64,7 @@ public class SteamDeck : IDevice
 
         // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
         GfxClock = new double[] { 200, 1600 };
+        CpuClock = 3500;
 
         OEMChords.Add(new DeviceChord("...",
             new List<KeyCode>(), new List<KeyCode>(),

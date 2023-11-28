@@ -17,6 +17,7 @@ public class AYANEO2 : AYANEO.AYANEODevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 3, 33 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
 
         GyrometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>

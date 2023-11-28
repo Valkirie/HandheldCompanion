@@ -18,6 +18,7 @@ namespace HandheldCompanion.Devices
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 4, 28 };
             this.GfxClock = new double[] { 100, 2200 };
+            this.CpuClock = 4700;
 
             GyrometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
             this.GyrometerAxisSwap = new()

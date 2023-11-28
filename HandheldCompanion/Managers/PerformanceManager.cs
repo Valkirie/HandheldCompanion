@@ -335,7 +335,7 @@ public class PerformanceManager : Manager
 
     private void RestoreCPUClock(bool immediate)
     {
-        uint maxClock = MotherboardInfo.ProcessorMaxClockSpeed;
+        uint maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
         RequestCPUClock(maxClock);
     }
 
@@ -823,7 +823,7 @@ public class PerformanceManager : Manager
 
     private void RequestCPUClock(uint cpuClock)
     {
-        double maxClock = MotherboardInfo.ProcessorMaxClockSpeed;
+        double maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
 
         // Is the PROCFREQMAX value already correct?
         uint[] currentClock = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PROCFREQMAX);

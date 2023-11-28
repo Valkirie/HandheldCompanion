@@ -17,6 +17,7 @@ public class AYANEO2021Pro : IDevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 3, 25 };
         GfxClock = new double[] { 100, 1750 };
+        CpuClock = 4200;
 
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {

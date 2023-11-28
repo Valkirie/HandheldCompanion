@@ -18,6 +18,7 @@ public class AYANEONEXT : IDevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 10, 25 };
         GfxClock = new double[] { 100, 2000 };
+        CpuClock = 4500;
 
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {

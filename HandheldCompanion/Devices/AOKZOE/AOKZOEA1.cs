@@ -18,6 +18,7 @@ public class AOKZOEA1 : IDevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
 
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {

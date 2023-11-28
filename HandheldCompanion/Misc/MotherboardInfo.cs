@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HandheldCompanion.Views;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management;
 
 namespace HandheldCompanion;
@@ -249,6 +251,20 @@ public static class MotherboardInfo
             }
 
             return _ProcessorMaxClockSpeed;
+        }
+    }
+
+    private static uint _ProcessorMaxTurboSpeed = 0;
+    public static uint ProcessorMaxTurboSpeed
+    {
+        get
+        {
+            if (_ProcessorMaxTurboSpeed != 0)
+                return _ProcessorMaxTurboSpeed;
+
+            _ProcessorMaxTurboSpeed = MainWindow.CurrentDevice.CpuClock;
+
+            return _ProcessorMaxTurboSpeed;
         }
     }
 

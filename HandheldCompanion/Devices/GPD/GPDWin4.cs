@@ -18,6 +18,7 @@ public class GPDWin4 : IDevice
         nTDP = new double[] { 15, 15, 28 };
         cTDP = new double[] { 5, 28 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;

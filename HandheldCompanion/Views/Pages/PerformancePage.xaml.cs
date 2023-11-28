@@ -60,8 +60,8 @@ namespace HandheldCompanion.Views.Pages
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
             GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
 
-            CPUSlider.Minimum = MotherboardInfo.ProcessorMaxClockSpeed / 4.0d;
-            CPUSlider.Maximum = MotherboardInfo.ProcessorMaxClockSpeed;
+            CPUSlider.Minimum = MotherboardInfo.ProcessorMaxTurboSpeed / 4.0d;
+            CPUSlider.Maximum = MotherboardInfo.ProcessorMaxTurboSpeed;
 
             // motherboard settings
             CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
@@ -441,7 +441,7 @@ namespace HandheldCompanion.Views.Pages
 
                     // CPU Clock control
                     CPUToggle.IsOn = selectedProfile.CPUOverrideEnabled;
-                    CPUSlider.Value = selectedProfile.CPUOverrideValue != 0 ? selectedProfile.CPUOverrideValue : MotherboardInfo.ProcessorMaxClockSpeed;
+                    CPUSlider.Value = selectedProfile.CPUOverrideValue != 0 ? selectedProfile.CPUOverrideValue : MotherboardInfo.ProcessorMaxTurboSpeed;
 
                     // GPU Clock control
                     GPUToggle.IsOn = selectedProfile.GPUOverrideEnabled;

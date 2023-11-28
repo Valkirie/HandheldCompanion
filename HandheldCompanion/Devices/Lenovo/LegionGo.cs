@@ -44,6 +44,7 @@ public class LegionGo : IDevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 100, 2700 };
+        CpuClock = 5100;
 
         GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>

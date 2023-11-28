@@ -14,6 +14,7 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
 
         AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
 

@@ -16,6 +16,7 @@ public class AYANEOAIR : AYANEO.AYANEODevice
         nTDP = new double[] { 12, 12, 15 };
         cTDP = new double[] { 3, 15 };
         GfxClock = new double[] { 100, 1600 };
+        CpuClock = 4000;
 
         GyrometerAxisSwap = new SortedDictionary<char, char>
         {

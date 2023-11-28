@@ -11,6 +11,7 @@ public class OneXPlayerMiniIntel : OneXPlayerMini
         nTDP = new double[] { 28, 28, 64 };
         cTDP = new double[] { 20, 64 };
         GfxClock = new double[] { 100, 1400 };
+        CpuClock = 4700;
 
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
