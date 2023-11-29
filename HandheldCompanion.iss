@@ -301,7 +301,7 @@ begin
   end;
 end;
 
-procedure Dependency_AddVC2015To2012;
+procedure Dependency_AddVC2015To2022;
 begin
   // https://support.microsoft.com/en-US/help/2977003/the-latest-supported-visual-c-downloads
   if not IsMsiProductInstalled(Dependency_String('{65E5BD06-6392-3027-8C26-853107D3CF1A}', '{36F68A90-239C-34DF-B58C-64B30153CE35}'), PackVersionComponents(14, 29, 30037, 0)) then begin
