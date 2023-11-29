@@ -307,7 +307,7 @@ begin
   if not IsMsiProductInstalled(Dependency_String('{65E5BD06-6392-3027-8C26-853107D3CF1A}', '{36F68A90-239C-34DF-B58C-64B30153CE35}'), PackVersionComponents(14, 29, 30037, 0)) then begin
     Dependency_Add('vcredist2022' + Dependency_ArchSuffix + '.exe',
       '/passive /norestart',
-      'Visual C++ 2015-2012 Redistributable' + Dependency_ArchTitle,
+      'Visual C++ 2015-2022 Redistributable' + Dependency_ArchTitle,
       Dependency_String('https://aka.ms/vs/17/release/vc_redist.x86.exe', 'https://aka.ms/vs/17/release/vc_redist.x64.exe'),
       '', False, False);
   end;
@@ -583,7 +583,7 @@ begin
 #ifdef UseVC2013
   Dependency_AddVC2013;
 #endif
-#ifdef UseVC2015To2019
+#ifdef UseVC2015To2022
   Dependency_AddVC2015To2022;
 #endif
 
