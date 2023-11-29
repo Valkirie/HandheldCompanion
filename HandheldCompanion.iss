@@ -508,7 +508,7 @@ begin
                    
     if not(keepHidhideCheckbox.Checked) then
     begin 
-      if(ShellExec('', 'msiexec.exe', '/X{27AF679E-48DB-4B49-A689-1D6A3A52C472} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+      if(ShellExec('', 'msiexec.exe', '/X{BE49B9DE-F8EB-4F54-B312-DD4B601985FC} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
       begin
         log('Successfully executed Hidhide uninstaller');
         if(resultCode = 0) then
