@@ -109,7 +109,7 @@
                     <Grid>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
 
-                        <Grid Name="HasNotifications" Margin="11,-11,-11,11">
+                        <Grid Name="HasNotifications" Margin="11,-11,-11,11" Visibility="Hidden">
                             <ui:FontIcon
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Foreground="Red"
