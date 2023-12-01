@@ -103,8 +103,7 @@
                                     ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Glyph="&#xF136;" />
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
+                                    Glyph="&#xe7ba;" />
                             </Grid>
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock
