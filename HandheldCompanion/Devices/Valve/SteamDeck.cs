@@ -30,21 +30,28 @@ public class SteamDeck : IDevice
 
     public static readonly ushort[] SupportedFirmwares =
     {
-        0xB030, // 45104
-        0x1010, // 4112
+        // Steam Deck - LCD version
+        0xB030,
+        // Steam Deck - OLED version
+        0x1030,
+        0x1010,
     };
 
     public static readonly byte[] SupportedBoardID =
     {
-        0x5,
+        // Steam Deck - LCD version
         0x6,
-        0xA,
+        0xA,        
+        // Steam Deck - OLED version
+        0x5,
     };
 
     public static readonly byte[] SupportedPDCS =
     {
-        0x2B, // 43
-        0x2F, // 47
+        // Steam Deck - LCD version
+        0x2B,
+        // Steam Deck - OLED version
+        0x2F,
     };
 
     private InpOut inpOut;
