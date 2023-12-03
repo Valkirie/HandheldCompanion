@@ -11,6 +11,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion;
 
@@ -92,6 +93,7 @@ public class DSUServer
     private uint serverId;
     private int udpPacketCount;
     private Socket udpSock;
+    private Timer udpTimer;
 
     public DSUServer()
     {
@@ -108,12 +110,25 @@ public class DSUServer
             Model = DsModel.DS4,
             PadState = DsState.Connected
         };
+
+        udpTimer = new(5000);
+        udpTimer.AutoReset = false;
+        udpTimer.Elapsed += UdpTimer_Elapsed;
     }
 
     private void ResetPool()
     {
+        if (_pool is not null)
+            _pool.Release();
+
         _pool = new SemaphoreSlim(ARG_BUFFER_LEN);
+
+        if (argsList is not null && argsList.Length != 0)
+            foreach(SocketAsyncEventArgs args in argsList)
+                args.Dispose();
+
         argsList = new SocketAsyncEventArgs[ARG_BUFFER_LEN];
+
         for (int num = 0; num < ARG_BUFFER_LEN; num++)
         {
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -376,6 +391,7 @@ public class DSUServer
             if (running)
             {
                 ResetUDPConn();
+                return;
             }
         }
         catch (Exception /*e*/) { }
@@ -404,7 +420,7 @@ public class DSUServer
             if (running)
             {
                 ResetUDPConn();
-                StartReceive();
+                return;
             }
         }
         catch (Exception /*ex*/) { }
@@ -417,15 +433,22 @@ public class DSUServer
     /// </summary>
     private void ResetUDPConn()
     {
-        Stop();
+        // suspend UDP
+        if (running)
+            Stop();
+
+        udpTimer.Stop();
+        udpTimer.Start();
+    }
+
+    private void UdpTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        // resume UDP
         Start();
     }
 
     public bool Start()
     {
-        if (running)
-            Stop();
-
         ResetPool();
 
         try
@@ -461,7 +484,11 @@ public class DSUServer
     {
         if (udpSock is not null)
         {
+            if (udpSock.Connected)
+                udpSock.Disconnect(true);
+
             udpSock.Close();
+            udpSock.Dispose();
             udpSock = null;
         }
 
