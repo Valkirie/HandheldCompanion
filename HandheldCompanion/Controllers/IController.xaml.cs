@@ -115,7 +115,7 @@ namespace HandheldCompanion.Controllers
                 UserIndexChanged?.Invoke(value);
 
                 // UI thread (async)
-                Application.Current.Dispatcher.BeginInvoke(() =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     foreach(FrameworkElement frameworkElement in UserIndexPanel.Children)
                     {
