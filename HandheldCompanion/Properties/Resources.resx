@@ -2568,6 +2568,27 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="LayoutPage_SetAsDefault" xml:space="preserve">
     <value>Make this the default layout</value>
   </data>
+  <data name="InputsHotkey_shortcutChangeHIDMode" xml:space="preserve">
+    <value>Toggle emulated controller type</value>
+  </data>
+  <data name="InputsHotkey_shortcutChangeHIDModeDesc" xml:space="preserve">
+    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
+  </data>
+  <data name="ProfilesPage_EmulatedController" xml:space="preserve">
+    <value>Emulated controller type</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDS4" xml:space="preserve">
+    <value>Emulated DualShock 4 controller</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
+    <value>Emulated XBOX 360 controller</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
+    <value>The emulated controller to be used when this profile is active</value>
+  </data>
   <data name="ControllerPage_ControllerManagement" xml:space="preserve">
     <value>Controller management</value>
   </data>
@@ -2621,6 +2642,15 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
     <value>You have no notifications right now.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
+    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
+    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
+    <value>Emulated controller is managed by profile</value>
   </data>
   <data name="Hint_HWiNFO12hLimitPassed" xml:space="preserve">
     <value>HWiNFO Shared Memory limit was reached</value>

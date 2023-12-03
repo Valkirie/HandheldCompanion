@@ -18,6 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Page = System.Windows.Controls.Page;
 using Task = System.Threading.Tasks.Task;
 
@@ -28,9 +29,6 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ControllerPage : Page
 {
-    public delegate void HIDchangedEventHandler(HIDmode HID);
-    public event HIDchangedEventHandler HIDchanged;
-
     // controllers vars
     private HIDmode controllerMode = HIDmode.NoController;
     private HIDstatus controllerStatus = HIDstatus.Disconnected;
@@ -40,7 +38,7 @@ public partial class ControllerPage : Page
         InitializeComponent();
 
         // initialize components
-        foreach (var mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController))
+        foreach (var mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController && a != HIDmode.NotSelected))
             cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
 
         foreach (var status in (HIDstatus[])Enum.GetValues(typeof(HIDstatus)))
@@ -52,6 +50,7 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.Working += ControllerManager_Working;
+        ProfileManager.Applied += ProfileManager_Applied;
 
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
@@ -61,6 +60,24 @@ public partial class ControllerPage : Page
         this.Tag = Tag;
     }
 
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // disable emulated controller combobox if profile is not default or set to default controller
+            if (!profile.Default && (HIDmode)profile.HID != HIDmode.NotSelected)
+            {
+                cB_HidMode.IsEnabled = false;
+                HintsHIDManagedByProfile.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                cB_HidMode.IsEnabled = true;
+                HintsHIDManagedByProfile.Visibility = Visibility.Collapsed;
+            }
+        });
+    }
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
         // UI thread (async)
@@ -429,11 +446,12 @@ public partial class ControllerPage : Page
         controllerMode = (HIDmode)cB_HidMode.SelectedIndex;
         UpdateControllerImage();
 
-        // raise event
-        HIDchanged?.Invoke(controllerMode);
-
-        SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
-
+        // only change HIDmode setting if current profile is default or set to default controller
+        var currentProfile = ProfileManager.GetCurrent();
+        if (currentProfile.Default || (HIDmode)currentProfile.HID == HIDmode.NotSelected)
+        {
+            SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
+        }
     }
 
     private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)

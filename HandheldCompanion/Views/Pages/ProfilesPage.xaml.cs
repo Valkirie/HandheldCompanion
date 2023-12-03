@@ -460,6 +460,20 @@ public partial class ProfilesPage : Page
                 cB_Whitelist.IsChecked = selectedProfile.Whitelisted;
                 cB_Wrapper.SelectedIndex = (int)selectedProfile.XInputPlus;
 
+                // Emulated controller assigned to the profile
+                cB_EmulatedController.IsEnabled = !selectedProfile.Default; // if default profile, disable combobox
+                cB_EmulatedController.SelectedIndex = new Func<int>(() =>
+                {
+                    if (selectedProfile.Default) // Default profile always shows default, but keeps track of default controller internally
+                        return 0;
+                    else if ((HIDmode)selectedProfile.HID == HIDmode.Xbox360Controller)
+                        return 1;
+                    else if ((HIDmode)selectedProfile.HID == HIDmode.DualShock4Controller)
+                        return 2;
+                    else
+                        return 0; // Current or not assigned
+                })();
+
                 // Motion control settings
                 tb_ProfileGyroValue.Value = selectedProfile.GyrometerMultiplier;
                 tb_ProfileAcceleroValue.Value = selectedProfile.AccelerometerMultiplier;
@@ -882,4 +896,18 @@ public partial class ProfilesPage : Page
         selectedProfile.RSRSharpness = (int)RSRSlider.Value;
         UpdateProfile();
     }
+
+    private void cB_EmulatedController_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        var selectedEmulatedController = (ComboBoxItem)cB_EmulatedController.SelectedItem;
+        int HIDmode = int.Parse(selectedEmulatedController.Tag.ToString());
+        if (selectedProfile != null)
+            selectedProfile.HID = HIDmode;
+        UpdateProfile();
+    }
+
 }

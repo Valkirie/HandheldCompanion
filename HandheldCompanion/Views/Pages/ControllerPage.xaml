@@ -157,6 +157,40 @@
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}" TextWrapping="Wrap" />
                     </Expander>
 
+                    <!--  Emulated controller managed by profile  -->
+                    <Expander
+                        Name="HintsHIDManagedByProfile"
+                        Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="Segoe Fluent Icons"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    Glyph="&#xe7ba;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileAction}" TextWrapping="Wrap" />
+                    </Expander>
+
+
                     <!--  Has hidden physical controller but no virtual controller  -->
                     <Expander
                         Name="HintsNoVirtual"

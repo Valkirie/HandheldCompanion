@@ -26,6 +26,10 @@ namespace HandheldCompanion.Managers
 
         public static bool IsInitialized;
 
+        public static event HIDChangedEventHandler HIDchanged;
+        public delegate void HIDChangedEventHandler(HIDmode HIDmode);
+
+
         public static event ControllerSelectedEventHandler ControllerSelected;
         public delegate void ControllerSelectedEventHandler(HIDmode mode);
 
@@ -53,6 +57,7 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Initialized += SettingsManager_Initialized;
+            ProfileManager.Applied += ProfileManager_Applied;
         }
 
         public static void Start()
@@ -74,6 +79,9 @@ namespace HandheldCompanion.Managers
 
             ResetViGEm();
             DSUServer.Stop();
+
+            // unsubscrive events
+            ProfileManager.Applied -= ProfileManager_Applied;
 
             IsInitialized = false;
 
@@ -117,6 +125,38 @@ namespace HandheldCompanion.Managers
                     break;
             }
         }
+
+        private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+        {
+            try
+            {
+                // SetControllerMode takes care of ignoring identical mode switching
+                if (HIDmode == (HIDmode)profile.HID)
+                    return;
+                
+                switch ((HIDmode)profile.HID)
+                {
+                    case HIDmode.Xbox360Controller:
+                    case HIDmode.DualShock4Controller:
+                        {
+                            SetControllerMode((HIDmode)profile.HID);
+                            break;
+                        }
+
+                    default: // Default or not assigned
+                        {
+                            var defaultHIDmode = SettingsManager.GetInt("HIDmode", true);
+                            SetControllerMode((HIDmode)defaultHIDmode);
+                            break;
+                        }
+                }
+            }
+            catch // TODO requires further testing
+            {
+                LogManager.LogError("********************** ProfileManager_Applied in VirtualManager **********************");
+            }
+        }
+
 
         private static void SettingsManager_Initialized()
         {

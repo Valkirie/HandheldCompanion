@@ -151,11 +151,11 @@ public static class ProfileManager
             if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
                 announce = false;
 
+        // update current profile before invoking event
+        currentProfile = profile;
+
         // raise event
         Applied?.Invoke(profile, source);
-
-        // update current profile
-        currentProfile = profile;
 
         // send toast
         // todo: localize me

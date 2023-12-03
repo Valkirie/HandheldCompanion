@@ -512,6 +512,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to profiles settings to change per-game emulated controller type preference..
+        /// </summary>
+        public static string ControllerPage_HIDManagedByProfileAction {
+            get {
+                return ResourceManager.GetString("ControllerPage_HIDManagedByProfileAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The emulated controller type is being managed by the currently applied game profile..
+        /// </summary>
+        public static string ControllerPage_HIDManagedByProfileDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_HIDManagedByProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated controller is managed by profile.
+        /// </summary>
+        public static string ControllerPage_HIDManagedByProfileWarning {
+            get {
+                return ResourceManager.GetString("ControllerPage_HIDManagedByProfileWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input devices.
         /// </summary>
         public static string ControllerPage_InputDevices {
@@ -3601,6 +3628,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toggle emulated controller type.
+        /// </summary>
+        public static string InputsHotkey_shortcutChangeHIDMode {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 emulated controllers.
+        /// </summary>
+        public static string InputsHotkey_shortcutChangeHIDModeDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDModeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display Action center.
         /// </summary>
         public static string InputsHotkey_shortcutControlCenter {
@@ -5181,6 +5226,51 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_DeleteProfile {
             get {
                 return ResourceManager.GetString("ProfilesPage_DeleteProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated controller type.
+        /// </summary>
+        public static string ProfilesPage_EmulatedController {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string ProfilesPage_EmulatedControllerDefault {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedControllerDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The emulated controller to be used when this profile is active.
+        /// </summary>
+        public static string ProfilesPage_EmulatedControllerDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedControllerDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated DualShock 4 controller.
+        /// </summary>
+        public static string ProfilesPage_EmulatedControllerDS4 {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedControllerDS4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulated XBOX 360 controller.
+        /// </summary>
+        public static string ProfilesPage_EmulatedControllerXbox {
+            get {
+                return ResourceManager.GetString("ProfilesPage_EmulatedControllerXbox", resourceCulture);
             }
         }
         

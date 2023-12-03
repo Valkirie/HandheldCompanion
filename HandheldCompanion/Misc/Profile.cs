@@ -91,6 +91,9 @@ public partial class Profile : ICloneable, IComparable
     public bool CPUCoreEnabled { get; set; }
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 
+    // emulated controller type, default is default
+    public int HID { get; set; } = (int)HIDmode.NotSelected;
+
     public Profile()
     {
         // initialize aiming array

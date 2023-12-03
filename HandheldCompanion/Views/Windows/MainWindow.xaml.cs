@@ -247,6 +247,8 @@ public partial class MainWindow : GamepadWindow
         SensorsManager.Start();
         TimerManager.Start();
 
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+
         // start managers asynchroneously
         foreach (var manager in _managers)
             new Thread(manager.Start).Start();
@@ -433,10 +435,6 @@ public partial class MainWindow : GamepadWindow
         _pages.Add("HotkeysPage", hotkeysPage);
         _pages.Add("LayoutPage", layoutPage);
         _pages.Add("NotificationsPage", notificationsPage);
-
-        // handle controllerPage events
-        controllerPage.HIDchanged += HID => { overlayModel.UpdateHIDMode(HID); };
-        controllerPage.HIDchanged += ControllerPage_HIDchanged;
     }
 
     private void loadWindows()
@@ -544,9 +542,13 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
-    private void ControllerPage_HIDchanged(HIDmode controllerMode)
+    private void VirtualManager_ControllerSelected(HIDmode HIDmode)
     {
-        CurrentDevice.SetKeyPressDelay(controllerMode);
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            overlayModel.UpdateHIDMode(HIDmode);
+        });
+        CurrentDevice.SetKeyPressDelay(HIDmode);
     }
 
     public void UpdateSettings(Dictionary<string, string> args)

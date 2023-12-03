@@ -749,6 +749,55 @@
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
 
                     <!--  Controller settings  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" MinWidth="250" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    Glyph="&#xE7FC;" />
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+
+                                    <TextBlock
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_EmulatedController}" />
+                                    <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}"
+                                            TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                <ComboBox
+                                    x:Name="cB_EmulatedController"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    SelectedIndex="0"
+                                    SelectionChanged="cB_EmulatedController_Changed">
+                                    <ComboBoxItem Name="cB_EmulatedController_disabled" Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}" Tag="-1"/>
+                                    <ComboBoxItem
+                                        Name="cB_EmulatedController_Xbox"
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
+                                        Tag="0"/>
+                                    <ComboBoxItem
+                                        Name="cB_EmulatedController_DS4"
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}" 
+                                        Tag="1"/>
+                                </ComboBox>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+
                     <Button
                         Name="ControllerSettingsButton"
                         Height="66"
