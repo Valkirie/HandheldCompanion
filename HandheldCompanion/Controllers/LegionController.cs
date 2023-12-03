@@ -211,7 +211,7 @@ namespace HandheldCompanion.Controllers
 
             bool touched = (TouchpadX != 0 || TouchpadY != 0);
 
-            Inputs.ButtonState[ButtonFlags.RightPadTouch] = false;
+            Inputs.ButtonState[ButtonFlags.RightPadTouch] = touched;
             Inputs.ButtonState[ButtonFlags.RightPadClick] = false;
             Inputs.ButtonState[ButtonFlags.RightPadClickDown] = false;
 
