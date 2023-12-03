@@ -330,19 +330,19 @@ end;
 
 procedure Dependency_AddRTSS;
 begin
-  Dependency_Add('RTSSSetup734.exe',
+  Dependency_Add('RTSSSetup735Beta5.exe',
     '/S',
-    'RTSS Setup v7.3.4',
-    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup734.exe',
+    'RTSS Setup v7.3.5 Beta5',
+    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/RTSSSetup735Beta5.exe',
     '', True, False);
 end;
 
 procedure Dependency_AddHWiNFO;
 begin
-  Dependency_Add('hwi_746.exe',
+  Dependency_Add('hwi_766.exe',
     '/silent',
-    'HWiNFO v7.4.6',
-    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/hwi_746.exe',
+    'HWiNFO v7.6.6',
+    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/hwi_766.exe',
     '', True, False);
 end;
 
