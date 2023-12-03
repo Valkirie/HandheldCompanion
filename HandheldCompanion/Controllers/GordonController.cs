@@ -30,8 +30,8 @@ namespace HandheldCompanion.Controllers
             ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-            DrawControls();
-            RefreshControls();
+            DrawUI();
+            UpdateUI();
 
             // Additional controller specific source buttons/axes
             SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4 });

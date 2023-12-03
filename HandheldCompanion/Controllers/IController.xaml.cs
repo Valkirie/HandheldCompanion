@@ -202,7 +202,7 @@ namespace HandheldCompanion.Controllers
             return string.Empty;
         }
 
-        protected void DrawControls()
+        protected void DrawUI()
         {
             // update name
             ControllerName.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
@@ -212,14 +212,11 @@ namespace HandheldCompanion.Controllers
                 this.Visibility = Visibility.Collapsed;
         }
 
-        protected void RefreshControls()
+        protected void UpdateUI()
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                if (!IsEnabled)
-                    return;
-
                 // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
                 ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
@@ -382,7 +379,7 @@ namespace HandheldCompanion.Controllers
                 CyclePort();
             }
 
-            RefreshControls();
+            UpdateUI();
         }
 
         public virtual void Unhide(bool powerCycle = true)
@@ -397,7 +394,7 @@ namespace HandheldCompanion.Controllers
                 CyclePort();
             }
 
-            RefreshControls();
+            UpdateUI();
         }
 
         public virtual void CyclePort()

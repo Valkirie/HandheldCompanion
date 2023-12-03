@@ -32,14 +32,14 @@ namespace HandheldCompanion.Controllers
         {
             HideHID();
 
-            RefreshControls();
+            UpdateUI();
         }
 
         public override void Unhide(bool powerCycle = true)
         {
             UnhideHID();
 
-            RefreshControls();
+            UpdateUI();
         }
 
         public override string GetGlyph(ButtonFlags button)

@@ -33,8 +33,8 @@ public class NeptuneController : SteamController
         AttachDetails(details);
 
         // UI
-        DrawControls();
-        RefreshControls();
+        DrawUI();
+        UpdateUI();
 
         // Additional controller specific source buttons/axes
         SourceButtons.AddRange(new List<ButtonFlags>

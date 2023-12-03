@@ -38,8 +38,8 @@ public class JSController : IController
         Capabilities |= ControllerCapabilities.Calibration;
 
         // UI
-        DrawControls();
-        RefreshControls();
+        DrawUI();
+        UpdateUI();
     }
 
     public override string ToString()
