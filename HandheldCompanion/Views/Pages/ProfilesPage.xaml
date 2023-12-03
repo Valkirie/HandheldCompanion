@@ -755,7 +755,7 @@
                         CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" MinWidth="250" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                                 <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
@@ -767,16 +767,15 @@
                                     Glyph="&#xE7FC;" />
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
 
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EmulatedController}" />
                                     <TextBlock
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_EmulatedController}" />
-                                    <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}"
-                                            TextWrapping="Wrap" />
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}"
+                                        TextWrapping="Wrap" />
                                 </ui:SimpleStackPanel>
                             </DockPanel>
+
                             <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                 <ComboBox
                                     x:Name="cB_EmulatedController"
@@ -784,15 +783,18 @@
                                     VerticalAlignment="Center"
                                     SelectedIndex="0"
                                     SelectionChanged="cB_EmulatedController_Changed">
-                                    <ComboBoxItem Name="cB_EmulatedController_disabled" Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}" Tag="-1"/>
+                                    <ComboBoxItem
+                                        Name="cB_EmulatedController_disabled"
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
+                                        Tag="-1" />
                                     <ComboBoxItem
                                         Name="cB_EmulatedController_Xbox"
                                         Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
-                                        Tag="0"/>
+                                        Tag="0" />
                                     <ComboBoxItem
                                         Name="cB_EmulatedController_DS4"
-                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}" 
-                                        Tag="1"/>
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
+                                        Tag="1" />
                                 </ComboBox>
                             </DockPanel>
                         </Grid>
