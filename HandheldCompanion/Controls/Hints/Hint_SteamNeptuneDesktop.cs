@@ -35,11 +35,11 @@ namespace HandheldCompanion.Controls.Hints
             {
                 switch (status)
                 {
+                    default:
                     case PlatformStatus.Stopping:
                     case PlatformStatus.Stopped:
                         this.Visibility = Visibility.Collapsed;
                         break;
-                    default:
                     case PlatformStatus.Started:
                         this.Visibility = DesktopProfileApplied ? Visibility.Visible : Visibility.Collapsed;
                         break;
