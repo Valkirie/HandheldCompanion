@@ -3186,6 +3186,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HWiNFO Shared Memory limit was reached.
+        /// </summary>
+        public static string Hint_HWiNFO12hLimitPassed {
+            get {
+                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HWiNFO has reached its shared memory time limit and disabled the shared memory support. This may result in missing or outdated sensor readings.
+        /// </summary>
+        public static string Hint_HWiNFO12hLimitPassedDesc {
+            get {
+                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassedDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should manually re-activate the shared memory time limit in the HWiNFO settings.
+        /// </summary>
+        public static string Hint_HWiNFO12hLimitPassedReadme {
+            get {
+                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassedReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LSDaemon is active.
         /// </summary>
         public static string Hint_LegionGoDaemon {
@@ -3204,7 +3231,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It appears that LSDaemon is already active on your console. This may cause compatibility issues with the application..
+        ///   Looks up a localized string similar to LSDaemon is already active on your console. This may cause compatibility issues with the application.
         /// </summary>
         public static string Hint_LegionGoDaemonDesc {
             get {
@@ -3213,7 +3240,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should quit LSDaemon, so that the application can run properly and without any errors..
+        ///   Looks up a localized string similar to You should quit LSDaemon, so that the application can run properly and without any errors.
         /// </summary>
         public static string Hint_LegionGoDaemonReadme {
             get {
@@ -3240,7 +3267,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It appears that ASUS services are already running on your device. This may interfere with the application..
+        ///   Looks up a localized string similar to ASUS services are already running on your device. This may interfere with the application.
         /// </summary>
         public static string Hint_RogAllyServiceCheckDesc {
             get {
@@ -3249,7 +3276,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should disable ASUS services, so that the application can run smoothly and without any conflicts..
+        ///   Looks up a localized string similar to You should disable ASUS services, so that the application can run smoothly and without any conflicts.
         /// </summary>
         public static string Hint_RogAllyServiceCheckReadme {
             get {
@@ -3276,7 +3303,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input..
+        ///   Looks up a localized string similar to Steam is already running and Steam Desktop Layout is applied. This may result in double input.
         /// </summary>
         public static string Hint_SteamNeptuneDesktopDesc {
             get {
@@ -3285,7 +3312,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input..
+        ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.
         /// </summary>
         public static string Hint_SteamNeptuneReadme {
             get {
@@ -3303,7 +3330,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller.
+        ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller.
         /// </summary>
         public static string Hint_SteamXboxDriversDesc {
             get {

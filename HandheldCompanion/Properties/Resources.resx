@@ -2332,10 +2332,10 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Select</value>
   </data>
   <data name="Hint_SteamNeptuneReadme" xml:space="preserve">
-    <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.</value>
+    <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input</value>
   </data>
   <data name="Hint_SteamNeptuneDesktopDesc" xml:space="preserve">
-    <value>It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input.</value>
+    <value>Steam is already running and Steam Desktop Layout is applied. This may result in double input</value>
   </data>
   <data name="Hint_SteamNeptuneDesktop" xml:space="preserve">
     <value>Steam Desktop Layout is applied</value>
@@ -2344,7 +2344,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
   </data>
   <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
-    <value>It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller</value>
+    <value>Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller</value>
   </data>
   <data name="Hint_SteamXboxDrivers" xml:space="preserve">
     <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
@@ -2590,19 +2590,19 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>LSDaemon is active</value>
   </data>
   <data name="Hint_LegionGoDaemonReadme" xml:space="preserve">
-    <value>You should quit LSDaemon, so that the application can run properly and without any errors.</value>
+    <value>You should quit LSDaemon, so that the application can run properly and without any errors</value>
   </data>
   <data name="Hint_LegionGoDaemonDesc" xml:space="preserve">
-    <value>It appears that LSDaemon is already active on your console. This may cause compatibility issues with the application.</value>
+    <value>LSDaemon is already active on your console. This may cause compatibility issues with the application</value>
   </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
     <value>ASUS services are running</value>
   </data>
   <data name="Hint_RogAllyServiceCheckReadme" xml:space="preserve">
-    <value>You should disable ASUS services, so that the application can run smoothly and without any conflicts.</value>
+    <value>You should disable ASUS services, so that the application can run smoothly and without any conflicts</value>
   </data>
   <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
-    <value>It appears that ASUS services are already running on your device. This may interfere with the application.</value>
+    <value>ASUS services are already running on your device. This may interfere with the application</value>
   </data>
   <data name="Hint_LegionGoDaemonAction" xml:space="preserve">
     <value>Quit LSDaemon</value>
@@ -2621,5 +2621,14 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
     <value>You have no notifications right now.</value>
+  </data>
+  <data name="Hint_HWiNFO12hLimitPassed" xml:space="preserve">
+    <value>HWiNFO Shared Memory limit was reached</value>
+  </data>
+  <data name="Hint_HWiNFO12hLimitPassedDesc" xml:space="preserve">
+    <value>HWiNFO has reached its shared memory time limit and disabled the shared memory support. This may result in missing or outdated sensor readings</value>
+  </data>
+  <data name="Hint_HWiNFO12hLimitPassedReadme" xml:space="preserve">
+    <value>You should manually re-activate the shared memory time limit in the HWiNFO settings</value>
   </data>
 </root>

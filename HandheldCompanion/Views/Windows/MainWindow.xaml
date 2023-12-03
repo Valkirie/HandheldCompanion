@@ -100,6 +100,18 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
+            <!--  About icon  -->
+            <ui:NavigationViewItem
+                Name="navAbout"
+                Content="{x:Static resx:Resources.MainWindow_navAbout}"
+                Tag="AboutPage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+        </ui:NavigationView.MenuItems>
+
+        <ui:NavigationView.FooterMenuItems>
             <!--  Notifications icon  -->
             <ui:NavigationViewItem
                 Name="navNotifications"
@@ -124,16 +136,6 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
-            <!--  About icon  -->
-            <ui:NavigationViewItem
-                Name="navAbout"
-                Content="{x:Static resx:Resources.MainWindow_navAbout}"
-                Tag="AboutPage">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-
             <!--  Settings  -->
             <ui:NavigationViewItem
                 Name="navSettings"
@@ -143,7 +145,7 @@
                     <ui:SymbolIcon Symbol="Setting" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
-        </ui:NavigationView.MenuItems>
+        </ui:NavigationView.FooterMenuItems>
 
         <ui:NavigationView.Content>
             <Grid>

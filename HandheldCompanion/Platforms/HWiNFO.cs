@@ -1,10 +1,12 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
+using Microsoft.Extensions.FileSystemGlobbing;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Enumeration;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -106,6 +108,15 @@ public class HWiNFO : IPlatform
         MonitoredSensors[SensorElementType.CPUFrequency] = new SensorElement();
         MonitoredSensors[SensorElementType.GPUFrequency] = new SensorElement();
 
+        // file watcher
+        if (File.Exists(SettingsPath))
+        {
+            systemWatcher = new(Path.GetDirectoryName(SettingsPath));
+            systemWatcher.Filter = "*.ini";
+            systemWatcher.EnableRaisingEvents = true;
+            systemWatcher.Changed += SystemWatcher_Changed;
+        }
+
         // our main watchdog to (re)apply requested settings
         PlatformWatchdog = new Timer(3000) { Enabled = false };
         PlatformWatchdog.Elapsed += Watchdog_Elapsed;
@@ -113,6 +124,12 @@ public class HWiNFO : IPlatform
         // secondary watchdog to (re)populate sensors
         MemoryTimer = new Timer(MemoryInterval) { Enabled = false };
         MemoryTimer.Elapsed += (sender, e) => PopulateSensors();
+    }
+
+    private void SystemWatcher_Changed(object sender, FileSystemEventArgs e)
+    {
+        bool SensorsSM = GetProperty("SensorsSM");
+        SystemWatcher_Changed("SensorsSM", SensorsSM);
     }
 
     public override bool Start()
@@ -498,7 +515,12 @@ public class HWiNFO : IPlatform
         try
         {
             IniFile settings = new(SettingsPath);
-            return Convert.ToBoolean(Convert.ToInt16(settings.Read(propertyName, "Settings")));
+            string value = settings.Read(propertyName, "Settings");
+
+            if (string.IsNullOrEmpty(value))
+                return false;
+
+            return Convert.ToBoolean(Convert.ToInt16(value));
         }
         catch
         {
