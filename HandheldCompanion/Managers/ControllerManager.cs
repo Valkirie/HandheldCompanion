@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
@@ -779,6 +780,16 @@ public static class ControllerManager
                 Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
                 Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
                 targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+
+                var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
+                switch(ManufacturerName)
+                {
+                    case "AOKZOE":
+                    case "ONE-NETBOOK TECHNOLOGY CO., LTD.":
+                    case "ONE-NETBOOK":
+                        targetController.Rumble();
+                        break;
+                }
             }
         }
     }
