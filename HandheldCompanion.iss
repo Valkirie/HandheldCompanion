@@ -313,7 +313,7 @@ end;
 procedure Dependency_AddHideHide;
 begin
   Dependency_Add('HidHide_1.4.192_x64.exe',
-    '',
+    '/quiet /norestart',
     'HidHide Drivers',
     'https://github.com/nefarius/HidHide/releases/download/v1.4.192.0/HidHide_1.4.192_x64.exe',
     '', True, False);
@@ -322,7 +322,7 @@ end;
 procedure Dependency_AddViGem;
 begin
   Dependency_Add('ViGEmBus_1.22.0_x64_x86_arm64.exe',
-    '',
+    '/quiet /norestart',
     'ViGEmBus Setup',
     'https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
     '', True, False);
@@ -404,7 +404,10 @@ SourceDir=redist
 OutputDir={#SourcePath}\install
 AllowNoIcons=yes
 MinVersion=6.0
-PrivilegesRequired=admin
+;PrivilegesRequired=admin
+PrivilegesRequiredOverridesAllowed=dialog
+Compression=lzma
+SolidCompression=yes
 
 // remove next line if you only deploy 32-bit binaries and dependencies
 ArchitecturesInstallIn64BitMode=x64
