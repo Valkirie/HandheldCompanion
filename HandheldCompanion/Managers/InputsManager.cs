@@ -74,7 +74,7 @@ public static class InputsManager
     private static readonly Dictionary<string, InputsChord> Triggers = new();
 
     // Keyboard vars
-    private static readonly IKeyboardMouseEvents m_GlobalHook;
+    private static IKeyboardMouseEvents m_GlobalHook;
 
     private static short KeyIndex;
     private static bool KeyUsed;
@@ -106,8 +106,6 @@ public static class InputsManager
         InputsChordInputTimer = new Timer(TIME_NEXT);
         InputsChordInputTimer.AutoReset = false;
         InputsChordInputTimer.Elapsed += (sender, e) => InputsChordInput_Elapsed();
-
-        m_GlobalHook = Hook.GlobalEvents();
 
         HotkeysManager.HotkeyCreated += TriggerCreated;
     }
@@ -144,7 +142,7 @@ public static class InputsManager
             InputsChordInputTimer.Stop();
         }
 
-        if (!IsListening())
+        if (!IsListening)
         {
             var keys = GetTriggersFromChord(currentChord);
 
@@ -476,10 +474,7 @@ public static class InputsManager
     public static void Start()
     {
         if (MainWindow.CurrentDevice.HasKey())
-        {
-            m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
-            m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
-        }
+            InitGlobalHook();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -494,13 +489,30 @@ public static class InputsManager
 
         IsInitialized = false;
 
-        if (MainWindow.CurrentDevice.HasKey())
-        {
-            m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
-            m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
-        }
+        DisposeGlobalHook();
 
         LogManager.LogInformation("{0} has stopped", "InputsManager");
+    }
+
+    private static void InitGlobalHook()
+    {
+        if (m_GlobalHook is not null)
+            return;
+
+        m_GlobalHook = Hook.GlobalEvents();
+        m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
+        m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
+    }
+
+    private static void DisposeGlobalHook()
+    {
+        if (m_GlobalHook is null)
+            return;
+
+        m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
+        m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+        m_GlobalHook.Dispose();
+        m_GlobalHook = null;
     }
 
     public static void UpdateReport(ButtonState buttonState)
@@ -588,15 +600,15 @@ public static class InputsManager
         // GamepadResetTimer.Start();
     }
 
-    public static bool IsListening()
-    {
-        return !string.IsNullOrEmpty(currentHotkey.Listener);
-    }
+    public static bool IsListening => !string.IsNullOrEmpty(currentHotkey.Listener);
 
     public static void StartListening(Hotkey hotkey, ListenerType type)
     {
+        if (!MainWindow.CurrentDevice.HasKey())
+            InitGlobalHook();
+
         // force expiration on previous listener, if any
-        if (IsListening())
+        if (IsListening)
             ListenerExpired();
 
         // store current hotkey values
@@ -626,6 +638,9 @@ public static class InputsManager
 
     private static void StopListening(InputsChord inputsChord = null)
     {
+        if (!MainWindow.CurrentDevice.HasKey())
+            DisposeGlobalHook();
+
         if (inputsChord is null)
             inputsChord = new InputsChord();
 

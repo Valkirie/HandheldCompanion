@@ -355,7 +355,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // stop gamepad navigation when InputsManager is listening
-            if (InputsManager.IsListening())
+            if (InputsManager.IsListening)
                 return;
 
             if (controllerState.ButtonState.Equals(prevButtonState))
