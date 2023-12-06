@@ -266,6 +266,22 @@ public class NeptuneController : SteamController
         catch { }
     }
 
+    public override void Hide(bool powerCycle = true)
+    {
+        Close();
+        base.Hide(powerCycle);
+        if (!powerCycle)
+            Open();
+    }
+
+    public override void Unhide(bool powerCycle = true)
+    {
+        Close();
+        base.Unhide(powerCycle);
+        if (!powerCycle)
+            Open();
+    }
+
     private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
     {
         this.input = input;
