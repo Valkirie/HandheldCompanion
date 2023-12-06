@@ -144,9 +144,26 @@ public class DesktopScreen
         return resolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
     }
 
-    public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
+    public ScreenResolution GetResolution(DMDO dmDisplayOrientation, int dmPelsWidth, int dmPelsHeight)
     {
-        return resolutions.FirstOrDefault(a => a.Width == dmPelsWidth && a.Height == dmPelsHeight);
+        int width = 0;
+        int height = 0;
+
+        switch(dmDisplayOrientation)
+        {
+            case DMDO.DEFAULT:
+            case DMDO.D180:
+                width = dmPelsWidth;
+                height = dmPelsHeight;
+                break;
+            case DMDO.D270:
+            case DMDO.D90:
+                height = dmPelsWidth;
+                width = dmPelsHeight;
+                break;
+        }
+
+        return resolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
     }
 
     public ScreenFrequency GetFrequency()

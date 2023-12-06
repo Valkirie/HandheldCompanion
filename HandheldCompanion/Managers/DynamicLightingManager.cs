@@ -86,7 +86,6 @@ public static class DynamicLightingManager
     private static void SystemManager_DisplaySettingsChanged(Desktop.ScreenResolution resolution)
     {
         // Update the screen width and height values when display changes
-
         // Get the primary screen dimensions
         screenWidth = resolution.Width;
         screenHeight = resolution.Height;

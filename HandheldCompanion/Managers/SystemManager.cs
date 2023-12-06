@@ -223,10 +223,9 @@ public static class SystemManager
 
         // update current desktop resolution
         DesktopScreen.devMode = GetDisplay(DesktopScreen.PrimaryScreen.DeviceName);
-        var ScreenResolution =
-            DesktopScreen.GetResolution(DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
+        ScreenResolution ScreenResolution = DesktopScreen.GetResolution(DesktopScreen.devMode.dmDisplayOrientation, DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
 
-        var oldOrientation = ScreenOrientation.rotation;
+        ScreenRotation.Rotations oldOrientation = ScreenOrientation.rotation;
 
         if (!IsInitialized)
         {
@@ -246,7 +245,8 @@ public static class SystemManager
         }
 
         // raise event
-        DisplaySettingsChanged?.Invoke(ScreenResolution);
+        if (ScreenResolution is not null)
+            DisplaySettingsChanged?.Invoke(ScreenResolution);
 
         if (oldOrientation != ScreenOrientation.rotation)
             // raise event
