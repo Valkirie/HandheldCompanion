@@ -592,6 +592,9 @@ public partial class MainWindow : GamepadWindow
                         // start timer manager
                         TimerManager.Start();
 
+                        // resume the virtual controller last
+                        VirtualManager.Resume();
+
                         // restart IMU
                         SensorsManager.Resume(true);
                     }
@@ -612,6 +615,9 @@ public partial class MainWindow : GamepadWindow
             case PowerManager.SystemStatus.SystemPending:
                 // sleep
                 {
+                    // stop the virtual controller
+                    VirtualManager.Suspend();
+
                     // stop timer manager
                     TimerManager.Stop();
 
