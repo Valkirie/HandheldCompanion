@@ -14,7 +14,7 @@ namespace HandheldCompanion.Controls.Hints
         public Hint_HWiNFO12hLimitPassed() : base()
         {
             PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
-            PlatformManager.HWiNFO.SettingValueChanged += HWiNFO_SettingValueChanged; ;
+            PlatformManager.HWiNFO.SettingValueChanged += HWiNFO_SettingValueChanged;
 
             PlatformManager.Initialized += PlatformManager_Initialized;
 

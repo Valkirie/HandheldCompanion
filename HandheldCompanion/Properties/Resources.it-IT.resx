@@ -2257,10 +2257,10 @@
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
   <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">

@@ -23,7 +23,7 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="8*" MinWidth="200" />
-                    <ColumnDefinition Width="2*" MinWidth="140" />
+                    <ColumnDefinition Width="2*" MinWidth="200" />
                 </Grid.ColumnDefinitions>
 
                 <DockPanel Margin="0,12,12,12">
@@ -46,7 +46,7 @@
                 <Button
                     Name="HintActionButton"
                     Grid.Column="1"
-                    Width="140"
+                    Width="200"
                     HorizontalAlignment="Right"
                     d:Visibility="Visible"
                     Click="HintActionButton_Click"

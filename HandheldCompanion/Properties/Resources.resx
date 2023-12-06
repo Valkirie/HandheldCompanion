@@ -1263,22 +1263,16 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="AboutPage_Partner" xml:space="preserve">
     <value>Partner</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrder" xml:space="preserve">
-    <value>Improve virtual controller detection</value>
-  </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderDesc" xml:space="preserve">
-    <value>Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn't detect your inputs (requires device reboot).</value>
-  </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderPrimary" xml:space="preserve">
+  <data name="Dialog_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
   <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
@@ -2660,5 +2654,17 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="Hint_HWiNFO12hLimitPassedReadme" xml:space="preserve">
     <value>You should manually re-activate the shared memory time limit in the HWiNFO settings</value>
+  </data>
+  <data name="Hint_CoreIsolationCheck" xml:space="preserve">
+    <value>Core isolation features are turned on</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckAction" xml:space="preserve">
+    <value>Disable Core isolation</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckDesc" xml:space="preserve">
+    <value>Your system core isolation features are turned on, therefore TDP read/write and fan control might be disabled</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
+    <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
   </data>
 </root>

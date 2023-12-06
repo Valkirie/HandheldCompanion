@@ -1038,10 +1038,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>Non</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Le redémarrage de votre appareil est requis pour que les changements soient pris en compte. Voulez-vous redémarrer maintenant ?</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Redémarrage requis</value>
   </data>
   <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">

@@ -2260,10 +2260,10 @@
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Es necesario reiniciar el dispositivo para que los cambios surtan efecto. ¿Quieres reiniciar ahora?</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Reinicio requerido</value>
   </data>
   <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">

@@ -989,6 +989,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
+        /// </summary>
+        public static string Dialog_ForceRestartDesc {
+            get {
+                return ResourceManager.GetString("Dialog_ForceRestartDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        public static string Dialog_ForceRestartTitle {
+            get {
+                return ResourceManager.GetString("Dialog_ForceRestartTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string Dialog_No {
+            get {
+                return ResourceManager.GetString("Dialog_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Dialog_Yes {
+            get {
+                return ResourceManager.GetString("Dialog_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DIRECTIONAL PAD.
         /// </summary>
         public static string DPadPage_DPad {
@@ -3209,6 +3245,42 @@ namespace HandheldCompanion.Properties {
         public static string Enum_XInputController_ButtonFlags_Start {
             get {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Core isolation features are turned on.
+        /// </summary>
+        public static string Hint_CoreIsolationCheck {
+            get {
+                return ResourceManager.GetString("Hint_CoreIsolationCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable Core isolation.
+        /// </summary>
+        public static string Hint_CoreIsolationCheckAction {
+            get {
+                return ResourceManager.GetString("Hint_CoreIsolationCheckAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your system core isolation features are turned on, therefore TDP read/write and fan control might be disabled.
+        /// </summary>
+        public static string Hint_CoreIsolationCheckDesc {
+            get {
+                return ResourceManager.GetString("Hint_CoreIsolationCheckDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You might want to turn off core isolation and restart your system to enable TDP manipulations.
+        /// </summary>
+        public static string Hint_CoreIsolationCheckReadme {
+            get {
+                return ResourceManager.GetString("Hint_CoreIsolationCheckReadme", resourceCulture);
             }
         }
         
@@ -6965,60 +7037,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_EnableDesktopProfileOnStartDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_EnableDesktopProfileOnStartDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Improve virtual controller detection.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrder {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn&apos;t detect your inputs (requires device reboot)..
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderPrimary {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderPrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderSecondary {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderSecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderText {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restart required.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderTitle {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderTitle", resourceCulture);
             }
         }
         
