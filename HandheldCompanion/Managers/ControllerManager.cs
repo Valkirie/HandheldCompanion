@@ -666,7 +666,7 @@ public static class ControllerManager
                             VirtualManager.Suspend();
 
                             // suspend all physical controllers
-                            foreach (XInputController xInputController in GetPhysicalControllers())
+                            foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
                                 SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
 
                             // resume virtual controller
