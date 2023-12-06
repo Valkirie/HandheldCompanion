@@ -19,6 +19,12 @@ public static class RegistryUtils
         Registry.SetValue(keyName, valueName, value);
     }
 
+    public static bool KeyExists(string key, string valueName)
+    {
+        var keyName = HKLM + "\\" + key;
+        return Registry.GetValue(keyName, valueName, null) != null;
+    }
+
     public static string GetString(string key, string valueName)
     {
         return Convert.ToString(GetValue(key, valueName));

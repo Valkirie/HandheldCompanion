@@ -22,20 +22,25 @@ namespace HandheldCompanion.Controls.Hints
         private static WqlEventQuery HypervisorQuery = new WqlEventQuery(@"SELECT * FROM RegistryValueChangeEvent WHERE Hive = 'HKEY_LOCAL_MACHINE' AND KeyPath = 'SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios' AND ValueName='HypervisorEnforcedCodeIntegrity'");
         private static WqlEventQuery VulnerableDriverQuery = new WqlEventQuery(@"SELECT * FROM RegistryValueChangeEvent WHERE Hive = 'HKEY_LOCAL_MACHINE' AND KeyPath = 'SYSTEM\\CurrentControlSet\\Control\\CI\\Config' AND ValueName='VulnerableDriverBlocklistEnable'");
 
-        private static ManagementEventWatcher VulnerableDriverWatcher = new ManagementEventWatcher(VulnerableDriverQuery);
-        private static ManagementEventWatcher HypervisorWatcher = new ManagementEventWatcher(HypervisorQuery);
+        private ManagementEventWatcher VulnerableDriverWatcher = new ManagementEventWatcher(VulnerableDriverQuery);
+        private ManagementEventWatcher HypervisorWatcher = new ManagementEventWatcher(HypervisorQuery);
 
         bool HypervisorEnforcedCodeIntegrityEnabled = true;
         bool VulnerableDriverBlocklistEnable = true;
 
         public Hint_CoreIsolationCheck() : base()
         {
-            HypervisorWatcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
-            VulnerableDriverWatcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
+            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity"))
+            {
+                HypervisorWatcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
+                HypervisorWatcher.Start();
+            }
 
-            // Start listening for events.
-            HypervisorWatcher.Start();
-            VulnerableDriverWatcher.Start();
+            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable"))
+            {
+                VulnerableDriverWatcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
+                VulnerableDriverWatcher.Start();
+            }
 
             // default state
             this.HintActionButton.Visibility = Visibility.Visible;
@@ -100,8 +105,11 @@ namespace HandheldCompanion.Controls.Hints
 
         public override void Stop()
         {
-            HypervisorWatcher.Stop();
-            VulnerableDriverWatcher.Stop();
+            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios", "HypervisorEnforcedCodeIntegrity"))
+                HypervisorWatcher.Stop();
+
+            if (RegistryUtils.KeyExists(@"SYSTEM\CurrentControlSet\Control\CI\Config", "VulnerableDriverBlocklistEnable"))
+                VulnerableDriverWatcher.Stop();
 
             base.Stop();
         }
