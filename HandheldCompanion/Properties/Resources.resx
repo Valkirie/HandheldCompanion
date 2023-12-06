@@ -1266,7 +1266,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Dialog_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
+  <data name="Dialog_No" xml:space="preserve">
     <value>No</value>
   </data>
   <data name="Dialog_ForceRestartDesc" xml:space="preserve">
