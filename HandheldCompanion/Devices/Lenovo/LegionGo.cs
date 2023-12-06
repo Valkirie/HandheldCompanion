@@ -1,11 +1,17 @@
 ﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Devices.Lenovo;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HidLibrary;
+using HidSharp.Reports.Units;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Management;
 using System.Numerics;
 using System.Threading;
 using System.Windows.Media;
@@ -19,11 +25,14 @@ public class LegionGo : IDevice
 {
     public enum LegionMode
     {
-        Quiet = 0,
-        Balance = 1,
-        Performance = 2,
-        Custom = 3,
+        Quiet = 0x01,
+        Balanced = 0x02,
+        Performance = 0x03,
+        Custom = 0xFF,
     }
+
+    private ManagementScope managementScope = new ManagementScope("root\\WMI");
+    private FanTable fanTable = new();
 
     public const byte INPUT_HID_ID = 0x04;
 
@@ -64,6 +73,7 @@ public class LegionGo : IDevice
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.None;
+        // Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
@@ -83,7 +93,7 @@ public class LegionGo : IDevice
         {
             Default = true,
             OSPowerMode = PowerMode.BetterPerformance,
-            OEMPowerMode = (int)LegionMode.Balance,
+            OEMPowerMode = (int)LegionMode.Balanced,
             Guid = PowerMode.BetterPerformance
         };
 
@@ -120,15 +130,97 @@ public class LegionGo : IDevice
         Init();
     }
 
+    public override void SetFanControl(bool enable, int mode = 0)
+    {
+        // do something
+    }
+
+    public override void SetFanDuty(double percent)
+    {
+        // do something
+    }
+
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        if (profile.OEMPowerMode == -1)
-            ECRAMWrite(0x0A, (byte)LegionMode.Custom);
+        // Fan control
+        if (profile.FanProfile.fanMode == FanMode.Hardware)
+            fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         else
-            ECRAMWrite(0x0A, (byte)profile.OEMPowerMode);
+            fanTable = new(new ushort[] {
+                (ushort)profile.FanProfile.fanSpeeds[1],
+                (ushort)profile.FanProfile.fanSpeeds[2],
+                (ushort)profile.FanProfile.fanSpeeds[3],
+                (ushort)profile.FanProfile.fanSpeeds[4],
+                (ushort)profile.FanProfile.fanSpeeds[5],
+                (ushort)profile.FanProfile.fanSpeeds[6],
+                (ushort)profile.FanProfile.fanSpeeds[7],
+                (ushort)profile.FanProfile.fanSpeeds[8],
+                (ushort)profile.FanProfile.fanSpeeds[9],
+                (ushort)profile.FanProfile.fanSpeeds[10],
+            });
 
-        // Fan control: Default, Full (0, 1)
-        // ECRAMWrite(0x8A, 0);
+        managementScope.Connect();
+        ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_FAN_METHOD");
+        using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
+        {
+            var obj = searcher.Cast<object>().FirstOrDefault();
+            if (obj is ManagementObject mo)
+            {
+                using (mo)
+                {
+                    // Invoke the Fan_Set_Table method
+                    var inParams = mo.GetMethodParameters("Fan_Set_Table");
+                    inParams["FanTable"] = fanTable.GetBytes();
+                    mo.InvokeMethod("Fan_Set_Table", inParams, null);
+
+                    // Invoke the Fan_Get_Table method
+                    inParams = mo.GetMethodParameters("Fan_Get_Table");
+                    inParams["FanID"] = 1;
+                    inParams["SensorID"] = 0;
+
+                    ManagementBaseObject outParams = mo.InvokeMethod("Fan_Get_Table", inParams, null);
+
+                    /* Read output
+                    uint fanTableSize = (uint)outParams["FanTableSize"];
+                    uint[] fanTableArray = (uint[])outParams["FanTable"];
+                    uint sensorTableSize = (uint)outParams["SensorTableSize"];
+                    uint[] sensorTableArray = (uint[])outParams["SensorTable"];
+                    Debug.WriteLine("fanTable:{0}", string.Join(',', fanTable));
+                    */
+                }
+            }
+        }
+
+        // Power mode
+        managementScope.Connect();
+        objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
+        using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
+        {
+            var obj = searcher.Cast<object>().FirstOrDefault();
+            if (obj is ManagementObject mo)
+            {
+                using (mo)
+                {
+                    ManagementBaseObject param = mo.GetMethodParameters("SetSmartFanMode");
+
+                    switch(profile.OEMPowerMode)
+                    {
+                        case -1:
+                            param["Data"] = LegionMode.Custom;
+                            break;
+                        default:
+                            param["Data"] = profile.OEMPowerMode;
+                            break;
+                    }
+                    mo.InvokeMethod("SetSmartFanMode", param, null);
+
+                    /* Read output
+                    int GetSmartFanMode = Convert.ToInt32(mo.InvokeMethod("GetSmartFanMode", null, null)?.Properties["Data"].Value);
+                    Debug.WriteLine("GetSmartFanMode:{0}", GetSmartFanMode);
+                    */
+                }
+            }
+        }
     }
 
     public override bool Open()
