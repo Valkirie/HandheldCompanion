@@ -735,7 +735,8 @@ public abstract class IDevice
         foreach (DeviceChord pair in OEMChords.Where(a => !a.silenced))
         {
             IEnumerable<KeyCode> chords = pair.chords.SelectMany(chord => chord.Value);
-            return chords.Any();
+            if (chords.Any())
+                return true;
         }
 
         return false;
