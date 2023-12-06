@@ -84,7 +84,7 @@ public class SteamDeck : IDevice
         switch (button)
         {
             case ButtonFlags.OEM1:
-                return "\u21E4";
+                return "\u21E5";
         }
 
         return defaultGlyph;
