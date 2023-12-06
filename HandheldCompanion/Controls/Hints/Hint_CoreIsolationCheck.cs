@@ -1,19 +1,10 @@
-﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Platforms;
+﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
-using Microsoft.Extensions.FileSystemGlobbing;
-using SharpDX.Direct3D9;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Xml.Linq;
 
 namespace HandheldCompanion.Controls.Hints
 {

@@ -1,6 +1,5 @@
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
-using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using RTSSSharedMemoryNET;
 using System;

@@ -11,7 +11,6 @@ using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;

@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Views;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Management;
 
 namespace HandheldCompanion;

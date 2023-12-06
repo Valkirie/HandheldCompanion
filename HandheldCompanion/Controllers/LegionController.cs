@@ -2,17 +2,13 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using HidLibrary;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Controllers
 {

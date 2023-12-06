@@ -1,10 +1,8 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Views;
 using Microsoft.Win32.TaskScheduler;
-using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using Task = System.Threading.Tasks.Task;

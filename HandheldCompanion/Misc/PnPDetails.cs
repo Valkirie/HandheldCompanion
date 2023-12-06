@@ -1,7 +1,5 @@
-﻿using HandheldCompanion.Managers.Hid;
-using Nefarius.Utilities.DeviceManagement.Extensions;
+﻿using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
 using System.Runtime.InteropServices;
 
 namespace HandheldCompanion;

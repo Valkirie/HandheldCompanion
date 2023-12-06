@@ -2,25 +2,16 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
-using Microsoft.Win32.TaskScheduler;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Page = System.Windows.Controls.Page;
-using Task = System.Threading.Tasks.Task;
 
 namespace HandheldCompanion.Views.Pages;
 

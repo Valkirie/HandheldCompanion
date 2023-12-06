@@ -1,14 +1,10 @@
 ﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
-using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.ServiceProcess;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;

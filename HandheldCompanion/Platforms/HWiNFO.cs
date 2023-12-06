@@ -1,12 +1,10 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
-using Microsoft.Extensions.FileSystemGlobbing;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Enumeration;
 using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Threading;

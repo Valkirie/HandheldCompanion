@@ -3,7 +3,6 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
-using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;

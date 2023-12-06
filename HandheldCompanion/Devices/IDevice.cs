@@ -4,7 +4,6 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views;
 using HidLibrary;
 using Inkore.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
