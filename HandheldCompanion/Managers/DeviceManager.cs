@@ -431,13 +431,18 @@ public static class DeviceManager
     {
         try
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
-                    return;
 
-                PnPDetails deviceEx = FindDevice(InstanceId);
+                PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = FindDevice(InstanceId);
+                    await Task.Delay(100);
+                }
+
                 if (deviceEx is null)
                     return;
 
@@ -458,8 +463,6 @@ public static class DeviceManager
             Task.Run(async () =>
             {
                 string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
-                    return;
 
                 PnPDetails deviceEx = null;
 
@@ -499,13 +502,17 @@ public static class DeviceManager
     {
         try
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
-                    return;
 
-                PnPDetails deviceEx = FindDevice(InstanceId);
+                PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = FindDevice(InstanceId);
+                    await Task.Delay(100);
+                }
 
                 // skip if XInput
                 if (deviceEx is null || deviceEx.isXInput)
@@ -530,9 +537,6 @@ public static class DeviceManager
             Task.Run(async () =>
             {
                 string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-                if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
-                    return;
-
                 PnPDetails deviceEx = null;
 
                 DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));

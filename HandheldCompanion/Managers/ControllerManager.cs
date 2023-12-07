@@ -567,8 +567,13 @@ public static class ControllerManager
         IController controller = null;
 
         DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
-        while (DateTime.Now < timeout && !Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+        while (DateTime.Now < timeout && controller is null)
+        {
+            if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+                break;
+
             await Task.Delay(100);
+        }
 
         if (controller is null)
             return;
@@ -801,8 +806,13 @@ public static class ControllerManager
         IController controller = null;
 
         DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
-        while (DateTime.Now < timeout && !Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+        while (DateTime.Now < timeout && controller is null)
+        {
+            if (Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out controller))
+                break;
+
             await Task.Delay(100);
+        }
 
         if (controller is null)
             return;
