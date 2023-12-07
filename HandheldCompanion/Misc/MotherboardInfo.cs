@@ -90,18 +90,25 @@ public static class MotherboardInfo
         }
     }
 
+    private static string _Manufacturer;
     public static string Manufacturer
     {
         get
         {
+            if (!string.IsNullOrEmpty(_Manufacturer))
+                return _Manufacturer;
+
             foreach (ManagementObject queryObj in baseboardCollection)
             {
                 var query = queryObj["Manufacturer"];
                 if (query is not null)
-                    return query.ToString();
+                {
+                    _Manufacturer = query.ToString();
+                    break;
+                }
             }
 
-            return string.Empty;
+            return _Manufacturer;
         }
     }
 
@@ -132,8 +139,11 @@ public static class MotherboardInfo
             {
                 var query = queryObj["NumberOfCores"];
                 if (query is not null)
+                {
                     if (int.TryParse(query.ToString(), out var value))
                         _NumberOfCores = value;
+                    break;
+                }
             }
 
             return _NumberOfCores;
@@ -245,8 +255,11 @@ public static class MotherboardInfo
             {
                 var query = queryObj["MaxClockSpeed"];
                 if (query is not null)
+                {
                     if (uint.TryParse(query.ToString(), out var value))
                         _ProcessorMaxClockSpeed = value;
+                    break;
+                }
             }
 
             return _ProcessorMaxClockSpeed;
