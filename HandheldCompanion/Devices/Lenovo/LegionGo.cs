@@ -11,6 +11,7 @@ using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
@@ -191,41 +192,43 @@ public class LegionGo : IDevice
             }
         } catch { }
 
-        try
+        Task.Run(async () =>
         {
             // Power mode
-            ManagementScope managementScope = new ManagementScope("root\\WMI");
-            managementScope.Connect();
-            ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
-            using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
+            int GetSmartFanMode = -1;
+
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
+            while (DateTime.Now < timeout && GetSmartFanMode != profile.OEMPowerMode)
             {
-                var obj = searcher.Cast<object>().FirstOrDefault();
-                if (obj is ManagementObject mo)
+                try
                 {
-                    using (mo)
+
+                    ManagementScope managementScope = new ManagementScope("root\\WMI");
+                    managementScope.Connect();
+                    ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
+                    using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
                     {
-                        ManagementBaseObject param = mo.GetMethodParameters("SetSmartFanMode");
-
-                        switch (profile.OEMPowerMode)
+                        var obj = searcher.Cast<object>().FirstOrDefault();
+                        if (obj is ManagementObject mo)
                         {
-                            case -1:
-                                param["Data"] = LegionMode.Custom;
-                                break;
-                            default:
+                            using (mo)
+                            {
+                                // Update value
+                                ManagementBaseObject param = mo.GetMethodParameters("SetSmartFanMode");
                                 param["Data"] = profile.OEMPowerMode;
-                                break;
-                        }
-                        mo.InvokeMethod("SetSmartFanMode", param, null);
+                                mo.InvokeMethod("SetSmartFanMode", param, null);
 
-                        /* Read output
-                        int GetSmartFanMode = Convert.ToInt32(mo.InvokeMethod("GetSmartFanMode", null, null)?.Properties["Data"].Value);
-                        Debug.WriteLine("GetSmartFanMode:{0}", GetSmartFanMode);
-                        */
+                                // Read output
+                                GetSmartFanMode = Convert.ToInt32(mo.InvokeMethod("GetSmartFanMode", null, null)?.Properties["Data"].Value);
+                            }
+                        }
                     }
                 }
+                catch { }
+
+                await Task.Delay(1000);
             }
-        }
-        catch { }
+        });
     }
 
     public override bool Open()
