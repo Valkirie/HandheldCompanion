@@ -92,7 +92,7 @@ public partial class Profile : ICloneable, IComparable
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 
     // emulated controller type, default is default
-    public int HID { get; set; } = (int)HIDmode.NotSelected;
+    public HIDmode HID { get; set; } = HIDmode.NotSelected;
 
     public Profile()
     {

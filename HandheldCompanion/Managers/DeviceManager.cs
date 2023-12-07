@@ -78,7 +78,7 @@ public static class DeviceManager
         UsbDeviceListener.DeviceRemoved += UsbDevice_DeviceRemoved;
 
         XUsbDeviceListener.StartListen(DeviceInterfaceIds.XUsbDevice);
-        XUsbDeviceListener.DeviceArrived += XUsbDevice_DeviceArrivedAsync;
+        XUsbDeviceListener.DeviceArrived += XUsbDevice_DeviceArrived;
         XUsbDeviceListener.DeviceRemoved += XUsbDevice_DeviceRemoved;
 
         HidDeviceListener.StartListen(DeviceInterfaceIds.HidDevice);
@@ -106,7 +106,7 @@ public static class DeviceManager
         UsbDeviceListener.DeviceRemoved -= UsbDevice_DeviceRemoved;
 
         XUsbDeviceListener.StopListen(DeviceInterfaceIds.XUsbDevice);
-        XUsbDeviceListener.DeviceArrived -= XUsbDevice_DeviceArrivedAsync;
+        XUsbDeviceListener.DeviceArrived -= XUsbDevice_DeviceArrived;
         XUsbDeviceListener.DeviceRemoved -= XUsbDevice_DeviceRemoved;
 
         HidDeviceListener.StopListen(DeviceInterfaceIds.HidDevice);
@@ -137,7 +137,7 @@ public static class DeviceManager
         // sort devices list
         devices = devices.OrderBy(device => device.Value).ToDictionary(x => x.Key, x => x.Value);
         foreach (var pair in devices)
-            XUsbDevice_DeviceArrivedAsync(new DeviceEventArgs
+            XUsbDevice_DeviceArrived(new DeviceEventArgs
             { InterfaceGuid = DeviceInterfaceIds.XUsbDevice, SymLink = pair.Key });
     }
 
@@ -451,11 +451,11 @@ public static class DeviceManager
         catch { }
     }
 
-    private static void XUsbDevice_DeviceArrivedAsync(DeviceEventArgs obj)
+    private static void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
     {
         try
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
                 if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
@@ -467,7 +467,7 @@ public static class DeviceManager
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     deviceEx = FindDevice(InstanceId);
-                    Task.Delay(100);
+                    await Task.Delay(100);
                 }
 
                 if (deviceEx is not null && deviceEx.isGaming)
@@ -527,7 +527,7 @@ public static class DeviceManager
     {
         try
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
                 if (InstanceId.Contains(VirtualManager.FakeVendorId.ToString("X4")))
@@ -539,7 +539,7 @@ public static class DeviceManager
                 while (DateTime.Now < timeout && deviceEx is null)
                 {
                     deviceEx = GetDetails(obj.SymLink);
-                    Task.Delay(100);
+                    await Task.Delay(100);
                 }
 
                 // skip if XInput
@@ -608,7 +608,7 @@ public static class DeviceManager
                 ledState = ledStateData[2];
             }
 
-            Task.Delay(100);
+            Task.Delay(1000);
         }
 
         return XINPUT_LED_TO_PORT_MAP[ledState];

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Management;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using WindowsInput.Events;
 using static HandheldCompanion.Devices.Lenovo.SapientiaUsb;
@@ -28,7 +29,6 @@ public class LegionGo : IDevice
         Custom = 0xFF,
     }
 
-    private ManagementScope managementScope = new ManagementScope("root\\WMI");
     private FanTable fanTable = new();
 
     public const byte INPUT_HID_ID = 0x04;
@@ -139,7 +139,6 @@ public class LegionGo : IDevice
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        // Fan control
         if (profile.FanProfile.fanMode == FanMode.Hardware)
             fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
         else
@@ -156,68 +155,80 @@ public class LegionGo : IDevice
                 (ushort)profile.FanProfile.fanSpeeds[10],
             });
 
-        managementScope.Connect();
-        ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_FAN_METHOD");
-        using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
+        try
         {
-            var obj = searcher.Cast<object>().FirstOrDefault();
-            if (obj is ManagementObject mo)
+            // Fan control
+            ManagementScope managementScope = new ManagementScope("root\\WMI");
+            managementScope.Connect();
+            ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_FAN_METHOD");
+            using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
             {
-                using (mo)
+                var obj = searcher.Cast<object>().FirstOrDefault();
+                if (obj is ManagementObject mo)
                 {
-                    // Invoke the Fan_Set_Table method
-                    var inParams = mo.GetMethodParameters("Fan_Set_Table");
-                    inParams["FanTable"] = fanTable.GetBytes();
-                    mo.InvokeMethod("Fan_Set_Table", inParams, null);
-
-                    // Invoke the Fan_Get_Table method
-                    inParams = mo.GetMethodParameters("Fan_Get_Table");
-                    inParams["FanID"] = 1;
-                    inParams["SensorID"] = 0;
-
-                    ManagementBaseObject outParams = mo.InvokeMethod("Fan_Get_Table", inParams, null);
-
-                    /* Read output
-                    uint fanTableSize = (uint)outParams["FanTableSize"];
-                    uint[] fanTableArray = (uint[])outParams["FanTable"];
-                    uint sensorTableSize = (uint)outParams["SensorTableSize"];
-                    uint[] sensorTableArray = (uint[])outParams["SensorTable"];
-                    Debug.WriteLine("fanTable:{0}", string.Join(',', fanTable));
-                    */
-                }
-            }
-        }
-
-        // Power mode
-        managementScope.Connect();
-        objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
-        using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
-        {
-            var obj = searcher.Cast<object>().FirstOrDefault();
-            if (obj is ManagementObject mo)
-            {
-                using (mo)
-                {
-                    ManagementBaseObject param = mo.GetMethodParameters("SetSmartFanMode");
-
-                    switch(profile.OEMPowerMode)
+                    using (mo)
                     {
-                        case -1:
-                            param["Data"] = LegionMode.Custom;
-                            break;
-                        default:
-                            param["Data"] = profile.OEMPowerMode;
-                            break;
-                    }
-                    mo.InvokeMethod("SetSmartFanMode", param, null);
+                        // Invoke the Fan_Set_Table method
+                        var inParams = mo.GetMethodParameters("Fan_Set_Table");
+                        inParams["FanTable"] = fanTable.GetBytes();
+                        mo.InvokeMethod("Fan_Set_Table", inParams, null);
 
-                    /* Read output
-                    int GetSmartFanMode = Convert.ToInt32(mo.InvokeMethod("GetSmartFanMode", null, null)?.Properties["Data"].Value);
-                    Debug.WriteLine("GetSmartFanMode:{0}", GetSmartFanMode);
-                    */
+                        // Invoke the Fan_Get_Table method
+                        inParams = mo.GetMethodParameters("Fan_Get_Table");
+                        inParams["FanID"] = 1;
+                        inParams["SensorID"] = 0;
+
+                        ManagementBaseObject outParams = mo.InvokeMethod("Fan_Get_Table", inParams, null);
+
+                        /* Read output
+                        uint fanTableSize = (uint)outParams["FanTableSize"];
+                        uint[] fanTableArray = (uint[])outParams["FanTable"];
+                        uint sensorTableSize = (uint)outParams["SensorTableSize"];
+                        uint[] sensorTableArray = (uint[])outParams["SensorTable"];
+                        Debug.WriteLine("fanTable:{0}", string.Join(',', fanTable));
+                        */
+                    }
                 }
             }
-        }
+        } catch { }
+
+        Task.Run(async () =>
+        {
+            // Power mode
+            int GetSmartFanMode = -1;
+
+            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
+            while (DateTime.Now < timeout && GetSmartFanMode != profile.OEMPowerMode)
+            {
+                try
+                {
+
+                    ManagementScope managementScope = new ManagementScope("root\\WMI");
+                    managementScope.Connect();
+                    ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
+                    using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
+                    {
+                        var obj = searcher.Cast<object>().FirstOrDefault();
+                        if (obj is ManagementObject mo)
+                        {
+                            using (mo)
+                            {
+                                // Update value
+                                ManagementBaseObject param = mo.GetMethodParameters("SetSmartFanMode");
+                                param["Data"] = profile.OEMPowerMode;
+                                mo.InvokeMethod("SetSmartFanMode", param, null);
+
+                                // Read output
+                                GetSmartFanMode = Convert.ToInt32(mo.InvokeMethod("GetSmartFanMode", null, null)?.Properties["Data"].Value);
+                            }
+                        }
+                    }
+                }
+                catch { }
+
+                await Task.Delay(1000);
+            }
+        });
     }
 
     public override bool Open()
