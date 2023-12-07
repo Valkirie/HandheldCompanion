@@ -190,7 +190,7 @@ public static class SystemManager
 
     private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
-        var PrimaryScreen = Screen.PrimaryScreen;
+        Screen PrimaryScreen = Screen.PrimaryScreen;
 
         if (DesktopScreen is null || DesktopScreen.PrimaryScreen.DeviceName != PrimaryScreen.DeviceName)
         {
@@ -198,16 +198,16 @@ public static class SystemManager
             DesktopScreen = new DesktopScreen(PrimaryScreen);
 
             // pull resolutions details
-            var resolutions = GetResolutions(DesktopScreen.PrimaryScreen.DeviceName);
+            List<Display> resolutions = GetResolutions(DesktopScreen.PrimaryScreen.DeviceName);
 
             foreach (var mode in resolutions)
             {
-                var res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
+                ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
 
-                var frequencies = resolutions
+                List<int> frequencies = resolutions
                     .Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight)
                     .Select(b => b.dmDisplayFrequency).Distinct().ToList();
-                foreach (var frequency in frequencies)
+                foreach (int frequency in frequencies)
                     res.Frequencies[frequency] = new ScreenFrequency(frequency);
 
                 if (!DesktopScreen.HasResolution(res))
@@ -223,7 +223,7 @@ public static class SystemManager
 
         // update current desktop resolution
         DesktopScreen.devMode = GetDisplay(DesktopScreen.PrimaryScreen.DeviceName);
-        ScreenResolution ScreenResolution = DesktopScreen.GetResolution(DesktopScreen.devMode.dmDisplayOrientation, DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
+        ScreenResolution ScreenResolution = DesktopScreen.GetResolution(DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
 
         ScreenRotation.Rotations oldOrientation = ScreenOrientation.rotation;
 
