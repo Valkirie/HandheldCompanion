@@ -282,43 +282,10 @@ public partial class ControllerPage : Page
                 {
                     default:
                     case ContentDialogResult.Primary:
-                        {
                             Toggle_ControllerManagement.IsOn = false;
-                        }
                         break;
                     case ContentDialogResult.None:
-                        {
-                            Toggle_ControllerManagement.IsOn = false;
                             Toggle_ControllerManagement.IsOn = true;
-
-                            /*
-                            // The command to schedule the executable with Task Scheduler
-                            string exePath = Assembly.GetExecutingAssembly().Location.Replace("dll", "exe");
-                            string exeArgs = "";
-
-                            // Create a task name
-                            string taskName = "RestartHC";
-
-                            // Create a task definition using the TaskService class
-                            var td = TaskService.Instance.NewTask();
-                            td.RegistrationInfo.Description = "Run RestartHC";
-                            td.Principal.RunLevel = TaskRunLevel.Highest;
-
-                            // Create a trigger that runs the task once after 3 seconds
-                            var trigger = new TimeTrigger();
-                            trigger.StartBoundary = DateTime.Now.AddSeconds(3);
-                            td.Triggers.Add(trigger);
-
-                            // Create an action that executes the executable
-                            var action = new ExecAction(exePath, exeArgs);
-                            td.Actions.Add(action);
-
-                            // Register the task with the Task Scheduler
-                            TaskService.Instance.RootFolder.RegisterTaskDefinition(taskName, td);
-
-                            Environment.Exit(0);
-                            */
-                        }
                         break;
                 }
             }

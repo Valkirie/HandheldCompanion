@@ -642,6 +642,8 @@ public static class ControllerManager
                         // disable that setting if we failed too many times
                         if (ControllerManagementAttempts == ControllerManagementMaxAttempts)
                         {
+                            SettingsManager.SetProperty("ControllerManagement", false);
+
                             // resume all physical controllers
                             StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");
                             if (deviceInstanceIds is not null && deviceInstanceIds.Count != 0)
