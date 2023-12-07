@@ -131,22 +131,24 @@ namespace HandheldCompanion.Managers
             try
             {
                 // SetControllerMode takes care of ignoring identical mode switching
-                if (HIDmode == (HIDmode)profile.HID)
+                if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
                     return;
+
+                // todo: monitor ControllerManager and check if automatic controller management is running
                 
-                switch ((HIDmode)profile.HID)
+                switch (profile.HID)
                 {
                     case HIDmode.Xbox360Controller:
                     case HIDmode.DualShock4Controller:
                         {
-                            SetControllerMode((HIDmode)profile.HID);
+                            SetControllerMode(profile.HID);
                             break;
                         }
 
                     default: // Default or not assigned
                         {
-                            var defaultHIDmode = SettingsManager.GetInt("HIDmode", true);
-                            SetControllerMode((HIDmode)defaultHIDmode);
+                            HIDmode defaultHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+                            SetControllerMode(defaultHIDmode);
                             break;
                         }
                 }

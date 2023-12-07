@@ -465,9 +465,9 @@ public partial class ProfilesPage : Page
                 {
                     if (selectedProfile.Default) // Default profile always shows default, but keeps track of default controller internally
                         return 0;
-                    else if ((HIDmode)selectedProfile.HID == HIDmode.Xbox360Controller)
+                    else if (selectedProfile.HID == HIDmode.Xbox360Controller)
                         return 1;
-                    else if ((HIDmode)selectedProfile.HID == HIDmode.DualShock4Controller)
+                    else if (selectedProfile.HID == HIDmode.DualShock4Controller)
                         return 2;
                     else
                         return 0; // Current or not assigned
@@ -902,10 +902,17 @@ public partial class ProfilesPage : Page
         if (updateLock)
             return;
 
-        var selectedEmulatedController = (ComboBoxItem)cB_EmulatedController.SelectedItem;
-        int HIDmode = int.Parse(selectedEmulatedController.Tag.ToString());
-        if (selectedProfile != null)
-            selectedProfile.HID = HIDmode;
+        if (selectedProfile is null)
+            return;
+
+        ComboBoxItem selectedEmulatedController = (ComboBoxItem)cB_EmulatedController.SelectedItem;
+
+        if (selectedEmulatedController is null || selectedEmulatedController.Tag is null)
+            return;
+
+        HIDmode HIDmode = (HIDmode)int.Parse(selectedEmulatedController.Tag.ToString());
+        selectedProfile.HID = HIDmode;
+
         UpdateProfile();
     }
 

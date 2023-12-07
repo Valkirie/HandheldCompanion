@@ -82,7 +82,7 @@ namespace HandheldCompanion.Misc
 
         public FanProfile FanProfile { get; set; } = new();
 
-        public int OEMPowerMode { get; set; } = -1;
+        public int OEMPowerMode { get; set; } = 0xFF;
         public Guid OSPowerMode { get; set; } = PowerMode.BetterPerformance;
 
         private Dictionary<Page, UIElement> uIElements = new();
