@@ -38,6 +38,7 @@ public static class ControllerManager
 
     private static bool ControllerManagementSuccess = false;
     private static int ControllerManagementAttempts = 0;
+    private const int ControllerManagementMaxAttempts = 3;
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -638,8 +639,8 @@ public static class ControllerManager
                     IController controller = GetControllerFromSlot(UserIndex.One, false);
                     if (controller is null)
                     {
-                        // disable that setting if we failed three times
-                        if (ControllerManagementAttempts == 3)
+                        // disable that setting if we failed too many times
+                        if (ControllerManagementAttempts == ControllerManagementMaxAttempts)
                         {
                             // resume all physical controllers
                             StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedControllers");

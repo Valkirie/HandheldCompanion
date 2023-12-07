@@ -265,6 +265,7 @@ public partial class ControllerPage : Page
 
             ControllerRefresh();
 
+            // failed
             if (status == 2)
             {
                 // todo: translate me
@@ -287,6 +288,7 @@ public partial class ControllerPage : Page
                         break;
                     case ContentDialogResult.None:
                         {
+                            Toggle_ControllerManagement.IsOn = false;
                             Toggle_ControllerManagement.IsOn = true;
 
                             /*
