@@ -28,7 +28,6 @@ public class LegionGo : IDevice
         Custom = 0xFF,
     }
 
-    private ManagementScope managementScope = new ManagementScope("root\\WMI");
     private FanTable fanTable = new();
 
     public const byte INPUT_HID_ID = 0x04;
@@ -156,6 +155,7 @@ public class LegionGo : IDevice
                 (ushort)profile.FanProfile.fanSpeeds[10],
             });
 
+        ManagementScope managementScope = new ManagementScope("root\\WMI");
         managementScope.Connect();
         ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_FAN_METHOD");
         using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
@@ -189,6 +189,7 @@ public class LegionGo : IDevice
         }
 
         // Power mode
+        managementScope = new ManagementScope("root\\WMI");
         managementScope.Connect();
         objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
         using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
