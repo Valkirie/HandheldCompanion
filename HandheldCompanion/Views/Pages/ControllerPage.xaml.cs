@@ -7,6 +7,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -263,6 +264,9 @@ public partial class ControllerPage : Page
                     break;
             }
 
+            while (workingThread is not null && workingThread.IsAlive)
+                await Task.Delay(1000);
+
             ControllerRefresh();
 
             // failed
@@ -377,8 +381,8 @@ public partial class ControllerPage : Page
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
             IController targetController = ControllerManager.GetTargetController();
-            IController virtualController = ControllerManager.GetVirtualControllers().FirstOrDefault();
-            int idx = virtualController is null ? -1 : virtualController.GetUserIndex();
+            IController virtualController = ControllerManager.GetVirtualControllers().LastOrDefault();
+            int idx = virtualController is null ? 255 : virtualController.GetUserIndex();
             SetVirtualControllerVisualIndex(idx);
 
             bool isPlugged = hasTarget;
