@@ -166,7 +166,8 @@ namespace HandheldCompanion.Controllers
             {
                 // kill rumble thread
                 dataThreadRunning = false;
-                dataThread.Join();
+                if (dataThread is not null)
+                    dataThread.Join();
 
                 if (hidDevice.IsConnected && hidDevice.IsOpen)
                 {
