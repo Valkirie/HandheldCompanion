@@ -13,10 +13,16 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         // https://www.amd.com/en/products/apu/amd-ryzen-7-6800u
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 28 };
+<<<<<<< HEAD
         GfxClock = new double[] { 100, 2200 };
         CpuClock = 4700;
 
         AccelerometerAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+=======
+        GfxClock = new double[] { 100, 2200 };
+
+        AccelerationAxis = new Vector3(-1.0f, 1.0f, 1.0f);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         OEMChords.Clear();
 
@@ -37,6 +43,7 @@ public class OneXPlayerMiniPro : OneXPlayerMini
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             false, ButtonFlags.OEM3
         ));
+<<<<<<< HEAD
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -52,6 +59,8 @@ public class OneXPlayerMiniPro : OneXPlayerMini
         }
 
         return defaultGlyph;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     public override bool Open()

@@ -10,7 +10,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 using System.Windows;
+<<<<<<< HEAD
 using Timer = System.Timers.Timer;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 namespace HandheldCompanion.Platforms;
 
@@ -136,7 +139,12 @@ public class HWiNFO : IPlatform
         // var hasSensorsSM = GetProperty("SensorsSM");
 
         // start HWiNFO if not running or Shared Memory is disabled
+<<<<<<< HEAD
         if (!IsRunning) // || !hasSensorsSM)
+=======
+        var hasSensorsSM = GetProperty("SensorsSM");
+        if (!IsRunning || !hasSensorsSM)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             // StopProcess();
             StartProcess();
@@ -543,10 +551,13 @@ public class HWiNFO : IPlatform
         SetProperty("MinimalizeMainWnd", 1);
         SetProperty("MinimalizeSensors", 1);
         SetProperty("MinimalizeSensorsClose", 1);
+<<<<<<< HEAD
 
         // not authorized
         // SetProperty("SensorsSM", 1); // Shared Memory Support [12-HOUR LIMIT]
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         SetProperty("ShowWelcomeAndProgress", 0);
         SetProperty("SensorsOnly", 1);
         SetProperty("AutoUpdateBetaDisable", 1);

@@ -55,6 +55,12 @@ public static class ProcessManager
             TreeScope.Children,
             OnWindowOpened);
 
+<<<<<<< HEAD
+=======
+        // list all current windows
+        EnumWindows(OnWindowDiscovered, 0);
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         ForegroundTimer = new Timer(1000);
         ForegroundTimer.Elapsed += ForegroundCallback;
     }

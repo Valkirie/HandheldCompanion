@@ -400,8 +400,24 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
+<<<<<<< HEAD
                                 // set state
                                 _goingForward = true;
+=======
+                                switch (focusedElement.Name)
+                                {
+                                    // deprecated, used for ui:NavigationView.FooterMenuItem
+                                    case "b_ServiceStart":
+                                    case "b_ServiceStop":
+                                    case "b_ServiceInstall":
+                                    case "b_ServiceDelete":
+                                        WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
+                                        return;
+                                    default:
+                                        {
+                                            // set state
+                                            _goingForward = true;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
                                 if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
                                     Focus(control);

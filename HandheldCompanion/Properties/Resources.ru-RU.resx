@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
@@ -2338,4 +2339,2313 @@
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>Gamepad: {0}</value>
   </data>
+=======
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_About" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="AboutPage_AboutDescription" xml:space="preserve">
+    <value>Набор служб Windows и оптимизированного под сенсорный дисплей интерфейса для расширения возможностей вашего портативного игрового устройства. Включает в себя следующие фукнции: управление движением(гироском), эмуляцию виртуального контроллера, оверлей быстрого доступа, виртуальные сенсорные панели, визуализация контрллера, систему настроек профиля для каждого приложения. Handheld Companion использует драйвер ViGEmBus и библиотеки ViGEmClient, а также драйвер фильтра режима ядра HidHide. Алгоритмы управления движением основаны на работе Jibbsmart и доступной информации на GyroWiki.</value>
+  </data>
+  <data name="AboutPage_Accelerometer" xml:space="preserve">
+    <value>Акселерометр</value>
+  </data>
+  <data name="AboutPage_Author" xml:space="preserve">
+    <value>Автор</value>
+  </data>
+  <data name="AboutPage_Contributors" xml:space="preserve">
+    <value>Разработчики</value>
+  </data>
+  <data name="AboutPage_Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="AboutPage_Donate" xml:space="preserve">
+    <value>Помочь проекту</value>
+  </data>
+  <data name="AboutPage_Gyrometer" xml:space="preserve">
+    <value>Гироскоп</value>
+  </data>
+  <data name="AboutPage_Inclinometer" xml:space="preserve">
+    <value>Датчик наклона</value>
+  </data>
+  <data name="AboutPage_NotApplicable" xml:space="preserve">
+    <value>Н/Д</value>
+  </data>
+  <data name="AboutPage_Partner" xml:space="preserve">
+    <value>При поддержке</value>
+  </data>
+  <data name="AboutPage_RelatedLinks" xml:space="preserve">
+    <value>Ссылки</value>
+  </data>
+  <data name="AboutPage_SensorExternal" xml:space="preserve">
+    <value>Встроенные</value>
+  </data>
+  <data name="AboutPage_SensorInternal" xml:space="preserve">
+    <value>Внешние</value>
+  </data>
+  <data name="AboutPage_SensorName" xml:space="preserve">
+    <value>Название датчика</value>
+  </data>
+  <data name="AboutPage_SensorSpecification" xml:space="preserve">
+    <value>Спецификации датчиков</value>
+  </data>
+  <data name="AboutPage_Service" xml:space="preserve">
+    <value>Служба</value>
+  </data>
+  <data name="AboutPage_SourceCode" xml:space="preserve">
+    <value>Исходный код</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="AboutPage_Wiki" xml:space="preserve">
+    <value>Вики</value>
+  </data>
+  <data name="Administrator" xml:space="preserve">
+    <value>Администратор</value>
+  </data>
+  <data name="ButtonsPage_ABXY" xml:space="preserve">
+    <value>A,B,X,Y</value>
+  </data>
+  <data name="ButtonsPage_Back_Grips" xml:space="preserve">
+    <value>ЗАДНИЕ КНОПКИ</value>
+  </data>
+  <data name="ButtonsPage_Bumpers" xml:space="preserve">
+    <value>БАМПЕРЫ</value>
+  </data>
+  <data name="ButtonsPage_Menu" xml:space="preserve">
+    <value>MENU</value>
+  </data>
+  <data name="ButtonsPage_OEM" xml:space="preserve">
+    <value>OEM</value>
+  </data>
+  <data name="ControllerPage_CloakDevice" xml:space="preserve">
+    <value>Скрыть контроллер при подключении</value>
+  </data>
+  <data name="ControllerPage_CloakDeviceDesc" xml:space="preserve">
+    <value>Скрыть физический контроллер при подключении</value>
+  </data>
+  <data name="ControllerPage_Connect" xml:space="preserve">
+    <value>Подключить</value>
+  </data>
+  <data name="ControllerPage_Controller" xml:space="preserve">
+    <value>Контроллер</value>
+  </data>
+  <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
+    <value>Маскировка контроллера</value>
+  </data>
+  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+    <value>Настойки контроллера</value>
+  </data>
+  <data name="ControllerPage_Disconnect" xml:space="preserve">
+    <value>Отключить</value>
+  </data>
+  <data name="ControllerPage_InputDevices" xml:space="preserve">
+    <value>Устройства ввода</value>
+  </data>
+  <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
+    <value>Показать контроллер при закрытии</value>
+  </data>
+  <data name="ControllerPage_UncloakOnCloseDesc" xml:space="preserve">
+    <value>Восстановить видимость всех физических контроллеров при выходе из приложения</value>
+  </data>
+  <data name="ControllerPage_VibrateDevice" xml:space="preserve">
+    <value>Вибрация при подключении</value>
+  </data>
+  <data name="ControllerPage_VibrateDeviceDesc" xml:space="preserve">
+    <value>Вибрировать при подключении контроллера</value>
+  </data>
+  <data name="ControllerPage_VibrationStrength" xml:space="preserve">
+    <value>Сила вибрации</value>
+  </data>
+  <data name="ControllerPage_VibrationStrengthExpl" xml:space="preserve">
+    <value>Изменить силу вибрации контрллера</value>
+  </data>
+  <data name="DPadPage_DPad" xml:space="preserve">
+    <value>КРЕСТОВИНА</value>
+  </data>
+  <data name="InputsHotkey_decreaseBrightness" xml:space="preserve">
+    <value>Уменьшить яркость</value>
+  </data>
+  <data name="InputsHotkey_decreaseBrightnessDesc" xml:space="preserve">
+    <value>Уменьшить текущую яркость экрана на 5%</value>
+  </data>
+  <data name="InputsHotkey_decreaseTDP" xml:space="preserve">
+    <value>Уменьшить лимит энергомотребления (TDP)</value>
+  </data>
+  <data name="InputsHotkey_decreaseTDPDesc" xml:space="preserve">
+    <value>Уменьшить TDP системы или текущего профиля на 1 ватт</value>
+  </data>
+  <data name="InputsHotkey_decreaseVolume" xml:space="preserve">
+    <value>Уменьшить громкость</value>
+  </data>
+  <data name="InputsHotkey_decreaseVolumeDesc" xml:space="preserve">
+    <value>Уменьшить громкость на 5%</value>
+  </data>
+  <data name="InputsHotkey_DesktopLayoutEnabled" xml:space="preserve">
+    <value>Раскладка рабочего стола</value>
+  </data>
+  <data name="InputsHotkey_DesktopLayoutEnabledDesc" xml:space="preserve">
+    <value>Переключить раскладку рабочего стола</value>
+  </data>
+  <data name="InputsHotkey_fallbackInput" xml:space="preserve">
+    <value>Нажмите, чтобы задать кнопку</value>
+  </data>
+  <data name="InputsHotkey_fallbackOutput" xml:space="preserve">
+    <value>Нажмите, чтобы задать кнопку клавиатуры</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightness" xml:space="preserve">
+    <value>Увеличить яркость</value>
+  </data>
+  <data name="InputsHotkey_increaseBrightnessDesc" xml:space="preserve">
+    <value>Увеличить якрость экрана на 5%</value>
+  </data>
+  <data name="InputsHotkey_increaseTDP" xml:space="preserve">
+    <value>Увеличить лимит энергопотребления (TDP)</value>
+  </data>
+  <data name="InputsHotkey_increaseTDPDesc" xml:space="preserve">
+    <value>Увеличить TDP системы или текущего профиля на 1 ватт</value>
+  </data>
+  <data name="InputsHotkey_increaseVolume" xml:space="preserve">
+    <value>Увеличить громкость</value>
+  </data>
+  <data name="InputsHotkey_increaseVolumeDesc" xml:space="preserve">
+    <value>Увеличить громкость на 5%</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplay" xml:space="preserve">
+    <value>Оверлей</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayDesc" xml:space="preserve">
+    <value>Включить поддержку оверлея</value>
+  </data>
+  <data name="InputsHotkey_overlayGamepad" xml:space="preserve">
+    <value>Отобразить оверлей контроллера</value>
+  </data>
+  <data name="InputsHotkey_overlayGamepadDesc" xml:space="preserve">
+    <value>Change 3D hotkey by pressing a button or a special key</value>
+  </data>
+  <data name="InputsHotkey_overlayTrackpads" xml:space="preserve">
+    <value>Отобразить виртуальные трекпады</value>
+  </data>
+  <data name="InputsHotkey_overlayTrackpadsDesc" xml:space="preserve">
+    <value>Измените горячую клавишу нажатием кнопки или специальной клавиши</value>
+  </data>
+  <data name="InputsHotkey_quickTools" xml:space="preserve">
+    <value>Открыть окно быстрых настроек</value>
+  </data>
+  <data name="InputsHotkey_quickToolsDesc" xml:space="preserve">
+    <value>Измените горячую клавишу нажатием кнопки или специальной клавиши</value>
+  </data>
+  <data name="InputsHotkey_QuietModeToggled" xml:space="preserve">
+    <value>Настройки вентилятора</value>
+  </data>
+  <data name="InputsHotkey_QuietModeToggledDesc" xml:space="preserve">
+    <value>Установите рабочий цикл вентилятора на заданное пользователем значение</value>
+  </data>
+  <data name="InputsHotkey_shortcutControlCenter" xml:space="preserve">
+    <value>Показать центр уведомлений</value>
+  </data>
+  <data name="InputsHotkey_shortcutControlCenterDesc" xml:space="preserve">
+    <value>Отображение и скрытие Центра уведомлений Windows</value>
+  </data>
+  <data name="InputsHotkey_shortcutCustom" xml:space="preserve">
+    <value>Назначить хоткей</value>
+  </data>
+  <data name="InputsHotkey_shortcutCustomDesc" xml:space="preserve">
+    <value>Измените горячую клавишу нажатием кнопки или специальной клавиши</value>
+  </data>
+  <data name="InputsHotkey_shortcutDesktop" xml:space="preserve">
+    <value>Показать или скрыть рабочий стол</value>
+  </data>
+  <data name="InputsHotkey_shortcutDesktopDesc" xml:space="preserve">
+    <value>Путем нажатия: Windows + D</value>
+  </data>
+  <data name="InputsHotkey_shortcutESC" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="InputsHotkey_shortcutESCDesc" xml:space="preserve">
+    <value>Нажать кнопку: Escape</value>
+  </data>
+  <data name="InputsHotkey_shortcutExpand" xml:space="preserve">
+    <value>Переключение между оконным и полноэкранным режимом</value>
+  </data>
+  <data name="InputsHotkey_shortcutExpandDesc" xml:space="preserve">
+    <value>Нажать сочетание: Alt + Enter</value>
+  </data>
+  <data name="InputsHotkey_shortcutGuide" xml:space="preserve">
+    <value>Guide или PS кнопка</value>
+  </data>
+  <data name="InputsHotkey_shortcutGuideDesc" xml:space="preserve">
+    <value>Эмулировать Xbox Guide или Sony PS кнопки</value>
+  </data>
+  <data name="InputsHotkey_shortcutKeyboard" xml:space="preserve">
+    <value>Показать экранную клавиатуру</value>
+  </data>
+  <data name="InputsHotkey_shortcutKeyboardDesc" xml:space="preserve">
+    <value>Измените горячую клавишу нажатием кнопки или специальной клавиши</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillApp" xml:space="preserve">
+    <value>Принудитильное закрытие приложение</value>
+  </data>
+  <data name="InputsHotkey_shortcutKillAppDesc" xml:space="preserve">
+    <value>Измените горячую клавишу нажатием кнопки или специальной клавиши</value>
+  </data>
+  <data name="InputsHotkey_shortcutMainwindow" xml:space="preserve">
+    <value>Переключить окно</value>
+  </data>
+  <data name="InputsHotkey_shortcutMainwindowDesc" xml:space="preserve">
+    <value>Измените горячую клавишу нажатием кнопки или специальной клавиши</value>
+  </data>
+  <data name="InputsHotkey_shortcutPrintScreen" xml:space="preserve">
+    <value>Открыть инструмент «Ножницы»</value>
+  </data>
+  <data name="InputsHotkey_shortcutPrintScreenDesc" xml:space="preserve">
+    <value>Нажать сочетание: Windows + Shift + S</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskManager" xml:space="preserve">
+    <value>Открыть диспетчер задач</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskManagerDesc" xml:space="preserve">
+    <value>Нажать сочетание: Ctrl + Shift + Esc</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskview" xml:space="preserve">
+    <value>Открыть режим представление задач</value>
+  </data>
+  <data name="InputsHotkey_shortcutTaskviewDesc" xml:space="preserve">
+    <value>Нажать сочетание: Windows + Tab</value>
+  </data>
+  <data name="InputsHotkey_suspendResumeTask" xml:space="preserve">
+    <value>Переключатель паузы</value>
+  </data>
+  <data name="InputsHotkey_suspendResumeTaskDesc" xml:space="preserve">
+    <value>Приостановить или возобновить работу текущего приложения</value>
+  </data>
+  <data name="JoystickPage_Joystick_Left" xml:space="preserve">
+    <value>ЛЕВЫЙ СТИК</value>
+  </data>
+  <data name="JoystickPage_Joystick_Left_Buttons" xml:space="preserve">
+    <value>КНОПКИ ЛЕВОГО СТИКА</value>
+  </data>
+  <data name="JoystickPage_Joystick_Right" xml:space="preserve">
+    <value>ПРАВЫЙ СТИК</value>
+  </data>
+  <data name="JoystickPage_Joystick_Right_Buttons" xml:space="preserve">
+    <value>КНОПКИ ПРАВОГО СТИКА</value>
+  </data>
+  <data name="MainWindow_HandheldCompanion" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="MainWindow_navAbout" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="MainWindow_navController" xml:space="preserve">
+    <value>Контроллер</value>
+  </data>
+  <data name="MainWindow_navHotkeys" xml:space="preserve">
+    <value>Хоткеи</value>
+  </data>
+  <data name="MainWindow_navOverlay" xml:space="preserve">
+    <value>Оверлей</value>
+  </data>
+  <data name="MainWindow_navProfiles" xml:space="preserve">
+    <value>Профили</value>
+  </data>
+  <data name="MainWindow_OK" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="MainWindow_Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="OverlayPage_8BitDoLite2Controller" xml:space="preserve">
+    <value>8BitDo Lite 2</value>
+  </data>
+  <data name="OverlayPage_Alignment" xml:space="preserve">
+    <value>Выравнивание</value>
+  </data>
+  <data name="OverlayPage_AlignmentDesc" xml:space="preserve">
+    <value>Изменить расположение оверлея контроллера</value>
+  </data>
+  <data name="OverlayPage_AlignmentTrackpadDesc" xml:space="preserve">
+    <value>Изменение расположение оверлея трекпадов</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTop" xml:space="preserve">
+    <value>Всегда поверх все окон</value>
+  </data>
+  <data name="OverlayPage_AlwaysOnTopDesc" xml:space="preserve">
+    <value>Когда включено, оверлей контроллера отображается поверх все окон</value>
+  </data>
+  <data name="OverlayPage_BackButton" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="OverlayPage_CameraAngle" xml:space="preserve">
+    <value>Face camera</value>
+  </data>
+  <data name="OverlayPage_CameraAngleDesc" xml:space="preserve">
+    <value>Change 3D controller overlay model behaviour for facing the camera</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitch" xml:space="preserve">
+    <value>Stationary pitch</value>
+  </data>
+  <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
+    <value>Change the angle, in degree</value>
+  </data>
+  <data name="OverlayPage_Color" xml:space="preserve">
+    <value>Цвет фона</value>
+  </data>
+  <data name="OverlayPage_ColorDesc" xml:space="preserve">
+    <value>Изменить цвет фона наложения оверлея контроллера</value>
+  </data>
+  <data name="OverlayPage_ControllerOptions" xml:space="preserve">
+    <value>Оверлей контроллера</value>
+  </data>
+  <data name="OverlayPage_DualSenseController" xml:space="preserve">
+    <value>Playstation DualSense</value>
+  </data>
+  <data name="OverlayPage_EmulatedController" xml:space="preserve">
+    <value>Эмулируемый контроллер</value>
+  </data>
+  <data name="OverlayPage_FaceCamera" xml:space="preserve">
+    <value>Face camera</value>
+  </data>
+  <data name="OverlayPage_FaceCameraDesc" xml:space="preserve">
+    <value>3D Model slowly rotates to face camera as default position</value>
+  </data>
+  <data name="OverlayPage_Listening" xml:space="preserve">
+    <value>Ожидаю...</value>
+  </data>
+  <data name="OverlayPage_MachenikeHG510Controller" xml:space="preserve">
+    <value>MACHENIKE HG510</value>
+  </data>
+  <data name="OverlayPage_MainTrigger" xml:space="preserve">
+    <value>Main trigger</value>
+  </data>
+  <data name="OverlayPage_MainTriggerDesc" xml:space="preserve">
+    <value>Change 3D controller overlay main trigger</value>
+  </data>
+  <data name="OverlayPage_MotionActivated" xml:space="preserve">
+    <value>Движение</value>
+  </data>
+  <data name="OverlayPage_MotionActivatedDesc" xml:space="preserve">
+    <value>Модель будет двигаться в соответствии с движениями пользователя на основе информации датчиков</value>
+  </data>
+  <data name="OverlayPage_N64Controller" xml:space="preserve">
+    <value>N64</value>
+  </data>
+  <data name="OverlayPage_OEMController" xml:space="preserve">
+    <value>OEM контроллер</value>
+  </data>
+  <data name="OverlayPage_Opacity" xml:space="preserve">
+    <value>Прозрачность</value>
+  </data>
+  <data name="OverlayPage_OpacityControllerDesc" xml:space="preserve">
+    <value>Изменить непрозрачность оверлея контроллера</value>
+  </data>
+  <data name="OverlayPage_OpacityTrackpadDesc" xml:space="preserve">
+    <value>Изменить непрозрачность оверлея трекпада</value>
+  </data>
+  <data name="OverlayPage_Overlay" xml:space="preserve">
+    <value>Оверлей</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel" xml:space="preserve">
+    <value>Уровень отображаемых оверлеем данных</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevelDesc" xml:space="preserve">
+    <value>Изменение уровня отображаемой информации на экране</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayUpdateRate" xml:space="preserve">
+    <value>Скорость обновления</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayUpdateRateDesc" xml:space="preserve">
+    <value>Изменить скорость обновления данных</value>
+  </data>
+  <data name="OverlayPage_OverlayModel" xml:space="preserve">
+    <value>Вид контроллера</value>
+  </data>
+  <data name="OverlayPage_OverlayModelDesc" xml:space="preserve">
+    <value>Изменить вид оверлея контроллера</value>
+  </data>
+  <data name="OverlayPage_OverlayPreview" xml:space="preserve">
+    <value>Предпросмотр оверлея</value>
+  </data>
+  <data name="OverlayPage_RenderSettings" xml:space="preserve">
+    <value>Настройки рендеринга</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasing" xml:space="preserve">
+    <value>Сглаживание</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsAntialiasingDesc" xml:space="preserve">
+    <value>Изменить уровень сглаживания рендеринга</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsDesc" xml:space="preserve">
+    <value>Измените настройки рендеринга оверлея контроллера.</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerate" xml:space="preserve">
+    <value>Скорость обновления</value>
+  </data>
+  <data name="OverlayPage_RenderSettingsFramerateDesc" xml:space="preserve">
+    <value>Изменить скорость обновления рендеринга, в обновлениях в секунду</value>
+  </data>
+  <data name="OverlayPage_Size" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="OverlayPage_SizeDesc" xml:space="preserve">
+    <value>Изменит размер отображаемой модели контроллера</value>
+  </data>
+  <data name="OverlayPage_SizeOverlayDesc" xml:space="preserve">
+    <value>Изменить размер оверлея трекпадов</value>
+  </data>
+  <data name="OverlayPage_StartButton" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="OverlayPage_ToyController" xml:space="preserve">
+    <value>Fisher-Price controller</value>
+  </data>
+  <data name="OverlayPage_TrackpadsOptions" xml:space="preserve">
+    <value>Настройки трекпадов</value>
+  </data>
+  <data name="OverlayPage_XboxOneController" xml:space="preserve">
+    <value>Xbox One</value>
+  </data>
+  <data name="OverlayPage_ZDOPlusController" xml:space="preserve">
+    <value>ZD O+</value>
+  </data>
+  <data name="Overlay_Overlay" xml:space="preserve">
+    <value>Оверлей</value>
+  </data>
+  <data name="ProcessEx_processResume" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="ProcessEx_processSuspend" xml:space="preserve">
+    <value>Приостановить</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplier" xml:space="preserve">
+    <value>Множитель акселерометра</value>
+  </data>
+  <data name="ProfilesPage_AccelerometerMultiplierDesc" xml:space="preserve">
+    <value>Изменяет значение получаемых от акселерометра данных</value>
+  </data>
+  <data name="ProfilesPage_AdditionalSettings" xml:space="preserve">
+    <value>Дополнительные настройки</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzone" xml:space="preserve">
+    <value>Уменьшение мертвых зон</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneDesc" xml:space="preserve">
+    <value>Изменить внутриигровую мёртвую зону, в процентах</value>
+  </data>
+  <data name="ProfilesPage_AntiDeadzoneUnitPercentage" xml:space="preserve">
+    <value> %</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete1" xml:space="preserve">
+    <value>Вы уверены что хотите удалить?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureDelete2" xml:space="preserve">
+    <value>Этот элемент будет немедленно удален. Это действие нельзя отменить.</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite1" xml:space="preserve">
+    <value>Вы уверены что хотите переписать профиль?</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureOverwrite2" xml:space="preserve">
+    <value>{0} будет перезаписан. Это действие нельзя отменить.</value>
+  </data>
+  <data name="ProfilesPage_AutoTDP" xml:space="preserve">
+    <value>Автоматический TDP</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPDesc" xml:space="preserve">
+    <value>Автоматическая подстойка TDP на основе текущего FPS и целевого FPS</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPFPS" xml:space="preserve">
+    <value>Целевая частота кадров</value>
+  </data>
+  <data name="ProfilesPage_AutoTDPFPSDesc" xml:space="preserve">
+    <value>Желаемая частота кадров для автоматического контроля TDP</value>
+  </data>
+  <data name="ProfilesPage_BoostPower" xml:space="preserve">
+    <value>Лимит энергопотребления турбо</value>
+  </data>
+  <data name="ProfilesPage_BoostPowerDesc" xml:space="preserve">
+    <value>Изменить лимит энергопотребления для турбо режима</value>
+  </data>
+  <data name="ProfilesPage_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="ProfilesPage_ControllerLayout" xml:space="preserve">
+    <value>Раскладка контроллера</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettings" xml:space="preserve">
+    <value>Настройки контроллера</value>
+  </data>
+  <data name="ProfilesPage_ControllerSettingsDesc" xml:space="preserve">
+    <value>Изменить настройки виртуального контроллера</value>
+  </data>
+  <data name="ProfilesPage_CreateNewProfile" xml:space="preserve">
+    <value>Создать новый профиль</value>
+  </data>
+  <data name="ProfilesPage_Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="ProfilesPage_DeleteProfile" xml:space="preserve">
+    <value>Удалить профиль</value>
+  </data>
+  <data name="ProfilesPage_EnableProfile" xml:space="preserve">
+    <value>Пользовательские профили для игры</value>
+  </data>
+  <data name="ProfilesPage_EnableProfileDesc" xml:space="preserve">
+    <value>Профиль будет применен автоматически при обнаружении указанного приложения</value>
+  </data>
+  <data name="ProfilesPage_FramerateLimit" xml:space="preserve">
+    <value>Лимит частоты кадров</value>
+  </data>
+  <data name="ProfilesPage_FramerateLimitDesc" xml:space="preserve">
+    <value>Ограничивает частоту кадров для 3D приложений</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettings" xml:space="preserve">
+    <value>Глобальные настройки</value>
+  </data>
+  <data name="ProfilesPage_GlobalSettingsDesc" xml:space="preserve">
+    <value>Изменить глобальные настройки профилей</value>
+  </data>
+  <data name="ProfilesPage_GPUMhz" xml:space="preserve">
+    <value>Максимальная частота GPU</value>
+  </data>
+  <data name="ProfilesPage_GPUMhzDesc" xml:space="preserve">
+    <value>Максимальная частота GPU В МГц</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplier" xml:space="preserve">
+    <value>Множитель гироскопа</value>
+  </data>
+  <data name="ProfilesPage_GyrometerMultiplierDesc" xml:space="preserve">
+    <value>Изменяет значение получаемых от гироскопа данных</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxis" xml:space="preserve">
+    <value>Ось гироскопа</value>
+  </data>
+  <data name="ProfilesPage_GyroSteeringAxisDesc" xml:space="preserve">
+    <value>Для управления горизонтальным перемещением контроллера вы можете использовать либо вертикальную ось, либо горизонтпльную.</value>
+  </data>
+  <data name="ProfilesPage_InvertHorizontalAxis" xml:space="preserve">
+    <value>Инвертировать горизонтальную ось</value>
+  </data>
+  <data name="ProfilesPage_InvertVerticalAxis" xml:space="preserve">
+    <value>Инвертировать вертикальную ось</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeft" xml:space="preserve">
+    <value>% Остаточной мертвый зоны левого стика</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneLeftDesc" xml:space="preserve">
+    <value>Регулировка процента внутренней и внешней мертвой зоны левого стика</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRight" xml:space="preserve">
+    <value>% Остаточной мертвый зоны правого стика</value>
+  </data>
+  <data name="ProfilesPage_JoystickDeadZoneRightDesc" xml:space="preserve">
+    <value>Регулировка процента внутренней и внешней мертвой зоны правого стика</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettings" xml:space="preserve">
+    <value>Настройки управления движением</value>
+  </data>
+  <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
+    <value>Изменить глобальные настройки управления движением</value>
+  </data>
+  <data name="ProfilesPage_OK" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
+    <value>Настройки электропитания</value>
+  </data>
+  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
+    <value>Изменить параметры питания</value>
+  </data>
+  <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
+    <value>Информация о профиле</value>
+  </data>
+  <data name="ProfilesPage_ProfileName" xml:space="preserve">
+    <value>Имя профиля</value>
+  </data>
+  <data name="ProfilesPage_ProfilePath" xml:space="preserve">
+    <value>Путь профиля</value>
+  </data>
+  <data name="ProfilesPage_Profiles" xml:space="preserve">
+    <value>Профили</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelection" xml:space="preserve">
+    <value>Выбор профиля</value>
+  </data>
+  <data name="ProfilesPage_ProfileSelectionDesc" xml:space="preserve">
+    <value>Выберите профиль, который хотите изменить</value>
+  </data>
+  <data name="ProfilesPage_ProfileSettings" xml:space="preserve">
+    <value>Настройки профиля</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated1" xml:space="preserve">
+    <value>Профиль обновлен</value>
+  </data>
+  <data name="ProfilesPage_ProfileUpdated2" xml:space="preserve">
+    <value>обновлен.</value>
+  </data>
+  <data name="ProfilesPage_Roll" xml:space="preserve">
+    <value>Горизонтальная</value>
+  </data>
+  <data name="ProfilesPage_SensitivityX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="ProfilesPage_SensitivityY" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="ProfilesPage_StyleofInput" xml:space="preserve">
+    <value>Тип ввода</value>
+  </data>
+  <data name="ProfilesPage_StyleofInputTooltip" xml:space="preserve">
+    <value>Физические входы контроллера можно запрограммировать, чтобы они действовали как различные типы устройств.</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutput" xml:space="preserve">
+    <value>Устройство вывода</value>
+  </data>
+  <data name="ProfilesPage_StyleofOutputTooltip" xml:space="preserve">
+    <value>Выберите устройство, которое будет получать команды движения</value>
+  </data>
+  <data name="ProfilesPage_SustainedPower" xml:space="preserve">
+    <value>Постоянный лимит энергопотребления</value>
+  </data>
+  <data name="ProfilesPage_SustainedPowerDesc" xml:space="preserve">
+    <value>Изменяет установенный лимит энергопотребления</value>
+  </data>
+  <data name="ProfilesPage_TDPOverride" xml:space="preserve">
+    <value>Лимит энергопотребления(TDP)</value>
+  </data>
+  <data name="ProfilesPage_TDPOverrideDesc" xml:space="preserve">
+    <value>Ограничивает мощность процессора для уменьшения общей мощности</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityDesc" xml:space="preserve">
+    <value>Improve the stick circularity</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityLeft" xml:space="preserve">
+    <value>Circularity stick left</value>
+  </data>
+  <data name="ProfilesPage_ThumbImproveCircularityRight" xml:space="preserve">
+    <value>Circularity stick right</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeft" xml:space="preserve">
+    <value>Мертвая зона левого триггера %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneLeftDesc" xml:space="preserve">
+    <value>Настройка внутренней и внешней мертвой зоны левого триггера</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRight" xml:space="preserve">
+    <value>Мертвая зона правого триггера %</value>
+  </data>
+  <data name="ProfilesPage_TriggerDeadZoneRightDesc" xml:space="preserve">
+    <value>Настройка внутренней и внешней мертвой зоны правого триггера</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzone" xml:space="preserve">
+    <value>Защита от мертвой зоны</value>
+  </data>
+  <data name="ProfilesPage_UMCAntiDeadzoneDesc" xml:space="preserve">
+    <value>Компенсирует внутриигровую мертвую зону, улучшает регистрацию небольших движений</value>
+  </data>
+  <data name="ProfilesPage_UMCEnable" xml:space="preserve">
+    <value>Включить универсальный контроллер движения</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOff" xml:space="preserve">
+    <value>Выключено, включение по кнопке</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
+    <value>Включено, отключение по кнопке</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
+    <value>Активация управления движением</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
+    <value>При отключенном управлении движением используйте выбранные кнопки для включения,
+при включенном используйте выбранные кнопки для отключения.</value>
+  </data>
+  <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
+    <value>Выберите устройство, которое будет получать команды управления движением</value>
+  </data>
+  <data name="ProfilesPage_UMCSettings" xml:space="preserve">
+    <value>Универсальные настройки управления движением</value>
+  </data>
+  <data name="ProfilesPage_UMCSettingsDesc" xml:space="preserve">
+    <value>Преобразовывать движения устройтва в ввод с контроллера</value>
+  </data>
+  <data name="ProfilesPage_UpdateProfile" xml:space="preserve">
+    <value>Обновить профил</value>
+  </data>
+  <data name="ProfilesPage_Whitelist" xml:space="preserve">
+    <value>Разрешить приложению доступ к физическому контроллеру устройства</value>
+  </data>
+  <data name="ProfilesPage_Wrapper" xml:space="preserve">
+    <value>Расширенная совместимость (XInputPlus)</value>
+  </data>
+  <data name="ProfilesPage_Yaw" xml:space="preserve">
+    <value>Вертикальная</value>
+  </data>
+  <data name="ProfilesPage_Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="Properties.Resources.ControllerPage_Disconnect" xml:space="preserve">
+    <value>Отключить</value>
+  </data>
+  <data name="QuickPerformancePage_AutoTDPUnitFPS" xml:space="preserve">
+    <value>FPS</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControl" xml:space="preserve">
+    <value>Ручной контроль частоты GPU</value>
+  </data>
+  <data name="QuickPerformancePage_GPUControlDesc" xml:space="preserve">
+    <value>Устанавливает фиксированную частоту GPU</value>
+  </data>
+  <data name="QuickPerformancePage_GPUUnit" xml:space="preserve">
+    <value> ГГц</value>
+  </data>
+  <data name="QuickPerformancePage_PowerMode" xml:space="preserve">
+    <value>Режим энергопотребления</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeBalanced" xml:space="preserve">
+    <value>Баланс</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeDesc" xml:space="preserve">
+    <value>Оптимизизация на основе энергопотребления и производительности</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModeEfficiency" xml:space="preserve">
+    <value>Экономия</value>
+  </data>
+  <data name="QuickPerformancePage_PowerModePerformance" xml:space="preserve">
+    <value>Производительный</value>
+  </data>
+  <data name="QuickPerformancePage_TDPBoost" xml:space="preserve">
+    <value>Турбо</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimit" xml:space="preserve">
+    <value>Лимит энергопотребления (TDP)</value>
+  </data>
+  <data name="QuickPerformancePage_TDPLimitDesc" xml:space="preserve">
+    <value>Ограничивает мощность процессора для уменьшения общего энергомотребления</value>
+  </data>
+  <data name="QuickPerformancePage_TDPOverWrittenWarning" xml:space="preserve">
+    <value>TDP переназначен профилем</value>
+  </data>
+  <data name="QuickPerformancePage_TDPSustained" xml:space="preserve">
+    <value>Постоянный</value>
+  </data>
+  <data name="QuickPerformancePage_TDPUnitWatt" xml:space="preserve">
+    <value> Вт</value>
+  </data>
+  <data name="QuickProfilesPage_Create" xml:space="preserve">
+    <value>Созданить профиль</value>
+  </data>
+  <data name="QuickProfilesPage_Waiting" xml:space="preserve">
+    <value>Ожидание завершения фоновых процессов...</value>
+  </data>
+  <data name="ServiceDescription" xml:space="preserve">
+    <value>Обеспечивает поддержку гироскопа и акселерометра для Windows через эмуляцию контроллера. Если служба включена, встроенный контроллер будет скрыт от приложений, не входящих в белый список. Если служба отключена, встроенный контроллер будет включен, а виртуальный контроллер отключен.</value>
+  </data>
+  <data name="ServiceName" xml:space="preserve">
+    <value>Служба игрового контроллера</value>
+  </data>
+  <data name="SettingsMode0_AdditionalSettings" xml:space="preserve">
+    <value>Дополнительные настройки</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSights" xml:space="preserve">
+    <value>Aiming down sights motion multiplier</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSightsActivation" xml:space="preserve">
+    <value>Кнопка включения</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSightsDesc" xml:space="preserve">
+    <value>An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button</value>
+  </data>
+  <data name="SettingsMode0_AimingDownSightsMultiplier" xml:space="preserve">
+    <value>Значение множителя</value>
+  </data>
+  <data name="SettingsMode0_CameraOptions" xml:space="preserve">
+    <value>Camera options</value>
+  </data>
+  <data name="SettingsMode0_CustomResponseCurve" xml:space="preserve">
+    <value>Custom response curve</value>
+  </data>
+  <data name="SettingsMode0_CustomResponseCurveGameOutput" xml:space="preserve">
+    <value>Output sent to game</value>
+  </data>
+  <data name="SettingsMode0_CustomResponseIntensity" xml:space="preserve">
+    <value>Movement intensity</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetAgressive" xml:space="preserve">
+    <value>Agressive</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetOptions" xml:space="preserve">
+    <value>Preset options</value>
+  </data>
+  <data name="SettingsMode0_CustomResponsePresetPrecise" xml:space="preserve">
+    <value>Precise</value>
+  </data>
+  <data name="SettingsMode0_FlickDuration" xml:space="preserve">
+    <value>Flick duration</value>
+  </data>
+  <data name="SettingsMode0_FlickDurationDesc" xml:space="preserve">
+    <value>Change the flick duration, calibrate to 180 degree turn, in milliseconds</value>
+  </data>
+  <data name="SettingsMode0_FlickStick" xml:space="preserve">
+    <value>Flick stick (experimental)</value>
+  </data>
+  <data name="SettingsMode0_FlickStickDesc" xml:space="preserve">
+    <value>Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating</value>
+  </data>
+  <data name="SettingsMode0_FlickStickEnable" xml:space="preserve">
+    <value>Enable flick stick</value>
+  </data>
+  <data name="SettingsMode0_Sensitivity" xml:space="preserve">
+    <value>Sensitivity</value>
+  </data>
+  <data name="SettingsMode0_SensitivityDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the horizontal and vertical axis</value>
+  </data>
+  <data name="SettingsMode0_SensitivityX" xml:space="preserve">
+    <value>Sensitivity X</value>
+  </data>
+  <data name="SettingsMode0_SensitivityXDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the horizontal axis</value>
+  </data>
+  <data name="SettingsMode0_SensitivityY" xml:space="preserve">
+    <value>Sensitivity Y</value>
+  </data>
+  <data name="SettingsMode0_SensitivityYDesc" xml:space="preserve">
+    <value>Change the motion sensitivity of the vertical axis</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivtity" xml:space="preserve">
+    <value>Чувствительность стика</value>
+  </data>
+  <data name="SettingsMode0_StickSensitivtityDesc" xml:space="preserve">
+    <value>Change the rotation rate</value>
+  </data>
+  <data name="SettingsMode1_AdditionalSettings" xml:space="preserve">
+    <value>Дополнительные настройки</value>
+  </data>
+  <data name="SettingsMode1_Deadzone" xml:space="preserve">
+    <value>Мертвая зона</value>
+  </data>
+  <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
+    <value>Change the steering deadzone, in degree. Improves steering straight</value>
+  </data>
+  <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
+    <value>Joystick game Input</value>
+  </data>
+  <data name="SettingsMode1_JoystickSteering" xml:space="preserve">
+    <value>Joystick steering</value>
+  </data>
+  <data name="SettingsMode1_JoystickSteeringOptions" xml:space="preserve">
+    <value>Joystick steering options</value>
+  </data>
+  <data name="SettingsMode1_JoystickSteeringPreview" xml:space="preserve">
+    <value>Joystick steering preview</value>
+  </data>
+  <data name="SettingsMode1_MaxSteeringAngle" xml:space="preserve">
+    <value>Max steering angle</value>
+  </data>
+  <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
+    <value>Change the maximum steering angle value, in degree</value>
+  </data>
+  <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
+    <value>Steering linearity</value>
+  </data>
+  <data name="SettingsMode1_SteeringLinearityDesc" xml:space="preserve">
+    <value>Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping</value>
+  </data>
+  <data name="SettingsPage_AppLanguage" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="SettingsPage_AppLanguageDesc" xml:space="preserve">
+    <value>Язык приложения</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarning" xml:space="preserve">
+    <value>Требуется перезапуск</value>
+  </data>
+  <data name="SettingsPage_AppLanguageWarningDesc" xml:space="preserve">
+    <value>Чтобы изменения вступили в силу, перезапустите приложение</value>
+  </data>
+  <data name="SettingsPage_AppTheme" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="SettingsPage_AppThemeDesc" xml:space="preserve">
+    <value>Тема приложения, светлая или темная</value>
+  </data>
+  <data name="SettingsPage_AutoStartApp" xml:space="preserve">
+    <value>Автозапуск</value>
+  </data>
+  <data name="SettingsPage_AutoStartAppDesc" xml:space="preserve">
+    <value>Приложение будет запускаться автоматически при входе в Windows.</value>
+  </data>
+  <data name="SettingsPage_Backdrop" xml:space="preserve">
+    <value>Фон</value>
+  </data>
+  <data name="SettingsPage_BackdropAcrylic" xml:space="preserve">
+    <value>Акрил</value>
+  </data>
+  <data name="SettingsPage_BackdropDesc" xml:space="preserve">
+    <value>Фон приложения, пусто, матовый, tabbed, акрил</value>
+  </data>
+  <data name="SettingsPage_BackdropMica" xml:space="preserve">
+    <value>Матовый</value>
+  </data>
+  <data name="SettingsPage_BackdropNone" xml:space="preserve">
+    <value>Пусто</value>
+  </data>
+  <data name="SettingsPage_BackdropTabbed" xml:space="preserve">
+    <value>Tabbed</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates" xml:space="preserve">
+    <value>Проверить обновления</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizes" xml:space="preserve">
+    <value>Сворачивать при закрытии</value>
+  </data>
+  <data name="SettingsPage_CloseMinimizesDesc" xml:space="preserve">
+    <value>Приложение будет свернуто в трей вместо закрытия</value>
+  </data>
+  <data name="SettingsPage_Download" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="SettingsPage_DownloadingPercentage" xml:space="preserve">
+    <value>Загрузка - </value>
+  </data>
+  <data name="SettingsPage_EcoQoS" xml:space="preserve">
+    <value>Умное энергопотребление</value>
+  </data>
+  <data name="SettingsPage_EcoQoSDesc" xml:space="preserve">
+    <value>Режим умного энергопотребления снижает приоритет фоновых процессов и повышает энергоэффективность</value>
+  </data>
+  <data name="SettingsPage_EnableDesktopProfileOnStart" xml:space="preserve">
+    <value>Включить профиль рабочего стола при запуске</value>
+  </data>
+  <data name="SettingsPage_EnableDesktopProfileOnStartDesc" xml:space="preserve">
+    <value>Профиль рабочего стола будет автоматически включен при запуске приложения.</value>
+  </data>
+  <data name="SettingsPage_GeneralOptions" xml:space="preserve">
+    <value>Общие настройки</value>
+  </data>
+  <data name="SettingsPage_InstallNow" xml:space="preserve">
+    <value>Установить сейчас</value>
+  </data>
+  <data name="SettingsPage_LastChecked" xml:space="preserve">
+    <value>Последняя проверка: </value>
+  </data>
+  <data name="SettingsPage_NotificationOptions" xml:space="preserve">
+    <value>Настройки уведомлений</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackground" xml:space="preserve">
+    <value>Открыть приложение в фоновом режиме</value>
+  </data>
+  <data name="SettingsPage_OpenAppBackgroundDesc" xml:space="preserve">
+    <value>По-умолчанию приложение запустится в свернутом виде и появится на панели задач.</value>
+  </data>
+  <data name="SettingsPage_SensorExternal" xml:space="preserve">
+    <value>Встроенны</value>
+  </data>
+  <data name="SettingsPage_SensorInternal" xml:space="preserve">
+    <value>Внешний</value>
+  </data>
+  <data name="SettingsPage_SensorOptions" xml:space="preserve">
+    <value>Настройки датчиков</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirection" xml:space="preserve">
+    <value>Направление размещения внешнего датчика</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementDirectionDesc" xml:space="preserve">
+    <value>Выберите, на какой стороне устройства был установлен датчик</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDown" xml:space="preserve">
+    <value>Внешний датчик перевернут</value>
+  </data>
+  <data name="SettingsPage_SensorPlacementUpsideDownDesc" xml:space="preserve">
+    <value>Датчик был установлен вверх ногами, возможно через USB-C переходник.</value>
+  </data>
+  <data name="SettingsPage_SensorSelection" xml:space="preserve">
+    <value>Выбор датчика</value>
+  </data>
+  <data name="SettingsPage_SensorSelectionDesc" xml:space="preserve">
+    <value>Выберите нужный датчик, используемый для управление движением</value>
+  </data>
+  <data name="SettingsPage_Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsPage_StartupType" xml:space="preserve">
+    <value>Тип запуска</value>
+  </data>
+  <data name="SettingsPage_StartupTypeDesc" xml:space="preserve">
+    <value>Используется диспетчером служб для определения типа запуска службы.</value>
+  </data>
+  <data name="SettingsPage_TDPMax" xml:space="preserve">
+    <value>Максимальное энергопотребление</value>
+  </data>
+  <data name="SettingsPage_TDPMaxDesc" xml:space="preserve">
+    <value>Максимальная мощность в ваттах для процессора</value>
+  </data>
+  <data name="SettingsPage_TDPMin" xml:space="preserve">
+    <value>Минимальное энергопотребление</value>
+  </data>
+  <data name="SettingsPage_TDPMinDesc" xml:space="preserve">
+    <value>Минимальная мощность в ваттах для процессора</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverride" xml:space="preserve">
+    <value>Переопределение настраиваемой мощности (cTDP)</value>
+  </data>
+  <data name="SettingsPage_TDPRangeOverrideDesc" xml:space="preserve">
+    <value>Позволяет изменять минимальные и максимальные значения мощности (TDP) вне зависимости от спецификаций ЦП.</value>
+  </data>
+  <data name="SettingsPage_ThemeDark" xml:space="preserve">
+    <value>Темная</value>
+  </data>
+  <data name="SettingsPage_ThemeDefault" xml:space="preserve">
+    <value>Использовать системное значение</value>
+  </data>
+  <data name="SettingsPage_ThemeLight" xml:space="preserve">
+    <value>Светлая</value>
+  </data>
+  <data name="SettingsPage_ToastNotification" xml:space="preserve">
+    <value>Всплывающие уведомления</value>
+  </data>
+  <data name="SettingsPage_ToastNotificationDesc" xml:space="preserve">
+    <value>Получать уведомления от приложения в центре уведомлений Windows</value>
+  </data>
+  <data name="SettingsPage_UpdateAvailable" xml:space="preserve">
+    <value>Доступны обновления</value>
+  </data>
+  <data name="SettingsPage_UpdateCheck" xml:space="preserve">
+    <value>Проверка обновлений...</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedDownload" xml:space="preserve">
+    <value>Не удалось скачать файл обновления.</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedGithub" xml:space="preserve">
+    <value>Не удалось подключиться к github.</value>
+  </data>
+  <data name="SettingsPage_UpdateFailedInstall" xml:space="preserve">
+    <value>Не удалось найти файл обновления.</value>
+  </data>
+  <data name="SettingsPage_UpdateWarning" xml:space="preserve">
+    <value>Упс. Произошла ошибка</value>
+  </data>
+  <data name="SettingsPage_UpToDate" xml:space="preserve">
+    <value>У вас последняя версия</value>
+  </data>
+  <data name="ToastNewControllerEx" xml:space="preserve">
+    <value>Контроллер теперь скрыт, а входные данные перенаправляются на виртуальный контроллер</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Left" xml:space="preserve">
+    <value>ЛЕВЫЙ ТРЕКПАД</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Left_Buttons" xml:space="preserve">
+    <value>ФУНКЦИИ ЛЕВЫЙ ТРЕКПАД</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Right" xml:space="preserve">
+    <value>ПРАВЫЙ ТРЕКПАД</value>
+  </data>
+  <data name="TrackPadsPage_Trackpad_Right_Buttons" xml:space="preserve">
+    <value>ФУНКЦИИ ПРАВЫЙТРЕКПАД</value>
+  </data>
+  <data name="TriggersPage_Trigger_Left" xml:space="preserve">
+    <value>ЛЕВЫЙ ТРИГГЕР</value>
+  </data>
+  <data name="TriggersPage_Trigger_Left_Button" xml:space="preserve">
+    <value>ФУНКЦИИ ЛЕВЫЙ ТРИГГЕР</value>
+  </data>
+  <data name="TriggersPage_Trigger_Right" xml:space="preserve">
+    <value>ПРАВЫЙ ТРИГГЕР</value>
+  </data>
+  <data name="TriggersPage_Trigger_Right_Button" xml:space="preserve">
+    <value>ФУНКЦИИ ПРАВЫЙ ТРИГГЕР</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Пользователь</value>
+  </data>
+  <data name="WarningElevated" xml:space="preserve">
+    <value>Запустите от имени администратора чтобы разблокировать эти настройки</value>
+  </data>
+  <data name="Controller_Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Controller_Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="Controller_Hide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="Controller_Unhide" xml:space="preserve">
+    <value>Unhide</value>
+  </data>
+  <data name="Controller_Virtual" xml:space="preserve">
+    <value>Virtual </value>
+  </data>
+  <data name="AboutPage_Manufacturer" xml:space="preserve">
+    <value>Manufacturer</value>
+  </data>
+  <data name="AboutPage_ProductName" xml:space="preserve">
+    <value>Product name</value>
+  </data>
+  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+    <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
+  </data>
+  <data name="ControllerPage_DesktopLayout" xml:space="preserve">
+    <value>Desktop layout</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutDefine" xml:space="preserve">
+    <value>Define desktop layout</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutDefineController" xml:space="preserve">
+    <value>Define controller layout when in desktop mode</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
+    <value>Enable desktop layout</value>
+  </data>
+  <data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
+    <value>Non-game controller layouts</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerAction" xml:space="preserve">
+    <value>You might want to click on Connect next to your plugged controller.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDesc" xml:space="preserve">
+    <value>You have no physical controller connected. No inputs will be sent to HC or its service.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedAction" xml:space="preserve">
+    <value>Please make sure you connected a compatible XInput or DInput device.</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerDetectedWarning" xml:space="preserve">
+    <value>No physical controller detected</value>
+  </data>
+  <data name="ControllerPage_NoPhysicalControllerWarning" xml:space="preserve">
+    <value>No physical controller connected</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerAction" xml:space="preserve">
+    <value>You might want to start companion service or make sure your virtual controller status is set to: Connected</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerDesc" xml:space="preserve">
+    <value>Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games.</value>
+  </data>
+  <data name="ControllerPage_NoVirtualControllerWarning" xml:space="preserve">
+    <value>No virtual controller detected</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenAction" xml:space="preserve">
+    <value>You might want to unmute your virtual controller or unhide your physical controller.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenDesc" xml:space="preserve">
+    <value>Your physical controller is hidden, yet you have muted your virtual controller.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerHiddenWarning" xml:space="preserve">
+    <value>Physical controller is hidden</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenAction" xml:space="preserve">
+    <value>You might want to hide your physical controller or mute your virtual controller.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenDesc" xml:space="preserve">
+    <value>Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games.</value>
+  </data>
+  <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
+    <value>Physical controller is not hidden</value>
+  </data>
+  <data name="ControllerPage_SteamControllerHDRumble" xml:space="preserve">
+    <value>HD rumble</value>
+  </data>
+  <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
+    <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
+  </data>
+  <data name="ControllerPage_SteamControllerMute" xml:space="preserve">
+    <value>Приостановить виртуальные контроллер</value>
+  </data>
+  <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
+    <value>Временно отключает виртуальный контрллер в Steam приложених</value>
+  </data>
+  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
+    <value>Steam Controller Settings</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEO2.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM2" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM3" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEOAIRLite.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM2" xml:space="preserve">
+    <value>≈</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM3" xml:space="preserve">
+    <value>RC</value>
+  </data>
+  <data name="Enum.AYANEOAIRPro.ButtonFlags.OEM4" xml:space="preserve">
+    <value>LC</value>
+  </data>
+  <data name="Enum.DS4Controller.AxisLayoutFlags.LeftPad" xml:space="preserve">
+    <value>Single-touch swipe</value>
+  </data>
+  <data name="Enum.DS4Controller.AxisLayoutFlags.RightPad" xml:space="preserve">
+    <value>Multi-touch swipe</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B2" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B3" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.B4" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.LeftPadClick" xml:space="preserve">
+    <value>Single-touch click</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.LeftPadTouch" xml:space="preserve">
+    <value>Single-touch tap</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Multi-touch click</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Multi-touch tap</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum.DS4Controller.ButtonFlags.Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum.DualSenseController.AxisLayoutFlags.LeftPad" xml:space="preserve">
+    <value>Single-touch swipe</value>
+  </data>
+  <data name="Enum.DualSenseController.AxisLayoutFlags.RightPad" xml:space="preserve">
+    <value>Multi-touch swipe</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B1" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B2" xml:space="preserve">
+    <value>Circle</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B3" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.B4" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Back" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.LeftPadClick" xml:space="preserve">
+    <value>Single-touch click</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.LeftPadTouch" xml:space="preserve">
+    <value>Single-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.RightPadClick" xml:space="preserve">
+    <value>Multi-touch click</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.RightPadTouch" xml:space="preserve">
+    <value>Multi-touch tap</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Special" xml:space="preserve">
+    <value>Sony</value>
+  </data>
+  <data name="Enum.DualSenseController.ButtonFlags.Start" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.AlwaysOn" xml:space="preserve">
+    <value>Always On</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadDown" xml:space="preserve">
+    <value>DPad Down</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadLeft" xml:space="preserve">
+    <value>DPad Left</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadRight" xml:space="preserve">
+    <value>DPad Right</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.DPadUp" xml:space="preserve">
+    <value>DPad Up</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftShoulder" xml:space="preserve">
+    <value>Left Shoulder</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.LeftTrigger" xml:space="preserve">
+    <value>Left Trigger</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightShoulder" xml:space="preserve">
+    <value>Right Shoulder</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.RightTrigger" xml:space="preserve">
+    <value>Right Trigger</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.GamepadButtonFlagsExt.Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.HIDmode.DualShock4Controller" xml:space="preserve">
+    <value>Emulated DualShock 4 controller</value>
+  </data>
+  <data name="Enum.HIDmode.NoController" xml:space="preserve">
+    <value>No emulated controller</value>
+  </data>
+  <data name="Enum.HIDmode.Xbox360Controller" xml:space="preserve">
+    <value>Emulated XBOX 360 controller</value>
+  </data>
+  <data name="Enum.HIDstatus.Connected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="Enum.HIDstatus.Disconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="Enum.Input.AutoRollYawSwap" xml:space="preserve">
+    <value>Auto Roll Yaw Swap</value>
+  </data>
+  <data name="Enum.Input.JoystickCamera" xml:space="preserve">
+    <value>Joystick camera</value>
+  </data>
+  <data name="Enum.Input.JoystickSteering" xml:space="preserve">
+    <value>Joystick steering</value>
+  </data>
+  <data name="Enum.Input.PlayerSpace" xml:space="preserve">
+    <value>Player space</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Device" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
+    <value>Handheld Companion</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Overlay" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Quicktools" xml:space="preserve">
+    <value>Quick tools</value>
+  </data>
+  <data name="Enum.InputsHotkeyType.Windows" xml:space="preserve">
+    <value>Windows</value>
+  </data>
+  <data name="Enum.KeyFlags.A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.KeyFlags.Alt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="Enum.KeyFlags.Apostrophe" xml:space="preserve">
+    <value>Apostrophe</value>
+  </data>
+  <data name="Enum.KeyFlags.B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.KeyFlags.Backslash" xml:space="preserve">
+    <value>Backslash</value>
+  </data>
+  <data name="Enum.KeyFlags.Backspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="Enum.KeyFlags.C" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Enum.KeyFlags.Comma" xml:space="preserve">
+    <value>Comma</value>
+  </data>
+  <data name="Enum.KeyFlags.Control" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="Enum.KeyFlags.D" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="Enum.KeyFlags.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Enum.KeyFlags.E" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="Enum.KeyFlags.End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="Enum.KeyFlags.Enter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="Enum.KeyFlags.Equal" xml:space="preserve">
+    <value>Equal</value>
+  </data>
+  <data name="Enum.KeyFlags.Escape" xml:space="preserve">
+    <value>Escape</value>
+  </data>
+  <data name="Enum.KeyFlags.F" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="Enum.KeyFlags.F1" xml:space="preserve">
+    <value>F1</value>
+  </data>
+  <data name="Enum.KeyFlags.F10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="Enum.KeyFlags.F11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="Enum.KeyFlags.F12" xml:space="preserve">
+    <value>F12</value>
+  </data>
+  <data name="Enum.KeyFlags.F2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="Enum.KeyFlags.F3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="Enum.KeyFlags.F4" xml:space="preserve">
+    <value>F4</value>
+  </data>
+  <data name="Enum.KeyFlags.F5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="Enum.KeyFlags.F6" xml:space="preserve">
+    <value>F6</value>
+  </data>
+  <data name="Enum.KeyFlags.F7" xml:space="preserve">
+    <value>F7</value>
+  </data>
+  <data name="Enum.KeyFlags.F8" xml:space="preserve">
+    <value>F8</value>
+  </data>
+  <data name="Enum.KeyFlags.F9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="Enum.KeyFlags.G" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="Enum.KeyFlags.Grave" xml:space="preserve">
+    <value>Grave</value>
+  </data>
+  <data name="Enum.KeyFlags.H" xml:space="preserve">
+    <value>H</value>
+  </data>
+  <data name="Enum.KeyFlags.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum.KeyFlags.I" xml:space="preserve">
+    <value>I</value>
+  </data>
+  <data name="Enum.KeyFlags.Insert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Enum.KeyFlags.J" xml:space="preserve">
+    <value>J</value>
+  </data>
+  <data name="Enum.KeyFlags.K" xml:space="preserve">
+    <value>K</value>
+  </data>
+  <data name="Enum.KeyFlags.L" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum.KeyFlags.M" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Enum.KeyFlags.Minus" xml:space="preserve">
+    <value>Minus</value>
+  </data>
+  <data name="Enum.KeyFlags.N" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="Enum.KeyFlags.O" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="Enum.KeyFlags.P" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Enum.KeyFlags.Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Enum.KeyFlags.Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Enum.KeyFlags.Q" xml:space="preserve">
+    <value>Q</value>
+  </data>
+  <data name="Enum.KeyFlags.R" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum.KeyFlags.S" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Enum.KeyFlags.Semicolon" xml:space="preserve">
+    <value>Semicolon</value>
+  </data>
+  <data name="Enum.KeyFlags.Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="Enum.KeyFlags.Slash" xml:space="preserve">
+    <value>Slash</value>
+  </data>
+  <data name="Enum.KeyFlags.Space" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="Enum.KeyFlags.T" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="Enum.KeyFlags.Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Enum.KeyFlags.U" xml:space="preserve">
+    <value>U</value>
+  </data>
+  <data name="Enum.KeyFlags.V" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="Enum.KeyFlags.W" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="Enum.KeyFlags.X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.KeyFlags.Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.KeyFlags.Z" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="Enum.MotionInput.AutoRollYawSwap" xml:space="preserve">
+    <value>Auto Roll Yaw Swap</value>
+  </data>
+  <data name="Enum.MotionInput.JoystickCamera" xml:space="preserve">
+    <value>Joystick Camera</value>
+  </data>
+  <data name="Enum.MotionInput.JoystickSteering" xml:space="preserve">
+    <value>Joystick Steering</value>
+  </data>
+  <data name="Enum.MotionInput.PlayerSpace" xml:space="preserve">
+    <value>Player Space</value>
+  </data>
+  <data name="Enum.MotionOuput.LeftStick" xml:space="preserve">
+    <value>LeftStick</value>
+  </data>
+  <data name="Enum.MotionOuput.MoveCursor" xml:space="preserve">
+    <value>MoveCursor</value>
+  </data>
+  <data name="Enum.MotionOuput.RightStick" xml:space="preserve">
+    <value>RightStick</value>
+  </data>
+  <data name="Enum.MotionOuput.ScrollWheel" xml:space="preserve">
+    <value>ScrollWheel</value>
+  </data>
+  <data name="Enum.MotionOutput.LeftStick" xml:space="preserve">
+    <value>Left Stick</value>
+  </data>
+  <data name="Enum.MotionOutput.RightStick" xml:space="preserve">
+    <value>Right Stick</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.Special" xml:space="preserve">
+    <value>STEAM</value>
+  </data>
+  <data name="Enum.NeptuneController.ButtonFlags.Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Enum.Output.LeftStick" xml:space="preserve">
+    <value>Left joystick</value>
+  </data>
+  <data name="Enum.Output.RightStick" xml:space="preserve">
+    <value>Right joystick</value>
+  </data>
+  <data name="Enum.ProController.AxisLayoutFlags.L2" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="Enum.ProController.AxisLayoutFlags.R2" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B1" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B2" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B3" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.B4" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Back" xml:space="preserve">
+    <value>Minus</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.L1" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.R1" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Special" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Special2" xml:space="preserve">
+    <value>Capture</value>
+  </data>
+  <data name="Enum.ProController.ButtonFlags.Start" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
+    <value>This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.IsRunning" xml:space="preserve">
+    <value>Oops. This profile seems to be running. Some options requiring an executable may be disabled.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
+    <value>Oops. It seems this profile does not have an executable. How is this even possible?</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPath" xml:space="preserve">
+    <value>Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.MissingPermission" xml:space="preserve">
+    <value>Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.None" xml:space="preserve">
+    <value>Nothing to see here.</value>
+  </data>
+  <data name="Enum.ProfileErrorCode.Running" xml:space="preserve">
+    <value>Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled.</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.Eco" xml:space="preserve">
+    <value>Eco</value>
+  </data>
+  <data name="Enum.QualityOfServiceLevel.High" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Command center</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM2" xml:space="preserve">
+    <value>Armory crate</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+    <value>M1 / M2</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Automatic" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="Enum.SteamDeck.ButtonFlags.OEM1" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.LeftStick" xml:space="preserve">
+    <value>LeftStick</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B1" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B2" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B3" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B4" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B5" xml:space="preserve">
+    <value>B5</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B6" xml:space="preserve">
+    <value>B6</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B7" xml:space="preserve">
+    <value>B7</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.B8" xml:space="preserve">
+    <value>B8</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.Back" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadDown" xml:space="preserve">
+    <value>DPad Down</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadLeft" xml:space="preserve">
+    <value>DPad Left</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
+    <value>PPad Right</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
+    <value>DPad Up</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L1" xml:space="preserve">
+    <value>LB</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L2" xml:space="preserve">
+    <value>L2</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L3" xml:space="preserve">
+    <value>L3</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L4" xml:space="preserve">
+    <value>L4</value>
+  </data>
+  <data name="Enum.AYANEOAIR.ButtonFlags.OEM1" xml:space="preserve">
+    <value>AYA</value>
+  </data>
+  <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
+    <value>RightStick</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.L5" xml:space="preserve">
+    <value>L5</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumb" xml:space="preserve">
+    <value>Left Thumb</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbDown" xml:space="preserve">
+    <value>Left Thumb Down</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbLeft" xml:space="preserve">
+    <value>Left Thumb Left</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbRight" xml:space="preserve">
+    <value>Left Thumb Right</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.LeftThumbUp" xml:space="preserve">
+    <value>Left Thumb Up</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.OEM1" xml:space="preserve">
+    <value>OEM1</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.OEM2" xml:space="preserve">
+    <value>OEM2</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.OEM3" xml:space="preserve">
+    <value>OEM3</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R1" xml:space="preserve">
+    <value>RB</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R2" xml:space="preserve">
+    <value>R2</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R3" xml:space="preserve">
+    <value>R3</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R4" xml:space="preserve">
+    <value>R4</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.R5" xml:space="preserve">
+    <value>R5</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumb" xml:space="preserve">
+    <value>Right Thumb</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbDown" xml:space="preserve">
+    <value>Right Thumb Down</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbLeft" xml:space="preserve">
+    <value>Right Thumb Left</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbRight" xml:space="preserve">
+    <value>Right Thumb Right</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.RightThumbUp" xml:space="preserve">
+    <value>Right Thumb Up</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.Special" xml:space="preserve">
+    <value>Guide</value>
+  </data>
+  <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="JoystickSteeringDesc" xml:space="preserve">
+    <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
+  </data>
+  <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
+    <value>Apply template</value>
+  </data>
+  <data name="LayoutPage_Buttons" xml:space="preserve">
+    <value>Buttons</value>
+  </data>
+  <data name="LayoutPage_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LayoutPage_Community" xml:space="preserve">
+    <value>COMMUNITY</value>
+  </data>
+  <data name="LayoutPage_Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="LayoutPage_Dpad" xml:space="preserve">
+    <value>Dpad</value>
+  </data>
+  <data name="LayoutPage_ExportCurrentController" xml:space="preserve">
+    <value>Export for current controller</value>
+  </data>
+  <data name="LayoutPage_ExportLayout" xml:space="preserve">
+    <value>Export layout</value>
+  </data>
+  <data name="LayoutPage_Gyro" xml:space="preserve">
+    <value>Gyro</value>
+  </data>
+  <data name="LayoutPage_Joysticks" xml:space="preserve">
+    <value>Joysticks</value>
+  </data>
+  <data name="LayoutPage_LayoutAuthor" xml:space="preserve">
+    <value>Layout author</value>
+  </data>
+  <data name="LayoutPage_LayoutDesc" xml:space="preserve">
+    <value>Layout description</value>
+  </data>
+  <data name="LayoutPage_LayoutTitle" xml:space="preserve">
+    <value>Layout title</value>
+  </data>
+  <data name="LayoutPage_SaveGameInfoLayout" xml:space="preserve">
+    <value>Save game information with the layout</value>
+  </data>
+  <data name="LayoutPage_ShowCurrentControllerTemplates" xml:space="preserve">
+    <value>Show current controller templates only</value>
+  </data>
+  <data name="LayoutPage_TemplatePicker" xml:space="preserve">
+    <value>Layout template picker</value>
+  </data>
+  <data name="LayoutPage_Templates" xml:space="preserve">
+    <value>TEMPLATES</value>
+  </data>
+  <data name="LayoutPage_Trackpads" xml:space="preserve">
+    <value>Trackpads</value>
+  </data>
+  <data name="LayoutPage_Triggers" xml:space="preserve">
+    <value>Triggers</value>
+  </data>
+  <data name="JoystickCameraDesc" xml:space="preserve">
+    <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
+  </data>
+  <data name="MainWindow_Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="MainWindow_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="MainWindow_MainWindow" xml:space="preserve">
+    <value>Main Window</value>
+  </data>
+  <data name="MainWindow_Navigate" xml:space="preserve">
+    <value>Navigate</value>
+  </data>
+  <data name="MainWindow_QuickTools" xml:space="preserve">
+    <value>Quick Tools</value>
+  </data>
+  <data name="MainWindow_Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="OverlayPage_Millisecond" xml:space="preserve">
+    <value>ms</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Extended" xml:space="preserve">
+    <value>Extended</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
+    <value>External</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Full" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
+    <value>Minimal</value>
+  </data>
+  <data name="PlayerSpaceDesc" xml:space="preserve">
+    <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureApplyTemplate1" xml:space="preserve">
+    <value>Are you sure you want to apply this template? All layout settings will be overridden.</value>
+  </data>
+  <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
+    <value>You can't undo this action. Previously applied template: {0}</value>
+  </data>
+  <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
+    <value>Change the virtual controller layout</value>
+  </data>
+  <data name="ProfilesPage_CPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ProfilesPage_EPP" xml:space="preserve">
+    <value>Energy performance preference (EPP)</value>
+  </data>
+  <data name="ProfilesPage_EPPBalance" xml:space="preserve">
+    <value>CPU/GPU power balance</value>
+  </data>
+  <data name="ProfilesPage_EPPDesc" xml:space="preserve">
+    <value>Specifies power distribution policy between CPU and GPU</value>
+  </data>
+  <data name="ProfilesPage_GPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="ProfilesPage_PowerLimitTarget" xml:space="preserve">
+    <value>Power limit target</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Injection" xml:space="preserve">
+    <value>Injection (recommended)</value>
+  </data>
+  <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
+    <value>Redirection</value>
+  </data>
+  <data name="QuickPerformancePage_CPUBoostMode" xml:space="preserve">
+    <value>CPU boost mode</value>
+  </data>
+  <data name="QuickPerformancePage_CPUBoostModeDesc" xml:space="preserve">
+    <value>Set current CPU boost mode</value>
+  </data>
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+    <value>Display resolution and refresh rate</value>
+  </data>
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+    <value>Adjust main display resolution and refresh rate</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
+    <value>Fan override</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverrideDesc" xml:space="preserve">
+    <value>Set the fan duty cycle to user-defined value</value>
+  </data>
+  <data name="QuickPerformancePage_FanOverridePercentage" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="QuickProfilesPage_CurrentProfile" xml:space="preserve">
+    <value>Current profile:</value>
+  </data>
+  <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="QuickProfilesPage_PowerLimitTarget" xml:space="preserve">
+    <value>Power limit target</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrder" xml:space="preserve">
+    <value>Improve virtual controller detection</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderDesc" xml:space="preserve">
+    <value>Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn't detect your inputs (requires device reboot).</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+    <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
+  <data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
+    <value>Hide when loses focus</value>
+  </data>
+  <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
+    <value>Automatically hide quick tools when the user clicks outside of window</value>
+  </data>
+  <data name="SettingsPage_HwInfo" xml:space="preserve">
+    <value>HWiNFO</value>
+  </data>
+  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
+    <value>Automatically turn HWiNFO off when companion is closed</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
+    <value>Native display orientation</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDesc" xml:space="preserve">
+    <value>Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display's orientation to the orientation that matches your controller, then click Detect</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationDetect" xml:space="preserve">
+    <value>Detect</value>
+  </data>
+  <data name="SettingsPage_NativeDisplayOrientationNotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
+  <data name="DevicePage_PowerOptions" xml:space="preserve">
+    <value>Power options</value>
+  </data>
+  <data name="SettingsPage_QuickToolsBackdrop" xml:space="preserve">
+    <value>Quicktools backdrop, none, mica, tabbed, acrylic</value>
+  </data>
+  <data name="SettingsPage_QuickToolsOptions" xml:space="preserve">
+    <value>Quicktools options</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocation" xml:space="preserve">
+    <value>Window location</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomLeft" xml:space="preserve">
+    <value>Bottom left</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationBottomRight" xml:space="preserve">
+    <value>Bottom right</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationDesc" xml:space="preserve">
+    <value>Define quicktools window location</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationTopLeft" xml:space="preserve">
+    <value>Top left</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
+    <value>Top right</value>
+  </data>
+  <data name="SettingsPage_RivaTunerStatisticsServer" xml:space="preserve">
+    <value>RivaTuner Statistics Server</value>
+  </data>
+  <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
+    <value>Automatically turn RTSS off when companion is closed</value>
+  </data>
+  <data name="SettingsPage_SensorNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SettingsPage_ThirdPartyApps" xml:space="preserve">
+    <value>Third-party applications</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Make this the default layout</value>
+  </data>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 </root>

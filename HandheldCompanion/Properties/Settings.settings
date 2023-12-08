@@ -132,7 +132,11 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SteamControllerMute" Type="System.Boolean" Scope="User">
+<<<<<<< HEAD
       <Value Profile="(Default)">False</Value>
+=======
+      <Value Profile="(Default)">True</Value>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     </Setting>
     <Setting Name="HIDcloakonconnect" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -186,6 +190,7 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="QuickToolsAutoHide" Type="System.Boolean" Scope="User">
+<<<<<<< HEAD
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ControllerManagement" Type="System.Boolean" Scope="User">
@@ -240,7 +245,33 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="LegionControllerPassthrough" Type="System.Boolean" Scope="User">
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="VirtualControllerForceOrder" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="PhysicalControllerInstanceIds" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="HidModeDoNotShowAgain" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HIDmode" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="HIDstatus" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="DSUEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DSUport" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">26760</Value>
+    </Setting>
+    <Setting Name="DSUip" Type="System.String" Scope="User">
+      <Value Profile="(Default)">127.0.0.1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

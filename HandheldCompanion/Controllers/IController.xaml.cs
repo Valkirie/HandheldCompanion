@@ -29,6 +29,7 @@ namespace HandheldCompanion.Controllers
         // Buttons and axes we should be able to map to.
         // When we have target controllers with different buttons (e.g. in VigEm) this will have to be moved elsewhere.
         public static readonly List<ButtonFlags> TargetButtons = new()
+<<<<<<< HEAD
         {
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
             ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
@@ -42,6 +43,21 @@ namespace HandheldCompanion.Controllers
             AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
+=======
+    {
+        ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+        ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
+        ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
+        ButtonFlags.L1, ButtonFlags.R1,
+        ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
+    };
+
+        public static readonly List<AxisLayoutFlags> TargetAxis = new()
+    {
+        AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
+        AxisLayoutFlags.L2, AxisLayoutFlags.R2,
+    };
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         public static readonly string defaultGlyph = "\u2753";
 
@@ -59,6 +75,7 @@ namespace HandheldCompanion.Controllers
         public ButtonState InjectedButtons = new();
 
         public ControllerState Inputs = new();
+<<<<<<< HEAD
         public virtual bool IsReady => true;
 
         public bool IsBusy
@@ -84,10 +101,21 @@ namespace HandheldCompanion.Controllers
             AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
             AxisLayoutFlags.L2, AxisLayoutFlags.R2
         };
+=======
+        protected bool isPlugged;
+
+        protected List<AxisLayoutFlags> SourceAxis = new()
+    {
+        // same as target, we assume all controllers have those axes
+        AxisLayoutFlags.LeftStick, AxisLayoutFlags.RightStick,
+        AxisLayoutFlags.L2, AxisLayoutFlags.R2
+    };
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // Buttons and axes all controllers have that we can map.
         // Additional ones can be added per controller.
         protected List<ButtonFlags> SourceButtons = new()
+<<<<<<< HEAD
         {
             // same as target, we assume all controllers have those buttons
             ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
@@ -133,10 +161,27 @@ namespace HandheldCompanion.Controllers
             }
         }
 
+=======
+    {
+        // same as target, we assume all controllers have those buttons
+        ButtonFlags.B1, ButtonFlags.B2, ButtonFlags.B3, ButtonFlags.B4,
+        ButtonFlags.DPadUp, ButtonFlags.DPadDown, ButtonFlags.DPadLeft, ButtonFlags.DPadRight,
+        ButtonFlags.Start, ButtonFlags.Back, ButtonFlags.Special,
+        ButtonFlags.L1, ButtonFlags.R1,
+        ButtonFlags.LeftStickClick, ButtonFlags.RightStickClick,
+        // additional buttons calculated from the above
+        ButtonFlags.L2Soft, ButtonFlags.R2Soft, ButtonFlags.L2Full, ButtonFlags.R2Full,
+        ButtonFlags.LeftStickUp, ButtonFlags.LeftStickDown, ButtonFlags.LeftStickLeft, ButtonFlags.LeftStickRight,
+        ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
+    };
+
+        protected int UserIndex;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         protected double VibrationStrength = 1.0d;
 
         public IController()
         {
+<<<<<<< HEAD
             InitializeComponent();
         }
 
@@ -144,6 +189,8 @@ namespace HandheldCompanion.Controllers
         {
             this.Details = details;
             Details.isHooked = true;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         public virtual void UpdateInputs(long ticks)
@@ -156,11 +203,14 @@ namespace HandheldCompanion.Controllers
             return Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
         }
 
+<<<<<<< HEAD
         public bool IsPhysical()
         {
             return !IsVirtual();
         }
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         public bool IsVirtual()
         {
             if (Details is not null)
@@ -201,22 +251,40 @@ namespace HandheldCompanion.Controllers
             return string.Empty;
         }
 
+<<<<<<< HEAD
         protected void DrawUI()
         {
             // update name
             ControllerName.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
+=======
+        protected void DrawControls()
+        {
+            // update name
+            ui_name.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // virtual controller shouldn't be visible
             if (IsVirtual())
                 this.Visibility = Visibility.Collapsed;
         }
 
+<<<<<<< HEAD
         protected void UpdateUI()
+=======
+        protected void RefreshControls()
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
+<<<<<<< HEAD
                 // ui_button_hook.Content = IsPlugged ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
+=======
+                if (!IsEnabled)
+                    return;
+
+                ui_button_hook.Content = IsPlugged() ? Properties.Resources.Controller_Disconnect : Properties.Resources.Controller_Connect;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 ui_button_hide.Content = IsHidden() ? Properties.Resources.Controller_Unhide : Properties.Resources.Controller_Hide;
                 ui_button_calibrate.Visibility = Capabilities.HasFlag(ControllerCapabilities.Calibration) ? Visibility.Visible : Visibility.Collapsed;
             });
@@ -272,6 +340,7 @@ namespace HandheldCompanion.Controllers
 
         // let the controller decide itself what motor to use for a specific button
         public virtual void SetHaptic(HapticStrength strength, ButtonFlags button)
+<<<<<<< HEAD
         {
             int delay;
             switch (strength)
@@ -308,12 +377,16 @@ namespace HandheldCompanion.Controllers
                     break;
             }
         }
+=======
+        { }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         public virtual bool IsConnected()
         {
             return false;
         }
 
+<<<<<<< HEAD
         private Task rumbleTask;
         public virtual void Rumble(int delay = 125, byte LargeMotor = byte.MaxValue, byte SmallMotor = byte.MaxValue)
         {
@@ -325,16 +398,32 @@ namespace HandheldCompanion.Controllers
             rumbleTask = Task.Run(async () =>
             {
                 SetVibration(LargeMotor, SmallMotor);
+=======
+        public virtual void Rumble(int delay = 125)
+        {
+            Task.Run(async () =>
+            {
+                SetVibration(byte.MaxValue, byte.MaxValue);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 await Task.Delay(delay);
                 SetVibration(0, 0);
             });
         }
 
+<<<<<<< HEAD
+=======
+        public virtual bool IsPlugged()
+        {
+            return isPlugged;
+        }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         // this function cannot be called twice
         public virtual void Plug()
         {
             SetVibrationStrength(SettingsManager.GetUInt("VibrationStrength"));
 
+<<<<<<< HEAD
             InjectedButtons.Clear();
 
             // UI thread (async)
@@ -342,16 +431,29 @@ namespace HandheldCompanion.Controllers
             {
                 ui_button_hook.IsEnabled = false;
             });
+=======
+            isPlugged = true;
+
+            InjectedButtons.Clear();
+
+            RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         // this function cannot be called twice
         public virtual void Unplug()
         {
+<<<<<<< HEAD
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 ui_button_hook.IsEnabled = true;
             });
+=======
+            isPlugged = false;
+
+            RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         // like Unplug but one that can be safely called when controller is already removed
@@ -361,8 +463,13 @@ namespace HandheldCompanion.Controllers
 
         public bool IsHidden()
         {
+<<<<<<< HEAD
             // bool hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
             bool hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
+=======
+            // var hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
+            var hide_base = HidHide.IsRegistered(Details.baseContainerDeviceInstanceId);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             return /* hide_device || */ hide_base;
         }
 
@@ -372,6 +479,7 @@ namespace HandheldCompanion.Controllers
 
             if (powerCycle)
             {
+<<<<<<< HEAD
                 IsBusy = true;
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
@@ -379,6 +487,22 @@ namespace HandheldCompanion.Controllers
             }
 
             UpdateUI();
+=======
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    IsEnabled = false;
+                    ProgressBarPanel.Visibility = Visibility.Visible;
+                });
+
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+
+                CyclePort();
+                return;
+            }
+
+            RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         public virtual void Unhide(bool powerCycle = true)
@@ -387,6 +511,7 @@ namespace HandheldCompanion.Controllers
 
             if (powerCycle)
             {
+<<<<<<< HEAD
                 IsBusy = true;
 
                 ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
@@ -394,6 +519,22 @@ namespace HandheldCompanion.Controllers
             }
 
             UpdateUI();
+=======
+                // UI thread (async)
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    IsEnabled = false;
+                    ProgressBarPanel.Visibility = Visibility.Visible;
+                });
+
+                ControllerManager.PowerCyclers[Details.baseContainerDeviceInstanceId] = true;
+
+                CyclePort();
+                return;
+            }
+
+            RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         public virtual void CyclePort()
@@ -405,7 +546,11 @@ namespace HandheldCompanion.Controllers
         {
         }
 
+<<<<<<< HEAD
         protected void HideHID()
+=======
+        public void HideHID()
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             HidHide.HidePath(Details.baseContainerDeviceInstanceId);
             HidHide.HidePath(Details.deviceInstanceId);
@@ -419,7 +564,11 @@ namespace HandheldCompanion.Controllers
             */
         }
 
+<<<<<<< HEAD
         protected void UnhideHID()
+=======
+        public void UnhideHID()
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             HidHide.UnhidePath(Details.baseContainerDeviceInstanceId);
             HidHide.UnhidePath(Details.deviceInstanceId);
@@ -489,6 +638,29 @@ namespace HandheldCompanion.Controllers
                     return "\u21BD";
                 case ButtonFlags.RightStickRight:
                     return "\u21C1";
+<<<<<<< HEAD
+=======
+                case ButtonFlags.OEM1:
+                    return "\u2780";
+                case ButtonFlags.OEM2:
+                    return "\u2781";
+                case ButtonFlags.OEM3:
+                    return "\u2782";
+                case ButtonFlags.OEM4:
+                    return "\u2783";
+                case ButtonFlags.OEM5:
+                    return "\u2784";
+                case ButtonFlags.OEM6:
+                    return "\u2785";
+                case ButtonFlags.OEM7:
+                    return "\u2786";
+                case ButtonFlags.OEM8:
+                    return "\u2787";
+                case ButtonFlags.OEM9:
+                    return "\u2788";
+                case ButtonFlags.OEM10:
+                    return "\u2789";
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 case ButtonFlags.VolumeUp:
                     return "\u21fe";
                 case ButtonFlags.VolumeDown:
@@ -630,9 +802,12 @@ namespace HandheldCompanion.Controllers
 
         #region events
 
+<<<<<<< HEAD
         public event UserIndexChangedEventHandler UserIndexChanged;
         public delegate void UserIndexChangedEventHandler(byte UserIndex);
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         public event InputsUpdatedEventHandler InputsUpdated;
         public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
 

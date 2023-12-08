@@ -6,8 +6,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+<<<<<<< HEAD
     Name="QuickPerformance"
     Title="{x:Static resx:Resources.QuickPerformancePage_Title}"
+=======
+    Title="Performance"
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     Margin="15,0,0,0"
     d:Background="White"
     d:DesignHeight="1500"
@@ -15,10 +19,17 @@
     KeepAlive="True"
     mc:Ignorable="d">
 
+<<<<<<< HEAD
     <ui:SimpleStackPanel Margin="0,6,0,6">
 
         <ui:SimpleStackPanel Spacing="6">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
+=======
+    <ui:SimpleStackPanel Margin="15,6,15,6" Spacing="10">
+        <ui:SimpleStackPanel Spacing="6">
+            <!--  Header  -->
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             <!--  Maximum CPU Count  -->
             <Border
@@ -37,6 +48,7 @@
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
 
+<<<<<<< HEAD
                         <ui:ToggleSwitch
                             Name="CPUCoreToggle"
                             Grid.Column="1"
@@ -48,6 +60,96 @@
                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <StackPanel Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+=======
+            <!--  Content  -->
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+                <ComboBox
+                    Name="ComboBoxOverlayDisplayLevel"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    SelectionChanged="ComboBoxOverlayDisplayLevel_SelectionChanged">
+
+                    <ComboBoxItem Name="OverlayDisplayLevelDisabled" Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Disabled}" />
+                    <ComboBoxItem Name="OverlayDisplayLevelMinimal" Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Minimal}" />
+                    <ComboBoxItem
+                        Name="OverlayDisplayLevelExtended"
+                        Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Extended}"
+                        IsEnabled="False" />
+                    <ComboBoxItem
+                        Name="OverlayDisplayLevelFull"
+                        Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_Full}"
+                        IsEnabled="False" />
+                    <ComboBoxItem Name="OverlayDisplayLevelExternal" Content="{x:Static resx:Resources.OverlayPage_OverlayDisplayLevel_External}" />
+                </ComboBox>
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <!--  Refresh rate  -->
+        <ui:SimpleStackPanel Spacing="6">
+            <!--  Header  -->
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <DockPanel>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="Segoe UI Symbol"
+                            Glyph="&#xE2CB;" />
+
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_DisplayResolutionRefreshRate}" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Static resx:Resources.QuickPerformancePage_DisplayResolutionRefreshRateDesc}"
+                                TextWrapping="Wrap" />
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+
+            <!--  Content  -->
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ComboBox
+                        Name="ComboBoxResolution"
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        IsReadOnly="True"
+                        SelectionChanged="ComboBoxResolution_SelectionChanged" />
+                    <ComboBox
+                        Name="ComboBoxFrequency"
+                        Grid.Column="1"
+                        Margin="6,0,0,0"
+                        HorizontalAlignment="Stretch"
+                        IsReadOnly="True"
+                        SelectionChanged="ComboBoxFrequency_SelectionChanged" />
+                </Grid>
+            </Border>
+        </ui:SimpleStackPanel>
+
+        <!--  Quiet mode  -->
+        <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+
+            <Grid>
+                <DockPanel>
+                    <ui:FontIcon
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xE9CA;" />
+
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_FanOverride}" />
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         <TextBlock
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
@@ -102,6 +204,7 @@
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
 
+<<<<<<< HEAD
                         <ui:ToggleSwitch
                             Name="TDPToggle"
                             Grid.Column="1"
@@ -147,6 +250,38 @@
                     </StackPanel>
                 </ui:SimpleStackPanel>
             </Border>
+=======
+            <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                <TextBlock
+                    Width="35"
+                    VerticalAlignment="Center"
+                    Text="{Binding Value, ElementName=QuietModeSlider, Mode=OneWay}"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Width="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{x:Static resx:Resources.QuickPerformancePage_FanOverridePercentage}" />
+                <Slider
+                    x:Name="QuietModeSlider"
+                    Margin="8,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    AutoToolTipPrecision="0"
+                    IsMoveToPointEnabled="True"
+                    IsSnapToTickEnabled="True"
+                    Maximum="100"
+                    Minimum="10"
+                    Style="{DynamicResource SliderStyle1}"
+                    TickFrequency="2"
+                    TickPlacement="BottomRight"
+                    ValueChanged="QuietModeSlider_ValueChanged" />
+            </DockPanel>
+        </Border>
+
+        <!--  Quiet mode  -->
+        <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             <!--  Auto TDP  -->
             <Border
@@ -455,12 +590,19 @@
                 </Grid>
             </Border>
 
+<<<<<<< HEAD
             <!--  Power mode  -->
             <Border
                 Name="StackProfilePowerMode"
                 Padding="15,12,12,12"
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
+=======
+        <!--  Power mode  -->
+        <ui:SimpleStackPanel Spacing="6">
+            <!--  Header  -->
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -492,11 +634,16 @@
                 </Grid>
             </Border>
 
+<<<<<<< HEAD
             <!--  Fan mode  -->
             <Border
                 Padding="15,12,12,12"
                 Background="{DynamicResource ExpanderHeaderBackground}"
                 CornerRadius="{DynamicResource ControlCornerRadius}">
+=======
+            <!--  Content  -->
+            <Border CornerRadius="{DynamicResource ControlCornerRadius}">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
                 <Grid>
                     <Grid.ColumnDefinitions>

@@ -1,10 +1,15 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+<<<<<<< HEAD
+=======
+using Nefarius.Utilities.DeviceManagement.PnP;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers;
@@ -21,6 +26,7 @@ public class XInputController : IController
 
     public XInputController(PnPDetails details)
     {
+<<<<<<< HEAD
         AttachController(details.XInputUserIndex);
         AttachDetails(details);
 
@@ -44,6 +50,39 @@ public class XInputController : IController
                 ProgressBarWarning.Text = Properties.Resources.XInputController_Warning_USB;
                 break;
         }
+=======
+    }
+
+    public XInputController(Controller controller, PnPDetails details) : this()
+    {
+        Controller = controller;
+        UserIndex = (int)controller.UserIndex;
+
+        if (!IsConnected())
+            return;
+
+        this.Details = details;
+        if (Details is null)
+            return;
+
+        Details.isHooked = true;
+
+        // UI
+        ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
+        ColoredButtons.Add(ButtonFlags.B2, new SolidColorBrush(Color.FromArgb(255, 217, 65, 38)));
+        ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
+        ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
+
+        InitializeComponent();
+        DrawControls();
+        RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
+    }
+
+    public void UpdateController(Controller controller)
+    {
+        Controller = controller;
+        UserIndex = (int)controller.UserIndex;
     }
 
     public override string ToString()
@@ -120,8 +159,12 @@ public class XInputController : IController
         }
         catch { }
 
+<<<<<<< HEAD
         if (commit)
             base.UpdateInputs(ticks);
+=======
+        base.UpdateInputs(ticks);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     public override bool IsConnected()
@@ -136,6 +179,7 @@ public class XInputController : IController
         if (!IsConnected())
             return;
 
+<<<<<<< HEAD
         try
         {
             ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
@@ -145,17 +189,32 @@ public class XInputController : IController
             Controller.SetVibration(vibration);
         }
         catch { }
+=======
+        var LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+        var RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+
+        var vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
+        Controller.SetVibration(vibration);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     public override void Plug()
     {
+<<<<<<< HEAD
         TimerManager.Tick += (ticks) => UpdateInputs(ticks, true);
+=======
+        TimerManager.Tick += UpdateInputs;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         base.Plug();
     }
 
     public override void Unplug()
     {
+<<<<<<< HEAD
         TimerManager.Tick -= (ticks) => UpdateInputs(ticks, true);
+=======
+        TimerManager.Tick -= UpdateInputs;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         base.Unplug();
     }
 
@@ -172,7 +231,11 @@ public class XInputController : IController
         {
             if (XInputGetCapabilitiesEx(1, idx, 0, ref capabilitiesEx) == 0)
             {
+<<<<<<< HEAD
                 if (capabilitiesEx.ProductId != details.ProductID || capabilitiesEx.VendorId != details.VendorID)
+=======
+                if (capabilitiesEx.ProductId != details.attributes.ProductID || capabilitiesEx.VendorId != details.attributes.VendorID)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                     continue;
 
                 var devices = DeviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
@@ -184,6 +247,7 @@ public class XInputController : IController
         return SharpDX.XInput.UserIndex.Any;
     }
 
+<<<<<<< HEAD
     public virtual void AttachController(byte userIndex)
     {
         if (UserIndex == userIndex)
@@ -195,11 +259,36 @@ public class XInputController : IController
 
     public override void Hide(bool powerCycle = true)
     {
+=======
+    public override void Hide(bool powerCycle = true)
+    {
+        if (powerCycle)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
+            });
+        }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         base.Hide(powerCycle);
     }
 
     public override void Unhide(bool powerCycle = true)
     {
+<<<<<<< HEAD
+=======
+        if (powerCycle)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
+            });
+        }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         base.Unhide(powerCycle);
     }
 

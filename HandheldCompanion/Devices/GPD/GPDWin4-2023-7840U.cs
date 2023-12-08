@@ -14,6 +14,7 @@ public class GPDWin4_2023_7840U : IDevice
 
         // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
         nTDP = new double[] { 15, 15, 28 };
+<<<<<<< HEAD
         cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };
         CpuClock = 5100;
@@ -33,20 +34,48 @@ public class GPDWin4_2023_7840U : IDevice
 
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
+=======
+        cTDP = new double[] { 5, 28 };
+        GfxClock = new double[] { 200, 2700 };
+
+        AngularVelocityAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             { 'X', 'Y' },
             { 'Y', 'Z' },
             { 'Z', 'X' }
         };
 
+<<<<<<< HEAD
         AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
+=======
+        AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        AccelerationAxisSwap = new SortedDictionary<char, char>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
+<<<<<<< HEAD
+=======
+        // device specific capacities
+        Capabilities = DeviceCapabilities.FanControl;
+
+        ECDetails = new ECDetails
+        {
+            AddressControl = 0x275,
+            AddressDuty = 0x1809,
+            AddressRegistry = 0x4E,
+            AddressData = 0x4F,
+            ValueMin = 0,
+            ValueMax = 184
+        };
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         // Note, OEM1 not configured as this device has it's own Menu button for guide button
 
         // Note, chords need to be manually configured in GPD app first by end user
@@ -66,6 +95,7 @@ public class GPDWin4_2023_7840U : IDevice
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             false, ButtonFlags.OEM3
         ));
+<<<<<<< HEAD
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -79,6 +109,8 @@ public class GPDWin4_2023_7840U : IDevice
         }
 
         return defaultGlyph;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     public override void Close()

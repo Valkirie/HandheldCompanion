@@ -2,6 +2,10 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+<<<<<<< HEAD
+=======
+using HandheldCompanion.Misc;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
@@ -23,12 +27,18 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
+<<<<<<< HEAD
 using Windows.UI.ViewManagement;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
 using Control = System.Windows.Controls.Control;
 using Page = System.Windows.Controls.Page;
+<<<<<<< HEAD
 using RadioButton = System.Windows.Controls.RadioButton;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 namespace HandheldCompanion.Views;
 
@@ -45,7 +55,10 @@ public partial class MainWindow : GamepadWindow
 
     public static ControllerPage controllerPage;
     public static DevicePage devicePage;
+<<<<<<< HEAD
     public static PerformancePage performancePage;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     public static ProfilesPage profilesPage;
     public static SettingsPage settingsPage;
     public static AboutPage aboutPage;
@@ -83,8 +96,11 @@ public partial class MainWindow : GamepadWindow
     private WindowState prevWindowState;
     private SplashScreen splashScreen;
 
+<<<<<<< HEAD
     public static UISettings uiSettings;
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     private const int WM_QUERYENDSESSION = 0x0011;
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
@@ -226,6 +242,7 @@ public partial class MainWindow : GamepadWindow
 
         OSDManager.Start();
         LayoutManager.Start();
+<<<<<<< HEAD
 
         // todo: improve overall threading logic
         new Thread(() =>
@@ -233,6 +250,9 @@ public partial class MainWindow : GamepadWindow
             PlatformManager.Start();
             ProcessManager.Start();
         }).Start();
+=======
+        ProcessManager.Start();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         PowerManager.SystemStatusChanged += OnSystemStatusChanged;
         PowerManager.Start();
@@ -246,8 +266,11 @@ public partial class MainWindow : GamepadWindow
         InputsManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
+<<<<<<< HEAD
 
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // start managers asynchroneously
         foreach (var manager in _managers)
@@ -270,7 +293,18 @@ public partial class MainWindow : GamepadWindow
         // windows shutting down event
         if (msg == WM_QUERYENDSESSION)
         {
+<<<<<<< HEAD
             // do something
+=======
+            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+            {
+                // disable physical controllers when shutting down to ensure we can give the first order to virtual controller on next boot
+                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
+                {
+                    PnPUtil.DisableDevice(physicalControllerInstanceId);
+                }
+            }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         return IntPtr.Zero;
@@ -304,6 +338,7 @@ public partial class MainWindow : GamepadWindow
                 default:
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
+<<<<<<< HEAD
                         GamepadUIBack.Visibility = Visibility.Visible;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
 
@@ -327,6 +362,12 @@ public partial class MainWindow : GamepadWindow
                             GamepadUIToggle.Visibility = Visibility.Visible;
                             GamepadUIToggleDesc.Text = Properties.Resources.MainWindow_Toggle;
                         }
+=======
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Select;
+
+                        GamepadUIBack.Visibility = Visibility.Visible;
+                        GamepadUIBackDesc.Text = Properties.Resources.MainWindow_Back;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                     }
                     break;
 
@@ -341,6 +382,11 @@ public partial class MainWindow : GamepadWindow
                 case "NavigationViewItem":
                     {
                         GamepadUISelect.Visibility = Visibility.Visible;
+<<<<<<< HEAD
+=======
+                        GamepadUISelectDesc.Text = Properties.Resources.MainWindow_Navigate;
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         GamepadUIBack.Visibility = Visibility.Collapsed;
                         GamepadUIToggle.Visibility = Visibility.Collapsed;
 
@@ -414,20 +460,29 @@ public partial class MainWindow : GamepadWindow
         controllerPage.Loaded += ControllerPage_Loaded;
 
         devicePage = new DevicePage("device");
+<<<<<<< HEAD
         performancePage = new PerformancePage("performance");
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         profilesPage = new ProfilesPage("profiles");
         settingsPage = new SettingsPage("settings");
         aboutPage = new AboutPage("about");
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
         layoutPage = new LayoutPage("layout", navView);
+<<<<<<< HEAD
         notificationsPage = new NotificationsPage("notifications");
         notificationsPage.StatusChanged += NotificationsPage_LayoutUpdated;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
         _pages.Add("DevicePage", devicePage);
+<<<<<<< HEAD
         _pages.Add("PerformancePage", performancePage);
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         _pages.Add("ProfilesPage", profilesPage);
         _pages.Add("AboutPage", aboutPage);
         _pages.Add("OverlayPage", overlayPage);
@@ -498,6 +553,9 @@ public partial class MainWindow : GamepadWindow
                 overlayquickTools.ToggleVisibility();
                 break;
             case "Exit":
+                if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+                    SwapWindowState();
+
                 appClosing = true;
                 Close();
                 break;
@@ -616,7 +674,11 @@ public partial class MainWindow : GamepadWindow
                 // sleep
                 {
                     // stop the virtual controller
+<<<<<<< HEAD
                     VirtualManager.Suspend();
+=======
+                    VirtualManager.Pause();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
                     // stop timer manager
                     TimerManager.Stop();
@@ -723,6 +785,11 @@ public partial class MainWindow : GamepadWindow
         Environment.Exit(0);
     }
 
+<<<<<<< HEAD
+=======
+    bool CloseOverride = false;
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     private async void Window_Closing(object sender, CancelEventArgs e)
     {
         // position and size settings
@@ -754,6 +821,36 @@ public partial class MainWindow : GamepadWindow
             WindowState = WindowState.Minimized;
             return;
         }
+<<<<<<< HEAD
+=======
+
+        if (SettingsManager.GetBoolean("VirtualControllerForceOrder") && !CloseOverride)
+        {
+            // we have to cancel closing the window to be able to prompt the user
+            e.Cancel = true;
+
+            // warn user when attempting to close HC while using Improve virtual controller detection
+            var result = Dialog.ShowAsync(
+                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseTitle,
+                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseText,
+                ContentDialogButton.Primary, null,
+                Properties.Resources.MainWindow_VirtualControllerForceOrderClosePrimary,
+                Properties.Resources.MainWindow_VirtualControllerForceOrderCloseSecondary);
+
+            await result;
+
+            switch (result.Result)
+            {
+                case ContentDialogResult.Primary:
+                    CloseOverride = true;
+                    Close();
+                    break;
+                case ContentDialogResult.Secondary:
+                    appClosing = false;
+                    return;
+            }
+        }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void Window_StateChanged(object sender, EventArgs e)

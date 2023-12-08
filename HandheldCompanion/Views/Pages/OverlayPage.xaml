@@ -7,7 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+<<<<<<< HEAD
     Name="Overlay"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     Title="{x:Static resx:Resources.OverlayPage_Overlay}"
     d:Background="White"
     d:DesignHeight="1800"

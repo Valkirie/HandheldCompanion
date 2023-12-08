@@ -1,6 +1,10 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+<<<<<<< HEAD
+=======
+using Inkore.UI.WPF.Modern;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using System.Windows;
 using System.Windows.Media;
 using static JSL;

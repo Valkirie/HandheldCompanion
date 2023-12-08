@@ -70,8 +70,12 @@ public class SteamDeck : IDevice
         cTDP = new double[] { 4, 15 };
 
         // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
+<<<<<<< HEAD
         GfxClock = new double[] { 200, 1600 };
         CpuClock = 3500;
+=======
+        GfxClock = new double[] { 200, 1600 };
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         OEMChords.Add(new DeviceChord("...",
             new List<KeyCode>(), new List<KeyCode>(),

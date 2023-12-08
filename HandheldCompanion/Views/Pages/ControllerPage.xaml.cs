@@ -1,13 +1,16 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
+<<<<<<< HEAD
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
+=======
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Utils;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using System;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,6 +24,12 @@ namespace HandheldCompanion.Views.Pages;
 /// </summary>
 public partial class ControllerPage : Page
 {
+<<<<<<< HEAD
+=======
+    public delegate void HIDchangedEventHandler(HIDmode HID);
+    public event HIDchangedEventHandler HIDchanged;
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     // controllers vars
     private HIDmode controllerMode = HIDmode.NoController;
     private HIDstatus controllerStatus = HIDstatus.Disconnected;
@@ -41,10 +50,16 @@ public partial class ControllerPage : Page
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+<<<<<<< HEAD
         ControllerManager.Working += ControllerManager_Working;
         ProfileManager.Applied += ProfileManager_Applied;
 
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+=======
+
+        PlatformManager.Initialized += PlatformManager_Initialized;
+        PlatformManager.Steam.Updated += Steam_Updated;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     public ControllerPage(string Tag) : this()
@@ -52,11 +67,22 @@ public partial class ControllerPage : Page
         this.Tag = Tag;
     }
 
+<<<<<<< HEAD
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
+=======
+    private void PlatformManager_Initialized()
+    {
+        HintsSteamXboxDrivers.Visibility = PlatformManager.Steam.HasXboxDriversInstalled() ? Visibility.Visible : Visibility.Collapsed;
+        Steam_Updated(PlatformManager.Steam.IsRunning ? PlatformStatus.Started : PlatformStatus.Stopped);
+    }
+
+    private void Steam_Updated(PlatformStatus status)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
+<<<<<<< HEAD
             // disable emulated controller combobox if profile is not default or set to default controller
             if (!profile.Default && (HIDmode)profile.HID != HIDmode.NotSelected)
             {
@@ -70,6 +96,21 @@ public partial class ControllerPage : Page
             }
         });
     }
+=======
+            switch (status)
+            {
+                case PlatformStatus.Stopping:
+                case PlatformStatus.Stopped:
+                    HintsSteamNeptuneDeskop.Visibility = Visibility.Collapsed;
+                    break;
+                case PlatformStatus.Started:
+                    HintsSteamNeptuneDeskop.Visibility = PlatformManager.Steam.HasDesktopProfileApplied() ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+            }
+        });
+    }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
         // UI thread (async)
@@ -86,9 +127,12 @@ public partial class ControllerPage : Page
                 case "HIDvibrateonconnect":
                     Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                     break;
+<<<<<<< HEAD
                 case "ControllerManagement":
                     Toggle_ControllerManagement.IsOn = Convert.ToBoolean(value);
                     break;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 case "VibrationStrength":
                     SliderStrength.Value = Convert.ToDouble(value);
                     break;
@@ -99,9 +143,12 @@ public partial class ControllerPage : Page
                     Toggle_SCMuteController.IsOn = Convert.ToBoolean(value);
                     ControllerRefresh();
                     break;
+<<<<<<< HEAD
                 case "LegionControllerPassthrough":
                     Toggle_TouchpadPassthrough.IsOn = Convert.ToBoolean(value);
                     break;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 case "HIDmode":
                     cB_HidMode.SelectedIndex = Convert.ToInt32(value);
                     break;
@@ -123,6 +170,11 @@ public partial class ControllerPage : Page
 
     private void ControllerUnplugged(IController Controller, bool IsPowerCycling)
     {
+<<<<<<< HEAD
+=======
+        LogManager.LogDebug("Controller unplugged: {0}", Controller.ToString());
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
@@ -145,15 +197,29 @@ public partial class ControllerPage : Page
             Controller.UserIndexChanged -= Controller_UserIndexChanged;
     }
 
+<<<<<<< HEAD
     private void ControllerPlugged(IController Controller, bool IsPowerCycling)
+=======
+    private void ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             // Search for an existing controller, remove it
             foreach (IController ctrl in InputDevices.Children)
+<<<<<<< HEAD
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                     return;
+=======
+            {
+                if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
+                {
+                    InputDevices.Children.Remove(ctrl);
+                    break;
+                }
+            }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // Add new controller to list if no existing controller was found
             InputDevices.Children.Add(Controller);
@@ -168,14 +234,36 @@ public partial class ControllerPage : Page
             ControllerRefresh();
         });
 
+<<<<<<< HEAD
         if (Controller.IsVirtual())
             Controller.UserIndexChanged += Controller_UserIndexChanged;
+=======
+        // we assume this is HC virtual controller
+        if (Controller.IsVirtual() && isHCVirtualController)
+        {
+            if (SettingsManager.GetBoolean("VirtualControllerForceOrder"))
+            {
+                // enable physical controller(s) after virtual controller to ensure first order
+                foreach (var physicalControllerInstanceId in SettingsManager.GetStringCollection("PhysicalControllerInstanceIds"))
+                {
+                    PnPUtil.EnableDevice(physicalControllerInstanceId);
+                }
+            }
+        }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
         // UI thread (async)
+<<<<<<< HEAD
         ControllerRefresh();
+=======
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            SteamControllerPanel.Visibility = Controller is SteamController ? Visibility.Visible : Visibility.Collapsed;
+        });
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void SetVirtualControllerVisualIndex(int value)
@@ -327,7 +415,8 @@ public partial class ControllerPage : Page
         else
             Controller.Hide();
 
-        ControllerRefresh();
+        if (!ControllerManager.PowerCyclers.ContainsKey(Controller.GetContainerInstancePath()))
+            ControllerRefresh();
     }
 
     private void ControllerRefresh()
@@ -335,6 +424,7 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
+<<<<<<< HEAD
             // we're busy
             if (ControllerLoading.Visibility is Visibility.Visible)
                 return;
@@ -342,11 +432,17 @@ public partial class ControllerPage : Page
             bool hasPhysical = ControllerManager.HasPhysicalController();
             bool hasVirtual = ControllerManager.HasVirtualController();
             bool hasTarget = ControllerManager.GetTargetController() != null;
+=======
+            var hasPhysical = ControllerManager.HasPhysicalController();
+            var hasVirtual = ControllerManager.HasVirtualController();
+            var hasTarget = ControllerManager.GetTargetController() != null;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // check: do we have any plugged physical controller
             InputDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
+<<<<<<< HEAD
             IController targetController = ControllerManager.GetTargetController();
             IController virtualController = ControllerManager.GetVirtualControllers().LastOrDefault();
             int idx = virtualController is null ? 255 : virtualController.GetUserIndex();
@@ -360,6 +456,14 @@ public partial class ControllerPage : Page
             DeviceSpecificPanel.Visibility = targetController is SteamController || targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
             MuteVirtualController.Visibility = targetController is SteamController ? Visibility.Visible : Visibility.Collapsed;
             TouchpadPassthrough.Visibility = targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
+=======
+            var target = ControllerManager.GetTargetController();
+            var isPlugged = hasTarget && target.IsPlugged();
+            var isHidden = hasTarget && target.IsHidden();
+            var isSteam = hasTarget && (target.GetType() == typeof(NeptuneController) || target.GetType() == typeof(GordonController));
+            var isMuted = SettingsManager.GetBoolean("SteamControllerMute");
+            var isForceOrder = SettingsManager.GetBoolean("VirtualControllerForceOrder");
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // hint: Has physical controller, but is not connected
             HintsNoPhysicalConnected.Visibility =
@@ -370,7 +474,11 @@ public partial class ControllerPage : Page
             HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
+<<<<<<< HEAD
             bool neptunehidden = isHidden && isSteam && isMuted;
+=======
+            var neptunehidden = isHidden && isSteam && isMuted;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             HintsNeptuneHidden.Visibility = neptunehidden ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller not hidden, and virtual controller
@@ -410,12 +518,20 @@ public partial class ControllerPage : Page
         controllerMode = (HIDmode)cB_HidMode.SelectedIndex;
         UpdateControllerImage();
 
+<<<<<<< HEAD
         // only change HIDmode setting if current profile is default or set to default controller
         var currentProfile = ProfileManager.GetCurrent();
         if (currentProfile.Default || (HIDmode)currentProfile.HID == HIDmode.NotSelected)
         {
             SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
         }
+=======
+        // raise event
+        HIDchanged?.Invoke(controllerMode);
+
+        SettingsManager.SetProperty("HIDmode", cB_HidMode.SelectedIndex);
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void cB_ServiceSwitch_SelectionChanged(object sender, SelectionChangedEventArgs e)

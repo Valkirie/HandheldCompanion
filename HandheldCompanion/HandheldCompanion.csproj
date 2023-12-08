@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+<<<<<<< HEAD
     <TargetFrameworks>net8.0-windows10.0.19041.0</TargetFrameworks>
+=======
+    <TargetFrameworks>net8.0-windows10.0.19041.0;net7.0-windows10.0.19041.0</TargetFrameworks>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 	<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
 	<AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
 	<PlatformTarget>x64</PlatformTarget>
@@ -12,7 +16,11 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+<<<<<<< HEAD
     <Version>0.19.1.2</Version>
+=======
+    <Version>0.18.0.6</Version>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -78,7 +86,10 @@
     <None Remove="Resources\device_gpd4.png" />
     <None Remove="Resources\device_gpd_win2.png" />
     <None Remove="Resources\device_gpd_winmax2.png" />
+<<<<<<< HEAD
     <None Remove="Resources\device_legion_go.png" />
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
     <None Remove="Resources\device_onexplayer_onexfly.png" />
@@ -154,7 +165,11 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="NAudio" Version="2.2.0" />
+<<<<<<< HEAD
     <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.12.2" />
+=======
+    <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.60" />
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.17.406" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -166,13 +181,19 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+<<<<<<< HEAD
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
     <PackageReference Include="System.IO.Ports" Version="7.0.0" />
     <PackageReference Include="System.Management" Version="7.0.2" />
+<<<<<<< HEAD
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <PackageReference Include="WindowsAPICodePack" Version="7.0.4" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
@@ -2257,9 +2278,12 @@
     <None Update="Resources\RTSSSharedMemoryNET.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+<<<<<<< HEAD
     <None Update="SapientiaUsb.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <None Update="ucrtbased.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

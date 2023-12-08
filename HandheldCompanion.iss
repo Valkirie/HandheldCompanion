@@ -221,9 +221,28 @@ begin
   if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 8.0.0') then begin
     Dependency_Add('dotNet80desktop' + Dependency_ArchSuffix + '.exe',
       '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
+<<<<<<< HEAD
       '.NET Desktop Runtime 8.0.0' + Dependency_ArchTitle,
       Dependency_String('https://download.visualstudio.microsoft.com/download/pr/b280d97f-25a9-4ab7-8a12-8291aa3af117/a37ed0e68f51fcd973e9f6cb4f40b1a7/windowsdesktop-runtime-8.0.0-win-x64.exe',
 	  'https://download.visualstudio.microsoft.com/download/pr/f9e3b581-059d-429f-9f0d-1d1167ff7e32/bd7661030cd5d66cd3eee0fd20b24540/windowsdesktop-runtime-8.0.0-win-x86.exe'),
+=======
+      '.NET Runtime 7.0.0' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/75c0d7c7-9f30-46fd-9675-a301f0e051f4/ec04d5cc40aa6537a4af21fad6bf8ba9/dotnet-runtime-7.0.0-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/87bc5966-97cc-498c-8381-bff4c43aafc6/baca88b989e7d2871e989d33a667d8e9/dotnet-runtime-7.0.0-win-x64.exe'),
+      '', False, False);
+  end;
+end;
+
+procedure Dependency_AddDotNet70Desktop;
+begin
+  // https://dotnet.microsoft.com/download/dotnet/7.0
+  if not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.10') then begin
+    Dependency_Add('dotnet70desktop' + Dependency_ArchSuffix + '.exe',
+      '/lcid ' + IntToStr(GetUILanguage) + ' /passive /norestart',
+      '.NET Desktop Runtime 7.0.0' + Dependency_ArchTitle,
+      Dependency_String('https://download.visualstudio.microsoft.com/download/pr/9812249d-fc42-41ab-bd2e-6e858d5dd5a7/95fa5a1a77eace4482bcb98ede190003/windowsdesktop-runtime-7.0.10-win-x86.exe',
+	  'https://download.visualstudio.microsoft.com/download/pr/747f4a98-2586-4bc6-b828-34f35e384a7d/44225cfd9d365855ec77d00c4812133c/windowsdesktop-runtime-7.0.10-win-x64.exe'),
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
       '', False, False);
   end;
 end;
@@ -312,19 +331,34 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
+<<<<<<< HEAD
   Dependency_Add('HidHide_1.4.192_x64.exe',
     '/quiet /norestart',
     'HidHide Drivers',
+=======
+  // https://www.microsoft.com/en-US/download/details.aspx?id=35
+  Dependency_Add('HidHide_1.4.192_x64.exe',
+    '/quiet /norestart',
+    'HidHide Drivers v1.4.192',
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     'https://github.com/nefarius/HidHide/releases/download/v1.4.192.0/HidHide_1.4.192_x64.exe',
     '', True, False);
 end;
 
 procedure Dependency_AddViGem;
 begin
+<<<<<<< HEAD
   Dependency_Add('ViGEmBus_1.22.0_x64_x86_arm64.exe',
     '/quiet /norestart',
     'ViGEmBus Setup',
     'https://github.com/nefarius/ViGEmBus/releases/download/v1.22.0/ViGEmBus_1.22.0_x64_x86_arm64.exe',
+=======
+  // https://www.microsoft.com/en-US/download/details.aspx?id=35
+  Dependency_Add('ViGEmBus_1.22.0_x64_x86_arm64.exe',
+    '/quiet /norestart',
+    'ViGEmBus Setup 1.22.0',
+    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/ViGEmBus_1.22.0_x64_x86_arm64.exe',
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     '', True, False);
 end;
 
@@ -374,7 +408,11 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
+<<<<<<< HEAD
 #define MyAppVersion '0.19.1.2'
+=======
+#define MyAppVersion '0.18.0.6'
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -442,8 +480,17 @@ Name: "{commondesktop}\{#MyAppSetupName}"; Filename: "{app}\{#MyAppExeName}"; Ta
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"
 
+<<<<<<< HEAD
 [UninstallRun]
 Filename: "C:\Program Files\Nefarius Software Solutions\HidHide\x64\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
+=======
+[Run]
+Filename: "{sys}\sc.exe"; Parameters: "stop ControllerService" ; Flags: runascurrentuser runhidden
+Filename: "{sys}\sc.exe"; Parameters: "delete ControllerService" ; Flags: runascurrentuser runhidden
+
+[UninstallRun]
+Filename: "C:\Program Files\Nefarius Software Solutions e.U\HidHideCLI\HidHideCLI.exe"; Parameters: "--cloak-off" ; RunOnceId: "CloakOff"; Flags: runascurrentuser runhidden
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
@@ -492,7 +539,11 @@ begin
                    
     if not(keepHidhideCheckbox.Checked) then
     begin 
+<<<<<<< HEAD
       if(ShellExec('', 'msiexec.exe', '/X{BE49B9DE-F8EB-4F54-B312-DD4B601985FC}', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+=======
+      if(ShellExec('', 'msiexec.exe', '/X{50D7EB6D-6A4A-4A38-B09C-CC28F75F082E} /qn /norestart', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
       begin
         log('Successfully executed Hidhide uninstaller');
         if(resultCode = 0) then
@@ -548,8 +599,13 @@ end;
 function InitializeSetup: Boolean;
 begin
 
+<<<<<<< HEAD
 #ifdef UseDotNet80
   Dependency_AddDotNet80Desktop;
+=======
+#ifdef UseDotNet70
+  Dependency_AddDotNet70Desktop;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 #endif
 
 #ifdef UseVC2005

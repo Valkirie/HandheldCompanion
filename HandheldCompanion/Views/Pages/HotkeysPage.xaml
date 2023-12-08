@@ -5,7 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+<<<<<<< HEAD
     Name="Hotkeys"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     Title="Hotkeys"
     d:Background="White"
     d:DesignHeight="1500"

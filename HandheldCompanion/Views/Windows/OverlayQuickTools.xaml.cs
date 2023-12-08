@@ -487,5 +487,11 @@ public partial class OverlayQuickTools : GamepadWindow
         Time.Text = DateTime.Now.ToString(timeFormat);
     }
 
+    private void UpdateTime(object? sender, EventArgs e)
+    {
+        var timeFormat = CultureInfo.InstalledUICulture.DateTimeFormat.ShortTimePattern;
+        Time.Text = DateTime.Now.ToString(timeFormat);
+    }
+
     #endregion
 }

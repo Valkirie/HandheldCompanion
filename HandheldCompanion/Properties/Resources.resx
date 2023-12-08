@@ -763,7 +763,11 @@
   <data name="ProfilesPage_UMCMotionOn" xml:space="preserve">
     <value>Enabled, turn off with button(s)</value>
   </data>
+<<<<<<< HEAD
   <data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
+=======
+	<data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>Toggle between enabled or disabled with button(s)</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOff" xml:space="preserve">
@@ -1263,6 +1267,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="AboutPage_Partner" xml:space="preserve">
     <value>Partner</value>
   </data>
+<<<<<<< HEAD
   <data name="Dialog_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
@@ -1297,6 +1302,48 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
   </data>
   <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
+=======
+  <data name="SettingsPage_ForceVirtualControllerOrder" xml:space="preserve">
+    <value>Improve virtual controller detection</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderDesc" xml:space="preserve">
+    <value>Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn't detect your inputs (requires device reboot).</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+    <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>Warning</value>
   </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
@@ -1371,8 +1418,13 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
   </data>
+<<<<<<< HEAD
   <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
     <value>Controller settings</value>
+=======
+  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
+    <value>Steam Controller Settings</value>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
     <value>Apply template</value>
@@ -1572,7 +1624,11 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
     <value>Redirection</value>
   </data>
+<<<<<<< HEAD
   <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
+=======
+  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
@@ -1770,6 +1826,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
+<<<<<<< HEAD
   <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
   </data>
@@ -1777,6 +1834,15 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
+=======
+  <data name="JoystickCameraDesc" xml:space="preserve">
+    <value>This input will operate as a simple joystick. This is intended for traditional joystick applications</value>
+  </data>
+  <data name="JoystickSteeringDesc" xml:space="preserve">
+    <value>This input will operate as a joystick optimized for controlling a steering wheel or a racing game</value>
+  </data>
+  <data name="PlayerSpaceDesc" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>This input will operate as a joystick optimized for controlling a first or third person camera</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
@@ -1795,7 +1861,11 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Armory crate</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+<<<<<<< HEAD
     <value>M1</value>
+=======
+    <value>M1 / M2</value>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
   </data>
   <data name="Enum.AYANEO2021Pro.ButtonFlags.OEM1" xml:space="preserve">
     <value>Win</value>
@@ -2325,6 +2395,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="MainWindow_Select" xml:space="preserve">
     <value>Select</value>
   </data>
+<<<<<<< HEAD
   <data name="Hint_SteamNeptuneReadme" xml:space="preserve">
     <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input</value>
   </data>
@@ -2341,6 +2412,24 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller</value>
   </data>
   <data name="Hint_SteamXboxDrivers" xml:space="preserve">
+=======
+  <data name="ControllerPage_SteamNeptuneDesktopAction" xml:space="preserve">
+    <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.</value>
+  </data>
+  <data name="ControllerPage_SteamNeptuneDesktopDesc" xml:space="preserve">
+    <value>It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input.</value>
+  </data>
+  <data name="ControllerPage_SteamNeptuneDesktopWarning" xml:space="preserve">
+    <value>Steam Desktop Layout is applied</value>
+  </data>
+  <data name="ControllerPage_SteamXboxDriversAction" xml:space="preserve">
+    <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
+  </data>
+  <data name="ControllerPage_SteamXboxDriversDesc" xml:space="preserve">
+    <value>It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller</value>
+  </data>
+  <data name="ControllerPage_SteamXboxDriversWarning" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
   </data>
   <data name="DevicePage_Device" xml:space="preserve">
@@ -2349,6 +2438,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="MainWindow_navDevice" xml:space="preserve">
     <value>Device</value>
   </data>
+<<<<<<< HEAD
   <data name="XInputController_Warning_BTH" xml:space="preserve">
     <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
   </data>
@@ -2667,4 +2757,12 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
     <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
   </data>
+=======
+  <data name="ControllerPage_XInputControllerWarning" xml:space="preserve">
+    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+  </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Make this the default layout</value>
+  </data>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 </root>

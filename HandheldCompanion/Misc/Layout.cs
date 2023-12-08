@@ -33,7 +33,11 @@ public partial class Layout : ICloneable, IDisposable
             ButtonLayout[button] = new List<IActions>() { new ButtonActions() { Button = button } };
         }
 
+<<<<<<< HEAD
         // ButtonLayout[ButtonFlags.OEM1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.Special } };
+=======
+        ButtonLayout[ButtonFlags.OEM1] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.Special } };
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         ButtonLayout[ButtonFlags.LeftPadClickUp] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadUp } };
         ButtonLayout[ButtonFlags.LeftPadClickDown] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadDown } };
         ButtonLayout[ButtonFlags.LeftPadClickLeft] = new List<IActions>() { new ButtonActions { Button = ButtonFlags.DPadLeft } };

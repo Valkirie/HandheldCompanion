@@ -3,7 +3,10 @@ using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using System;
+<<<<<<< HEAD
 using System.Threading;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 namespace HandheldCompanion.Managers
 {
@@ -16,6 +19,7 @@ namespace HandheldCompanion.Managers
         private static DSUServer DSUServer;
 
         // settings vars
+<<<<<<< HEAD
         public static HIDmode HIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
@@ -32,6 +36,15 @@ namespace HandheldCompanion.Managers
 
         public static event ControllerSelectedEventHandler ControllerSelected;
         public delegate void ControllerSelectedEventHandler(HIDmode mode);
+=======
+        private static HIDmode HIDmode = HIDmode.NoController;
+        private static HIDstatus HIDstatus = HIDstatus.Disconnected;
+
+        public static bool IsInitialized;
+
+        public static event ControllerSelectedEventHandler ControllerSelected;
+        public delegate void ControllerSelectedEventHandler(IController Controller);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -57,15 +70,21 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Initialized += SettingsManager_Initialized;
+<<<<<<< HEAD
             ProfileManager.Applied += ProfileManager_Applied;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         public static void Start()
         {
+<<<<<<< HEAD
             // todo: improve me !!
             while (!ControllerManager.IsInitialized)
                 Thread.Sleep(250);
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             IsInitialized = true;
             Initialized?.Invoke();
 
@@ -80,9 +99,12 @@ namespace HandheldCompanion.Managers
             ResetViGEm();
             DSUServer.Stop();
 
+<<<<<<< HEAD
             // unsubscrive events
             ProfileManager.Applied -= ProfileManager_Applied;
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "VirtualManager");
@@ -90,17 +112,30 @@ namespace HandheldCompanion.Managers
 
         public static void Resume()
         {
+<<<<<<< HEAD
             // create new ViGEm client
             if (vClient is null)
                 vClient = new ViGEmClient();
+=======
+            // reset vigem
+            ResetViGEm();
+
+            // create new ViGEm client
+            vClient = new ViGEmClient();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // set controller mode
             SetControllerMode(HIDmode);
         }
 
+<<<<<<< HEAD
         public static void Suspend()
         {
             // reset vigem
+=======
+        public static void Pause()
+        {
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             ResetViGEm();
         }
 
@@ -126,6 +161,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
+<<<<<<< HEAD
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             try
@@ -160,6 +196,8 @@ namespace HandheldCompanion.Managers
         }
 
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         private static void SettingsManager_Initialized()
         {
             SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
@@ -173,7 +211,11 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
+<<<<<<< HEAD
         public static void SetControllerMode(HIDmode mode)
+=======
+        private static void SetControllerMode(HIDmode mode)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             // do not disconnect if similar to previous mode
             if (HIDmode == mode && vTarget is not null)
@@ -181,11 +223,15 @@ namespace HandheldCompanion.Managers
 
             // disconnect current virtual controller
             if (vTarget is not null)
+<<<<<<< HEAD
             {
                 vTarget.Disconnect();
                 vTarget.Dispose();
                 vTarget = null;
             }
+=======
+                vTarget.Disconnect();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             switch (mode)
             {
@@ -193,7 +239,10 @@ namespace HandheldCompanion.Managers
                 case HIDmode.NoController:
                     if (vTarget is not null)
                     {
+<<<<<<< HEAD
                         vTarget.Disconnect();
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         vTarget.Dispose();
                         vTarget = null;
                     }
@@ -202,6 +251,7 @@ namespace HandheldCompanion.Managers
                     vTarget = new DualShock4Target();
                     break;
                 case HIDmode.Xbox360Controller:
+<<<<<<< HEAD
                     // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
                     VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
                     ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
@@ -210,6 +260,13 @@ namespace HandheldCompanion.Managers
             }
 
             ControllerSelected?.Invoke(mode);
+=======
+                    vTarget = new Xbox360Target();
+                    break;
+            }
+
+            ControllerSelected?.Invoke(ControllerManager.GetEmulatedController());
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // failed to initialize controller
             if (vTarget is null)
@@ -230,7 +287,11 @@ namespace HandheldCompanion.Managers
             HIDmode = mode;
         }
 
+<<<<<<< HEAD
         public static void SetControllerStatus(HIDstatus status)
+=======
+        private static void SetControllerStatus(HIDstatus status)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             if (vTarget is null)
                 return;
@@ -279,7 +340,10 @@ namespace HandheldCompanion.Managers
             // dispose virtual controller
             if (vTarget is not null)
             {
+<<<<<<< HEAD
                 vTarget.Disconnect();
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 vTarget.Dispose();
                 vTarget = null;
             }

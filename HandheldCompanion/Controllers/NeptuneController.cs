@@ -30,11 +30,37 @@ public class NeptuneController : SteamController
 
     public NeptuneController(PnPDetails details) : base()
     {
+<<<<<<< HEAD
         AttachDetails(details);
 
         // UI
         DrawUI();
         UpdateUI();
+=======
+        if (details is null)
+            return;
+
+        Details = details;
+        Details.isHooked = true;
+
+        try
+        {
+            Controller = new(details.attributes.VendorID, details.attributes.ProductID, details.GetMI());
+
+            // open controller
+            Open();
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
+            return;
+        }
+
+        // UI
+        InitializeComponent();
+        DrawControls();
+        RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // Additional controller specific source buttons/axes
         SourceButtons.AddRange(new List<ButtonFlags>
@@ -59,6 +85,7 @@ public class NeptuneController : SteamController
         TargetButtons.Add(ButtonFlags.RightPadClick);
         TargetButtons.Add(ButtonFlags.LeftPadTouch);
         TargetButtons.Add(ButtonFlags.RightPadTouch);
+<<<<<<< HEAD
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
@@ -72,6 +99,11 @@ public class NeptuneController : SteamController
 
         // open controller
         Open();
+=======
+
+        TargetAxis.Add(AxisLayoutFlags.LeftPad);
+        TargetAxis.Add(AxisLayoutFlags.RightPad);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     public override string ToString()
@@ -266,6 +298,7 @@ public class NeptuneController : SteamController
         catch { }
     }
 
+<<<<<<< HEAD
     public override void Hide(bool powerCycle = true)
     {
         Close();
@@ -282,6 +315,8 @@ public class NeptuneController : SteamController
             Open();
     }
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)
     {
         this.input = input;

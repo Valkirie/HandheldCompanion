@@ -1,6 +1,9 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+<<<<<<< HEAD
 using HandheldCompanion.Misc;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
@@ -164,6 +167,7 @@ public static class ProfileManager
             LogManager.LogInformation("Profile {0} applied", profile.Name);
             ToastManager.SendToast($"Profile {profile.Name} applied");
         }
+<<<<<<< HEAD
     }
 
     private static void PowerProfileManager_Deleted(PowerProfile powerProfile)
@@ -183,6 +187,8 @@ public static class ProfileManager
                     ApplyProfile(profile);
             }
         }
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private static void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -491,7 +497,11 @@ public static class ProfileManager
             {
                 // restore previous XInputPlus mode if failed to update
                 profile.XInputPlus = prevWrapper;
+<<<<<<< HEAD
                 source = UpdateSource.Background;
+=======
+                source = ProfileUpdateSource.Background;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             }
 
             // update cloaking
@@ -548,7 +558,11 @@ public static class ProfileManager
         }
     }
 
+<<<<<<< HEAD
     private static void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+=======
+    private static void ControllerManager_ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     {
         // we're only interest in virtual, XInput controllers
         if (Controller is not XInputController || !Controller.IsVirtual())

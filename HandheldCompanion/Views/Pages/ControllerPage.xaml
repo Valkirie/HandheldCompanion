@@ -8,7 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+<<<<<<< HEAD
     Name="Controller"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
     d:DesignHeight="1800"
@@ -35,6 +38,7 @@
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform" />
                         </Grid.Background>
 
+<<<<<<< HEAD
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -104,6 +108,8 @@
                             </ui:SimpleStackPanel>
                         </ui:SimpleStackPanel>
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
@@ -151,6 +157,7 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerDesc}"
                                         TextWrapping="Wrap" />
+<<<<<<< HEAD
                                 </ui:SimpleStackPanel>
                             </DockPanel>
                         </Expander.Header>
@@ -190,6 +197,13 @@
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileAction}" TextWrapping="Wrap" />
                     </Expander>
 
+=======
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}" TextWrapping="Wrap" />
+                    </Expander>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
                     <!--  Has hidden physical controller but no virtual controller  -->
                     <Expander
@@ -281,10 +295,75 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                                         TextWrapping="Wrap" />
+<<<<<<< HEAD
                                 </ui:SimpleStackPanel>
                             </DockPanel>
                         </Expander.Header>
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}" TextWrapping="Wrap" />
+=======
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}" TextWrapping="Wrap" />
+                    </Expander>
+
+                    <!--  Steam Xbox Controller Enhanced Features Driver  -->
+                    <Expander
+                        Name="HintsSteamXboxDrivers"
+                        Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe7ba;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversWarning}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamXboxDriversAction}" TextWrapping="Wrap" />
+                    </Expander>
+
+                    <!--  Steam Desktop Layout  -->
+                    <Expander
+                        Name="HintsSteamNeptuneDeskop"
+                        Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe7ba;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopWarning}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopAction}" TextWrapping="Wrap" />
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                     </Expander>
                 </ui:SimpleStackPanel>
 
@@ -638,6 +717,7 @@
 
                 <!--  Steam Deck settings  -->
                 <ui:SimpleStackPanel
+<<<<<<< HEAD
                     Name="DeviceSpecificPanel"
                     d:Visibility="Visible"
                     Spacing="6"
@@ -647,14 +727,29 @@
                     <!--  Mute virtual controller (Steam Deck)  -->
                     <Border
                         Name="MuteVirtualController"
+=======
+                    Name="SteamControllerPanel"
+                    d:Visibility="Visible"
+                    Spacing="6"
+                    Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_SteamControllerSettings}" />
+
+                    <!--  Mute virtual controller  -->
+                    <Border
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         Padding="15,12,12,12"
                         Background="{DynamicResource ExpanderHeaderBackground}"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
+<<<<<<< HEAD
                                 <ColumnDefinition Width="5*" MinWidth="200" />
                                 <ColumnDefinition Width="5*" MinWidth="200" />
+=======
+                                <ColumnDefinition Width="9*" MinWidth="200" />
+                                <ColumnDefinition MinWidth="200" />
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -680,6 +775,7 @@
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="Toggle_SCMuteController_Toggled" />
+<<<<<<< HEAD
                         </Grid>
                     </Border>
 
@@ -719,6 +815,8 @@
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="Toggle_TouchpadPassthrough_Toggled" />
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

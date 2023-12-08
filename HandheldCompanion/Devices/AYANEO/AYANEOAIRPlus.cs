@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using HandheldCompanion.Devices.AYANEO;
 using HandheldCompanion.Inputs;
 using System;
@@ -10,6 +11,17 @@ using static HandheldCompanion.Utils.DeviceUtils;
 namespace HandheldCompanion.Devices;
 
 public class AYANEOAIRPlus : AYANEODevice
+=======
+using HandheldCompanion.Inputs;
+using System.Collections.Generic;
+using System.Numerics;
+
+using WindowsInput.Events;
+
+namespace HandheldCompanion.Devices;
+
+public class AYANEOAIRPlus : IDevice
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 {
     public AYANEOAIRPlus()
     {
@@ -17,22 +29,33 @@ public class AYANEOAIRPlus : AYANEODevice
         ProductIllustration = "device_aya_air";
         ProductModel = "AYANEOAir";
 
+<<<<<<< HEAD
         GyrometerAxis = new Vector3(1.0f, -1.0f, -1.0f);
         GyrometerAxisSwap = new SortedDictionary<char, char>
+=======
+        AngularVelocityAxis = new Vector3(1.0f, -1.0f, -1.0f);
+        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
+<<<<<<< HEAD
         AccelerometerAxis = new Vector3(-1.0f, -1.0f, -1.0f);
         AccelerometerAxisSwap = new SortedDictionary<char, char>
+=======
+        AccelerationAxis = new Vector3(-1.0f, -1.0f, -1.0f);
+        AccelerationAxisSwap = new SortedDictionary<char, char>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
+<<<<<<< HEAD
         // device specific capacities
         // todo, missing fan control
         Capabilities |= DeviceCapabilities.DynamicLighting;
@@ -51,6 +74,8 @@ public class AYANEOAIRPlus : AYANEODevice
             FanValueMax = 100           // Unknown
         };
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         OEMChords.Add(new DeviceChord("Custom Key Top Right",
             new List<KeyCode> { KeyCode.LControl, KeyCode.LWin, KeyCode.F16 },
             new List<KeyCode> { KeyCode.F16, KeyCode.LControl, KeyCode.LWin },
@@ -74,6 +99,7 @@ public class AYANEOAIRPlus : AYANEODevice
             new List<KeyCode> { KeyCode.D, KeyCode.LWin },
             false, ButtonFlags.OEM2
         ));
+<<<<<<< HEAD
     }
 
     public override string GetGlyph(ButtonFlags button)
@@ -330,4 +356,7 @@ public class AYANEOAIRPlus : AYANEODevice
         return true;
     }
     */
+=======
+    }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 }

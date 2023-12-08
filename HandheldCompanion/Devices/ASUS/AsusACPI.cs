@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 ﻿using HandheldCompanion.Managers;
 using System;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Threading;
+=======
+﻿using System.Management;
+using System.Runtime.InteropServices;
+using System;
+using System.Threading;
+using HandheldCompanion.Managers;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 public enum AsusFan
 {
@@ -14,7 +22,11 @@ public enum AsusFan
 
 public enum AsusMode
 {
+<<<<<<< HEAD
     Performance = 0,
+=======
+    Balanced = 0,
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     Turbo = 1,
     Silent = 2
 }

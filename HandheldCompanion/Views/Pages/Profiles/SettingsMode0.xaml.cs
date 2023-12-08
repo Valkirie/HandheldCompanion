@@ -103,7 +103,11 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
+<<<<<<< HEAD
         ProfilesPage.UpdateProfile();
+=======
+        ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -115,7 +119,11 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
+<<<<<<< HEAD
         ProfilesPage.UpdateProfile();
+=======
+        ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void Highlight_Thumb(float value)
@@ -170,7 +178,11 @@ public partial class SettingsMode0 : Page
             var x = (double)Thumb.Tag;
             Thumb.Height = StackCurve.ActualHeight - e.GetPosition(StackCurve).Y;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+<<<<<<< HEAD
             ProfilesPage.UpdateProfile();
+=======
+            ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
     }
 
@@ -182,7 +194,11 @@ public partial class SettingsMode0 : Page
             var x = (double)Thumb.Tag;
             Thumb.Height = StackCurve.Height / 2.0f;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+<<<<<<< HEAD
             ProfilesPage.UpdateProfile();
+=======
+            ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
     }
 
@@ -197,7 +213,11 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+<<<<<<< HEAD
             ProfilesPage.UpdateProfile();
+=======
+            ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
     }
 
@@ -212,7 +232,11 @@ public partial class SettingsMode0 : Page
 
             Thumb.Height = StackCurve.Height * value;
             ProfilesPage.selectedProfile.MotionSensivityArray[x] = Thumb.Height / StackCurve.Height;
+<<<<<<< HEAD
             ProfilesPage.UpdateProfile();
+=======
+            ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
     }
 
@@ -230,7 +254,11 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.AimingSightsMultiplier = (float)tb_ProfileAimingDownSightsMultiplier.Value;
+<<<<<<< HEAD
         ProfilesPage.UpdateProfile();
+=======
+        ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void Toggle_FlickStick_Toggled(object sender, RoutedEventArgs e)
@@ -242,7 +270,11 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.FlickstickEnabled = Toggle_FlickStick.IsOn;
+<<<<<<< HEAD
         ProfilesPage.UpdateProfile();
+=======
+        ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void SliderFlickDuration_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -254,7 +286,11 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.FlickstickDuration = (float)tb_ProfileFlickDuration.Value / 1000;
+<<<<<<< HEAD
         ProfilesPage.UpdateProfile();
+=======
+        ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void SliderStickSensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -266,7 +302,11 @@ public partial class SettingsMode0 : Page
             return;
 
         ProfilesPage.selectedProfile.FlickstickSensivity = (float)tb_ProfileStickSensitivity.Value;
+<<<<<<< HEAD
         ProfilesPage.UpdateProfile();
+=======
+        ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void TriggerCreated(Hotkey hotkey)
@@ -296,7 +336,11 @@ public partial class SettingsMode0 : Page
         {
             case "shortcutProfilesSettingsMode0":
                 ProfilesPage.selectedProfile.AimingSightsTrigger = inputs.State.Clone() as ButtonState;
+<<<<<<< HEAD
                 ProfilesPage.UpdateProfile();
+=======
+                ProfilesPage.RequestUpdate();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 break;
         }
     }

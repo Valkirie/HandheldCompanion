@@ -28,6 +28,23 @@ namespace HandheldCompanion.Controllers
             isVirtualMuted = mute;
         }
 
+<<<<<<< HEAD
+=======
+        public override void Hide(bool powerCycle = true)
+        {
+            HideHID();
+
+            RefreshControls();
+        }
+
+        public override void Unhide(bool powerCycle = true)
+        {
+            UnhideHID();
+
+            RefreshControls();
+        }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         public override string GetGlyph(ButtonFlags button)
         {
             switch (button)
@@ -55,6 +72,7 @@ namespace HandheldCompanion.Controllers
                 case ButtonFlags.R2Full:
                     return "\u21B3";
                 case ButtonFlags.L4:
+<<<<<<< HEAD
                     return "\u2276";
                 case ButtonFlags.L5:
                     return "\u2278";
@@ -62,6 +80,15 @@ namespace HandheldCompanion.Controllers
                     return "\u2277";
                 case ButtonFlags.R5:
                     return "\u2279";
+=======
+                    return "\u219c\u24f8";
+                case ButtonFlags.L5:
+                    return "\u219c\u24f9";
+                case ButtonFlags.R4:
+                    return "\u219d\u24f8";
+                case ButtonFlags.R5:
+                    return "\u219d\u24f9";
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 case ButtonFlags.Special:
                     return "\u21E4";
                 case ButtonFlags.OEM1:

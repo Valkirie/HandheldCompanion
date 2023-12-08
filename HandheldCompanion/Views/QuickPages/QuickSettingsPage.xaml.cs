@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+<<<<<<< HEAD
 using HandheldCompanion.Managers.Desktop;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,13 @@ using System.Windows;
 using System.Windows.Controls;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Radios;
+=======
+using System;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 namespace HandheldCompanion.Views.QuickPages;
 
@@ -92,8 +100,22 @@ public partial class QuickSettingsPage : Page
 
     private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
+<<<<<<< HEAD
         ComboBoxResolution.SelectedItem = resolution;
         ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
+=======
+        if (Monitor.TryEnter(volumeLock))
+        {
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // todo: update volume icon on update
+                SliderVolume.Value = Math.Round(volume);
+            });
+
+            Monitor.Exit(volumeLock);
+        }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)

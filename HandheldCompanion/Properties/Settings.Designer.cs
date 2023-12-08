@@ -11,11 +11,19 @@
 using System.Configuration;
 
 namespace HandheldCompanion.Properties {
+<<<<<<< HEAD
 
 
     [SettingsProvider(typeof(CustomSettingsProvider))]
     internal sealed partial class Settings : ApplicationSettingsBase
     {
+=======
+    
+    
+    [SettingsProvider(typeof(CustomSettingsProvider))]
+    internal sealed partial class Settings : ApplicationSettingsBase
+    {        
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
         public static Settings Default {
@@ -542,7 +550,11 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         public bool SteamControllerMute {
             get {
                 return ((bool)(this["SteamControllerMute"]));
@@ -770,6 +782,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ControllerManagement {
             get {
@@ -777,17 +790,35 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["ControllerManagement"] = value;
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool VirtualControllerForceOrder {
+            get {
+                return ((bool)(this["VirtualControllerForceOrder"]));
+            }
+            set {
+                this["VirtualControllerForceOrder"] = value;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         public global::System.Collections.Specialized.StringCollection SuspendedControllers {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedControllers"]));
             }
             set {
                 this["SuspendedControllers"] = value;
+=======
+        public global::System.Collections.Specialized.StringCollection PhysicalControllerInstanceIds {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["PhysicalControllerInstanceIds"]));
+            }
+            set {
+                this["PhysicalControllerInstanceIds"] = value;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             }
         }
         
@@ -862,6 +893,7 @@ namespace HandheldCompanion.Properties {
                 this["DSUip"] = value;
             }
         }
+<<<<<<< HEAD
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -981,5 +1013,7 @@ namespace HandheldCompanion.Properties {
                 this["LegionControllerPassthrough"] = value;
             }
         }
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 }

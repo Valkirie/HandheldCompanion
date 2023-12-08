@@ -11,7 +11,10 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+<<<<<<< HEAD
 using Timer = System.Timers.Timer;
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 namespace HandheldCompanion;
 
@@ -128,7 +131,10 @@ public class DSUServer
                 args.Dispose();
 
         argsList = new SocketAsyncEventArgs[ARG_BUFFER_LEN];
+<<<<<<< HEAD
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         for (int num = 0; num < ARG_BUFFER_LEN; num++)
         {
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -751,8 +757,17 @@ public class DSUServer
                     bool sendAsync = udpSock.SendToAsync(args);
                     if (!sendAsync) CompletedSynchronousSocketEvent();
                 }
+<<<<<<< HEAD
                 catch (SocketException /*ex*/) { }
                 catch (Exception /*ex*/) { }
+=======
+                catch (ObjectDisposedException)
+                {
+                }
+                catch (NullReferenceException)
+                {
+                }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 finally
                 {
                     if (!sentAsync) CompletedSynchronousSocketEvent();

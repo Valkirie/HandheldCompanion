@@ -22,7 +22,20 @@ namespace HandheldCompanion.Controllers
 
         public GordonController(PnPDetails details) : base()
         {
+<<<<<<< HEAD
             AttachDetails(details);
+=======
+            if (details is null)
+                return;
+
+            Controller = new(details.attributes.VendorID, details.attributes.ProductID, details.GetMI());
+
+            // open controller
+            Open();
+
+            Details = details;
+            Details.isHooked = true;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // UI
             ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
@@ -30,8 +43,14 @@ namespace HandheldCompanion.Controllers
             ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
             ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
+<<<<<<< HEAD
             DrawUI();
             UpdateUI();
+=======
+            InitializeComponent();
+            DrawControls();
+            RefreshControls();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // Additional controller specific source buttons/axes
             SourceButtons.AddRange(new List<ButtonFlags>() { ButtonFlags.L4, ButtonFlags.R4 });
@@ -60,6 +79,7 @@ namespace HandheldCompanion.Controllers
             SourceAxis.Remove(AxisLayoutFlags.RightStick);
         }
 
+<<<<<<< HEAD
         public override void AttachDetails(PnPDetails details)
         {
             base.AttachDetails(details);
@@ -70,6 +90,8 @@ namespace HandheldCompanion.Controllers
             Open();
         }
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         public override string ToString()
         {
             string baseName = base.ToString();

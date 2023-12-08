@@ -11,14 +11,21 @@ public static class PlatformManager
     private const int UpdateInterval = 1000;
 
     // gaming platforms
+<<<<<<< HEAD
     public static readonly Steam Steam = new();
+=======
+    public static readonly SteamPlatform Steam = new();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     public static readonly GOGGalaxy GOGGalaxy = new();
     public static readonly UbisoftConnect UbisoftConnect = new();
 
     // misc platforms
     public static RTSS RTSS = new();
     public static HWiNFO HWiNFO = new();
+<<<<<<< HEAD
     public static OpenHardwareMonitor OpenHardwareMonitor = new();
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
     private static Timer UpdateTimer;
 

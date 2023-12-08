@@ -9,7 +9,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+<<<<<<< HEAD
 using System.Windows.Media.Animation;
+=======
+using System.Windows.Media.Animation;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using static HandheldCompanion.Managers.InputsHotkey;
 using static HandheldCompanion.Managers.InputsManager;
 
@@ -302,6 +306,7 @@ public class Hotkey
 
                 foreach (var button in inputsChord.State.Buttons)
                 {
+<<<<<<< HEAD
                     UIElement? label = null;
                     var fontIcon = new FontIcon();
 
@@ -336,6 +341,18 @@ public class Hotkey
                             fontIcon.SetResourceReference(Control.ForegroundProperty,
                                 "SystemControlForegroundBaseMediumBrush");
 
+=======
+                    UIElement? label = null;
+
+                    var fontIcon = controller.GetFontIcon(button);
+                    // we display only one label, default one is not enough
+                    if (fontIcon.Glyph != IController.defaultGlyph)
+                    {
+                        if (fontIcon.Foreground is null)
+                            fontIcon.SetResourceReference(Control.ForegroundProperty,
+                                "SystemControlForegroundBaseMediumBrush");
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         label = fontIcon;
                     }
 

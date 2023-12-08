@@ -167,7 +167,11 @@ public partial class OverlayTrackpad : OverlayWindow
             case "LeftTrackpad":
                 {
                     var elapsed = e.Timestamp - leftInput.Timestamp;
+<<<<<<< HEAD
                     if (elapsed < SystemInformation.DoubleClickTime)
+=======
+                    if (elapsed < 200)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         leftInput.Flags = 30;
 
                     Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchLeft);
@@ -181,7 +185,11 @@ public partial class OverlayTrackpad : OverlayWindow
             case "RightTrackpad":
                 {
                     var elapsed = e.Timestamp - rightInput.Timestamp;
+<<<<<<< HEAD
                     if (elapsed < SystemInformation.DoubleClickTime)
+=======
+                    if (elapsed < 200)
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         rightInput.Flags = 30;
 
                     Trackpad_TouchInput(e, CursorAction.CursorDown, CursorButton.TouchRight);

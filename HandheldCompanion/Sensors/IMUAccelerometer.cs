@@ -133,7 +133,11 @@ public class IMUAccelerometer : IMUSensor
             return;
 
         foreach (var axis in reading_axis.Keys)
+<<<<<<< HEAD
             switch (MainWindow.CurrentDevice.AccelerometerAxisSwap[axis])
+=======
+            switch (MainWindow.CurrentDevice.AccelerationAxisSwap[axis])
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             {
                 default:
                 case 'X':
@@ -147,9 +151,15 @@ public class IMUAccelerometer : IMUSensor
                     break;
             }
 
+<<<<<<< HEAD
         reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AccelerometerAxis.X;
         reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AccelerometerAxis.Y;
         reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AccelerometerAxis.Z;
+=======
+        reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AccelerationAxis.X;
+        reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AccelerationAxis.Y;
+        reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AccelerationAxis.Z;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         base.ReadingChanged();
     }

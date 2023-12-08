@@ -5,12 +5,18 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
+<<<<<<< HEAD
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
+=======
+using Inkore.UI.WPF.Modern;
+using Microsoft.Win32;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+<<<<<<< HEAD
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -20,6 +26,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Windows.UI;
+=======
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Utils.DeviceUtils;
 using static JSL;
@@ -29,6 +41,7 @@ namespace HandheldCompanion.Managers;
 
 public static class ControllerManager
 {
+<<<<<<< HEAD
     private static readonly ConcurrentDictionary<string, IController> Controllers = new();
     public static readonly ConcurrentDictionary<string, bool> PowerCyclers = new();
 
@@ -39,6 +52,10 @@ public static class ControllerManager
     private static bool ControllerManagementSuccess = false;
     private static int ControllerManagementAttempts = 0;
     private const int ControllerManagementMaxAttempts = 3;
+=======
+    private static readonly Dictionary<string, IController> Controllers = new();
+    public static readonly Dictionary<string, bool> PowerCyclers = new();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
     private static readonly XInputController? emptyXInput = new();
     private static readonly DS4Controller? emptyDS4 = new();
@@ -48,13 +65,19 @@ public static class ControllerManager
     private static ProcessEx? foregroundProcess;
     private static bool ControllerMuted;
 
+    private static UISettings uiSettings;
+
     public static bool IsInitialized;
 
+<<<<<<< HEAD
     static ControllerManager()
     {
         watchdogThread = new Thread(watchdogThreadLoop);
         watchdogThread.IsBackground = true;
     }
+=======
+    private static bool virtualControllerCreated;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
     public static void Start()
     {
@@ -76,6 +99,10 @@ public static class ControllerManager
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
+<<<<<<< HEAD
+=======
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         VirtualManager.Vibrated += VirtualManager_Vibrated;
 
         MainWindow.CurrentDevice.KeyPressed += CurrentDevice_KeyPressed;
@@ -85,6 +112,9 @@ public static class ControllerManager
 
         // enable HidHide
         HidHide.SetCloaking(true);
+
+        uiSettings = new UISettings();
+        uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -96,6 +126,7 @@ public static class ControllerManager
         LogManager.LogInformation("{0} has started", "ControllerManager");
     }
 
+<<<<<<< HEAD
     public static void Stop()
     {
         if (!IsInitialized)
@@ -129,6 +160,12 @@ public static class ControllerManager
     {
         var _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
         var _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+=======
+    private static void OnColorValuesChanged(UISettings sender, object args)
+    {
+        var _systemBackground = uiSettings.GetColorValue(UIColorType.Background);
+        var _systemAccent = uiSettings.GetColorValue(UIColorType.Accent);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         targetController?.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
     }
@@ -220,6 +257,38 @@ public static class ControllerManager
             ControllerMuted = true;
     }
 
+<<<<<<< HEAD
+=======
+    public static void Stop()
+    {
+        if (!IsInitialized)
+            return;
+
+        IsInitialized = false;
+
+        // unplug on close
+        ClearTargetController();
+
+        DeviceManager.XUsbDeviceArrived -= XUsbDeviceArrived;
+        DeviceManager.XUsbDeviceRemoved -= XUsbDeviceRemoved;
+
+        DeviceManager.HidDeviceArrived -= HidDeviceArrived;
+        DeviceManager.HidDeviceRemoved -= HidDeviceRemoved;
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        // uncloak on close, if requested
+        if (SettingsManager.GetBoolean("HIDuncloakonclose"))
+            foreach (var controller in GetPhysicalControllers())
+                controller.Unhide(false);
+
+        // Flushing possible JoyShocks...
+        JslDisconnectAndDisposeAll();
+
+        LogManager.LogInformation("{0} has stopped", "ControllerManager");
+    }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     private static void SettingsManager_SettingValueChanged(string name, object value)
     {
         // UI thread (async)
@@ -244,6 +313,7 @@ public static class ControllerManager
                         bool Muted = Convert.ToBoolean(value);
                         ((SteamController)target).SetVirtualMuted(Muted);
                     }
+<<<<<<< HEAD
                     break;
 
                 case "ControllerManagement":
@@ -288,6 +358,8 @@ public static class ControllerManager
                         bool enabled = Convert.ToBoolean(value);
                         ((LegionController)target).SetPassthrough(enabled);
                     }
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                     break;
             }
         });
@@ -321,10 +393,15 @@ public static class ControllerManager
         if (!details.isGaming)
             return;
 
+<<<<<<< HEAD
         Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+=======
+        // initialize controller vars
+        IController controller = null;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // JoyShockLibrary
         int connectedJoys = JslConnectDevices();
@@ -342,7 +419,11 @@ public static class ControllerManager
                 settings = JslGetControllerInfoAndSettings(i);
 
                 string joyShockpath = settings.path;
+<<<<<<< HEAD
                 string detailsPath = details.devicePath;
+=======
+                string detailsPath = details.Path;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
                 if (detailsPath.Equals(joyShockpath, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -359,6 +440,7 @@ public static class ControllerManager
 
                 JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
 
+<<<<<<< HEAD
                 if (controller is not null)
                 {
                     ((JSController)controller).AttachDetails(details);
@@ -389,6 +471,24 @@ public static class ControllerManager
                         }
                     });
                 }
+=======
+                // UI thread (sync)
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    switch (joyShockType)
+                    {
+                        case JOY_TYPE.DualSense:
+                            controller = new DualSenseController(settings, details);
+                            break;
+                        case JOY_TYPE.DualShock4:
+                            controller = new DS4Controller(settings, details);
+                            break;
+                        case JOY_TYPE.ProController:
+                            controller = new ProController(settings, details);
+                            break;
+                    }
+                });
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             }
             else
             {
@@ -399,10 +499,18 @@ public static class ControllerManager
         }
         else
         {
+<<<<<<< HEAD
             // DInput
             var directInput = new DirectInput();
             int VendorId = details.VendorID;
             int ProductId = details.ProductID;
+=======
+
+            // DInput
+            var directInput = new DirectInput();
+            int VendorId = details.attributes.VendorID;
+            int ProductId = details.attributes.ProductID;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             // initialize controller vars
             Joystick joystick = null;
@@ -441,6 +549,7 @@ public static class ControllerManager
                     details.GetVendorID(), details.GetProductID());
             }
 
+<<<<<<< HEAD
             if (controller is not null)
             {
                 controller.AttachDetails(details);
@@ -560,10 +669,107 @@ public static class ControllerManager
                 targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
             }
         }
+=======
+            // UI thread (sync)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // search for a supported controller
+                switch (VendorId)
+                {
+                    // STEAM
+                    case 0x28DE:
+                        {
+                            switch (ProductId)
+                            {
+                                // WIRED STEAM CONTROLLER
+                                case 0x1102:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1 is virtual mouse
+                                    // MI == 2 is controller proper
+                                    // No idea what's in case of more than one controller connected
+                                    if (details.GetMI() == 2)
+                                        controller = new GordonController(details);
+                                    break;
+                                // WIRELESS STEAM CONTROLLER
+                                case 0x1142:
+                                    // MI == 0 is virtual keyboards
+                                    // MI == 1-4 are 4 controllers
+                                    // TODO: The dongle registers 4 controller devices, regardless how many are
+                                    // actually connected. There is no easy way to check for connection without
+                                    // actually talking to each controller. Handle only the first for now.
+                                    if (details.GetMI() == 1)
+                                        controller = new GordonController(details);
+                                    break;
+
+                                // STEAM DECK
+                                case 0x1205:
+                                    controller = new NeptuneController(details);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    // NINTENDO
+                    case 0x057E:
+                        {
+                            switch (ProductId)
+                            {
+                                // Nintendo Wireless Gamepad
+                                case 0x2009:
+                                    break;
+                            }
+                        }
+                        break;
+                }
+            });
+        }
+
+        // unsupported controller
+        if (controller is null)
+        {
+            LogManager.LogError("Unsupported Generic controller: VID:{0} and PID:{1}", details.GetVendorID(),
+                details.GetProductID());
+            return;
+        }
+
+        // failed to initialize
+        if (controller.Details is null)
+            return;
+
+        if (!controller.IsConnected())
+            return;
+
+        // update or create controller
+        var path = controller.GetContainerInstancePath();
+        Controllers[path] = controller;
+
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+        // power cycling logic
+        // hide new InstanceID (HID)
+        if (IsPowerCycling && controller.IsHidden())
+            controller.HideHID();
+
+        LogManager.LogDebug("Generic controller {0} plugged", controller.ToString());
+
+        // raise event
+        ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
+
+        ToastManager.SendToast(controller.ToString(), "detected");
+
+        // remove controller from powercyclers
+        PowerCyclers.Remove(controller.GetContainerInstancePath());
+
+        // first controller logic
+        if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
+            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     }
 
     private static async void HidDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
     {
+<<<<<<< HEAD
         IController controller = null;
 
         DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(10));
@@ -576,6 +782,9 @@ public static class ControllerManager
         }
 
         if (controller is null)
+=======
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             return;
 
         // XInput controller are handled elsewhere
@@ -584,6 +793,16 @@ public static class ControllerManager
 
         if (controller is JSController)
             JslDisconnect(controller.GetUserIndex());
+<<<<<<< HEAD
+=======
+
+        // are we power cycling ?
+        PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+        // unhide on remove 
+        if (!IsPowerCycling)
+            controller.UnhideHID();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
@@ -603,12 +822,15 @@ public static class ControllerManager
 
         LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
 
+        LogManager.LogDebug("Generic controller {0} unplugged", controller.ToString());
+
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
     private static void watchdogThreadLoop(object? obj)
     {
+<<<<<<< HEAD
         while(watchdogThreadRunning)
         {
             // monitoring unexpected slot changes
@@ -715,10 +937,68 @@ public static class ControllerManager
     private static async void XUsbDeviceArrived(PnPDetails details, DeviceEventArgs obj)
     {
         Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller);
+=======
+        // get details passed UserIndex
+        UserIndex userIndex = (UserIndex)details.XInputUserIndex;
+
+        // device manager failed to retrieve actual userIndex
+        // use backup method
+        if (userIndex == UserIndex.Any)
+            userIndex = XInputController.TryGetUserIndex(details);
+
+        // A XInput controller
+        Controller _controller = new(userIndex);
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            XInputController controller = new(_controller, details);
+
+            // failed to initialize
+            if (controller.Details is null)
+                return;
+
+            if (!controller.IsConnected())
+                return;
+
+            // update or create controller
+            string path = controller.GetContainerInstancePath();
+            Controllers[path] = controller;
+
+            // are we power cycling ?
+            PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
+
+            // power cycling logic
+            // hide new InstanceID (HID)
+            if (IsPowerCycling && controller.IsHidden())
+                controller.HideHID();
+
+            LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
+
+            // raise event
+            ControllerPlugged?.Invoke(controller, IsHCVirtualController(controller), IsPowerCycling);
+
+            ToastManager.SendToast(controller.ToString(), "detected");
+
+            // remove controller from powercyclers
+            PowerCyclers.Remove(controller.GetContainerInstancePath());
+
+            // first controller logic
+            if (!controller.IsVirtual() && GetTargetController() is null && DeviceManager.IsInitialized)
+                SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+        });
+    }
+
+    private static void XUsbDeviceRemoved(PnPDetails details, DeviceEventArgs obj)
+    {
+        if (!Controllers.TryGetValue(details.baseContainerDeviceInstanceId, out IController controller))
+            return;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // are we power cycling ?
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
+<<<<<<< HEAD
         // get details passed UserIndex
         UserIndex userIndex = (UserIndex)details.XInputUserIndex;
 
@@ -767,8 +1047,23 @@ public static class ControllerManager
         Controllers[path] = controller;
 
         LogManager.LogDebug("XInput controller {0} plugged", controller.ToString());
+=======
+        // unhide on remove
+        if (!IsPowerCycling)
+            controller.UnhideHID();
+
+        // controller was unplugged
+        Controllers.Remove(details.baseContainerDeviceInstanceId);
+
+        // unplug controller, if needed
+        if (GetTargetController()?.GetContainerInstancePath() == controller.GetContainerInstancePath())
+            ClearTargetController();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
+
+        LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
+<<<<<<< HEAD
         ControllerPlugged?.Invoke(controller, IsPowerCycling);
 
         ToastManager.SendToast(controller.ToString(), "detected");
@@ -834,6 +1129,8 @@ public static class ControllerManager
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
 
         // raise event
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
@@ -855,15 +1152,43 @@ public static class ControllerManager
 
     public static void SetTargetController(string baseContainerDeviceInstanceId, bool IsPowerCycling)
     {
+<<<<<<< HEAD
+=======
+        // unplug current controller
+        if (targetController is not null)
+        {
+            string targetPath = targetController.GetContainerInstancePath();
+
+            ClearTargetController();
+
+            // if we're setting currently selected, it's unplugged, there is none plugged
+            // reset the UI to the default controller and stop
+            if (targetPath == baseContainerDeviceInstanceId)
+            {
+                // reset layout UI
+                ControllerSelected?.Invoke(GetEmulatedController());
+                return;
+            }
+        }
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         // look for new controller
         if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
             return;
 
+<<<<<<< HEAD
         if (controller.IsVirtual())
             return;
 
         // clear current target
         ClearTargetController();
+=======
+        if (controller is null)
+            return;
+
+        if (controller.IsVirtual())
+            return;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         // update target controller
         targetController = controller;
@@ -874,12 +1199,20 @@ public static class ControllerManager
         Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
         targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
 
+<<<<<<< HEAD
+=======
+        var _systemBackground = uiSettings.GetColorValue(UIColorType.Background);
+        var _systemAccent = uiSettings.GetColorValue(UIColorType.Accent);
+        targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         // update HIDInstancePath
         SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
 
         if (!IsPowerCycling)
         {
             if (SettingsManager.GetBoolean("HIDcloakonconnect"))
+<<<<<<< HEAD
             {
                 bool powerCycle = true;
 
@@ -893,6 +1226,10 @@ public static class ControllerManager
                 if (!targetController.IsHidden())
                     targetController.Hide(powerCycle);
             }
+=======
+                if (!targetController.IsHidden())
+                    targetController.Hide();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         }
 
         // check applicable scenarios
@@ -906,10 +1243,20 @@ public static class ControllerManager
             if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
                 targetController.Rumble();
         }
+<<<<<<< HEAD
+=======
+        else
+        {
+            // stop listening to device while it's power cycled
+            // only usefull for Xbox One bluetooth controllers
+            targetController.Unplug();
+        }
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         
         ControllerSelected?.Invoke(targetController);
     }
 
+<<<<<<< HEAD
     public static bool SuspendController(string baseContainerDeviceInstanceId)
     {
         // PnPUtil.StartPnPUtil(@"/delete-driver C:\Windows\INF\xusb22.inf /uninstall /force");
@@ -1000,6 +1347,8 @@ public static class ControllerManager
         return false;
     }
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     public static IController GetTargetController()
     {
         return targetController;
@@ -1070,9 +1419,12 @@ public static class ControllerManager
             ControllerState emptyState = new ControllerState();
             emptyState.ButtonState[ButtonFlags.Special] = controllerState.ButtonState[ButtonFlags.Special];
 
+<<<<<<< HEAD
             controllerState = emptyState;
         }
 
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
         VirtualManager.UpdateInputs(controllerState);
     }
 
@@ -1091,12 +1443,45 @@ public static class ControllerManager
         }
     }
 
+    private static bool IsHCVirtualController(XInputController controller)
+    {
+        if (controller.IsVirtual() && virtualControllerCreated)
+        {
+            virtualControllerCreated = false;
+            return true;
+        }
+        return false;
+    }
+
+    private static bool IsHCVirtualController(IController controller)
+    {
+        if (controller.IsVirtual() && virtualControllerCreated)
+        {
+            virtualControllerCreated = false;
+            return true;
+        }
+        return false;
+    }
+
+    private static void VirtualManager_ControllerSelected(IController Controller)
+    {
+        virtualControllerCreated = true;
+    }
+
     #region events
 
     public static event ControllerPluggedEventHandler ControllerPlugged;
+<<<<<<< HEAD
     public delegate void ControllerPluggedEventHandler(IController Controller, bool IsPowerCycling);
 
     public static event ControllerUnpluggedEventHandler ControllerUnplugged;
+=======
+
+    public delegate void ControllerPluggedEventHandler(IController Controller, bool isHCVirtualController, bool IsPowerCycling);
+
+    public static event ControllerUnpluggedEventHandler ControllerUnplugged;
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     public delegate void ControllerUnpluggedEventHandler(IController Controller, bool IsPowerCycling);
 
     public static event ControllerSelectedEventHandler ControllerSelected;

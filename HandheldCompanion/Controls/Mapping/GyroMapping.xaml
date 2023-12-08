@@ -203,7 +203,10 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="0.1"
                                         TickPlacement="BottomRight"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Slider_GyroWeight_ValueChanged" />
                                 </DockPanel>
                             </Grid>
@@ -293,7 +296,10 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="90"
                                         TickPlacement="BottomRight"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis_Rotation_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -330,7 +336,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis_InnerDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -367,7 +376,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis_OuterDeadzone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -403,7 +415,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis_AntiDeadZone_Slider_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -480,7 +495,10 @@
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="90"
                                         TickPlacement="BottomRight"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis2MouseRotation_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -516,7 +534,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis2MousePointerSpeed_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>
@@ -553,7 +574,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="0.05"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis2MouseAcceleration_ValueChanged"
                                         Value="1.00" />
                                 </ui:SimpleStackPanel>
@@ -590,7 +614,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="1"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="Axis2MouseDeadzone_ValueChanged" />
                                 </ui:SimpleStackPanel>
                             </Grid>

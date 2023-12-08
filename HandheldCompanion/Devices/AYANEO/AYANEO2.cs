@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 using HandheldCompanion.Inputs;
+=======
+using HandheldCompanion.Inputs;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
@@ -36,8 +40,12 @@ public class AYANEO2 : AYANEO.AYANEODevice
         };
 
         // device specific capacities
+<<<<<<< HEAD
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
+=======
+        Capabilities = DeviceCapabilities.FanControl;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
         ECDetails = new ECDetails
         {

@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+=======
+﻿using System.Diagnostics;
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
 namespace HandheldCompanion
 {
@@ -26,6 +30,7 @@ namespace HandheldCompanion
 
         public static bool RestartDevice(string InstanceId)
         {
+<<<<<<< HEAD
             var pnpResult = GetPnPUtilResult($"/restart-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
@@ -33,11 +38,20 @@ namespace HandheldCompanion
         public static bool EnableDevice(string InstanceId)
         {
             var pnpResult = GetPnPUtilResult($"/enable-device \"{InstanceId}\"");
+=======
+            var pnpResult = StartPnPUtil($"/restart-device \"{InstanceId}\"");
+            return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
+        }
+        public static bool EnableDevice(string InstanceId)
+        {
+            var pnpResult = StartPnPUtil($"/enable-device \"{InstanceId}\"");
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
 
         public static bool DisableDevice(string InstanceId)
         {
+<<<<<<< HEAD
             var pnpResult = GetPnPUtilResult($"/disable-device \"{InstanceId}\"");
             return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
         }
@@ -83,6 +97,15 @@ namespace HandheldCompanion
         public static Process StartPnPUtil(string arguments)
         {
             Process process = new();
+=======
+            var pnpResult = StartPnPUtil($"/disable-device \"{InstanceId}\"");
+            return ValidateChangeDeviceStatusResult(InstanceId, pnpResult);
+        }
+
+        private static PnPUtilResult StartPnPUtil(string arguments)
+        {
+            using Process process = new();
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
 
             process.StartInfo.FileName = "pnputil.exe";
             process.StartInfo.Arguments = arguments;
@@ -94,6 +117,7 @@ namespace HandheldCompanion
 
             process.Start();
 
+<<<<<<< HEAD
             return process;
         }
 
@@ -109,6 +133,12 @@ namespace HandheldCompanion
         {
             Process process = StartPnPUtil(arguments);
             var output = process.StandardOutput.ReadToEnd();
+=======
+            var output = process.StandardOutput.ReadToEnd();
+
+            process.WaitForExit();
+
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             var exitCode = process.ExitCode;
 
             return new PnPUtilResult(exitCode, output);

@@ -4,8 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controllers"
+<<<<<<< HEAD
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+=======
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -16,7 +21,11 @@
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         CornerRadius="{DynamicResource ControlCornerRadius}">
 
+<<<<<<< HEAD
         <ui:SimpleStackPanel Spacing="12">
+=======
+        <StackPanel>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -25,6 +34,7 @@
 
                 <DockPanel>
                     <ui:FontIcon
+<<<<<<< HEAD
                         VerticalAlignment="Center"
                         FontFamily="PromptFont"
                         FontSize="30"
@@ -46,6 +56,18 @@
                             <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
+=======
+                        Height="40"
+                        HorizontalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Glyph="&#xE7FC;" />
+
+                    <TextBlock
+                        Name="ui_name"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                 </DockPanel>
 
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">
@@ -54,7 +76,10 @@
                         Width="100"
                         Click="ui_button_hook_Click"
                         FontSize="14"
+<<<<<<< HEAD
                         Content="{x:Static resx:Resources.Controller_Connect}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                         Style="{DynamicResource AccentButtonStyle}" />
                     <Button
                         Name="ui_button_hide"
@@ -88,6 +113,10 @@
                     TextAlignment="Center"
                     TextWrapping="Wrap" />
             </ui:SimpleStackPanel>
+<<<<<<< HEAD
         </ui:SimpleStackPanel>
+=======
+        </StackPanel>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     </Border>
 </UserControl>

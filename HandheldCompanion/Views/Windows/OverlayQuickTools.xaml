@@ -68,7 +68,23 @@
                             Style="{StaticResource BodyTextBlockStyle}" />
                     </DockPanel>
                 </ui:NavigationViewItem>
+<<<<<<< HEAD
                 <ui:NavigationViewItem IsEnabled="False" />
+=======
+                <ui:NavigationViewItem IsEnabled="False">
+                    <DockPanel>
+                        <ui:FontIcon
+                            VerticalAlignment="Center"
+                            FontSize="21"
+                            Glyph="{x:Static ui:SegoeIcons.Recent}" />
+                        <TextBlock
+                            Name="Time"
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource CaptionTextBlockStyle}" />
+                    </DockPanel>
+                </ui:NavigationViewItem>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
             </ui:NavigationView.FooterMenuItems>
 
             <common:TouchScrollViewer

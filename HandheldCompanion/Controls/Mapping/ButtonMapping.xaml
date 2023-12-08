@@ -104,7 +104,10 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="50"
+<<<<<<< HEAD
                                         ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+=======
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
                                         ValueChanged="LongPressDelaySlider_ValueChanged"
                                         Value="450" />
 

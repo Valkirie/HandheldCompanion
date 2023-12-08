@@ -1117,8 +1117,13 @@
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>對Steam相關程序禁用虛擬手柄</value>
   </data>
+<<<<<<< HEAD
   <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
     <value>控制器设置</value>
+=======
+  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
+    <value>Steam Deck 配置</value>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
   </data>
   <data name="ControllerPage_VibrateDevice" xml:space="preserve">
     <value>手柄連接時震動提示</value>
@@ -1447,10 +1452,17 @@
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>風扇轉速</value>
   </data>
+<<<<<<< HEAD
   <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>調整顯示器的解析度與刷新率</value>
   </data>
   <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
+=======
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+    <value>調整顯示器的解析度與刷新率</value>
+  </data>
+  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>顯示器解析度與刷新率</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1639,6 +1651,7 @@
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手動</value>
   </data>
+<<<<<<< HEAD
   <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>這個模式將反轉X軸，適用於將陀螺儀模擬滑鼠。</value>
   </data>
@@ -1646,6 +1659,15 @@
     <value>這個模式適用於一些賽車遊戲，陀螺儀輸入將模擬方向盤。</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
+=======
+  <data name="JoystickCameraDesc" xml:space="preserve">
+    <value>這個模式將反轉X軸，適用於將陀螺儀模擬滑鼠。</value>
+  </data>
+  <data name="JoystickSteeringDesc" xml:space="preserve">
+    <value>這個模式適用於一些賽車遊戲，陀螺儀輸入將模擬方向盤。</value>
+  </data>
+  <data name="PlayerSpaceDesc" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>這個模式適用於第一人稱或第三人稱視角的遊戲，體感輸入將模擬玩家視角，</value>
   </data>
   <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
@@ -1709,7 +1731,11 @@
     <value>LC</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
+<<<<<<< HEAD
     <value>M1</value>
+=======
+    <value>M1 / M2</value>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
     <value>叉</value>
@@ -2206,6 +2232,7 @@
   <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
     <value>RightStick</value>
   </data>
+<<<<<<< HEAD
   <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
@@ -2216,6 +2243,18 @@
     <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
   </data>
   <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
+=======
+  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
+  </data>
+  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>Warning</value>
   </data>
   <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
@@ -2239,6 +2278,7 @@
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>No</value>
   </data>
+<<<<<<< HEAD
   <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
   </data>
@@ -2258,6 +2298,27 @@
     <value>Warning</value>
   </data>
   <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
+=======
+  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+    <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
+  </data>
+  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+    <value>Restart required</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
+  </data>
+  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">
@@ -2302,6 +2363,7 @@
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>You can't undo this action. Previously applied template: {0}</value>
   </data>
+<<<<<<< HEAD
   <data name="Enum.LegionController.ButtonFlags.B5" xml:space="preserve">
     <value>M2</value>
   </data>
@@ -2337,5 +2399,9 @@
   </data>
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>Gamepad: {0}</value>
+=======
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Make this the default layout</value>
+>>>>>>> f8fea3c25fb5fd254f5020d43305b7356ec9770d
   </data>
 </root>
