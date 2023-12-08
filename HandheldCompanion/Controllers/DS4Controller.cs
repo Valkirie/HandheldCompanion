@@ -86,6 +86,11 @@ public class DS4Controller : JSController
         base.UpdateInputs(ticks);
     }
 
+    public override string ToString()
+    {
+        return "DUALSHOCK®4 Wireless Controller";
+    }
+
     public override void Plug()
     {
         TimerManager.Tick += UpdateInputs;
