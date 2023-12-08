@@ -327,8 +327,23 @@ public static class ControllerManager
         PowerCyclers.TryGetValue(details.baseContainerDeviceInstanceId, out bool IsPowerCycling);
 
         // JoyShockLibrary
-        int connectedJoys = JslConnectDevices();
-        if (connectedJoys != 0)
+        int connectedJoys = -1;
+
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
+        while (DateTime.Now < timeout && connectedJoys == -1)
+        {
+            try
+            {
+                // JslConnect might raise an exception
+                connectedJoys = JslConnectDevices();
+            }
+            catch
+            {
+                await Task.Delay(1000);
+            }
+        }
+
+        if (connectedJoys >= 0)
         {
             int[] joysHandle = new int[connectedJoys];
             JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
