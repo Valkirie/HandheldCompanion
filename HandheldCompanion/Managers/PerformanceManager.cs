@@ -365,20 +365,20 @@ public class PerformanceManager : Manager
             autoLock = true;
 
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
-            var processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
+            double processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
 
             // Ensure realistic process values, prevent divide by 0
             processValueFPS = Math.Clamp(processValueFPS, 5, 500);
 
             // Determine error amount, include target, actual and dipper modifier
-            var controllerError = AutoTDPTargetFPS - processValueFPS - AutoTDPDipper(processValueFPS, AutoTDPTargetFPS);
+            double controllerError = AutoTDPTargetFPS - processValueFPS - AutoTDPDipper(processValueFPS, AutoTDPTargetFPS);
 
             // Clamp error amount corrected within a single cycle
             // Adjust clamp if actual FPS is 2.5x requested FPS
             double clampLowerLimit = processValueFPS >= 2.5 * AutoTDPTargetFPS ? -100 : -5;
             controllerError = Math.Clamp(controllerError, clampLowerLimit, 15);
 
-            var TDPAdjustment = controllerError * AutoTDP / processValueFPS;
+            double TDPAdjustment = controllerError * AutoTDP / processValueFPS;
             TDPAdjustment *= 0.9; // Always have a little undershoot
 
             // Determine final setpoint
@@ -392,7 +392,7 @@ public class PerformanceManager : Manager
             // Only update if we have a different TDP value to set
             if (AutoTDP != AutoTDPPrev)
             {
-                var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
+                double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
                 RequestTDP(values, true);
             }
             AutoTDPPrev = AutoTDP;
@@ -408,7 +408,7 @@ public class PerformanceManager : Manager
     {
         // Dipper
         // Add small positive "error" if actual and target FPS are similar for a duration
-        var Modifier = 0.0;
+        double Modifier = 0.0d;
 
         // Track previous FPS values for average calculation using a rolling array
         Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
@@ -451,12 +451,12 @@ public class PerformanceManager : Manager
     {
         // (PI)D derivative control component to dampen FPS fluctuations
         if (double.IsNaN(ProcessValueFPSPrevious)) ProcessValueFPSPrevious = FPSActual;
-        var DFactor = -0.1;
+        double DFactor = -0.1d;
 
         // Calculation
-        var deltaError = FPSActual - ProcessValueFPSPrevious;
-        var DTerm = deltaError / (INTERVAL_AUTO / 1000.0);
-        var TDPDamping = AutoTDP / FPSActual * DFactor * DTerm;
+        double deltaError = FPSActual - ProcessValueFPSPrevious;
+        double DTerm = deltaError / (INTERVAL_AUTO / 1000.0);
+        double TDPDamping = AutoTDP / FPSActual * DFactor * DTerm;
 
         ProcessValueFPSPrevious = FPSActual;
 
@@ -703,7 +703,7 @@ public class PerformanceManager : Manager
 
         // immediately apply
         if (immediate)
-            processor.SetTDPLimit((PowerType)idx, value);
+            processor.SetTDPLimit((PowerType)idx, value, immediate);
     }
 
     public async void RequestTDP(double[] values, bool immediate = false)
@@ -722,7 +722,7 @@ public class PerformanceManager : Manager
             // immediately apply
             if (immediate)
             {
-                processor.SetTDPLimit((PowerType)idx, values[idx]);
+                processor.SetTDPLimit((PowerType)idx, values[idx], immediate);
                 await Task.Delay(12);
             }
         }
@@ -744,7 +744,8 @@ public class PerformanceManager : Manager
     public void RequestPowerMode(Guid guid)
     {
         currentPowerMode = guid;
-        LogManager.LogInformation("User requested power scheme: {0}", currentPowerMode);
+        LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
+
         if (PowerSetActiveOverlayScheme(currentPowerMode) != 0)
             LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
     }
@@ -764,7 +765,7 @@ public class PerformanceManager : Manager
         if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
             return;
 
-        LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
+        LogManager.LogDebug("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
 
         // Set profile EPP
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, requestedEPP[0], requestedEPP[1]);
@@ -797,7 +798,7 @@ public class PerformanceManager : Manager
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES, currentCoreCountPercent, currentCoreCountPercent);
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES, currentCoreCountPercent, currentCoreCountPercent);
 
-        LogManager.LogInformation("User requested CoreCount: {0} ({1}%)", CoreCount, currentCoreCountPercent);
+        LogManager.LogDebug("User requested CoreCount: {0} ({1}%)", CoreCount, currentCoreCountPercent);
 
         // Has the CPMINCORES value been applied?
         CPMINCORES = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
@@ -817,7 +818,7 @@ public class PerformanceManager : Manager
         var perfboostmode = value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Enabled;
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, perfboostmode, perfboostmode);
 
-        LogManager.LogInformation("User requested perfboostmode: {0}", value);
+        LogManager.LogDebug("User requested perfboostmode: {0}", value);
     }
 
     private void RequestCPUClock(uint cpuClock)
@@ -834,7 +835,7 @@ public class PerformanceManager : Manager
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PROCFREQMAX, cpuClock, cpuClock);
 
         double cpuPercentage = cpuClock / maxClock * 100.0d;
-        LogManager.LogInformation("User requested PROCFREQMAX: {0} ({1}%)", cpuClock, cpuPercentage);
+        LogManager.LogDebug("User requested PROCFREQMAX: {0} ({1}%)", cpuClock, cpuPercentage);
 
         // Has the value been applied?
         currentClock = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PROCFREQMAX);

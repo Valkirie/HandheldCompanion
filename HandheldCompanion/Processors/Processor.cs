@@ -85,9 +85,10 @@ public class Processor
         */
     }
 
-    public virtual void SetTDPLimit(PowerType type, double limit, int result = 0)
+    public virtual void SetTDPLimit(PowerType type, double limit, bool immediate = false, int result = 0)
     {
-        LogManager.LogDebug("User requested {0} TDP limit: {1}, error code: {2}", type, (uint)limit, result);
+        if (!immediate)
+            LogManager.LogDebug("User requested {0} TDP limit: {1}, error code: {2}", type, (uint)limit, result);
     }
 
     public virtual void SetGPUClock(double clock, int result = 0)
@@ -100,7 +101,7 @@ public class Processor
          * #define ADJ_ERR_MEMORY_ACCESS        -5
          */
 
-        LogManager.LogInformation("User requested GPU clock: {0}, error code: {1}", clock, result);
+        LogManager.LogDebug("User requested GPU clock: {0}, error code: {1}", clock, result);
     }
 
     protected virtual void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
