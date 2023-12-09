@@ -17,6 +17,7 @@ namespace HandheldCompanion.Managers
 
         // settings vars
         public static HIDmode HIDmode = HIDmode.NoController;
+        private static HIDmode defaultHIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
 
         public static ushort ProductId = 0x28E; // Xbox 360
@@ -109,7 +110,8 @@ namespace HandheldCompanion.Managers
             switch (name)
             {
                 case "HIDmode":
-                    SetControllerMode((HIDmode)Convert.ToInt32(value));
+                    defaultHIDmode = (HIDmode)Convert.ToInt32(value);
+                    SetControllerMode(defaultHIDmode);
                     break;
                 case "HIDstatus":
                     SetControllerStatus((HIDstatus)Convert.ToInt32(value));
@@ -131,7 +133,7 @@ namespace HandheldCompanion.Managers
             try
             {
                 // SetControllerMode takes care of ignoring identical mode switching
-                if (HIDmode == profile.HID || profile.HID == HIDmode.NotSelected)
+                if (HIDmode == profile.HID)
                     return;
 
                 // todo: monitor ControllerManager and check if automatic controller management is running
@@ -147,7 +149,6 @@ namespace HandheldCompanion.Managers
 
                     default: // Default or not assigned
                         {
-                            HIDmode defaultHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
                             SetControllerMode(defaultHIDmode);
                             break;
                         }
@@ -155,7 +156,7 @@ namespace HandheldCompanion.Managers
             }
             catch // TODO requires further testing
             {
-                LogManager.LogError("********************** ProfileManager_Applied in VirtualManager **********************");
+                LogManager.LogError("Couldnt set per-profile HIDmode: {0}", profile.HID);
             }
         }
 
