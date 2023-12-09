@@ -568,6 +568,12 @@ public class HWiNFO : IPlatform
         return true;
     }
 
+    public void ReaffirmRunningProcess()
+    {
+        if (!IsRunning)
+            StartProcess();
+    }
+
     private void DisposeMemory()
     {
         if (MemoryMapped is not null)

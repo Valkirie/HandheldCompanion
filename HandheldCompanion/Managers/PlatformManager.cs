@@ -47,7 +47,7 @@ public static class PlatformManager
 
         if (RTSS.IsInstalled)
         {
-            // do something
+            UpdateCurrentNeeds_OnScreenDisplay(OSDManager.OverlayLevel);
         }
 
         if (HWiNFO.IsInstalled)
@@ -65,6 +65,7 @@ public static class PlatformManager
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
+        UpdateTimer.Start();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -105,33 +106,35 @@ public static class PlatformManager
             {
                 case "OnScreenDisplayLevel":
                     {
-                        var level = Convert.ToInt16(value);
-
-                        switch (level)
-                        {
-                            case 0: // Disabled
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                            default:
-                            case 1: // Minimal
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                            case 2: // Extended
-                            case 3: // Full
-                            case 4: // External
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                        }
-
+                        UpdateCurrentNeeds_OnScreenDisplay(Convert.ToInt16(value));
                         UpdateTimer.Stop();
                         UpdateTimer.Start();
                     }
                     break;
             }
         });
+    }
+
+    private static void UpdateCurrentNeeds_OnScreenDisplay(short level)
+    {
+        switch (level)
+        {
+            case 0: // Disabled
+                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
+                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                break;
+            default:
+            case 1: // Minimal
+                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                break;
+            case 2: // Extended
+            case 3: // Full
+            case 4: // External
+                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
+                break;
+        }
     }
 
     private static void MonitorPlatforms()

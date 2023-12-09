@@ -42,6 +42,9 @@ public static class OSDManager
         // timer used to monitor foreground application framerate
         RefreshInterval = SettingsManager.GetInt("OnScreenDisplayRefreshRate");
 
+        // OverlayLevel
+        OverlayLevel = Convert.ToInt16(SettingsManager.GetInt("OnScreenDisplayLevel"));
+
         RefreshTimer = new PrecisionTimer();
         RefreshTimer.SetInterval(new Action(UpdateOSD), RefreshInterval, false, 0, TimerMode.Periodic, true);
     }
@@ -90,6 +93,9 @@ public static class OSDManager
         Initialized?.Invoke();
 
         LogManager.LogInformation("{0} has started", "OSDManager");
+
+        if (OverlayLevel != 0 && !RefreshTimer.IsRunning())
+            RefreshTimer.Start();
     }
 
     private static uint OSDIndex(this OSD? osd)
@@ -178,6 +184,8 @@ public static class OSDManager
 
             case 2: // Extended
                 {
+                    PlatformManager.HWiNFO.ReaffirmRunningProcess();
+
                     OverlayRow row1 = new();
 
                     OverlayEntry BATTentry = new("BATT", "C5");
@@ -229,6 +237,8 @@ public static class OSDManager
 
             case 3: // Full
                 {
+                    PlatformManager.HWiNFO.ReaffirmRunningProcess();
+
                     OverlayRow row1 = new();
                     OverlayRow row2 = new();
                     OverlayRow row3 = new();
