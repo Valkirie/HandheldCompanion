@@ -12,10 +12,10 @@ public class AYANEO2021 : IDevice
         ProductIllustration = "device_aya_2021";
         ProductModel = "AYANEO2021";
 
-        // https://www.amd.com/fr/products/apu/amd-ryzen-5-4500u
+        // https://www.amd.com/en/support/apu/amd-ryzen-processors/amd-ryzen-5-mobile-processors-radeon-graphics/amd-ryzen-5-4500u
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 3, 25 };
-        GfxClock = new double[] { 100, 1750 };
+        GfxClock = new double[] { 100, 1500 };
         CpuClock = 4000;
 
         GyrometerAxisSwap = new SortedDictionary<char, char>
