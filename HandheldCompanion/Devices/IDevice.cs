@@ -6,6 +6,7 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using Inkore.UI.WPF.Modern.Controls;
+using LibreHardwareMonitor.Hardware.Motherboard;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -281,6 +282,17 @@ public abstract class IDevice
                         case "AYANEO 2S":
                         case "GEEK 1S":
                             device = new AYANEO2S();
+                            break;
+                    }
+                }
+                break;
+
+            case "CNCDAN":
+                {
+                    switch (ProductName)
+                    {
+                        case "NucDeckRev1.0":
+                            device = new NUCDeck();
                             break;
                     }
                 }
