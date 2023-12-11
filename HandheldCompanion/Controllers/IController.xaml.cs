@@ -65,12 +65,12 @@ namespace HandheldCompanion.Controllers
         {
             get
             {
-                return IsEnabled;
+                return !IsEnabled;
             }
             set
             {
-                // UI thread (async)
-                Application.Current.Dispatcher.BeginInvoke(() =>
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     IsEnabled = !value;
                     ProgressBarPanel.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
@@ -444,17 +444,14 @@ namespace HandheldCompanion.Controllers
 
         protected virtual void ui_button_calibrate_Click(object sender, RoutedEventArgs e)
         {
-            CalibrateClicked?.Invoke(this);
         }
 
         protected virtual void ui_button_hide_Click(object sender, RoutedEventArgs e)
         {
-            HideClicked?.Invoke(this);
         }
 
         protected virtual void ui_button_hook_Click(object sender, RoutedEventArgs e)
         {
-            HookClicked?.Invoke(this);
         }
 
         public virtual string GetGlyph(ButtonFlags button)
@@ -635,15 +632,6 @@ namespace HandheldCompanion.Controllers
 
         public event InputsUpdatedEventHandler InputsUpdated;
         public delegate void InputsUpdatedEventHandler(ControllerState Inputs);
-
-        public event HookClickedEventHandler HookClicked;
-        public delegate void HookClickedEventHandler(IController controller);
-
-        public event HideClickedEventHandler HideClicked;
-        public delegate void HideClickedEventHandler(IController controller);
-
-        public event CalibrateClickedEventHandler CalibrateClicked;
-        public delegate void CalibrateClickedEventHandler(IController controller);
 
         #endregion
     }

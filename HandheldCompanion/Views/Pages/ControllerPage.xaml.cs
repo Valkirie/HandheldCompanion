@@ -312,7 +312,9 @@ public partial class ControllerPage : Page
 
     private void ControllerHookClicked(IController Controller)
     {
-        // todo: move me
+        if (Controller.IsBusy)
+            return;
+
         var path = Controller.GetContainerInstancePath();
         ControllerManager.SetTargetController(path, false);
 
@@ -321,7 +323,9 @@ public partial class ControllerPage : Page
 
     private void ControllerHideClicked(IController Controller)
     {
-        // todo: move me
+        if (Controller.IsBusy)
+            return;
+
         if (Controller.IsHidden())
             Controller.Unhide();
         else

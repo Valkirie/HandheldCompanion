@@ -252,6 +252,12 @@ public class NeptuneController : SteamController
         {
             Controller.Open();
             isConnected = true;
+
+            // disable lizard state
+            Controller.RequestLizardMode(false);
+
+            // create handler
+            Controller.OnControllerInputReceived += input => Task.Run(() => OnControllerInputReceived(input));
         }
         catch { }
     }
@@ -260,6 +266,12 @@ public class NeptuneController : SteamController
     {
         try
         {
+            // disable lizard state
+            Controller.RequestLizardMode(true);
+
+            // remove handler
+            Controller.OnControllerInputReceived = null;
+            
             Controller.Close();
             isConnected = false;
         }
@@ -291,8 +303,6 @@ public class NeptuneController : SteamController
     {
         try
         {
-            Controller.OnControllerInputReceived = input => Task.Run(() => OnControllerInputReceived(input));
-
             // open controller
             Open();
         }
@@ -301,9 +311,6 @@ public class NeptuneController : SteamController
             LogManager.LogError("Couldn't initialize GordonController. Exception: {0}", ex.Message);
             return;
         }
-
-        // disable lizard state
-        Controller.RequestLizardMode(false);
 
         // manage rumble thread
         rumbleThreadRunning = true;
@@ -322,9 +329,6 @@ public class NeptuneController : SteamController
     {
         try
         {
-            // restore lizard state
-            Controller.RequestLizardMode(true);
-
             // kill rumble thread
             rumbleThreadRunning = false;
             rumbleThread.Join();
