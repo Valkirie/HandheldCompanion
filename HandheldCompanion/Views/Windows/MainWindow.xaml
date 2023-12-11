@@ -47,18 +47,6 @@
                 Tag="ControllerPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7FC;" />
-                    <!-- <Image Source="/Resources/icons/manette-48.png" Margin="-10"/> -->
-                </ui:NavigationViewItem.Icon>
-            </ui:NavigationViewItem>
-            
-            <!--  Device icon  -->
-            <ui:NavigationViewItem
-                Name="navDevice"
-                Content="{x:Static resx:Resources.MainWindow_navDevice}"
-                Tag="DevicePage">
-                <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
-                    <!-- <Image Source="/Resources/icons/device-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -89,7 +77,6 @@
                 Tag="ProfilesPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE748;" />
-                    <!-- <Image Source="/Resources/icons/games-folder-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -100,7 +87,6 @@
                 Tag="OverlayPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
-                    <!-- <Image Source="/Resources/icons/calques-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -111,7 +97,6 @@
                 Tag="HotkeysPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF26B;" />
-                    <!-- <Image Source="/Resources/icons/ctrl-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -122,7 +107,6 @@
                 Tag="AboutPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                    <!-- <Image Source="/Resources/icons/info-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
         </ui:NavigationView.MenuItems>
@@ -159,14 +143,9 @@
                 Tag="SettingsPage">
                 <ui:NavigationViewItem.Icon>
                     <ui:SymbolIcon Symbol="Setting" />
-                    <!-- <Image Source="/Resources/icons/settings-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
-<<<<<<< HEAD
-        </ui:NavigationView.MenuItems>
-=======
         </ui:NavigationView.FooterMenuItems>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         <ui:NavigationView.Content>
             <Grid>

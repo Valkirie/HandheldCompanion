@@ -3,10 +3,7 @@ using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using System;
-<<<<<<< HEAD
-=======
 using System.Threading;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
 namespace HandheldCompanion.Managers
 {
@@ -19,15 +16,6 @@ namespace HandheldCompanion.Managers
         private static DSUServer DSUServer;
 
         // settings vars
-<<<<<<< HEAD
-        private static HIDmode HIDmode = HIDmode.NoController;
-        private static HIDstatus HIDstatus = HIDstatus.Disconnected;
-
-        public static bool IsInitialized;
-
-        public static event ControllerSelectedEventHandler ControllerSelected;
-        public delegate void ControllerSelectedEventHandler(IController Controller);
-=======
         public static HIDmode HIDmode = HIDmode.NoController;
         private static HIDmode defaultHIDmode = HIDmode.NoController;
         public static HIDstatus HIDstatus = HIDstatus.Disconnected;
@@ -45,7 +33,6 @@ namespace HandheldCompanion.Managers
 
         public static event ControllerSelectedEventHandler ControllerSelected;
         public delegate void ControllerSelectedEventHandler(HIDmode mode);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -71,21 +58,15 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Initialized += SettingsManager_Initialized;
-<<<<<<< HEAD
-=======
             ProfileManager.Applied += ProfileManager_Applied;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         }
 
         public static void Start()
         {
-<<<<<<< HEAD
-=======
             // todo: improve me !!
             while (!ControllerManager.IsInitialized)
                 Thread.Sleep(250);
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             IsInitialized = true;
             Initialized?.Invoke();
 
@@ -100,12 +81,9 @@ namespace HandheldCompanion.Managers
             ResetViGEm();
             DSUServer.Stop();
 
-<<<<<<< HEAD
-=======
             // unsubscrive events
             ProfileManager.Applied -= ProfileManager_Applied;
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "VirtualManager");
@@ -113,30 +91,17 @@ namespace HandheldCompanion.Managers
 
         public static void Resume()
         {
-<<<<<<< HEAD
-            // reset vigem
-            ResetViGEm();
-
-            // create new ViGEm client
-            vClient = new ViGEmClient();
-=======
             // create new ViGEm client
             if (vClient is null)
                 vClient = new ViGEmClient();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
             // set controller mode
             SetControllerMode(HIDmode);
         }
 
-<<<<<<< HEAD
-        public static void Pause()
-        {
-=======
         public static void Suspend()
         {
             // reset vigem
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             ResetViGEm();
         }
 
@@ -145,12 +110,8 @@ namespace HandheldCompanion.Managers
             switch (name)
             {
                 case "HIDmode":
-<<<<<<< HEAD
-                    SetControllerMode((HIDmode)Convert.ToInt32(value));
-=======
                     defaultHIDmode = (HIDmode)Convert.ToInt32(value);
                     SetControllerMode(defaultHIDmode);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     break;
                 case "HIDstatus":
                     SetControllerStatus((HIDstatus)Convert.ToInt32(value));
@@ -167,8 +128,6 @@ namespace HandheldCompanion.Managers
             }
         }
 
-<<<<<<< HEAD
-=======
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
             try
@@ -202,7 +161,6 @@ namespace HandheldCompanion.Managers
         }
 
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         private static void SettingsManager_Initialized()
         {
             SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
@@ -216,11 +174,7 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-<<<<<<< HEAD
-        private static void SetControllerMode(HIDmode mode)
-=======
         public static void SetControllerMode(HIDmode mode)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         {
             // do not disconnect if similar to previous mode
             if (HIDmode == mode && vTarget is not null)
@@ -228,15 +182,11 @@ namespace HandheldCompanion.Managers
 
             // disconnect current virtual controller
             if (vTarget is not null)
-<<<<<<< HEAD
-                vTarget.Disconnect();
-=======
             {
                 vTarget.Disconnect();
                 vTarget.Dispose();
                 vTarget = null;
             }
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
             switch (mode)
             {
@@ -244,10 +194,7 @@ namespace HandheldCompanion.Managers
                 case HIDmode.NoController:
                     if (vTarget is not null)
                     {
-<<<<<<< HEAD
-=======
                         vTarget.Disconnect();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                         vTarget.Dispose();
                         vTarget = null;
                     }
@@ -256,13 +203,6 @@ namespace HandheldCompanion.Managers
                     vTarget = new DualShock4Target();
                     break;
                 case HIDmode.Xbox360Controller:
-<<<<<<< HEAD
-                    vTarget = new Xbox360Target();
-                    break;
-            }
-
-            ControllerSelected?.Invoke(ControllerManager.GetEmulatedController());
-=======
                     // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
                     VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
                     ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
@@ -271,7 +211,6 @@ namespace HandheldCompanion.Managers
             }
 
             ControllerSelected?.Invoke(mode);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
             // failed to initialize controller
             if (vTarget is null)
@@ -292,11 +231,7 @@ namespace HandheldCompanion.Managers
             HIDmode = mode;
         }
 
-<<<<<<< HEAD
-        private static void SetControllerStatus(HIDstatus status)
-=======
         public static void SetControllerStatus(HIDstatus status)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         {
             if (vTarget is null)
                 return;
@@ -345,10 +280,7 @@ namespace HandheldCompanion.Managers
             // dispose virtual controller
             if (vTarget is not null)
             {
-<<<<<<< HEAD
-=======
                 vTarget.Disconnect();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 vTarget.Dispose();
                 vTarget = null;
             }

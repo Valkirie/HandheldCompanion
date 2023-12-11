@@ -1117,13 +1117,8 @@
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>对Steam相关程序禁用虚拟手柄</value>
   </data>
-<<<<<<< HEAD
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Steam Deck 配置</value>
-=======
   <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
     <value>控制器设置</value>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
   </data>
   <data name="ControllerPage_VibrateDevice" xml:space="preserve">
     <value>手柄连接时震动提示</value>
@@ -1512,11 +1507,7 @@
   <data name="SettingsPage_HideWhenLoseFocus" xml:space="preserve">
     <value>自动最小化</value>
   </data>
-<<<<<<< HEAD
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
-=======
   <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     <value>该模式适合笔记本或翻盖式掌机，可以根据该设备如何被握持（屏幕以90度角或者180度角打开）判断重力方向，来自动切换陀螺仪方向。</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
@@ -1651,15 +1642,6 @@
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>手动</value>
   </data>
-<<<<<<< HEAD
-  <data name="JoystickCameraDesc" xml:space="preserve">
-    <value>这个模式将反转X轴，适用于将陀螺仪模拟鼠标。</value>
-  </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
-    <value>这个模式适用于一些赛车游戏，陀螺仪输入将模拟方向盘。</value>
-  </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
-=======
   <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>这个模式将反转X轴，适用于将陀螺仪模拟鼠标。</value>
   </data>
@@ -1667,7 +1649,6 @@
     <value>这个模式适用于一些赛车游戏，陀螺仪输入将模拟方向盘。</value>
   </data>
   <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     <value>这个模式适用于第一人称或第三人称视角的游戏，体感输入将模拟玩家视角，</value>
   </data>
   <data name="Enum.InputsHotkeyType.HC" xml:space="preserve">
@@ -1731,11 +1712,7 @@
     <value>LC</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
-<<<<<<< HEAD
-    <value>M1 / M2</value>
-=======
     <value>M1</value>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
     <value>叉</value>
@@ -2232,18 +2209,6 @@
   <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
     <value>RightStick</value>
   </data>
-<<<<<<< HEAD
-  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
-    <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
-  </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
-=======
   <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
@@ -2254,7 +2219,6 @@
     <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
   </data>
   <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     <value>Warning</value>
   </data>
   <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
@@ -2278,24 +2242,6 @@
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-<<<<<<< HEAD
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
-    <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
-  </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
-    <value>Restart required</value>
-  </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
-    <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
-  </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
-=======
   <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
   </data>
@@ -2312,7 +2258,6 @@
     <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
   </data>
   <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     <value>Warning</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">
@@ -2357,10 +2302,6 @@
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>You can't undo this action. Previously applied template: {0}</value>
   </data>
-<<<<<<< HEAD
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Make this the default layout</value>
-=======
   <data name="Enum.LegionController.ButtonFlags.B5" xml:space="preserve">
     <value>M2</value>
   </data>
@@ -2396,6 +2337,5 @@
   </data>
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>Gamepad: {0}</value>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
   </data>
 </root>

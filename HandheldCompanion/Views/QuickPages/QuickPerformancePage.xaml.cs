@@ -1,12 +1,5 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
-<<<<<<< HEAD
-using HandheldCompanion.Managers.Desktop;
-using HandheldCompanion.Misc;
-using HandheldCompanion.Platforms;
-using Inkore.UI.WPF.Modern.Controls;
-using System;
-=======
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
@@ -14,7 +7,6 @@ using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Timers;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -78,14 +70,6 @@ public partial class QuickPerformancePage : Page
 
         // force call
         RTSS_Updated(PlatformManager.RTSS.Status);
-<<<<<<< HEAD
-        HWiNFO_Updated(PlatformManager.HWiNFO.Status);
-
-        // todo: move me ?
-        SettingsManager.SetProperty("QuietModeEnabled",
-            MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl));
-=======
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void HotkeysManager_CommandExecuted(string listener)

@@ -11,21 +11,14 @@ public static class PlatformManager
     private const int UpdateInterval = 1000;
 
     // gaming platforms
-<<<<<<< HEAD
-    public static readonly SteamPlatform Steam = new();
-=======
     public static readonly Steam Steam = new();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     public static readonly GOGGalaxy GOGGalaxy = new();
     public static readonly UbisoftConnect UbisoftConnect = new();
 
     // misc platforms
     public static RTSS RTSS = new();
     public static HWiNFO HWiNFO = new();
-<<<<<<< HEAD
-=======
     public static OpenHardwareMonitor OpenHardwareMonitor = new();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
     private static Timer UpdateTimer;
 
@@ -113,31 +106,7 @@ public static class PlatformManager
             {
                 case "OnScreenDisplayLevel":
                     {
-<<<<<<< HEAD
-                        var level = Convert.ToInt16(value);
-
-                        switch (level)
-                        {
-                            case 0: // Disabled
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                            default:
-                            case 1: // Minimal
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                            case 2: // Extended
-                            case 3: // Full
-                            case 4: // External
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                        }
-
-=======
                         UpdateCurrentNeeds_OnScreenDisplay(Convert.ToInt16(value));
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                         UpdateTimer.Stop();
                         UpdateTimer.Start();
                     }

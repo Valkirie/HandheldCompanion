@@ -1,8 +1,4 @@
 using HandheldCompanion.Inputs;
-<<<<<<< HEAD
-using HandheldCompanion.Properties;
-=======
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
@@ -23,11 +19,7 @@ public enum ProfileErrorCode
 }
 
 [Flags]
-<<<<<<< HEAD
-public enum ProfileUpdateSource
-=======
 public enum UpdateSource
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 {
     Background = 0,
     ProfilesPage = 1,
@@ -41,53 +33,8 @@ public partial class Profile : ICloneable, IComparable
 {
     [JsonIgnore] public const int SensivityArraySize = 49; // x + 1 (hidden)
 
-<<<<<<< HEAD
-    // todo: move me out of here !
-    public static readonly SortedDictionary<MotionInput, string> InputDescription = new()
-    {
-        { MotionInput.JoystickCamera, Resources.JoystickCameraDesc },
-        { MotionInput.JoystickSteering, Resources.JoystickSteeringDesc },
-        { MotionInput.PlayerSpace, Resources.PlayerSpaceDesc },
-        { MotionInput.AutoRollYawSwap, Resources.AutoRollYawSwapDesc }
-    };
-
     public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
 
-    public Profile()
-    {
-        // initialize aiming array
-        if (MotionSensivityArray.Count == 0)
-            for (var i = 0; i < SensivityArraySize; i++)
-            {
-                var value = i / (double)(SensivityArraySize - 1);
-                MotionSensivityArray[value] = 0.5f;
-            }
-    }
-
-    public Profile(string path) : this()
-    {
-        if (!string.IsNullOrEmpty(path))
-        {
-
-            var AppProperties = ProcessUtils.GetAppProperties(path);
-
-            var ProductName = AppProperties.TryGetValue("FileDescription", out var property) ? property : AppProperties["ItemFolderNameDisplay"];
-            // string Version = AppProperties.ContainsKey("FileVersion") ? AppProperties["FileVersion"] : "1.0.0.0";
-            // string Company = AppProperties.ContainsKey("Company") ? AppProperties["Company"] : AppProperties.ContainsKey("Copyright") ? AppProperties["Copyright"] : "Unknown";
-
-            Executable = AppProperties["FileName"];
-            Name = ProductName;
-            Path = path;
-        }
-
-        // enable the below variables when profile is created
-        Enabled = true;
-    }
-
-=======
-    public ProfileErrorCode ErrorCode = ProfileErrorCode.None;
-
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
 
@@ -133,36 +80,17 @@ public partial class Profile : ICloneable, IComparable
     public float FlickstickSensivity { get; set; } = 3.0f;
 
     // power
-<<<<<<< HEAD
-    public bool TDPOverrideEnabled { get; set; }
-    public double[] TDPOverrideValues { get; set; }
-
-    public bool GPUOverrideEnabled { get; set; }
-    public double GPUOverrideValue { get; set; }
-
-    public bool AutoTDPEnabled { get; set; }
-    public float AutoTDPRequestedFPS { get; set; } = 30.0f;
-=======
     public Guid PowerProfile { get; set; } = new();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
     public bool FramerateEnabled { get; set; }
     public int FramerateValue { get; set; } = 0;
 
-<<<<<<< HEAD
-    public bool EPPOverrideEnabled { get; set; }
-    public uint EPPOverrideValue { get; set; } = 50;
-
-=======
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     public bool RSREnabled { get; set; }
     public int RSRSharpness { get; set; } = 20;
 
     public bool CPUCoreEnabled { get; set; }
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 
-<<<<<<< HEAD
-=======
     // emulated controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;
 
@@ -197,7 +125,6 @@ public partial class Profile : ICloneable, IComparable
         Enabled = true;
     }
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     public object Clone()
     {
         var jsonString = JsonConvert.SerializeObject(this, Formatting.Indented,

@@ -1,9 +1,6 @@
 ﻿using Microsoft.Win32.TaskScheduler;
 using System;
-<<<<<<< HEAD
-=======
 using System.Security.Principal;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
 namespace HandheldCompanion.Managers;
 

@@ -92,22 +92,14 @@ public partial class LayoutPage : Page
         LayoutManager.Updated += LayoutManager_Updated;
         LayoutManager.Initialized += LayoutManager_Initialized;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-<<<<<<< HEAD
-        MainWindow.controllerPage.HIDchanged += VirtualManager_ControllerSelected;
-=======
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
         ProfileManager.Updated += ProfileManager_Updated;
     }
 
-<<<<<<< HEAD
-    private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
-=======
     private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     {
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
@@ -116,11 +108,7 @@ public partial class LayoutPage : Page
         // good enough
         switch(source)
         {
-<<<<<<< HEAD
-            case ProfileUpdateSource.QuickProfilesPage:
-=======
             case UpdateSource.QuickProfilesPage:
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 {
                     if (currentTemplate.Executable.Equals(profile.Executable))
                         MainWindow.layoutPage.UpdateLayout(profile.Layout);

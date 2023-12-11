@@ -90,11 +90,7 @@ namespace HandheldCompanion.Views.Pages
                     buttonStack.Visibility = Visibility.Visible;
 
                     // update icon
-<<<<<<< HEAD
-                    FontIcon newIcon = controller.GetFontIcon(button);
-=======
                     FontIcon newIcon = MainWindow.CurrentDevice.GetFontIcon(button);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     string newLabel = MainWindow.CurrentDevice.GetButtonName(button);
                     buttonStack.UpdateIcon(newIcon, newLabel);
                 }

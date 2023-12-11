@@ -268,15 +268,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
-        /// </summary>
-        public static string AutoRollYawSwapDesc {
-            get {
-                return ResourceManager.GetString("AutoRollYawSwapDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A,B,X,Y.
         /// </summary>
         public static string ButtonsPage_ABXY {
@@ -746,73 +737,11 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to Steam Controller Settings.
-        /// </summary>
-        public static string ControllerPage_SteamControllerSettings {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamControllerSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input..
-        /// </summary>
-        public static string ControllerPage_SteamNeptuneDesktopAction {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamNeptuneDesktopAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to It appears that Steam is already running and Steam Desktop Layout is applied. This may result in double input..
-        /// </summary>
-        public static string ControllerPage_SteamNeptuneDesktopDesc {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamNeptuneDesktopDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Steam Desktop Layout is applied.
-        /// </summary>
-        public static string ControllerPage_SteamNeptuneDesktopWarning {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamNeptuneDesktopWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You might want to uninstall Steam Xbox Controller Enhanced Features Driver.
-        /// </summary>
-        public static string ControllerPage_SteamXboxDriversAction {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamXboxDriversAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to It appears you have installed Steam Xbox Controller Enhanced Features Driver which are breaking HidHide capacities to hide/unhide your physical controller.
-        /// </summary>
-        public static string ControllerPage_SteamXboxDriversDesc {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamXboxDriversDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver is installed.
-        /// </summary>
-        public static string ControllerPage_SteamXboxDriversWarning {
-            get {
-                return ResourceManager.GetString("ControllerPage_SteamXboxDriversWarning", resourceCulture);
-=======
         ///   Looks up a localized string similar to Try again.
         /// </summary>
         public static string ControllerPage_TryAgain {
             get {
                 return ResourceManager.GetString("ControllerPage_TryAgain", resourceCulture);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
@@ -871,13 +800,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing..
-        /// </summary>
-        public static string ControllerPage_XInputControllerWarning {
-            get {
-                return ResourceManager.GetString("ControllerPage_XInputControllerWarning", resourceCulture);
-=======
         ///   Looks up a localized string similar to Ambilight Vertical Blackbar detection.
         /// </summary>
         public static string DevicePage_AmbilightVerticalBlackBarDetection {
@@ -892,7 +814,6 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_AmbilightVerticalBlackBarDetectionDesc {
             get {
                 return ResourceManager.GetString("DevicePage_AmbilightVerticalBlackBarDetectionDesc", resourceCulture);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
@@ -906,8 +827,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to Effects.
         /// </summary>
         public static string DevicePage_DynamicLighting {
@@ -1061,7 +980,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Power options.
         /// </summary>
         public static string DevicePage_PowerOptions {
@@ -1071,8 +989,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
         /// </summary>
         public static string Dialog_ForceRestartDesc {
@@ -1109,7 +1025,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to DIRECTIONAL PAD.
         /// </summary>
         public static string DPadPage_DPad {
@@ -2371,8 +2286,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to M2.
         /// </summary>
         public static string Enum_LegionController_ButtonFlags_B5 {
@@ -2463,7 +2376,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Auto Roll Yaw Swap.
         /// </summary>
         public static string Enum_MotionInput_AutoRollYawSwap {
@@ -2473,8 +2385,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
         /// </summary>
         public static string Enum_MotionInput_AutoRollYawSwap_Desc {
@@ -2484,7 +2394,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Joystick Camera.
         /// </summary>
         public static string Enum_MotionInput_JoystickCamera {
@@ -2494,8 +2403,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
         /// </summary>
         public static string Enum_MotionInput_JoystickCamera_Desc {
@@ -2505,7 +2412,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Joystick Steering.
         /// </summary>
         public static string Enum_MotionInput_JoystickSteering {
@@ -2515,8 +2421,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
         /// </summary>
         public static string Enum_MotionInput_JoystickSteering_Desc {
@@ -2526,7 +2430,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Player Space.
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace {
@@ -2536,8 +2439,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
         /// </summary>
         public static string Enum_MotionInput_PlayerSpace_Desc {
@@ -2547,7 +2448,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to LeftStick.
         /// </summary>
         public static string Enum_MotionOuput_LeftStick {
@@ -2899,11 +2799,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to M1 / M2.
-=======
         ///   Looks up a localized string similar to M1.
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM3 {
             get {
@@ -2912,8 +2808,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to M2.
         /// </summary>
         public static string Enum_ROGAlly_ButtonFlags_OEM4 {
@@ -2923,7 +2817,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Automatic.
         /// </summary>
         public static string Enum_ServiceStartMode_Automatic {
@@ -3356,8 +3249,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to Core isolation features are turned on.
         /// </summary>
         public static string Hint_CoreIsolationCheck {
@@ -3556,7 +3447,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap icon {
@@ -4062,15 +3952,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
-        /// </summary>
-        public static string JoystickCameraDesc {
-            get {
-                return ResourceManager.GetString("JoystickCameraDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to LEFT JOYSTICK.
         /// </summary>
         public static string JoystickPage_Joystick_Left {
@@ -4103,15 +3984,6 @@ namespace HandheldCompanion.Properties {
         public static string JoystickPage_Joystick_Right_Buttons {
             get {
                 return ResourceManager.GetString("JoystickPage_Joystick_Right_Buttons", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
-        /// </summary>
-        public static string JoystickSteeringDesc {
-            get {
-                return ResourceManager.GetString("JoystickSteeringDesc", resourceCulture);
             }
         }
         
@@ -4305,8 +4177,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to Yes.
         /// </summary>
         public static string MainWindow_ControllerManagementClosePrimary {
@@ -4343,7 +4213,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string MainWindow_Exit {
@@ -4416,8 +4285,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to Notifications.
         /// </summary>
         public static string MainWindow_navNotifications {
@@ -4427,7 +4294,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
         public static string MainWindow_navOverlay {
@@ -4491,62 +4357,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderClosePrimary {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderClosePrimary", resourceCulture);
-=======
         ///   Looks up a localized string similar to Toggle.
         /// </summary>
         public static string MainWindow_Toggle {
             get {
                 return ResourceManager.GetString("MainWindow_Toggle", resourceCulture);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderCloseSecondary {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseSecondary", resourceCulture);
-=======
         ///   Looks up a localized string similar to No notifications yet.
         /// </summary>
         public static string NotificationsPage_NothingToSee {
             get {
                 return ResourceManager.GetString("NotificationsPage_NothingToSee", resourceCulture);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderCloseText {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string MainWindow_VirtualControllerForceOrderCloseTitle {
-            get {
-                return ResourceManager.GetString("MainWindow_VirtualControllerForceOrderCloseTitle", resourceCulture);
-=======
         ///   Looks up a localized string similar to You have no notifications right now..
         /// </summary>
         public static string NotificationsPage_NothingToSeeDesc {
             get {
                 return ResourceManager.GetString("NotificationsPage_NothingToSeeDesc", resourceCulture);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
@@ -5073,13 +4906,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-        ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
-        /// </summary>
-        public static string PlayerSpaceDesc {
-            get {
-                return ResourceManager.GetString("PlayerSpaceDesc", resourceCulture);
-=======
         ///   Looks up a localized string similar to Performance.
         /// </summary>
         public static string PerformancePage_Device {
@@ -5175,7 +5001,6 @@ namespace HandheldCompanion.Properties {
         public static string PowerProfileTurboName {
             get {
                 return ResourceManager.GetString("PowerProfileTurboName", resourceCulture);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
@@ -6190,8 +6015,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-<<<<<<< HEAD
-=======
         ///   Looks up a localized string similar to .
         /// </summary>
         public static string ProfilesPage_WrapperDesc {
@@ -6201,7 +6024,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         ///   Looks up a localized string similar to Yaw.
         /// </summary>
         public static string ProfilesPage_Yaw {
@@ -7219,60 +7041,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Improve virtual controller detection.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrder {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn&apos;t detect your inputs (requires device reboot)..
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderPrimary {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderPrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderSecondary {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderSecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderText {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restart required.
-        /// </summary>
-        public static string SettingsPage_ForceVirtualControllerOrderTitle {
-            get {
-                return ResourceManager.GetString("SettingsPage_ForceVirtualControllerOrderTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to General options.
         /// </summary>
         public static string SettingsPage_GeneralOptions {
@@ -7773,42 +7541,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_UpToDate {
             get {
                 return ResourceManager.GetString("SettingsPage_UpToDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Yes.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencyPrimary {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyPrimary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencySecondary {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencySecondary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencyText {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string SettingsPage_VirtualControllerForceOrderDependencyTitle {
-            get {
-                return ResourceManager.GetString("SettingsPage_VirtualControllerForceOrderDependencyTitle", resourceCulture);
             }
         }
         

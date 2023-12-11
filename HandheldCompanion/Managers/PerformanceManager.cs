@@ -1,9 +1,5 @@
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
-<<<<<<< HEAD
-using HandheldCompanion.Utils;
-=======
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using HandheldCompanion.Views;
 using RTSSSharedMemoryNET;
 using System;
@@ -26,11 +22,7 @@ public static class PowerMode
     ///     Better Performance mode.
     /// </summary>
     // public static Guid BetterPerformance = new Guid("3af9B8d9-7c97-431d-ad78-34a8bfea439f");
-<<<<<<< HEAD
-    public static Guid BetterPerformance = new("00000000-0000-0000-0000-000000000000");
-=======
     public static Guid BetterPerformance = new();
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
     /// <summary>
     ///     Best Performance mode.
@@ -45,12 +37,7 @@ public class PerformanceManager : Manager
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
     public static int MaxDegreeOfParallelism = 4;
 
-<<<<<<< HEAD
-    private static readonly Guid[] PowerModes = new Guid[3]
-        { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
-=======
     public static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
     private readonly Timer autoWatchdog;
     private readonly Timer cpuWatchdog;
@@ -113,12 +100,9 @@ public class PerformanceManager : Manager
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
 
-<<<<<<< HEAD
-=======
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
         PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
 
@@ -152,9 +136,6 @@ public class PerformanceManager : Manager
         }
     }
 
-<<<<<<< HEAD
-    private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
-=======
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // apply profile define RSR
@@ -189,7 +170,6 @@ public class PerformanceManager : Manager
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     {
         // apply profile defined TDP
         if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
@@ -240,8 +220,6 @@ public class PerformanceManager : Manager
                 RestoreTDP(true);
         }
 
-<<<<<<< HEAD
-=======
         // apply profile defined CPU
         if (profile.CPUOverrideEnabled)
         {
@@ -253,7 +231,6 @@ public class PerformanceManager : Manager
             RestoreCPUClock(true);
         }
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         // apply profile defined GPU
         if (profile.GPUOverrideEnabled)
         {
@@ -283,32 +260,6 @@ public class PerformanceManager : Manager
         {
             RequestCPUCoreCount(profile.CPUCoreCount);
         }
-<<<<<<< HEAD
-        else if (currentCoreCount != Environment.ProcessorCount)
-        {
-            // restore default CPU Core Count
-            RequestCPUCoreCount(Environment.ProcessorCount);
-        }
-
-        // apply profile define RSR
-        try
-        {
-            if (profile.RSREnabled)
-            {
-                ADLXBackend.SetRSR(true);
-                ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
-            }
-            else if (ADLXBackend.GetRSRState() == 1)
-            {
-                ADLXBackend.SetRSR(false);
-                ADLXBackend.SetRSRSharpness(20);
-            }
-        }
-        catch { }
-    }
-
-    private void ProfileManager_Discarded(Profile profile)
-=======
         else if (currentCoreCount != MotherboardInfo.NumberOfCores)
         {
             // restore default CPU Core Count
@@ -323,7 +274,6 @@ public class PerformanceManager : Manager
     }
 
     private void PowerProfileManager_Discarded(PowerProfile profile)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     {
         // restore default TDP
         if (profile.TDPOverrideEnabled)
@@ -338,15 +288,12 @@ public class PerformanceManager : Manager
             StopAutoTDPWatchdog(true);
             StopTDPWatchdog(true);
             RestoreTDP(true);
-<<<<<<< HEAD
-=======
         }
 
         // restore default CPU frequency
         if (profile.CPUOverrideEnabled)
         {
             RestoreCPUClock(true);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         }
 
         // restore default GPU frequency
@@ -363,24 +310,6 @@ public class PerformanceManager : Manager
             RequestEPP(0x00000032);
         }
 
-<<<<<<< HEAD
-        // (un)apply profile defined CPU Core Count
-        if (profile.CPUCoreEnabled)
-        {
-            RequestCPUCoreCount(100);
-        }
-
-        try
-        {
-            // restore default RSR
-            if (profile.RSREnabled)
-            {
-                ADLXBackend.SetRSR(false);
-                ADLXBackend.SetRSRSharpness(20);
-            }
-        }
-        catch { }
-=======
         // unapply profile defined CPU Core Count
         if (profile.CPUCoreEnabled)
         {
@@ -395,7 +324,6 @@ public class PerformanceManager : Manager
 
         // restore PowerMode.BetterPerformance 
         RequestPowerMode(PowerMode.BetterPerformance);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void RestoreTDP(bool immediate)
@@ -404,15 +332,12 @@ public class PerformanceManager : Manager
             RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
     }
 
-<<<<<<< HEAD
-=======
     private void RestoreCPUClock(bool immediate)
     {
         uint maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
         RequestCPUClock(maxClock);
     }
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     private void RestoreGPUClock(bool immediate)
     {
         RequestGPUClock(255 * 50, immediate);
@@ -440,32 +365,20 @@ public class PerformanceManager : Manager
             autoLock = true;
 
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
-<<<<<<< HEAD
-            var processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
-=======
             double processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
             // Ensure realistic process values, prevent divide by 0
             processValueFPS = Math.Clamp(processValueFPS, 5, 500);
 
             // Determine error amount, include target, actual and dipper modifier
-<<<<<<< HEAD
-            var controllerError = AutoTDPTargetFPS - processValueFPS - AutoTDPDipper(processValueFPS, AutoTDPTargetFPS);
-=======
             double controllerError = AutoTDPTargetFPS - processValueFPS - AutoTDPDipper(processValueFPS, AutoTDPTargetFPS);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
             // Clamp error amount corrected within a single cycle
             // Adjust clamp if actual FPS is 2.5x requested FPS
             double clampLowerLimit = processValueFPS >= 2.5 * AutoTDPTargetFPS ? -100 : -5;
             controllerError = Math.Clamp(controllerError, clampLowerLimit, 15);
 
-<<<<<<< HEAD
-            var TDPAdjustment = controllerError * AutoTDP / processValueFPS;
-=======
             double TDPAdjustment = controllerError * AutoTDP / processValueFPS;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             TDPAdjustment *= 0.9; // Always have a little undershoot
 
             // Determine final setpoint
@@ -479,11 +392,7 @@ public class PerformanceManager : Manager
             // Only update if we have a different TDP value to set
             if (AutoTDP != AutoTDPPrev)
             {
-<<<<<<< HEAD
-                var values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
-=======
                 double[] values = new double[3] { AutoTDP, AutoTDP, AutoTDP };
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 RequestTDP(values, true);
             }
             AutoTDPPrev = AutoTDP;
@@ -499,11 +408,7 @@ public class PerformanceManager : Manager
     {
         // Dipper
         // Add small positive "error" if actual and target FPS are similar for a duration
-<<<<<<< HEAD
-        var Modifier = 0.0;
-=======
         double Modifier = 0.0d;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         // Track previous FPS values for average calculation using a rolling array
         Array.Copy(FPSHistory, 0, FPSHistory, 1, FPSHistory.Length - 1);
@@ -546,21 +451,12 @@ public class PerformanceManager : Manager
     {
         // (PI)D derivative control component to dampen FPS fluctuations
         if (double.IsNaN(ProcessValueFPSPrevious)) ProcessValueFPSPrevious = FPSActual;
-<<<<<<< HEAD
-        var DFactor = -0.1;
-
-        // Calculation
-        var deltaError = FPSActual - ProcessValueFPSPrevious;
-        var DTerm = deltaError / (INTERVAL_AUTO / 1000.0);
-        var TDPDamping = AutoTDP / FPSActual * DFactor * DTerm;
-=======
         double DFactor = -0.1d;
 
         // Calculation
         double deltaError = FPSActual - ProcessValueFPSPrevious;
         double DTerm = deltaError / (INTERVAL_AUTO / 1000.0);
         double TDPDamping = AutoTDP / FPSActual * DFactor * DTerm;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         ProcessValueFPSPrevious = FPSActual;
 
@@ -585,11 +481,7 @@ public class PerformanceManager : Manager
                 }
 
             // read perfboostmode
-<<<<<<< HEAD
-            var result = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
-=======
             var result = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             var perfboostmode = result[(int)PowerIndexType.AC] == (uint)PerfBoostMode.Aggressive &&
                                 result[(int)PowerIndexType.DC] == (uint)PerfBoostMode.Aggressive;
 
@@ -600,11 +492,7 @@ public class PerformanceManager : Manager
             }
 
             // Checking if current EPP value has changed to reflect that
-<<<<<<< HEAD
-            var EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
-=======
             var EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             var DCvalue = EPP[(int)PowerIndexType.DC];
 
             if (DCvalue != currentEPP)
@@ -642,21 +530,13 @@ public class PerformanceManager : Manager
 
                 var TDP = StoredTDP[idx];
 
-<<<<<<< HEAD
-                if (processor.GetType() == typeof(AMDProcessor))
-=======
                 if (processor is AMDProcessor)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 {
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
                     if (currentPowerMode == PowerMode.BetterBattery)
                         TDP = (int)Math.Truncate(TDP * 0.9);
                 }
-<<<<<<< HEAD
-                else if (processor.GetType() == typeof(IntelProcessor))
-=======
                 else if (processor is IntelProcessor)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 {
                     // Intel doesn't have stapm
                     if (type == PowerType.Stapm)
@@ -681,11 +561,7 @@ public class PerformanceManager : Manager
             TDPdone = CurrentTDP[0] == StoredTDP[0] && CurrentTDP[1] == StoredTDP[1] && CurrentTDP[2] == StoredTDP[2];
 
             // processor specific
-<<<<<<< HEAD
-            if (processor.GetType() == typeof(IntelProcessor))
-=======
             if (processor is IntelProcessor)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             {
                 var TDPslow = (int)StoredTDP[(int)PowerType.Slow];
                 var TDPfast = (int)StoredTDP[(int)PowerType.Fast];
@@ -827,11 +703,7 @@ public class PerformanceManager : Manager
 
         // immediately apply
         if (immediate)
-<<<<<<< HEAD
-            processor.SetTDPLimit((PowerType)idx, value);
-=======
             processor.SetTDPLimit((PowerType)idx, value, immediate);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     public async void RequestTDP(double[] values, bool immediate = false)
@@ -850,11 +722,7 @@ public class PerformanceManager : Manager
             // immediately apply
             if (immediate)
             {
-<<<<<<< HEAD
-                processor.SetTDPLimit((PowerType)idx, values[idx]);
-=======
                 processor.SetTDPLimit((PowerType)idx, values[idx], immediate);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 await Task.Delay(12);
             }
         }
@@ -873,18 +741,11 @@ public class PerformanceManager : Manager
             processor.SetGPUClock(value);
     }
 
-<<<<<<< HEAD
-    public void RequestPowerMode(int idx)
-    {
-        currentPowerMode = PowerModes[idx];
-        LogManager.LogInformation("User requested power scheme: {0}", currentPowerMode);
-=======
     public void RequestPowerMode(Guid guid)
     {
         currentPowerMode = guid;
         LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         if (PowerSetActiveOverlayScheme(currentPowerMode) != 0)
             LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
     }
@@ -900,20 +761,6 @@ public class PerformanceManager : Manager
         };
 
         // Is the EPP value already correct?
-<<<<<<< HEAD
-        uint[] EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
-        if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
-            return;
-
-        LogManager.LogInformation("User requested EPP AC: {0}, DC: {1}", requestedEPP[0], requestedEPP[1]);
-
-        // Set profile EPP
-        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP, requestedEPP[0], requestedEPP[1]);
-        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP1, requestedEPP[0], requestedEPP[1]);
-
-        // Has the EPP value been applied?
-        EPP = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
-=======
         uint[] EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
         if (EPP[0] == requestedEPP[0] && EPP[1] == requestedEPP[1])
             return;
@@ -926,7 +773,6 @@ public class PerformanceManager : Manager
 
         // Has the EPP value been applied?
         EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         if (EPP[0] != requestedEPP[0] || EPP[1] != requestedEPP[1])
             LogManager.LogWarning("Failed to set requested EPP");
     }
@@ -938,34 +784,17 @@ public class PerformanceManager : Manager
         uint currentCoreCountPercent = (uint)((100.0d / MotherboardInfo.NumberOfCores) * CoreCount);
 
         // Is the CPMINCORES value already correct?
-<<<<<<< HEAD
-        uint[] CPMINCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
-        bool CPMINCORESReady = (CPMINCORES[0] == currentCoreCountPercent && CPMINCORES[1] == currentCoreCountPercent);
-
-        // Is the CPMAXCORES value already correct?
-        uint[] CPMAXCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES);
-=======
         uint[] CPMINCORES = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
         bool CPMINCORESReady = (CPMINCORES[0] == currentCoreCountPercent && CPMINCORES[1] == currentCoreCountPercent);
 
         // Is the CPMAXCORES value already correct?
         uint[] CPMAXCORES = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         bool CPMAXCORESReady = (CPMAXCORES[0] == currentCoreCountPercent && CPMAXCORES[1] == currentCoreCountPercent);
 
         if (CPMINCORESReady && CPMAXCORESReady)
             return;
 
         // Set profile CPMINCORES and CPMAXCORES
-<<<<<<< HEAD
-        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES, currentCoreCountPercent, currentCoreCountPercent);
-        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES, currentCoreCountPercent, currentCoreCountPercent);
-
-        LogManager.LogInformation("User requested CoreCount: {0} ({1}%)", CoreCount, currentCoreCountPercent);
-
-        // Has the CPMINCORES value been applied?
-        CPMINCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
-=======
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES, currentCoreCountPercent, currentCoreCountPercent);
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES, currentCoreCountPercent, currentCoreCountPercent);
 
@@ -973,16 +802,11 @@ public class PerformanceManager : Manager
 
         // Has the CPMINCORES value been applied?
         CPMINCORES = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMINCORES);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         if (CPMINCORES[0] != currentCoreCountPercent || CPMINCORES[1] != currentCoreCountPercent)
             LogManager.LogWarning("Failed to set requested CPMINCORES");
 
         // Has the CPMAXCORES value been applied?
-<<<<<<< HEAD
-        CPMAXCORES = ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES);
-=======
         CPMAXCORES = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.CPMAXCORES);
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         if (CPMAXCORES[0] != currentCoreCountPercent || CPMAXCORES[1] != currentCoreCountPercent)
             LogManager.LogWarning("Failed to set requested CPMAXCORES");
     }
@@ -991,44 +815,6 @@ public class PerformanceManager : Manager
     {
         currentPerfBoostMode = value;
 
-<<<<<<< HEAD
-        var perfboostmode = value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Disabled;
-        WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, perfboostmode, perfboostmode);
-
-        LogManager.LogInformation("User requested perfboostmode: {0}", value);
-    }
-
-    private uint[] ReadPowerCfg(Guid SubGroup, Guid Settings)
-    {
-        var results = new uint[2];
-
-        if (PowerProfile.GetActiveScheme(out var currentScheme))
-        {
-            // read AC/DC values
-            PowerProfile.GetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings,
-                out results[(int)PowerIndexType.AC]);
-            PowerProfile.GetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings,
-                out results[(int)PowerIndexType.DC]);
-        }
-
-        return results;
-    }
-
-    private void WritePowerCfg(Guid SubGroup, Guid Settings, uint ACValue, uint DCValue)
-    {
-        if (PowerProfile.GetActiveScheme(out var currentScheme))
-        {
-            // unhide attribute
-            PowerProfile.SetAttribute(SubGroup, Settings, false);
-
-            // set value(s)
-            PowerProfile.SetValue(PowerIndexType.AC, currentScheme, SubGroup, Settings, ACValue);
-            PowerProfile.SetValue(PowerIndexType.DC, currentScheme, SubGroup, Settings, DCValue);
-
-            // activate scheme
-            PowerProfile.SetActiveScheme(currentScheme);
-        }
-=======
         var perfboostmode = value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Enabled;
         PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, perfboostmode, perfboostmode);
 
@@ -1055,7 +841,6 @@ public class PerformanceManager : Manager
         currentClock = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PROCFREQMAX);
         if (currentClock[0] != cpuClock || currentClock[1] != cpuClock)
             LogManager.LogWarning("Failed to set requested PROCFREQMAX");
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     public override void Start()
@@ -1066,18 +851,6 @@ public class PerformanceManager : Manager
         // initialize processor
         processor = Processor.GetCurrent();
 
-<<<<<<< HEAD
-        // read OS specific values
-        var HypervisorEnforcedCodeIntegrityEnabled = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios",
-            "HypervisorEnforcedCodeIntegrity");
-        var VulnerableDriverBlocklistEnable = RegistryUtils.GetBoolean(@"SYSTEM\CurrentControlSet\Control\CI\Config",
-            "VulnerableDriverBlocklistEnable");
-
-        if (VulnerableDriverBlocklistEnable || HypervisorEnforcedCodeIntegrityEnabled)
-            LogManager.LogWarning("Core isolation settings are turned on. TDP read/write and fan control might be disabled");
-
-=======
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         if (processor.IsInitialized)
         {
             processor.StatusChanged += Processor_StatusChanged;

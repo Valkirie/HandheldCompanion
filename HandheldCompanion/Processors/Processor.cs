@@ -1,9 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using System.Collections.Generic;
-<<<<<<< HEAD
-using System.Management;
-=======
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using System.Timers;
 
 namespace HandheldCompanion.Processors;

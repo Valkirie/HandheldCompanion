@@ -4,15 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-<<<<<<< HEAD
-    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    Title="Settings"
-=======
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="QuickSettings"
     Title="{x:Static resx:Resources.QuickSettingsPage_Title}"
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     Margin="15,0,0,0"
     d:Background="White"
     d:DesignHeight="1200"

@@ -5,12 +5,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
-<<<<<<< HEAD
-
-=======
 using System.Windows.Media;
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 namespace HandheldCompanion.Managers;
 
 public static class SettingsManager

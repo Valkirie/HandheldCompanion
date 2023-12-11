@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-﻿using System.Collections.Generic;
-=======
 ﻿using HandheldCompanion.Views;
 using System.Collections.Generic;
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using System.Management;
 
 namespace HandheldCompanion;
@@ -31,12 +27,6 @@ public static class MotherboardInfo
         displayCollection = displaySearcher.Get();
     }
 
-    private static readonly ManagementObjectSearcher processerSearcher =
-        new("root\\CIMV2", "SELECT * FROM Win32_Processor");
-
-    private static readonly ManagementObjectSearcher displaySearcher =
-        new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
-
     public static string Availability
     {
         get
@@ -58,11 +48,7 @@ public static class MotherboardInfo
         get
         {
             List<string> strings = new List<string>();
-<<<<<<< HEAD
-            foreach (ManagementObject queryObj in displaySearcher.Get())
-=======
             foreach (ManagementObject queryObj in displayCollection)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             {
                 var query = queryObj["Description"];
                 if (query is not null)
@@ -149,14 +135,6 @@ public static class MotherboardInfo
             if (_NumberOfCores != 0)
                 return _NumberOfCores;
 
-<<<<<<< HEAD
-            foreach (ManagementObject queryObj in processerSearcher.Get())
-            {
-                var query = queryObj["NumberOfCores"];
-                if (query is not null)
-                    if (int.TryParse(query.ToString(), out var value))
-                        _NumberOfCores = value;
-=======
             foreach (ManagementObject queryObj in processorCollection)
             {
                 var query = queryObj["NumberOfCores"];
@@ -166,7 +144,6 @@ public static class MotherboardInfo
                         _NumberOfCores = value;
                     break;
                 }
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
 
             return _NumberOfCores;
@@ -218,13 +195,6 @@ public static class MotherboardInfo
         }
     }
 
-<<<<<<< HEAD
-    public static string Processor
-    {
-        get
-        {
-            foreach (ManagementObject queryObj in processerSearcher.Get())
-=======
     public static string ProcessorID
     {
         get
@@ -246,7 +216,6 @@ public static class MotherboardInfo
         get
         {
             foreach (ManagementObject queryObj in processorCollection)
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             {
                 var query = queryObj["Name"];
 
@@ -258,8 +227,6 @@ public static class MotherboardInfo
         }
     }
 
-<<<<<<< HEAD
-=======
     public static string ProcessorManufacturer
     {
         get
@@ -313,7 +280,6 @@ public static class MotherboardInfo
         }
     }
 
->>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     public static string Product
     {
         get
