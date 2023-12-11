@@ -458,6 +458,8 @@ public static class ControllerManager
                 // hide new InstanceID (HID)
                 if (controller.IsHidden())
                     controller.Hide(false);
+                else
+                    controller.Unhide(false);
 
                 IsPowerCycling = true;
             }
@@ -745,6 +747,8 @@ public static class ControllerManager
             // hide new InstanceID (HID)
             if (controller.IsHidden())
                 controller.Hide(false);
+            else
+                controller.Unhide(false);
 
             IsPowerCycling = true;
         }

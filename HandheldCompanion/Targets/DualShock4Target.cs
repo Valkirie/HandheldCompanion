@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
@@ -38,6 +39,11 @@ namespace HandheldCompanion.Targets
         {
             // initialize controller
             HID = HIDmode.DualShock4Controller;
+
+            // create new ViGEm client
+            // this shouldn't happen, caused by profile HIDmode logic, fixme!
+            if (VirtualManager.vClient is null)
+                VirtualManager.vClient = new ViGEmClient();
 
             virtualController = VirtualManager.vClient.CreateDualShock4Controller(0x054C, 0x09CC);
             virtualController.AutoSubmitReport = false;

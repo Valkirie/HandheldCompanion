@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Exceptions;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
@@ -16,6 +17,11 @@ namespace HandheldCompanion.Targets
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;
+
+            // create new ViGEm client
+            // this shouldn't happen, caused by profile HIDmode logic, fixme!
+            if (VirtualManager.vClient is null)
+                VirtualManager.vClient = new ViGEmClient();
 
             virtualController = VirtualManager.vClient.CreateXbox360Controller(vendorId, productId);
             virtualController.AutoSubmitReport = false;
