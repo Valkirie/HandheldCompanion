@@ -1,5 +1,7 @@
-﻿using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Devices;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
+using Inkore.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +23,7 @@ public partial class QuickDevicePage : Page
     {
         InitializeComponent();
 
+        FullFanSpeedToggler.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Hidden;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
@@ -88,5 +91,23 @@ public partial class QuickDevicePage : Page
             return;
 
         SettingsManager.SetProperty("OnScreenDisplayLevel", ComboBoxOverlayDisplayLevel.SelectedIndex);
+    }
+
+    private void Toggle_cFFanSpeed_Toggled(object sender, RoutedEventArgs e)
+    {
+        var device = new LegionGo();
+
+        ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
+
+        bool isSwitchOn = toggleSwitch.IsOn;
+
+        if (isSwitchOn)
+        {
+            device.SetFanFullSpeed(1);
+        }
+        else
+        {
+            device.SetFanFullSpeed(0);
+        }
     }
 }

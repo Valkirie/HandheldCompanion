@@ -67,5 +67,35 @@
                 </ComboBox>
             </Border>
         </ui:SimpleStackPanel>
+        <ui:SimpleStackPanel Spacing="6" Name="FullFanSpeedToggler">
+            <Border
+                Padding="15,12,12,12"
+                Background="{DynamicResource ExpanderHeaderBackground}"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <DockPanel>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE7BC;" />
+
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_FullFanSpeedText}" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Static resx:Resources.DevicePage_FullFanSpeedDesc}"
+                                TextWrapping="Wrap" />
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+                </Grid>
+            </Border>
+            <ui:ToggleSwitch
+            Name="Toggle_cFFanSpeed"
+            Style="{DynamicResource InvertedToggleSwitchStyle}"
+            Toggled="Toggle_cFFanSpeed_Toggled" Margin="436,-62,0,22" VerticalAlignment="Stretch" />
+        </ui:SimpleStackPanel>
     </ui:SimpleStackPanel>
 </Page>
