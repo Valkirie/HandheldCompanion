@@ -56,7 +56,7 @@ public static class ControllerManager
         watchdogThread.IsBackground = true;
     }
 
-    public static void Start()
+    public static Task Start()
     {
         // Flushing possible JoyShocks...
         JslDisconnectAndDisposeAll();
@@ -94,6 +94,8 @@ public static class ControllerManager
         ControllerSelected?.Invoke(GetEmulatedController());
 
         LogManager.LogInformation("{0} has started", "ControllerManager");
+
+        return Task.CompletedTask;
     }
 
     public static void Stop()
@@ -328,6 +330,8 @@ public static class ControllerManager
 
         // JoyShockLibrary
         int connectedJoys = -1;
+        int joyShockId = -1;
+        JOY_SETTINGS settings = new();
 
         DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
         while (DateTime.Now < timeout && connectedJoys == -1)
@@ -343,15 +347,12 @@ public static class ControllerManager
             }
         }
 
-        if (connectedJoys >= 0)
+        if (connectedJoys > 0)
         {
             int[] joysHandle = new int[connectedJoys];
             JslGetConnectedDeviceHandles(joysHandle, connectedJoys);
 
             // scroll handles until we find matching device path
-            int joyShockId = -1;
-            JOY_SETTINGS settings = new();
-
             foreach (int i in joysHandle)
             {
                 settings = JslGetControllerInfoAndSettings(i);
@@ -365,51 +366,45 @@ public static class ControllerManager
                     break;
                 }
             }
+        }
 
-            // device found
-            if (joyShockId != -1)
+        // device found
+        if (joyShockId != -1)
+        {
+            // use handle
+            settings.playerNumber = joyShockId;
+
+            JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
+
+            if (controller is not null)
             {
-                // use handle
-                settings.playerNumber = joyShockId;
+                ((JSController)controller).AttachDetails(details);
+                ((JSController)controller).AttachJoySettings(settings);
 
-                JOY_TYPE joyShockType = (JOY_TYPE)JslGetControllerType(joyShockId);
+                // hide new InstanceID (HID)
+                if (controller.IsHidden())
+                    controller.Hide(false);
 
-                if (controller is not null)
-                {
-                    ((JSController)controller).AttachDetails(details);
-                    ((JSController)controller).AttachJoySettings(settings);
-
-                    // hide new InstanceID (HID)
-                    if (controller.IsHidden())
-                        controller.Hide(false);
-
-                    IsPowerCycling = true;
-                }
-                else
-                {
-                    // UI thread (sync)
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        switch (joyShockType)
-                        {
-                            case JOY_TYPE.DualSense:
-                                controller = new DualSenseController(settings, details);
-                                break;
-                            case JOY_TYPE.DualShock4:
-                                controller = new DS4Controller(settings, details);
-                                break;
-                            case JOY_TYPE.ProController:
-                                controller = new ProController(settings, details);
-                                break;
-                        }
-                    });
-                }
+                IsPowerCycling = true;
             }
             else
             {
-                // unsupported controller
-                LogManager.LogError("Couldn't find matching JoyShock controller: VID:{0} and PID:{1}",
-                    details.GetVendorID(), details.GetProductID());
+                // UI thread (sync)
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    switch (joyShockType)
+                    {
+                        case JOY_TYPE.DualSense:
+                            controller = new DualSenseController(settings, details);
+                            break;
+                        case JOY_TYPE.DualShock4:
+                            controller = new DS4Controller(settings, details);
+                            break;
+                        case JOY_TYPE.ProController:
+                            controller = new ProController(settings, details);
+                            break;
+                    }
+                });
             }
         }
         else
