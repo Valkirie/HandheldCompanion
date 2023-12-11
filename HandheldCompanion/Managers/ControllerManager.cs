@@ -852,77 +852,85 @@ public static class ControllerManager
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
     }
 
+    private static object targetLock = new object();
+
     private static void ClearTargetController()
     {
-        // unplug previous controller
-        if (targetController is not null)
+        lock (targetLock)
         {
-            targetController.InputsUpdated -= UpdateInputs;
-            targetController.SetLightColor(0, 0, 0);
-            targetController.Cleanup();
-            targetController.Unplug();
-            targetController = null;
+            // unplug previous controller
+            if (targetController is not null)
+            {
+                targetController.InputsUpdated -= UpdateInputs;
+                targetController.SetLightColor(0, 0, 0);
+                targetController.Cleanup();
+                targetController.Unplug();
+                targetController = null;
 
-            // update HIDInstancePath
-            SettingsManager.SetProperty("HIDInstancePath", string.Empty);
+                // update HIDInstancePath
+                SettingsManager.SetProperty("HIDInstancePath", string.Empty);
+            }
         }
     }
 
     public static void SetTargetController(string baseContainerDeviceInstanceId, bool IsPowerCycling)
     {
-        // look for new controller
-        if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
-            return;
-
-        if (controller.IsVirtual())
-            return;
-
-        // clear current target
-        ClearTargetController();
-
-        // update target controller
-        targetController = controller;
-        targetController.InputsUpdated += UpdateInputs;
-        targetController.Plug();
-        
-        Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
-        Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
-        targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
-
-        // update HIDInstancePath
-        SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
-
-        if (!IsPowerCycling)
+        lock (targetLock)
         {
-            if (SettingsManager.GetBoolean("HIDcloakonconnect"))
+            // look for new controller
+            if (!Controllers.TryGetValue(baseContainerDeviceInstanceId, out IController controller))
+                return;
+
+            if (controller.IsVirtual())
+                return;
+
+            // clear current target
+            ClearTargetController();
+
+            // update target controller
+            targetController = controller;
+            targetController.InputsUpdated += UpdateInputs;
+            targetController.Plug();
+
+            Color _systemBackground = MainWindow.uiSettings.GetColorValue(UIColorType.Background);
+            Color _systemAccent = MainWindow.uiSettings.GetColorValue(UIColorType.Accent);
+            targetController.SetLightColor(_systemAccent.R, _systemAccent.G, _systemAccent.B);
+
+            // update HIDInstancePath
+            SettingsManager.SetProperty("HIDInstancePath", baseContainerDeviceInstanceId);
+
+            if (!IsPowerCycling)
             {
-                bool powerCycle = true;
-
-                if (targetController is LegionController)
+                if (SettingsManager.GetBoolean("HIDcloakonconnect"))
                 {
-                    // todo:    Look for a byte within hid report that'd tend to mean both controllers are synced.
-                    //          Then I guess we could try and power cycle them.
-                    powerCycle = !((LegionController)targetController).IsWireless;
+                    bool powerCycle = true;
+
+                    if (targetController is LegionController)
+                    {
+                        // todo:    Look for a byte within hid report that'd tend to mean both controllers are synced.
+                        //          Then I guess we could try and power cycle them.
+                        powerCycle = !((LegionController)targetController).IsWireless;
+                    }
+
+                    if (!targetController.IsHidden())
+                        targetController.Hide(powerCycle);
                 }
-
-                if (!targetController.IsHidden())
-                    targetController.Hide(powerCycle);
             }
+
+            // check applicable scenarios
+            CheckControllerScenario();
+
+            // check if controller is about to power cycle
+            PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
+
+            if (!IsPowerCycling)
+            {
+                if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
+                    targetController.Rumble();
+            }
+
+            ControllerSelected?.Invoke(targetController);
         }
-
-        // check applicable scenarios
-        CheckControllerScenario();
-
-        // check if controller is about to power cycle
-        PowerCyclers.TryGetValue(baseContainerDeviceInstanceId, out IsPowerCycling);
-
-        if (!IsPowerCycling)
-        {
-            if (SettingsManager.GetBoolean("HIDvibrateonconnect"))
-                targetController.Rumble();
-        }
-        
-        ControllerSelected?.Invoke(targetController);
     }
 
     public static bool SuspendController(string baseContainerDeviceInstanceId)
