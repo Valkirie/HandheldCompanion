@@ -12,12 +12,12 @@ namespace HandheldCompanion.Targets
     {
         private new IXbox360Controller virtualController;
 
-        public Xbox360Target() : base()
+        public Xbox360Target(ushort vendorId, ushort productId) : base()
         {
             // initialize controller
             HID = HIDmode.Xbox360Controller;
 
-            virtualController = VirtualManager.vClient.CreateXbox360Controller();
+            virtualController = VirtualManager.vClient.CreateXbox360Controller(vendorId, productId);
             virtualController.AutoSubmitReport = false;
             virtualController.FeedbackReceived += FeedbackReceived;
 

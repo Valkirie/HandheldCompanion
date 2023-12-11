@@ -8,5 +8,6 @@ public class AYANEOAIRPro : AYANEOAIR
         nTDP = new double[] { 12, 12, 15 };
         cTDP = new double[] { 3, 18 };
         GfxClock = new double[] { 100, 2000 };
+        CpuClock = 4500;
     }
 }

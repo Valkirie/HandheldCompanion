@@ -1038,34 +1038,34 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>Non</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Le redémarrage de votre appareil est requis pour que les changements soient pris en compte. Voulez-vous redémarrer maintenant ?</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Redémarrage requis</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
     <value>Oui</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
     <value>Non</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
     <value>Si vous désactivez ce paramètre, le paramètre "Amélioration de la détection du contrôleur virtuel" sera aussi désactivé. Voulez-vous continuer?</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
     <value>Avertissement</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
     <value>Oui</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
     <value>Non</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
     <value>Améliorer la détection du controlleur ne fonctionnera pas si vous fermez Handheld Companion. Êtes-vous sûr?</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
     <value>Avertissement</value>
   </data>
   <data name="AboutPage_Manufacturer" xml:space="preserve">
@@ -1167,8 +1167,8 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>Mute virtual controller on steam related applications</value>
   </data>
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Steam Deck Settings</value>
+  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+    <value>Paramètres du contrôleur</value>
   </data>
   <data name="ControllerPage_VibrateDevice" xml:space="preserve">
     <value>Vibrate controller on connect</value>
@@ -1497,10 +1497,10 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>Fan override</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>Adjust main display resolution and refresh rate</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>Display resolution and refresh rate</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1566,7 +1566,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_Wrapper_Redirection" xml:space="preserve">
     <value>Redirection</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
@@ -1681,13 +1681,13 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="Enum.ServiceStartMode.Manual" xml:space="preserve">
     <value>Manuel</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un simple joystick. Elle est destinée aux applications traditionnelles de joystick</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'un volant ou d'un jeu de course</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>Cette entrée fonctionnera comme un joystick optimisé pour le contrôle d'une caméra à la première ou à la troisième personne</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
@@ -1772,7 +1772,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>LC</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
-    <value>M1 / M2</value>
+    <value>M1</value>
   </data>
   <data name="Enum.DS4Controller.ButtonFlags.B1" xml:space="preserve">
     <value>Cross</value>
@@ -2311,7 +2311,40 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>You can't undo this action. Previously applied template: {0}</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Make this the default layout</value>
+  <data name="Enum.LegionController.ButtonFlags.B5" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B6" xml:space="preserve">
+    <value>Mouse wheel click</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B7" xml:space="preserve">
+    <value>Mouse wheel up</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B8" xml:space="preserve">
+    <value>Mouse wheel down</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.L4" xml:space="preserve">
+    <value>Y1</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.L5" xml:space="preserve">
+    <value>Y2</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.R4" xml:space="preserve">
+    <value>M3</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.R5" xml:space="preserve">
+    <value>Y3</value>
+  </data>
+  <data name="Enum.LegionGo.ButtonFlags.OEM1" xml:space="preserve">
+    <value>LegionR</value>
+  </data>
+  <data name="Enum.LegionGo.ButtonFlags.OEM2" xml:space="preserve">
+    <value>LegionL</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM4" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="IController_ControllerIndex" xml:space="preserve">
+    <value>Gamepad: {0}</value>
   </data>
 </root>

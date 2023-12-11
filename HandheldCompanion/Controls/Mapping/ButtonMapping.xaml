@@ -104,6 +104,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="50"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="LongPressDelaySlider_ValueChanged"
                                         Value="450" />
 
@@ -228,6 +229,7 @@
                                         ScrollViewer.PanningMode="HorizontalOnly"
                                         Style="{DynamicResource SliderStyle1}"
                                         TickFrequency="5"
+                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                         ValueChanged="Turbo_Slider_ValueChanged"
                                         Value="30" />
 

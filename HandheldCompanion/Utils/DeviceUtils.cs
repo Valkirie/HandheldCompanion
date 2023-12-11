@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 
@@ -12,6 +13,26 @@ public class DeviceUtils
         Windows = 1,
         SerialUSBIMU = 2,
         Controller = 3
+    }
+
+    [Flags]
+    public enum LEDLevel
+    {
+        SolidColor = 0,
+        Breathing = 1,
+        Rainbow = 2,
+        Wave = 4,
+        Wheel = 8,
+        Gradient = 16,
+        Ambilight = 32,
+    }
+
+    public enum LEDDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
 
     public static USBDeviceInfo GetUSBDevice(string DeviceId)

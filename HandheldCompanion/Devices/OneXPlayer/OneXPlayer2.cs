@@ -18,17 +18,18 @@ namespace HandheldCompanion.Devices
             this.nTDP = new double[] { 15, 15, 20 };
             this.cTDP = new double[] { 4, 28 };
             this.GfxClock = new double[] { 100, 2200 };
+            this.CpuClock = 4700;
 
-            AngularVelocityAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-            this.AngularVelocityAxisSwap = new()
+            GyrometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            this.GyrometerAxisSwap = new()
             {
                 { 'X', 'X' },
                 { 'Y', 'Z' },
                 { 'Z', 'Y' },
             };
 
-            AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-            this.AccelerationAxisSwap = new()
+            AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+            this.AccelerometerAxisSwap = new()
             {
                 { 'X', 'X' },
                 { 'Y', 'Z' },
@@ -40,12 +41,12 @@ namespace HandheldCompanion.Devices
 
             ECDetails = new ECDetails
             {
-                AddressControl = 0x44A,
-                AddressDuty = 0x44B,
-                AddressRegistry = 0x4E,
-                AddressData = 0x4F,
-                ValueMin = 0,
-                ValueMax = 184
+                AddressFanControl = 0x44A,
+                AddressFanDuty = 0x44B,
+                AddressStatusCommandPort = 0x4E,
+                AddressDataPort = 0x4F,
+                FanValueMin = 0,
+                FanValueMax = 184
             };
 
             // Choose OEM2 due to presense of physical Xbox Guide button
@@ -55,6 +56,16 @@ namespace HandheldCompanion.Devices
                 new List<KeyCode>() { KeyCode.LWin, KeyCode.LMenu, KeyCode.LControl },
                 false, ButtonFlags.OEM2
                 ));
+        }
+        public override string GetGlyph(ButtonFlags button)
+        {
+            switch (button)
+            {
+                case ButtonFlags.OEM2:
+                    return "\u2211";
+            }
+
+            return defaultGlyph;
         }
 
         public override bool Open()
@@ -66,9 +77,9 @@ namespace HandheldCompanion.Devices
             // allow OneX button to pass key inputs
             LogManager.LogInformation("Unlocked {0} OEM button", ButtonFlags.OEM2);
 
-            ECRamDirectWrite(0x4EB, ECDetails, 0x40);
+            ECRamDirectWrite(0x4EB, ECDetails, 0xEB);
 
-            return (ECRamReadByte(0x4EB, ECDetails) == 0x40);
+            return ECRamReadByte(0x4EB, ECDetails) == 0xEB;
         }
 
         public override void Close()

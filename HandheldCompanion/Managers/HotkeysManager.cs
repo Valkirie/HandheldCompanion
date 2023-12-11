@@ -34,7 +34,7 @@ public static class HotkeysManager
 
     private const short PIN_LIMIT = 18;
     private static readonly string InstallPath;
-
+    private static bool hasProfileHID = false;
     public static SortedDictionary<ushort, Hotkey> Hotkeys = new();
 
     private static bool IsInitialized;
@@ -50,6 +50,10 @@ public static class HotkeysManager
         InputsManager.TriggerRaised += TriggerRaised;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged += ControllerManager_ControllerUnplugged;
+        ProfileManager.Applied += ProfileManager_Applied;
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
 
     public static event HotkeyTypeCreatedEventHandler HotkeyTypeCreated;
@@ -67,6 +71,99 @@ public static class HotkeysManager
         foreach (var hotkey in Hotkeys.Values)
             hotkey.ControllerSelected(Controller);
     }
+
+    private static void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
+    {
+        // when the target emulated controller is Dualshock
+        // only enable HIDmode switch hotkey when controller is plugged (last stage of HIDmode change in this case)
+        var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+        if (targetHIDmode == HIDmode.DualShock4Controller)
+        {
+            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
+            foreach (var hotkey in hotkeys)
+            {
+                Application.Current.Dispatcher.BeginInvoke(() => { hotkey.IsEnabled = !hasProfileHID; });
+            }
+        }
+    }
+
+    private static void ControllerManager_ControllerUnplugged(IController Controller, bool IsPowerCycling)
+    {
+        // when the target emulated controller is Xbox Controller
+        // only enable HIDmode switch hotkey when controller is unplugged (last stage of HIDmode change in this case)
+        var targetHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+
+        if (targetHIDmode == HIDmode.Xbox360Controller)
+        {
+            var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
+            foreach (var hotkey in hotkeys)
+            {
+                Application.Current.Dispatcher.Invoke(() => { hotkey.IsEnabled = !hasProfileHID; });
+            }
+        }
+    }
+
+    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
+        // check if profile-specific HIDmode -> disable emulated controller hotkey, else -> enable it
+        HIDmode HIDmode;
+
+        switch ((HIDmode)profile.HID)
+        {
+            case HIDmode.Xbox360Controller:
+            case HIDmode.DualShock4Controller:
+                {
+                    hasProfileHID = true;
+                    HIDmode = (HIDmode)profile.HID; // Applies profile-specific HID
+                    break;
+                }
+
+            default: // Default
+                {
+                    HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true); // Applies default HID from settings
+                    hasProfileHID = false;
+                    break;
+                }
+        }
+
+        // enable/disable hotkey based on profile HIDmode
+        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
+        foreach (var hotkey in hotkeys)
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                hotkey.IsEnabled = !hasProfileHID;
+            });
+
+        // change glyph at startup only
+        if (!IsInitialized)
+        {
+            VirtualManager_ControllerSelected(HIDmode);
+        }
+    }
+
+    private static void VirtualManager_ControllerSelected(HIDmode HIDmode)
+    {
+        // change glyph of shortcutChangeHIDMode to the corresponding target emulated controller
+        var hotkeys = Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
+        foreach (var hotkey in hotkeys)
+        {
+            switch (HIDmode)
+            {
+                case HIDmode.Xbox360Controller:
+                    hotkey.inputsHotkey.Glyph = "\uE001";
+                    break;
+                case HIDmode.DualShock4Controller:
+                    hotkey.inputsHotkey.Glyph = "\uE000";
+                    break;
+                default:
+                    break;
+            }
+
+            // redraw to change glyph
+            hotkey.Draw();
+        }
+    }
+
 
     public static void Start()
     {
@@ -132,6 +229,11 @@ public static class HotkeysManager
             return;
 
         IsInitialized = false;
+
+        ControllerManager.ControllerPlugged -= ControllerManager_ControllerPlugged;
+        ControllerManager.ControllerUnplugged -= ControllerManager_ControllerUnplugged;
+        ProfileManager.Applied -= ProfileManager_Applied;
+        VirtualManager.ControllerSelected -= VirtualManager_ControllerSelected;
 
         LogManager.LogInformation("{0} has stopped", "HotkeysManager");
     }
@@ -352,15 +454,6 @@ public static class HotkeysManager
                 case "shortcutKillApp":
                     if (fProcess is not null) fProcess.Process.Kill();
                     break;
-                case "QuietModeToggled":
-                    {
-                        var value = !SettingsManager.GetBoolean(listener);
-                        SettingsManager.SetProperty(listener, value);
-
-                        ToastManager.SendToast("Quiet mode", $"is now {(value ? "enabled" : "disabled")}");
-                    }
-                    break;
-
                 case "OnScreenDisplayLevel":
                     {
                         var value = !SettingsManager.GetBoolean(listener);
@@ -377,6 +470,23 @@ public static class HotkeysManager
                         ToastManager.SendToast("Desktop layout", $"is now {(value ? "enabled" : "disabled")}");
                     }
                     break;
+
+                case "shortcutChangeHIDMode":
+                    {
+                        var currentHIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+                        switch (currentHIDmode)
+                        {
+                            case HIDmode.Xbox360Controller:
+                                SettingsManager.SetProperty("HIDmode", (int)HIDmode.DualShock4Controller);
+                                break;
+                            case HIDmode.DualShock4Controller:
+                                SettingsManager.SetProperty("HIDmode", (int)HIDmode.Xbox360Controller);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    }
 
                 default:
                     KeyboardSimulator.KeyPress(input.OutputKeys.ToArray());

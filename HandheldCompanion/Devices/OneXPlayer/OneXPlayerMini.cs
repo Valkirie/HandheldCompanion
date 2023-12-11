@@ -13,14 +13,14 @@ public class OneXPlayerMini : IDevice
         ProductIllustration = "device_onexplayer_mini";
         ProductModel = "ONEXPLAYERMini";
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
@@ -32,12 +32,12 @@ public class OneXPlayerMini : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x44A,
-            AddressDuty = 0x44B,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 255
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 255
         };
 
         OEMChords.Add(new DeviceChord("Orange",
@@ -57,6 +57,20 @@ public class OneXPlayerMini : IDevice
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             false, ButtonFlags.OEM3
         ));
+    }
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u2219";
+            case ButtonFlags.OEM2:
+                return "\u2210";
+            case ButtonFlags.OEM3:
+                return "\u2218";
+        }
+
+        return defaultGlyph;
     }
 
     public override bool Open()

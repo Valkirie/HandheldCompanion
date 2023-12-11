@@ -1288,8 +1288,8 @@
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
   </data>
-  <data name="ControllerPage_SteamControllerSettings" xml:space="preserve">
-    <value>Steam Deck Settings</value>
+  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+    <value>コントローラー設定</value>
   </data>
   <data name="DPadPage_DPad" xml:space="preserve">
     <value>DIRECTIONAL PAD</value>
@@ -1462,10 +1462,10 @@
   <data name="QuickPerformancePage_FanOverride" xml:space="preserve">
     <value>Fan override</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRateDesc" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolutionDesc" xml:space="preserve">
     <value>Adjust main display resolution and refresh rate</value>
   </data>
-  <data name="QuickPerformancePage_DisplayResolutionRefreshRate" xml:space="preserve">
+  <data name="QuickSettingsPage_DisplayResolution" xml:space="preserve">
     <value>Display resolution and refresh rate</value>
   </data>
   <data name="SettingsPage_QuickToolsWindowLocationTopRight" xml:space="preserve">
@@ -1717,13 +1717,13 @@
   <data name="Enum.XInputController.ButtonFlags.Start" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="JoystickCameraDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickCamera.Desc" xml:space="preserve">
     <value>単純なジョイスティックとして動作します。これは従来のジョイスティック アプリケーションを対象としています</value>
   </data>
-  <data name="JoystickSteeringDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.JoystickSteering.Desc" xml:space="preserve">
     <value>ステアリング ホイールやレーシング ゲームの制御に最適化されたジョイスティックとして動作します</value>
   </data>
-  <data name="PlayerSpaceDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.PlayerSpace.Desc" xml:space="preserve">
     <value>一人称または三人称カメラの制御に最適化されたジョイスティックとして動作します</value>
   </data>
   <data name="Enum.InputsHotkeyType.Handheld" xml:space="preserve">
@@ -1745,7 +1745,7 @@
     <value>Esc</value>
   </data>
   <data name="Enum.ROGAlly.ButtonFlags.OEM3" xml:space="preserve">
-    <value>M1 / M2</value>
+    <value>M1</value>
   </data>
   <data name="Enum.GamepadButtonFlagsExt.A" xml:space="preserve">
     <value>A</value>
@@ -2221,16 +2221,16 @@
   <data name="Enum.XInputController.AxisLayoutFlags.RightStick" xml:space="preserve">
     <value>RightStick</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderClosePrimary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementClosePrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseSecondary" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseText" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseText" xml:space="preserve">
     <value>Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?</value>
   </data>
-  <data name="MainWindow_VirtualControllerForceOrderCloseTitle" xml:space="preserve">
+  <data name="MainWindow_ControllerManagementCloseTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="ProfilesPage_Wrapper_Disabled" xml:space="preserve">
@@ -2254,28 +2254,28 @@
   <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderText" xml:space="preserve">
+  <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderTitle" xml:space="preserve">
+  <data name="Dialog_ForceRestartTitle" xml:space="preserve">
     <value>Restart required</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyPrimary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyPrimary" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencySecondary" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencySecondary" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyText" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyText" xml:space="preserve">
     <value>Disabling this setting will also disable "Improve virtual controller detection". Do you want to continue?</value>
   </data>
-  <data name="SettingsPage_VirtualControllerForceOrderDependencyTitle" xml:space="preserve">
+  <data name="SettingsPage_ControllerManagementDependencyTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>Change the virtual controller layout</value>
   </data>
-  <data name="AutoRollYawSwapDesc" xml:space="preserve">
+  <data name="Enum.MotionInput.AutoRollYawSwap.Desc" xml:space="preserve">
     <value>This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open).</value>
   </data>
   <data name="Controller_Connect" xml:space="preserve">
@@ -2320,7 +2320,40 @@
   <data name="ProfilesPage_AreYouSureApplyTemplate2" xml:space="preserve">
     <value>You can't undo this action. Previously applied template: {0}</value>
   </data>
-  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
-    <value>Make this the default layout</value>
+  <data name="Enum.LegionController.ButtonFlags.B5" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B6" xml:space="preserve">
+    <value>Mouse wheel click</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B7" xml:space="preserve">
+    <value>Mouse wheel up</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.B8" xml:space="preserve">
+    <value>Mouse wheel down</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.L4" xml:space="preserve">
+    <value>Y1</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.L5" xml:space="preserve">
+    <value>Y2</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.R4" xml:space="preserve">
+    <value>M3</value>
+  </data>
+  <data name="Enum.LegionController.ButtonFlags.R5" xml:space="preserve">
+    <value>Y3</value>
+  </data>
+  <data name="Enum.LegionGo.ButtonFlags.OEM1" xml:space="preserve">
+    <value>LegionR</value>
+  </data>
+  <data name="Enum.LegionGo.ButtonFlags.OEM2" xml:space="preserve">
+    <value>LegionL</value>
+  </data>
+  <data name="Enum.ROGAlly.ButtonFlags.OEM4" xml:space="preserve">
+    <value>M2</value>
+  </data>
+  <data name="IController_ControllerIndex" xml:space="preserve">
+    <value>Gamepad: {0}</value>
   </data>
 </root>

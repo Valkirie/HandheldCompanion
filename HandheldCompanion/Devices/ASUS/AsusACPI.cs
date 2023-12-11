@@ -1,8 +1,8 @@
-﻿using System.Management;
-using System.Runtime.InteropServices;
+﻿using HandheldCompanion.Managers;
 using System;
+using System.Management;
+using System.Runtime.InteropServices;
 using System.Threading;
-using HandheldCompanion.Managers;
 
 public enum AsusFan
 {
@@ -14,7 +14,7 @@ public enum AsusFan
 
 public enum AsusMode
 {
-    Balanced = 0,
+    Performance = 0,
     Turbo = 1,
     Silent = 2
 }

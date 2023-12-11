@@ -103,7 +103,7 @@ public abstract class IModel
         foreach (Model3DGroup model3D in model3DGroup.Children)
         {
             var material = DefaultMaterials[model3D];
-            if (material.GetType() != typeof(DiffuseMaterial))
+            if (material is not DiffuseMaterial)
                 continue;
 
             // determine colors from brush from materials

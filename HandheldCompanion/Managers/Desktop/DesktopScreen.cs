@@ -146,7 +146,28 @@ public class DesktopScreen
 
     public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
     {
-        return resolutions.FirstOrDefault(a => a.Width == dmPelsWidth && a.Height == dmPelsHeight);
+        // improve me
+        int width = dmPelsWidth > dmPelsHeight ? dmPelsWidth : dmPelsHeight;
+        int height = dmPelsWidth > dmPelsHeight ? dmPelsHeight : dmPelsWidth;
+
+        // unreliable !
+        /*
+        switch(SystemInformation.ScreenOrientation)
+        {
+            case ScreenOrientation.Angle0:
+            case ScreenOrientation.Angle180:
+                width = dmPelsWidth;
+                height = dmPelsHeight;
+                break;
+            case ScreenOrientation.Angle90:
+            case ScreenOrientation.Angle270:
+                height = dmPelsWidth;
+                width = dmPelsHeight;
+                break;
+        }
+        */
+
+        return resolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
     }
 
     public ScreenFrequency GetFrequency()

@@ -15,6 +15,7 @@ public class GPDWin3 : IDevice
         nTDP = new double[] { 20, 20, 25 };
         cTDP = new double[] { 7, 25 };
         GfxClock = new double[] { 100, 1400 };
+        CpuClock = 5000;
 
         // note, need to manually configured in GPD app
         OEMChords.Add(new DeviceChord("Bottom button left",
@@ -28,5 +29,18 @@ public class GPDWin3 : IDevice
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             false, ButtonFlags.OEM2
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u220E";
+            case ButtonFlags.OEM2:
+                return "\u220F";
+        }
+
+        return defaultGlyph;
     }
 }

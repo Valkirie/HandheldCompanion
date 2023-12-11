@@ -30,29 +30,11 @@ public class NeptuneController : SteamController
 
     public NeptuneController(PnPDetails details) : base()
     {
-        if (details is null)
-            return;
-
-        Details = details;
-        Details.isHooked = true;
-
-        try
-        {
-            Controller = new(details.attributes.VendorID, details.attributes.ProductID, details.GetMI());
-
-            // open controller
-            Open();
-        }
-        catch (Exception ex)
-        {
-            LogManager.LogError("Couldn't initialize NeptuneController. Exception: {0}", ex.Message);
-            return;
-        }
+        AttachDetails(details);
 
         // UI
-        InitializeComponent();
-        DrawControls();
-        RefreshControls();
+        DrawUI();
+        UpdateUI();
 
         // Additional controller specific source buttons/axes
         SourceButtons.AddRange(new List<ButtonFlags>
@@ -82,12 +64,19 @@ public class NeptuneController : SteamController
         TargetAxis.Add(AxisLayoutFlags.RightPad);
     }
 
+    public override void AttachDetails(PnPDetails details)
+    {
+        base.AttachDetails(details);
+
+        Controller = new(details.VendorID, details.ProductID, details.GetMI());
+
+        // open controller
+        Open();
+    }
+
     public override string ToString()
     {
-        var baseName = base.ToString();
-        if (!string.IsNullOrEmpty(baseName))
-            return baseName;
-        return "Steam Controller Neptune";
+        return "Valve Software Steam Controller";
     }
 
     public override void UpdateInputs(long ticks)
@@ -275,6 +264,22 @@ public class NeptuneController : SteamController
             isConnected = false;
         }
         catch { }
+    }
+
+    public override void Hide(bool powerCycle = true)
+    {
+        Close();
+        base.Hide(powerCycle);
+        if (!powerCycle)
+            Open();
+    }
+
+    public override void Unhide(bool powerCycle = true)
+    {
+        Close();
+        base.Unhide(powerCycle);
+        if (!powerCycle)
+            Open();
     }
 
     private void OnControllerInputReceived(NeptuneControllerInputEventArgs input)

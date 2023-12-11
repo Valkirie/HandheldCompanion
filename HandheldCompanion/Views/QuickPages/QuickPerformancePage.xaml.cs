@@ -1,10 +1,12 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
-using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
+using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -16,6 +18,12 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickPerformancePage : Page
 {
+    private const int UpdateInterval = 500;
+    private readonly Timer UpdateTimer;
+    private PowerProfile selectedProfile;
+
+    private LockObject updateLock = new();
+
     public QuickPerformancePage(string Tag) : this()
     {
         this.Tag = Tag;
@@ -25,43 +33,92 @@ public partial class QuickPerformancePage : Page
     {
         InitializeComponent();
 
+        /*
         MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
         MainWindow.performanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
+        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        */
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
-        SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
-
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
+
+        MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
+
+        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+
+        PowerProfileManager.Updated += PowerProfileManager_Updated;
+        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+
+        // device settings
+        GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
+        GPUSlider.Maximum = MainWindow.CurrentDevice.GfxClock[1];
+
+        CPUSlider.Minimum = MotherboardInfo.ProcessorMaxTurboSpeed / 4.0d;
+        CPUSlider.Maximum = MotherboardInfo.ProcessorMaxTurboSpeed;
+
+        // motherboard settings
+        CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
+
+        FanModeSoftware.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl);
+
+        UpdateTimer = new Timer(UpdateInterval);
+        UpdateTimer.AutoReset = false;
+        UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // force call
-        // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
-        HWiNFO_Updated(PlatformManager.HWiNFO.Status);
-
-        // todo: move me ?
-        SettingsManager.SetProperty("QuietModeEnabled",
-            MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl));
     }
 
-    private void HWiNFO_Updated(PlatformStatus status)
+    private void HotkeysManager_CommandExecuted(string listener)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (status)
+            switch (listener)
             {
-                case PlatformStatus.Ready:
-                    OverlayDisplayLevelExtended.IsEnabled = true;
-                    OverlayDisplayLevelFull.IsEnabled = true;
+                case "increaseTDP":
+                    {
+                        if (selectedProfile is null || !selectedProfile.TDPOverrideEnabled)
+                            return;
+
+                        TDPSlider.Value++;
+                    }
                     break;
-                case PlatformStatus.Stalled:
-                    // OverlayDisplayLevelExtended.IsEnabled = false;
-                    // OverlayDisplayLevelFull.IsEnabled = false;
+                case "decreaseTDP":
+                    {
+                        if (selectedProfile is null || !selectedProfile.TDPOverrideEnabled)
+                            return;
+
+                        TDPSlider.Value--;
+                    }
                     break;
             }
+        });
+    }
+
+    private void PowerProfileManager_Deleted(PowerProfile profile)
+    {
+        // current power profile deleted, return to previous page
+        bool isCurrent = selectedProfile?.Guid == profile.Guid;
+        if (isCurrent)
+            MainWindow.overlayquickTools.ContentFrame.GoBack();
+    }
+
+    private void PowerProfileManager_Updated(PowerProfile profile, UpdateSource source)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // current power profile updated, update UI
+            bool isCurrent = selectedProfile.Guid == profile.Guid;
+            if (isCurrent)
+                UpdateUI();
         });
     }
 
@@ -73,28 +130,65 @@ public partial class QuickPerformancePage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    ComboBoxOverlayDisplayLevel.IsEnabled = true;
+                    var Processor = MainWindow.performanceManager.GetProcessor();
+                    StackProfileAutoTDP.IsEnabled = true && Processor is not null ? Processor.CanChangeTDP : false;
                     break;
                 case PlatformStatus.Stalled:
-                    ComboBoxOverlayDisplayLevel.SelectedIndex = 0;
+                    // StackProfileFramerate.IsEnabled = false;
+                    // StackProfileAutoTDP.IsEnabled = false;
                     break;
             }
         });
     }
 
-    private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
+    public void UpdateProfile()
     {
-        ComboBoxResolution.Items.Clear();
-        foreach (var resolution in screen.resolutions)
-            ComboBoxResolution.Items.Add(resolution);
+        if (UpdateTimer is not null)
+        {
+            UpdateTimer.Stop();
+            UpdateTimer.Start();
+        }
     }
 
-    private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+    public void SubmitProfile(UpdateSource source = UpdateSource.ProfilesPage)
     {
-        ComboBoxResolution.SelectedItem = resolution;
-        ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
+        if (selectedProfile is null)
+            return;
+
+        PowerProfileManager.UpdateOrCreateProfile(selectedProfile, source);
     }
 
+    private void PerformanceManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileTDP.IsEnabled = CanChangeTDP;
+            StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.RTSS.IsInstalled;
+
+            StackProfileGPUClock.IsEnabled = CanChangeGPU;
+        });
+    }
+
+    private void PerformanceManager_EPPChanged(uint EPP)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            EPPSlider.Value = EPP;
+        });
+    }
+
+    private void PerformanceManager_Initialized()
+    {
+        Processor processor = MainWindow.performanceManager.GetProcessor();
+        if (processor is null)
+            return;
+
+        PerformanceManager_StatusChanged(processor.CanChangeTDP, processor.CanChangeGPU);
+    }
+
+    /*
     private void PerformanceManager_PowerModeChanged(int idx)
     {
         // UI thread (async)
@@ -106,6 +200,7 @@ public partial class QuickPerformancePage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() => { CPUBoostToggle.IsOn = value; });
     }
+    */
 
     private void SettingsManager_SettingValueChanged(string name, object value)
     {
@@ -114,141 +209,333 @@ public partial class QuickPerformancePage : Page
         {
             switch (name)
             {
-                case "QuietModeToggled":
-                    QuietModeToggle.IsOn = Convert.ToBoolean(value);
+                case "ConfigurableTDPOverrideDown":
+                    {
+                        using (new ScopedLock(updateLock))
+                        {
+                            TDPSlider.Minimum = (double)value;
+                        }
+                    }
                     break;
-                case "QuietModeEnabled":
-                    QuietModeToggle.IsEnabled = Convert.ToBoolean(value);
-                    break;
-                case "QuietModeDuty":
-                    QuietModeSlider.Value = Convert.ToDouble(value);
-                    break;
-                case "OnScreenDisplayLevel":
-                    ComboBoxOverlayDisplayLevel.SelectedIndex = Convert.ToInt32(value);
+                case "ConfigurableTDPOverrideUp":
+                    {
+                        using (new ScopedLock(updateLock))
+                        {
+                            TDPSlider.Maximum = (double)value;
+                        }
+                    }
                     break;
             }
         });
     }
 
-    private void PowerModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void PowerMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // update settings
-        var idx = (int)PowerModeSlider.Value;
-
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            foreach (TextBlock tb in PowerModeGrid.Children)
-                tb.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-
-            var TextBlock = (TextBlock)PowerModeGrid.Children[idx];
-            TextBlock.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
-        });
-
-        if (!IsLoaded)
+        if (PowerMode.SelectedIndex == -1)
             return;
 
-        MainWindow.performanceManager.RequestPowerMode(idx);
-    }
-
-    private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (ComboBoxResolution.SelectedItem is null)
+        if (selectedProfile is null)
             return;
 
-        var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
-
-        ComboBoxFrequency.Items.Clear();
-        foreach (var frequency in resolution.Frequencies.Values)
-            ComboBoxFrequency.Items.Add(frequency);
-
-        ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
-
-        SetResolution();
-    }
-
-    private void ComboBoxFrequency_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (ComboBoxFrequency.SelectedItem is null)
+        // wait until lock is released
+        if (updateLock)
             return;
 
-        SetResolution();
-    }
-
-    private void SetResolution()
-    {
-        if (ComboBoxResolution.SelectedItem is null)
-            return;
-
-        if (ComboBoxFrequency.SelectedItem is null)
-            return;
-
-        var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
-        var frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
-
-        // update current screen resolution
-        SystemManager.SetResolution(resolution.Width, resolution.Height, (int)frequency.GetValue(Frequency.Full), resolution.BitsPerPel);
-    }
-
-    private async void QuietModeToggle_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        var Disclosure = SettingsManager.GetBoolean("QuietModeDisclosure");
-        if (QuietModeToggle.IsOn && !Disclosure)
-        {
-            // todo: localize me !
-            var result = Dialog.ShowAsync(
-                "Warning",
-                "Altering fan duty cycle might cause instabilities and overheating. It might also trigger anti cheat systems and get you banned. Product warranties may not apply if you operate your device beyond its specifications. Use at your own risk.",
-                ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
-
-            await result; // sync call
-
-            switch (result.Result)
-            {
-                case ContentDialogResult.Primary:
-                    // save state
-                    SettingsManager.SetProperty("QuietModeDisclosure", true);
-                    break;
-                default:
-                case ContentDialogResult.None:
-                    // restore previous state
-                    QuietModeToggle.IsOn = false;
-                    return;
-            }
-        }
-
-        SettingsManager.SetProperty("QuietModeToggled", QuietModeToggle.IsOn);
-    }
-
-    private void QuietModeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        var value = QuietModeSlider.Value;
-        if (double.IsNaN(value))
-            return;
-
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("QuietModeDuty", value);
-    }
-
-    private void ComboBoxOverlayDisplayLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("OnScreenDisplayLevel", ComboBoxOverlayDisplayLevel.SelectedIndex);
+        selectedProfile.OSPowerMode = PerformanceManager.PowerModes[PowerMode.SelectedIndex];
+        UpdateProfile();
     }
 
     private void CPUBoostToggle_Toggled(object sender, RoutedEventArgs e)
     {
-        if (!IsLoaded)
+        if (selectedProfile is null)
             return;
 
-        var value = CPUBoostToggle.IsOn;
-        MainWindow.performanceManager.RequestPerfBoostMode(value);
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUBoostEnabled = CPUBoostToggle.IsOn;
+        UpdateProfile();
+    }
+
+    public void SelectionChanged(Guid guid)
+    {
+        // if an update is pending, cut it short, it will disturb profile selection though
+        // keep me ?
+        if (UpdateTimer.Enabled)
+        {
+            UpdateTimer.Stop();
+            SubmitProfile();
+        }
+
+        selectedProfile = PowerProfileManager.GetProfile(guid);
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        if (selectedProfile is null)
+            return;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            using (new ScopedLock(updateLock))
+            {
+                switch (selectedProfile.Default)
+                {
+                    case true:
+                        // we shouldn't allow users to mess with default profile fan mode
+                        FanMode.IsEnabled = false;
+                        break;
+                    case false:
+                        FanMode.IsEnabled = true;
+                        break;
+                }
+
+                // we shouldn't allow users to modify some of default profile settings
+                Button_PowerSettings_Delete.IsEnabled = !selectedProfile.Default;
+
+                // page name
+                this.Title = selectedProfile.Name;
+
+                // TDP
+                TDPToggle.IsOn = selectedProfile.TDPOverrideEnabled;
+                var TDP = selectedProfile.TDPOverrideValues is not null
+                    ? selectedProfile.TDPOverrideValues
+                    : MainWindow.CurrentDevice.nTDP;
+                TDPSlider.Value = TDP[(int)PowerType.Slow];
+
+                // CPU Clock control
+                CPUToggle.IsOn = selectedProfile.CPUOverrideEnabled;
+                CPUSlider.Value = selectedProfile.CPUOverrideValue != 0 ? selectedProfile.CPUOverrideValue : MotherboardInfo.ProcessorMaxTurboSpeed;
+
+                // GPU Clock control
+                GPUToggle.IsOn = selectedProfile.GPUOverrideEnabled;
+                GPUSlider.Value = selectedProfile.GPUOverrideValue != 0 ? selectedProfile.GPUOverrideValue : 255 * 50;
+
+                // AutoTDP
+                AutoTDPToggle.IsOn = selectedProfile.AutoTDPEnabled;
+                AutoTDPRequestedFPSSlider.Value = selectedProfile.AutoTDPRequestedFPS;
+
+                // EPP
+                EPPToggle.IsOn = selectedProfile.EPPOverrideEnabled;
+                EPPSlider.Value = selectedProfile.EPPOverrideValue;
+
+                // CPU Core Count
+                CPUCoreToggle.IsOn = selectedProfile.CPUCoreEnabled;
+                CPUCoreSlider.Value = selectedProfile.CPUCoreCount;
+
+                // CPU Boost
+                CPUBoostToggle.IsOn = selectedProfile.CPUBoostEnabled;
+
+                // Power Mode
+                PowerMode.SelectedIndex = Array.IndexOf(PerformanceManager.PowerModes, selectedProfile.OSPowerMode);
+
+                // Fan control
+                FanMode.SelectedIndex = (int)selectedProfile.FanProfile.fanMode;
+            }
+        });
+    }
+
+    private void TDPToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.TDPOverrideEnabled = TDPToggle.IsOn;
+        selectedProfile.TDPOverrideValues = new double[3]
+        {
+                TDPSlider.Value,
+                TDPSlider.Value,
+                TDPSlider.Value
+        };
+
+        UpdateProfile();
+    }
+
+    private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.TDPOverrideValues = new double[3]
+        {
+                TDPSlider.Value,
+                TDPSlider.Value,
+                TDPSlider.Value
+        };
+
+        UpdateProfile();
+    }
+
+    private void AutoTDPToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.AutoTDPEnabled = AutoTDPToggle.IsOn;
+        AutoTDPRequestedFPSSlider.Value = selectedProfile.AutoTDPRequestedFPS;
+
+        UpdateProfile();
+    }
+
+    private void AutoTDPRequestedFPSSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
+        UpdateProfile();
+    }
+
+    private void CPUToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUOverrideEnabled = CPUToggle.IsOn;
+        selectedProfile.CPUOverrideValue = (int)CPUSlider.Value;
+        UpdateProfile();
+    }
+
+    private void CPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUOverrideValue = (int)CPUSlider.Value;
+        UpdateProfile();
+    }
+
+    private void GPUToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.GPUOverrideEnabled = GPUToggle.IsOn;
+        selectedProfile.GPUOverrideValue = (int)GPUSlider.Value;
+        UpdateProfile();
+    }
+
+    private void GPUSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.GPUOverrideValue = (int)GPUSlider.Value;
+        UpdateProfile();
+    }
+
+    private void EPPToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.EPPOverrideEnabled = EPPToggle.IsOn;
+        selectedProfile.EPPOverrideValue = (uint)EPPSlider.Value;
+        UpdateProfile();
+    }
+
+    private void EPPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (updateLock)
+            return;
+
+        selectedProfile.EPPOverrideValue = (uint)EPPSlider.Value;
+        UpdateProfile();
+    }
+
+    private void CPUCoreToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUCoreEnabled = CPUCoreToggle.IsOn;
+        selectedProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
+        UpdateProfile();
+    }
+
+    private void CPUCoreSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (!CPUCoreSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
+        UpdateProfile();
+    }
+
+    private void FanMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (FanMode.SelectedIndex == -1)
+            return;
+
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.FanProfile.fanMode = (FanMode)FanMode.SelectedIndex;
+        UpdateProfile();
+    }
+
+    private async void Button_PowerSettings_Delete_Click(object sender, RoutedEventArgs e)
+    {
+        var result = Dialog.ShowAsync(
+                $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedProfile.Name}\"?",
+                $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
+                ContentDialogButton.Primary,
+                $"{Properties.Resources.ProfilesPage_Cancel}",
+                $"{Properties.Resources.ProfilesPage_Delete}");
+        await result; // sync call
+
+        switch (result.Result)
+        {
+            case ContentDialogResult.Primary:
+                PowerProfileManager.DeleteProfile(selectedProfile);
+                break;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using Newtonsoft.Json;
@@ -20,12 +21,13 @@ public static class ProfileManager
 
     private static Profile currentProfile;
 
-    public static string ProfilesPath;
-    private static bool IsInitialized;
+    private static string ProfilesPath;
+
+    public static bool IsInitialized;
 
     static ProfileManager()
     {
-        // initialiaze path
+        // initialiaze path(s)
         ProfilesPath = Path.Combine(MainWindow.SettingsPath, "profiles");
         if (!Directory.Exists(ProfilesPath))
             Directory.CreateDirectory(ProfilesPath);
@@ -33,6 +35,8 @@ public static class ProfileManager
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
         ProcessManager.ProcessStarted += ProcessManager_ProcessStarted;
         ProcessManager.ProcessStopped += ProcessManager_ProcessStopped;
+
+        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
 
         ControllerManager.ControllerPlugged += ControllerManager_ControllerPlugged;
     }
@@ -60,18 +64,18 @@ public static class ProfileManager
         // check for default profile
         if (!HasDefault())
         {
+            Layout deviceLayout = MainWindow.CurrentDevice.DefaultLayout.Clone() as Layout;
             Profile defaultProfile = new()
             {
                 Name = DefaultName,
                 Default = true,
                 Enabled = false,
-                Layout = LayoutTemplate.DefaultLayout.Layout.Clone() as Layout,
+                Layout = deviceLayout,
                 LayoutTitle = LayoutTemplate.DefaultLayout.Name,
-                TDPOverrideValues = MainWindow.CurrentDevice.nTDP,
                 LayoutEnabled = true
             };
 
-            UpdateOrCreateProfile(defaultProfile, ProfileUpdateSource.Creation);
+            UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);
         }
 
         // force apply default
@@ -136,7 +140,7 @@ public static class ProfileManager
         return profile.Enabled ? profile : GetDefault();
     }
 
-    private static void ApplyProfile(Profile profile, ProfileUpdateSource source = ProfileUpdateSource.Background,
+    private static void ApplyProfile(Profile profile, UpdateSource source = UpdateSource.Background,
         bool announce = true)
     {
         // might not be the same anymore if disabled
@@ -147,11 +151,11 @@ public static class ProfileManager
             if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
                 announce = false;
 
+        // update current profile before invoking event
+        currentProfile = profile;
+
         // raise event
         Applied?.Invoke(profile, source);
-
-        // update current profile
-        currentProfile = profile;
 
         // send toast
         // todo: localize me
@@ -159,6 +163,25 @@ public static class ProfileManager
         {
             LogManager.LogInformation("Profile {0} applied", profile.Name);
             ToastManager.SendToast($"Profile {profile.Name} applied");
+        }
+    }
+
+    private static void PowerProfileManager_Deleted(PowerProfile powerProfile)
+    {
+        foreach(Profile profile in profiles.Values)
+        {
+            bool isCurrent = profile.PowerProfile == powerProfile.Guid;
+            if (isCurrent)
+            {
+                // sanitize profile
+                SanitizeProfile(profile);
+
+                // update profile
+                UpdateOrCreateProfile(profile);
+
+                if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
+                    ApplyProfile(profile);
+            }
         }
     }
 
@@ -324,15 +347,15 @@ public static class ProfileManager
         // failed to parse
         if (profile is null || profile.Name is null || profile.Path is null)
         {
-            LogManager.LogError("Could not parse profile {0}", fileName);
+            LogManager.LogError("Failed to parse profile {0}", fileName);
             return;
         }
 
-        UpdateOrCreateProfile(profile, ProfileUpdateSource.Serializer);
+        UpdateOrCreateProfile(profile, UpdateSource.Serializer);
 
         // default specific
         if (profile.Default)
-            ApplyProfile(profile, ProfileUpdateSource.Serializer);
+            ApplyProfile(profile, UpdateSource.Serializer);
     }
 
     public static void DeleteProfile(Profile profile)
@@ -417,17 +440,20 @@ public static class ProfileManager
             if (ProcessManager.GetProcesses(profile.Executable).Capacity > 0)
                 profile.ErrorCode |= ProfileErrorCode.Running;
         }
+
+        // looks like profile power profile was deleted, restore balanced
+        if (!PowerProfileManager.Contains(profile.PowerProfile))
+            profile.PowerProfile = PowerMode.BetterPerformance;
     }
 
-    public static void UpdateOrCreateProfile(Profile profile,
-        ProfileUpdateSource source = ProfileUpdateSource.Background)
+    public static void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
-        var isCurrent = false;
+        bool isCurrent = false;
         switch (source)
         {
             // update current profile on creation
-            case ProfileUpdateSource.Creation:
-            case ProfileUpdateSource.QuickProfilesPage:
+            case UpdateSource.Creation:
+            case UpdateSource.QuickProfilesPage:
                 isCurrent = true;
                 break;
             default:
@@ -454,7 +480,7 @@ public static class ProfileManager
         // raise event(s)
         Updated?.Invoke(profile, source, isCurrent);
 
-        if (source == ProfileUpdateSource.Serializer)
+        if (source == UpdateSource.Serializer)
             return;
 
         // do not update wrapper and cloaking from default profile
@@ -465,7 +491,7 @@ public static class ProfileManager
             {
                 // restore previous XInputPlus mode if failed to update
                 profile.XInputPlus = prevWrapper;
-                source = ProfileUpdateSource.Background;
+                source = UpdateSource.Background;
             }
 
             // update cloaking
@@ -522,10 +548,10 @@ public static class ProfileManager
         }
     }
 
-    private static void ControllerManager_ControllerPlugged(IController Controller, bool isHCVirtualController, bool IsPowerCycling)
+    private static void ControllerManager_ControllerPlugged(IController Controller, bool IsPowerCycling)
     {
         // we're only interest in virtual, XInput controllers
-        if (Controller.GetType() != typeof(XInputController) || !Controller.IsVirtual())
+        if (Controller is not XInputController || !Controller.IsVirtual())
             return;
 
         foreach (var profile in profiles.Values)
@@ -542,11 +568,11 @@ public static class ProfileManager
 
     public static event UpdatedEventHandler Updated;
 
-    public delegate void UpdatedEventHandler(Profile profile, ProfileUpdateSource source, bool isCurrent);
+    public delegate void UpdatedEventHandler(Profile profile, UpdateSource source, bool isCurrent);
 
     public static event AppliedEventHandler Applied;
 
-    public delegate void AppliedEventHandler(Profile profile, ProfileUpdateSource source);
+    public delegate void AppliedEventHandler(Profile profile, UpdateSource source);
 
     public static event DiscardedEventHandler Discarded;
 

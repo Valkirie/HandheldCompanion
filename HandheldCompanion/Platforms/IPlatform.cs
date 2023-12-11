@@ -64,6 +64,8 @@ public abstract class IPlatform : IDisposable
     protected int Tentative;
     protected string Url;
 
+    protected FileSystemWatcher systemWatcher;
+
     protected Process Process
     {
         get
@@ -446,10 +448,18 @@ public abstract class IPlatform : IDisposable
         }
     }
 
+    protected void SystemWatcher_Changed(string name, object value)
+    {
+        SettingValueChanged?.Invoke(name, Convert.ToString(value));
+    }
+
     #region events
 
     public event StartedEventHandler Updated;
     public delegate void StartedEventHandler(PlatformStatus status);
+
+    public event SettingValueChangedEventHandler SettingValueChanged;
+    public delegate void SettingValueChangedEventHandler(string name, object value);
 
     #endregion
 }

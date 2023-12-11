@@ -1,6 +1,5 @@
 ﻿using HandheldCompanion.Managers;
 using System.Collections.Generic;
-using System.Management;
 using System.Timers;
 
 namespace HandheldCompanion.Processors;
@@ -17,8 +16,6 @@ public enum PowerType
 
 public class Processor
 {
-    private static readonly ManagementClass managClass = new("win32_processor");
-
     private static Processor processor;
     private static string Manufacturer;
 
@@ -41,8 +38,9 @@ public class Processor
 
     public Processor()
     {
-        Name = GetProcessorDetails("Name");
-        ProcessorID = GetProcessorDetails("processorID");
+        Name = MotherboardInfo.ProcessorName;
+        ProcessorID = MotherboardInfo.ProcessorID;
+        Manufacturer = MotherboardInfo.ProcessorManufacturer;
 
         // write default miscs
         m_Misc["gfx_clk"] = m_PrevMisc["gfx_clk"] = 0;
@@ -52,8 +50,6 @@ public class Processor
     {
         if (processor is not null)
             return processor;
-
-        Manufacturer = GetProcessorDetails("Manufacturer");
 
         switch (Manufacturer)
         {
@@ -66,15 +62,6 @@ public class Processor
         }
 
         return processor;
-    }
-
-    private static string GetProcessorDetails(string value)
-    {
-        var managCollec = managClass.GetInstances();
-        foreach (ManagementObject managObj in managCollec)
-            return managObj.Properties[value].Value.ToString();
-
-        return string.Empty;
     }
 
     public virtual void Initialize()
@@ -98,9 +85,10 @@ public class Processor
         */
     }
 
-    public virtual void SetTDPLimit(PowerType type, double limit, int result = 0)
+    public virtual void SetTDPLimit(PowerType type, double limit, bool immediate = false, int result = 0)
     {
-        LogManager.LogDebug("User requested {0} TDP limit: {1}, error code: {2}", type, (uint)limit, result);
+        if (!immediate)
+            LogManager.LogDebug("User requested {0} TDP limit: {1}, error code: {2}", type, (uint)limit, result);
     }
 
     public virtual void SetGPUClock(double clock, int result = 0)
@@ -113,7 +101,7 @@ public class Processor
          * #define ADJ_ERR_MEMORY_ACCESS        -5
          */
 
-        LogManager.LogInformation("User requested GPU clock: {0}, error code: {1}", clock, result);
+        LogManager.LogDebug("User requested GPU clock: {0}, error code: {1}", clock, result);
     }
 
     protected virtual void UpdateTimer_Elapsed(object sender, ElapsedEventArgs e)

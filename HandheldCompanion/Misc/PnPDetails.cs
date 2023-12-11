@@ -1,49 +1,44 @@
-﻿using HandheldCompanion.Managers.Hid;
-using Nefarius.Utilities.DeviceManagement.Extensions;
+﻿using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
-using System;
 using System.Runtime.InteropServices;
 
 namespace HandheldCompanion;
 
 [StructLayout(LayoutKind.Sequential)]
-public class PnPDetails : IDisposable
+public class PnPDetails
 {
-    public DateTimeOffset arrivalDate;
-
-    public Attributes attributes;
-    public string baseContainerDeviceInstanceId;
-    public Capabilities capabilities;
-
     public string deviceInstanceId;
+    public string baseContainerDeviceInstanceId;
+
     public bool isGaming;
     public bool isHooked;
 
     public bool isVirtual;
-    public string Name;
-    public string Path;
-    public string SymLink;
+    public bool isPhysical => !isVirtual;
 
-    // dirty
-    public int DeviceIdx;
+    public string devicePath;
+    public string baseContainerDevicePath;
+
+    public string Name;
+    public string SymLink;
+    public string Enumerator;
+
+    public ushort ProductID;
+    public ushort VendorID;
 
     // XInput
     public bool isXInput;
     public byte XInputUserIndex = byte.MaxValue;
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-    }
+    public int XInputDeviceIdx;
 
     public string GetProductID()
     {
-        return "0x" + attributes.ProductID.ToString("X4");
+        return "0x" + ProductID.ToString("X4");
     }
 
     public string GetVendorID()
     {
-        return "0x" + attributes.VendorID.ToString("X4");
+        return "0x" + VendorID.ToString("X4");
     }
 
     public short GetMI()
@@ -62,11 +57,7 @@ public class PnPDetails : IDisposable
 
     public string GetEnumerator()
     {
-        PnPDevice device = GetBasePnPDevice();
-        if (device is not null)
-            return device.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName);
-
-        return string.Empty;
+        return Enumerator;
     }
 
     public UsbPnPDevice GetUsbPnPDevice()
@@ -76,9 +67,7 @@ public class PnPDetails : IDisposable
             return null;
 
         // is this a USB device
-        string enumerator = GetEnumerator();
-
-        switch (enumerator)
+        switch (Enumerator)
         {
             default:
             case "BTHENUM":

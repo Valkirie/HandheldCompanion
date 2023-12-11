@@ -11,13 +11,14 @@ public static class PlatformManager
     private const int UpdateInterval = 1000;
 
     // gaming platforms
-    public static readonly SteamPlatform Steam = new();
+    public static readonly Steam Steam = new();
     public static readonly GOGGalaxy GOGGalaxy = new();
     public static readonly UbisoftConnect UbisoftConnect = new();
 
     // misc platforms
     public static RTSS RTSS = new();
     public static HWiNFO HWiNFO = new();
+    public static OpenHardwareMonitor OpenHardwareMonitor = new();
 
     private static Timer UpdateTimer;
 
@@ -32,9 +33,7 @@ public static class PlatformManager
     public static void Start()
     {
         if (Steam.IsInstalled)
-        {
             Steam.Start();
-        }
 
         if (GOGGalaxy.IsInstalled)
         {
@@ -48,7 +47,7 @@ public static class PlatformManager
 
         if (RTSS.IsInstalled)
         {
-            // do something
+            UpdateCurrentNeeds_OnScreenDisplay(OSDManager.OverlayLevel);
         }
 
         if (HWiNFO.IsInstalled)
@@ -56,12 +55,17 @@ public static class PlatformManager
             // do something
         }
 
+        if (OpenHardwareMonitor.IsInstalled)
+            OpenHardwareMonitor.Start();
+
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
+        PowerProfileManager.Applied += PowerProfileManager_Applied;
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => MonitorPlatforms();
+        UpdateTimer.Start();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -69,7 +73,7 @@ public static class PlatformManager
         LogManager.LogInformation("{0} has started", "PlatformManager");
     }
 
-    private static void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
+    private static void PowerProfileManager_Applied(Misc.PowerProfile profile, UpdateSource source)
     {
         // AutoTDP
         if (profile.AutoTDPEnabled)
@@ -77,6 +81,12 @@ public static class PlatformManager
         else
             CurrentNeeds &= ~PlatformNeeds.AutoTDP;
 
+        UpdateTimer.Stop();
+        UpdateTimer.Start();
+    }
+
+    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
         // Framerate limiter
         if (profile.FramerateEnabled)
             CurrentNeeds |= PlatformNeeds.FramerateLimiter;
@@ -96,33 +106,35 @@ public static class PlatformManager
             {
                 case "OnScreenDisplayLevel":
                     {
-                        var level = Convert.ToInt16(value);
-
-                        switch (level)
-                        {
-                            case 0: // Disabled
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                            default:
-                            case 1: // Minimal
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                            case 2: // Extended
-                            case 3: // Full
-                            case 4: // External
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
-                                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
-                                break;
-                        }
-
+                        UpdateCurrentNeeds_OnScreenDisplay(Convert.ToInt16(value));
                         UpdateTimer.Stop();
                         UpdateTimer.Start();
                     }
                     break;
             }
         });
+    }
+
+    private static void UpdateCurrentNeeds_OnScreenDisplay(short level)
+    {
+        switch (level)
+        {
+            case 0: // Disabled
+                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplay;
+                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                break;
+            default:
+            case 1: // Minimal
+                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                CurrentNeeds &= ~PlatformNeeds.OnScreenDisplayComplex;
+                break;
+            case 2: // Extended
+            case 3: // Full
+            case 4: // External
+                CurrentNeeds |= PlatformNeeds.OnScreenDisplay;
+                CurrentNeeds |= PlatformNeeds.OnScreenDisplayComplex;
+                break;
+        }
     }
 
     private static void MonitorPlatforms()
@@ -225,6 +237,9 @@ public static class PlatformManager
             HWiNFO.Stop(killHWiNFO);
             HWiNFO.Dispose();
         }
+
+        if (OpenHardwareMonitor.IsInstalled)
+            OpenHardwareMonitor.Stop();
 
         IsInitialized = false;
 

@@ -39,9 +39,11 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - Ayn Loki (all models)
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
 - GPD WIN Max 2 (Intel and AMD)
-- GPD Win 2, 3 and 4
-- Steam Deck
-- Lenovo Legion Go (work in progress, may not work as expected)
+- GPD Win 2
+- GPD Win 3
+- GPD Win 4
+- Steam Deck (LCD and OLED)
+- Lenovo Legion Go (WIP)
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)

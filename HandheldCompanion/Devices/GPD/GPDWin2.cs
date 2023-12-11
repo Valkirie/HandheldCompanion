@@ -11,5 +11,6 @@ public class GPDWin2 : IDevice
         nTDP = new double[] { 10, 10, 15 };
         cTDP = new double[] { 5, 15 };
         GfxClock = new double[] { 300, 900 };
+        CpuClock = 3400;
     }
 }

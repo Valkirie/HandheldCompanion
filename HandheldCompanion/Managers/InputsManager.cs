@@ -1,5 +1,6 @@
 using Gma.System.MouseKeyHook;
 using GregsStack.InputSimulatorStandard.Native;
+using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Views;
@@ -73,7 +74,7 @@ public static class InputsManager
     private static readonly Dictionary<string, InputsChord> Triggers = new();
 
     // Keyboard vars
-    private static readonly IKeyboardMouseEvents m_GlobalHook;
+    private static IKeyboardMouseEvents m_GlobalHook;
 
     private static short KeyIndex;
     private static bool KeyUsed;
@@ -105,8 +106,6 @@ public static class InputsManager
         InputsChordInputTimer = new Timer(TIME_NEXT);
         InputsChordInputTimer.AutoReset = false;
         InputsChordInputTimer.Elapsed += (sender, e) => InputsChordInput_Elapsed();
-
-        m_GlobalHook = Hook.GlobalEvents();
 
         HotkeysManager.HotkeyCreated += TriggerCreated;
     }
@@ -143,7 +142,7 @@ public static class InputsManager
             InputsChordInputTimer.Stop();
         }
 
-        if (!IsListening())
+        if (!IsListening)
         {
             var keys = GetTriggersFromChord(currentChord);
 
@@ -157,6 +156,24 @@ public static class InputsManager
                     var hotkey = InputsHotkeys.Values.FirstOrDefault(item => item.Listener == key);
                     if (hotkey is null)
                         continue;
+
+                    // special case HIDmode switch hotkey
+                    // required here in order to (immediatly) disable hotkey while HIDmode is being changed to avoid duplicates
+                    // this takes care of repeated keybinds actions
+                    if (hotkey.Listener == "shortcutChangeHIDMode")
+                    {
+                        var inputType = currentChord.InputsType;
+                        if ((inputType == InputsChordType.Click && IsKeyUp) || (inputType == InputsChordType.Long && IsKeyDown))
+                        {
+                            var hidHotkeys = HotkeysManager.Hotkeys.Values.Where(item => item.inputsHotkey.Listener.Equals("shortcutChangeHIDMode"));
+                            foreach (var hidHotkey in hidHotkeys)
+                            {
+                                if (!hidHotkey.IsEnabled)
+                                    return false;
+                                System.Windows.Application.Current.Dispatcher.Invoke(() => { hidHotkey.IsEnabled = false; });
+                            }
+                        }
+                    }
 
                     var chord = Triggers[key];
                     switch (chord.InputsType)
@@ -263,15 +280,15 @@ public static class InputsManager
 
     private static void M_GlobalHook_KeyEvent(object? sender, KeyEventArgs e)
     {
-        var args = (KeyEventArgsExt)e;
+        KeyEventArgsExt args = (KeyEventArgsExt)e;
 
-        var Injected = (args.Flags & LLKHF_INJECTED) > 0;
-        var InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
+        bool Injected = (args.Flags & LLKHF_INJECTED) > 0;
+        bool InjectedLL = (args.Flags & LLKHF_LOWER_IL_INJECTED) > 0;
 
         if ((Injected || InjectedLL) && currentType != ListenerType.Output)
             return;
 
-        var hookKey = (KeyCode)args.KeyValue;
+        KeyCode hookKey = (KeyCode)args.KeyValue;
 
         KeyboardResetTimer.Stop();
         KeyUsed = false;
@@ -290,13 +307,25 @@ public static class InputsManager
             return;
         }
 
-        foreach (var pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
+        foreach (DeviceChord? pair in MainWindow.CurrentDevice.OEMChords.Where(a => !a.silenced))
         {
-            var chord = pair.chords[args.IsKeyDown];
+            List<KeyCode> chord = pair.chords[args.IsKeyDown];
             if (KeyIndex >= chord.Count)
                 continue;
 
-            var chordKey = chord[KeyIndex];
+            // simplified process for single key chords
+            if (chord.Count == 1)
+            {
+                if (chord[0] == hookKey)
+                {
+                    // calls current controller (if connected)
+                    IController controller = ControllerManager.GetTargetController();
+                    controller?.InjectState(pair.state, args.IsKeyDown, args.IsKeyUp);
+                    return;
+                }
+            }
+
+            KeyCode chordKey = chord[KeyIndex];
             if (chordKey == hookKey)
             {
                 KeyUsed = true;
@@ -321,28 +350,28 @@ public static class InputsManager
             BufferKeys.Add(args);
 
             // search for matching triggers
-            var buffer_keys = GetChord(BufferKeys);
+            List<KeyCode> buffer_keys = GetChord(BufferKeys);
 
-            foreach (var chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
+            foreach (DeviceChord? chord in MainWindow.CurrentDevice.OEMChords.Where(a =>
                          a.chords[args.IsKeyDown].Count == BufferKeys.Count))
             {
                 // compare ordered enumerable
-                var chord_keys = chord.GetChord(args.IsKeyDown);
+                List<KeyCode> chord_keys = chord.GetChord(args.IsKeyDown);
 
-                var existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
+                bool existsCheck = chord_keys.All(x => buffer_keys.Any(y => x == y));
                 if (existsCheck)
                 {
                     // reset index
                     KeyIndex = 0;
 
                     // check if inputs timestamp are too close from one to another
-                    var IsKeyUnexpected = args.IsKeyUp && string.IsNullOrEmpty(SpecialKey);
+                    bool IsKeyUnexpected = args.IsKeyUp && string.IsNullOrEmpty(SpecialKey);
 
                     // do not bother checking timing if key is already unexpected
                     if (!IsKeyUnexpected)
                     {
-                        var pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
-                        var prevTimestamp = prevKeys.TryGetValue(pair, out var key) ? key : TIME_SPAM;
+                        KeyValuePair<KeyCode, bool> pair = new KeyValuePair<KeyCode, bool>(hookKey, args.IsKeyDown);
+                        int prevTimestamp = prevKeys.TryGetValue(pair, out var key) ? key : TIME_SPAM;
                         prevKeys[pair] = args.Timestamp;
 
                         // spamming
@@ -358,7 +387,7 @@ public static class InputsManager
                         return;
 
                     // calls current controller (if connected)
-                    var controller = ControllerManager.GetTargetController();
+                    IController controller = ControllerManager.GetTargetController();
                     controller?.InjectState(chord.state, args.IsKeyDown, args.IsKeyUp);
 
                     if (args.IsKeyDown)
@@ -444,8 +473,8 @@ public static class InputsManager
 
     public static void Start()
     {
-        m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
-        m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
+        if (MainWindow.CurrentDevice.HasKey())
+            InitGlobalHook();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -460,11 +489,30 @@ public static class InputsManager
 
         IsInitialized = false;
 
-        //It is recommened to dispose it
-        m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
-        m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+        DisposeGlobalHook();
 
         LogManager.LogInformation("{0} has stopped", "InputsManager");
+    }
+
+    private static void InitGlobalHook()
+    {
+        if (m_GlobalHook is not null)
+            return;
+
+        m_GlobalHook = Hook.GlobalEvents();
+        m_GlobalHook.KeyDown += M_GlobalHook_KeyEvent;
+        m_GlobalHook.KeyUp += M_GlobalHook_KeyEvent;
+    }
+
+    private static void DisposeGlobalHook()
+    {
+        if (m_GlobalHook is null)
+            return;
+
+        m_GlobalHook.KeyDown -= M_GlobalHook_KeyEvent;
+        m_GlobalHook.KeyUp -= M_GlobalHook_KeyEvent;
+        m_GlobalHook.Dispose();
+        m_GlobalHook = null;
     }
 
     public static void UpdateReport(ButtonState buttonState)
@@ -552,15 +600,15 @@ public static class InputsManager
         // GamepadResetTimer.Start();
     }
 
-    public static bool IsListening()
-    {
-        return !string.IsNullOrEmpty(currentHotkey.Listener);
-    }
+    public static bool IsListening => !string.IsNullOrEmpty(currentHotkey.Listener);
 
     public static void StartListening(Hotkey hotkey, ListenerType type)
     {
+        if (!MainWindow.CurrentDevice.HasKey())
+            InitGlobalHook();
+
         // force expiration on previous listener, if any
-        if (IsListening())
+        if (IsListening)
             ListenerExpired();
 
         // store current hotkey values
@@ -590,6 +638,9 @@ public static class InputsManager
 
     private static void StopListening(InputsChord inputsChord = null)
     {
+        if (!MainWindow.CurrentDevice.HasKey())
+            DisposeGlobalHook();
+
         if (inputsChord is null)
             inputsChord = new InputsChord();
 

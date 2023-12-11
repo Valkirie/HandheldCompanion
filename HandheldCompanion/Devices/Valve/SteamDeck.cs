@@ -30,18 +30,28 @@ public class SteamDeck : IDevice
 
     public static readonly ushort[] SupportedFirmwares =
     {
-        0xB030 // 45104
+        // Steam Deck - LCD version
+        0xB030,
+        // Steam Deck - OLED version
+        0x1030,
+        0x1010,
     };
 
     public static readonly byte[] SupportedBoardID =
     {
-        6,
-        0xA
+        // Steam Deck - LCD version
+        0x6,
+        0xA,        
+        // Steam Deck - OLED version
+        0x5,
     };
 
     public static readonly byte[] SupportedPDCS =
     {
-        0x2B // 43
+        // Steam Deck - LCD version
+        0x2B,
+        // Steam Deck - OLED version
+        0x2F,
     };
 
     private InpOut inpOut;
@@ -61,11 +71,23 @@ public class SteamDeck : IDevice
 
         // https://www.techpowerup.com/gpu-specs/steam-deck-gpu.c3897
         GfxClock = new double[] { 200, 1600 };
+        CpuClock = 3500;
 
         OEMChords.Add(new DeviceChord("...",
             new List<KeyCode>(), new List<KeyCode>(),
             false, ButtonFlags.OEM1
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u21E5";
+        }
+
+        return defaultGlyph;
     }
 
     public static ushort FirmwareVersion { get; private set; }
@@ -118,10 +140,10 @@ public class SteamDeck : IDevice
 
     public override void Close()
     {
-        SetFanControl(false);
-
         inpOut.Dispose();
         inpOut = null;
+
+        base.Close();
     }
 
     private void SetGain(ushort gain)
@@ -142,7 +164,7 @@ public class SteamDeck : IDevice
         inpOut.WriteMemory(FRPR, data);
     }
 
-    public override void SetFanControl(bool enable)
+    public override void SetFanControl(bool enable, int mode = 0)
     {
         if (!IsOpen || !IsSupported)
             return;

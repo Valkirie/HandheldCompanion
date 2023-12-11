@@ -11,6 +11,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion;
 
@@ -70,11 +71,9 @@ public class DSUServer
     public const int NUMBER_SLOTS = 4;
     private const int ARG_BUFFER_LEN = 80;
 
-    protected const short UPDATE_INTERVAL = 10;
-
     private const ushort MaxProtocolVersion = 1001;
-    private readonly SemaphoreSlim _pool;
-    private readonly SocketAsyncEventArgs[] argsList;
+    private SemaphoreSlim _pool;
+    private SocketAsyncEventArgs[] argsList;
 
     private readonly Dictionary<IPEndPoint, ClientRequestTimes> clients = new();
 
@@ -94,6 +93,7 @@ public class DSUServer
     private uint serverId;
     private int udpPacketCount;
     private Socket udpSock;
+    private Timer udpTimer;
 
     public DSUServer()
     {
@@ -111,8 +111,24 @@ public class DSUServer
             PadState = DsState.Connected
         };
 
+        udpTimer = new(5000);
+        udpTimer.AutoReset = false;
+        udpTimer.Elapsed += UdpTimer_Elapsed;
+    }
+
+    private void ResetPool()
+    {
+        if (_pool is not null)
+            _pool.Release();
+
         _pool = new SemaphoreSlim(ARG_BUFFER_LEN);
+
+        if (argsList is not null && argsList.Length != 0)
+            foreach(SocketAsyncEventArgs args in argsList)
+                args.Dispose();
+
         argsList = new SocketAsyncEventArgs[ARG_BUFFER_LEN];
+
         for (int num = 0; num < ARG_BUFFER_LEN; num++)
         {
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -232,13 +248,10 @@ public class DSUServer
 
             packetSize += 16; //size of header
             if (packetSize > localMsg.Length)
-            {
                 return;
-            }
-
-            if (packetSize < localMsg.Length)
+            else if (packetSize < localMsg.Length)
             {
-                var newMsg = new byte[packetSize];
+                byte[] newMsg = new byte[packetSize];
                 Array.Copy(localMsg, newMsg, packetSize);
                 localMsg = newMsg;
             }
@@ -366,29 +379,28 @@ public class DSUServer
 
         try
         {
+            //Get the received message.
+            Socket recvSock = (Socket)iar.AsyncState;
+            int msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
+
+            localMsg = new byte[msgLen];
+            Array.Copy(recvBuffer, localMsg, msgLen);
+        }
+        catch (SocketException)
+        {
             if (running)
             {
-                //Get the received message.
-                var recvSock = (Socket)iar.AsyncState;
-
-                var msgLen = recvSock.EndReceiveFrom(iar, ref clientEP);
-                localMsg = new byte[msgLen];
-                Array.Copy(recvBuffer, localMsg, msgLen);
+                ResetUDPConn();
+                return;
             }
         }
-        catch
-        {
-            var IOC_IN = 0x80000000;
-            uint IOC_VENDOR = 0x18000000;
-            var SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-            udpSock?.IOControl((int)SIO_UDP_CONNRESET, new[] { Convert.ToByte(false) }, null);
-        }
+        catch (Exception /*e*/) { }
 
         //Start another receive as soon as we copied the data
         StartReceive();
 
         //Process the data if its valid
-        if (localMsg is not null)
+        if (localMsg != null)
             ProcessIncoming(localMsg, (IPEndPoint)clientEP);
     }
 
@@ -400,29 +412,48 @@ public class DSUServer
             {
                 //Start listening for a new message.
                 EndPoint newClientEP = new IPEndPoint(IPAddress.Any, 0);
-                udpSock?.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP,
-                    ReceiveCallback, udpSock);
+                udpSock.BeginReceiveFrom(recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ref newClientEP, ReceiveCallback, udpSock);
             }
         }
-        catch
+        catch (SocketException /*ex*/)
         {
-            var IOC_IN = 0x80000000;
-            uint IOC_VENDOR = 0x18000000;
-            var SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
-            udpSock?.IOControl((int)SIO_UDP_CONNRESET, new[] { Convert.ToByte(false) }, null);
-
-            StartReceive();
+            if (running)
+            {
+                ResetUDPConn();
+                return;
+            }
         }
+        catch (Exception /*ex*/) { }
+    }
+
+    /// <summary>
+    /// Used to send CONNRESET ioControlCode to Socket used for UDP Server.
+    /// Frees Socket from potentially firing SocketException instances after a client
+    /// connection is terminated. Avoids memory leak
+    /// </summary>
+    private void ResetUDPConn()
+    {
+        // suspend UDP
+        if (running)
+            Stop();
+
+        udpTimer.Stop();
+        udpTimer.Start();
+    }
+
+    private void UdpTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        // resume UDP
+        Start();
     }
 
     public bool Start()
     {
-        if (running)
-            Stop();
+        ResetPool();
 
-        udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         try
         {
+            udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpSock.Bind(new IPEndPoint(IPAddress.Any, port));
         }
         catch (SocketException)
@@ -431,6 +462,7 @@ public class DSUServer
             Stop();
             return running;
         }
+        catch (Exception /*ex*/) { }
 
         var randomBuf = new byte[4];
         new Random().NextBytes(randomBuf);
@@ -452,7 +484,11 @@ public class DSUServer
     {
         if (udpSock is not null)
         {
+            if (udpSock.Connected)
+                udpSock.Disconnect(true);
+
             udpSock.Close();
+            udpSock.Dispose();
             udpSock = null;
         }
 
@@ -699,30 +735,24 @@ public class DSUServer
             foreach (var cl in clientsList)
             {
                 //try { udpSock.SendTo(outputData, cl); }
-                var temp = 0;
+                int temp = 0;
                 poolLock.EnterWriteLock();
                 temp = listInd;
                 listInd = ++listInd % ARG_BUFFER_LEN;
-                var args = argsList[temp];
+                SocketAsyncEventArgs args = argsList[temp];
                 poolLock.ExitWriteLock();
 
                 _pool.Wait();
                 args.RemoteEndPoint = cl;
                 Array.Copy(outputData, args.Buffer, outputData.Length);
-                var sentAsync = false;
+                bool sentAsync = false;
                 try
                 {
-                    sentAsync = udpSock.SendToAsync(args);
+                    bool sendAsync = udpSock.SendToAsync(args);
+                    if (!sendAsync) CompletedSynchronousSocketEvent();
                 }
-                catch (SocketException)
-                {
-                }
-                catch (ObjectDisposedException)
-                {
-                }
-                catch (NullReferenceException)
-                {
-                }
+                catch (SocketException /*ex*/) { }
+                catch (Exception /*ex*/) { }
                 finally
                 {
                     if (!sentAsync) CompletedSynchronousSocketEvent();
@@ -731,6 +761,7 @@ public class DSUServer
         }
 
         clientsList.Clear();
+        clientsList = null;
     }
 
     private enum MessageType
@@ -743,38 +774,42 @@ public class DSUServer
         DSUS_PadDataRsp = 0x100002
     }
 
-    private class ClientRequestTimes
+    class ClientRequestTimes
     {
+        DateTime allPads;
+        DateTime[] padIds;
+        Dictionary<PhysicalAddress, DateTime> padMacs;
+
+        public DateTime AllPadsTime { get { return allPads; } }
+        public DateTime[] PadIdsTime { get { return padIds; } }
+        public Dictionary<PhysicalAddress, DateTime> PadMacsTime { get { return padMacs; } }
+
         public ClientRequestTimes()
         {
-            AllPadsTime = DateTime.MinValue;
-            PadIdsTime = new DateTime[4];
+            allPads = DateTime.MinValue;
+            padIds = new DateTime[4];
 
-            for (var i = 0; i < PadIdsTime.Length; i++)
-                PadIdsTime[i] = DateTime.MinValue;
+            for (int i = 0; i < padIds.Length; i++)
+                padIds[i] = DateTime.MinValue;
 
-            PadMacsTime = new Dictionary<PhysicalAddress, DateTime>();
+            padMacs = new Dictionary<PhysicalAddress, DateTime>();
         }
-
-        public DateTime AllPadsTime { get; private set; }
-
-        public DateTime[] PadIdsTime { get; }
-
-        public Dictionary<PhysicalAddress, DateTime> PadMacsTime { get; }
 
         public void RequestPadInfo(byte regFlags, byte idToReg, PhysicalAddress macToReg)
         {
             if (regFlags == 0)
-            {
-                AllPadsTime = DateTime.UtcNow;
-            }
+                allPads = DateTime.UtcNow;
             else
             {
                 if ((regFlags & 0x01) != 0) //id valid
-                    if (idToReg < PadIdsTime.Length)
-                        PadIdsTime[idToReg] = DateTime.UtcNow;
+                {
+                    if (idToReg < padIds.Length)
+                        padIds[idToReg] = DateTime.UtcNow;
+                }
                 if ((regFlags & 0x02) != 0) //mac valid
-                    PadMacsTime[macToReg] = DateTime.UtcNow;
+                {
+                    padMacs[macToReg] = DateTime.UtcNow;
+                }
             }
         }
     }

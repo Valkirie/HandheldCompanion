@@ -3,6 +3,7 @@ using HandheldCompanion.Targets;
 using HandheldCompanion.Utils;
 using Nefarius.ViGEm.Client;
 using System;
+using System.Threading;
 
 namespace HandheldCompanion.Managers
 {
@@ -15,13 +16,23 @@ namespace HandheldCompanion.Managers
         private static DSUServer DSUServer;
 
         // settings vars
-        private static HIDmode HIDmode = HIDmode.NoController;
-        private static HIDstatus HIDstatus = HIDstatus.Disconnected;
+        public static HIDmode HIDmode = HIDmode.NoController;
+        private static HIDmode defaultHIDmode = HIDmode.NoController;
+        public static HIDstatus HIDstatus = HIDstatus.Disconnected;
+
+        public static ushort ProductId = 0x28E; // Xbox 360
+        public static ushort VendorId = 0x45E;  // Microsoft
+
+        public static ushort FakeVendorId = 0x76B;  // HC
 
         public static bool IsInitialized;
 
+        public static event HIDChangedEventHandler HIDchanged;
+        public delegate void HIDChangedEventHandler(HIDmode HIDmode);
+
+
         public static event ControllerSelectedEventHandler ControllerSelected;
-        public delegate void ControllerSelectedEventHandler(IController Controller);
+        public delegate void ControllerSelectedEventHandler(HIDmode mode);
 
         public static event InitializedEventHandler Initialized;
         public delegate void InitializedEventHandler();
@@ -47,10 +58,15 @@ namespace HandheldCompanion.Managers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             SettingsManager.Initialized += SettingsManager_Initialized;
+            ProfileManager.Applied += ProfileManager_Applied;
         }
 
         public static void Start()
         {
+            // todo: improve me !!
+            while (!ControllerManager.IsInitialized)
+                Thread.Sleep(250);
+
             IsInitialized = true;
             Initialized?.Invoke();
 
@@ -65,6 +81,9 @@ namespace HandheldCompanion.Managers
             ResetViGEm();
             DSUServer.Stop();
 
+            // unsubscrive events
+            ProfileManager.Applied -= ProfileManager_Applied;
+
             IsInitialized = false;
 
             LogManager.LogInformation("{0} has stopped", "VirtualManager");
@@ -72,18 +91,17 @@ namespace HandheldCompanion.Managers
 
         public static void Resume()
         {
-            // reset vigem
-            ResetViGEm();
-
             // create new ViGEm client
-            vClient = new ViGEmClient();
+            if (vClient is null)
+                vClient = new ViGEmClient();
 
             // set controller mode
             SetControllerMode(HIDmode);
         }
 
-        public static void Pause()
+        public static void Suspend()
         {
+            // reset vigem
             ResetViGEm();
         }
 
@@ -92,7 +110,8 @@ namespace HandheldCompanion.Managers
             switch (name)
             {
                 case "HIDmode":
-                    SetControllerMode((HIDmode)Convert.ToInt32(value));
+                    defaultHIDmode = (HIDmode)Convert.ToInt32(value);
+                    SetControllerMode(defaultHIDmode);
                     break;
                 case "HIDstatus":
                     SetControllerStatus((HIDstatus)Convert.ToInt32(value));
@@ -109,6 +128,39 @@ namespace HandheldCompanion.Managers
             }
         }
 
+        private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+        {
+            try
+            {
+                // SetControllerMode takes care of ignoring identical mode switching
+                if (HIDmode == profile.HID)
+                    return;
+
+                // todo: monitor ControllerManager and check if automatic controller management is running
+                
+                switch (profile.HID)
+                {
+                    case HIDmode.Xbox360Controller:
+                    case HIDmode.DualShock4Controller:
+                        {
+                            SetControllerMode(profile.HID);
+                            break;
+                        }
+
+                    default: // Default or not assigned
+                        {
+                            SetControllerMode(defaultHIDmode);
+                            break;
+                        }
+                }
+            }
+            catch // TODO requires further testing
+            {
+                LogManager.LogError("Couldnt set per-profile HIDmode: {0}", profile.HID);
+            }
+        }
+
+
         private static void SettingsManager_Initialized()
         {
             SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
@@ -122,7 +174,7 @@ namespace HandheldCompanion.Managers
                 DSUServer.Stop();
         }
 
-        private static void SetControllerMode(HIDmode mode)
+        public static void SetControllerMode(HIDmode mode)
         {
             // do not disconnect if similar to previous mode
             if (HIDmode == mode && vTarget is not null)
@@ -130,7 +182,11 @@ namespace HandheldCompanion.Managers
 
             // disconnect current virtual controller
             if (vTarget is not null)
+            {
                 vTarget.Disconnect();
+                vTarget.Dispose();
+                vTarget = null;
+            }
 
             switch (mode)
             {
@@ -138,6 +194,7 @@ namespace HandheldCompanion.Managers
                 case HIDmode.NoController:
                     if (vTarget is not null)
                     {
+                        vTarget.Disconnect();
                         vTarget.Dispose();
                         vTarget = null;
                     }
@@ -146,11 +203,14 @@ namespace HandheldCompanion.Managers
                     vTarget = new DualShock4Target();
                     break;
                 case HIDmode.Xbox360Controller:
-                    vTarget = new Xbox360Target();
+                    // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
+                    VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
+                    ProductId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
+                    vTarget = new Xbox360Target(VendorId, ProductId);
                     break;
             }
 
-            ControllerSelected?.Invoke(ControllerManager.GetEmulatedController());
+            ControllerSelected?.Invoke(mode);
 
             // failed to initialize controller
             if (vTarget is null)
@@ -171,7 +231,7 @@ namespace HandheldCompanion.Managers
             HIDmode = mode;
         }
 
-        private static void SetControllerStatus(HIDstatus status)
+        public static void SetControllerStatus(HIDstatus status)
         {
             if (vTarget is null)
                 return;
@@ -220,6 +280,7 @@ namespace HandheldCompanion.Managers
             // dispose virtual controller
             if (vTarget is not null)
             {
+                vTarget.Disconnect();
                 vTarget.Dispose();
                 vTarget = null;
             }

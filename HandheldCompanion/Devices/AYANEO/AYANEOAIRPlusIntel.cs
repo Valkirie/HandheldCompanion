@@ -8,5 +8,6 @@ public class AYANEOAIRPlusIntel : AYANEOAIRPlus
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 5, 55 };
         GfxClock = new double[] { 100, 1100 };
+        CpuClock = 4400;
     }
 }

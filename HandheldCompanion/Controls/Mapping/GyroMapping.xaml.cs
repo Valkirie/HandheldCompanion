@@ -433,7 +433,7 @@ public partial class GyroMapping : IMapping
             return;
 
         MotionInput input = (MotionInput)cB_Input.SelectedIndex;
-        Text_InputHint.Text = Profile.InputDescription[input];
+        Text_InputHint.Text = EnumUtils.GetDescriptionFromEnumValue(input, string.Empty, "Desc");
 
         ((GyroActions)this.Actions).MotionInput = (MotionInput)cB_Input.SelectedIndex;
 

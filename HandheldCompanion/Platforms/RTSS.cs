@@ -18,23 +18,6 @@ namespace HandheldCompanion.Platforms;
 
 public class RTSS : IPlatform
 {
-    public enum AppFlagsEx
-    {
-        None = 0x0,
-        OpenGL = 0x1,
-        DDraw = 0x2,
-        D3D8 = 0x3,
-        D3D9 = 0x4,
-        D3D9Ex = 0x5,
-        D3D10 = 0x6,
-        D3D11 = 0x7,
-        D3D12 = 0x8,
-        D3D12AFR = 0x9,
-        Vulkan = 0xA,
-        ProfileUpdateRequested = 0x10000000,
-        MASK = 0xF
-    }
-
     private const uint WM_APP = 0x8000;
     private const uint WM_RTSS_UPDATESETTINGS = WM_APP + 100;
     private const uint WM_RTSS_SHOW_PROPERTIES = WM_APP + 102;
@@ -128,7 +111,7 @@ public class RTSS : IPlatform
             if (foregroundProcess is not null)
                 ProcessManager_ForegroundChanged(foregroundProcess, null);
 
-            ProfileManager_Applied(ProfileManager.GetCurrent(), ProfileUpdateSource.Background);
+            ProfileManager_Applied(ProfileManager.GetCurrent(), UpdateSource.Background);
         }
 
         return base.Start();
@@ -143,19 +126,20 @@ public class RTSS : IPlatform
         return base.Stop(kill);
     }
 
-    private void ProfileManager_Applied(Profile profile, ProfileUpdateSource source)
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
-        // apply profile defined framerate
         if (profile.FramerateEnabled)
         {
-            var frequency = (int)Math.Floor(SystemManager.GetDesktopScreen().GetFrequency()
+            // Apply profile-defined framerate
+            int frequency = (int)Math.Floor(SystemManager.GetDesktopScreen().GetFrequency()
                 .GetValue((Frequency)profile.FramerateValue));
             RequestFPS(frequency);
         }
-        else
+        else if (RequestedFramerate > 0 && !profile.FramerateEnabled)
         {
-            // restore default framerate
-            RequestFPS(0);
+            // Reset to 0 only when a cap was set previously and the current profile has no limit
+            // These conditions prevent 0 from being set on every profile change
+            RequestFPS(0); // Restore default framerate
         }
     }
 

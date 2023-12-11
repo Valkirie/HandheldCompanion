@@ -7,44 +7,52 @@ public static class RegistryUtils
 {
     private const string HKLM = @"HKEY_LOCAL_MACHINE";
 
-    private static object GetValue(string key, string value)
+    private static object GetValue(string key, string valueName)
     {
         var keyName = HKLM + "\\" + key;
-        return Registry.GetValue(keyName, value, null);
+        return Registry.GetValue(keyName, valueName, null);
     }
 
-    public static string GetString(string key, string value)
+    public static void SetValue(string key, string valueName, object value)
     {
-        return Convert.ToString(GetValue(key, value));
+        var keyName = HKLM + "\\" + key;
+        Registry.SetValue(keyName, valueName, value);
     }
 
-    public static int GetInt(string key, string value)
+    public static bool KeyExists(string key, string valueName)
+    {
+        var keyName = HKLM + "\\" + key;
+        return Registry.GetValue(keyName, valueName, null) != null;
+    }
+
+    public static string GetString(string key, string valueName)
+    {
+        return Convert.ToString(GetValue(key, valueName));
+    }
+
+    public static int GetInt(string key, string valueName)
     {
         try
         {
-            return Convert.ToInt32(GetValue(key, value));
+            return Convert.ToInt32(GetValue(key, valueName));
         }
-        catch
-        {
-        }
+        catch { }
 
         return 0;
     }
 
-    public static bool GetBoolean(string key, string value)
+    public static bool GetBoolean(string key, string valueName)
     {
         try
         {
-            return Convert.ToBoolean(GetValue(key, value));
+            return Convert.ToBoolean(GetValue(key, valueName));
         }
-        catch
-        {
-        }
+        catch { }
 
         return false;
     }
 
-    public static bool SearchForKeyValue(string key, string value, string content)
+    public static bool SearchForKeyValue(string key, string valueName, string value)
     {
         // Open the root registry key for reading
         RegistryKey root = Registry.LocalMachine.OpenSubKey(key);
@@ -62,13 +70,13 @@ public static class RegistryUtils
                 RegistryKey subKey = root.OpenSubKey(subkey);
 
                 // Check if the subkey exists and has a value named DeviceDesc
-                if (subKey != null && subKey.GetValue(value) != null)
+                if (subKey != null && subKey.GetValue(valueName) != null)
                 {
                     // Get the value of DeviceDesc as a string
-                    string subKeyDesc = subKey.GetValue(value).ToString();
+                    string subKeyDesc = subKey.GetValue(valueName).ToString();
 
                     // Check if the value contains the target strings
-                    if (subKeyDesc.Contains(content, StringComparison.InvariantCultureIgnoreCase))
+                    if (subKeyDesc.Contains(value, StringComparison.InvariantCultureIgnoreCase))
                         return true;
                 }
             }

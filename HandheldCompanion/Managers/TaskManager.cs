@@ -1,22 +1,23 @@
 ﻿using Microsoft.Win32.TaskScheduler;
 using System;
+using System.Security.Principal;
 
 namespace HandheldCompanion.Managers;
 
 public class TaskManager : Manager
 {
-    private readonly string ServiceName;
-    private readonly string ServiceExecutable;
+    private readonly string TaskName;
+    private readonly string TaskExecutable;
 
     // TaskManager vars
     private Task task;
     private TaskDefinition taskDefinition;
-    private TaskService TaskServ;
+    private TaskService taskService;
 
-    public TaskManager(string ServiceName, string Executable)
+    public TaskManager(string TaskName, string Executable)
     {
-        this.ServiceName = ServiceName;
-        ServiceExecutable = Executable;
+        this.TaskName = TaskName;
+        TaskExecutable = Executable;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
@@ -33,30 +34,27 @@ public class TaskManager : Manager
 
     public override void Start()
     {
-        TaskServ = new TaskService();
-        task = TaskServ.FindTask(ServiceName);
+        taskService = new TaskService();
+        task = taskService.FindTask(TaskName);
 
         try
         {
             if (task is not null)
-            {
-                task.Definition.Actions.Clear();
-                task.Definition.Actions.Add(new ExecAction(ServiceExecutable));
-                task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, task.Definition);
-            }
-            else
-            {
-                taskDefinition = TaskService.Instance.NewTask();
-                taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
-                taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
-                taskDefinition.Settings.DisallowStartIfOnBatteries = false;
-                taskDefinition.Settings.StopIfGoingOnBatteries = false;
-                taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
-                taskDefinition.Settings.Enabled = false;
-                taskDefinition.Triggers.Add(new LogonTrigger());
-                taskDefinition.Actions.Add(new ExecAction(ServiceExecutable));
-                task = TaskService.Instance.RootFolder.RegisterTaskDefinition(ServiceName, taskDefinition);
-            }
+                taskService.RootFolder.DeleteTask(TaskName);
+
+            taskDefinition = TaskService.Instance.NewTask();
+            taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
+            taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;
+            taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
+            taskDefinition.Settings.DisallowStartIfOnBatteries = false;
+            taskDefinition.Settings.StopIfGoingOnBatteries = false;
+            taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+            taskDefinition.Settings.Enabled = false;
+            taskDefinition.Triggers.Add(new LogonTrigger() { UserId = WindowsIdentity.GetCurrent().Name });
+            taskDefinition.Actions.Add(new ExecAction(TaskExecutable));
+
+            task = TaskService.Instance.RootFolder.RegisterTaskDefinition(TaskName, taskDefinition);
+            task.Enabled = SettingsManager.GetBoolean("RunAtStartup");
         }
         catch
         {

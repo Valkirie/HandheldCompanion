@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern;
 using System.Windows;
 using System.Windows.Media;
 using static JSL;
@@ -85,6 +84,11 @@ public class DS4Controller : JSController
         }
 
         base.UpdateInputs(ticks);
+    }
+
+    public override string ToString()
+    {
+        return "DUALSHOCK®4 Wireless Controller";
     }
 
     public override void Plug()

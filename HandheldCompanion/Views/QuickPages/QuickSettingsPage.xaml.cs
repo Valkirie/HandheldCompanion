@@ -1,9 +1,14 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using Windows.Devices.Bluetooth;
+using Windows.Devices.Radios;
 
 namespace HandheldCompanion.Views.QuickPages;
 
@@ -12,43 +17,51 @@ namespace HandheldCompanion.Views.QuickPages;
 /// </summary>
 public partial class QuickSettingsPage : Page
 {
-    private readonly object brightnessLock = new();
-    private readonly object volumeLock = new();
+    private IReadOnlyList<Radio> radios;
+    private Timer radioTimer;
 
     public QuickSettingsPage(string Tag) : this()
     {
         this.Tag = Tag;
+
+        HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
+        HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
+
+        SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
+        SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
+
+        radioTimer = new(1000);
+        radioTimer.Elapsed += RadioTimer_Elapsed;
+        radioTimer.Start();
+    }
+
+    private void RadioTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        new Task(async () =>
+        {
+            // Get the Bluetooth adapter
+            BluetoothAdapter adapter = await BluetoothAdapter.GetDefaultAsync();
+
+            // Get the Bluetooth radio
+            radios = await Radio.GetRadiosAsync();
+
+            // UI thread (async)
+            _ = Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                // WIFI
+                WifiToggle.IsEnabled = radios.Where(radio => radio.Kind == RadioKind.WiFi).Any();
+                WifiToggle.IsOn = radios.Where(radio => radio.Kind == RadioKind.WiFi && radio.State == RadioState.On).Any();
+
+                // Bluetooth
+                BluetoothToggle.IsEnabled = radios.Where(radio => radio.Kind == RadioKind.Bluetooth).Any();
+                BluetoothToggle.IsOn = radios.Where(radio => radio.Kind == RadioKind.Bluetooth && radio.State == RadioState.On).Any();
+            });
+        }).Start();
     }
 
     public QuickSettingsPage()
     {
         InitializeComponent();
-
-        HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
-        HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
-
-        SystemManager.VolumeNotification += SystemManager_VolumeNotification;
-        SystemManager.BrightnessNotification += SystemManager_BrightnessNotification;
-        SystemManager.Initialized += SystemManager_Initialized;
-    }
-
-    private void SystemManager_Initialized()
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            if (SystemManager.HasBrightnessSupport())
-            {
-                SliderBrightness.IsEnabled = true;
-                SliderBrightness.Value = SystemManager.GetBrightness();
-            }
-
-            if (SystemManager.HasVolumeSupport())
-            {
-                SliderVolume.IsEnabled = true;
-                SliderVolume.Value = SystemManager.GetVolume();
-            }
-        });
     }
 
     private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
@@ -70,56 +83,72 @@ public partial class QuickSettingsPage : Page
             QuickHotkeys.Children.Add(hotkey.GetPin());
     }
 
-    private void SystemManager_BrightnessNotification(int brightness)
+    private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
     {
-        if (Monitor.TryEnter(brightnessLock))
-        {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() => { SliderBrightness.Value = brightness; });
-
-            Monitor.Exit(brightnessLock);
-        }
+        ComboBoxResolution.Items.Clear();
+        foreach (var resolution in screen.resolutions)
+            ComboBoxResolution.Items.Add(resolution);
     }
 
-    private void SystemManager_VolumeNotification(float volume)
+    private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
-        if (Monitor.TryEnter(volumeLock))
-        {
-            // UI thread
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                // todo: update volume icon on update
-                SliderVolume.Value = Math.Round(volume);
-            });
-
-            Monitor.Exit(volumeLock);
-        }
+        ComboBoxResolution.SelectedItem = resolution;
+        ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
     }
 
-    private void SliderBrightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!IsLoaded)
+        if (ComboBoxResolution.SelectedItem is null)
             return;
 
-        if (Monitor.TryEnter(brightnessLock))
-        {
-            SystemManager.SetBrightness(SliderBrightness.Value);
+        var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
 
-            Monitor.Exit(brightnessLock);
-        }
+        ComboBoxFrequency.Items.Clear();
+        foreach (var frequency in resolution.Frequencies.Values)
+            ComboBoxFrequency.Items.Add(frequency);
+
+        ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
+
+        SetResolution();
     }
 
-    private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void ComboBoxFrequency_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (!IsLoaded)
+        if (ComboBoxFrequency.SelectedItem is null)
             return;
 
-        if (Monitor.TryEnter(volumeLock))
-        {
-            // update volume
-            SystemManager.SetVolume(SliderVolume.Value);
+        SetResolution();
+    }
 
-            Monitor.Exit(volumeLock);
-        }
+    private void SetResolution()
+    {
+        if (ComboBoxResolution.SelectedItem is null)
+            return;
+
+        if (ComboBoxFrequency.SelectedItem is null)
+            return;
+
+        var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
+        var frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
+
+        // update current screen resolution
+        SystemManager.SetResolution(resolution.Width, resolution.Height, (int)frequency.GetValue(Frequency.Full), resolution.BitsPerPel);
+    }
+
+    private void WIFIToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        foreach(Radio radio in radios.Where(r => r.Kind == RadioKind.WiFi))
+            _ = radio.SetStateAsync(WifiToggle.IsOn ? RadioState.On : RadioState.Off);
+    }
+
+    private void BluetoothToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        foreach (Radio radio in radios.Where(r => r.Kind == RadioKind.Bluetooth))
+            _ = radio.SetStateAsync(BluetoothToggle.IsOn ? RadioState.On : RadioState.Off);
+    }
+
+    internal void Close()
+    {
+        radioTimer.Stop();
     }
 }

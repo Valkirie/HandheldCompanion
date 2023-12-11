@@ -99,6 +99,8 @@ public static class PowerManager
         IsInitialized = true;
         Initialized?.Invoke();
 
+        PowerStatusChanged?.Invoke(SystemInformation.PowerStatus);
+
         LogManager.LogInformation("{0} has started", "PowerManager");
     }
 

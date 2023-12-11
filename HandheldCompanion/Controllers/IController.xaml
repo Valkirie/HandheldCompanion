@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controllers"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -16,7 +16,7 @@
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         CornerRadius="{DynamicResource ControlCornerRadius}">
 
-        <StackPanel>
+        <ui:SimpleStackPanel Spacing="12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" MinWidth="200" />
@@ -25,16 +25,27 @@
 
                 <DockPanel>
                     <ui:FontIcon
-                        Height="40"
-                        HorizontalAlignment="Center"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        Glyph="&#xE7FC;" />
-
-                    <TextBlock
-                        Name="ui_name"
-                        Margin="12,0,0,0"
                         VerticalAlignment="Center"
-                        Style="{StaticResource BodyTextBlockStyle}" />
+                        FontFamily="PromptFont"
+                        FontSize="30"
+                        Glyph="&#x243C;" />
+
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Name="ControllerName" Style="{StaticResource BodyTextBlockStyle}" />
+                        
+                        <ui:SimpleStackPanel Spacing="2" HorizontalAlignment="Left" Orientation="Horizontal" Name="UserIndexPanel">
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+                        </ui:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </DockPanel>
 
                 <DockPanel Grid.Column="1" HorizontalAlignment="Right">
@@ -43,6 +54,7 @@
                         Width="100"
                         Click="ui_button_hook_Click"
                         FontSize="14"
+                        Content="{x:Static resx:Resources.Controller_Connect}"
                         Style="{DynamicResource AccentButtonStyle}" />
                     <Button
                         Name="ui_button_hide"
@@ -76,6 +88,6 @@
                     TextAlignment="Center"
                     TextWrapping="Wrap" />
             </ui:SimpleStackPanel>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </Border>
 </UserControl>

@@ -18,29 +18,30 @@ public class GPDWin4 : IDevice
         nTDP = new double[] { 15, 15, 28 };
         cTDP = new double[] { 5, 28 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0xC311,
-            AddressDuty = 0xC880,
-            AddressRegistry = 0x2E,
-            AddressData = 0x2F,
-            ValueMin = 0,
-            ValueMax = 127
+            AddressFanControl = 0xC311,
+            AddressFanDuty = 0xC880,
+            AddressStatusCommandPort = 0x2E,
+            AddressDataPort = 0x2F,
+            FanValueMin = 0,
+            FanValueMax = 127
         };
 
-        AngularVelocityAxis = new Vector3(-1.0f, -1.0f, 1.0f);
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxis = new Vector3(-1.0f, -1.0f, 1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
@@ -68,7 +69,20 @@ public class GPDWin4 : IDevice
         ));
     }
 
-    public override void SetFanControl(bool enable)
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM2:
+                return "\u220E";
+            case ButtonFlags.OEM3:
+                return "\u220F";
+        }
+
+        return defaultGlyph;
+    }
+
+    public override void SetFanControl(bool enable, int mode = 0)
     {
         switch (enable)
         {
@@ -80,13 +94,13 @@ public class GPDWin4 : IDevice
 
     public override void SetFanDuty(double percent)
     {
-        if (ECDetails.AddressControl == 0)
+        if (ECDetails.AddressFanControl == 0)
             return;
 
-        var duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
+        var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
         var data = Convert.ToByte(duty);
 
-        ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
+        ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, data);
     }
 
     public override bool Open()

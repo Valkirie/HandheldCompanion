@@ -18,16 +18,17 @@ public class AOKZOEA1 : IDevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2200 };
+        CpuClock = 4700;
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
@@ -39,12 +40,12 @@ public class AOKZOEA1 : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x44A,
-            AddressDuty = 0x44B,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 184
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E, // 78
+            AddressDataPort = 0x4F,     // 79
+            FanValueMin = 0,
+            FanValueMax = 184
         };
 
         // Home
@@ -111,5 +112,20 @@ public class AOKZOEA1 : IDevice
         ECRamDirectWrite(0x4F1, ECDetails, 0x00);
         ECRamDirectWrite(0x4F2, ECDetails, 0x00);
         base.Close();
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u220C";
+            case ButtonFlags.OEM2:
+                return "\u2210";
+            case ButtonFlags.OEM3:
+                return "\u2211";
+        }
+
+        return defaultGlyph;
     }
 }

@@ -18,15 +18,16 @@ public class AYANEONEXT : IDevice
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 10, 25 };
         GfxClock = new double[] { 100, 2000 };
+        CpuClock = 4500;
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
@@ -44,5 +45,18 @@ public class AYANEONEXT : IDevice
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             false, ButtonFlags.OEM2
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\uE003";
+            case ButtonFlags.OEM2:
+                return "\u220B";
+        }
+
+        return defaultGlyph;
     }
 }

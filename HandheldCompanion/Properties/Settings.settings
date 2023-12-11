@@ -132,7 +132,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SteamControllerMute" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="HIDcloakonconnect" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -188,10 +188,10 @@
     <Setting Name="QuickToolsAutoHide" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="VirtualControllerForceOrder" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="ControllerManagement" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="PhysicalControllerInstanceIds" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="SuspendedControllers" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="HidModeDoNotShowAgain" Type="System.Boolean" Scope="User">
@@ -211,6 +211,36 @@
     </Setting>
     <Setting Name="DSUip" Type="System.String" Scope="User">
       <Value Profile="(Default)">127.0.0.1</Value>
+    </Setting>
+    <Setting Name="LEDBrightness" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="LEDMainColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FFFFFF00</Value>
+    </Setting>
+    <Setting Name="LEDAmbilightVerticalBlackBarDetection" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LEDSettingsLevel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="LEDSettingsEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="LEDSecondColor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#FFFFFF00</Value>
+    </Setting>
+    <Setting Name="LEDSettingsUseAccentColor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LEDSpeed" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
+    <Setting Name="SuspendedDevices" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LegionControllerPassthrough" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

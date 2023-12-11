@@ -210,6 +210,7 @@ public partial class ProcessEx : UserControl, IDisposable
 
     private void B_KillProcess_Clicked(object sender, RoutedEventArgs e)
     {
-        Process.Kill();
+        if (Process is not null)
+            Process.Kill();
     }
 }
