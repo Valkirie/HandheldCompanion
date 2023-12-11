@@ -132,7 +132,11 @@ public class IMUGyrometer : IMUSensor
             return;
 
         foreach (var axis in reading_axis.Keys)
+<<<<<<< HEAD
             switch (MainWindow.CurrentDevice.AngularVelocityAxisSwap[axis])
+=======
+            switch (MainWindow.CurrentDevice.GyrometerAxisSwap[axis])
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             {
                 default:
                 case 'X':
@@ -146,9 +150,15 @@ public class IMUGyrometer : IMUSensor
                     break;
             }
 
+<<<<<<< HEAD
         reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.AngularVelocityAxis.X;
         reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.AngularVelocityAxis.Y;
         reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.AngularVelocityAxis.Z;
+=======
+        reading.X = (float)reading_axis['X'] * MainWindow.CurrentDevice.GyrometerAxis.X;
+        reading.Y = (float)reading_axis['Y'] * MainWindow.CurrentDevice.GyrometerAxis.Y;
+        reading.Z = (float)reading_axis['Z'] * MainWindow.CurrentDevice.GyrometerAxis.Z;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         base.ReadingChanged();
     }

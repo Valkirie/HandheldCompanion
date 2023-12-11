@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net8.0-windows10.0.19041.0;net7.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows10.0.19041.0</TargetFrameworks>
 	<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
 	<AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
 	<PlatformTarget>x64</PlatformTarget>
@@ -12,7 +12,7 @@
     <StartupObject>HandheldCompanion.App</StartupObject>
     <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
-    <Version>0.18.0.6</Version>
+    <Version>0.19.1.4</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -73,13 +73,16 @@
     <None Remove="Resources\device_aya_air.png" />
     <None Remove="Resources\device_aya_next.png" />
     <None Remove="Resources\device_ayn_loki.png" />
+    <None Remove="Resources\device_cncdan_nucdeck.png" />
     <None Remove="Resources\device_generic.png" />
     <None Remove="Resources\device_gpd3.png" />
     <None Remove="Resources\device_gpd4.png" />
     <None Remove="Resources\device_gpd_win2.png" />
     <None Remove="Resources\device_gpd_winmax2.png" />
+    <None Remove="Resources\device_legion_go.png" />
     <None Remove="Resources\device_onexplayer_2.png" />
     <None Remove="Resources\device_onexplayer_mini.png" />
+    <None Remove="Resources\device_onexplayer_onexfly.png" />
     <None Remove="Resources\device_rog_ally.png" />
     <None Remove="Resources\device_valve_jupiter.png" />
     <None Remove="Resources\droix.png" />
@@ -108,6 +111,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\device_cncdan_nucdeck.png" />
+    <Resource Include="Resources\device_legion_go.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\controller_2_0.png" />
     <Resource Include="Resources\device_aokzoe_a1.png" />
     <Resource Include="Resources\device_aya_2.png" />
@@ -129,6 +137,7 @@
     <Resource Include="Resources\device_gpd_winmax2.png" />
     <Resource Include="Resources\device_onexplayer_2.png" />
     <Resource Include="Resources\device_onexplayer_mini.png" />
+    <Resource Include="Resources\device_onexplayer_onexfly.png" />
     <Resource Include="Resources\device_rog_ally.png" />
     <Resource Include="Resources\device_valve_jupiter.png" />
     <Resource Include="Resources\droix.png" />
@@ -139,6 +148,7 @@
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.24.0" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.3-pre256" />
     <PackageReference Include="LiveCharts.Wpf.Core" Version="0.9.8" />
     <PackageReference Include="MathConverter" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
@@ -146,7 +156,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="NAudio" Version="2.2.0" />
-    <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.60" />
+    <PackageReference Include="Nefarius.Drivers.HidHide" Version="1.12.2" />
     <PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.17.406" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -158,10 +168,13 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="SharpDX" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
     <PackageReference Include="System.IO.Ports" Version="7.0.0" />
     <PackageReference Include="System.Management" Version="7.0.2" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
     <PackageReference Include="WindowsAPICodePack" Version="7.0.4" />
     <PackageReference Include="WindowsInput" Version="6.4.1" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.0" />
@@ -2244,6 +2257,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\RTSSSharedMemoryNET.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SapientiaUsb.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ucrtbased.dll">

@@ -62,6 +62,26 @@
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
+            <!--  Device icon  -->
+            <ui:NavigationViewItem
+                Name="navDevice"
+                Content="{x:Static resx:Resources.MainWindow_navDevice}"
+                Tag="DevicePage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F7;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
+            <!--  Performance icon  -->
+            <ui:NavigationViewItem
+                Name="navPerformance"
+                Content="{x:Static resx:Resources.MainWindow_navPerformance}"
+                Tag="PerformancePage">
+                <ui:NavigationViewItem.Icon>
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE945;" />
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
+
             <!--  Profiles icon  -->
             <ui:NavigationViewItem
                 Name="navProfiles"
@@ -105,6 +125,32 @@
                     <!-- <Image Source="/Resources/icons/info-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
+        </ui:NavigationView.MenuItems>
+
+        <ui:NavigationView.FooterMenuItems>
+            <!--  Notifications icon  -->
+            <ui:NavigationViewItem
+                Name="navNotifications"
+                Content="{x:Static resx:Resources.MainWindow_navNotifications}"
+                Tag="NotificationsPage">
+                <ui:NavigationViewItem.Icon>
+                    <Grid>
+                        <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
+
+                        <Grid Name="HasNotifications" Margin="11,-11,-11,11" Visibility="Hidden">
+                            <ui:FontIcon
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="Red"
+                                Glyph="&#xF136;" />
+                            <ui:FontIcon
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="20"
+                                Foreground="White"
+                                Glyph="&#xF13C;" />
+                        </Grid>
+                    </Grid>
+                </ui:NavigationViewItem.Icon>
+            </ui:NavigationViewItem>
 
             <!--  Settings  -->
             <ui:NavigationViewItem
@@ -116,7 +162,11 @@
                     <!-- <Image Source="/Resources/icons/settings-48.png" Margin="-10"/> -->
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
+<<<<<<< HEAD
         </ui:NavigationView.MenuItems>
+=======
+        </ui:NavigationView.FooterMenuItems>
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         <ui:NavigationView.Content>
             <Grid>
@@ -128,7 +178,7 @@
                 <common:TouchScrollViewer
                     x:Name="scrollViewer"
                     Grid.Row="0"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Stretch"
                     PanningMode="VerticalOnly">
                     <ui:Frame
                         Name="ContentFrame"
@@ -150,10 +200,31 @@
                         Orientation="Horizontal"
                         Spacing="6">
 
-                        <!--  SELECT  -->
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                        <!--  Toggle  -->
+                        <ui:SimpleStackPanel
+                            Name="GamepadUIToggle"
+                            Orientation="Horizontal"
+                            Spacing="2">
                             <ui:FontIcon
-                                Name="GamepadUISelect"
+                                Name="GamepadUIToggleIcon"
+                                Height="40"
+                                VerticalAlignment="Center"
+                                FontFamily="PromptFont"
+                                FontSize="28" />
+                            <TextBlock
+                                Name="GamepadUIToggleDesc"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
+                        </ui:SimpleStackPanel>
+
+                        <!--  Select  -->
+                        <ui:SimpleStackPanel
+                            Name="GamepadUISelect"
+                            Orientation="Horizontal"
+                            Spacing="2">
+                            <ui:FontIcon
+                                Name="GamepadUISelectIcon"
                                 Height="40"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
@@ -161,14 +232,17 @@
                             <TextBlock
                                 Name="GamepadUISelectDesc"
                                 VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Visibility="{Binding Visibility, ElementName=GamepadUISelect}" />
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
                         </ui:SimpleStackPanel>
 
-                        <!--  BACK  -->
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="2">
+                        <!--  Back  -->
+                        <ui:SimpleStackPanel
+                            Name="GamepadUIBack"
+                            Orientation="Horizontal"
+                            Spacing="2">
                             <ui:FontIcon
-                                Name="GamepadUIBack"
+                                Name="GamepadUIBackIcon"
                                 Height="40"
                                 VerticalAlignment="Center"
                                 FontFamily="PromptFont"
@@ -176,8 +250,8 @@
                             <TextBlock
                                 Name="GamepadUIBackDesc"
                                 VerticalAlignment="Center"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Visibility="{Binding Visibility, ElementName=GamepadUIBack}" />
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}" />
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </Grid>

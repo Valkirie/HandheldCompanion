@@ -4,12 +4,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+<<<<<<< HEAD
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="Suspender"
+=======
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="QuickSuspender"
+    Title="{x:Static resx:Resources.QuickSuspenderPage_Title}"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     Margin="15,0,0,0"
     d:Background="White"
     d:DesignHeight="1200"
-    d:DesignWidth="500"
+    d:DesignWidth="640"
     KeepAlive="True"
     mc:Ignorable="d">
 

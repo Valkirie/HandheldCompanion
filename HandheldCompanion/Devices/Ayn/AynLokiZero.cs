@@ -8,5 +8,6 @@ public class LokiZero : AynLoki
         nTDP = new double[] { 10, 10, 10 };
         cTDP = new double[] { 5, 15 };
         GfxClock = new double[] { 100, 1100 };
+        CpuClock = 3200;
     }
 }

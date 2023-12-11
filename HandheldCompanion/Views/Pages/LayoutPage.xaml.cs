@@ -92,14 +92,22 @@ public partial class LayoutPage : Page
         LayoutManager.Updated += LayoutManager_Updated;
         LayoutManager.Initialized += LayoutManager_Initialized;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+<<<<<<< HEAD
         MainWindow.controllerPage.HIDchanged += VirtualManager_ControllerSelected;
+=======
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
         ProfileManager.Updated += ProfileManager_Updated;
     }
 
+<<<<<<< HEAD
     private void ProfileManager_Updated(Profile profile, ProfileUpdateSource source, bool isCurrent)
+=======
+    private void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     {
         if (!MainWindow.CurrentPageName.Equals("LayoutPage"))
             return;
@@ -108,7 +116,11 @@ public partial class LayoutPage : Page
         // good enough
         switch(source)
         {
+<<<<<<< HEAD
             case ProfileUpdateSource.QuickProfilesPage:
+=======
+            case UpdateSource.QuickProfilesPage:
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 {
                     if (currentTemplate.Executable.Equals(profile.Executable))
                         MainWindow.layoutPage.UpdateLayout(profile.Layout);
@@ -174,12 +186,12 @@ public partial class LayoutPage : Page
             // search if we already have this template listed
             foreach (var item in cB_Layouts.Items)
             {
-                if (item.GetType() != typeof(ComboBoxItem))
+                if (item is not ComboBoxItem)
                     continue;
 
                 // get template
                 var parent = (ComboBoxItem)item;
-                if (parent.Content.GetType() != typeof(LayoutTemplate))
+                if (parent.Content is not LayoutTemplate)
                     continue;
 
                 var template = (LayoutTemplate)parent.Content;
@@ -342,7 +354,7 @@ public partial class LayoutPage : Page
         var comboBox = (ComboBox)sender;
         foreach (var item in comboBox.Items)
         {
-            if (item.GetType() != typeof(ComboBoxItem))
+            if (item is not ComboBoxItem)
                 continue;
 
             var layoutTemplate = (ComboBoxItem)item;
@@ -356,13 +368,13 @@ public partial class LayoutPage : Page
         if (cB_Layouts.SelectedItem is null)
             return;
 
-        if (cB_Layouts.SelectedItem.GetType() != typeof(ComboBoxItem))
+        if (cB_Layouts.SelectedItem is not ComboBoxItem)
             return;
 
         // get parent
         var parent = cB_Layouts.SelectedItem as ComboBoxItem;
 
-        if (parent.Content.GetType() != typeof(LayoutTemplate))
+        if (parent.Content is not LayoutTemplate)
             return;
 
         // get template

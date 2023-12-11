@@ -16,12 +16,12 @@ public class GPDWinMax2 : IDevice
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x275,
-            AddressDuty = 0x1809,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 184
+            AddressFanControl = 0x275,
+            AddressFanDuty = 0x1809,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 184
         };
 
         // Disabled this one as Win Max 2 also sends an Xbox guide input when Menu key is pressed.
@@ -43,5 +43,18 @@ public class GPDWinMax2 : IDevice
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             false, ButtonFlags.OEM3
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM2:
+                return "\u220E";
+            case ButtonFlags.OEM3:
+                return "\u220F";
+        }
+
+        return defaultGlyph;
     }
 }

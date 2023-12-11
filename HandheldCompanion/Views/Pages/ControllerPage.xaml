@@ -4,12 +4,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:HandheldCompanion.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hints="clr-namespace:HandheldCompanion.Controls.Hints"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+<<<<<<< HEAD
+=======
+    Name="Controller"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     Title="{x:Static resx:Resources.ControllerPage_Controller}"
     d:Background="White"
-    d:DesignHeight="1500"
+    d:DesignHeight="1800"
     d:DesignWidth="1000"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -33,6 +38,78 @@
                             <ImageBrush ImageSource="/Resources/controller_2_0.png" Stretch="Uniform" />
                         </Grid.Background>
 
+<<<<<<< HEAD
+=======
+                        <ui:SimpleStackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Spacing="12">
+
+                            <ui:ProgressRing
+                                Name="ControllerLoading"
+                                Width="125"
+                                Height="125"
+                                Visibility="Hidden" />
+
+                            <ui:SimpleStackPanel
+                                Name="UserIndexPanel"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal"
+                                Spacing="2">
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                                <Border
+                                    Width="12"
+                                    Height="12"
+                                    Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                    CornerRadius="2" />
+                            </ui:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
+
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                         <ui:SimpleStackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
@@ -80,11 +157,53 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerDesc}"
                                         TextWrapping="Wrap" />
+<<<<<<< HEAD
                                 </ui:SimpleStackPanel>
                             </DockPanel>
                         </Expander.Header>
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}" TextWrapping="Wrap" />
                     </Expander>
+=======
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_NoPhysicalControllerAction}" TextWrapping="Wrap" />
+                    </Expander>
+
+                    <!--  Emulated controller managed by profile  -->
+                    <Expander
+                        Name="HintsHIDManagedByProfile"
+                        Padding="15,12,12,12"
+                        HorizontalAlignment="Stretch"
+                        d:Visibility="Visible"
+                        Visibility="Collapsed">
+
+                        <Expander.Header>
+                            <DockPanel Margin="0,12,12,12">
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="Segoe Fluent Icons"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    Glyph="&#xe7ba;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileWarning}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_HIDManagedByProfileAction}" TextWrapping="Wrap" />
+                    </Expander>
+
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
                     <!--  Has hidden physical controller but no virtual controller  -->
                     <Expander
@@ -176,6 +295,7 @@
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenDesc}"
                                         TextWrapping="Wrap" />
+<<<<<<< HEAD
                                 </ui:SimpleStackPanel>
                             </DockPanel>
                         </Expander.Header>
@@ -238,6 +358,12 @@
                             </DockPanel>
                         </Expander.Header>
                         <TextBlock Text="{x:Static resx:Resources.ControllerPage_SteamNeptuneDesktopAction}" TextWrapping="Wrap" />
+=======
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+                        </Expander.Header>
+                        <TextBlock Text="{x:Static resx:Resources.ControllerPage_PhysicalControllerNotHiddenAction}" TextWrapping="Wrap" />
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     </Expander>
                 </ui:SimpleStackPanel>
 
@@ -262,7 +388,7 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -345,6 +471,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="5"
                                     TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="SliderStrength_ValueChanged"
                                     Value="100" />
                             </DockPanel>
@@ -359,8 +486,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -368,7 +495,7 @@
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE877;" />
+                                    Glyph="&#xe95f;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_VibrateDevice}" />
@@ -386,6 +513,44 @@
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="Toggle_Vibrate_Toggled" />
+                        </Grid>
+                    </Border>
+
+                    <!--  Controller management  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xedab;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_ControllerManagement}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_ControllerManagementDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch
+                                Name="Toggle_ControllerManagement"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_ControllerManagement_Toggled" />
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>
@@ -422,8 +587,8 @@
                             <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock
@@ -446,8 +611,8 @@
                                     BorderThickness="0,1,0,0" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock
@@ -481,8 +646,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -490,7 +655,7 @@
                                     Height="40"
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE793;" />
+                                    Glyph="&#xED1A;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_CloakDevice}" />
@@ -519,8 +684,8 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="9*" MinWidth="200" />
-                                <ColumnDefinition MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -552,6 +717,7 @@
 
                 <!--  Steam Deck settings  -->
                 <ui:SimpleStackPanel
+<<<<<<< HEAD
                     Name="SteamControllerPanel"
                     d:Visibility="Visible"
                     Spacing="6"
@@ -560,14 +726,30 @@
 
                     <!--  Mute virtual controller  -->
                     <Border
+=======
+                    Name="DeviceSpecificPanel"
+                    d:Visibility="Visible"
+                    Spacing="6"
+                    Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSpecificSettings}" />
+
+                    <!--  Mute virtual controller (Steam Deck)  -->
+                    <Border
+                        Name="MuteVirtualController"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                         Padding="15,12,12,12"
                         Background="{DynamicResource ExpanderHeaderBackground}"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
 
                         <Grid>
                             <Grid.ColumnDefinitions>
+<<<<<<< HEAD
                                 <ColumnDefinition Width="9*" MinWidth="200" />
                                 <ColumnDefinition MinWidth="200" />
+=======
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                             </Grid.ColumnDefinitions>
 
                             <DockPanel>
@@ -593,6 +775,48 @@
                                 HorizontalAlignment="Right"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="Toggle_SCMuteController_Toggled" />
+<<<<<<< HEAD
+=======
+                        </Grid>
+                    </Border>
+
+                    <!--  Touchpad passthrough (Legion Go)  -->
+                    <Border
+                        Name="TouchpadPassthrough"
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe772;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthrough}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ControllerPage_LegionGoPassthroughDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <ui:ToggleSwitch
+                                Name="Toggle_TouchpadPassthrough"
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                Toggled="Toggle_TouchpadPassthrough_Toggled" />
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                         </Grid>
                     </Border>
                 </ui:SimpleStackPanel>

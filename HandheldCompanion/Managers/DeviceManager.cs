@@ -70,6 +70,9 @@ public static class DeviceManager
 
     public static void Start()
     {
+        // fail-safe
+        PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
+
         UsbDeviceListener.StartListen(DeviceInterfaceIds.UsbDevice);
         UsbDeviceListener.DeviceArrived += UsbDevice_DeviceArrived;
         UsbDeviceListener.DeviceRemoved += UsbDevice_DeviceRemoved;
@@ -82,7 +85,8 @@ public static class DeviceManager
         HidDeviceListener.DeviceArrived += HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved += HidDevice_DeviceRemoved;
 
-        Refresh();
+        RefreshXInput();
+        RefreshDInput();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -109,14 +113,10 @@ public static class DeviceManager
         HidDeviceListener.DeviceArrived -= HidDevice_DeviceArrived;
         HidDeviceListener.DeviceRemoved -= HidDevice_DeviceRemoved;
 
-        LogManager.LogInformation("{0} has stopped", "DeviceManager");
-    }
+        // fail-safe
+        PnPUtil.StartPnPUtil(@"/add-driver C:\Windows\INF\xusb22.inf /install");
 
-    public static void Refresh()
-    {
-        RefreshHID();
-        RefreshXInput();
-        RefreshDInput();
+        LogManager.LogInformation("{0} has stopped", "DeviceManager");
     }
 
     private static void RefreshXInput()
@@ -163,76 +163,85 @@ public static class DeviceManager
             { InterfaceGuid = DeviceInterfaceIds.HidDevice, SymLink = pair.Key });
     }
 
-    private static PnPDetails FindDevice(string SymLink, bool Removed = false)
+    private static PnPDetails FindDevice(string InstanceId)
     {
-        if (SymLink.StartsWith(@"USB\"))
-            return FindDeviceFromUSB(SymLink, Removed);
-        if (SymLink.StartsWith(@"HID\"))
-            return FindDeviceFromHID(SymLink, Removed);
+        if (InstanceId.StartsWith(@"USB\"))
+            return FindDeviceFromUSB(InstanceId);
+        if (InstanceId.StartsWith(@"HID\"))
+            return FindDeviceFromHID(InstanceId);
         return null;
     }
 
-    public static PnPDetails FindDeviceFromUSB(string SymLink, bool Removed)
+    public static PnPDetails FindDeviceFromUSB(string InstanceId)
     {
-        var details = PnPDevices.Values
-            .FirstOrDefault(device => device.baseContainerDeviceInstanceId.Equals(SymLink, StringComparison.InvariantCultureIgnoreCase));
-
-        // backup plan
-        if (details is null)
+        PnPDetails details = null;
+        while(details is null)
         {
-            var deviceIndex = 0;
-            while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.UsbDevice, out var path, out var instanceId,
-                       deviceIndex++))
-            {
-                var parent = PnPDevice.GetDeviceByInterfaceId(path);
+            details = PnPDevices.Values.FirstOrDefault(device => device.baseContainerDeviceInstanceId.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase));
 
-                path = PathToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString());
-                if (path == SymLink)
-                {
-                    details = PnPDevices.Values.FirstOrDefault(device => device.baseContainerDeviceInstanceId.Equals(parent.InstanceId,
-                        StringComparison.InvariantCultureIgnoreCase));
+            if (details is not null)
+                return details;
+
+            // look for parent
+            try
+            {
+                PnPDevice pnPDevice = PnPDevice.GetDeviceByInstanceId(InstanceId);
+                if (pnPDevice.Parent is null)
                     break;
-                }
+
+                InstanceId = pnPDevice.Parent.InstanceId;
+            }
+            catch
+            {
+                break;
             }
         }
 
         return details;
     }
 
-    public static PnPDetails FindDeviceFromHID(string SymLink, bool Removed)
+    public static PnPDetails FindDeviceFromHID(string InstanceId)
     {
-        PnPDevices.TryGetValue(SymLink, out var device);
+        PnPDevices.TryGetValue(InstanceId, out var device);
         return device;
     }
 
-    private static void RefreshHID()
+    private static int GetDeviceIndex(string path)
     {
-        var deviceIndex = 0;
-        while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var path, out var instanceId,
-                   deviceIndex++))
-        {
-            var children = PnPDevice.GetDeviceByInterfaceId(path);
+        int deviceIndex = 0;
 
-            var parent = children;
-            var parentId = string.Empty;
+        while (Devcon.FindByInterfaceGuid(DeviceInterfaceIds.HidDevice, out var symlink, out var instanceId, deviceIndex++))
+            if (symlink == path)
+                return deviceIndex;
+
+        return 0;
+    }
+
+    private static PnPDetails GetDetails(string path)
+    {
+        try
+        {
+            string SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString());
+
+            PnPDevice children = PnPDevice.GetDeviceByInterfaceId(path);
 
             // get attributes
-            var attributes = GetHidAttributes(path);
-            var capabilities = GetHidCapabilities(path);
+            Attributes? attributes = GetHidAttributes(path);
+            Capabilities? capabilities = GetHidCapabilities(path);
 
             if (attributes is null || capabilities is null)
-                continue;
+                return null;
 
-            var ProductID = ((Attributes)attributes).ProductID.ToString("X4");
-            var VendorID = ((Attributes)attributes).VendorID.ToString("X4");
-            var FriendlyName = string.Empty;
+            string ProductID = ((Attributes)attributes).ProductID.ToString("X4");
+            string VendorID = ((Attributes)attributes).VendorID.ToString("X4");
 
-            while (parent is not null)
+            IPnPDevice? parent = children;
+            string parentId = parent.InstanceId;
+
+            while (parent.Parent is not null)
             {
-                if (string.IsNullOrEmpty(FriendlyName))
-                    FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
-
-                parentId = parent.GetProperty<string>(DevicePropertyKey.Device_Parent);
+                // update parent InstanceId
+                parentId = parent.Parent.InstanceId;
 
                 if (parentId.Equals(@"HTREE\ROOT\0", StringComparison.InvariantCultureIgnoreCase))
                     break;
@@ -252,49 +261,57 @@ public static class DeviceManager
                 if (!parentId.Contains(VendorID, StringComparison.InvariantCultureIgnoreCase))
                     break;
 
-                parent = PnPDevice.GetDeviceByInstanceId(parentId);
-            }
+                // we want the closest parent
+                PnPDevice check = PnPDevice.GetDeviceByInstanceId(parentId);
+                if (check.Children is not null)
+                {
+                    if (check.Children.Count() > 1)
+                        break;
+                }
 
-            if (string.IsNullOrEmpty(FriendlyName))
-            {
-                var product = GetProductString(path);
-                var vendor = GetManufacturerString(path);
-
-                FriendlyName = string.Join(' ', vendor, product).Trim();
+                // update parent
+                parent = check;
             }
 
             // get details
             PnPDetails details = new PnPDetails
             {
-                Path = path,
-                SymLink = PathToInstanceId(path, DeviceInterfaceIds.HidDevice.ToString()),
-
-                deviceInstanceId = children.InstanceId,
-                baseContainerDeviceInstanceId = parent.InstanceId,
-
-                Name = FriendlyName,
-
+                devicePath = path,
+                SymLink = SymLink,
+                Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
+                Enumerator = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
+                deviceInstanceId = children.InstanceId.ToUpper(),
+                baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
                 isVirtual = parent.IsVirtual() || children.IsVirtual(),
                 isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
-
-                arrivalDate = children.GetProperty<DateTimeOffset>(DevicePropertyKey.Device_LastArrivalDate),
-
-                attributes = (Attributes)attributes,
-                capabilities = (Capabilities)capabilities,
-
-                DeviceIdx = deviceIndex
+                ProductID = ((Attributes)attributes).ProductID,
+                VendorID = ((Attributes)attributes).VendorID,
+                isXInput = children.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
             };
 
+            // get name
+            string DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+            string FriendlyName = parent.GetProperty<string>(DevicePropertyKey.Device_FriendlyName);
+
+            if (!string.IsNullOrEmpty(FriendlyName))
+                details.Name = FriendlyName;
+            else if (!string.IsNullOrEmpty(DeviceDesc))
+                details.Name = DeviceDesc;
+
             // add or update device
-            if (!PnPDevices.ContainsKey(details.SymLink))
-                PnPDevices.TryAdd(details.SymLink, details);
+            PnPDevices[details.SymLink] = details;
+
+            return details;
         }
+        catch { }
+
+        return null;
     }
 
     public static List<PnPDetails> GetDetails(ushort VendorId = 0, ushort ProductId = 0)
     {
-        return PnPDevices.Values.OrderBy(a => a.DeviceIdx).Where(a =>
-            a.attributes.VendorID == VendorId && a.attributes.ProductID == ProductId && !a.isHooked).ToList();
+        return PnPDevices.Values.OrderBy(device => device.XInputDeviceIdx).Where(device =>
+            device.VendorID == VendorId && device.ProductID == ProductId && !device.isHooked).ToList();
     }
 
     public static PnPDetails GetDeviceByInterfaceId(string path)
@@ -305,8 +322,8 @@ public static class DeviceManager
 
         return new PnPDetails
         {
-            Path = path,
-            SymLink = PathToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString()),
+            devicePath = path,
+            SymLink = SymLinkToInstanceId(path, DeviceInterfaceIds.UsbDevice.ToString()),
 
             deviceInstanceId = device.InstanceId,
             baseContainerDeviceInstanceId = device.InstanceId
@@ -360,13 +377,11 @@ public static class DeviceManager
     private static Attributes? GetHidAttributes(string path)
     {
         using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ | Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
             Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
+            IntPtr.Zero,
+            Kernel32.CreationDisposition.OPEN_EXISTING,
+            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
             Kernel32.SafeObjectHandle.Null
         );
 
@@ -376,13 +391,11 @@ public static class DeviceManager
     private static Capabilities? GetHidCapabilities(string path)
     {
         using var handle = Kernel32.CreateFile(path,
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ |
-            Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
+            Kernel32.ACCESS_MASK.GenericRight.GENERIC_READ | Kernel32.ACCESS_MASK.GenericRight.GENERIC_WRITE,
             Kernel32.FileShare.FILE_SHARE_READ | Kernel32.FileShare.FILE_SHARE_WRITE,
-            IntPtr.Zero, Kernel32.CreationDisposition.OPEN_EXISTING,
-            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL
-            | Kernel32.CreateFileFlags.FILE_FLAG_NO_BUFFERING
-            | Kernel32.CreateFileFlags.FILE_FLAG_WRITE_THROUGH,
+            IntPtr.Zero,
+            Kernel32.CreationDisposition.OPEN_EXISTING,
+            Kernel32.CreateFileFlags.FILE_ATTRIBUTE_NORMAL,
             Kernel32.SafeObjectHandle.Null
         );
 
@@ -401,129 +414,148 @@ public static class DeviceManager
 
     public static PnPDetails GetPnPDeviceEx(string SymLink)
     {
-        if (PnPDevices.TryGetValue(SymLink, out var details))
-            return details;
-
-        return null;
+        PnPDevices.TryGetValue(SymLink, out var details);
+        return details;
     }
 
-    public static string PathToInstanceId(string SymLink, string InterfaceGuid)
+    public static string SymLinkToInstanceId(string SymLink, string InterfaceGuid)
     {
-        var output = SymLink.ToUpper().Replace(InterfaceGuid, "", StringComparison.InvariantCultureIgnoreCase);
-        output = output.Replace("#", @"\");
-        output = output.Replace(@"\\?\", "");
-        output = output.Replace(@"\{}", "");
-        return output;
+        string InstanceId = SymLink.ToUpper().Replace(InterfaceGuid, "", StringComparison.InvariantCultureIgnoreCase);
+        InstanceId = InstanceId.Replace("#", @"\");
+        InstanceId = InstanceId.Replace(@"\\?\", "");
+        InstanceId = InstanceId.Replace(@"\{}", "");
+        return InstanceId;
     }
 
-    private static async void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
-    {
-        var SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-        var deviceEx = FindDevice(SymLink, true);
-        if (deviceEx is null)
-            return;
-
-        // give system at least one second to initialize device
-        await Task.Delay(1000);
-        if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
-        {
-            // RefreshHID();
-            LogManager.LogDebug("XUsbDevice {1} removed: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical");
-
-            // raise event
-            XUsbDeviceRemoved?.Invoke(deviceEx, obj);
-        }
-    }
-
-    private static async void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
+    private static void XUsbDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         try
         {
-            var SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-            if (IsInitialized)
+            Task.Run(async () =>
             {
-                // give system at least one second to initialize device
-                await Task.Delay(1000);
-                RefreshHID();
-            }
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
-            var deviceEx = FindDevice(SymLink);
-            if (deviceEx is not null && deviceEx.isGaming)
-            {
-                deviceEx.isXInput = true;
-
-                using (SafeFileHandle handle = CreateFileW(obj.SymLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0))
+                PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
                 {
-                    if (handle.IsInvalid)
-                        goto Event;
-
-                    byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
-                    byte[] ledStateData = new byte[3];
-                    uint len = 0;
-
-                    if (!DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, gamepadStateRequest0101, gamepadStateRequest0101.Length, ledStateData, ledStateData.Length, ref len, 0))
-                        goto Event;
-
-                    byte ledState = ledStateData[2];
-                    deviceEx.XInputUserIndex = XINPUT_LED_TO_PORT_MAP[ledState];
+                    deviceEx = FindDevice(InstanceId);
+                    await Task.Delay(100);
                 }
 
-                LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
-                    deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+                if (deviceEx is null)
+                    return;
+
+                if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+                {
+                    LogManager.LogDebug("XUsbDevice {1} removed from slot {2}: {0}", deviceEx.Name, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
+                    XUsbDeviceRemoved?.Invoke(deviceEx, obj);
+                }
+            });
+        }
+        catch { }
+    }
+
+    private static void XUsbDevice_DeviceArrived(DeviceEventArgs obj)
+    {
+        try
+        {
+            Task.Run(async () =>
+            {
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+
+                PnPDetails deviceEx = null;
+
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = FindDevice(InstanceId);
+                    await Task.Delay(100);
+                }
+
+                if (deviceEx is not null && deviceEx.isGaming)
+                {
+                    deviceEx.isXInput = true;
+                    deviceEx.baseContainerDevicePath = obj.SymLink;
+
+                    if (deviceEx.Enumerator.Equals("USB"))
+                        deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink);
+
+                    if (deviceEx.XInputUserIndex == byte.MaxValue)
+                        deviceEx.XInputDeviceIdx = GetDeviceIndex(obj.SymLink);
+
+                    LogManager.LogDebug("XUsbDevice {4} arrived on slot {5}: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name,
+                        deviceEx.GetVendorID(), deviceEx.GetProductID(), deviceEx.deviceInstanceId, deviceEx.isVirtual ? "virtual" : "physical", deviceEx.XInputUserIndex);
 
                 // raise event
                 Event:
                     XUsbDeviceArrived?.Invoke(deviceEx, obj);
-            }
+                }
+            });
         }
         catch
         {
         }
     }
 
-    private static async void HidDevice_DeviceRemoved(DeviceEventArgs obj)
+    private static void HidDevice_DeviceRemoved(DeviceEventArgs obj)
     {
         try
         {
-            var SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+            Task.Run(async () =>
+            {
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
 
-            var deviceEx = FindDevice(SymLink, true);
-            if (deviceEx is null)
-                return;
+                PnPDetails deviceEx = null;
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = FindDevice(InstanceId);
+                    await Task.Delay(100);
+                }
 
-            // give system at least one second to initialize device (+500 ms to give XInput priority)
-            await Task.Delay(1500);
-            PnPDevices.TryRemove(deviceEx.SymLink, out var value);
+                // skip if XInput
+                if (deviceEx is null || deviceEx.isXInput)
+                    return;
 
-            // RefreshHID();
-            LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
-            HidDeviceRemoved?.Invoke(deviceEx, obj);
+                if (PnPDevices.TryRemove(deviceEx.SymLink, out var value))
+                {
+                    LogManager.LogDebug("HidDevice removed: {0}", deviceEx.Name);
+                    HidDeviceRemoved?.Invoke(deviceEx, obj);
+                }
+            });
         }
         catch
         {
         }
     }
 
-    private static async void HidDevice_DeviceArrived(DeviceEventArgs obj)
+    private static void HidDevice_DeviceArrived(DeviceEventArgs obj)
     {
-        var SymLink = PathToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
-
-        if (IsInitialized)
+        try
         {
-            // give system at least one second to initialize device (+500 ms to give XInput priority)
-            await Task.Delay(1500);
-            RefreshHID();
-        }
+            Task.Run(async () =>
+            {
+                string InstanceId = SymLinkToInstanceId(obj.SymLink, obj.InterfaceGuid.ToString());
+                PnPDetails deviceEx = null;
 
-        var deviceEx = FindDevice(SymLink);
-        if (deviceEx is not null && !deviceEx.isXInput)
-        {
-            LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
-                deviceEx.GetProductID(), deviceEx.deviceInstanceId);
-            HidDeviceArrived?.Invoke(deviceEx, obj);
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(8));
+                while (DateTime.Now < timeout && deviceEx is null)
+                {
+                    deviceEx = GetDetails(obj.SymLink);
+                    await Task.Delay(100);
+                }
+
+                // skip if XInput
+                if (deviceEx is null || deviceEx.isXInput)
+                    return;
+
+                LogManager.LogDebug("HidDevice arrived: {0} (VID:{1}, PID:{2}) {3}", deviceEx.Name, deviceEx.GetVendorID(),
+                    deviceEx.GetProductID(), deviceEx.deviceInstanceId);
+                HidDeviceArrived?.Invoke(deviceEx, obj);
+            });
         }
+        catch { }
     }
 
     private static void UsbDevice_DeviceRemoved(DeviceEventArgs obj)
@@ -556,6 +588,34 @@ public static class DeviceManager
         catch
         {
         }
+    }
+
+    public static byte GetXInputIndexAsync(string SymLink)
+    {
+        byte ledState = 0;
+
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
+        while (DateTime.Now < timeout && (ledState < 2 || ledState > 9))
+        {
+            using (SafeFileHandle handle = CreateFileW(SymLink, GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0))
+            {
+                if (handle.IsInvalid)
+                    return byte.MaxValue;
+
+                byte[] gamepadStateRequest0101 = new byte[3] { 0x01, 0x01, 0x00 };
+                byte[] ledStateData = new byte[3];
+                uint len = 0;
+
+                if (!DeviceIoControl(handle, IOCTL_XUSB_GET_LED_STATE, gamepadStateRequest0101, gamepadStateRequest0101.Length, ledStateData, ledStateData.Length, ref len, 0))
+                    return byte.MaxValue;
+
+                ledState = ledStateData[2];
+            }
+
+            Task.Delay(1000);
+        }
+
+        return XINPUT_LED_TO_PORT_MAP[ledState];
     }
 
     public static string[]? GetDevices(Guid? classGuid)

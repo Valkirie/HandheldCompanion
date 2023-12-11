@@ -263,7 +263,7 @@ public static class HidHide
         List<HidHideDevice> hidHideDevices = GetHidHideDevices();
 
         if (hidHideDevices.Count != 0)
-            return hidHideDevices.FirstOrDefault(device => device.Devices.Where(a => a.BaseContainerDeviceInstancePath == deviceInstancePath).Any());
+            return hidHideDevices.FirstOrDefault(device => device.Devices.Where(a => a.BaseContainerDeviceInstancePath == deviceInstancePath || a.DeviceInstancePath == deviceInstancePath).Any());
 
         return null;
     }

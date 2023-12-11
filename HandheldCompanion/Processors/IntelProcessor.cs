@@ -115,7 +115,7 @@ public class IntelProcessor : Processor
         }
     }
 
-    public override void SetTDPLimit(PowerType type, double limit, int result)
+    public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
     {
         if (Monitor.TryEnter(IsBusy))
         {
@@ -131,7 +131,7 @@ public class IntelProcessor : Processor
                     break;
             }
 
-            base.SetTDPLimit(type, limit, error);
+            base.SetTDPLimit(type, limit, immediate, error);
 
             Monitor.Exit(IsBusy);
         }

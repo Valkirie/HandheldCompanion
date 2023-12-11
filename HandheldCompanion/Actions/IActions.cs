@@ -76,10 +76,6 @@ namespace HandheldCompanion.Actions
         protected object Value;
         protected object prevValue;
 
-        // values below are common for button type actions
-
-        protected int Period;
-
         // TODO: multiple delay, delay ranges
         public PressType PressType = PressType.Short;
         public int LongPressTime = 450; // default value for steam
@@ -101,7 +97,6 @@ namespace HandheldCompanion.Actions
 
         public IActions()
         {
-            Period = TimerManager.GetPeriod();
         }
 
         public virtual void SetHaptic(ButtonFlags button, bool up)
@@ -113,42 +108,23 @@ namespace HandheldCompanion.Actions
             ControllerManager.GetTargetController()?.SetHaptic(this.HapticStrength, button);
         }
 
-        // if longDelay == 0 no new logic will be executed
-        public virtual void Execute(ButtonFlags button, bool value, int longTime)
+        public virtual void Execute(ButtonFlags button, bool value)
         {
-            // reset failed attempts on button release
-            if (pressTimer >= 0 && !value &&
-                ((PressType == PressType.Short && pressTimer >= longTime) ||
-                 (PressType == PressType.Long && pressTimer < longTime)))
+            switch(PressType)
             {
-                pressTimer = -1;
-                prevValue = false;
-                return;
-            }
-
-            // some long presses exist and button was just pressed, start the timer and quit
-            if (longTime > 0 && value && !(bool)prevValue)
-            {
-                pressTimer = 0;
-                prevValue = true;
-                return;
-            }
-
-            if (pressTimer >= 0)
-            {
-                pressTimer += Period;
-
-                // conditions were met to trigger either short or long, reset state, press buttons
-                if ((!value && PressType == PressType.Short && pressTimer < longTime) ||
-                    (value && PressType == PressType.Long && pressTimer >= longTime))
-                {
-                    pressTimer = -1;
-                    prevValue = false;  // simulate a situation where the button was just pressed
-                    value = true;       // prev = false, current = true, this way toggle works
-                }
-                // timer active, conditions not met, carry on, maybe smth happens, maybe failed attempt
-                else
-                    return;
+                case PressType.Long:
+                    {
+                        if (value || (pressTimer <= LongPressTime && pressTimer >= 0))
+                        {
+                            pressTimer += TimerManager.GetPeriod();
+                            value = true;
+                        }
+                        else if(pressTimer >= LongPressTime)
+                        {
+                            pressTimer = -1;
+                        }
+                    }
+                    break;
             }
 
             if (Toggle)
@@ -166,7 +142,7 @@ namespace HandheldCompanion.Actions
                     if (TurboIdx % TurboDelay == 0)
                         IsTurboed = !IsTurboed;
 
-                    TurboIdx += Period;
+                    TurboIdx += TimerManager.GetPeriod();
                 }
                 else
                 {

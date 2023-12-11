@@ -264,7 +264,7 @@ public partial class OverlayModel : OverlayWindow
                     foreach (Model3DGroup model3DGroup in CurrentModel.ButtonMap[button])
                     {
                         GeometryModel3D model3D = (GeometryModel3D)model3DGroup.Children.FirstOrDefault();
-                        if (model3D is null || model3D.Material.GetType() != typeof(DiffuseMaterial))
+                        if (model3D is null || model3D.Material is not DiffuseMaterial)
                             continue;
 
                         model3D.Material = Inputs.ButtonState[button]

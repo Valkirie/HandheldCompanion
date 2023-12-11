@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Utils;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using static JSL;
@@ -26,17 +27,8 @@ public class JSController : IController
 
     public JSController(JOY_SETTINGS settings, PnPDetails details)
     {
-        if (string.IsNullOrEmpty(settings.path))
-            return;
-
-        this.sSETTINGS = settings;
-        this.UserIndex = settings.playerNumber;
-
-        if (details is null)
-            return;
-
-        Details = details;
-        Details.isHooked = true;
+        AttachJoySettings(settings);
+        AttachDetails(details);
 
         // timer(s)
         calibrateTimer.Elapsed += CalibrateTimer_Elapsed;
@@ -46,11 +38,8 @@ public class JSController : IController
         Capabilities |= ControllerCapabilities.Calibration;
 
         // UI
-        InitializeComponent();
-        DrawControls();
-        RefreshControls();
-
-        JslSetAutomaticCalibration(UserIndex, true);
+        DrawUI();
+        UpdateUI();
     }
 
     public override string ToString()
@@ -222,5 +211,13 @@ public class JSController : IController
             ui_button_calibrate.Content = "Calibrate";
             ui_button_calibrate.IsEnabled = true;
         });
+    }
+
+    public void AttachJoySettings(JOY_SETTINGS settings)
+    {
+        this.sSETTINGS = settings;
+        this.UserIndex = (byte)settings.playerNumber;
+
+        JslSetAutomaticCalibration(UserIndex, true);
     }
 }

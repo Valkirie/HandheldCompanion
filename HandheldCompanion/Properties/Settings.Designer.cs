@@ -11,11 +11,19 @@
 using System.Configuration;
 
 namespace HandheldCompanion.Properties {
+<<<<<<< HEAD
     
     
     [SettingsProvider(typeof(CustomSettingsProvider))]
     internal sealed partial class Settings : ApplicationSettingsBase
     {        
+=======
+
+
+    [SettingsProvider(typeof(CustomSettingsProvider))]
+    internal sealed partial class Settings : ApplicationSettingsBase
+    {
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
         public static Settings Default {
@@ -542,7 +550,11 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         public bool SteamControllerMute {
             get {
                 return ((bool)(this["SteamControllerMute"]));
@@ -770,6 +782,7 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool VirtualControllerForceOrder {
             get {
@@ -777,17 +790,35 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["VirtualControllerForceOrder"] = value;
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ControllerManagement {
+            get {
+                return ((bool)(this["ControllerManagement"]));
+            }
+            set {
+                this["ControllerManagement"] = value;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         public global::System.Collections.Specialized.StringCollection PhysicalControllerInstanceIds {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["PhysicalControllerInstanceIds"]));
             }
             set {
                 this["PhysicalControllerInstanceIds"] = value;
+=======
+        public global::System.Collections.Specialized.StringCollection SuspendedControllers {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedControllers"]));
+            }
+            set {
+                this["SuspendedControllers"] = value;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         }
         
@@ -862,5 +893,127 @@ namespace HandheldCompanion.Properties {
                 this["DSUip"] = value;
             }
         }
+<<<<<<< HEAD
+=======
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double LEDBrightness {
+            get {
+                return ((double)(this["LEDBrightness"]));
+            }
+            set {
+                this["LEDBrightness"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFF00")]
+        public string LEDMainColor {
+            get {
+                return ((string)(this["LEDMainColor"]));
+            }
+            set {
+                this["LEDMainColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDAmbilightVerticalBlackBarDetection {
+            get {
+                return ((bool)(this["LEDAmbilightVerticalBlackBarDetection"]));
+            }
+            set {
+                this["LEDAmbilightVerticalBlackBarDetection"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LEDSettingsLevel {
+            get {
+                return ((int)(this["LEDSettingsLevel"]));
+            }
+            set {
+                this["LEDSettingsLevel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LEDSettingsEnabled {
+            get {
+                return ((bool)(this["LEDSettingsEnabled"]));
+            }
+            set {
+                this["LEDSettingsEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFF00")]
+        public string LEDSecondColor {
+            get {
+                return ((string)(this["LEDSecondColor"]));
+            }
+            set {
+                this["LEDSecondColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDSettingsUseAccentColor {
+            get {
+                return ((bool)(this["LEDSettingsUseAccentColor"]));
+            }
+            set {
+                this["LEDSettingsUseAccentColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public double LEDSpeed {
+            get {
+                return ((double)(this["LEDSpeed"]));
+            }
+            set {
+                this["LEDSpeed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SuspendedDevices {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SuspendedDevices"]));
+            }
+            set {
+                this["SuspendedDevices"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LegionControllerPassthrough {
+            get {
+                return ((bool)(this["LegionControllerPassthrough"]));
+            }
+            set {
+                this["LegionControllerPassthrough"] = value;
+            }
+        }
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 }

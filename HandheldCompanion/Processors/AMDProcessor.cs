@@ -138,7 +138,7 @@ public class AMDProcessor : Processor
         }
     }
 
-    public override void SetTDPLimit(PowerType type, double limit, int result)
+    public override void SetTDPLimit(PowerType type, double limit, bool immediate, int result)
     {
         if (ry == IntPtr.Zero)
             return;
@@ -163,7 +163,7 @@ public class AMDProcessor : Processor
                     break;
             }
 
-            base.SetTDPLimit(type, limit, error);
+            base.SetTDPLimit(type, limit, immediate, error);
 
             Monitor.Exit(IsBusy);
         }

@@ -31,6 +31,11 @@ public class ProController : JSController
         base.UpdateInputs(ticks);
     }
 
+    public override string ToString()
+    {
+        return "Nintendo Pro Controller";
+    }
+
     public override void Plug()
     {
         TimerManager.Tick += UpdateInputs;

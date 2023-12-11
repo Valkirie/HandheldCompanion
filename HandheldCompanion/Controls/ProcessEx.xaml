@@ -58,16 +58,16 @@
                         Toggled="SuspendToggle_Toggled" />
                 </Grid>
 
-                <!-- Separator -->
+                <!--  Separator  -->
                 <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
-                <!-- Kill Process -->
+                <!--  Kill Process  -->
                 <Button
                     Name="B_KillProcess"
-                    Click="B_KillProcess_Clicked"
-                    Content="Kill process" 
                     HorizontalAlignment="Stretch"
-                    Style="{DynamicResource AccentButtonStyle}"/>
+                    Click="B_KillProcess_Clicked"
+                    Content="Kill process"
+                    Style="{DynamicResource AccentButtonStyle}" />
             </ui:SimpleStackPanel>
         </Expander.Content>
     </Expander>

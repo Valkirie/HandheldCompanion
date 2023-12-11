@@ -1,12 +1,10 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
-using Nefarius.Utilities.DeviceManagement.PnP;
 using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media;
 
 namespace HandheldCompanion.Controllers;
@@ -19,22 +17,12 @@ public class XInputController : IController
     private XInputStateSecret State;
 
     public XInputController()
+    { }
+
+    public XInputController(PnPDetails details)
     {
-    }
-
-    public XInputController(Controller controller, PnPDetails details) : this()
-    {
-        Controller = controller;
-        UserIndex = (int)controller.UserIndex;
-
-        if (!IsConnected())
-            return;
-
-        this.Details = details;
-        if (Details is null)
-            return;
-
-        Details.isHooked = true;
+        AttachController(details.XInputUserIndex);
+        AttachDetails(details);
 
         // UI
         ColoredButtons.Add(ButtonFlags.B1, new SolidColorBrush(Color.FromArgb(255, 81, 191, 61)));
@@ -42,15 +30,20 @@ public class XInputController : IController
         ColoredButtons.Add(ButtonFlags.B3, new SolidColorBrush(Color.FromArgb(255, 26, 159, 255)));
         ColoredButtons.Add(ButtonFlags.B4, new SolidColorBrush(Color.FromArgb(255, 255, 200, 44)));
 
-        InitializeComponent();
-        DrawControls();
-        RefreshControls();
-    }
+        DrawUI();
+        UpdateUI();
 
-    public void UpdateController(Controller controller)
-    {
-        Controller = controller;
-        UserIndex = (int)controller.UserIndex;
+        string enumerator = Details.GetEnumerator();
+        switch (enumerator)
+        {
+            default:
+            case "BTHENUM":
+                ProgressBarWarning.Text = Properties.Resources.XInputController_Warning_BTH;
+                break;
+            case "USB":
+                ProgressBarWarning.Text = Properties.Resources.XInputController_Warning_USB;
+                break;
+        }
     }
 
     public override string ToString()
@@ -58,10 +51,10 @@ public class XInputController : IController
         var baseName = base.ToString();
         if (!string.IsNullOrEmpty(baseName))
             return baseName;
-        return $"XInput Controller {UserIndex}";
+        return $"XInput Controller {(UserIndex)UserIndex}";
     }
 
-    public override void UpdateInputs(long ticks)
+    public virtual void UpdateInputs(long ticks, bool commit)
     {
         // skip if controller isn't connected
         if (!IsConnected())
@@ -127,7 +120,8 @@ public class XInputController : IController
         }
         catch { }
 
-        base.UpdateInputs(ticks);
+        if (commit)
+            base.UpdateInputs(ticks);
     }
 
     public override bool IsConnected()
@@ -142,22 +136,26 @@ public class XInputController : IController
         if (!IsConnected())
             return;
 
-        var LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
-        var RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+        try
+        {
+            ushort LeftMotorSpeed = (ushort)((double)LargeMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
+            ushort RightMotorSpeed = (ushort)((double)SmallMotor / byte.MaxValue * ushort.MaxValue * VibrationStrength);
 
-        var vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
-        Controller.SetVibration(vibration);
+            Vibration vibration = new Vibration { LeftMotorSpeed = LeftMotorSpeed, RightMotorSpeed = RightMotorSpeed };
+            Controller.SetVibration(vibration);
+        }
+        catch { }
     }
 
     public override void Plug()
     {
-        TimerManager.Tick += UpdateInputs;
+        TimerManager.Tick += (ticks) => UpdateInputs(ticks, true);
         base.Plug();
     }
 
     public override void Unplug()
     {
-        TimerManager.Tick -= UpdateInputs;
+        TimerManager.Tick -= (ticks) => UpdateInputs(ticks, true);
         base.Unplug();
     }
 
@@ -174,7 +172,7 @@ public class XInputController : IController
         {
             if (XInputGetCapabilitiesEx(1, idx, 0, ref capabilitiesEx) == 0)
             {
-                if (capabilitiesEx.ProductId != details.attributes.ProductID || capabilitiesEx.VendorId != details.attributes.VendorID)
+                if (capabilitiesEx.ProductId != details.ProductID || capabilitiesEx.VendorId != details.VendorID)
                     continue;
 
                 var devices = DeviceManager.GetDetails(capabilitiesEx.VendorId, capabilitiesEx.ProductId);
@@ -186,31 +184,22 @@ public class XInputController : IController
         return SharpDX.XInput.UserIndex.Any;
     }
 
+    public virtual void AttachController(byte userIndex)
+    {
+        if (UserIndex == userIndex)
+            return;
+
+        UserIndex = userIndex;
+        Controller = new((UserIndex)userIndex);
+    }
+
     public override void Hide(bool powerCycle = true)
     {
-        if (powerCycle)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
-            });
-        }
-
         base.Hide(powerCycle);
     }
 
     public override void Unhide(bool powerCycle = true)
     {
-        if (powerCycle)
-        {
-            // UI thread (async)
-            Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                ProgressBarWarning.Text = Properties.Resources.ControllerPage_XInputControllerWarning;
-            });
-        }
-
         base.Unhide(powerCycle);
     }
 

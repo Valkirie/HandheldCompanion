@@ -10,8 +10,11 @@ using Inkore.UI.WPF.Modern.Controls.Primitives;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using System.Collections.Specialized;
 using System.Diagnostics;
+=======
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using System.Globalization;
 using System.Threading;
 using System.Windows;

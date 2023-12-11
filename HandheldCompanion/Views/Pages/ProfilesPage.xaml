@@ -6,6 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+<<<<<<< HEAD
+=======
+    Name="Profiles"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     Title="{x:Static resx:Resources.ProfilesPage_Profiles}"
     d:Background="White"
     d:DesignHeight="2000"
@@ -37,7 +41,7 @@
                                     HorizontalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Glyph="&#xE748;" />
+                                    Glyph="&#xE7EE;" />
 
                                 <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
@@ -49,41 +53,40 @@
                                 </ui:SimpleStackPanel>
                             </DockPanel>
 
-                            <ui:SimpleStackPanel
-                                Grid.Column="1"
-                                Margin="12,0,0,0"
-                                Spacing="6">
+                            <Grid Grid.Column="1" Margin="12,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="8*" MinWidth="400" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
                                 <ComboBox
                                     Name="cB_Profiles"
+                                    Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     SelectionChanged="cB_Profiles_SelectionChanged" />
 
-                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                    <!--  Create new profile  -->
-                                    <Button Click="b_CreateProfile_Click" Style="{DynamicResource AccentButtonStyle}">
-                                        <ui:SimpleStackPanel
-                                            HorizontalAlignment="Center"
-                                            Orientation="Horizontal"
-                                            Spacing="12">
-                                            <ui:FontIcon
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                                Glyph="&#xE8E5;" />
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource BodyTextBlockStyle}"
-                                                Text="{x:Static resx:Resources.ProfilesPage_CreateNewProfile}" />
-                                        </ui:SimpleStackPanel>
-                                    </Button>
-                                    <Button
-                                        Name="b_DeleteProfile"
-                                        Width="Auto"
-                                        Click="b_DeleteProfile_Click"
-                                        Content="{x:Static resx:Resources.ProfilesPage_DeleteProfile}" />
-                                </ui:SimpleStackPanel>
-                            </ui:SimpleStackPanel>
+                                <!--  Create new profile  -->
+                                <Button
+                                    Grid.Column="1"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Click="b_CreateProfile_Click"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                </Button>
+
+                                <!--  Delete profile  -->
+                                <Button
+                                    Name="b_DeleteProfile"
+                                    Grid.Column="2"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Click="b_DeleteProfile_Click">
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
+                                </Button>
+                            </Grid>
                         </Grid>
                     </Border>
 
@@ -103,8 +106,7 @@
                                     ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    Glyph="&#xF136;" />
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xF13C;" />
+                                    Glyph="&#xe7ba;" />
                             </Grid>
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock
@@ -276,6 +278,7 @@
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
+<<<<<<< HEAD
                                         <ColumnDefinition Width="1*" MinWidth="250" />
                                         <ColumnDefinition Width="5*" MinWidth="200" />
                                     </Grid.ColumnDefinitions>
@@ -292,6 +295,16 @@
                                             Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                             Text="{x:Static resx:Resources.ProfilesPage_Wrapper}" />
                                     </DockPanel>
+=======
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                        <ColumnDefinition Width="5*" MinWidth="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_Wrapper}" />
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
                                     <DockPanel Grid.Column="1" Margin="12,0,0,0">
                                         <ComboBox
@@ -401,6 +414,10 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="5"
                                                 TickPlacement="BottomRight"
+<<<<<<< HEAD
+=======
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                                                 ValueChanged="RSRSlider_ValueChanged" />
                                         </DockPanel>
                                     </StackPanel>
@@ -458,6 +475,7 @@
                                             Style="{DynamicResource SliderStyle1}"
                                             TickFrequency="1"
                                             TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                             ValueChanged="FramerateSlider_ValueChanged" />
 
                                         <Grid Name="FramerateModeGrid">
@@ -498,6 +516,7 @@
                                     </StackPanel>
                                 </Grid>
 
+<<<<<<< HEAD
                             </ui:SimpleStackPanel>
                         </Expander.Content>
                     </Expander>
@@ -885,8 +904,53 @@
                                         </DockPanel>
                                     </StackPanel>
                                 </Grid>
+=======
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                             </ui:SimpleStackPanel>
                         </Expander.Content>
+                    </Expander>
+
+                    <!--  Power settings  -->
+                    <Expander
+                        Name="PowerSettings"
+                        HorizontalAlignment="Stretch"
+                        Expanded="Expander_Expanded">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <DockPanel Margin="0,12,12,12">
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xe945;" />
+
+                                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_PowerSettingsDesc}"
+                                            TextWrapping="Wrap" />
+                                    </ui:SimpleStackPanel>
+                                </DockPanel>
+
+                                <TextBlock
+                                    Name="SelectedPowerProfileName"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.PowerProfileDefaultName}" />
+                            </Grid>
+                        </Expander.Header>
+
+                        <ui:SimpleStackPanel Name="ProfileStack" Spacing="16" />
                     </Expander>
 
                     <!--  Motion control settings  -->
@@ -953,6 +1017,7 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                 ValueChanged="tb_ProfileGyroValue_ValueChanged"
                                                 Value="10" />
                                         </DockPanel>
@@ -1001,6 +1066,7 @@
                                                 Style="{DynamicResource SliderStyle1}"
                                                 TickFrequency="0.1"
                                                 TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N1, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                                 ValueChanged="tb_ProfileAcceleroValue_ValueChanged"
                                                 Value="10" />
                                         </DockPanel>
@@ -1098,6 +1164,57 @@
                     <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
 
                     <!--  Controller settings  -->
+                    <Border
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    Glyph="&#xE7FC;" />
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EmulatedController}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                <ComboBox
+                                    x:Name="cB_EmulatedController"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    SelectedIndex="0"
+                                    SelectionChanged="cB_EmulatedController_Changed">
+                                    <ComboBoxItem
+                                        Name="cB_EmulatedController_disabled"
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDefault}"
+                                        Tag="-1" />
+                                    <ComboBoxItem
+                                        Name="cB_EmulatedController_Xbox"
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerXbox}"
+                                        Tag="0" />
+                                    <ComboBoxItem
+                                        Name="cB_EmulatedController_DS4"
+                                        Content="{x:Static resx:Resources.ProfilesPage_EmulatedControllerDS4}"
+                                        Tag="1" />
+                                </ComboBox>
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+
                     <Button
                         Name="ControllerSettingsButton"
                         Height="66"

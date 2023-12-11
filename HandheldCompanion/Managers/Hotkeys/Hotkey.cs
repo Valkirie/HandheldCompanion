@@ -48,6 +48,14 @@ public class Hotkey
 
         quickControl.QuickButton.Click += async (e, sender) =>
         {
+            // special case HIDmode switch hotkey
+            // required here in order to (immediatly) disable hotkey while HIDmode is being changed to avoid duplicates
+            // this takes care of repeated button clicks
+            if (this.inputsHotkey.Listener == "shortcutChangeHIDMode")
+            {
+                this.IsEnabled = false;
+            }
+
             // workaround for gamepad navigation
             await Task.Delay(100);
             Summoned?.Invoke(this);
@@ -295,9 +303,33 @@ public class Hotkey
                 foreach (var button in inputsChord.State.Buttons)
                 {
                     UIElement? label = null;
+                    var fontIcon = new FontIcon();
 
-                    var fontIcon = controller.GetFontIcon(button);
-                    // we display only one label, default one is not enough
+                    switch (button)
+                    {                           
+                        case Inputs.ButtonFlags.OEM1:
+                        case Inputs.ButtonFlags.OEM2:
+                        case Inputs.ButtonFlags.OEM3:
+                        case Inputs.ButtonFlags.OEM4:
+                        case Inputs.ButtonFlags.OEM5:
+                        case Inputs.ButtonFlags.OEM6:
+                        case Inputs.ButtonFlags.OEM7:
+                        case Inputs.ButtonFlags.OEM8:
+                        case Inputs.ButtonFlags.OEM9:
+                        case Inputs.ButtonFlags.OEM10:
+                            {
+                                //
+                                fontIcon = MainWindow.CurrentDevice.GetFontIcon(button);
+                            }
+                            break;
+                        default:
+                            {
+                                fontIcon = controller.GetFontIcon(button);
+                            }
+                            break;
+                    }
+                            
+                    // display only one label, default one is not enough
                     if (fontIcon.Glyph != IController.defaultGlyph)
                     {
                         if (fontIcon.Foreground is null)

@@ -1,12 +1,10 @@
 using HandheldCompanion.Inputs;
 using System.Collections.Generic;
 using System.Numerics;
-
 using WindowsInput.Events;
-
 namespace HandheldCompanion.Devices;
 
-public class AYANEOAIR : IDevice
+public class AYANEOAIR : AYANEO.AYANEODevice
 {
     public AYANEOAIR()
     {
@@ -18,16 +16,17 @@ public class AYANEOAIR : IDevice
         nTDP = new double[] { 12, 12, 15 };
         cTDP = new double[] { 3, 15 };
         GfxClock = new double[] { 100, 1600 };
+        CpuClock = 4000;
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxis = new Vector3(-1.0f, 1.0f, -1.0f);
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxis = new Vector3(-1.0f, 1.0f, -1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
@@ -36,15 +35,16 @@ public class AYANEOAIR : IDevice
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.DynamicLighting;
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x44A,
-            AddressDuty = 0x44B,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 100
+            AddressFanControl = 0x44A,
+            AddressFanDuty = 0x44B,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 100
         };
 
         OEMChords.Add(new DeviceChord("Custom Key Top Right",
@@ -70,5 +70,22 @@ public class AYANEOAIR : IDevice
             new List<KeyCode> { KeyCode.LWin, KeyCode.D },
             false, ButtonFlags.OEM2
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\uE003";
+            case ButtonFlags.OEM2:
+                return "\u220B";
+            case ButtonFlags.OEM3:
+                return "\u220A";
+            case ButtonFlags.OEM4:
+                return "\u2209";
+        }
+
+        return defaultGlyph;
     }
 }

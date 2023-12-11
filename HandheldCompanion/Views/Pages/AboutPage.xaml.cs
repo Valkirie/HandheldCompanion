@@ -50,7 +50,7 @@ public partial class AboutPage : Page
                 ? MainWindow.CurrentDevice.ExternalSensorName
                 : string.Empty;
 
-            if (MainWindow.CurrentDevice.GetType() == typeof(DefaultDevice))
+            if (MainWindow.CurrentDevice is DefaultDevice)
             {
                 WarningBorder.Visibility = Visibility.Visible;
                 WarningContent.Text =

@@ -3,15 +3,26 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+<<<<<<< HEAD
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
+=======
+using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using HandheldCompanion.Utils;
 using Inkore.UI.WPF.Modern.Controls;
 using System;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+<<<<<<< HEAD
+=======
+using System.Windows.Media;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 using Page = System.Windows.Controls.Page;
+using Separator = System.Windows.Controls.Separator;
 
 namespace HandheldCompanion.Views.QuickPages;
 
@@ -23,7 +34,7 @@ public partial class QuickProfilesPage : Page
     private const int UpdateInterval = 500;
     private readonly Timer UpdateTimer;
     private ProcessEx currentProcess;
-    private Profile currentProfile;
+    private Profile selectedProfile;
 
     private LockObject updateLock = new();
 
@@ -43,18 +54,71 @@ public partial class QuickProfilesPage : Page
 
         ProfileManager.Applied += ProfileApplied;
 
+<<<<<<< HEAD
+        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
+=======
+        PowerProfileManager.Updated += PowerProfileManager_Updated;
+        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
+
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
 
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
         HotkeysManager.HotkeyCreated += TriggerCreated;
 
         InputsManager.TriggerUpdated += TriggerUpdated;
 
-        MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
-        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
+        {
+            // create panel
+            ComboBoxItem comboBoxItem = new ComboBoxItem()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+            };
+
+            SimpleStackPanel simpleStackPanel = new SimpleStackPanel
+            {
+                Spacing = 6,
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            // create icon
+            var icon = new FontIcon();
+
+            switch (mode)
+            {
+                case MotionOuput.Disabled:
+                    icon.Glyph = "\uE8D8";
+                    break;
+                case MotionOuput.RightStick:
+                    icon.Glyph = "\uF109";
+                    break;
+                case MotionOuput.LeftStick:
+                    icon.Glyph = "\uF108";
+                    break;
+                case MotionOuput.MoveCursor:
+                    icon.Glyph = "\uE962";
+                    break;
+                case MotionOuput.ScrollWheel:
+                    icon.Glyph = "\uEC8F";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(icon.Glyph))
+                simpleStackPanel.Children.Add(icon);
+
+            // create textblock
+            var description = EnumUtils.GetDescriptionFromEnumValue(mode);
+            var text = new TextBlock { Text = description };
+
+            simpleStackPanel.Children.Add(text);
+
+            comboBoxItem.Content = simpleStackPanel;
+            cB_Output.Items.Add(comboBoxItem);
+        }
 
         foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
         {
@@ -151,6 +215,7 @@ public partial class QuickProfilesPage : Page
             var text = new TextBlock { Text = description };
 
             simpleStackPanel.Children.Add(text);
+<<<<<<< HEAD
 
             comboBoxItem.Content = simpleStackPanel;
             cB_Input.Items.Add(comboBoxItem);
@@ -163,6 +228,13 @@ public partial class QuickProfilesPage : Page
         // motherboard settings
         CPUCoreSlider.Maximum = MotherboardInfo.NumberOfCores;
 
+=======
+
+            comboBoxItem.Content = simpleStackPanel;
+            cB_Input.Items.Add(comboBoxItem);
+        }
+
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
@@ -207,7 +279,6 @@ public partial class QuickProfilesPage : Page
                 case PlatformStatus.Ready:
                     var Processor = MainWindow.performanceManager.GetProcessor();
                     StackProfileFramerate.IsEnabled = true;
-                    StackProfileAutoTDP.IsEnabled = true && Processor is not null ? Processor.CanChangeTDP : false;
                     break;
                 case PlatformStatus.Stalled:
                     // StackProfileFramerate.IsEnabled = false;
@@ -231,39 +302,23 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void PerformanceManager_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+    public void SubmitProfile(UpdateSource source = UpdateSource.QuickProfilesPage)
     {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            StackProfileTDP.IsEnabled = CanChangeTDP;
-            StackProfileAutoTDP.IsEnabled = CanChangeTDP && PlatformManager.RTSS.IsInstalled;
-
-            StackProfileGPU.IsEnabled = CanChangeGPU;
-        });
-    }
-
-    private void PerformanceManager_EPPChanged(uint EPP)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() => { EPPSlider.Value = EPP; });
-    }
-
-    public void SubmitProfile(ProfileUpdateSource source = ProfileUpdateSource.QuickProfilesPage)
-    {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
-        ProfileManager.UpdateOrCreateProfile(currentProfile, source);
+        ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
     }
 
-    private void HotkeysManager_CommandExecuted(string listener)
+    private void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (listener)
+            int idx = -1;
+            foreach (var item in ProfileStack.Children)
             {
+<<<<<<< HEAD
                 case "increaseTDP":
                     {
                         if (currentProfile is null || !currentProfile.TDPOverrideEnabled)
@@ -279,18 +334,48 @@ public partial class QuickProfilesPage : Page
 
                         TDPSlider.Value--;
                     }
+=======
+                if (item is not Button)
+                    continue;
+
+                // get power profile
+                var parent = (Button)item;
+                if (parent.Tag is not PowerProfile)
+                    continue;
+
+                PowerProfile pr = (PowerProfile)parent.Tag;
+
+                bool isCurrent = pr.Guid == powerProfile.Guid;
+                if (isCurrent)
+                {
+                    idx = ProfileStack.Children.IndexOf(parent);
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     break;
+                }
+            }
+
+            if (idx != -1)
+            {
+                // remove profile
+                ProfileStack.Children.RemoveAt(idx);
+
+                // remove separator
+                if (idx >= ProfileStack.Children.Count)
+                    idx = ProfileStack.Children.Count - 1;
+                ProfileStack.Children.RemoveAt(idx);
             }
         });
     }
 
-    public void SettingsManager_SettingValueChanged(string name, object value)
+    private void PowerProfileManager_Updated(PowerProfile powerProfile, UpdateSource source)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (name)
+            int idx = -1;
+            foreach (var item in ProfileStack.Children)
             {
+<<<<<<< HEAD
                 case "ConfigurableTDPOverrideDown":
                     {
                         using (new ScopedLock(updateLock))
@@ -307,19 +392,92 @@ public partial class QuickProfilesPage : Page
                         }
                     }
                     break;
+=======
+                if (item is not Button)
+                    continue;
+
+                // get power profile
+                var parent = (Button)item;
+                if (parent.Tag is not PowerProfile)
+                    continue;
+
+                PowerProfile pr = (PowerProfile)parent.Tag;
+
+                bool isCurrent = pr.Guid == powerProfile.Guid;
+                if (isCurrent)
+                {
+                    idx = ProfileStack.Children.IndexOf(parent);
+                    break;
+                }
+            }
+
+            if (idx != -1)
+            {
+                // found it
+                return;
+            }
+            else
+            {
+                // draw UI elements
+                powerProfile.DrawUI(this);
+
+                idx = ProfileStack.Children.Count;
+                if (idx != 0)
+                {
+                    // Create a separator
+                    Separator separator = new Separator();
+                    separator.Margin = new Thickness(-16, 0, -16, 0);
+                    separator.BorderBrush = (Brush)FindResource("SystemControlBackgroundChromeMediumBrush");
+                    separator.BorderThickness = new Thickness(0, 1, 0, 0);
+                    ProfileStack.Children.Add(separator);
+                }
+
+                Button button = powerProfile.GetButton(this);
+                button.Click += (sender, e) => PowerProfile_Clicked(powerProfile);
+
+                RadioButton radioButton = powerProfile.GetRadioButton(this);
+                radioButton.Checked += (sender, e) => PowerProfile_Selected(powerProfile);
+
+                // add new entry
+                ProfileStack.Children.Add(button);
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             }
         });
     }
 
-    private void ProfileApplied(Profile profile, ProfileUpdateSource source)
+    private void PowerProfile_Clicked(PowerProfile powerProfile)
+    {
+        RadioButton radioButton = powerProfile.GetRadioButton(this);
+        if (radioButton.IsMouseOver)
+            return;
+
+        MainWindow.overlayquickTools.performancePage.SelectionChanged(powerProfile.Guid);
+        MainWindow.overlayquickTools.NavView_Navigate("QuickPerformancePage");
+    }
+
+    private void PowerProfile_Selected(PowerProfile powerProfile)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // update UI
+            SelectedPowerProfileName.Text = powerProfile.Name;
+
+            // update profile
+            selectedProfile.PowerProfile = powerProfile.Guid;
+            UpdateProfile();
+        });
+    }
+
+    private void ProfileApplied(Profile profile, UpdateSource source)
     {
         if (true)
         {
             switch (source)
             {
                 // self update, unlock and exit
-                case ProfileUpdateSource.QuickProfilesPage:
-                case ProfileUpdateSource.Serializer:
+                case UpdateSource.QuickProfilesPage:
+                case UpdateSource.Serializer:
                     return;
             }
 
@@ -331,14 +489,19 @@ public partial class QuickProfilesPage : Page
             }
 
             // update profile
+<<<<<<< HEAD
             currentProfile = profile;
+=======
+            selectedProfile = profile;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
-            // UI thread
+            // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 using (new ScopedLock(updateLock))
                 {
                     // update profile name
+<<<<<<< HEAD
                     CurrentProfileName.Text = currentProfile.Name;
                     Toggle_ControllerLayout.IsEnabled = currentProfile.Default ? false : true;
                     Toggle_ControllerLayout.IsOn = currentProfile.LayoutEnabled;
@@ -409,6 +572,59 @@ public partial class QuickProfilesPage : Page
                     // CPU Core Count
                     CPUCoreToggle.IsOn = currentProfile.CPUCoreEnabled;
                     CPUCoreSlider.Value = currentProfile.CPUCoreCount;
+=======
+                    CurrentProfileName.Text = selectedProfile.Name;
+                    Toggle_ControllerLayout.IsEnabled = selectedProfile.Default ? false : true;
+                    Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
+
+                    // power profile
+                    PowerProfile powerProfile = PowerProfileManager.GetProfile(profile.PowerProfile);
+                    powerProfile.Check(this);
+
+                    // gyro layout
+                    if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+                    {
+                        // no gyro layout available, mark as disabled
+                        cB_Output.SelectedIndex = (int)MotionOuput.Disabled;
+                    }
+                    else
+                    {
+                        // IActions
+                        GridAntiDeadzone.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+                        GridGyroWeight.Visibility = currentAction is AxisActions ? Visibility.Visible : Visibility.Collapsed;
+
+                        if (currentAction is AxisActions)
+                        {
+                            cB_Output.SelectedIndex = (int)((AxisActions)currentAction).Axis;
+                            SliderUMCAntiDeadzone.Value = ((AxisActions)currentAction).AxisAntiDeadZone;
+                            Slider_GyroWeight.Value = ((AxisActions)currentAction).gyroWeight;
+                        }
+                        else if (currentAction is MouseActions)
+                        {
+                            cB_Output.SelectedIndex = (int)((MouseActions)currentAction).MouseType - 1;
+                        }
+
+                        // GyroActions
+                        cB_Input.SelectedIndex = (int)((GyroActions)currentAction).MotionInput;
+                        cB_UMC_MotionDefaultOffOn.SelectedIndex = (int)((GyroActions)currentAction).MotionMode;
+
+                        // todo: move me to layout ?
+                        SliderSensitivityX.Value = selectedProfile.MotionSensivityX;
+                        SliderSensitivityY.Value = selectedProfile.MotionSensivityY;
+
+                        // todo: improve me ?
+                        GyroHotkey.inputsChord.State = ((GyroActions)currentAction).MotionTrigger.Clone() as ButtonState;
+                        GyroHotkey.DrawInput();
+                    }
+
+                    // Framerate
+                    FramerateToggle.IsOn = selectedProfile.FramerateEnabled;
+                    FramerateSlider.Value = selectedProfile.FramerateValue;
+
+                    // RSR
+                    RSRToggle.IsOn = selectedProfile.RSREnabled;
+                    RSRSlider.Value = selectedProfile.RSRSharpness;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 }
             });
         }
@@ -450,7 +666,7 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void RequestUpdate()
+    private void UpdateProfile()
     {
         UpdateTimer.Stop();
         UpdateTimer.Start();
@@ -473,7 +689,11 @@ public partial class QuickProfilesPage : Page
         else
         {
             realProfile.Enabled = ProfileToggle.IsOn;
+<<<<<<< HEAD
             ProfileManager.UpdateOrCreateProfile(realProfile, ProfileUpdateSource.Creation);
+=======
+            ProfileManager.UpdateOrCreateProfile(realProfile, UpdateSource.Creation);
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         }
     }
 
@@ -483,16 +703,26 @@ public partial class QuickProfilesPage : Page
             return;
 
         // create profile
+<<<<<<< HEAD
         currentProfile = new Profile(currentProcess.Path);
         currentProfile.Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout;
         currentProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
         currentProfile.TDPOverrideValues = MainWindow.CurrentDevice.nTDP;
+=======
+        selectedProfile = new Profile(currentProcess.Path);
+        selectedProfile.Layout = (ProfileManager.GetProfileWithDefaultLayout()?.Layout ?? LayoutTemplate.DefaultLayout.Layout).Clone() as Layout;
+        selectedProfile.LayoutTitle = LayoutTemplate.DesktopLayout.Name;
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
 
         // if an update is pending, execute it and stop timer
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
+<<<<<<< HEAD
         SubmitProfile(ProfileUpdateSource.Creation);
+=======
+        SubmitProfile(UpdateSource.Creation);
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -500,28 +730,44 @@ public partial class QuickProfilesPage : Page
         if (cB_Input.SelectedIndex == -1)
             return;
 
+<<<<<<< HEAD
         var input = (MotionInput)cB_Input.SelectedIndex;
         Text_InputHint.Text = Profile.InputDescription[input];
 
         if (currentProfile is null)
+=======
+        MotionInput input = (MotionInput)cB_Input.SelectedIndex;
+        Text_InputHint.Text = EnumUtils.GetDescriptionFromEnumValue(input, string.Empty, "Desc");
+
+        if (selectedProfile is null)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
             return;
 
         ((GyroActions)currentAction).MotionInput = (MotionInput)cB_Input.SelectedIndex;
         RequestUpdate();
+=======
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        ((GyroActions)currentAction).MotionInput = (MotionInput)cB_Input.SelectedIndex;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void cB_Output_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         if (updateLock)
+<<<<<<< HEAD
             return;
 
         IActions newActions = null;
@@ -571,12 +817,60 @@ public partial class QuickProfilesPage : Page
         currentProfile.TDPOverrideEnabled = TDPToggle.IsOn;
         RequestUpdate();
     }
-
-    private void TDPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (currentProfile is null)
+=======
             return;
 
+        // try get current actions, if exists
+        selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions gyroActions);
+
+        MotionOuput motionOuput = (MotionOuput)cB_Output.SelectedIndex;
+        switch (motionOuput)
+        {
+            case MotionOuput.Disabled:
+                selectedProfile.Layout.RemoveLayout(AxisLayoutFlags.Gyroscope);
+                gyroActions = null;
+                break;
+
+            case MotionOuput.LeftStick:
+            case MotionOuput.RightStick:
+                {
+                    if (gyroActions is null || gyroActions is not AxisActions)
+                    {
+                        gyroActions = new AxisActions()
+                        {
+                            AxisAntiDeadZone = GyroActions.DefaultAxisAntiDeadZone
+                        };
+                    }
+
+                    ((AxisActions)gyroActions).Axis = motionOuput == MotionOuput.LeftStick ? AxisLayoutFlags.LeftStick : AxisLayoutFlags.RightStick;
+                    ((AxisActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState;
+                }
+                break;
+
+            case MotionOuput.MoveCursor:
+            case MotionOuput.ScrollWheel:
+                {
+                    if (gyroActions is null || gyroActions is not MouseActions)
+                    {
+                        gyroActions = new MouseActions()
+                        {
+                            MouseType = GyroActions.DefaultMouseActionsType,
+                            Sensivity = GyroActions.DefaultSensivity,
+                            Deadzone = GyroActions.DefaultDeadzone
+                        };
+                    }
+
+                    ((MouseActions)gyroActions).MotionTrigger = GyroHotkey.inputsChord.State.Clone() as ButtonState;
+                }
+                break;
+        }
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
+
+        // proper layout update
+        if (gyroActions is not null)
+            selectedProfile.Layout.UpdateLayout(AxisLayoutFlags.Gyroscope, gyroActions);
+
+<<<<<<< HEAD
         if (updateLock)
             return;
 
@@ -613,64 +907,97 @@ public partial class QuickProfilesPage : Page
 
         currentProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
         RequestUpdate();
+=======
+        SubmitProfile(UpdateSource.Creation);
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void SliderUMCAntiDeadzone_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+=======
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             return;
 
         if (currentAction is AxisActions)
             ((AxisActions)currentAction).AxisAntiDeadZone = (int)SliderUMCAntiDeadzone.Value;
 
+<<<<<<< HEAD
         RequestUpdate();
+=======
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void Slider_GyroWeight_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+<<<<<<< HEAD
         if (currentProfile is null)
+=======
+        if (selectedProfile is null)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+=======
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             return;
 
         if (currentAction is AxisActions)
             ((AxisActions)currentAction).gyroWeight = (float)Slider_GyroWeight.Value;
 
+<<<<<<< HEAD
         RequestUpdate();
+=======
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void SliderSensitivityX_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         currentProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
         RequestUpdate();
+=======
+        selectedProfile.MotionSensivityX = (float)SliderSensitivityX.Value;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void SliderSensitivityY_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         currentProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
         RequestUpdate();
+=======
+        selectedProfile.MotionSensivityY = (float)SliderSensitivityY.Value;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void TriggerCreated(Hotkey hotkey)
@@ -694,7 +1021,10 @@ public partial class QuickProfilesPage : Page
 
     private void TriggerUpdated(string listener, InputsChord inputs, InputsManager.ListenerType type)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
+            return;
+
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
             return;
 
         if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -706,17 +1036,22 @@ public partial class QuickProfilesPage : Page
             case "shortcutProfilesPage@":
             case "shortcutProfilesPage@@":
                 ((GyroActions)currentAction).MotionTrigger = inputs.State.Clone() as ButtonState;
+<<<<<<< HEAD
                 RequestUpdate();
+=======
+                UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                 break;
         }
     }
 
     private void cB_UMC_MotionDefaultOffOn_SelectionChanged(object sender, RoutedEventArgs e)
     {
-        if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1 || currentProfile is null)
+        if (cB_UMC_MotionDefaultOffOn.SelectedIndex == -1 || selectedProfile is null)
             return;
 
         if (updateLock)
+<<<<<<< HEAD
             return;
 
         if (!currentProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
@@ -748,6 +1083,15 @@ public partial class QuickProfilesPage : Page
 
         currentProfile.GPUOverrideValue = (int)GPUSlider.Value;
         RequestUpdate();
+=======
+            return;
+
+        if (!selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions currentAction))
+            return;
+
+        ((GyroActions)currentAction).MotionMode = (MotionMode)cB_UMC_MotionDefaultOffOn.SelectedIndex;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
@@ -763,7 +1107,11 @@ public partial class QuickProfilesPage : Page
             {
                 foreach (Control control in FramerateModeGrid.Children)
                 {
+<<<<<<< HEAD
                     if (control.GetType() != typeof(Label))
+=======
+                    if (control is not Label)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                         continue;
 
                     control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
@@ -771,14 +1119,23 @@ public partial class QuickProfilesPage : Page
             }
         });
 
+<<<<<<< HEAD
         if (currentProfile is null)
+=======
+        if (selectedProfile is null)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         currentProfile.FramerateEnabled = FramerateToggle.IsOn;
         RequestUpdate();
+=======
+        selectedProfile.FramerateEnabled = FramerateToggle.IsOn;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -790,43 +1147,67 @@ public partial class QuickProfilesPage : Page
 
             foreach (Control control in FramerateModeGrid.Children)
             {
+<<<<<<< HEAD
                 if (control.GetType() != typeof(Label))
+=======
+                if (control is not Label)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     continue;
 
                 control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
             }
 
+<<<<<<< HEAD
             Label Label = (Label)FramerateModeGrid.Children[value];
             Label.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+=======
+            Label label = (Label)FramerateModeGrid.Children[value];
+            label.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         });
 
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         currentProfile.FramerateValue = (int)FramerateSlider.Value;
         RequestUpdate();
+=======
+        selectedProfile.FramerateValue = (int)FramerateSlider.Value;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
-    private void EPPToggle_Toggled(object sender, RoutedEventArgs e)
+    private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
     {
-        if (currentProfile is null)
+        if (selectedProfile is null)
             return;
 
+<<<<<<< HEAD
         if (updateLock)
             return;
 
         currentProfile.EPPOverrideEnabled = EPPToggle.IsOn;
         RequestUpdate();
-    }
-
-    private void EPPSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (currentProfile is null)
+=======
+        // wait until lock is released
+        if (updateLock)
             return;
 
+        selectedProfile.RSREnabled = RSRToggle.IsOn;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
+    }
+
+    private void RSRSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+<<<<<<< HEAD
         if (updateLock)
             return;
 
@@ -852,6 +1233,8 @@ public partial class QuickProfilesPage : Page
         if (currentProfile is null)
             return;
 
+=======
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         if (!RSRSlider.IsInitialized)
             return;
 
@@ -859,6 +1242,7 @@ public partial class QuickProfilesPage : Page
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         currentProfile.RSRSharpness = (int)RSRSlider.Value;
         RequestUpdate();
     }
@@ -890,18 +1274,41 @@ public partial class QuickProfilesPage : Page
 
         currentProfile.CPUCoreCount = (int)CPUCoreSlider.Value;
         RequestUpdate();
+=======
+        selectedProfile.RSRSharpness = (int)RSRSlider.Value;
+        UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void Toggle_ControllerLayout_Toggled(object sender, RoutedEventArgs e)
     {
+<<<<<<< HEAD
         if (currentProfile is null)
+=======
+        if (selectedProfile is null)
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
             return;
 
         // wait until lock is released
         if (updateLock)
             return;
 
+<<<<<<< HEAD
         currentProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
         RequestUpdate();
+=======
+        selectedProfile.LayoutEnabled = Toggle_ControllerLayout.IsOn;
+        UpdateProfile();
+    }
+
+    private void Button_PowerSettings_Create_Click(object sender, RoutedEventArgs e)
+    {
+        int idx = PowerProfileManager.profiles.Values.Where(p => !p.IsDefault()).Count() + 1;
+
+        string Name = string.Format(Properties.Resources.PowerProfileManualName, idx);
+        PowerProfile powerProfile = new PowerProfile(Name, Properties.Resources.PowerProfileManualDescription);
+
+        PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Creation);
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 }

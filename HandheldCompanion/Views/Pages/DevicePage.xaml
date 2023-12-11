@@ -4,12 +4,23 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:colorpicker="clr-namespace:ColorPicker;assembly=ColorPicker"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+<<<<<<< HEAD
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Title="{x:Static resx:Resources.DevicePage_Device}"
     d:Background="White"
     d:DesignHeight="500"
+=======
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    Name="Device"
+    Title="{x:Static resx:Resources.DevicePage_Device}"
+    d:Background="White"
+    d:DesignHeight="1500"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -62,6 +73,10 @@
                 <!--  Configurable TDP down  -->
                 <Border
                     Padding="15,12,12,12"
+<<<<<<< HEAD
+=======
+                    d:Visibility="Visible"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -102,6 +117,10 @@
                 <!--  Configurable TDP up  -->
                 <Border
                     Padding="15,12,12,12"
+<<<<<<< HEAD
+=======
+                    d:Visibility="Visible"
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     Visibility="{Binding ElementName=Toggle_cTDP, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -139,6 +158,409 @@
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>
+<<<<<<< HEAD
+=======
+
+            <!--  Dynamic lighting settings  -->
+            <ui:SimpleStackPanel Name="DynamicLightingPanel" Spacing="6">
+                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Dynamic lighting settings" />
+
+                <!--  Use Dynamic lighting  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xE781;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Use dynamic lighting on my device" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="UseDynamicLightingToggle"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="UseDynamicLightingToggle_Toggled" />
+                    </Grid>
+                </Border>
+
+                <ui:SimpleStackPanel
+                    Name="LEDPanel"
+                    IsEnabled="{Binding ElementName=UseDynamicLightingToggle, Path=IsOn}"
+                    Spacing="6">
+                    <!--  Static LED Brightness  -->
+                    <Border
+                        Name="LEDBrightness"
+                        Padding="15,12,12,12"
+                        Background="{DynamicResource ExpanderHeaderBackground}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                                <ColumnDefinition Width="5*" MinWidth="200" />
+                            </Grid.ColumnDefinitions>
+
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE706;" />
+
+                                <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_DynamicLighting_Brightness}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.DevicePage_DynamicLighting_BrightnessDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </DockPanel>
+
+                            <DockPanel
+                                Grid.Column="1"
+                                Margin="12,0,0,0"
+                                ScrollViewer.PanningMode="HorizontalOnly">
+                                <TextBlock
+                                    Width="35"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Value, StringFormat=N0, ElementName=SliderLEDBrightness, Mode=OneWay}"
+                                    TextAlignment="Center" />
+                                <TextBlock VerticalAlignment="Center" Text="%" />
+                                <Slider
+                                    x:Name="SliderLEDBrightness"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="10"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    SmallChange="5"
+                                    Style="{DynamicResource SliderStyle1}"
+                                    TickFrequency="5"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ValueChanged="SliderLEDBrightness_ValueChanged"
+                                    Value="100" />
+                            </DockPanel>
+                        </Grid>
+                    </Border>
+
+                    <!--  Dynamic lighting effects  -->
+                    <Expander
+                        Name="DynamicLightingEffects"
+                        HorizontalAlignment="Stretch"
+                        Expanded="Expander_Expanded">
+
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <DockPanel Margin="0,12,12,12">
+                                    <ui:FontIcon
+                                        Height="40"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xF4A5;" />
+
+                                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.DevicePage_DynamicLighting}" />
+                                        <TextBlock
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                            Style="{StaticResource CaptionTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_DynamicLightingDesc}"
+                                            TextWrapping="Wrap" />
+                                    </ui:SimpleStackPanel>
+                                </DockPanel>
+
+                                <ComboBox
+                                    Name="LEDSettingsLevel"
+                                    Grid.Column="1"
+                                    Width="140"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    SelectionChanged="LEDSettingsLevel_SelectionChanged">
+
+                                    <ComboBoxItem
+                                        Name="LEDSolidColor"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_SolidColor}"
+                                        IsEnabled="False"
+                                        Tag="0" />
+                                    <ComboBoxItem
+                                        Name="LEDBreathing"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Breathing}"
+                                        IsEnabled="False"
+                                        Tag="1" />
+                                    <ComboBoxItem
+                                        Name="LEDRainbow"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Rainbow}"
+                                        IsEnabled="False"
+                                        Tag="2" />
+                                    <ComboBoxItem
+                                        Name="LEDWave"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Wave}"
+                                        IsEnabled="False"
+                                        Tag="4" />
+                                    <ComboBoxItem
+                                        Name="LEDWheel"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Wheel}"
+                                        IsEnabled="False"
+                                        Tag="8" />
+                                    <ComboBoxItem
+                                        Name="LEDGradient"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Gradient}"
+                                        IsEnabled="False"
+                                        Tag="16" />
+                                    <ComboBoxItem
+                                        Name="LEDAmbilight"
+                                        Content="{x:Static resx:Resources.DevicePage_DynamicLighting_Ambilight}"
+                                        IsEnabled="False"
+                                        Tag="32" />
+                                </ComboBox>
+
+                            </Grid>
+                        </Expander.Header>
+
+                        <Expander.Content>
+                            <ui:SimpleStackPanel Margin="30,-6,0,-6" Spacing="6">
+
+                                <!--  Effect speed  -->
+                                <ui:SimpleStackPanel
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=1|2|3|4|5|6}">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_EffectSpeed}" />
+
+                                        <DockPanel
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBlock
+                                                Width="35"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding Value, StringFormat=N0, ElementName=SliderLEDSpeed, Mode=OneWay}"
+                                                TextAlignment="Center" />
+                                            <TextBlock VerticalAlignment="Center" Text="%" />
+                                            <Slider
+                                                x:Name="SliderLEDSpeed"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="10"
+                                                Maximum="100"
+                                                Minimum="10"
+                                                SmallChange="5"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                TickFrequency="5"
+                                                TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="SliderLEDSpeed_ValueChanged"
+                                                Value="100" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ui:SimpleStackPanel>
+
+                                <!--  Direction  -->
+                                <!--  Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=2|3|4|5}"  -->
+                                <ui:SimpleStackPanel
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="Collapsed">
+
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}" />
+
+                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                                            <ComboBox
+                                                Name="LEDDirection"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectedIndex="0"
+                                                SelectionChanged="LEDDirection_SelectionChanged" />
+                                        </DockPanel>
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ui:SimpleStackPanel>
+
+                                <!--  Main color  -->
+                                <ui:SimpleStackPanel
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0|1|3|5}">
+
+                                    <!--  Match my Windows accent color  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_MatchAccentColor}" />
+
+                                        <ui:ToggleSwitch
+                                            Name="MatchAccentColor"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="MatchAccentColor_Toggled" />
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+
+                                    <!--  Main color picker  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_MainColorSelection}" />
+
+                                        <colorpicker:PortableColorPicker
+                                            Name="MainColorPicker"
+                                            Grid.Column="1"
+                                            Height="40"
+                                            Margin="12,0,0,0"
+                                            ColorChanged="MainColorPicker_ColorChanged"
+                                            ScrollViewer.PanningMode="HorizontalOnly"
+                                            Style="{StaticResource DefaultColorPickerStyle}" />
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ui:SimpleStackPanel>
+
+                                <!--  Second color  -->
+                                <!--  Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=3|5}"  -->
+                                <ui:SimpleStackPanel
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="Collapsed">
+
+                                    <!--  Second color  -->
+                                    <Grid Height="40">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_DynamicLighting_SecondColorSelection}" />
+
+                                        <colorpicker:PortableColorPicker
+                                            Name="SecondColorPicker"
+                                            Grid.Column="1"
+                                            Height="40"
+                                            Margin="12,0,0,0"
+                                            ColorChanged="SecondColorPicker_ColorChanged"
+                                            ScrollViewer.PanningMode="HorizontalOnly"
+                                            Style="{StaticResource DefaultColorPickerStyle}" />
+                                    </Grid>
+
+                                    <!--  Separator  -->
+                                    <Separator
+                                        Margin="-46,0,-16,0"
+                                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        BorderThickness="0,1,0,0" />
+                                </ui:SimpleStackPanel>
+
+                                <!--  Vertical blackbar detection  -->
+                                <ui:SimpleStackPanel
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="{Binding ElementName=LEDSettingsLevel, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=6}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                            <ColumnDefinition Width="5*" MinWidth="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="{x:Static resx:Resources.DevicePage_AmbilightVerticalBlackBarDetectionDesc}"
+                                            TextWrapping="Wrap" />
+
+                                        <ui:ToggleSwitch
+                                            Name="Toggle_AmbilightVerticalBlackBarDetection"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="Toggle_AmbilightVerticalBlackBarDetection_Toggled" />
+                                    </Grid>
+                                </ui:SimpleStackPanel>
+
+                            </ui:SimpleStackPanel>
+                        </Expander.Content>
+                    </Expander>
+                </ui:SimpleStackPanel>
+            </ui:SimpleStackPanel>
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
         </ui:SimpleStackPanel>
     </Grid>
 </Page>

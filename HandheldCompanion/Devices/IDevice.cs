@@ -1,15 +1,25 @@
+using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
+using Inkore.UI.WPF.Modern.Controls;
+using LibreHardwareMonitor.Hardware.Motherboard;
+using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
+using System.Windows.Media;
 using Windows.Devices.Sensors;
+using WindowsInput.Events;
 using static HandheldCompanion.OneEuroFilter;
 using static HandheldCompanion.OpenLibSys;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 namespace HandheldCompanion.Devices;
 
@@ -19,43 +29,61 @@ public enum DeviceCapabilities : ushort
     None = 0,
     InternalSensor = 1,
     ExternalSensor = 2,
-    FanControl = 4
+    FanControl = 4,
+    DynamicLighting = 8,
+    DynamicLightingBrightness = 16
 }
 
 public struct ECDetails
 {
-    public ushort AddressRegistry;
-    public ushort AddressData;
-    public ushort AddressControl;
-    public ushort AddressDuty;
+    // Todo, remove comments
+    // ADDR_PORT="0x4e" <-- AddressStatusCommandPort should be called address port??
+    // DATA_PORT="0x4f" <-- AddressDataPort should be called data port??
 
-    public short ValueMin;
-    public short ValueMax;
+    // Ayaneo LED control calls them EC_Data and EC_SC
+    //private const uint EC_DATA = 0x62; // Data Port
+    //private const uint EC_SC = 0x66;   // Status/Command Port
+
+    public ushort AddressStatusCommandPort;  // Address of the register, In EC communication, the registry address specifies the type of data or command you want to access.
+    public ushort AddressDataPort;      // Address where the data needs to go to, When interacting with the EC, the data address is where you send or receive the actual data or commands you want to communicate with the EC.
+    public ushort AddressFanControl;   // Never used?
+    public ushort AddressFanDuty;      // Never used?
+
+    // https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/12_ACPI_Embedded_Controller_Interface_Specification/embedded-controller-register-descriptions.html
+    // The embedded controller contains three registers at two address locations: EC_SC and EC_DATA.
+    // EC_SC Status Command Register
+    // EC_DATA Data register
+
+    public short FanValueMin;
+    public short FanValueMax;
 }
 
 public abstract class IDevice
 {
     public delegate void KeyPressedEventHandler(ButtonFlags button);
     public delegate void KeyReleasedEventHandler(ButtonFlags button);
+    public delegate void PowerStatusChangedEventHandler(IDevice device);
 
     private static OpenLibSys openLibSys;
+    protected LockObject updateLock = new();
 
     private static IDevice device;
 
     protected ushort _vid, _pid;
+    public Dictionary<byte, HidDevice> hidDevices = new();
 
-    public Vector3 AccelerationAxis = new(1.0f, 1.0f, 1.0f);
+    public Vector3 AccelerometerAxis = new(1.0f, 1.0f, 1.0f);
 
-    public SortedDictionary<char, char> AccelerationAxisSwap = new()
+    public SortedDictionary<char, char> AccelerometerAxisSwap = new()
     {
         { 'X', 'X' },
         { 'Y', 'Y' },
         { 'Z', 'Z' }
     };
 
-    public Vector3 AngularVelocityAxis = new(1.0f, 1.0f, 1.0f);
+    public Vector3 GyrometerAxis = new(1.0f, 1.0f, 1.0f);
 
-    public SortedDictionary<char, char> AngularVelocityAxisSwap = new()
+    public SortedDictionary<char, char> GyrometerAxisSwap = new()
     {
         { 'X', 'X' },
         { 'Y', 'Y' },
@@ -63,20 +91,46 @@ public abstract class IDevice
     };
 
     public DeviceCapabilities Capabilities = DeviceCapabilities.None;
+    public LEDLevel DynamicLightingCapabilities = LEDLevel.SolidColor;
+
+    protected const byte EC_OBF = 0x01;  // Output Buffer Full
+    protected const byte EC_IBF = 0x02;  // Input Buffer Full
+    protected const byte EC_DATA = 0x62; // Data Port
+    protected const byte EC_SC = 0x66;   // Status/Command Port
+    protected const byte RD_EC = 0x80;   // Read Embedded Controller
+    protected const byte WR_EC = 0x81;   // Write Embedded Controller
 
     // device configurable TDP (down, up)
     public double[] cTDP = { 10, 25 };
 
-    public ECDetails ECDetails;
-
-    public string ExternalSensorName = string.Empty;
-
     // device GfxClock frequency limits
     public double[] GfxClock = { 100, 1800 };
-    public string InternalSensorName = string.Empty;
+    public uint CpuClock = 6000;
 
     // device nominal TDP (slow, fast)
     public double[] nTDP = { 15, 15, 20 };
+
+    // device maximum operating temperature
+    public double Tjmax = 100;
+
+    // power profile(s)
+    // we might want to create an array instead
+    public PowerProfile powerProfileQuiet;
+    public PowerProfile powerProfileBalanced = new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+    {
+        Default = true,
+        Guid = PowerMode.BetterPerformance,
+        OSPowerMode = PowerMode.BetterPerformance,
+    };
+    public PowerProfile powerProfileCool;
+
+    public List<double[]> fanPresets = new()
+    {
+        //               00, 10, 20, 30, 40, 50, 60, 70, 80, 90,  100�C
+        { new double[] { 20, 20, 20, 20, 20, 25, 30, 40, 70, 70,  100 } },  // Quiet
+        { new double[] { 20, 20, 20, 30, 40, 50, 70, 80, 90, 100, 100 } },  // Default
+        { new double[] { 40, 40, 40, 40, 40, 50, 70, 80, 90, 100, 100 } },  // Aggressive
+    };
 
     // trigger specific settings
     public List<DeviceChord> OEMChords = new();
@@ -84,10 +138,19 @@ public abstract class IDevice
     // filter settings
     public OneEuroSettings oneEuroSettings = new(0.002d, 0.008d);
 
+    // UI
+    protected FontFamily GlyphFontFamily = new("PromptFont");
+    protected const string defaultGlyph = "\u2753";
+
+    public ECDetails ECDetails;
+
+    public string ExternalSensorName = string.Empty;
+    public string InternalSensorName = string.Empty;
+
     public string ProductIllustration = "device_generic";
     public string ProductModel = "default";
 
-    // mininum delay before trying to emulate a virtual controller on system resume (milliseconds)
+    // minimum delay before trying to emulate a virtual controller on system resume (milliseconds)
     public short ResumeDelay = 1000;
 
     // key press delay to use for certain scenarios
@@ -105,8 +168,11 @@ public abstract class IDevice
 
     public virtual bool IsSupported => true;
 
+    public Layout DefaultLayout { get; set; } = LayoutTemplate.DefaultLayout.Layout;
+
     public event KeyPressedEventHandler KeyPressed;
     public event KeyReleasedEventHandler KeyReleased;
+    public event PowerStatusChangedEventHandler PowerStatusChanged;
 
     public string ManufacturerName = string.Empty;
     public string ProductName = string.Empty;
@@ -120,11 +186,13 @@ public abstract class IDevice
         if (device is not null)
             return device;
 
+        MotherboardInfo.UpdateMotherboard();
+
         var ManufacturerName = MotherboardInfo.Manufacturer.ToUpper();
         var ProductName = MotherboardInfo.Product;
         var SystemName = MotherboardInfo.SystemName;
         var Version = MotherboardInfo.Version;
-        var Processor = MotherboardInfo.Processor;
+        var Processor = MotherboardInfo.ProcessorName;
         var NumberOfCores = MotherboardInfo.NumberOfCores;
 
         switch (ManufacturerName)
@@ -153,6 +221,7 @@ public abstract class IDevice
                     }
                 }
                 break;
+
             case "AOKZOE":
                 {
                     switch (ProductName)
@@ -166,6 +235,7 @@ public abstract class IDevice
                     }
                 }
                 break;
+
             case "AYADEVICE":
             case "AYANEO":
                 {
@@ -217,6 +287,17 @@ public abstract class IDevice
                 }
                 break;
 
+            case "CNCDAN":
+                {
+                    switch (ProductName)
+                    {
+                        case "NucDeckRev1.0":
+                            device = new NUCDeck();
+                            break;
+                    }
+                }
+                break;
+
             case "GPD":
                 {
                     switch (ProductName)
@@ -256,6 +337,17 @@ public abstract class IDevice
                 {
                     switch (ProductName)
                     {
+                        case "ONEXPLAYER F1":
+                            {
+                                switch (Version)
+                                {
+                                    default:
+                                    case "Default string":
+                                        device = new OneXPlayerOneXFly();
+                                        break;
+                                }
+                                break;
+                            }
                         case "ONE XPLAYER":
                         case "ONEXPLAYER Mini Pro":
                             {
@@ -294,7 +386,7 @@ public abstract class IDevice
                             {
                                 default:
                                 case "Version 1.0":
-                                    device = new OneXPlayer2_7840U();
+                                    device = new OneXPlayer2Pro();
                                     break;
                             }
                             break;
@@ -319,7 +411,19 @@ public abstract class IDevice
                     switch (ProductName)
                     {
                         case "Jupiter":
+                        case "Galileo":
                             device = new SteamDeck();
+                            break;
+                    }
+                }
+                break;
+
+            case "LENOVO":
+                {
+                    switch (ProductName)
+                    {
+                        case "LNVNB161216":
+                            device = new LegionGo();
                             break;
                     }
                 }
@@ -455,42 +559,58 @@ public abstract class IDevice
         return PnPUtil.RestartDevice(sensor.DeviceId);
     }
 
-    public string GetButtonName(ButtonFlags button)
-    {
-        return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
-    }
-
     public virtual void SetFanDuty(double percent)
     {
-        if (ECDetails.AddressDuty == 0)
+        if (ECDetails.AddressFanDuty == 0)
             return;
 
-        var duty = percent * (ECDetails.ValueMax - ECDetails.ValueMin) / 100 + ECDetails.ValueMin;
+        if (!IsOpen)
+            return;
+
+        var duty = percent * (ECDetails.FanValueMax - ECDetails.FanValueMin) / 100 + ECDetails.FanValueMin;
         var data = Convert.ToByte(duty);
 
-        ECRamDirectWrite(ECDetails.AddressDuty, ECDetails, data);
+        ECRamDirectWrite(ECDetails.AddressFanDuty, ECDetails, data);
     }
 
-    public virtual void SetFanControl(bool enable)
+    public virtual void SetFanControl(bool enable, int mode = 0)
     {
-        if (ECDetails.AddressControl == 0)
+        if (ECDetails.AddressFanControl == 0)
+            return;
+
+        if (!IsOpen)
             return;
 
         var data = Convert.ToByte(enable);
-        ECRamDirectWrite(ECDetails.AddressControl, ECDetails, data);
+        ECRamDirectWrite(ECDetails.AddressFanControl, ECDetails, data);
     }
 
     public virtual float ReadFanDuty()
     {
-        if (ECDetails.AddressControl == 0)
+        if (ECDetails.AddressFanControl == 0)
             return 0;
 
         // todo: implement me
         return 0;
     }
 
+    public virtual bool SetLedStatus(bool status)
+    {
+        return true;
+    }
+
+    public virtual bool SetLedBrightness(int brightness)
+    {
+        return true;
+    }
+
+    public virtual bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
+    {
+        return true;
+    }
+
     [Obsolete("ECRamReadByte is deprecated, please use ECRamReadByte with ECDetails instead.")]
-    public static byte ECRamReadByte(ushort address)
+    public virtual byte ECRamReadByte(ushort address)
     {
         try
         {
@@ -504,28 +624,44 @@ public abstract class IDevice
         }
     }
 
-    public static byte ECRamReadByte(ushort address, ECDetails details)
+    [Obsolete("ECRamWriteByte is deprecated, please use ECRamDirectWrite with ECDetails instead.")]
+    public virtual bool ECRamWriteByte(ushort address, byte data)
+    {
+        try
+        {
+            openLibSys.WriteIoPortByte(address, data);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogManager.LogError("Couldn't write byte to address {0} using OpenLibSys. ErrorCode: {1}", address,
+                ex.Message);
+            return false;
+        }
+    }
+
+    public virtual byte ECRamReadByte(ushort address, ECDetails details)
     {
         var addr_upper = (byte)((address >> 8) & byte.MaxValue);
         var addr_lower = (byte)(address & byte.MaxValue);
 
         try
         {
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x11);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x11);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_upper);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x10);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x10);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_lower);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x12);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x12);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
 
-            return openLibSys.ReadIoPortByte(details.AddressData);
+            return openLibSys.ReadIoPortByte(details.AddressDataPort);
         }
         catch (Exception ex)
         {
@@ -534,27 +670,27 @@ public abstract class IDevice
         }
     }
 
-    public static bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
+    public virtual bool ECRamDirectWrite(ushort address, ECDetails details, byte data)
     {
-        var addr_upper = (byte)((address >> 8) & byte.MaxValue);
-        var addr_lower = (byte)(address & byte.MaxValue);
+        byte addr_upper = (byte)((address >> 8) & byte.MaxValue);
+        byte addr_lower = (byte)(address & byte.MaxValue);
 
         try
         {
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x11);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_upper);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x11);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_upper);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x10);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, addr_lower);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x10);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, addr_lower);
 
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2E);
-            openLibSys.WriteIoPortByte(details.AddressData, 0x12);
-            openLibSys.WriteIoPortByte(details.AddressRegistry, 0x2F);
-            openLibSys.WriteIoPortByte(details.AddressData, data);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2E);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, 0x12);
+            openLibSys.WriteIoPortByte(details.AddressStatusCommandPort, 0x2F);
+            openLibSys.WriteIoPortByte(details.AddressDataPort, data);
             return true;
         }
         catch (Exception ex)
@@ -562,6 +698,37 @@ public abstract class IDevice
             LogManager.LogError("Couldn't write to port using OpenLibSys. ErrorCode: {0}", ex.Message);
             return false;
         }
+    }
+
+    protected void ECRAMWrite(byte address, byte data)
+    {
+        SendECCommand(WR_EC);
+        SendECData(address);
+        SendECData(data);
+    }
+
+    protected void SendECCommand(byte command)
+    {
+        if (IsECReady())
+            ECRamWriteByte(EC_SC, command);
+    }
+
+    protected void SendECData(byte data)
+    {
+        if (IsECReady())
+            ECRamWriteByte(EC_DATA, data);
+    }
+
+    protected bool IsECReady()
+    {
+        DateTime timeout = DateTime.Now.Add(TimeSpan.FromMilliseconds(50));
+        while (DateTime.Now < timeout && (ECRamReadByte(EC_SC) & EC_IBF) != 0x0)
+            Thread.Sleep(1);
+
+        if (DateTime.Now <= timeout)
+            return true;
+
+        return false;
     }
 
     protected void KeyPress(ButtonFlags button)
@@ -574,11 +741,122 @@ public abstract class IDevice
         KeyReleased?.Invoke(button);
     }
 
-    protected static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
+    public bool HasKey()
+    {
+        foreach (DeviceChord pair in OEMChords.Where(a => !a.silenced))
+        {
+            IEnumerable<KeyCode> chords = pair.chords.SelectMany(chord => chord.Value);
+            if (chords.Any())
+                return true;
+        }
+
+        return false;
+    }
+
+    protected void ResumeDevices()
+    {
+        List<string> successes = new();
+
+        StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
+
+        if (deviceInstanceIds is null)
+            deviceInstanceIds = new();
+
+        foreach (string InstanceId in deviceInstanceIds)
+        {
+            if (PnPUtil.EnableDevice(InstanceId))
+                successes.Add(InstanceId);
+        }
+
+        foreach (string InstanceId in successes)
+            deviceInstanceIds.Remove(InstanceId);
+
+        SettingsManager.SetProperty("SuspendedDevices", deviceInstanceIds);
+    }
+
+    protected bool SuspendDevice(string InterfaceId)
+    {
+        PnPDevice pnPDevice = PnPDevice.GetDeviceByInterfaceId(InterfaceId);
+        if (pnPDevice is not null)
+        {
+            StringCollection deviceInstanceIds = SettingsManager.GetStringCollection("SuspendedDevices");
+
+            if (deviceInstanceIds is null)
+                deviceInstanceIds = new();
+
+            if (!deviceInstanceIds.Contains(pnPDevice.InstanceId))
+                deviceInstanceIds.Add(pnPDevice.InstanceId);
+
+            SettingsManager.SetProperty("SuspendedDevices", deviceInstanceIds);
+
+            return PnPUtil.DisableDevice(pnPDevice.InstanceId);
+        }
+
+        return false;
+    }
+
+    protected void PowerStatusChange(IDevice device)
+    {
+        PowerStatusChanged?.Invoke(device);
+    }
+
+    public static IEnumerable<HidDevice> GetHidDevices(int vendorId, int deviceId, int minFeatures = 1)
     {
         HidDevice[] HidDeviceList = HidDevices.Enumerate(vendorId, new int[] { deviceId }).ToArray();
         foreach (HidDevice device in HidDeviceList)
             if (device.IsConnected && device.Capabilities.FeatureReportByteLength >= minFeatures)
                 yield return device;
+    }
+
+    public string GetButtonName(ButtonFlags button)
+    {
+        return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
+    }
+
+    public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
+    {
+        var FontIcon = new FontIcon
+        {
+            Glyph = GetGlyph(button),
+            FontSize = FontIconSize,
+            Foreground = null,
+        };
+
+        if (FontIcon.Glyph is not null)
+        {
+            FontIcon.FontFamily = GlyphFontFamily;
+            FontIcon.FontSize = 28;
+        }
+
+        return FontIcon;
+    }
+
+    public virtual string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u2780";
+            case ButtonFlags.OEM2:
+                return "\u2781";
+            case ButtonFlags.OEM3:
+                return "\u2782";
+            case ButtonFlags.OEM4:
+                return "\u2783";
+            case ButtonFlags.OEM5:
+                return "\u2784";
+            case ButtonFlags.OEM6:
+                return "\u2785";
+            case ButtonFlags.OEM7:
+                return "\u2786";
+            case ButtonFlags.OEM8:
+                return "\u2787";
+            case ButtonFlags.OEM9:
+                return "\u2788";
+            case ButtonFlags.OEM10:
+                return "\u2789";
+        }
+
+        return defaultGlyph;
     }
 }

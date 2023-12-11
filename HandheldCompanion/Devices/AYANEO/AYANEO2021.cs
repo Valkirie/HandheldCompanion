@@ -12,19 +12,20 @@ public class AYANEO2021 : IDevice
         ProductIllustration = "device_aya_2021";
         ProductModel = "AYANEO2021";
 
-        // https://www.amd.com/fr/products/apu/amd-ryzen-5-4500u
+        // https://www.amd.com/en/support/apu/amd-ryzen-processors/amd-ryzen-5-mobile-processors-radeon-graphics/amd-ryzen-5-4500u
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 3, 25 };
-        GfxClock = new double[] { 100, 1750 };
+        GfxClock = new double[] { 100, 1500 };
+        CpuClock = 4000;
 
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
+        GyrometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
             { 'Z', 'Y' }
         };
 
-        AccelerationAxisSwap = new SortedDictionary<char, char>
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
         {
             { 'X', 'X' },
             { 'Y', 'Z' },
@@ -52,5 +53,20 @@ public class AYANEO2021 : IDevice
             new List<KeyCode> { KeyCode.O, KeyCode.LWin, KeyCode.RControlKey },
             false, ButtonFlags.OEM3
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\uE008";
+            case ButtonFlags.OEM2:
+                return "\u242F";
+            case ButtonFlags.OEM3:
+                return "\u243D";
+        }
+
+        return defaultGlyph;
     }
 }

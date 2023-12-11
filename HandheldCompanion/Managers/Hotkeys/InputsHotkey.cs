@@ -113,13 +113,13 @@ public class InputsHotkey
             new InputsHotkey(InputsHotkeyType.HC, "\uE961", "DesktopLayoutEnabled", "Segoe Fluent Icons", 20, false,
                 true, null, string.Empty, true, true)
         },
+        {
+            32,
+            new InputsHotkey(InputsHotkeyType.HC, "\u243C", "shortcutChangeHIDMode", "PromptFont", 20, false,
+                true, null, string.Empty, true, false)
+        },
 
         // Device specific hotkeys
-        {
-            40,
-            new InputsHotkey(InputsHotkeyType.Device, "\uE9CA", "QuietModeToggled", "Segoe Fluent Icons", 20, false,
-                true, null, "QuietModeDisclosure", false, true)
-        },
         {
             41,
             new InputsHotkey(InputsHotkeyType.Device, "\uE706", "increaseBrightness", "Segoe Fluent Icons", 20, true,

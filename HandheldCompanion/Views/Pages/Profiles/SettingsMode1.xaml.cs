@@ -86,7 +86,11 @@ public partial class SettingsMode1 : Page
             return;
 
         ProfilesPage.selectedProfile.SteeringMaxAngle = (float)SliderSteeringAngle.Value;
+<<<<<<< HEAD
         ProfilesPage.RequestUpdate();
+=======
+        ProfilesPage.UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void SliderPower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -100,7 +104,11 @@ public partial class SettingsMode1 : Page
         lvLineSeriesValues.Values = GeneratePoints(SliderPower.Value);
 
         ProfilesPage.selectedProfile.SteeringPower = (float)SliderPower.Value;
+<<<<<<< HEAD
         ProfilesPage.RequestUpdate();
+=======
+        ProfilesPage.UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private void SliderDeadzoneAngle_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -112,7 +120,11 @@ public partial class SettingsMode1 : Page
             return;
 
         ProfilesPage.selectedProfile.SteeringDeadzone = (float)SliderDeadzoneAngle.Value;
+<<<<<<< HEAD
         ProfilesPage.RequestUpdate();
+=======
+        ProfilesPage.UpdateProfile();
+>>>>>>> 13793a887a48c3f3d5e7875eb624f8bfb16410cc
     }
 
     private ChartValues<ObservablePoint> GeneratePoints(double Power)

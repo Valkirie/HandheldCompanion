@@ -14,36 +14,37 @@ public class GPDWin4_2023_7840U : IDevice
 
         // https://www.amd.com/en/products/apu/amd-ryzen-7-7840u
         nTDP = new double[] { 15, 15, 28 };
-        cTDP = new double[] { 5, 28 };
+        cTDP = new double[] { 5, 30 };
         GfxClock = new double[] { 200, 2700 };
-
-        AngularVelocityAxis = new Vector3(1.0f, 1.0f, -1.0f);
-        AngularVelocityAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'Y' },
-            { 'Y', 'Z' },
-            { 'Z', 'X' }
-        };
-
-        AccelerationAxis = new Vector3(1.0f, 1.0f, 1.0f);
-        AccelerationAxisSwap = new SortedDictionary<char, char>
-        {
-            { 'X', 'X' },
-            { 'Y', 'Z' },
-            { 'Z', 'Y' }
-        };
+        CpuClock = 5100;
 
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
 
         ECDetails = new ECDetails
         {
-            AddressControl = 0x275,
-            AddressDuty = 0x1809,
-            AddressRegistry = 0x4E,
-            AddressData = 0x4F,
-            ValueMin = 0,
-            ValueMax = 184
+            AddressFanControl = 0x275,
+            AddressFanDuty = 0x1809,
+            AddressStatusCommandPort = 0x4E,
+            AddressDataPort = 0x4F,
+            FanValueMin = 0,
+            FanValueMax = 184
+        };
+
+        GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
+        GyrometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'Y' },
+            { 'Y', 'Z' },
+            { 'Z', 'X' }
+        };
+
+        AccelerometerAxis = new Vector3(1.0f, 1.0f, 1.0f);
+        AccelerometerAxisSwap = new SortedDictionary<char, char>
+        {
+            { 'X', 'X' },
+            { 'Y', 'Z' },
+            { 'Z', 'Y' }
         };
 
         // Note, OEM1 not configured as this device has it's own Menu button for guide button
@@ -65,6 +66,19 @@ public class GPDWin4_2023_7840U : IDevice
             new List<KeyCode> { KeyCode.F12, KeyCode.R },
             false, ButtonFlags.OEM3
         ));
+    }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM2:
+                return "\u220E";
+            case ButtonFlags.OEM3:
+                return "\u220F";
+        }
+
+        return defaultGlyph;
     }
 
     public override void Close()

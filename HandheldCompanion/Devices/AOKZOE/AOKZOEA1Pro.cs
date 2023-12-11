@@ -12,5 +12,6 @@ public class AOKZOEA1Pro : AOKZOEA1
         nTDP = new double[] { 15, 15, 20 };
         cTDP = new double[] { 4, 28 };
         GfxClock = new double[] { 100, 2700 };
+        CpuClock = 5100;
     }
 }

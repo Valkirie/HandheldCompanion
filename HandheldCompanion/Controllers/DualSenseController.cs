@@ -79,6 +79,11 @@ public class DualSenseController : JSController
         base.UpdateInputs(ticks);
     }
 
+    public override string ToString()
+    {
+        return "DualSense® Wireless Controller";
+    }
+
     public override void Plug()
     {
         TimerManager.Tick += UpdateInputs;
