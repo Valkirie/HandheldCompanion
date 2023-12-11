@@ -95,19 +95,10 @@ public partial class QuickDevicePage : Page
 
     private void Toggle_cFFanSpeed_Toggled(object sender, RoutedEventArgs e)
     {
-        var device = new LegionGo();
-
-        ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
-
-        bool isSwitchOn = toggleSwitch.IsOn;
-
-        if (isSwitchOn)
+        if (MainWindow.CurrentDevice is LegionGo device)
         {
-            device.SetFanFullSpeed(1);
-        }
-        else
-        {
-            device.SetFanFullSpeed(0);
+            ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
+            device.SetFanFullSpeed(toggleSwitch.IsOn);
         }
     }
 }

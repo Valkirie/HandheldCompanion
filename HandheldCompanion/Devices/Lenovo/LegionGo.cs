@@ -132,10 +132,10 @@ public class LegionGo : IDevice
         // do something
     }
 
-    public void SetFanFullSpeed(byte enable = 0)
+    public void SetFanFullSpeed(bool enabled)
     {
         // Fan control: Default, Full (0, 1)
-        ECRAMWrite(0x8A, enable);
+        ECRAMWrite(0x8A, (byte)(enabled ? 1 : 0));
     }
 
     public override void SetFanDuty(double percent)
@@ -275,7 +275,7 @@ public class LegionGo : IDevice
         }
 
         // Reset the fan speed to default before device shutdown/restart
-        SetFanFullSpeed(0);
+        SetFanFullSpeed(false);
 
         base.Close();
     }
