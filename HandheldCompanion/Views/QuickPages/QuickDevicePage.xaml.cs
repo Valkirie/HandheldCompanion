@@ -23,7 +23,7 @@ public partial class QuickDevicePage : Page
     {
         InitializeComponent();
 
-        FullFanSpeedToggler.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Hidden;
+        FullFanSpeedToggler.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Collapsed;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
