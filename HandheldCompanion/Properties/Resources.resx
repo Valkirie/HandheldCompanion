@@ -2667,4 +2667,10 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
     <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
   </data>
+  <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
+    <value>Sets the fan to max speed</value>
+  </data>
+  <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
+    <value>Fan max speed override</value>
+  </data>
 </root>
