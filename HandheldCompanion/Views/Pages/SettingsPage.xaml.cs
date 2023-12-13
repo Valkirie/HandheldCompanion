@@ -46,7 +46,7 @@ public partial class SettingsPage : Page
         UpdateDevice();
 
         // initialize manager(s)
-        MainWindow.updateManager.Updated += UpdateManager_Updated;
+        UpdateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
@@ -252,7 +252,7 @@ public partial class SettingsPage : Page
 
     private void Page_Loaded(object? sender, RoutedEventArgs? e)
     {
-        MainWindow.updateManager.Start();
+        UpdateManager.Start();
     }
 
     public void Page_Closed()
@@ -323,7 +323,7 @@ public partial class SettingsPage : Page
                         {
                             LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
                             LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked +
-                                                   MainWindow.updateManager.GetTime();
+                                                   UpdateManager.GetTime();
 
                             LabelUpdateDate.Visibility = Visibility.Visible;
                             GridUpdateSymbol.Visibility = Visibility.Visible;
@@ -358,13 +358,13 @@ public partial class SettingsPage : Page
                             // Set download button action
                             update.updateDownload.Click += (sender, e) =>
                             {
-                                MainWindow.updateManager.DownloadUpdateFile(update);
+                                UpdateManager.DownloadUpdateFile(update);
                             };
 
                             // Set button action
                             update.updateInstall.Click += (sender, e) =>
                             {
-                                MainWindow.updateManager.InstallUpdate(update);
+                                UpdateManager.InstallUpdate(update);
                             };
 
                             CurrentUpdates.Children.Add(border);
@@ -408,7 +408,7 @@ public partial class SettingsPage : Page
 
     private void B_CheckUpdate_Click(object? sender, RoutedEventArgs? e)
     {
-        new Thread(() => { MainWindow.updateManager.StartProcess(); }).Start();
+        new Thread(() => { UpdateManager.StartProcess(); }).Start();
     }
 
     private void cB_Language_SelectionChanged(object? sender, SelectionChangedEventArgs? e)

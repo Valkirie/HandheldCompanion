@@ -198,7 +198,7 @@ public partial class QuickProfilesPage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    var Processor = MainWindow.performanceManager.GetProcessor();
+                    var Processor = PerformanceManager.GetProcessor();
                     StackProfileFramerate.IsEnabled = true;
                     break;
                 case PlatformStatus.Stalled:

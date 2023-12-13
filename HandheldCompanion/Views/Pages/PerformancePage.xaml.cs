@@ -52,9 +52,9 @@ namespace HandheldCompanion.Views.Pages
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-            MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
-            MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
-            MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
+            PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+            PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+            PerformanceManager.Initialized += PerformanceManager_Initialized;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -224,7 +224,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void PerformanceManager_Initialized()
         {
-            Processor processor = MainWindow.performanceManager.GetProcessor();
+            Processor processor = PerformanceManager.GetProcessor();
             if (processor is null)
                 return;
 

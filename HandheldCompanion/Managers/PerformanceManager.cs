@@ -30,7 +30,7 @@ public static class PowerMode
     public static Guid BestPerformance = new("ded574b5-45a0-4f42-8737-46345c09c238");
 }
 
-public class PerformanceManager : Manager
+public static class PerformanceManager
 {
     private const short INTERVAL_DEFAULT = 1000; // default interval between value scans
     private const short INTERVAL_AUTO = 1010; // default interval between value scans
@@ -39,50 +39,55 @@ public class PerformanceManager : Manager
 
     public static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
 
-    private readonly Timer autoWatchdog;
-    private readonly Timer cpuWatchdog;
-    private readonly Timer gfxWatchdog;
-    private readonly Timer powerWatchdog;
+    private static readonly Timer autoWatchdog;
+    private static readonly Timer cpuWatchdog;
+    private static readonly Timer gfxWatchdog;
+    private static readonly Timer powerWatchdog;
 
-    private bool autoLock;
-    private bool cpuLock;
-    private bool gfxLock;
-    private bool powerLock;
+    private static bool autoLock;
+    private static bool cpuLock;
+    private static bool gfxLock;
+    private static bool powerLock;
 
     // AutoTDP
-    private double AutoTDP;
-    private double AutoTDPPrev;
-    private bool AutoTDPFirstRun = true;
-    private int AutoTDPFPSSetpointMetCounter;
-    private int AutoTDPFPSSmallDipCounter;
-    private double AutoTDPMax;
-    private double TDPMax;
-    private double TDPMin;
-    private int AutoTDPProcessId;
-    private double AutoTDPTargetFPS;
-    private bool cpuWatchdogPendingStop;
-    private uint currentEPP = 50;
-    private int currentCoreCount;
-    private double CurrentGfxClock;
+    private static double AutoTDP;
+    private static double AutoTDPPrev;
+    private static bool AutoTDPFirstRun = true;
+    private static int AutoTDPFPSSetpointMetCounter;
+    private static int AutoTDPFPSSmallDipCounter;
+    private static double AutoTDPMax;
+    private static double TDPMax;
+    private static double TDPMin;
+    private static int AutoTDPProcessId;
+    private static double AutoTDPTargetFPS;
+    private static bool cpuWatchdogPendingStop;
+    private static uint currentEPP = 50;
+    private static int currentCoreCount;
+    private static double CurrentGfxClock;
 
     // powercfg
-    private bool currentPerfBoostMode;
-    private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
-    private readonly double[] CurrentTDP = new double[5]; // used to store current TDP
+    private static bool currentPerfBoostMode;
+    private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+    private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
 
     // GPU limits
-    private double FallbackGfxClock;
-    private readonly double[] FPSHistory = new double[6];
-    private bool gfxWatchdogPendingStop;
+    private static double FallbackGfxClock;
+    private static readonly double[] FPSHistory = new double[6];
+    private static bool gfxWatchdogPendingStop;
 
-    private Processor processor = new();
-    private double ProcessValueFPSPrevious;
-    private double StoredGfxClock;
+    private static Processor processor = new();
+    private static double ProcessValueFPSPrevious;
+    private static double StoredGfxClock;
 
     // TDP limits
-    private readonly double[] StoredTDP = new double[3]; // used to store TDP
+    private static readonly double[] StoredTDP = new double[3]; // used to store TDP
 
-    public PerformanceManager()
+    private static bool IsInitialized;
+
+    public static event InitializedEventHandler Initialized;
+    public delegate void InitializedEventHandler();
+
+    static PerformanceManager()
     {
         // initialize timer(s)
         powerWatchdog = new Timer { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
@@ -116,7 +121,7 @@ public class PerformanceManager : Manager
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
     }
 
-    private void SettingsManagerOnSettingValueChanged(string name, object value)
+    private static void SettingsManagerOnSettingValueChanged(string name, object value)
     {
         switch (name)
         {
@@ -136,7 +141,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private void ProfileManager_Applied(Profile profile, UpdateSource source)
+    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // apply profile define RSR
         try
@@ -155,7 +160,7 @@ public class PerformanceManager : Manager
         catch { }
     }
 
-    private void ProfileManager_Discarded(Profile profile)
+    private static void ProfileManager_Discarded(Profile profile)
     {
         try
         {
@@ -169,7 +174,7 @@ public class PerformanceManager : Manager
         catch { }
     }
 
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         // apply profile defined TDP
         if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
@@ -273,7 +278,7 @@ public class PerformanceManager : Manager
         RequestPowerMode(profile.OSPowerMode);
     }
 
-    private void PowerProfileManager_Discarded(PowerProfile profile)
+    private static void PowerProfileManager_Discarded(PowerProfile profile)
     {
         // restore default TDP
         if (profile.TDPOverrideEnabled)
@@ -326,34 +331,34 @@ public class PerformanceManager : Manager
         RequestPowerMode(PowerMode.BetterPerformance);
     }
 
-    private void RestoreTDP(bool immediate)
+    private static void RestoreTDP(bool immediate)
     {
         for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
             RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
     }
 
-    private void RestoreCPUClock(bool immediate)
+    private static void RestoreCPUClock(bool immediate)
     {
         uint maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
         RequestCPUClock(maxClock);
     }
 
-    private void RestoreGPUClock(bool immediate)
+    private static void RestoreGPUClock(bool immediate)
     {
         RequestGPUClock(255 * 50, immediate);
     }
 
-    private void RTSS_Hooked(AppEntry appEntry)
+    private static void RTSS_Hooked(AppEntry appEntry)
     {
         AutoTDPProcessId = appEntry.ProcessId;
     }
 
-    private void RTSS_Unhooked(int processId)
+    private static void RTSS_Unhooked(int processId)
     {
         AutoTDPProcessId = 0;
     }
 
-    private void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         // We don't have any hooked process
         if (AutoTDPProcessId == 0)
@@ -404,7 +409,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private double AutoTDPDipper(double FPSActual, double FPSSetpoint)
+    private static double AutoTDPDipper(double FPSActual, double FPSSetpoint)
     {
         // Dipper
         // Add small positive "error" if actual and target FPS are similar for a duration
@@ -447,7 +452,7 @@ public class PerformanceManager : Manager
         return Modifier;
     }
 
-    private double AutoTDPDamper(double FPSActual)
+    private static double AutoTDPDamper(double FPSActual)
     {
         // (PI)D derivative control component to dampen FPS fluctuations
         if (double.IsNaN(ProcessValueFPSPrevious)) ProcessValueFPSPrevious = FPSActual;
@@ -463,7 +468,7 @@ public class PerformanceManager : Manager
         return TDPDamping;
     }
 
-    private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (!powerLock)
         {
@@ -506,7 +511,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private async void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static async void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -593,7 +598,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -651,45 +656,45 @@ public class PerformanceManager : Manager
         }
     }
 
-    internal void StartGPUWatchdog()
+    private static void StartGPUWatchdog()
     {
         gfxWatchdogPendingStop = false;
         gfxWatchdog.Interval = INTERVAL_DEFAULT;
         gfxWatchdog.Start();
     }
 
-    internal void StopGPUWatchdog(bool immediate = false)
+    private static void StopGPUWatchdog(bool immediate = false)
     {
         gfxWatchdogPendingStop = true;
         if (immediate)
             gfxWatchdog.Stop();
     }
 
-    internal void StartTDPWatchdog()
+    private static void StartTDPWatchdog()
     {
         cpuWatchdogPendingStop = false;
         cpuWatchdog.Interval = INTERVAL_DEFAULT;
         cpuWatchdog.Start();
     }
 
-    internal void StopTDPWatchdog(bool immediate = false)
+    private static void StopTDPWatchdog(bool immediate = false)
     {
         cpuWatchdogPendingStop = true;
         if (immediate)
             cpuWatchdog.Stop();
     }
 
-    internal void StartAutoTDPWatchdog()
+    private static void StartAutoTDPWatchdog()
     {
         autoWatchdog.Start();
     }
 
-    internal void StopAutoTDPWatchdog(bool immediate = false)
+    private static void StopAutoTDPWatchdog(bool immediate = false)
     {
         autoWatchdog.Stop();
     }
 
-    public void RequestTDP(PowerType type, double value, bool immediate = false)
+    private static void RequestTDP(PowerType type, double value, bool immediate = false)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -706,7 +711,7 @@ public class PerformanceManager : Manager
             processor.SetTDPLimit((PowerType)idx, value, immediate);
     }
 
-    public async void RequestTDP(double[] values, bool immediate = false)
+    private static async void RequestTDP(double[] values, bool immediate = false)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -728,7 +733,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    public void RequestGPUClock(double value, bool immediate = false)
+    private static void RequestGPUClock(double value, bool immediate = false)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -741,7 +746,7 @@ public class PerformanceManager : Manager
             processor.SetGPUClock(value);
     }
 
-    public void RequestPowerMode(Guid guid)
+    private static void RequestPowerMode(Guid guid)
     {
         currentPowerMode = guid;
         LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
@@ -750,7 +755,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
     }
 
-    public void RequestEPP(uint EPPOverrideValue)
+    private static void RequestEPP(uint EPPOverrideValue)
     {
         currentEPP = EPPOverrideValue;
 
@@ -777,7 +782,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested EPP");
     }
 
-    public void RequestCPUCoreCount(int CoreCount)
+    private static void RequestCPUCoreCount(int CoreCount)
     {
         currentCoreCount = CoreCount;
 
@@ -811,7 +816,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested CPMAXCORES");
     }
 
-    public void RequestPerfBoostMode(bool value)
+    private static void RequestPerfBoostMode(bool value)
     {
         currentPerfBoostMode = value;
 
@@ -821,7 +826,7 @@ public class PerformanceManager : Manager
         LogManager.LogDebug("User requested perfboostmode: {0}", value);
     }
 
-    private void RequestCPUClock(uint cpuClock)
+    private static void RequestCPUClock(uint cpuClock)
     {
         double maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
 
@@ -843,7 +848,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested PROCFREQMAX");
     }
 
-    public override void Start()
+    public static void Start()
     {
         // initialize watchdog(s)
         powerWatchdog.Start();
@@ -864,25 +869,31 @@ public class PerformanceManager : Manager
         processor.MiscChanged += Processor_MiscChanged;
         */
 
-        base.Start();
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "PerformanceManager");
     }
 
-    public override void Stop()
+    public static void Stop()
     {
         if (!IsInitialized)
             return;
 
-        processor.Stop();
+        if (processor.IsInitialized)
+            processor.Stop();
 
         powerWatchdog.Stop();
         cpuWatchdog.Stop();
         gfxWatchdog.Stop();
         autoWatchdog.Stop();
 
-        base.Stop();
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has started", "PerformanceManager");
     }
 
-    public Processor GetProcessor()
+    public static Processor GetProcessor()
     {
         return processor;
     }
@@ -909,27 +920,27 @@ public class PerformanceManager : Manager
 
     #region events
 
-    public event LimitChangedHandler PowerLimitChanged;
+    public static event LimitChangedHandler PowerLimitChanged;
 
     public delegate void LimitChangedHandler(PowerType type, int limit);
 
-    public event ValueChangedHandler PowerValueChanged;
+    public static event ValueChangedHandler PowerValueChanged;
 
     public delegate void ValueChangedHandler(PowerType type, float value);
 
-    public event StatusChangedHandler ProcessorStatusChanged;
+    public static event StatusChangedHandler ProcessorStatusChanged;
 
     public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
-    public event PowerModeChangedEventHandler PowerModeChanged;
+    public static event PowerModeChangedEventHandler PowerModeChanged;
 
     public delegate void PowerModeChangedEventHandler(int idx);
 
-    public event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
+    public static event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
 
     public delegate void PerfBoostModeChangedEventHandler(bool value);
 
-    public event EPPChangedEventHandler EPPChanged;
+    public static event EPPChangedEventHandler EPPChanged;
 
     public delegate void EPPChangedEventHandler(uint EPP);
 
@@ -937,7 +948,7 @@ public class PerformanceManager : Manager
 
     #region events
 
-    private void HWiNFO_PowerLimitChanged(PowerType type, int limit)
+    private static void HWiNFO_PowerLimitChanged(PowerType type, int limit)
     {
         var idx = (int)type;
         CurrentTDP[idx] = limit;
@@ -960,26 +971,26 @@ public class PerformanceManager : Manager
         LogManager.LogTrace("PowerLimitChanged: {0}\t{1} W", type, limit);
     }
 
-    private void HWiNFO_GPUFrequencyChanged(double value)
+    private static void HWiNFO_GPUFrequencyChanged(double value)
     {
         CurrentGfxClock = value;
 
         LogManager.LogTrace("GPUFrequencyChanged: {0} Mhz", value);
     }
 
-    private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+    private static void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
     {
         ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
     }
 
     [Obsolete("Method is deprecated.")]
-    private void Processor_ValueChanged(PowerType type, float value)
+    private static void Processor_ValueChanged(PowerType type, float value)
     {
         PowerValueChanged?.Invoke(type, value);
     }
 
     [Obsolete("Method is deprecated.")]
-    private void Processor_LimitChanged(PowerType type, int limit)
+    private static void Processor_LimitChanged(PowerType type, int limit)
     {
         var idx = (int)type;
         CurrentTDP[idx] = limit;
@@ -989,7 +1000,7 @@ public class PerformanceManager : Manager
     }
 
     [Obsolete("Method is deprecated.")]
-    private void Processor_MiscChanged(string misc, float value)
+    private static void Processor_MiscChanged(string misc, float value)
     {
         switch (misc)
         {

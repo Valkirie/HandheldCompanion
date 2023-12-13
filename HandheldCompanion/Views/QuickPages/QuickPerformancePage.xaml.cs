@@ -34,18 +34,18 @@ public partial class QuickPerformancePage : Page
         InitializeComponent();
 
         /*
-        MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
-        MainWindow.performanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
-        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        PerformanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
+        PerformanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
+        PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
         */
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
 
-        MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
-        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
-        MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
+        PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+        PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        PerformanceManager.Initialized += PerformanceManager_Initialized;
 
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
@@ -130,7 +130,7 @@ public partial class QuickPerformancePage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    var Processor = MainWindow.performanceManager.GetProcessor();
+                    var Processor = PerformanceManager.GetProcessor();
                     StackProfileAutoTDP.IsEnabled = true && Processor is not null ? Processor.CanChangeTDP : false;
                     break;
                 case PlatformStatus.Stalled:
@@ -181,7 +181,7 @@ public partial class QuickPerformancePage : Page
 
     private void PerformanceManager_Initialized()
     {
-        Processor processor = MainWindow.performanceManager.GetProcessor();
+        Processor processor = PerformanceManager.GetProcessor();
         if (processor is null)
             return;
 
