@@ -6,6 +6,7 @@ namespace HandheldCompanion.Misc
     {
         public const string CppFunctionsDLL = @"PerformanceMetrics.dll";
         public const string CppFunctionsDLL1 = @"GraphSettings.dll";
+        public const string CppFunctionsDLL2 = @"ADLX_DisplaySettings.dll";
         [DllImport(CppFunctionsDLL, CallingConvention = CallingConvention.Cdecl)] public static extern int GetFPSData();
         [DllImport(CppFunctionsDLL, CallingConvention = CallingConvention.Cdecl)] public static extern int GetGPUMetrics(int GPU, int Sensor);
 
@@ -19,5 +20,27 @@ namespace HandheldCompanion.Misc
         [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetChill(int GPU, bool isEnabled, int maxFPS, int minFPS);
         [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetImageSharpning(int GPU, bool isEnabled, int percent);
         [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetEnhancedSync(int GPU, bool isEnabled);
+
+        //int scaling features below
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasIntegerScalingSupport();
+        //0 is disabled, 1 is enabled
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int SetIntegerScaling(int key);
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool IsIntegerScalingEnabled();
+
+
+
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasGPUScalingSupport();
+        //0 is disabled, 1 is enabled
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int SetGPUScaling(int key);
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool IsGPUScalingEnabled();
+
+
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasScalingModeSupport();
+
+        //Scaling Mode int to mode: 0 is preserve aspect ration, 1 is full panel, 2 is center
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int SetScalingMode(int key);
+        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int GetScalingMode();
+
+        
     }
 }
