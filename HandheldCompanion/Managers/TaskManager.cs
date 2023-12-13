@@ -38,13 +38,19 @@ public static class TaskManager
     {
         TaskExecutable = Executable;
         taskService = new TaskService();
-        task = taskService.FindTask(TaskName);
 
         try
         {
+            // get current task, if any, delete it
+            task = taskService.FindTask(TaskName);
             if (task is not null)
                 taskService.RootFolder.DeleteTask(TaskName);
+        }
+        catch { }
 
+        try
+        {
+            // create a new task
             taskDefinition = TaskService.Instance.NewTask();
             taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
             taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;
