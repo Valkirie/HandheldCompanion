@@ -1809,7 +1809,7 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
     <value>DPad Esquerda</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Direita</value>
+    <value>DPad Direita</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Cima</value>

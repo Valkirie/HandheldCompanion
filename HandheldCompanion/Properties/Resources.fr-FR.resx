@@ -1895,7 +1895,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>DPad Left</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Right</value>
+    <value>DPad Right</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Up</value>

@@ -1829,7 +1829,7 @@
     <value>DPad Izquierda</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Derecha</value>
+    <value>DPad Derecha</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Arriba</value>

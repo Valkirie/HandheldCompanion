@@ -1861,7 +1861,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>DPad Left</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Right</value>
+    <value>DPad Right</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Up</value>

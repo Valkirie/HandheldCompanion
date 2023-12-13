@@ -3006,7 +3006,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PPad Right.
+        ///   Looks up a localized string similar to DPad Right.
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_DPadRight {
             get {
