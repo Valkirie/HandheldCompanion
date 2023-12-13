@@ -980,6 +980,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sets the fan to max speed.
+        /// </summary>
+        public static string DevicePage_FullFanSpeedDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_FullFanSpeedDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fan max speed override.
+        /// </summary>
+        public static string DevicePage_FullFanSpeedText {
+            get {
+                return ResourceManager.GetString("DevicePage_FullFanSpeedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power options.
         /// </summary>
         public static string DevicePage_PowerOptions {
