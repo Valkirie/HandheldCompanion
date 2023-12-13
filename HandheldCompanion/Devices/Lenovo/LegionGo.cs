@@ -83,7 +83,9 @@ public class LegionGo : IDevice
             Default = true,
             OSPowerMode = PowerMode.BetterBattery,
             OEMPowerMode = (int)LegionMode.Quiet,
-            Guid = PowerMode.BetterBattery
+            Guid = PowerMode.BetterBattery,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
         };
 
         powerProfileBalanced = new(Properties.Resources.PowerProfilePerformanceName, Properties.Resources.PowerProfilePerformanceDescription)
@@ -91,7 +93,9 @@ public class LegionGo : IDevice
             Default = true,
             OSPowerMode = PowerMode.BetterPerformance,
             OEMPowerMode = (int)LegionMode.Balanced,
-            Guid = PowerMode.BetterPerformance
+            Guid = PowerMode.BetterPerformance,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
         };
 
         powerProfileCool = new(Properties.Resources.PowerProfileTurboName, Properties.Resources.PowerProfileTurboDescription)
@@ -99,7 +103,9 @@ public class LegionGo : IDevice
             Default = true,
             OSPowerMode = PowerMode.BestPerformance,
             OEMPowerMode = (int)LegionMode.Performance,
-            Guid = PowerMode.BestPerformance
+            Guid = PowerMode.BestPerformance,
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
         };
 
         PowerProfileManager.Applied += PowerProfileManager_Applied;
