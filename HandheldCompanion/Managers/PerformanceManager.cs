@@ -32,7 +32,7 @@ public static class OSPowerMode
 
 public static class PerformanceManager
 {
-    private const short INTERVAL_DEFAULT = 1000; // default interval between value scans
+    private const short INTERVAL_DEFAULT = 3000; // default interval between value scans
     private const short INTERVAL_AUTO = 1010; // default interval between value scans
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
     public static int MaxDegreeOfParallelism = 4;
