@@ -57,6 +57,7 @@ namespace HandheldCompanion.Devices
                 false, ButtonFlags.OEM2
                 ));
         }
+
         public override string GetGlyph(ButtonFlags button)
         {
             switch (button)

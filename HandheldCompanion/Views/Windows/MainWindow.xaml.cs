@@ -197,12 +197,18 @@ public partial class MainWindow : GamepadWindow
         // load page(s)
         loadPages();
 
-        // start static managers in sequence
-        // managers that has to be stopped/started when session status changes shouldn't be put here
+        // manage events
+        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
+        PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
         ToastManager.Start();
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
+        // start static managers in sequence
         PowerProfileManager.Start();
         ProfileManager.Start();
         ControllerManager.Start();
@@ -224,14 +230,6 @@ public partial class MainWindow : GamepadWindow
         new Thread(() => { TaskManager.Start(CurrentExe); }).Start();
         new Thread(() => { PerformanceManager.Start(); }).Start();
         new Thread(() => { UpdateManager.Start(); }).Start();
-
-        // manage events
-        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
-        PowerManager.SystemStatusChanged += OnSystemStatusChanged;
-        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
         // start setting last
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
