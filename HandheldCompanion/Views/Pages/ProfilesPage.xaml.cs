@@ -74,7 +74,7 @@ public partial class ProfilesPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             RSRToggle.IsEnabled = RSRSupport;
-            RSRToggle.IsOn = Convert.ToBoolean(RSRState);
+            RSRToggle.IsOn = RSRState <= 0 ? false : true;
             RSRSlider.Value = RSRSharpness;
         });
     }

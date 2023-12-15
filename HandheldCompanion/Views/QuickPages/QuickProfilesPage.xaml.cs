@@ -189,7 +189,7 @@ public partial class QuickProfilesPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             StackProfileRSR.IsEnabled = RSRSupport;
-            RSRToggle.IsOn = Convert.ToBoolean(RSRState);
+            RSRToggle.IsOn = RSRState <= 0 ? false : true;
             RSRSlider.Value = RSRSharpness;
         });
     }
