@@ -1,7 +1,5 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers.Desktop;
+﻿using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Views;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -12,6 +10,7 @@ using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -32,19 +31,26 @@ public static class SystemManager
 
     private static bool VolumeSupport;
     private static readonly bool BrightnessSupport;
-    private static bool FanControlSupport;
 
-    private const int UpdateInterval = 1000;
+    private const int ADLXUpdateInterval = 2000;
     private static readonly Timer ADLXTimer;
+
+    private static bool prevRSRSupport = false;
     private static int prevRSRState = -2;
     private static int prevRSRSharpness = -1;
+
+    private static bool prevGPUScaling = false;
+    private static int prevScalingMode = 0;
+
+    private static bool prevIntegerScaling = false;
+    private static bool prevIntegerScalingSupport = false;
 
     public static bool IsInitialized;
 
     static SystemManager()
     {
         // ADLX
-        ADLXTimer = new Timer(UpdateInterval);
+        ADLXTimer = new Timer(ADLXUpdateInterval);
         ADLXTimer.AutoReset = true;
         ADLXTimer.Elapsed += ADLXTimer_Elapsed;
 
@@ -62,35 +68,89 @@ public static class SystemManager
         BrightnessWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
         BrightnessWatcher.EventArrived += onWMIEvent;
 
-        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-
         // check if we have control over brightness
         BrightnessSupport = GetBrightness() != -1;
 
-        if (MainWindow.CurrentDevice.IsOpen && MainWindow.CurrentDevice.IsSupported)
-            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl))
-                FanControlSupport = true;
-
+        // manage events
+        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
     }
 
+    // create a lock object
+    private static object ADLXlockObject = new object();
     private static void ADLXTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        try
+        if (Monitor.TryEnter(ADLXlockObject))
         {
-            var RSRState = ADLXBackend.GetRSRState();
-            var RSRSharpness = ADLXBackend.GetRSRSharpness();
+            bool GPUScaling = false;
 
-            if ((RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+            try
             {
-                RSRStateChanged?.Invoke(RSRState, RSRSharpness);
+                // get gpu scaling and scaling mode
+                GPUScaling = ADLXBackend.IsGPUScalingEnabled();
+                int ScalingMode = ADLXBackend.GetScalingMode();
 
-                prevRSRState = RSRState;
-                prevRSRSharpness = RSRSharpness;
+                if ((GPUScaling != prevGPUScaling) || (ScalingMode != prevScalingMode))
+                {
+                    // raise event
+                    StateChanged_GPUScaling?.Invoke(GPUScaling, ScalingMode);
+
+                    prevGPUScaling = GPUScaling;
+                    prevScalingMode = ScalingMode;
+                }
             }
+            catch { }
+
+            try
+            {
+                int RSRState = ADLXBackend.GetRSRState();
+                int RSRSharpness = ADLXBackend.GetRSRSharpness();
+                bool HasRSRSupport = GPUScaling && RSRState != -1;
+
+                if ((HasRSRSupport != prevRSRSupport) || (RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+                {
+                    // raise event
+                    StateChanged_RSR?.Invoke(HasRSRSupport, RSRState, RSRSharpness);
+
+                    prevRSRSupport = HasRSRSupport;
+                    prevRSRState = RSRState;
+                    prevRSRSharpness = RSRSharpness;
+                }
+            }
+            catch { }
+
+            try
+            {
+                // get gpu scaling and scaling mode
+                bool IntegerScalingSupport = false;
+                bool IntegerScaling = false;
+
+                // checking IntegerScaling without GPUScaling will hang the thread
+                if (GPUScaling)
+                {
+                    DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                    while (DateTime.Now < timeout && !IntegerScalingSupport)
+                    {
+                        IntegerScalingSupport = ADLXBackend.HasIntegerScalingSupport();
+                        Thread.Sleep(250);
+                    }
+                    IntegerScaling = ADLXBackend.IsIntegerScalingEnabled();
+                }
+
+                if ((IntegerScalingSupport != prevIntegerScalingSupport) || (IntegerScaling != prevIntegerScaling))
+                {
+                    // raise event
+                    StateChanged_IntegerScaling?.Invoke(IntegerScalingSupport, IntegerScaling);
+
+                    prevIntegerScalingSupport = prevIntegerScalingSupport;
+                    prevIntegerScaling = IntegerScaling;
+                }
+            }
+            catch { }
+
+            Monitor.Exit(ADLXlockObject);
         }
-        catch { }
     }
 
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
@@ -598,32 +658,31 @@ public static class SystemManager
 
     #region events
 
-    public static event RSRStateChangedEventHandler RSRStateChanged;
+    public static event RSRStateChangedEventHandler StateChanged_RSR;
+    public delegate void RSRStateChangedEventHandler(bool RSRSupport, int RSRState, int RSRSharpness);
 
-    public delegate void RSRStateChangedEventHandler(int RSRState, int RSRSharpness);
+    public static event ISStateChangedEventHandler StateChanged_IntegerScaling;
+    public delegate void ISStateChangedEventHandler(bool IntegerScalingSupport, bool IntegerScaling);
+
+    public static event GPUScalingStateChangedEventHandler StateChanged_GPUScaling;
+    public delegate void GPUScalingStateChangedEventHandler(bool GPUScaling, int ScalingMode);
 
     public static event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
-
     public delegate void DisplaySettingsChangedEventHandler(ScreenResolution resolution);
 
     public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
-
     public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
 
     public static event DisplayOrientationChangedEventHandler DisplayOrientationChanged;
-
     public delegate void DisplayOrientationChangedEventHandler(ScreenRotation rotation);
 
     public static event VolumeNotificationEventHandler VolumeNotification;
-
     public delegate void VolumeNotificationEventHandler(float volume);
 
     public static event BrightnessNotificationEventHandler BrightnessNotification;
-
     public delegate void BrightnessNotificationEventHandler(int brightness);
 
     public static event InitializedEventHandler Initialized;
-
     public delegate void InitializedEventHandler();
 
     #endregion

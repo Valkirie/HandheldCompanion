@@ -2485,7 +2485,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Profiles</value>
   </data>
   <data name="QuickSettingsPage_Desc" xml:space="preserve">
-    <value>Preferred actions, device settings</value>
+    <value>Preferred actions</value>
   </data>
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>Actions</value>
@@ -2672,5 +2672,23 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
     <value>Fan max speed override</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
+    <value>Integer scaling is not available</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
+    <value>Deploy integer scaling</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckDesc" xml:space="preserve">
+    <value>Integer scaling feature is not installed, therefore you won't be able to enable or disable it</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckReadme" xml:space="preserve">
+    <value>We need to execute some script to deploy the integer scaling on your system</value>
+  </data>
+  <data name="QuickOverlayPage_Desc" xml:space="preserve">
+    <value>Manage on-screen overlay</value>
+  </data>
+  <data name="QuickOverlayPage_Title" xml:space="preserve">
+    <value>Overlay</value>
   </data>
 </root>

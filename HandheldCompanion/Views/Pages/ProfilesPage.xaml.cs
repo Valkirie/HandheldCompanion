@@ -62,33 +62,20 @@ public partial class ProfilesPage : Page
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
-        SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
+        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription(string.Empty, ListSortDirection.Descending));
     }
 
-    private void SystemManager_RSRStateChanged(int RSRState, int RSRSharpness)
+    private void SystemManager_StateChanged_RSR(bool RSRSupport, int RSRState, int RSRSharpness)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (RSRState)
-            {
-                case -1:
-                    RSRToggle.IsEnabled = false;
-                    break;
-                case 0:
-                    RSRToggle.IsEnabled = true;
-                    RSRToggle.IsOn = false;
-                    RSRSlider.Value = RSRSharpness;
-                    break;
-                case 1:
-                    RSRToggle.IsEnabled = true;
-                    RSRToggle.IsOn = true;
-                    RSRSlider.Value = RSRSharpness;
-                    break;
-            }
+            RSRToggle.IsEnabled = RSRSupport;
+            RSRToggle.IsOn = Convert.ToBoolean(RSRState);
+            RSRSlider.Value = RSRSharpness;
         });
     }
 

@@ -102,19 +102,15 @@ public static class PerformanceManager
         autoWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
         autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
+        // manage events
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
-
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-
         PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
         PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
-
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
-
-        // initialize settings
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
 
         currentCoreCount = Environment.ProcessorCount;
@@ -148,6 +144,7 @@ public static class PerformanceManager
         {
             if (profile.RSREnabled)
             {
+                ADLXBackend.SetGPUScaling(1);
                 ADLXBackend.SetRSR(true);
                 ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
             }
@@ -156,6 +153,18 @@ public static class PerformanceManager
                 ADLXBackend.SetRSR(false);
                 ADLXBackend.SetRSRSharpness(20);
             }
+
+            if (profile.IntegerScalingEnabled)
+            {
+                ADLXBackend.SetGPUScaling(1);
+                ADLXBackend.SetIntegerScaling(1);
+            }
+            else if (ADLXBackend.IsIntegerScalingEnabled())
+            {
+                ADLXBackend.SetIntegerScaling(0);
+            }
+
+            ADLXBackend.SetScalingMode(profile.ScalingMode);
         }
         catch { }
     }
@@ -169,6 +178,12 @@ public static class PerformanceManager
             {
                 ADLXBackend.SetRSR(false);
                 ADLXBackend.SetRSRSharpness(20);
+            }
+            
+            // restore disabled integer scaling
+            if (profile.IntegerScalingEnabled)
+            {
+                ADLXBackend.SetIntegerScaling(0);
             }
         }
         catch { }

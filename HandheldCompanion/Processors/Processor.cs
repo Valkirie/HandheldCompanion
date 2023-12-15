@@ -67,7 +67,7 @@ public class Processor
     public virtual void Initialize()
     {
         StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-        Initialized?.Invoke();
+        Initialized?.Invoke(this);
 
         // deprecated, we're using HWiNFO to provide values and limits
         /*
@@ -160,7 +160,7 @@ public class Processor
 
     public event InitializedEventHandler Initialized;
 
-    public delegate void InitializedEventHandler();
+    public delegate void InitializedEventHandler(Processor processor);
 
     #endregion
 }

@@ -64,10 +64,10 @@ public partial class OverlayQuickTools : GamepadWindow
     private readonly DispatcherTimer clockUpdateTimer;
 
     public QuickHomePage homePage;
-    public QuickSettingsPage settingsPage;
     public QuickDevicePage devicePage;
     public QuickPerformancePage performancePage;
     public QuickProfilesPage profilesPage;
+    public QuickOverlayPage overlayPage;
     public QuickSuspenderPage suspenderPage;
 
     private string preNavItemTag;
@@ -93,17 +93,17 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // create pages
         homePage = new("quickhome");
-        settingsPage = new("quicksettings");
         devicePage = new("quickdevice");
         performancePage = new("quickperformance");
         profilesPage = new("quickprofiles");
+        overlayPage = new("quickoverlay");
         suspenderPage = new("quicksuspender");
 
         _pages.Add("QuickHomePage", homePage);
-        _pages.Add("QuickSettingsPage", settingsPage);
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickPerformancePage", performancePage);
         _pages.Add("QuickProfilesPage", profilesPage);
+        _pages.Add("QuickOverlayPage", overlayPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
 
         // update Position and Size
@@ -256,8 +256,8 @@ public partial class OverlayQuickTools : GamepadWindow
         // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
         if (hwndSource != null)
         {
-            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-            // hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+            //hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
@@ -389,7 +389,8 @@ public partial class OverlayQuickTools : GamepadWindow
             ToggleVisibility();
         else
         {
-            settingsPage.Close();
+            // close pages
+            devicePage.Close();
         }
     }
 

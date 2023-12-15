@@ -88,6 +88,9 @@ public partial class Profile : ICloneable, IComparable
     public bool RSREnabled { get; set; }
     public int RSRSharpness { get; set; } = 20;
 
+    public bool IntegerScalingEnabled { get; set; }
+    public int ScalingMode { get; set; } = 0;
+
     public bool CPUCoreEnabled { get; set; }
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 

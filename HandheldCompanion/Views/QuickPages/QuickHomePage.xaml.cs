@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Page = System.Windows.Controls.Page;
@@ -19,6 +20,9 @@ public partial class QuickHomePage : Page
     {
         this.Tag = Tag;
 
+        HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
+        HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
+
         SystemManager.VolumeNotification += SystemManager_VolumeNotification;
         SystemManager.BrightnessNotification += SystemManager_BrightnessNotification;
         SystemManager.Initialized += SystemManager_Initialized;
@@ -27,6 +31,25 @@ public partial class QuickHomePage : Page
     public QuickHomePage()
     {
         InitializeComponent();
+    }
+
+    private void HotkeysManager_HotkeyUpdated(Hotkey hotkey)
+    {
+        UpdatePins();
+    }
+
+    private void HotkeysManager_HotkeyCreated(Hotkey hotkey)
+    {
+        UpdatePins();
+    }
+
+    private void UpdatePins()
+    {
+        // todo, implement quick hotkey order
+        QuickHotkeys.Children.Clear();
+
+        foreach (var hotkey in HotkeysManager.Hotkeys.Values.Where(item => item.IsPinned))
+            QuickHotkeys.Children.Add(hotkey.GetPin());
     }
 
     private void QuickButton_Click(object sender, RoutedEventArgs e)

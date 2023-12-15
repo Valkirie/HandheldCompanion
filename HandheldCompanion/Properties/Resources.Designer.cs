@@ -3267,6 +3267,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Integer scaling is not available.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheck {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deploy integer scaling.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheckAction {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integer scaling feature is not installed, therefore you won&apos;t be able to enable or disable it.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheckDesc {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We need to execute some script to deploy the integer scaling on your system.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheckReadme {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Core isolation features are turned on.
         /// </summary>
         public static string Hint_CoreIsolationCheck {
@@ -6105,6 +6141,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manage on-screen overlay.
+        /// </summary>
+        public static string QuickOverlayPage_Desc {
+            get {
+                return ResourceManager.GetString("QuickOverlayPage_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay.
+        /// </summary>
+        public static string QuickOverlayPage_Title {
+            get {
+                return ResourceManager.GetString("QuickOverlayPage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FPS.
         /// </summary>
         public static string QuickPerformancePage_AutoTDPUnitFPS {
@@ -6393,7 +6447,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preferred actions, device settings.
+        ///   Looks up a localized string similar to Preferred actions.
         /// </summary>
         public static string QuickSettingsPage_Desc {
             get {
