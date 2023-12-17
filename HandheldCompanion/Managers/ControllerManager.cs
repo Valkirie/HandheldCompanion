@@ -5,6 +5,7 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
+using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -1100,7 +1101,17 @@ public static class ControllerManager
 
     internal static IController GetEmulatedController()
     {
-        var HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+        // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
+        HIDmode HIDmode = HIDmode.NoController;
+
+        // if profile is selected, get its HIDmode
+        if (ProfilesPage.selectedProfile != null)
+            HIDmode = ProfilesPage.selectedProfile.HID;
+
+        // if profile HID is NotSelected, use HIDmode from settings
+        if (HIDmode == HIDmode.NotSelected)
+            HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+
         switch (HIDmode)
         {
             default:
