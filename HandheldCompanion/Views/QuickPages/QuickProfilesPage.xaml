@@ -99,6 +99,42 @@
             </Border>
         </Grid>
 
+        <!--  Sub Profiles  -->
+        <Border
+            Name="SubProfilesBorder"
+            Padding="15,12,12,12"
+            Background="{DynamicResource ExpanderHeaderBackground}"
+            CornerRadius="{DynamicResource ControlCornerRadius}" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*" MinWidth="200" />
+                    <ColumnDefinition Width="5*" MinWidth="200" />
+                </Grid.ColumnDefinitions>
+                <DockPanel>
+                    <ui:FontIcon
+                        Height="40"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                        Glyph="&#xE81E;" />
+                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_SubProfiles}" />
+                        <TextBlock
+                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{x:Static resx:Resources.QuickProfilesPage_SubProfilesDesc}"
+                            TextWrapping="Wrap" />
+                    </ui:SimpleStackPanel>
+                </DockPanel>
+                <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                    <ComboBox
+                        Name="cb_SubProfiles"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        SelectionChanged="cb_SubProfiles_SelectionChanged" />
+                </DockPanel>
+            </Grid>
+        </Border>
+
         <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
         <ui:SimpleStackPanel Name="GridProfile" Spacing="6">

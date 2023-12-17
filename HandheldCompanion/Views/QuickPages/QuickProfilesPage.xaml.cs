@@ -45,7 +45,7 @@ public partial class QuickProfilesPage : Page
 
         // manage events
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
-        ProfileManager.Applied += ProfileApplied;
+        ProfileManager.Applied += ProfileManager_Applied;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
@@ -385,7 +385,7 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void ProfileApplied(Profile profile, UpdateSource source)
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         if (true)
         {
@@ -394,6 +394,7 @@ public partial class QuickProfilesPage : Page
                 // self update, unlock and exit
                 case UpdateSource.QuickProfilesPage:
                 case UpdateSource.Serializer:
+                case UpdateSource.ProfilesPage:
                     return;
             }
 
@@ -416,6 +417,32 @@ public partial class QuickProfilesPage : Page
                     CurrentProfileName.Text = selectedProfile.Name;
                     Toggle_ControllerLayout.IsEnabled = selectedProfile.Default ? false : true;
                     Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
+
+                    // sub profiles
+                    cb_SubProfiles.Items.Clear();
+                    int selectedIndex = 0;
+
+                    if (profile.Default)
+                    {
+                        cb_SubProfiles.Items.Add(profile);
+                        cb_SubProfiles.IsEnabled = false;
+                    }
+                    else
+                    {
+                        Profile mainProfile = ProfileManager.GetProfileForSubProfile(selectedProfile);
+                        Profile[] subProfiles = ProfileManager.GetSubProfilesFromPath(selectedProfile.Path, false);
+
+                        cb_SubProfiles.Items.Add(mainProfile);
+                        foreach (Profile subProfile in subProfiles)
+                        {
+                            cb_SubProfiles.Items.Add(subProfile);
+                            if (subProfile.Guid == selectedProfile.Guid)
+                                selectedIndex = cb_SubProfiles.Items.IndexOf(subProfile);
+                        }
+                        cb_SubProfiles.IsEnabled = true;
+                    }
+
+                    cb_SubProfiles.SelectedIndex = selectedIndex;
 
                     // power profile
                     PowerProfile powerProfile = PowerProfileManager.GetProfile(profile.PowerProfile);
@@ -496,6 +523,7 @@ public partial class QuickProfilesPage : Page
                     ProfileToggle.IsEnabled = true;
                     ProcessName.Text = currentProcess.Executable;
                     ProcessPath.Text = currentProcess.Path;
+                    SubProfilesBorder.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -504,6 +532,7 @@ public partial class QuickProfilesPage : Page
                     ProfileToggle.IsEnabled = false;
                     ProcessName.Text = Properties.Resources.QuickProfilesPage_Waiting;
                     ProcessPath.Text = string.Empty;
+                    SubProfilesBorder.Visibility = Visibility.Collapsed;
                 }
             }
         });
@@ -886,5 +915,23 @@ public partial class QuickProfilesPage : Page
     private void GPUScaling_Toggled(object sender, RoutedEventArgs e)
     {
         ADLXBackend.SetGPUScaling(Convert.ToInt32(GPUScalingToggle.IsOn));
+    }
+
+    private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+        
+        // return if combobox selected item is null
+        if (cb_SubProfiles.SelectedIndex == -1)
+            return;
+        
+        LogManager.LogInformation($"Subprofile changed in Quick Settings - ind: {cb_SubProfiles.SelectedIndex} - subprofile: {cb_SubProfiles.SelectedItem}");
+        selectedProfile = (Profile)cb_SubProfiles.SelectedItem;
+        UpdateProfile();
     }
 }

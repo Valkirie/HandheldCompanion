@@ -488,6 +488,18 @@ public static class HotkeysManager
                         break;
                     }
 
+                // Profiles
+                case "previousSubProfile":
+                    {
+                        ProfileManager.CycleSubProfiles(true);
+                        break;
+                    }
+                case "nextSubProfile":
+                    {
+                        ProfileManager.CycleSubProfiles(false);
+                        break;
+                    }
+
                 default:
                     KeyboardSimulator.KeyPress(input.OutputKeys.ToArray());
                     break;

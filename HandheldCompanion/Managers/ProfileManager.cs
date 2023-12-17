@@ -18,6 +18,7 @@ public static class ProfileManager
     public const string DefaultName = "Default";
 
     public static Dictionary<string, Profile> profiles = new(StringComparer.InvariantCultureIgnoreCase);
+    public static List<Profile> subProfiles = new();
 
     private static Profile currentProfile;
 
@@ -78,9 +79,6 @@ public static class ProfileManager
             UpdateOrCreateProfile(defaultProfile, UpdateSource.Creation);
         }
 
-        // force apply default
-        ApplyProfile(GetDefault());
-
         IsInitialized = true;
         Initialized?.Invoke();
 
@@ -120,8 +118,12 @@ public static class ProfileManager
 
     public static Profile GetProfileFromPath(string path, bool ignoreStatus)
     {
-        // get profile from path
-        Profile profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
+        // check if favorite sub profile exists for path
+        Profile profile = subProfiles.FirstOrDefault(pr => pr.Path == path && pr.IsFavoriteSubProfile);
+
+        // get main profile from path instead
+        if (profile is null)
+            profile = profiles.Values.FirstOrDefault(a => a.Path.Equals(path, StringComparison.InvariantCultureIgnoreCase));
 
         if (profile is null)
         {
@@ -140,15 +142,105 @@ public static class ProfileManager
         return profile.Enabled ? profile : GetDefault();
     }
 
+    public static Profile GetProfileFromGuid(Guid Guid, bool ignoreStatus, bool isSubProfile = false)
+    {
+        Profile profile = null;
+
+        if (isSubProfile)
+            profile = subProfiles.FirstOrDefault(pr => pr.Guid == Guid);
+        else
+            profile = profiles.Values.FirstOrDefault(pr => pr.Guid == Guid);
+
+        // get profile from path
+        if (profile is null)
+            return GetDefault();
+
+        // ignore profile status (enabled/disabled)
+        if (ignoreStatus)
+            return profile;
+
+        return profile.Enabled ? profile : GetDefault();
+    }
+
+    public static Profile[] GetSubProfilesFromPath(string path, bool ignoreStatus)
+    {
+        // get subprofile corresponding to path
+        List<Profile> filteredSubProfiles = subProfiles.Where(pr => pr.Path == path).ToList();
+        return filteredSubProfiles.OrderBy(pr => pr.Name).ToArray();
+    }
+
+    public static Profile GetProfileForSubProfile(Profile subProfile)
+    {
+        // if passed in profile is main profile
+        if (!subProfile.IsSubProfile || !profiles.ContainsKey(subProfile.Path))
+            return subProfile;
+
+        // get the main profile if it exists/loaded .. else return the profile itself
+        return profiles[subProfile.Path];
+    }
+
+    public static void SetSubProfileAsFavorite(Profile subProfile)
+    {
+        // remove favorite from all subprofiles
+        foreach (var profile in GetSubProfilesFromPath(subProfile.Path, false))
+        {
+            profile.IsFavoriteSubProfile = false;
+            SerializeProfile(profile);
+        }
+
+        // check if subProfile is not the main profile itself
+        if (subProfile.IsSubProfile)
+        {
+            subProfile.IsFavoriteSubProfile = true;
+            SerializeProfile(subProfile);
+        }
+    }
+
+    public static void CycleSubProfiles(bool previous = false)
+    {
+        if (currentProfile == null)
+            return;
+        // called using previousSubProfile/nextSubProfile hotkeys
+        List<Profile> subProfilesList = new();
+        subProfilesList.Add(GetProfileForSubProfile(currentProfile)); // adds main profile as sub profile
+        subProfilesList.AddRange(GetSubProfilesFromPath(currentProfile.Path, false).ToList()); // adds all sub profiles
+
+        // if profile does not have sub profiles -> do nothing
+        if (subProfilesList.Count <= 1)
+            return;
+
+        // get index of currently applied profile
+        int currentIndex = subProfilesList.IndexOf(currentProfile);        
+        int newIndex = currentIndex;
+
+        // previous? decrement, next? increment
+        if (previous)
+            newIndex -= 1;
+        else
+            newIndex += 1;
+
+        // ensure index is within list bounds, wrap if needed
+        newIndex = (newIndex + subProfilesList.Count) % subProfilesList.Count;
+
+        // if for whatever reason index is out of bound -> return
+        if (newIndex < 0 || newIndex >= subProfilesList.Count)
+            return;
+
+        // apply profile
+        Profile profileToApply = subProfilesList[newIndex];
+        UpdateOrCreateProfile(profileToApply);
+    }
+
+
     private static void ApplyProfile(Profile profile, UpdateSource source = UpdateSource.Background,
         bool announce = true)
     {
         // might not be the same anymore if disabled
-        profile = GetProfileFromPath(profile.Path, false);
+        profile = GetProfileFromGuid(profile.Guid, false, profile.IsSubProfile);
 
         // we've already announced this profile
         if (currentProfile is not null)
-            if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
+            if (currentProfile.Guid == profile.Guid)
                 announce = false;
 
         // update current profile before invoking event
@@ -168,7 +260,10 @@ public static class ProfileManager
 
     private static void PowerProfileManager_Deleted(PowerProfile powerProfile)
     {
-        foreach(Profile profile in profiles.Values)
+        Profile profileToApply = null;
+
+        // update main profiles
+        foreach (Profile profile in profiles.Values)
         {
             bool isCurrent = profile.PowerProfile == powerProfile.Guid;
             if (isCurrent)
@@ -180,9 +275,32 @@ public static class ProfileManager
                 UpdateOrCreateProfile(profile);
 
                 if (currentProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase))
-                    ApplyProfile(profile);
+                    profileToApply = profile;
             }
         }
+
+        // update sub profiles
+        foreach (Profile profile in subProfiles)
+        {
+            bool isCurrent = profile.PowerProfile == powerProfile.Guid;
+            if (isCurrent)
+            {
+                // sanitize profile
+                SanitizeProfile(profile);
+
+                // update profile
+                UpdateOrCreateProfile(profile);
+
+                if (currentProfile.Guid == profile.Guid)
+                {
+                    profileToApply = profile;
+                }
+            }
+        }
+
+        if (profileToApply != null)
+            ApplyProfile(profileToApply);
+
     }
 
     private static void ProcessManager_ProcessStopped(ProcessEx processEx)
@@ -364,6 +482,13 @@ public static class ProfileManager
 
         if (profiles.ContainsKey(profile.Path))
         {
+            // delete associated subprofiles
+            foreach (Profile subprofile in GetSubProfilesFromPath(profile.Path, false))
+            {
+                DeleteSubProfile(subprofile);
+            }
+            LogManager.LogInformation("Deleted subprofiles for profile {0}", profile);
+
             // Unregister application from HidHide
             HidHide.UnregisterApplication(profile.Path);
 
@@ -373,7 +498,10 @@ public static class ProfileManager
             profiles.Remove(profile.Path);
 
             // warn owner
-            var isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+            var isCurrent = false;
+
+            if (currentProfile != null)
+                isCurrent = profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
 
             // raise event
             Discarded?.Invoke(profile);
@@ -390,6 +518,42 @@ public static class ProfileManager
             // restore default profile
             if (isCurrent)
                 ApplyProfile(GetDefault());
+        }
+
+        FileUtils.FileDelete(profilePath);
+    }
+
+    public static void DeleteSubProfile(Profile subProfile)
+    {
+        var profilePath = Path.Combine(ProfilesPath, subProfile.GetFileName());
+
+        if (subProfiles.Contains(subProfile))
+        {
+            // remove sub profile from memory
+            subProfiles.Remove(subProfile);
+
+            // warn owner
+            var isCurrent = subProfile.Guid == currentProfile.Guid;
+
+            // raise event
+            Discarded?.Invoke(subProfile);
+
+            // raise event(s)
+            Deleted?.Invoke(subProfile);
+
+            // send toast
+            // todo: localize me
+            ToastManager.SendToast($"Subprofile {subProfile.Name} deleted");
+
+            LogManager.LogInformation("Deleted subprofile {0}", profilePath);
+
+            // restore main profile as favorite
+            if (isCurrent)
+            {
+                // apply the main profile if it still exists
+                Profile originalProfile = profiles.Values.FirstOrDefault(p => p.Path == subProfile.Path, GetDefault());
+                ApplyProfile(originalProfile);
+            }
         }
 
         FileUtils.FileDelete(profilePath);
@@ -448,13 +612,16 @@ public static class ProfileManager
 
     public static void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)
     {
+        LogManager.LogInformation($"Attempting to update/create profile {profile.Name} => sub profile? {profile.IsSubProfile}");
         bool isCurrent = false;
         switch (source)
         {
             // update current profile on creation
             case UpdateSource.Creation:
-            case UpdateSource.QuickProfilesPage:
                 isCurrent = true;
+                break;
+            case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile in ProfilesPage
+                isCurrent = false;
                 break;
             default:
                 // check if this is current profile
@@ -469,13 +636,26 @@ public static class ProfileManager
 
         // used to get and store a few previous values
         XInputPlusMethod prevWrapper = XInputPlusMethod.Disabled;
-        if (profiles.TryGetValue(profile.Path, out Profile prevProfile))
+        if (!profile.IsSubProfile && profiles.TryGetValue(profile.Path, out Profile prevProfile))
         {
             prevWrapper = prevProfile.XInputPlus;
         }
+        else if (profile.IsSubProfile) // TODO check if necessary
+        {
+            Profile prevSubProfile = subProfiles.FirstOrDefault(sub => sub.Guid == profile.Guid);
+            if (prevSubProfile != null)
+                prevWrapper = prevSubProfile.XInputPlus;
+        }
 
         // update database
-        profiles[profile.Path] = profile;
+        if (profile.IsSubProfile)
+        {
+            // remove sub profile if it already exists, then add the updated one
+            subProfiles = subProfiles.Where(pr => pr.Guid != profile.Guid).ToList();
+            subProfiles.Add(profile);
+        }
+        else
+            profiles[profile.Path] = profile;
 
         // raise event(s)
         Updated?.Invoke(profile, source, isCurrent);
@@ -499,8 +679,12 @@ public static class ProfileManager
         }
 
         // apply profile (silently)
+        LogManager.LogInformation($"Checking if profile: {profile} is current => {isCurrent}");
         if (isCurrent)
+        {
+            SetSubProfileAsFavorite(profile); // if sub profile, set it as favorite for main profile
             ApplyProfile(profile, source);
+        }
 
         // serialize profile
         SerializeProfile(profile);

@@ -2667,6 +2667,27 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
     <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
   </data>
+  <data name="ProfilesPage_SubProfiles" xml:space="preserve">
+    <value>Sub Profiles</value>
+  </data>
+  <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>Add different profiles to the same game</value>
+  </data>
+  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>Select a sub profile to apply</value>
+  </data>
+  <data name="InputsHotkey_nextSubProfile" xml:space="preserve">
+    <value>Select next sub profile</value>
+  </data>
+  <data name="InputsHotkey_nextSubProfileDesc" xml:space="preserve">
+    <value>Apply next sub profile for the current game</value>
+  </data>
+  <data name="InputsHotkey_previousSubProfile" xml:space="preserve">
+    <value>Select previous sub profile</value>
+  </data>
+  <data name="InputsHotkey_previousSubProfileDesc" xml:space="preserve">
+    <value>Apply previous sub profile for the current game</value>
+  </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Sets the fan to max speed</value>
   </data>

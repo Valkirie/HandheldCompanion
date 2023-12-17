@@ -1,4 +1,5 @@
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
@@ -25,7 +26,8 @@ public enum UpdateSource
     ProfilesPage = 1,
     QuickProfilesPage = 2,
     Creation = 4,
-    Serializer = 5
+    Serializer = 5,
+    ProfilesPageUpdateOnly = 6
 }
 
 [Serializable]
@@ -37,6 +39,8 @@ public partial class Profile : ICloneable, IComparable
 
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
+    public bool IsSubProfile { get; set; } = false;
+    public bool IsFavoriteSubProfile { get; set; } = false;
 
     public Guid Guid { get; set; } = Guid.NewGuid();
     public string Executable { get; set; } = string.Empty;
@@ -158,12 +162,23 @@ public partial class Profile : ICloneable, IComparable
 
         if (!Default)
             name = System.IO.Path.GetFileNameWithoutExtension(Executable);
+        
+        // sub profile files will be of form "executable - #guid"
+        if (IsSubProfile)
+            name = $"{name} - {Guid}";
 
         return $"{name}.json";
     }
 
     public override string ToString()
     {
-        return Name;
+        // if sub profile, return the following (mainprofile.name - subprofile.name)
+        if (IsSubProfile)
+        {
+            string mainProfileName = ProfileManager.GetProfileForSubProfile(this).Name;
+            return $"{mainProfileName} - {Name}";
+        }
+        else
+            return Name;
     }
 }

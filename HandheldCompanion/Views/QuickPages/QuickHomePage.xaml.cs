@@ -26,6 +26,8 @@ public partial class QuickHomePage : Page
         SystemManager.VolumeNotification += SystemManager_VolumeNotification;
         SystemManager.BrightnessNotification += SystemManager_BrightnessNotification;
         SystemManager.Initialized += SystemManager_Initialized;
+
+        ProfileManager.Applied += ProfileManager_Applied;
     }
 
     public QuickHomePage()
@@ -117,5 +119,14 @@ public partial class QuickHomePage : Page
 
         using (new ScopedLock(volumeLock))
             SystemManager.SetVolume(SliderVolume.Value);
+    }
+
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            t_CurrentProfile.Text = profile.ToString();
+        });
     }
 }

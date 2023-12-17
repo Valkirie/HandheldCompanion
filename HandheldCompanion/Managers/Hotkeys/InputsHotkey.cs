@@ -14,9 +14,10 @@ public class InputsHotkey
         Quicktools = 1,
         Windows = 2,
         HC = 3,
-        Device = 4,
-        Custom = 5,
-        Embedded = 6
+        Profiles = 4,
+        Device = 5,
+        Custom = 6,
+        Embedded = 7
     }
 
     public static SortedDictionary<ushort, InputsHotkey> InputsHotkeys = new()
@@ -118,6 +119,20 @@ public class InputsHotkey
             new InputsHotkey(InputsHotkeyType.HC, "\u243C", "shortcutChangeHIDMode", "PromptFont", 20, false,
                 true, null, string.Empty, true, false)
         },
+
+        // Profiles hotkeys
+        {
+            33,
+            new InputsHotkey(InputsHotkeyType.Profiles, "\uE81E", "previousSubProfile", "Segoe Fluent Icons", 20, false,
+                true, null, string.Empty, false, false)
+        },
+        {
+            34,
+            new InputsHotkey(InputsHotkeyType.Profiles, "\uE81E", "nextSubProfile", "Segoe Fluent Icons", 20, false,
+                true, null, string.Empty, false, false)
+        },
+
+
 
         // Device specific hotkeys
         {

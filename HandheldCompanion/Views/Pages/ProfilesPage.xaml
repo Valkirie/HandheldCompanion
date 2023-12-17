@@ -55,6 +55,7 @@
                                     <ColumnDefinition Width="8*" MinWidth="400" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <ComboBox
@@ -83,6 +84,16 @@
                                     Click="b_DeleteProfile_Click">
                                     <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
                                 </Button>
+
+                                <!--  Rename profile  -->
+                                <Button
+                                    Name="b_ProfileRename"
+                                    Grid.Column="3"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center" Click="b_ProfileRename_Click">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                            </Button>
+
                             </Grid>
                         </Grid>
                     </Border>
@@ -137,36 +148,6 @@
                                         Height="40"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Glyph="&#xE8AC;" />
-                                    <TextBlock
-                                        Margin="12,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Static resx:Resources.ProfilesPage_ProfileName}" />
-                                </DockPanel>
-
-                                <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                    <TextBox
-                                        Name="tB_ProfileName"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
-                                        TextChanged="tB_ProfileName_TextChanged" />
-                                </DockPanel>
-                            </Grid>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" MinWidth="70" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                </Grid.ColumnDefinitions>
-
-                                <DockPanel>
-                                    <ui:FontIcon
-                                        Height="40"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                         Glyph="&#xED25;" />
                                     <TextBlock
                                         Margin="12,0,0,0"
@@ -182,11 +163,109 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         BorderThickness="1"
-                                        IsReadOnly="True" />
+                                        IsReadOnly="True" IsEnabled="False" />
                                 </DockPanel>
                             </Grid>
+
+                            <!--  Sub Profiles  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" MinWidth="70" />
+                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+                                <DockPanel>
+                                    <ui:FontIcon
+                                        Height="40"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Glyph="&#xE81E;" />
+                                    <TextBlock
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                        Style="{StaticResource BodyTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_SubProfiles}" />
+                                </DockPanel>
+                                <DockPanel Grid.Column="1">
+                                    <Grid Grid.Column="1" Margin="12,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="8*" MinWidth="400" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ComboBox
+                                            Name="cb_SubProfilePicker"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            SelectionChanged="cb_SubProfilePicker_SelectionChanged" />
+
+                                        <Button
+                                            Name="b_SubProfileCreate"
+                                            Grid.Column="1"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Click="b_SubProfileCreate_Click"
+                                            Style="{DynamicResource AccentButtonStyle}">
+                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                                        </Button>
+
+                                        <Button
+                                            Name="b_SubProfileDelete"
+                                            Grid.Column="2"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Click="b_SubProfileDelete_Click">
+                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
+                                        </Button>
+
+                                        <Button
+                                            Name="b_SubProfileRename"
+                                            Grid.Column="3"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Click="b_SubProfileRename_Click">
+                                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                        </Button>
+                                    </Grid>
+                                </DockPanel>
+                            </Grid>
+
                         </ui:SimpleStackPanel>
                     </Border>
+
+                    <ui:ContentDialog
+                    Name="ProfileRenameDialog"
+                    CloseButtonText="Cancel"
+                    PrimaryButtonText="Rename" CloseButtonClick="ProfileRenameDialog_CloseButtonClick" PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Name" />
+                            <TextBox
+                                Name="tB_ProfileName"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                        </ui:SimpleStackPanel>
+                    </ui:ContentDialog>
+
+                    <ui:ContentDialog
+                        Name="SubProfileRenameDialog"
+                        CloseButtonClick="SubProfileRenameDialog_CloseButtonClick"
+                        CloseButtonText="Cancel"
+                        PrimaryButtonClick="SubProfileRenameDialog_PrimaryButtonClick"
+                        PrimaryButtonText="Rename">
+                        <ui:SimpleStackPanel Spacing="6">
+                            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Name" />
+                            <TextBox
+                                Name="tb_SubProfileName"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                        </ui:SimpleStackPanel>
+                    </ui:ContentDialog>
+
 
                     <!--  Enable profile  -->
                     <Border

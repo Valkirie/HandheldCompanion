@@ -3664,6 +3664,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select next sub profile.
+        /// </summary>
+        public static string InputsHotkey_nextSubProfile {
+            get {
+                return ResourceManager.GetString("InputsHotkey_nextSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply next sub profile for the current main profile.
+        /// </summary>
+        public static string InputsHotkey_nextSubProfileDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_nextSubProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to On-screen display.
         /// </summary>
         public static string InputsHotkey_OnScreenDisplay {
@@ -3714,6 +3732,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_overlayTrackpadsDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_overlayTrackpadsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select previous sub profile.
+        /// </summary>
+        public static string InputsHotkey_previousSubProfile {
+            get {
+                return ResourceManager.GetString("InputsHotkey_previousSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply previous sub profile for the current main profile.
+        /// </summary>
+        public static string InputsHotkey_previousSubProfileDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_previousSubProfileDesc", resourceCulture);
             }
         }
         
@@ -5887,6 +5923,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sub Profiles.
+        /// </summary>
+        public static string ProfilesPage_SubProfiles {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SubProfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add different profiles to the same game.
+        /// </summary>
+        public static string ProfilesPage_SubProfilesDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SubProfilesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sustained power limit.
         /// </summary>
         public static string ProfilesPage_SustainedPower {
@@ -6497,6 +6551,15 @@ namespace HandheldCompanion.Properties {
         public static string QuickProfilesPage_PowerLimitTarget {
             get {
                 return ResourceManager.GetString("QuickProfilesPage_PowerLimitTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a sub profile to apply.
+        /// </summary>
+        public static string QuickProfilesPage_SubProfilesDesc {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_SubProfilesDesc", resourceCulture);
             }
         }
         

@@ -8,6 +8,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages.Profiles;
 using Inkore.UI.WPF.Modern.Controls;
 using Microsoft.Win32;
+using SharpDX.Win32;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -28,6 +29,7 @@ public partial class ProfilesPage : Page
 {
     // when set on start cannot be null anymore
     public static Profile selectedProfile;
+    private static Profile selectedMainProfile;
 
     private readonly SettingsMode0 page0 = new("SettingsMode0");
     private readonly SettingsMode1 page1 = new("SettingsMode1");
@@ -53,11 +55,11 @@ public partial class ProfilesPage : Page
         ProfileManager.Deleted += ProfileDeleted;
         ProfileManager.Updated += ProfileUpdated;
         ProfileManager.Applied += ProfileApplied;
+        ProfileManager.Initialized += ProfileManagerLoaded;
 
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
 
-        ProfileManager.Initialized += ProfileManagerLoaded;
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
@@ -390,16 +392,8 @@ public partial class ProfilesPage : Page
         if (cB_Profiles.SelectedItem is null)
             return;
 
-        // if an update is pending, cut it short, it will disturb profile selection though
-        if (UpdateTimer.Enabled)
-        {
-            UpdateTimer.Stop();
-            SubmitProfile();
-        }
-
-        selectedProfile = (Profile)cB_Profiles.SelectedItem;
-
-        UpdateUI();
+        selectedMainProfile = (Profile)cB_Profiles.SelectedItem;
+        UpdateSubProfiles();
     }
 
     private void UpdateMotionControlsVisibility()
@@ -426,10 +420,10 @@ public partial class ProfilesPage : Page
         {
             using (new ScopedLock(updateLock))
             {
-                // disable delete button if is default profile or running
-                b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
+                // disable delete button if is default profile or any sub profile is running
+                b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running); //TODO consider sub profiles pertaining to this main profile is running
                 // prevent user from renaming default profile
-                tB_ProfileName.IsEnabled = !selectedProfile.Default;
+                b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
                 // prevent user from disabling default profile
                 Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
                 // prevent user from disabling default profile layout
@@ -437,8 +431,23 @@ public partial class ProfilesPage : Page
                 // prevent user from using Wrapper on default profile
                 cB_Wrapper.IsEnabled = !selectedProfile.Default;
 
+                // sub profiles
+                b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
+
+                // enable delete and rename if not default sub profile
+                if (cb_SubProfilePicker.SelectedIndex == 0) // main profile
+                {
+                    b_SubProfileDelete.IsEnabled = false;
+                    b_SubProfileRename.IsEnabled = false;
+                }
+                else // actual sub profile
+                {
+                    b_SubProfileDelete.IsEnabled = true;
+                    b_SubProfileRename.IsEnabled = true;
+                }
+
                 // Profile info
-                tB_ProfileName.Text = selectedProfile.Name;
+                tB_ProfileName.Text = selectedMainProfile.Name;
                 tB_ProfilePath.Text = selectedProfile.Path;
                 Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
@@ -522,8 +531,46 @@ public partial class ProfilesPage : Page
                         cB_Wrapper_Redirection.IsEnabled = false;
                         break;
                 }
+
+                // update dropdown lists
+                cB_Profiles.Items.Refresh();
+                cb_SubProfilePicker.Items.Refresh();
             }
         });
+    }
+
+    private void UpdateSubProfiles()
+    {
+        if (selectedMainProfile is null)
+            return;
+
+        var ind = 0; // default or main profile itself
+
+        // add main profile as first subprofile
+        cb_SubProfilePicker.Items.Clear();
+        cb_SubProfilePicker.Items.Add(selectedMainProfile);
+
+        // if main profile is not default, occupy sub profiles dropdown list
+        if (!selectedMainProfile.Default)
+        {
+            foreach (Profile subprofile in ProfileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
+            {
+                cb_SubProfilePicker.Items.Add(subprofile);
+
+                // select sub profile if it's favorite for main profile
+                if (subprofile.IsFavoriteSubProfile)
+                    ind = cb_SubProfilePicker.Items.IndexOf(subprofile);
+            }
+        }
+
+        // refresh sub profiles dropdown
+        cb_SubProfilePicker.Items.Refresh();
+
+        // set subprofile to be applied
+        cb_SubProfilePicker.SelectedIndex = ind;
+
+        // update UI elements
+        UpdateUI();
     }
 
     private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -532,7 +579,7 @@ public partial class ProfilesPage : Page
             return;
 
         var result = Dialog.ShowAsync(
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedProfile.Name}\"?",
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedMainProfile.Name}\"?",
             $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -542,7 +589,7 @@ public partial class ProfilesPage : Page
         switch (result.Result)
         {
             case ContentDialogResult.Primary:
-                ProfileManager.DeleteProfile(selectedProfile);
+                ProfileManager.DeleteProfile(selectedMainProfile);
                 cB_Profiles.SelectedIndex = 0;
                 break;
         }
@@ -696,34 +743,56 @@ public partial class ProfilesPage : Page
     {
         if (profile.Default)
             return;
-
         ProfileUpdated(profile, source, true);
     }
 
     public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
+        // self call - update ui and return
+        switch (source)
+        {
+            case UpdateSource.ProfilesPage:
+            case UpdateSource.ProfilesPageUpdateOnly:
+            case UpdateSource.QuickProfilesPage:
+                return;
+        }
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var idx = -1;
-            foreach (Profile pr in cB_Profiles.Items)
+            if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
             {
-                var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                if (isCurrent)
+                foreach (Profile pr in cB_Profiles.Items)
                 {
-                    idx = cB_Profiles.Items.IndexOf(pr);
-                    break;
+                    var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (isCurrent)
+                    {
+                        idx = cB_Profiles.Items.IndexOf(pr);
+                        break;
+                    }
                 }
+
+                if (idx != -1)
+                    cB_Profiles.Items[idx] = profile;
+                else
+                    cB_Profiles.Items.Add(profile);
+
+                cB_Profiles.Items.Refresh();
+
+                cB_Profiles.SelectedItem = profile;
             }
 
-            if (idx != -1)
-                cB_Profiles.Items[idx] = profile;
-            else
-                cB_Profiles.Items.Add(profile);
+            else if (!profile.IsFavoriteSubProfile)
+                cB_Profiles.SelectedItem = profile;
 
-            cB_Profiles.Items.Refresh();
+            else // TODO updateUI to show main & sub profile selected
+            {
+                Profile mainProfile = ProfileManager.GetProfileForSubProfile(profile);
+                cB_Profiles.SelectedItem = mainProfile;
+            }
 
-            cB_Profiles.SelectedItem = profile;
+            UpdateSubProfiles(); // TODO check
         });
     }
 
@@ -732,18 +801,42 @@ public partial class ProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var idx = -1;
-            foreach (Profile pr in cB_Profiles.Items)
+            if (!profile.IsSubProfile)
             {
-                var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                if (isCurrent)
+                // Profiles
+                var idx = -1;
+                foreach (Profile pr in cB_Profiles.Items)
                 {
-                    idx = cB_Profiles.Items.IndexOf(pr);
-                    break;
+                    var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (isCurrent)
+                    {
+                        idx = cB_Profiles.Items.IndexOf(pr);
+                        break;
+                    }
                 }
-            }
 
-            cB_Profiles.Items.RemoveAt(idx);
+                cB_Profiles.Items.RemoveAt(idx);
+            }
+            else
+            {
+                var idx = -1;
+                foreach (Profile pr in cb_SubProfilePicker.Items)
+                {
+                    // sub profiles
+                    var isCurrent = profile.Guid == pr.Guid;
+                    if (isCurrent)
+                    {
+                        idx = cb_SubProfilePicker.Items.IndexOf(pr);
+                        break;
+                    }
+                }
+
+                if (idx == -1)
+                    return;
+
+                cb_SubProfilePicker.Items.RemoveAt(idx);
+                cb_SubProfilePicker.SelectedIndex = 0;
+            }
         });
     }
 
@@ -754,16 +847,6 @@ public partial class ProfilesPage : Page
     }
 
     #endregion
-
-    private void tB_ProfileName_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        selectedProfile.Name = tB_ProfileName.Text;
-        UpdateProfile();
-    }
 
     private void tb_ProfileGyroValue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
@@ -856,8 +939,18 @@ public partial class ProfilesPage : Page
     {
         if (selectedProfile is null)
             return;
+        
+        LogManager.LogInformation($"Submitting profile in ProfilesPage: {selectedProfile} - is Sub Profile? {selectedProfile.IsSubProfile}");
 
-        ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+        switch (source)
+        {
+            case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile, update main profile only but don't apply it
+                ProfileManager.UpdateOrCreateProfile(selectedMainProfile, source);
+                break;
+            default:
+                ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+                break;
+        }
     }
 
     private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
@@ -903,4 +996,115 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
+    private void cb_SubProfilePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        if (cb_SubProfilePicker.SelectedIndex == -1)
+            return;
+
+        LogManager.LogInformation($"Subprofile changed in ProfilesPage - ind: {cb_SubProfilePicker.SelectedIndex} - {cb_SubProfilePicker.SelectedItem}");
+
+        // selected sub profile
+        if (selectedProfile != cb_SubProfilePicker.SelectedItem)
+        {
+            selectedProfile = (Profile)cb_SubProfilePicker.SelectedItem;
+            UpdateProfile();
+        }
+
+        UpdateUI();
+    }
+
+    private void b_SubProfileCreate_Click(object sender, RoutedEventArgs e)
+    {
+        // create a new sub profile matching the original profile's settings
+        Profile newSubProfile = (Profile)selectedProfile.Clone();
+        newSubProfile.Name = "(New Sub Profile)";
+        newSubProfile.Guid = Guid.NewGuid(); // must be unique
+        newSubProfile.IsSubProfile = true;
+        newSubProfile.IsFavoriteSubProfile = true;
+        ProfileManager.UpdateOrCreateProfile(newSubProfile);
+        UpdateSubProfiles();
+    }
+
+    private async void b_SubProfileDelete_Click(object sender, RoutedEventArgs e)
+    {
+        // return if original profile or nothing is selected
+        if (cb_SubProfilePicker.SelectedIndex <= 0)
+            return;
+
+        // get selected subprofile from dropdown
+        Profile subProfile = (Profile)cb_SubProfilePicker.SelectedItem;
+
+        // user confirmation
+        var result = Dialog.ShowAsync(
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{subProfile.Name}\"?",
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
+            ContentDialogButton.Primary,
+            $"{Properties.Resources.ProfilesPage_Cancel}",
+            $"{Properties.Resources.ProfilesPage_Delete}");
+        await result; // sync call
+
+        // delete sub profile if confirmed
+        switch (result.Result)
+        {
+            case ContentDialogResult.Primary:
+                ProfileManager.DeleteSubProfile(subProfile);
+                break;
+        }
+    }
+
+    private void b_SubProfileRename_Click(object sender, RoutedEventArgs e)
+    {
+        tb_SubProfileName.Text = selectedProfile.Name;
+        SubProfileRenameDialog.ShowAsync();
+    }
+
+    private void SubProfileRenameDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // update subprofile name
+        selectedProfile.Name = tb_SubProfileName.Text;
+
+        // serialize subprofile
+        SubmitProfile();
+
+        UpdateSubProfiles();
+    }
+
+    private void SubProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // restore subprofile rename dialog
+        tb_SubProfileName.Text = selectedProfile.Name;
+    }
+
+    private void ProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // restore profile name textbox
+        tB_ProfileName.Text = selectedMainProfile.Name;
+    }
+
+    private void ProfileRenameDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // change main profile name
+        selectedMainProfile.Name = tB_ProfileName.Text;
+
+        // change it in 
+        int ind = cB_Profiles.Items.IndexOf(selectedMainProfile);
+        cB_Profiles.Items[ind] = selectedMainProfile;
+        cB_Profiles.Items.Refresh();
+        cB_Profiles.SelectedIndex = ind;
+
+        SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
+    }
+
+    private void b_ProfileRename_Click(object sender, RoutedEventArgs e)
+    {
+        tB_ProfileName.Text = selectedMainProfile.Name;
+        ProfileRenameDialog.ShowAsync();
+    }
 }
