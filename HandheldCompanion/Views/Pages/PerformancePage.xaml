@@ -19,88 +19,117 @@
 
     <Grid Name="MainGrid" Margin="20">
         <ui:SimpleStackPanel Spacing="24">
+            <ui:SimpleStackPanel Spacing="6">
+                <!--  Power profile picker  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
-            <!--  Power profile picker  -->
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" MinWidth="70" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" MinWidth="70" />
-                        <ColumnDefinition Width="5*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
+                        <DockPanel>
+                            <ui:FontIcon
+                                Name="ProfileIcon"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Glyph="&#xE7EE;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.ProfilesPage_ProfileSelectionDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <Grid Grid.Column="1" Margin="12,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="8*" MinWidth="400" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox
+                                Name="ProfilesPicker"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                SelectionChanged="ProfilesPicker_SelectionChanged">
+                                <ComboBoxItem Name="OEMProfiles" IsEnabled="False">Device profiles</ComboBoxItem>
+                                <ComboBoxItem Name="UserProfiles" IsEnabled="False">User profiles</ComboBoxItem>
+                            </ComboBox>
+
+                            <!--  Create power profile  -->
+                            <Button
+                                Name="ButtonProfileCreate"
+                                Grid.Column="1"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                Click="ButtonProfileCreate_Click"
+                                Style="{DynamicResource AccentButtonStyle}">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
+                            </Button>
+
+                            <!--  Delete power profile  -->
+                            <Button
+                                Name="ButtonProfileDelete"
+                                Grid.Column="2"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                Click="ButtonProfileDelete_Click">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
+                            </Button>
+
+                            <!--  Edit fan profile  -->
+                            <Button
+                                Name="ButtonProfileMore"
+                                Grid.Column="3"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                Click="ButtonProfileEdit_Click">
+                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!--  Warning  -->
+                <Border
+                    Name="WarningBorder"
+                    Padding="15,12,12,12"
+                    d:Visibility="Visible"
+                    ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    Visibility="Collapsed">
 
                     <DockPanel>
-                        <ui:FontIcon
-                            Name="ProfileIcon"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                            Glyph="&#xE7EE;" />
-
+                        <Grid>
+                            <ui:FontIcon
+                                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Glyph="&#xe7ba;" />
+                        </Grid>
                         <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
                             <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.ProfilesPage_ProfileSelectionDesc}"
+                                Name="WarningContent"
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Style="{StaticResource BodyTextBlockStyle}"
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
                     </DockPanel>
-
-                    <Grid Grid.Column="1" Margin="12,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="8*" MinWidth="400" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <ComboBox
-                            Name="ProfilesPicker"
-                            Grid.Column="0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            SelectionChanged="ProfilesPicker_SelectionChanged">
-                            <ComboBoxItem Name="OEMProfiles" IsEnabled="False">Device profiles</ComboBoxItem>
-                            <ComboBoxItem Name="UserProfiles" IsEnabled="False">User profiles</ComboBoxItem>
-                        </ComboBox>
-
-                        <!--  Create fan profile  -->
-                        <Button
-                            Name="ButtonProfileCreate"
-                            Grid.Column="1"
-                            Margin="6,0,0,0"
-                            VerticalAlignment="Center"
-                            Click="ButtonProfileCreate_Click"
-                            Style="{DynamicResource AccentButtonStyle}">
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe710;" />
-                        </Button>
-
-                        <!--  Delete fan profile  -->
-                        <Button
-                            Name="ButtonProfileDelete"
-                            Grid.Column="2"
-                            Margin="6,0,0,0"
-                            VerticalAlignment="Center"
-                            Click="ButtonProfileDelete_Click">
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe738;" />
-                        </Button>
-
-                        <!--  Edit fan profile  -->
-                        <Button
-                            Name="ButtonProfileMore"
-                            Grid.Column="3"
-                            Margin="6,0,0,0"
-                            VerticalAlignment="Center"
-                            Click="ButtonProfileEdit_Click">
-                            <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Border>
+                </Border>
+            </ui:SimpleStackPanel>
 
             <ui:ContentDialog
                 Name="PowerProfileSettingsDialog"

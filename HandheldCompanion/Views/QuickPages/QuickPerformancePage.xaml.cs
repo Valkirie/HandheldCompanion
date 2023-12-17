@@ -292,6 +292,8 @@ public partial class QuickPerformancePage : Page
                         break;
                 }
 
+                PowerSettingsPanel.IsEnabled = !selectedProfile.DeviceDefault;
+
                 // we shouldn't allow users to modify some of default profile settings
                 Button_PowerSettings_Delete.IsEnabled = !selectedProfile.Default;
 

@@ -407,6 +407,26 @@ namespace HandheldCompanion.Views.Pages
             {
                 using (new ScopedLock(updateLock))
                 {
+                    if (selectedProfile.DeviceDefault)
+                    {
+                        WarningBorder.Visibility = Visibility.Visible;
+                        WarningContent.Text = Properties.Resources.ProfilesPage_DefaultDeviceProfile;
+                    }
+                    else if (selectedProfile.Default)
+                    {
+                        WarningBorder.Visibility = Visibility.Visible;
+                        WarningContent.Text = Properties.Resources.ProfilesPage_DefaultProfile;
+                    }
+                    else
+                    {
+                        WarningBorder.Visibility = Visibility.Collapsed;
+                        WarningContent.Text = string.Empty;
+                    }
+
+                    // Disable everything for device power profiles
+                    PowerPanel.IsEnabled = !selectedProfile.DeviceDefault;
+                    FanPanel.IsEnabled = !selectedProfile.DeviceDefault;
+
                     // update PowerProfile settings
                     PowerProfileName.Text = selectedProfile.Name;
                     PowerProfileDescription.Text = selectedProfile.Description;

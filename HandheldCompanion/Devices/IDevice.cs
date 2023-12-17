@@ -114,15 +114,16 @@ public abstract class IDevice
     public double Tjmax = 100;
 
     // power profile(s)
-    // we might want to create an array instead
-    public PowerProfile powerProfileQuiet;
-    public PowerProfile powerProfileBalanced = new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+    public List<PowerProfile> DevicePowerProfiles = new List<PowerProfile>()
     {
-        Default = true,
-        Guid = PowerMode.BetterPerformance,
-        OSPowerMode = PowerMode.BetterPerformance,
+        // Default profile
+        new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+        {
+            Default = true,
+            Guid = Guid.Empty,
+            OSPowerMode = OSPowerMode.BetterPerformance
+        }
     };
-    public PowerProfile powerProfileCool;
 
     public List<double[]> fanPresets = new()
     {

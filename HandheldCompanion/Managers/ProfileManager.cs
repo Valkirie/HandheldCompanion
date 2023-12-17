@@ -443,7 +443,7 @@ public static class ProfileManager
 
         // looks like profile power profile was deleted, restore balanced
         if (!PowerProfileManager.Contains(profile.PowerProfile))
-            profile.PowerProfile = PowerMode.BetterPerformance;
+            profile.PowerProfile = OSPowerMode.BetterPerformance;
     }
 
     public static void UpdateOrCreateProfile(Profile profile, UpdateSource source = UpdateSource.Background)

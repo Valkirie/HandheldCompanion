@@ -4987,6 +4987,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Profile similar to Balanced Mode in LS. TDP Limit: 15W.
+        /// </summary>
+        public static string PowerProfileLegionGoBalancedDescription {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoBalancedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Go - Balanced.
+        /// </summary>
+        public static string PowerProfileLegionGoBalancedName {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoBalancedName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile similar to Performance Mode in LS. TDP Limit: 20W.
+        /// </summary>
+        public static string PowerProfileLegionGoPerformanceDescription {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoPerformanceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Go - Performance.
+        /// </summary>
+        public static string PowerProfileLegionGoPerformanceName {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoPerformanceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile similar to Quiet Mode in LS. TDP Limit: 8W.
+        /// </summary>
+        public static string PowerProfileLegionGoQuietDescription {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoQuietDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Go - Quiet.
+        /// </summary>
+        public static string PowerProfileLegionGoQuietName {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoQuietName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User-defined power and fan speed..
         /// </summary>
         public static string PowerProfileManualDescription {
@@ -5007,54 +5061,54 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Balances performance, temperature and acoustic for any scenario..
         /// </summary>
-        public static string PowerProfilePerformanceDescription {
+        public static string PowerProfileROGAllyPerformanceDescription {
             get {
-                return ResourceManager.GetString("PowerProfilePerformanceDescription", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyPerformanceDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Performance.
+        ///   Looks up a localized string similar to ROG Ally - Performance.
         /// </summary>
-        public static string PowerProfilePerformanceName {
+        public static string PowerProfileROGAllyPerformanceName {
             get {
-                return ResourceManager.GetString("PowerProfilePerformanceName", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyPerformanceName", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Limits CPU and GPU power, but keeps noise levels quiet..
         /// </summary>
-        public static string PowerProfileSilentDescription {
+        public static string PowerProfileROGAllySilentDescription {
             get {
-                return ResourceManager.GetString("PowerProfileSilentDescription", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllySilentDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Silent.
+        ///   Looks up a localized string similar to ROG Ally - Silent.
         /// </summary>
-        public static string PowerProfileSilentName {
+        public static string PowerProfileROGAllySilentName {
             get {
-                return ResourceManager.GetString("PowerProfileSilentName", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllySilentName", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans..
         /// </summary>
-        public static string PowerProfileTurboDescription {
+        public static string PowerProfileROGAllyTurboDescription {
             get {
-                return ResourceManager.GetString("PowerProfileTurboDescription", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyTurboDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turbo.
+        ///   Looks up a localized string similar to ROG Ally - Turbo.
         /// </summary>
-        public static string PowerProfileTurboName {
+        public static string PowerProfileROGAllyTurboName {
             get {
-                return ResourceManager.GetString("PowerProfileTurboName", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyTurboName", resourceCulture);
             }
         }
         
@@ -5325,6 +5379,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_CreatePowerProfileButton {
             get {
                 return ResourceManager.GetString("ProfilesPage_CreatePowerProfileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is a default device profile and cannot be edited. These are comparable to the profiles provided by the devices original software..
+        /// </summary>
+        public static string ProfilesPage_DefaultDeviceProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DefaultDeviceProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is the default profile, you cannot modify the fan curve on this profile..
+        /// </summary>
+        public static string ProfilesPage_DefaultProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DefaultProfile", resourceCulture);
             }
         }
         

@@ -78,35 +78,41 @@ public class LegionGo : IDevice
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
-        powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
+        // Legion Go - Quiet
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoQuietName, Properties.Resources.PowerProfileLegionGoQuietDescription) 
         {
             Default = true,
-            OSPowerMode = PowerMode.BetterBattery,
-            OEMPowerMode = (int)LegionMode.Quiet,
-            Guid = PowerMode.BetterBattery,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterBattery,
+            OEMPowerMode = (int) LegionMode.Quiet,
+            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
-        };
+        });
 
-        powerProfileBalanced = new(Properties.Resources.PowerProfilePerformanceName, Properties.Resources.PowerProfilePerformanceDescription)
+        // Legion Go - Balanced
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBalancedName, Properties.Resources.PowerProfileLegionGoBalancedDescription)
         {
             Default = true,
-            OSPowerMode = PowerMode.BetterPerformance,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterPerformance,
             OEMPowerMode = (int)LegionMode.Balanced,
-            Guid = PowerMode.BetterPerformance,
+            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
             TDPOverrideEnabled = true,
             TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
-        };
+        });
 
-        powerProfileCool = new(Properties.Resources.PowerProfileTurboName, Properties.Resources.PowerProfileTurboDescription)
+        // Legion Go - Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoPerformanceName, Properties.Resources.PowerProfileLegionGoPerformanceDescription)
         {
             Default = true,
-            OSPowerMode = PowerMode.BestPerformance,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BestPerformance,
             OEMPowerMode = (int)LegionMode.Performance,
-            Guid = PowerMode.BestPerformance,
+            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
             TDPOverrideEnabled = true,
-            TDPOverrideValues = new[] { 30.0d, 30.0d, 30.0d }
-        };
+            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
+        });
 
         PowerProfileManager.Applied += PowerProfileManager_Applied;
 

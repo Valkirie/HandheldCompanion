@@ -17,7 +17,7 @@
 
     <ui:SimpleStackPanel Margin="0,6,0,6">
 
-        <ui:SimpleStackPanel Spacing="6">
+        <ui:SimpleStackPanel Name="PowerSettingsPanel" Spacing="6">
             <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="Power settings" />
 
             <!--  Maximum CPU Count  -->

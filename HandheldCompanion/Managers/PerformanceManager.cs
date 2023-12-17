@@ -11,7 +11,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
-public static class PowerMode
+public static class OSPowerMode
 {
     /// <summary>
     ///     Better Battery mode.
@@ -37,7 +37,7 @@ public static class PerformanceManager
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
     public static int MaxDegreeOfParallelism = 4;
 
-    public static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
+    public static readonly Guid[] PowerModes = new Guid[3] { OSPowerMode.BetterBattery, OSPowerMode.BetterPerformance, OSPowerMode.BestPerformance };
 
     private static readonly Timer autoWatchdog;
     private static readonly Timer cpuWatchdog;
@@ -342,8 +342,8 @@ public static class PerformanceManager
             RequestPerfBoostMode(false);
         }
 
-        // restore PowerMode.BetterPerformance 
-        RequestPowerMode(PowerMode.BetterPerformance);
+        // restore OSPowerMode.BetterPerformance 
+        RequestPowerMode(OSPowerMode.BetterPerformance);
     }
 
     private static void RestoreTDP(bool immediate)
@@ -553,7 +553,7 @@ public static class PerformanceManager
                 if (processor is AMDProcessor)
                 {
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
-                    if (currentPowerMode == PowerMode.BetterBattery)
+                    if (currentPowerMode == OSPowerMode.BetterBattery)
                         TDP = (int)Math.Truncate(TDP * 0.9);
                 }
                 else if (processor is IntelProcessor)

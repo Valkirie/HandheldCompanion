@@ -123,29 +123,32 @@ public class ROGAlly : IDevice
         DynamicLightingCapabilities |= LEDLevel.Wheel;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 
-        powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllySilentName, Properties.Resources.PowerProfileROGAllySilentDescription)
         {
             Default = true,
+            DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Silent,
-            OSPowerMode = PowerMode.BetterBattery,
-            Guid = PowerMode.BetterBattery
-        };
+            OSPowerMode = OSPowerMode.BetterBattery,
+            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a")
+        });
 
-        powerProfileBalanced = new(Properties.Resources.PowerProfilePerformanceName, Properties.Resources.PowerProfilePerformanceDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyPerformanceName, Properties.Resources.PowerProfileROGAllyPerformanceDescription)
         {
             Default = true,
+            DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Performance,
-            OSPowerMode = PowerMode.BetterPerformance,
-            Guid = PowerMode.BetterPerformance
-        };
+            OSPowerMode = OSPowerMode.BetterPerformance,
+            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f")
+        });
 
-        powerProfileCool = new(Properties.Resources.PowerProfileTurboName, Properties.Resources.PowerProfileTurboDescription)
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileROGAllyTurboName, Properties.Resources.PowerProfileROGAllyTurboDescription)
         {
             Default = true,
+            DeviceDefault = true,
             OEMPowerMode = (int)AsusMode.Turbo,
-            OSPowerMode = PowerMode.BestPerformance,
-            Guid = PowerMode.BestPerformance
-        };
+            OSPowerMode = OSPowerMode.BestPerformance,
+            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238")
+        });
 
         OEMChords.Add(new DeviceChord("CC",
             new List<KeyCode>(), new List<KeyCode>(),

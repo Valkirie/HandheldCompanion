@@ -39,13 +39,11 @@ namespace HandheldCompanion.Managers
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
-            // process device profiles
-            if (MainWindow.CurrentDevice.powerProfileQuiet is not null && !profiles.ContainsKey(MainWindow.CurrentDevice.powerProfileQuiet.Guid))
-                UpdateOrCreateProfile(MainWindow.CurrentDevice.powerProfileQuiet, UpdateSource.Serializer);
-            if (MainWindow.CurrentDevice.powerProfileCool is not null && !profiles.ContainsKey(MainWindow.CurrentDevice.powerProfileCool.Guid))
-                UpdateOrCreateProfile(MainWindow.CurrentDevice.powerProfileCool, UpdateSource.Serializer);
-            if (MainWindow.CurrentDevice.powerProfileBalanced is not null && !profiles.ContainsKey(MainWindow.CurrentDevice.powerProfileBalanced.Guid))
-                UpdateOrCreateProfile(MainWindow.CurrentDevice.powerProfileBalanced, UpdateSource.Serializer);
+            foreach (var devicePowerProfile in MainWindow.CurrentDevice.DevicePowerProfiles)
+            {
+                if(!profiles.ContainsKey(devicePowerProfile.Guid))
+                    UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
+            }
 
             IsInitialized = true;
             Initialized?.Invoke();
