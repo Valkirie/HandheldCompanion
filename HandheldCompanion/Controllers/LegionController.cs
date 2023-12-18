@@ -56,7 +56,16 @@ namespace HandheldCompanion.Controllers
                 return READY_STATES.Contains(status);
             }
         }
+private const byte MIN_WIRELESS_STATUS = 40;
+private const byte MAX_WIRELESS_STATUS = 50;
 
+public bool IsWireless
+{
+    get
+    {
+        return (status >= MIN_WIRELESS_STATUS && status <= MAX_WIRELESS_STATUS);
+    }
+}
         public bool IsWireless
         {
             get
