@@ -2673,4 +2673,16 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
     <value>Fan max speed override</value>
   </data>
+  <data name="Hint_LegionGoServices" xml:space="preserve">
+    <value>Legion Space Daemon is active</value>
+  </data>
+  <data name="Hint_LegionGoServicesAction" xml:space="preserve">
+    <value>Disable Legion Space Daemon</value>
+  </data>
+  <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
+    <value>Legion Space Daemon is already active on your console. This may cause compatibility issues with the application.</value>
+  </data>
+  <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
+    <value>You should disable Legion Space Daemon, so that the application can run properly and without any errors</value>
+  </data>
 </root>

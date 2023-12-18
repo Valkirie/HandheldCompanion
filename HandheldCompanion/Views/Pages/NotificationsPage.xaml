@@ -55,6 +55,7 @@
         <ui:SimpleStackPanel Name="Notifications" Spacing="6">
 
             <hints:Hint_LegionGoDaemon d:Visibility="Visible" />
+            <hints:Hint_LegionGoServices d:Visibility="Visible" />
             <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
             <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
             <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />

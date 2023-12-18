@@ -3366,6 +3366,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Legion Space Daemon is active.
+        /// </summary>
+        public static string Hint_LegionGoServices {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoServices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable Legion Space Daemon.
+        /// </summary>
+        public static string Hint_LegionGoServicesAction {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoServicesAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Space Daemon is already active on your console. This may cause compatibility issues with the application..
+        /// </summary>
+        public static string Hint_LegionGoServicesDesc {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoServicesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You should disable Legion Space Daemon, so that the application can run properly and without any errors.
+        /// </summary>
+        public static string Hint_LegionGoServicesReadme {
+            get {
+                return ResourceManager.GetString("Hint_LegionGoServicesReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ASUS services are running.
         /// </summary>
         public static string Hint_RogAllyServiceCheck {
