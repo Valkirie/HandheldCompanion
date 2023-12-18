@@ -42,6 +42,7 @@ namespace HandheldCompanion.Controllers
         private const byte BACK_IDX = 19;
         private const byte STATUS_IDX = 0;
         private const byte PING_IDX = 40;
+        private HashSet<int> READY_STATES = new HashSet<int>() {25, 60};
 
         private Thread dataThread;
         private bool dataThreadRunning;
@@ -52,7 +53,7 @@ namespace HandheldCompanion.Controllers
             get
             {
                 byte status = GetStatus(STATUS_IDX);
-                return status == 25;
+                return READY_STATES.Contains(status);
             }
         }
 
@@ -239,7 +240,7 @@ namespace HandheldCompanion.Controllers
                 if (report is not null)
                 {
                     // check if packet is safe
-                    if (report.Data[STATUS_IDX] == 25)
+                    if (READY_STATES.Contains(report.Data[STATUS_IDX]))
                         Data = report.Data;
                 }
             }
