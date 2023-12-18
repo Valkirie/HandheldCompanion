@@ -237,7 +237,11 @@ namespace HandheldCompanion.Controllers
                     continue;
 
                 HidReport report = hidDevice.ReadReport();
-                if (report is not null)
+internal void SetPassthrough(bool enabled)
+{
+    SetTouchPadStatus(enabled ? 1 : 0);
+    IsPassthrough = enabled;
+}
                 {
                     // check if packet is safe
                     if (READY_STATES.Contains(report.Data[STATUS_IDX]))
