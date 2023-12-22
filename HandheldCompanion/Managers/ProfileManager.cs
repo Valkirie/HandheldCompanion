@@ -617,17 +617,12 @@ public static class ProfileManager
         switch (source)
         {
             // update current profile on creation
-            case UpdateSource.Creation:
-                isCurrent = true;
-                break;
             case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile in ProfilesPage
                 isCurrent = false;
                 break;
             default:
                 // check if this is current profile
-                isCurrent = currentProfile is null
-                    ? false
-                    : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
+                isCurrent = currentProfile is null ? false : profile.Path.Equals(currentProfile.Path, StringComparison.InvariantCultureIgnoreCase);
                 break;
         }
 
