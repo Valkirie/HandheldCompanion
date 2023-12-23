@@ -432,7 +432,6 @@ namespace HandheldCompanion.Views.Pages
                     PowerProfileDescription.Text = selectedProfile.Description;
 
                     // we shouldn't allow users to modify some of default profile settings
-                    FanMode.IsEnabled = !selectedProfile.Default;
                     ButtonProfileDelete.IsEnabled = !selectedProfile.Default;
                     ButtonProfileMore.IsEnabled = !selectedProfile.Default;
 

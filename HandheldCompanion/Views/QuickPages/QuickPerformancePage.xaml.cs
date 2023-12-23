@@ -281,20 +281,8 @@ public partial class QuickPerformancePage : Page
         {
             using (new ScopedLock(updateLock))
             {
-                switch (selectedProfile.Default)
-                {
-                    case true:
-                        // we shouldn't allow users to mess with default profile fan mode
-                        FanMode.IsEnabled = false;
-                        break;
-                    case false:
-                        FanMode.IsEnabled = true;
-                        break;
-                }
-
-                PowerSettingsPanel.IsEnabled = !selectedProfile.DeviceDefault;
-
                 // we shouldn't allow users to modify some of default profile settings
+                PowerSettingsPanel.IsEnabled = !selectedProfile.DeviceDefault;
                 Button_PowerSettings_Delete.IsEnabled = !selectedProfile.Default;
 
                 // page name

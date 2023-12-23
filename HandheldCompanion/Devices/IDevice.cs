@@ -111,7 +111,7 @@ public abstract class IDevice
     public double[] nTDP = { 15, 15, 20 };
 
     // device maximum operating temperature
-    public double Tjmax = 100;
+    public double Tjmax = 95;
 
     // power profile(s)
     public List<PowerProfile> DevicePowerProfiles = new List<PowerProfile>()
