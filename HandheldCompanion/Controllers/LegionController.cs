@@ -148,13 +148,20 @@ namespace HandheldCompanion.Controllers
 
         public override void Plug()
         {
-            hidDevice = GetHidDevice();
+            // kill data thread
+            if (dataThread is not null)
+            {
+                dataThreadRunning = false;
+                dataThread.Join();
+            }
 
+            hidDevice = GetHidDevice();
             if (hidDevice is not null && hidDevice.IsConnected)
             {
                 if (!hidDevice.IsOpen)
                     hidDevice.OpenDevice();
 
+                // start data thread
                 dataThreadRunning = true;
                 dataThread = new Thread(dataThreadLoop);
                 dataThread.IsBackground = true;
@@ -166,13 +173,15 @@ namespace HandheldCompanion.Controllers
 
         public override void Unplug()
         {
+            // kill data thread
+            if (dataThread is not null)
+            {
+                dataThreadRunning = false;
+                dataThread.Join();
+            }
+
             if (hidDevice is not null)
             {
-                // kill rumble thread
-                dataThreadRunning = false;
-                if (dataThread is not null)
-                    dataThread.Join();
-
                 if (hidDevice.IsConnected && hidDevice.IsOpen)
                 {
                     hidDevice.CloseDevice();
@@ -237,7 +246,7 @@ namespace HandheldCompanion.Controllers
             while (dataThreadRunning)
             {
                 if (hidDevice is null)
-                    continue;
+                    break;
 
                 HidReport report = hidDevice.ReadReport();
 
