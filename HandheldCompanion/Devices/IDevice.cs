@@ -262,6 +262,9 @@ public abstract class IDevice
                         case "AYANEO 2021 Pro Retro Power":
                             device = new AYANEO2021Pro();
                             break;
+                        case "KUN":
+                            device = new AYANEOKUN();
+                            break;
                         case "NEXT Pro":
                         case "NEXT Advance":
                         case "NEXT":
