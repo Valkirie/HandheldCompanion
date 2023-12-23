@@ -164,6 +164,8 @@ public static class PerformanceManager
                 ADLXBackend.SetIntegerScaling(0);
             }
 
+            ADLXBackend.SetImageSharpning(0, profile.RISEnabled, profile.RISSharpness);
+
             ADLXBackend.SetScalingMode(profile.ScalingMode);
         }
         catch { }
@@ -184,6 +186,11 @@ public static class PerformanceManager
             if (profile.IntegerScalingEnabled)
             {
                 ADLXBackend.SetIntegerScaling(0);
+            }
+
+            if (profile.RISEnabled)
+            {
+                ADLXBackend.SetImageSharpning(0, false, 80);
             }
         }
         catch { }

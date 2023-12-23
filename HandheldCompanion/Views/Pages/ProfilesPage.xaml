@@ -90,9 +90,10 @@
                                     Name="b_ProfileRename"
                                     Grid.Column="3"
                                     Margin="6,0,0,0"
-                                    VerticalAlignment="Center" Click="b_ProfileRename_Click">
-                                <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
-                            </Button>
+                                    VerticalAlignment="Center"
+                                    Click="b_ProfileRename_Click">
+                                    <ui:FontIcon FontFamily="{DynamicResource SymbolThemeFontFamily}" Glyph="&#xe712;" />
+                                </Button>
 
                             </Grid>
                         </Grid>
@@ -163,7 +164,8 @@
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Center"
                                         BorderThickness="1"
-                                        IsReadOnly="True" IsEnabled="False" />
+                                        IsEnabled="False"
+                                        IsReadOnly="True" />
                                 </DockPanel>
                             </Grid>
 
@@ -237,9 +239,11 @@
                     </Border>
 
                     <ui:ContentDialog
-                    Name="ProfileRenameDialog"
-                    CloseButtonText="Cancel"
-                    PrimaryButtonText="Rename" CloseButtonClick="ProfileRenameDialog_CloseButtonClick" PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick">
+                        Name="ProfileRenameDialog"
+                        CloseButtonClick="ProfileRenameDialog_CloseButtonClick"
+                        CloseButtonText="Cancel"
+                        PrimaryButtonClick="ProfileRenameDialog_PrimaryButtonClick"
+                        PrimaryButtonText="Rename">
                         <ui:SimpleStackPanel Spacing="6">
                             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Name" />
                             <TextBox
@@ -265,7 +269,6 @@
                                 Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
                         </ui:SimpleStackPanel>
                     </ui:ContentDialog>
-
 
                     <!--  Enable profile  -->
                     <Border
@@ -413,40 +416,107 @@
                         <Expander.Content>
                             <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
 
-                                <!--  Radeon Super Resolution  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
+                                <!--  GPU Scaling  -->
+                                <ui:SimpleStackPanel Name="StackProfileGPUScaling" Spacing="6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Radeon Super Resolution" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="In-driver-based upscaling feature for faster framerates"
-                                            TextWrapping="Wrap" />
+                                        <ui:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="GPU Scaling" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="GPU will scale up lower resolutions to fit the display"
+                                                TextWrapping="Wrap" />
+                                        </ui:SimpleStackPanel>
+
+                                        <ui:ToggleSwitch
+                                            Name="GPUScalingToggle"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="GPUScaling_Toggled" />
+                                    </Grid>
+
+                                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=GPUScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                    <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=GPUScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="5*" />
+                                                <ColumnDefinition Width="5*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ui:SimpleStackPanel VerticalAlignment="Center">
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Scaling mode" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                    Text="Choose the method used to stretch and position images to fir the display"
+                                                    TextWrapping="Wrap" />
+                                            </ui:SimpleStackPanel>
+
+                                            <ComboBox
+                                                Name="GPUScalingComboBox"
+                                                Grid.Column="1"
+                                                Margin="12,0,0,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                SelectionChanged="GPUScalingComboBox_SelectionChanged">
+                                                <ComboBoxItem Content="Preserve aspect ratio" />
+                                                <ComboBoxItem Content="Full panel" />
+                                                <ComboBoxItem Content="Center" />
+                                            </ComboBox>
+                                        </Grid>
                                     </StackPanel>
+                                </ui:SimpleStackPanel>
 
-                                    <ui:ToggleSwitch
-                                        Name="RSRToggle"
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                        Toggled="RSRToggle_Toggled" />
-                                </Grid>
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
 
-                                <!--  Content  -->
-                                <Grid IsEnabled="{Binding ElementName=RSRToggle, Path=IsOn}">
+                                <!--  RSR  -->
+                                <ui:SimpleStackPanel Name="StackProfileRSR" Spacing="6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <StackPanel>
+                                        <ui:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Radeon Super Resolution" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="In-driver-based upscaling feature for faster framerates"
+                                                TextWrapping="Wrap" />
+                                        </ui:SimpleStackPanel>
+
+                                        <ui:ToggleSwitch
+                                            Name="RSRToggle"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="RSRToggle_Toggled" />
+                                    </Grid>
+
+                                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                    <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <TextBlock
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             Text="Sharpen effect" />
-
-                                        <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                        <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
                                                 Width="35"
                                                 VerticalAlignment="Center"
@@ -459,7 +529,6 @@
                                                 Text="%" />
                                             <Slider
                                                 x:Name="RSRSlider"
-                                                Margin="6,0,0,0"
                                                 VerticalAlignment="Center"
                                                 AutoToolTipPrecision="0"
                                                 IsMoveToPointEnabled="True"
@@ -475,7 +544,7 @@
                                                 ValueChanged="RSRSlider_ValueChanged" />
                                         </DockPanel>
                                     </StackPanel>
-                                </Grid>
+                                </ui:SimpleStackPanel>
 
                                 <!--  Separator  -->
                                 <Separator
@@ -483,92 +552,199 @@
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                     BorderThickness="0,1,0,0" />
 
-                                <!--  Framerate limit  -->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="9*" MinWidth="200" />
-                                        <ColumnDefinition MinWidth="200" />
-                                    </Grid.ColumnDefinitions>
+                                <!--  Integer Scaling  -->
+                                <ui:SimpleStackPanel Name="StackProfileIS" Spacing="6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
-                                        <TextBlock
-                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_FramerateLimitDesc}"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
+                                        <ui:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Integer scaling" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="Scales up resolution by multiplying each pixel by an integer"
+                                                TextWrapping="Wrap" />
+                                        </ui:SimpleStackPanel>
 
-                                    <ui:ToggleSwitch
-                                        Name="FramerateToggle"
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                        Toggled="FramerateToggle_Toggled" />
-                                </Grid>
-
-                                <!--  Content  -->
-                                <Grid IsEnabled="{Binding ElementName=FramerateToggle, Path=IsOn}">
-
-                                    <StackPanel
-                                        Grid.Column="0"
-                                        VerticalAlignment="Center"
-                                        Orientation="Vertical"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-
-                                        <Slider
-                                            x:Name="FramerateSlider"
-                                            Grid.ColumnSpan="7"
-                                            HorizontalAlignment="Stretch"
+                                        <ui:ToggleSwitch
+                                            Name="IntegerScalingToggle"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            AutoToolTipPrecision="0"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            Maximum="3"
-                                            Minimum="0"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            TickFrequency="1"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="FramerateSlider_ValueChanged" />
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="IntegerScalingToggle_Toggled" />
+                                    </Grid>
+                                </ui:SimpleStackPanel>
 
-                                        <Grid Name="FramerateModeGrid">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="30" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="30" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="30" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="30" />
-                                            </Grid.ColumnDefinitions>
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
 
-                                            <Label
-                                                Name="FramerateQuarter"
-                                                Grid.Column="0"
-                                                HorizontalContentAlignment="Center"
-                                                Content="|" />
-                                            <Label
-                                                Name="FramerateThird"
-                                                Grid.Column="2"
-                                                Margin="-2,0,0,0"
-                                                HorizontalContentAlignment="Center"
-                                                Content="|" />
-                                            <Label
-                                                Name="FramerateHalf"
-                                                Grid.Column="4"
-                                                Margin="-2,0,0,0"
-                                                HorizontalContentAlignment="Center"
-                                                Content="|" />
-                                            <Label
-                                                Name="FramerateFull"
-                                                Grid.Column="6"
-                                                Margin="-2,0,0,0"
-                                                HorizontalContentAlignment="Center"
-                                                Content="|" />
-                                        </Grid>
+                                <!--  RIS  -->
+                                <ui:SimpleStackPanel Name="StackProfileRIS" Spacing="6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ui:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Radeon Image Sharpening" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="Enhances visual detail"
+                                                TextWrapping="Wrap" />
+                                        </ui:SimpleStackPanel>
+
+                                        <ui:ToggleSwitch
+                                            Name="RISToggle"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="RISToggle_Toggled" />
+                                    </Grid>
+
+                                    <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                    <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Text="Sharpen effect" />
+                                        <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
+                                            <TextBlock
+                                                Width="35"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding Value, StringFormat=N0, ElementName=RISSlider, Mode=OneWay}"
+                                                TextAlignment="Center" />
+                                            <TextBlock
+                                                Width="30"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Text="%" />
+                                            <Slider
+                                                x:Name="RISSlider"
+                                                VerticalAlignment="Center"
+                                                AutoToolTipPrecision="0"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                LargeChange="5"
+                                                Maximum="100"
+                                                Minimum="0"
+                                                SmallChange="1"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                TickFrequency="5"
+                                                TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="RISSlider_ValueChanged" />
+                                        </DockPanel>
                                     </StackPanel>
-                                </Grid>
+                                </ui:SimpleStackPanel>
+
+                                <!--  Separator  -->
+                                <Separator
+                                    Margin="-46,0,-16,0"
+                                    BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                    BorderThickness="0,1,0,0" />
+
+                                <!--  Framerate Limit  -->
+                                <ui:SimpleStackPanel
+                                    Name="StackProfileFramerate"
+                                    IsEnabled="False"
+                                    Spacing="6">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ui:SimpleStackPanel VerticalAlignment="Center">
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_FramerateLimit}" />
+                                            <TextBlock
+                                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                Text="{x:Static resx:Resources.ProfilesPage_FramerateLimitDesc}"
+                                                TextWrapping="Wrap" />
+                                        </ui:SimpleStackPanel>
+
+                                        <ui:ToggleSwitch
+                                            Name="FramerateToggle"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                                            Toggled="FramerateToggle_Toggled" />
+                                    </Grid>
+
+                                    <DockPanel
+                                        Margin="0,0,0,0"
+                                        d:Visibility="Visible"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                        <ui:SimpleStackPanel
+                                            Margin="0,0,0,0"
+                                            VerticalAlignment="Center"
+                                            ScrollViewer.PanningMode="HorizontalOnly">
+                                            <Slider
+                                                x:Name="FramerateSlider"
+                                                Grid.ColumnSpan="7"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                AutoToolTipPrecision="0"
+                                                IsMoveToPointEnabled="True"
+                                                IsSnapToTickEnabled="True"
+                                                Maximum="3"
+                                                Minimum="0"
+                                                Style="{DynamicResource SliderStyle1}"
+                                                TickFrequency="1"
+                                                TickPlacement="BottomRight"
+                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                                ValueChanged="FramerateSlider_ValueChanged" />
+
+                                            <Grid Name="FramerateModeGrid">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="30" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="30" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="30" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="30" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Label
+                                                    Name="FramerateQuarter"
+                                                    Grid.Column="0"
+                                                    HorizontalContentAlignment="Center" />
+                                                <Label
+                                                    Name="FramerateThird"
+                                                    Grid.Column="2"
+                                                    Margin="-2,0,0,0"
+                                                    HorizontalContentAlignment="Center" />
+                                                <Label
+                                                    Name="FramerateHalf"
+                                                    Grid.Column="4"
+                                                    Margin="-2,0,0,0"
+                                                    HorizontalContentAlignment="Center" />
+                                                <Label
+                                                    Name="FramerateFull"
+                                                    Grid.Column="6"
+                                                    Margin="-2,0,0,0"
+                                                    HorizontalContentAlignment="Center" />
+                                            </Grid>
+                                        </ui:SimpleStackPanel>
+                                    </DockPanel>
+                                </ui:SimpleStackPanel>
 
                             </ui:SimpleStackPanel>
                         </Expander.Content>

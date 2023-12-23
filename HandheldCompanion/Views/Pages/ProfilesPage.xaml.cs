@@ -4,6 +4,7 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages.Profiles;
 using Inkore.UI.WPF.Modern.Controls;
@@ -39,35 +40,58 @@ public partial class ProfilesPage : Page
     private const int UpdateInterval = 500;
     private static Timer UpdateTimer;
 
-    public ProfilesPage()
-    {
-        InitializeComponent();
-
-        UpdateTimer = new Timer(UpdateInterval);
-        UpdateTimer.AutoReset = false;
-        UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
-    }
-
     public ProfilesPage(string Tag) : this()
     {
         this.Tag = Tag;
+    }
 
+    public ProfilesPage()
+    {
+        InitializeComponent();
+        
+        // manage events
         ProfileManager.Deleted += ProfileDeleted;
         ProfileManager.Updated += ProfileUpdated;
         ProfileManager.Applied += ProfileApplied;
         ProfileManager.Initialized += ProfileManagerLoaded;
-
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-
-
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
+        SystemManager.Initialized += SystemManager_Initialized;
         SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
+        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
+        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
+        PlatformManager.RTSS.Updated += RTSS_Updated;
+
+        UpdateTimer = new Timer(UpdateInterval);
+        UpdateTimer.AutoReset = false;
+        UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription(string.Empty, ListSortDirection.Descending));
+
+        // force call
+        RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void SystemManager_Initialized()
+    {
+        bool HasScalingModeSupport = ADLXBackend.HasScalingModeSupport();
+        bool HasIntegerScalingSupport = ADLXBackend.HasIntegerScalingSupport();
+        bool HasGPUScalingSupport = ADLXBackend.HasGPUScalingSupport();
+        bool IsGPUScalingEnabled = ADLXBackend.IsGPUScalingEnabled();
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
+            StackProfileRIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
+
+            StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
+            GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
+            GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+        });
     }
 
     private void SystemManager_StateChanged_RSR(bool RSRSupport, int RSRState, int RSRSharpness)
@@ -78,6 +102,54 @@ public partial class ProfilesPage : Page
             RSRToggle.IsEnabled = RSRSupport;
             RSRToggle.IsOn = RSRState <= 0 ? false : true;
             RSRSlider.Value = RSRSharpness;
+        });
+    }
+
+    private void SystemManager_StateChanged_GPUScaling(bool GPUScaling, int ScalingMode)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(async () =>
+        {
+            GPUScalingToggle.IsOn = GPUScaling;
+            GPUScalingComboBox.SelectedIndex = ScalingMode;
+
+            switch (GPUScaling)
+            {
+                case false:
+                    StackProfileRSR.IsEnabled = false;
+                    StackProfileRIS.IsEnabled = false;
+                    StackProfileIS.IsEnabled = false;
+                    break;
+            }
+        });
+    }
+
+    private void SystemManager_StateChanged_IntegerScaling(bool IntegerScalingSupport, bool IntegerScaling)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileIS.IsEnabled = IntegerScalingSupport;
+            IntegerScalingToggle.IsOn = IntegerScaling;
+        });
+    }
+
+    private void RTSS_Updated(PlatformStatus status)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            switch (status)
+            {
+                case PlatformStatus.Ready:
+                    var Processor = PerformanceManager.GetProcessor();
+                    StackProfileFramerate.IsEnabled = true;
+                    break;
+                case PlatformStatus.Stalled:
+                    // StackProfileFramerate.IsEnabled = false;
+                    // StackProfileAutoTDP.IsEnabled = false;
+                    break;
+            }
         });
     }
 
@@ -482,6 +554,14 @@ public partial class ProfilesPage : Page
                 // RSR
                 RSRToggle.IsOn = selectedProfile.RSREnabled;
                 RSRSlider.Value = selectedProfile.RSRSharpness;
+
+                // Integer Scaling
+                IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
+                GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+
+                // RIS
+                RISToggle.IsOn = selectedProfile.RISEnabled;
+                RISSlider.Value = selectedProfile.RISSharpness;
 
                 // Framerate limit
                 FramerateToggle.IsOn = selectedProfile.FramerateEnabled;
@@ -974,6 +1054,66 @@ public partial class ProfilesPage : Page
 
         selectedProfile.RSRSharpness = (int)RSRSlider.Value;
         UpdateProfile();
+    }
+
+    private void RISToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RISEnabled = RISToggle.IsOn;
+        UpdateProfile();
+    }
+
+    private void RISSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (!RSRSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RISSharpness = (int)RISSlider.Value;
+        UpdateProfile();
+    }
+
+    private void IntegerScalingToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.IntegerScalingEnabled = IntegerScalingToggle.IsOn;
+        UpdateProfile();
+    }
+
+    private void GPUScalingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (GPUScalingComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.ScalingMode = GPUScalingComboBox.SelectedIndex;
+        UpdateProfile();
+    }
+
+    private void GPUScaling_Toggled(object sender, RoutedEventArgs e)
+    {
+        ADLXBackend.SetGPUScaling(Convert.ToInt32(GPUScalingToggle.IsOn));
     }
 
     private void cB_EmulatedController_Changed(object sender, SelectionChangedEventArgs e)

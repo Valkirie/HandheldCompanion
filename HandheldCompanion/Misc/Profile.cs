@@ -95,6 +95,9 @@ public partial class Profile : ICloneable, IComparable
     public bool IntegerScalingEnabled { get; set; }
     public int ScalingMode { get; set; } = 0;
 
+    public bool RISEnabled { get; set; }
+    public int RISSharpness { get; set; } = 80; // 80 is default value when enabled from AMD Settings
+
     public bool CPUCoreEnabled { get; set; }
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 

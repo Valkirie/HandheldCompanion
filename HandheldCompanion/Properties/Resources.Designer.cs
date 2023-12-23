@@ -3709,7 +3709,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apply next sub profile for the current main profile.
+        ///   Looks up a localized string similar to Apply next sub profile for the current game.
         /// </summary>
         public static string InputsHotkey_nextSubProfileDesc {
             get {
@@ -3781,7 +3781,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apply previous sub profile for the current main profile.
+        ///   Looks up a localized string similar to Apply previous sub profile for the current game.
         /// </summary>
         public static string InputsHotkey_previousSubProfileDesc {
             get {
@@ -5671,6 +5671,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Graphics settings.
+        /// </summary>
+        public static string ProfilesPage_GraphicsSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the graphics settings.
+        /// </summary>
+        public static string ProfilesPage_GraphicsSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gyrometer multiplier.
         /// </summary>
         public static string ProfilesPage_GyrometerMultiplier {
@@ -5770,7 +5788,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the global motion control settings.
+        ///   Looks up a localized string similar to Change the motion control settings.
         /// </summary>
         public static string ProfilesPage_MotionControlSettingsDesc {
             get {

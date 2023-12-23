@@ -55,6 +55,7 @@ public partial class QuickProfilesPage : Page
         SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
         HotkeysManager.HotkeyCreated += TriggerCreated;
         InputsManager.TriggerUpdated += TriggerUpdated;
+        PlatformManager.RTSS.Updated += RTSS_Updated;
 
         foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
         {
@@ -160,8 +161,6 @@ public partial class QuickProfilesPage : Page
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
 
-        PlatformManager.RTSS.Updated += RTSS_Updated;
-
         // force call
         RTSS_Updated(PlatformManager.RTSS.Status);
     }
@@ -177,6 +176,8 @@ public partial class QuickProfilesPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
+            StackProfileRIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
+
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
             GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
@@ -206,6 +207,7 @@ public partial class QuickProfilesPage : Page
             {
                 case false:
                     StackProfileRSR.IsEnabled = false;
+                    StackProfileRIS.IsEnabled = false;
                     StackProfileIS.IsEnabled = false;
                     break;
             }
@@ -373,16 +375,18 @@ public partial class QuickProfilesPage : Page
 
     private void PowerProfile_Selected(PowerProfile powerProfile)
     {
+        if (selectedProfile is null)
+            return;
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // update UI
             SelectedPowerProfileName.Text = powerProfile.Name;
-
-            // update profile
-            selectedProfile.PowerProfile = powerProfile.Guid;
-            UpdateProfile();
         });
+
+        // update profile
+        selectedProfile.PowerProfile = powerProfile.Guid;
+        UpdateProfile();
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
@@ -495,6 +499,10 @@ public partial class QuickProfilesPage : Page
                     // Integer Scaling
                     IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
                     GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+
+                    // RIS
+                    RISToggle.IsOn = selectedProfile.RISEnabled;
+                    RISSlider.Value = selectedProfile.RISSharpness;
                 }
             });
         }
@@ -860,6 +868,35 @@ public partial class QuickProfilesPage : Page
             return;
 
         selectedProfile.RSRSharpness = (int)RSRSlider.Value;
+        UpdateProfile();
+    }
+
+    private void RISToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RISEnabled = RISToggle.IsOn;
+        UpdateProfile();
+    }
+
+    private void RISSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (!RSRSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RISSharpness = (int)RISSlider.Value;
         UpdateProfile();
     }
 
