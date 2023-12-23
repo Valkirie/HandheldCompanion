@@ -63,7 +63,6 @@ public partial class ProcessEx : UserControl, IDisposable
         MainWindowTitle = executable; // temporary, will be overwritten by ProcessManager
 
         Filter = filter;
-        Platform = PlatformManager.GetPlatform(Process);
 
         if (!string.IsNullOrEmpty(path) && File.Exists(path))
         {
