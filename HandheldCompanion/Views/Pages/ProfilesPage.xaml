@@ -677,73 +677,14 @@
                                                 TextWrapping="Wrap" />
                                         </ui:SimpleStackPanel>
 
-                                        <ui:ToggleSwitch
-                                            Name="FramerateToggle"
+                                        <ComboBox
+                                            Name="cB_Framerate"
                                             Grid.Column="1"
-                                            HorizontalAlignment="Right"
-                                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                                            Toggled="FramerateToggle_Toggled" />
-                                    </Grid>
-
-                                    <DockPanel
-                                        Margin="0,0,0,0"
-                                        d:Visibility="Visible"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Visibility="{Binding ElementName=FramerateToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                        <ui:SimpleStackPanel
-                                            Margin="0,0,0,0"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
-                                            ScrollViewer.PanningMode="HorizontalOnly">
-                                            <Slider
-                                                x:Name="FramerateSlider"
-                                                Grid.ColumnSpan="7"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                AutoToolTipPrecision="0"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                Maximum="3"
-                                                Minimum="0"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                TickFrequency="1"
-                                                TickPlacement="BottomRight"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="FramerateSlider_ValueChanged" />
-
-                                            <Grid Name="FramerateModeGrid">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="30" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="30" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="30" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="30" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <Label
-                                                    Name="FramerateQuarter"
-                                                    Grid.Column="0"
-                                                    HorizontalContentAlignment="Center" />
-                                                <Label
-                                                    Name="FramerateThird"
-                                                    Grid.Column="2"
-                                                    Margin="-2,0,0,0"
-                                                    HorizontalContentAlignment="Center" />
-                                                <Label
-                                                    Name="FramerateHalf"
-                                                    Grid.Column="4"
-                                                    Margin="-2,0,0,0"
-                                                    HorizontalContentAlignment="Center" />
-                                                <Label
-                                                    Name="FramerateFull"
-                                                    Grid.Column="6"
-                                                    Margin="-2,0,0,0"
-                                                    HorizontalContentAlignment="Center" />
-                                            </Grid>
-                                        </ui:SimpleStackPanel>
-                                    </DockPanel>
+                                            SelectionChanged="cB_Framerate_SelectionChanged" />
+                                    </Grid>
                                 </ui:SimpleStackPanel>
 
                             </ui:SimpleStackPanel>

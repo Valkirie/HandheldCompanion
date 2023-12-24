@@ -60,7 +60,7 @@ public partial class ProcessEx : UserControl, IDisposable
         Path = path;
 
         Executable = executable;
-        MainWindowTitle = executable; // temporary, will be overwritten by ProcessManager
+        MainWindowTitle = path;
 
         Filter = filter;
 

@@ -88,7 +88,7 @@ public static class PlatformManager
     private static void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
         // Framerate limiter
-        if (profile.FramerateEnabled)
+        if (profile.FramerateValue != 0)
             CurrentNeeds |= PlatformNeeds.FramerateLimiter;
         else
             CurrentNeeds &= ~PlatformNeeds.FramerateLimiter;

@@ -11,6 +11,7 @@ using Inkore.UI.WPF.Modern.Controls;
 using Microsoft.Win32;
 using SharpDX.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Timers;
@@ -166,15 +167,33 @@ public partial class ProfilesPage : Page
 
     private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
+        DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+        List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
+            cB_Framerate.Items.Clear();
 
-            FramerateQuarter.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
-            FramerateThird.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
-            FramerateHalf.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
-            FramerateFull.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
+            // add disabled frame limit
+            ScreenFramelimit closest = new(0, 0);
+            frameLimits.Insert(0, closest);
+
+            foreach (ScreenFramelimit frameLimit in frameLimits)
+                cB_Framerate.Items.Add(frameLimit);
+
+            uint minDiff = uint.MinValue;
+            foreach (ScreenFramelimit frameLimit in frameLimits)
+            {
+                int diff = Math.Abs(frameLimit.divider - selectedProfile.FramerateValue);
+                if (diff <= minDiff)
+                {
+                    closest = frameLimit;
+                    minDiff = (uint)diff;
+                }
+            }
+
+            cB_Framerate.SelectedItem = closest;
         });
     }
 
@@ -564,8 +583,7 @@ public partial class ProfilesPage : Page
                 RISSlider.Value = selectedProfile.RISSharpness;
 
                 // Framerate limit
-                FramerateToggle.IsOn = selectedProfile.FramerateEnabled;
-                FramerateSlider.Value = selectedProfile.FramerateValue;
+                // FIXME
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
@@ -724,65 +742,6 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.Enabled = Toggle_EnableProfile.IsOn;
-        UpdateProfile();
-    }
-
-    private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            if (FramerateToggle.IsOn)
-            {
-                FramerateSlider_ValueChanged(null, null);
-            }
-            else
-            {
-                foreach (Control control in FramerateModeGrid.Children)
-                {
-                    if (control is not Label)
-                        continue;
-
-                    control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-                }
-            }
-        });
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        selectedProfile.FramerateEnabled = FramerateToggle.IsOn;
-        UpdateProfile();
-    }
-
-    private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            var value = (int)FramerateSlider.Value;
-
-            foreach (Control control in FramerateModeGrid.Children)
-            {
-                if (control is not Label)
-                    continue;
-
-                control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-            }
-
-            Label label = (Label)FramerateModeGrid.Children[value];
-            label.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
-        });
-
-        if (!FramerateSlider.IsInitialized)
-            return;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        selectedProfile.FramerateValue = (int)FramerateSlider.Value;
         UpdateProfile();
     }
 
@@ -1246,5 +1205,25 @@ public partial class ProfilesPage : Page
     {
         tB_ProfileName.Text = selectedMainProfile.Name;
         ProfileRenameDialog.ShowAsync();
+    }
+
+    private void cB_Framerate_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        // return if combobox selected item is null
+        if (cB_Framerate.SelectedIndex == -1)
+            return;
+
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        {
+            selectedProfile.FramerateValue = screenFramelimit.divider;
+            UpdateProfile();
+        }
     }
 }

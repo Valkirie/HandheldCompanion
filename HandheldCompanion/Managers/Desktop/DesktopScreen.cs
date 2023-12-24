@@ -8,7 +8,7 @@ namespace HandheldCompanion.Managers.Desktop;
 
 public class ScreenResolution
 {
-    public SortedDictionary<int, ScreenFrequency> Frequencies;
+    public SortedList<int, int> Frequencies;
     public int Height;
     public int Width;
     public int BitsPerPel;
@@ -18,7 +18,7 @@ public class ScreenResolution
         Width = dmPelsWidth;
         Height = dmPelsHeight;
         BitsPerPel = bitsPerPel;
-        Frequencies = new SortedDictionary<int, ScreenFrequency>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        Frequencies = new(Comparer<int>.Create((x, y) => y.CompareTo(x)));
     }
 
     public override string ToString()
@@ -27,44 +27,23 @@ public class ScreenResolution
     }
 }
 
-public enum Frequency
+public class ScreenFramelimit
 {
-    Quarter = 0,
-    Third = 1,
-    Half = 2,
-    Full = 3
-}
+    public int divider;
+    public int limit;
 
-public class ScreenFrequency
-{
-    private readonly SortedDictionary<Frequency, double> Frequencies = new();
-
-    public ScreenFrequency(int frequency)
+    public ScreenFramelimit(int divider, int limit)
     {
-        Frequencies[Frequency.Quarter] = Math.Round(frequency / 4.0d, 1);
-        Frequencies[Frequency.Third] = Math.Round(frequency / 3.0d, 1);
-        Frequencies[Frequency.Half] = Math.Round(frequency / 2.0d, 1);
-        Frequencies[Frequency.Full] = frequency;
-    }
-
-    public double GetValue(Frequency frequency)
-    {
-        return Frequencies[frequency];
+        this.divider = divider;
+        this.limit = limit;
     }
 
     public override string ToString()
     {
-        return $"{Frequencies[Frequency.Full]} Hz";
-    }
+        if (limit == 0)
+            return "Disabled";
 
-    public override bool Equals(object obj)
-    {
-        if (obj is ScreenFrequency frequency)
-            foreach (var freq in (Frequency[])Enum.GetValues(typeof(Frequency)))
-                if (Frequencies[freq] != frequency.Frequencies[freq])
-                    return false;
-
-        return true;
+        return $"{limit} FPS";
     }
 }
 
@@ -131,12 +110,11 @@ public class DesktopScreen
 {
     public Display devMode;
     public Screen PrimaryScreen;
-    public List<ScreenResolution> resolutions;
+    public List<ScreenResolution> resolutions = new();
 
     public DesktopScreen(Screen primaryScreen)
     {
         PrimaryScreen = primaryScreen;
-        resolutions = new List<ScreenResolution>();
     }
 
     public bool HasResolution(ScreenResolution resolution)
@@ -170,9 +148,59 @@ public class DesktopScreen
         return resolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
     }
 
-    public ScreenFrequency GetFrequency()
+    public int GetCurrentFrequency()
     {
-        return new ScreenFrequency(devMode.dmDisplayFrequency);
+        return devMode.dmDisplayFrequency;
+    }
+
+    // A function that takes a screen frequency int value and returns a list of integer values that are the quotient of the frequency and the closest divisor
+    public List<ScreenFramelimit> GetFramelimits()
+    {
+        // A list to store the quotients
+        List<ScreenFramelimit> Limits = new(); // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
+
+        // A variable to store the divider value, initialized to 10
+        int divider = 1;
+        int dmDisplayFrequency = ClosestMultipleOf10(devMode.dmDisplayFrequency);
+
+        // A loop to find the closest divisors of the frequency
+        while (divider < 10)
+        {
+            // If the frequency is divisible by the divider, add the quotient to the list
+            if (dmDisplayFrequency % divider == 0)
+            {
+                int frequency = dmDisplayFrequency / divider;
+                if (frequency >= 20)
+                    Limits.Add(new(divider, frequency));
+            }
+
+            // Decrease the divider by 1
+            divider++;
+        }
+
+        // Return the list of quotients
+        return Limits;
+    }
+
+    // A function that takes an int as a parameter and returns the closest multiple of 10
+    private int ClosestMultipleOf10(decimal num)
+    {
+        // Round the number to the nearest integer
+        num = (int)Math.Round(num);
+
+        // If the number is already a multiple of 10, return it
+        if (num % 10 == 0)
+            return (int)num;
+
+        // Otherwise, find the closest lower and higher multiples of 10
+        decimal lower = num - (num % 10);
+        decimal higher = lower + 10;
+
+        // Return the one that has the smaller absolute difference with the number
+        if (Math.Abs(num - lower) <= Math.Abs(num - higher))
+            return (int)lower;
+        else
+            return (int)higher;
     }
 
     public void SortResolutions()

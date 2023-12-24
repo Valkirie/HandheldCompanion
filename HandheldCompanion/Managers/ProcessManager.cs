@@ -174,7 +174,7 @@ public static class ProcessManager
             ProcessEx prevProcess = foregroundProcess;
 
             // filter based on current process status
-            ProcessFilter filter = GetFilter(process.Executable, process.Path, ProcessUtils.GetWindowTitle(hWnd));
+            ProcessFilter filter = GetFilter(process.Executable, process.Path /*, ProcessUtils.GetWindowTitle(hWnd) */);
             switch (filter)
             {
                 // do nothing on QuickTools window, current process is kept
@@ -239,7 +239,6 @@ public static class ProcessManager
         {
             // process has exited on arrival
             Process proc = Process.GetProcessById(ProcessID);
-            proc.EnableRaisingEvents = true;
             if (proc.HasExited)
                 return false;
 
@@ -247,6 +246,7 @@ public static class ProcessManager
                 return true;
 
             // hook exited event
+            proc.EnableRaisingEvents = true;
             proc.Exited += ProcessHalted;
 
             // check process path
@@ -255,6 +255,7 @@ public static class ProcessManager
                 return false;
 
             string exec = Path.GetFileName(path);
+            IntPtr hWnd = NativeWindowHandle != 0 ? NativeWindowHandle : proc.MainWindowHandle;
 
             // get filter
             ProcessFilter filter = GetFilter(exec, path);
@@ -265,15 +266,13 @@ public static class ProcessManager
             {
                 // create process
                 processEx = new ProcessEx(proc, path, exec, filter);
-
-                IntPtr hWnd = NativeWindowHandle != 0 ? NativeWindowHandle : proc.MainWindowHandle;
-                processEx.MainWindowHandle = hWnd;
-                processEx.MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
+                // processEx.MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
             });
 
             if (processEx is null)
                 return false;
 
+            processEx.MainWindowHandle = hWnd;
             processEx.MainThread = GetMainThread(proc);
             processEx.Platform = PlatformManager.GetPlatform(proc);
 

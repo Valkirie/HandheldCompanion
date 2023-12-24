@@ -128,19 +128,21 @@ public class RTSS : IPlatform
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
-        if (profile.FramerateEnabled)
+        // Apply profile-defined framerate
+        int frameLimit = 0;
+
+        int divider = profile.FramerateValue;
+        if (divider != 0)
         {
-            // Apply profile-defined framerate
-            int frequency = (int)Math.Floor(SystemManager.GetDesktopScreen().GetFrequency()
-                .GetValue((Frequency)profile.FramerateValue));
-            RequestFPS(frequency);
+            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+            if (desktopScreen is not null)
+            {
+                int currentFrequency = desktopScreen.GetCurrentFrequency();
+                frameLimit = currentFrequency / divider;
+            }
         }
-        else if (RequestedFramerate > 0 && !profile.FramerateEnabled)
-        {
-            // Reset to 0 only when a cap was set previously and the current profile has no limit
-            // These conditions prevent 0 from being set on every profile change
-            RequestFPS(0); // Restore default framerate
-        }
+
+        RequestFPS(frameLimit);
     }
 
     private async void ProcessManager_ForegroundChanged(ProcessEx processEx, ProcessEx backgroundEx)

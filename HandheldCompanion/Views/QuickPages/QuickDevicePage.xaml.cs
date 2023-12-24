@@ -85,14 +85,26 @@ public partial class QuickDevicePage : Page
     private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
     {
         ComboBoxResolution.Items.Clear();
-        foreach (var resolution in screen.resolutions)
+        foreach (ScreenResolution resolution in screen.resolutions)
             ComboBoxResolution.Items.Add(resolution);
     }
 
     private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
         ComboBoxResolution.SelectedItem = resolution;
-        ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
+
+        int screenFrequency = SystemManager.GetDesktopScreen().GetCurrentFrequency();
+        foreach (ComboBoxItem comboBoxItem in ComboBoxFrequency.Items)
+        {
+            if (comboBoxItem.Tag is int frequency)
+            {
+                if (frequency == screenFrequency)
+                {
+                    ComboBoxFrequency.SelectedItem = comboBoxItem;
+                    break;
+                }
+            }
+        }
     }
 
     private void ComboBoxResolution_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -100,13 +112,23 @@ public partial class QuickDevicePage : Page
         if (ComboBoxResolution.SelectedItem is null)
             return;
 
-        var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
+        ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
+        int screenFrequency = SystemManager.GetDesktopScreen().GetCurrentFrequency();
 
         ComboBoxFrequency.Items.Clear();
-        foreach (var frequency in resolution.Frequencies.Values)
-            ComboBoxFrequency.Items.Add(frequency);
+        foreach (int frequency in resolution.Frequencies.Keys)
+        {
+            ComboBoxItem comboBoxItem = new()
+            {
+                Content = $"{frequency} Hz",
+                Tag = frequency,
+            };
 
-        ComboBoxFrequency.SelectedItem = SystemManager.GetDesktopScreen().GetFrequency();
+            ComboBoxFrequency.Items.Add(comboBoxItem);
+
+            if (frequency == screenFrequency)
+                ComboBoxFrequency.SelectedItem = comboBoxItem;
+        }
 
         SetResolution();
     }
@@ -127,11 +149,11 @@ public partial class QuickDevicePage : Page
         if (ComboBoxFrequency.SelectedItem is null)
             return;
 
-        var resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
-        var frequency = (ScreenFrequency)ComboBoxFrequency.SelectedItem;
+        ScreenResolution resolution = (ScreenResolution)ComboBoxResolution.SelectedItem;
+        int frequency = (int)((ComboBoxItem)ComboBoxFrequency.SelectedItem).Tag;
 
         // update current screen resolution
-        SystemManager.SetResolution(resolution.Width, resolution.Height, (int)frequency.GetValue(Frequency.Full), resolution.BitsPerPel);
+        SystemManager.SetResolution(resolution.Width, resolution.Height, frequency, resolution.BitsPerPel);
     }
 
     private void WIFIToggle_Toggled(object sender, RoutedEventArgs e)

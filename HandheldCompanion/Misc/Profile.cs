@@ -86,8 +86,7 @@ public partial class Profile : ICloneable, IComparable
     // power
     public Guid PowerProfile { get; set; } = new();
 
-    public bool FramerateEnabled { get; set; }
-    public int FramerateValue { get; set; } = 0;
+    public int FramerateValue { get; set; } = 0;    // 0 = disabled
 
     public bool RSREnabled { get; set; }
     public int RSRSharpness { get; set; } = 20;

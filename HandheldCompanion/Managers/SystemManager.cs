@@ -267,8 +267,9 @@ public static class SystemManager
                 List<int> frequencies = resolutions
                     .Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight)
                     .Select(b => b.dmDisplayFrequency).Distinct().ToList();
+
                 foreach (int frequency in frequencies)
-                    res.Frequencies[frequency] = new ScreenFrequency(frequency);
+                    res.Frequencies.Add(frequency, frequency);
 
                 if (!DesktopScreen.HasResolution(res))
                     DesktopScreen.resolutions.Add(res);
@@ -308,8 +309,8 @@ public static class SystemManager
         if (ScreenResolution is not null)
             DisplaySettingsChanged?.Invoke(ScreenResolution);
 
+        // raise event
         if (oldOrientation != ScreenOrientation.rotation)
-            // raise event
             DisplayOrientationChanged?.Invoke(ScreenOrientation);
     }
 
