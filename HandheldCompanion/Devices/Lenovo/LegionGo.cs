@@ -76,7 +76,9 @@ public class LegionGo : IDevice
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
-        DynamicLightingCapabilities |= LEDLevel.Ambilight;
+        DynamicLightingCapabilities |= LEDLevel.Breathing;
+        DynamicLightingCapabilities |= LEDLevel.Rainbow;
+        DynamicLightingCapabilities |= LEDLevel.Wheel;
 
         // Legion Go - Quiet
         DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoQuietName, Properties.Resources.PowerProfileLegionGoQuietDescription) 
@@ -340,19 +342,59 @@ public class LegionGo : IDevice
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
+        // Speed is inverted for Legion Go
+        lightProfileL.speed = 100 - speed;
+        lightProfileR.speed = 100 - speed;
+
+        // 1 - solid color
+        // 2 - breathing
+        // 3 - rainbow
+        // 4 - spiral rainbow
+        switch (level)
+        {
+            case LEDLevel.Breathing:
+                {
+                    lightProfileL.effect = 2;
+                    lightProfileR.effect = 2;
+                    SetLightProfileColors(MainColor, MainColor);
+                }
+                break;
+            case LEDLevel.Rainbow:
+                {
+                    lightProfileL.effect = 3;
+                    lightProfileR.effect = 3;
+                }
+                break;
+            case LEDLevel.Wheel:
+                {
+                    lightProfileL.effect = 4;
+                    lightProfileR.effect = 4;
+                }
+                break;
+            default:
+                {
+                    lightProfileL.effect = 1;
+                    lightProfileR.effect = 1;
+                    SetLightProfileColors(MainColor, MainColor);
+                }
+                break;
+        }
+
+        SetLightingEffectProfileID(3, lightProfileL);
+        SetLightingEffectProfileID(4, lightProfileR);
+
+        return true;
+    }
+
+    private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
+    {
         lightProfileL.r = MainColor.R;
         lightProfileL.g = MainColor.G;
         lightProfileL.b = MainColor.B;
-        lightProfileL.speed = speed;
-        SetLightingEffectProfileID(3, lightProfileL);
 
         lightProfileR.r = SecondaryColor.R;
         lightProfileR.g = SecondaryColor.G;
         lightProfileR.b = SecondaryColor.B;
-        lightProfileR.speed = speed;
-        SetLightingEffectProfileID(4, lightProfileR);
-
-        return true;
     }
 
     public override string GetGlyph(ButtonFlags button)

@@ -119,7 +119,6 @@ public class ROGAlly : IDevice
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Breathing;
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
-        // DynamicLightingCapabilities |= LEDLevel.Wave;
         DynamicLightingCapabilities |= LEDLevel.Wheel;
         DynamicLightingCapabilities |= LEDLevel.Ambilight;
 

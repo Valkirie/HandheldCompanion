@@ -2736,6 +2736,9 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
     <value>You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors</value>
   </data>
+  <data name="DevicePage_UseSecondColor" xml:space="preserve">
+    <value>Use second color</value>
+  </data>
   <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
     <value>Graphics settings</value>
   </data>

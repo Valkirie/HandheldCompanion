@@ -29,14 +29,16 @@ namespace HandheldCompanion.Views.Pages
             // Adjust UI element availability based on device capabilities
             DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
             LEDBrightness.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingBrightness);
+            StackSecondColor.Visibility = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLightingSecondLEDColor) ? Visibility.Visible : Visibility.Collapsed;
 
-            LEDSolidColor.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.SolidColor);
-            LEDBreathing.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Breathing);
-            LEDRainbow.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Rainbow);
-            LEDWave.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Wave);
-            LEDWheel.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Wheel);
-            LEDGradient.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Gradient);
-            LEDAmbilight.IsEnabled = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(LEDLevel.Ambilight);
+            SetControlEnabledAndVisible(LEDSolidColor, LEDLevel.SolidColor);
+            SetControlEnabledAndVisible(LEDBreathing, LEDLevel.Breathing);
+            SetControlEnabledAndVisible(LEDRainbow, LEDLevel.Rainbow);
+            SetControlEnabledAndVisible(LEDWave, LEDLevel.Wave);
+            SetControlEnabledAndVisible(LEDWheel, LEDLevel.Wheel);
+            SetControlEnabledAndVisible(LEDGradient, LEDLevel.Gradient);
+            SetControlEnabledAndVisible(LEDAmbilight, LEDLevel.Ambilight);
+            
         }
 
         public DevicePage(string? Tag) : this()
@@ -110,6 +112,9 @@ namespace HandheldCompanion.Views.Pages
                         break;
                     case "LEDAmbilightVerticalBlackBarDetection":
                         Toggle_AmbilightVerticalBlackBarDetection.IsOn = Convert.ToBoolean(value);
+                        break;
+                    case "LEDUseSecondColor":
+                        Toggle_UseSecondColor.IsOn = Convert.ToBoolean(value);
                         break;
                 }
             });
@@ -287,6 +292,14 @@ namespace HandheldCompanion.Views.Pages
             SettingsManager.SetProperty("LEDAmbilightVerticalBlackBarDetection", Toggle_AmbilightVerticalBlackBarDetection.IsOn);
         }
 
+        private async void Toggle_UseSecondColor_Toggled(object? sender, RoutedEventArgs? e)
+        {
+            if (!IsLoaded)
+                return;
+
+            SettingsManager.SetProperty("LEDUseSecondColor", Toggle_UseSecondColor.IsOn);
+        }
+
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
             ((Expander)sender).BringIntoView();
@@ -310,6 +323,13 @@ namespace HandheldCompanion.Views.Pages
                 return;
 
             SettingsManager.SetProperty("LEDDirection", LEDDirection.SelectedIndex);
+        }
+
+        private void SetControlEnabledAndVisible(UIElement control, LEDLevel level)
+        {
+            bool isCapabilitySupported = MainWindow.CurrentDevice.DynamicLightingCapabilities.HasFlag(level);
+            control.IsEnabled = isCapabilitySupported;
+            control.Visibility = isCapabilitySupported ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

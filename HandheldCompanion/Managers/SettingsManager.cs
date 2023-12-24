@@ -80,9 +80,8 @@ public static class SettingsManager
         switch (name)
         {
             case "OverlayControllerBackgroundColor":
-                value = Convert.ToString(value);
-                break;
             case "LEDMainColor":
+            case "LEDSecondColor":
                 value = Convert.ToString(value);
                 break;
         }

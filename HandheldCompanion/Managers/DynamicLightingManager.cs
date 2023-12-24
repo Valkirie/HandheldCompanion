@@ -153,6 +153,7 @@ public static class DynamicLightingManager
             case "LEDSecondColor":
             case "LEDSettingsLevel":
             case "LEDSpeed":
+            case "LEDUseSecondColor":
                 RequestUpdate();
                 break;
 
@@ -190,6 +191,7 @@ public static class DynamicLightingManager
             // Get colors
             Color LEDMainColor = SettingsManager.GetColor("LEDMainColor");
             Color LEDSecondColor = SettingsManager.GetColor("LEDSecondColor");
+            bool useSecondColor = SettingsManager.GetBoolean("LEDUseSecondColor");
 
             switch (LEDSettingsLevel)
             {
@@ -199,7 +201,7 @@ public static class DynamicLightingManager
                     {
                         StopAmbilight();
 
-                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, LEDMainColor, LEDSettingsLevel, LEDSpeed);
+                        MainWindow.CurrentDevice.SetLedColor(LEDMainColor, useSecondColor ? LEDSecondColor : LEDMainColor, LEDSettingsLevel, LEDSpeed);
                     }
                     break;
 
@@ -272,7 +274,7 @@ public static class DynamicLightingManager
                 Color averageColorRight = rightLedTracker.CalculateAverageColor();
 
                 // Only send HID update instruction if the color is different
-                if (averageColorLeft != previousColorLeft && averageColorRight != previousColorRight)
+                if (averageColorLeft != previousColorLeft || averageColorRight != previousColorRight)
                 {
                     // Change LED colors of the device
                     MainWindow.CurrentDevice.SetLedColor(averageColorLeft, averageColorRight, LEDLevel.Ambilight);

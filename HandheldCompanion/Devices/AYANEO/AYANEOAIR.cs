@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using WindowsInput.Events;
 namespace HandheldCompanion.Devices;
+using static HandheldCompanion.Utils.DeviceUtils;
 
 public class AYANEOAIR : AYANEO.AYANEODevice
 {
@@ -36,6 +37,7 @@ public class AYANEOAIR : AYANEO.AYANEODevice
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
+        DynamicLightingCapabilities |= LEDLevel.SolidColor;
 
         ECDetails = new ECDetails
         {

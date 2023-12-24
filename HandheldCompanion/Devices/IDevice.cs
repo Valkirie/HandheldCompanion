@@ -31,7 +31,8 @@ public enum DeviceCapabilities : ushort
     ExternalSensor = 2,
     FanControl = 4,
     DynamicLighting = 8,
-    DynamicLightingBrightness = 16
+    DynamicLightingBrightness = 16,
+    DynamicLightingSecondLEDColor = 32,
 }
 
 public struct ECDetails

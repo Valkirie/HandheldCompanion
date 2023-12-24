@@ -1007,6 +1007,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use second color.
+        /// </summary>
+        public static string DevicePage_UseSecondColor {
+            get {
+                return ResourceManager.GetString("DevicePage_UseSecondColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
         /// </summary>
         public static string Dialog_ForceRestartDesc {
