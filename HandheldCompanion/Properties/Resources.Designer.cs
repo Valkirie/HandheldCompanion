@@ -3366,43 +3366,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LSDaemon is active.
-        /// </summary>
-        public static string Hint_LegionGoDaemon {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Quit LSDaemon.
-        /// </summary>
-        public static string Hint_LegionGoDaemonAction {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemonAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LSDaemon is already active on your console. This may cause compatibility issues with the application.
-        /// </summary>
-        public static string Hint_LegionGoDaemonDesc {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemonDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You should quit LSDaemon, so that the application can run properly and without any errors.
-        /// </summary>
-        public static string Hint_LegionGoDaemonReadme {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemonReadme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Legion Space Daemon is active.
+        ///   Looks up a localized string similar to Legion Space Tasks and Services are active.
         /// </summary>
         public static string Hint_LegionGoServices {
             get {
@@ -3411,7 +3375,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable Legion Space Daemon.
+        ///   Looks up a localized string similar to Disable Legion Space.
         /// </summary>
         public static string Hint_LegionGoServicesAction {
             get {
@@ -3420,7 +3384,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Legion Space Daemon is already active on your console. This may cause compatibility issues with the application..
+        ///   Looks up a localized string similar to Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application..
         /// </summary>
         public static string Hint_LegionGoServicesDesc {
             get {
@@ -3429,7 +3393,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should disable Legion Space Daemon, so that the application can run properly and without any errors.
+        ///   Looks up a localized string similar to You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors.
         /// </summary>
         public static string Hint_LegionGoServicesReadme {
             get {

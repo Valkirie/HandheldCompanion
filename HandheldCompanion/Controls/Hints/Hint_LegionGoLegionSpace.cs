@@ -3,6 +3,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
@@ -11,17 +12,24 @@ using System.Windows;
 
 namespace HandheldCompanion.Controls.Hints
 {
-    public class Hint_LegionGoServices : IHint
+    public class Hint_LegionGoLegionSpace : IHint
     {
         private List<string> serviceNames = new()
         {
             "DAService",
         };
 
+        private List<string> taskNames = new()
+        {
+            "LegionGoQuickSettings",
+            "LegionSpace",
+            "LSDaemon"
+        };
+
         private List<ServiceController> serviceControllers = new();
         private Timer serviceTimer;
 
-        public Hint_LegionGoServices() : base()
+        public Hint_LegionGoLegionSpace() : base()
         {
             if (MainWindow.CurrentDevice is not LegionGo)
                 return;
@@ -58,7 +66,7 @@ namespace HandheldCompanion.Controls.Hints
 
         private void ServiceTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            if(!serviceControllers.Any())
+            if (!serviceControllers.Any())
                 return;
 
             // Check if any of the services in the list exist and are running
@@ -88,12 +96,25 @@ namespace HandheldCompanion.Controls.Hints
 
             Task.Run(async () =>
             {
+                // Disable services
                 foreach (ServiceController serviceController in serviceControllers)
                 {
+                    // Disable service from doing anything anymore
+                    ServiceUtils.ChangeStartMode(serviceController, ServiceStartMode.Disabled, out string error);
+
+                    // Stop tasks related to service
+                    foreach (string taskName in taskNames)
+                    {
+                        var taskProcess = Process.GetProcessesByName(taskName).FirstOrDefault();
+                        if (taskProcess != null && !taskProcess.HasExited)
+                        {
+                            taskProcess.Kill();
+                        }
+                    }
+
+                    // Stop running service
                     if (serviceController.Status == ServiceControllerStatus.Running)
                         serviceController.Stop();
-                    serviceController.WaitForStatus(ServiceControllerStatus.Stopped);
-                    ServiceUtils.ChangeStartMode(serviceController, ServiceStartMode.Disabled, out _);
                 }
             });
         }

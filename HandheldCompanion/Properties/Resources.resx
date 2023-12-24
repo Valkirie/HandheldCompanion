@@ -2601,15 +2601,6 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="ControllerPage_TryAgain" xml:space="preserve">
     <value>Try again</value>
   </data>
-  <data name="Hint_LegionGoDaemon" xml:space="preserve">
-    <value>LSDaemon is active</value>
-  </data>
-  <data name="Hint_LegionGoDaemonReadme" xml:space="preserve">
-    <value>You should quit LSDaemon, so that the application can run properly and without any errors</value>
-  </data>
-  <data name="Hint_LegionGoDaemonDesc" xml:space="preserve">
-    <value>LSDaemon is already active on your console. This may cause compatibility issues with the application</value>
-  </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
     <value>ASUS services are running</value>
   </data>
@@ -2618,9 +2609,6 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
     <value>ASUS services are already running on your device. This may interfere with the application</value>
-  </data>
-  <data name="Hint_LegionGoDaemonAction" xml:space="preserve">
-    <value>Quit LSDaemon</value>
   </data>
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Disable ASUS services</value>
@@ -2737,16 +2725,16 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>This is the default profile, you cannot modify the fan curve on this profile.</value>
   </data>
   <data name="Hint_LegionGoServices" xml:space="preserve">
-    <value>Legion Space Daemon is active</value>
+    <value>Legion Space Tasks and Services are active</value>
   </data>
   <data name="Hint_LegionGoServicesAction" xml:space="preserve">
-    <value>Disable Legion Space Daemon</value>
+    <value>Disable Legion Space</value>
   </data>
   <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
-    <value>Legion Space Daemon is already active on your console. This may cause compatibility issues with the application.</value>
+    <value>Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application.</value>
   </data>
   <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
-    <value>You should disable Legion Space Daemon, so that the application can run properly and without any errors</value>
+    <value>You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors</value>
   </data>
   <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
     <value>Graphics settings</value>
