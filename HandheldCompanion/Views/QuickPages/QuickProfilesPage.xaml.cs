@@ -177,7 +177,6 @@ public partial class QuickProfilesPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
-            StackProfileRIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
 
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
@@ -208,7 +207,6 @@ public partial class QuickProfilesPage : Page
             {
                 case false:
                     StackProfileRSR.IsEnabled = false;
-                    StackProfileRIS.IsEnabled = false;
                     StackProfileIS.IsEnabled = false;
                     break;
             }

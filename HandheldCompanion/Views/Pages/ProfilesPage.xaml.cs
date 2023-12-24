@@ -87,7 +87,6 @@ public partial class ProfilesPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
-            StackProfileRIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
 
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
@@ -100,7 +99,7 @@ public partial class ProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            RSRToggle.IsEnabled = RSRSupport;
+            StackProfileRSR.IsEnabled = RSRSupport;
             RSRToggle.IsOn = RSRState <= 0 ? false : true;
             RSRSlider.Value = RSRSharpness;
         });
@@ -118,7 +117,6 @@ public partial class ProfilesPage : Page
             {
                 case false:
                     StackProfileRSR.IsEnabled = false;
-                    StackProfileRIS.IsEnabled = false;
                     StackProfileIS.IsEnabled = false;
                     break;
             }
