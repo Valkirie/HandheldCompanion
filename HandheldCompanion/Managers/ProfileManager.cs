@@ -616,7 +616,10 @@ public static class ProfileManager
         bool isCurrent = false;
         switch (source)
         {
-            // update current profile on creation
+            // if profile is created from QT -> apply it
+            case UpdateSource.QuickProfilesCreation:
+                isCurrent = true;
+                break;
             case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile in ProfilesPage
                 isCurrent = false;
                 break;

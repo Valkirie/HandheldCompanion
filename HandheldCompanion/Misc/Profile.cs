@@ -25,6 +25,7 @@ public enum UpdateSource
     Background = 0,
     ProfilesPage = 1,
     QuickProfilesPage = 2,
+    QuickProfilesCreation = 3,
     Creation = 4,
     Serializer = 5,
     ProfilesPageUpdateOnly = 6

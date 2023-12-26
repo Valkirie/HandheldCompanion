@@ -588,7 +588,7 @@ public partial class QuickProfilesPage : Page
         else
         {
             realProfile.Enabled = ProfileToggle.IsOn;
-            ProfileManager.UpdateOrCreateProfile(realProfile, UpdateSource.Creation);
+            ProfileManager.UpdateOrCreateProfile(realProfile, UpdateSource.QuickProfilesCreation);
         }
     }
 
@@ -606,7 +606,7 @@ public partial class QuickProfilesPage : Page
         if (UpdateTimer.Enabled)
             UpdateTimer.Stop();
 
-        SubmitProfile(UpdateSource.Creation);
+        SubmitProfile(UpdateSource.QuickProfilesCreation);
     }
 
     private void cB_Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
