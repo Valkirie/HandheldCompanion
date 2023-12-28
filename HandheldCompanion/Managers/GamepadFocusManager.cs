@@ -9,6 +9,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -257,6 +258,19 @@ namespace HandheldCompanion.Managers
             control.Focus();
 
             ToolTipService.SetShowsToolTipOnKeyboardFocus(control, true);
+
+            string controlType = control.GetType().Name;
+
+            switch(controlType)
+            {
+                case "Slider":
+                    ToolTipService.SetInitialShowDelay(control, 0);
+                    break;
+                default:
+                    ToolTipService.SetInitialShowDelay(control, 600);
+                    break;
+            }
+
             control.BringIntoView();
         }
 
@@ -348,6 +362,12 @@ namespace HandheldCompanion.Managers
 
             return null;
         }
+        
+        // declare a DateTime variable to store the last time the function was called
+        private DateTime lastCallTime;
+
+        // declare a DateTime variable to store the last time the button state changed
+        private DateTime lastChangeTime;
 
         private void InputsUpdated(ControllerState controllerState)
         {
@@ -358,10 +378,41 @@ namespace HandheldCompanion.Managers
             if (InputsManager.IsListening)
                 return;
 
-            if (controllerState.ButtonState.Equals(prevButtonState))
-                return;
+            // get the current time
+            DateTime currentTime = DateTime.Now;
 
-            prevButtonState = controllerState.ButtonState.Clone() as ButtonState;
+            // check if the button state is equal to the previous button state
+            if (controllerState.ButtonState.Equals(prevButtonState))
+            {
+                if (controllerState.ButtonState.Buttons.Any())
+                {
+                    // check if the button state has been the same for at least 600ms
+                    if ((currentTime - lastChangeTime).TotalMilliseconds >= 600)
+                    {
+                        // check if the function has been called within the last 120ms
+                        if ((currentTime - lastCallTime).TotalMilliseconds >= 120)
+                        {
+                            // update the last call time
+                            lastCallTime = currentTime;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                // update the last change time and the last call time
+                lastChangeTime = currentTime;
+                lastCallTime = currentTime;
+                prevButtonState = controllerState.ButtonState.Clone() as ButtonState;
+            }
 
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
