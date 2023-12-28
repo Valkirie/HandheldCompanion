@@ -21,7 +21,7 @@ public class AYANEOKUN : AYANEO.AYANEODevice
     private static byte[] AYA_ZONES = new byte[] { 4 };
     private static byte[] STICK_ZONES = new byte[] { 1, 2, 3, 4 };
 
-    private Color color = Color.FromRgb(255, 255, 255);
+    private Color color = Color.FromRgb(0, 0, 0);
 
     public AYANEOKUN()
     {
