@@ -173,25 +173,10 @@ public partial class ProfilesPage : Page
         {
             cB_Framerate.Items.Clear();
 
-            // add disabled frame limit
-            ScreenFramelimit closest = new(0, 0);
-            frameLimits.Insert(0, closest);
-
             foreach (ScreenFramelimit frameLimit in frameLimits)
                 cB_Framerate.Items.Add(frameLimit);
 
-            uint minDiff = uint.MinValue;
-            foreach (ScreenFramelimit frameLimit in frameLimits)
-            {
-                int diff = Math.Abs(frameLimit.divider - selectedProfile.FramerateValue);
-                if (diff <= minDiff)
-                {
-                    closest = frameLimit;
-                    minDiff = (uint)diff;
-                }
-            }
-
-            cB_Framerate.SelectedItem = closest;
+            cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
         });
     }
 
@@ -1220,7 +1205,7 @@ public partial class ProfilesPage : Page
 
         if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
         {
-            selectedProfile.FramerateValue = screenFramelimit.divider;
+            selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();
         }
     }

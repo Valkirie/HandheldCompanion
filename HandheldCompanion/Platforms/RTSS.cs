@@ -131,15 +131,10 @@ public class RTSS : IPlatform
         // Apply profile-defined framerate
         int frameLimit = 0;
 
-        int divider = profile.FramerateValue;
-        if (divider != 0)
+        DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+        if (desktopScreen is not null)
         {
-            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
-            if (desktopScreen is not null)
-            {
-                int currentFrequency = desktopScreen.GetCurrentFrequency();
-                frameLimit = currentFrequency / divider;
-            }
+            frameLimit = desktopScreen.GetClosest(profile.FramerateValue).limit;
         }
 
         RequestFPS(frameLimit);

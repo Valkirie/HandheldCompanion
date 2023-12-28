@@ -251,25 +251,10 @@ public partial class QuickProfilesPage : Page
         {
             cB_Framerate.Items.Clear();
 
-            // add disabled frame limit
-            ScreenFramelimit closest = new(0,0);
-            frameLimits.Insert(0, closest);
-
             foreach (ScreenFramelimit frameLimit in frameLimits)
                 cB_Framerate.Items.Add(frameLimit);
 
-            uint minDiff = uint.MinValue;
-            foreach (ScreenFramelimit frameLimit in frameLimits)
-            {
-                int diff = Math.Abs(frameLimit.divider - selectedProfile.FramerateValue);
-                if (diff <= minDiff)
-                {
-                    closest = frameLimit;
-                    minDiff = (uint)diff;
-                }
-            }
-
-            cB_Framerate.SelectedItem = closest;
+            cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
         });
     }
 
@@ -425,6 +410,8 @@ public partial class QuickProfilesPage : Page
         // update profile
         selectedProfile = profile;
 
+        DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
@@ -502,13 +489,9 @@ public partial class QuickProfilesPage : Page
                 }
 
                 // Framerate
-                foreach (ScreenFramelimit screenFramelimit in cB_Framerate.Items)
+                if (desktopScreen is not null)
                 {
-                    if (screenFramelimit.divider == selectedProfile.FramerateValue)
-                    {
-                        cB_Framerate.SelectedItem = screenFramelimit;
-                        break;
-                    }
+                    cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
                 }
 
                 // RSR
@@ -945,7 +928,7 @@ public partial class QuickProfilesPage : Page
 
         if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
         {
-            selectedProfile.FramerateValue = screenFramelimit.divider;
+            selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();
         }
     }

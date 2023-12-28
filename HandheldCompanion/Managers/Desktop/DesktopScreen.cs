@@ -29,12 +29,12 @@ public class ScreenResolution
 
 public class ScreenFramelimit
 {
-    public int divider;
+    public int index;
     public int limit;
 
-    public ScreenFramelimit(int divider, int limit)
+    public ScreenFramelimit(int index, int limit)
     {
-        this.divider = divider;
+        this.index = index;
         this.limit = limit;
     }
 
@@ -112,6 +112,8 @@ public class DesktopScreen
     public Screen PrimaryScreen;
     public List<ScreenResolution> resolutions = new();
 
+    private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = new();
+
     public DesktopScreen(Screen primaryScreen)
     {
         PrimaryScreen = primaryScreen;
@@ -157,50 +159,81 @@ public class DesktopScreen
     public List<ScreenFramelimit> GetFramelimits()
     {
         // A list to store the quotients
-        List<ScreenFramelimit> Limits = new(); // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        List<ScreenFramelimit> Limits = [new(0,0)]; // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
 
-        // A variable to store the divider value, initialized to 10
+        // A variable to store the divider value, rounded to nearest even number
         int divider = 1;
-        int dmDisplayFrequency = ClosestMultipleOf10(devMode.dmDisplayFrequency);
+        int dmDisplayFrequency = RoundToEven(devMode.dmDisplayFrequency);
 
-        // A loop to find the closest divisors of the frequency
-        while (divider < 10)
+        if (_cachedFrameLimits.ContainsKey(dmDisplayFrequency)) { return _cachedFrameLimits[dmDisplayFrequency]; }
+
+        int lowestFPS = dmDisplayFrequency;
+
+        HashSet<int> fpsLimits = new();
+
+        // A loop to find the lowest possible fps limit option and limits from division
+        do
         {
             // If the frequency is divisible by the divider, add the quotient to the list
             if (dmDisplayFrequency % divider == 0)
             {
                 int frequency = dmDisplayFrequency / divider;
-                if (frequency >= 20)
-                    Limits.Add(new(divider, frequency));
+                if (frequency < 20)
+                {
+                    break;
+                }
+                fpsLimits.Add(frequency);
+                lowestFPS = frequency;
             }
 
-            // Decrease the divider by 1
+            // Increase the divider by 1
             divider++;
+        } while (true);
+
+        // loop to fill all possible fps limit options from lowest fps limit (e.g. getting 40FPS dor 60Hz)
+        int nrOptions = dmDisplayFrequency / lowestFPS;
+        for (int i = 1; i < nrOptions; i++)
+        {
+            fpsLimits.Add(lowestFPS * i);
         }
 
+        // Fill limits
+
+        var orderedFpsLimits = fpsLimits.OrderByDescending(f => f);
+
+        for (int i = 0; i < orderedFpsLimits.Count(); i++)
+        {
+            Limits.Add(new(i+1, orderedFpsLimits.ElementAt(i)));
+        }
+
+        _cachedFrameLimits.Add(dmDisplayFrequency, Limits);
         // Return the list of quotients
         return Limits;
     }
 
-    // A function that takes an int as a parameter and returns the closest multiple of 10
-    private int ClosestMultipleOf10(decimal num)
+    public ScreenFramelimit GetClosest(int fps)
     {
-        // Round the number to the nearest integer
-        num = (int)Math.Round(num);
+        var limits = GetFramelimits();
 
-        // If the number is already a multiple of 10, return it
-        if (num % 10 == 0)
-            return (int)num;
+        var fpsInLimits = limits.FirstOrDefault(l => l.limit == fps);
+        if (fpsInLimits is not null) { return fpsInLimits; }
 
-        // Otherwise, find the closest lower and higher multiples of 10
-        decimal lower = num - (num % 10);
-        decimal higher = lower + 10;
+        var diffs = GetFramelimits().Select(limit => (Math.Abs(fps - limit.limit), limit))
+                                    .OrderBy(g => g.Item1).ThenBy(g => g.limit.limit).ToList();
 
-        // Return the one that has the smaller absolute difference with the number
-        if (Math.Abs(num - lower) <= Math.Abs(num - higher))
-            return (int)lower;
-        else
-            return (int)higher;
+        var lowestDiff = diffs.First().Item1;
+        var lowestDiffs = diffs.Where(d => d.Item1 == lowestDiff);
+
+        return lowestDiffs.Last().limit;
+    }
+
+    // A function that takes an int as a parameter and returns the closest multiple of 10
+    private int RoundToEven(int num)
+    {
+        if (num % 2 == 0)
+            return num;
+
+        return num + 1;
     }
 
     public void SortResolutions()
