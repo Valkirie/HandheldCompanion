@@ -383,7 +383,7 @@
                                         IsMoveToPointEnabled="True"
                                         IsSnapToTickEnabled="True"
                                         LargeChange="10"
-                                        Maximum="120"
+                                        Maximum="144"
                                         Minimum="20"
                                         SmallChange="1"
                                         Style="{DynamicResource SliderStyle1}"
