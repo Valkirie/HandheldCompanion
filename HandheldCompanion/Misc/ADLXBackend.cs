@@ -5,7 +5,7 @@ namespace HandheldCompanion.Misc
     public class ADLXBackend
     {
         public const string CppFunctionsDLL = @"PerformanceMetrics.dll";
-        public const string CppFunctionsDLL1 = @"GraphSettings.dll";
+        public const string CppFunctionsDLL1 = @"ADLX_3DSettings.dll";
         public const string CppFunctionsDLL2 = @"ADLX_DisplaySettings.dll";
         [DllImport(CppFunctionsDLL, CallingConvention = CallingConvention.Cdecl)] public static extern int GetFPSData();
         [DllImport(CppFunctionsDLL, CallingConvention = CallingConvention.Cdecl)] public static extern int GetGPUMetrics(int GPU, int Sensor);

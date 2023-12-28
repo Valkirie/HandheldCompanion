@@ -227,10 +227,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ADLX_DisplaySettings.dll">
+    <None Update="ADLX_3DSettings.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="GraphSettings.dll">
+    <None Update="ADLX_DisplaySettings.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="JoyShockLibrary.dll">

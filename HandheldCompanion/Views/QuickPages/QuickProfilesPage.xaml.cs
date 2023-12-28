@@ -167,15 +167,15 @@ public partial class QuickProfilesPage : Page
 
     private void SystemManager_Initialized()
     {
-        bool HasScalingModeSupport = ADLXBackend.HasScalingModeSupport();
-        bool HasIntegerScalingSupport = ADLXBackend.HasIntegerScalingSupport();
-        bool HasGPUScalingSupport = ADLXBackend.HasGPUScalingSupport();
-        bool IsGPUScalingEnabled = ADLXBackend.IsGPUScalingEnabled();
+        bool HasScalingModeSupport = ADLXWrapper.HasScalingModeSupport();
+        bool HasIntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
+        bool HasGPUScalingSupport = ADLXWrapper.HasGPUScalingSupport();
+        bool IsGPUScalingEnabled = ADLXWrapper.IsGPUScalingEnabled();
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXBackend.GetRSRState() != -1;
+            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXWrapper.GetRSRState() != -1;
 
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
@@ -892,7 +892,7 @@ public partial class QuickProfilesPage : Page
 
     private void GPUScaling_Toggled(object sender, RoutedEventArgs e)
     {
-        ADLXBackend.SetGPUScaling(Convert.ToInt32(GPUScalingToggle.IsOn));
+        ADLXWrapper.SetGPUScaling(Convert.ToInt32(GPUScalingToggle.IsOn));
     }
 
     private void cb_SubProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

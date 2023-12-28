@@ -88,8 +88,8 @@ public static class SystemManager
             try
             {
                 // get gpu scaling and scaling mode
-                GPUScaling = ADLXBackend.IsGPUScalingEnabled();
-                int ScalingMode = ADLXBackend.GetScalingMode();
+                GPUScaling = ADLXWrapper.IsGPUScalingEnabled();
+                int ScalingMode = ADLXWrapper.GetScalingMode();
 
                 if ((GPUScaling != prevGPUScaling) || (ScalingMode != prevScalingMode))
                 {
@@ -104,8 +104,8 @@ public static class SystemManager
 
             try
             {
-                int RSRState = ADLXBackend.GetRSRState();
-                int RSRSharpness = ADLXBackend.GetRSRSharpness();
+                int RSRState = ADLXWrapper.GetRSRState();
+                int RSRSharpness = ADLXWrapper.GetRSRSharpness();
                 bool HasRSRSupport = GPUScaling && RSRState != -1;
 
                 if ((HasRSRSupport != prevRSRSupport) || (RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
@@ -132,10 +132,10 @@ public static class SystemManager
                     DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
                     while (DateTime.Now < timeout && !IntegerScalingSupport)
                     {
-                        IntegerScalingSupport = ADLXBackend.HasIntegerScalingSupport();
+                        IntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
                         Thread.Sleep(250);
                     }
-                    IntegerScaling = ADLXBackend.IsIntegerScalingEnabled();
+                    IntegerScaling = ADLXWrapper.IsIntegerScalingEnabled();
                 }
 
                 if ((IntegerScalingSupport != prevIntegerScalingSupport) || (IntegerScaling != prevIntegerScaling))

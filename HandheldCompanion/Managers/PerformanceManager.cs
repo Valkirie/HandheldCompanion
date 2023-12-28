@@ -144,29 +144,29 @@ public static class PerformanceManager
         {
             if (profile.RSREnabled)
             {
-                ADLXBackend.SetGPUScaling(1);
-                ADLXBackend.SetRSR(true);
-                ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
+                ADLXWrapper.SetGPUScaling(1);
+                ADLXWrapper.SetRSR(true);
+                ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
             }
-            else if (ADLXBackend.GetRSRState() == 1)
+            else if (ADLXWrapper.GetRSRState() == 1)
             {
-                ADLXBackend.SetRSR(false);
-                ADLXBackend.SetRSRSharpness(20);
+                ADLXWrapper.SetRSR(false);
+                ADLXWrapper.SetRSRSharpness(20);
             }
 
             if (profile.IntegerScalingEnabled)
             {
-                ADLXBackend.SetGPUScaling(1);
-                ADLXBackend.SetIntegerScaling(1);
+                ADLXWrapper.SetGPUScaling(1);
+                ADLXWrapper.SetIntegerScaling(1);
             }
-            else if (ADLXBackend.IsIntegerScalingEnabled())
+            else if (ADLXWrapper.IsIntegerScalingEnabled())
             {
-                ADLXBackend.SetIntegerScaling(0);
+                ADLXWrapper.SetIntegerScaling(0);
             }
 
-            ADLXBackend.SetImageSharpning(0, profile.RISEnabled, profile.RISSharpness);
+            ADLXWrapper.SetImageSharpening(profile.RISEnabled, profile.RISSharpness);
 
-            ADLXBackend.SetScalingMode(profile.ScalingMode);
+            ADLXWrapper.SetScalingMode(profile.ScalingMode);
         }
         catch { }
     }
@@ -178,19 +178,19 @@ public static class PerformanceManager
             // restore default RSR
             if (profile.RSREnabled)
             {
-                ADLXBackend.SetRSR(false);
-                ADLXBackend.SetRSRSharpness(20);
+                ADLXWrapper.SetRSR(false);
+                ADLXWrapper.SetRSRSharpness(20);
             }
             
             // restore disabled integer scaling
             if (profile.IntegerScalingEnabled)
             {
-                ADLXBackend.SetIntegerScaling(0);
+                ADLXWrapper.SetIntegerScaling(0);
             }
 
             if (profile.RISEnabled)
             {
-                ADLXBackend.SetImageSharpning(0, false, 80);
+                ADLXWrapper.SetImageSharpening(false, 80);
             }
         }
         catch { }
