@@ -41,11 +41,11 @@
                                 Glyph="&#xE7EE;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ProfileSelection}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.PowerProfilesPage_PresetSelection}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_ProfileSelectionDesc}"
+                                    Text="{x:Static resx:Resources.PowerProfilesPage_PresetSelectionDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>
@@ -64,8 +64,8 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 SelectionChanged="ProfilesPicker_SelectionChanged">
-                                <ComboBoxItem Name="OEMProfiles" IsEnabled="False">Device profiles</ComboBoxItem>
-                                <ComboBoxItem Name="UserProfiles" IsEnabled="False">User profiles</ComboBoxItem>
+                                <ComboBoxItem Name="OEMProfiles" IsEnabled="False" Content="{x:Static resx:Resources.PowerProfilesPage_DevicePresets}"></ComboBoxItem>
+                                <ComboBoxItem Name="UserProfiles" IsEnabled="False" Content="{x:Static resx:Resources.PowerProfilesPage_UserPresets}"></ComboBoxItem>
                             </ComboBox>
 
                             <!--  Create power profile  -->

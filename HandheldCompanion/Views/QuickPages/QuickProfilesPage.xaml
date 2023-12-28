@@ -139,7 +139,7 @@
         <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
         <ui:SimpleStackPanel Name="GridProfile" Spacing="6">
-            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Performance profile" />
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
             <Expander HorizontalAlignment="Stretch" IsExpanded="True">
                 <Expander.Header>
@@ -157,11 +157,11 @@
                                 Glyph="&#xec0a;" />
 
                             <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerPreset}" />
                                 <TextBlock
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_PowerSettingsDesc}"
+                                    Text="{x:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
                                     TextWrapping="Wrap" />
                             </ui:SimpleStackPanel>
                         </DockPanel>

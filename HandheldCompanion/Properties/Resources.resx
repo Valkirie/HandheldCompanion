@@ -688,11 +688,11 @@
   <data name="ProfilesPage_OK" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
-    <value>Power settings</value>
+  <data name="ProfilesPage_PowerPreset" xml:space="preserve">
+    <value>Power preset</value>
   </data>
-  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
-    <value>Change the power settings</value>
+  <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
+    <value>Change the selected power preset</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Profile details</value>
@@ -1708,7 +1708,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Right joystick</value>
   </data>
   <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
-    <value>This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
+    <value>This is your default profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
     <value>Oops. It seems this profile does not have an executable. How is this even possible?</value>
@@ -2509,13 +2509,13 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Change the fan settings</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
-    <value>Create a new power profile</value>
+    <value>Create a new power preset</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
-    <value>Create power profile</value>
+    <value>Create power preset</value>
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
-    <value>Delete power profile</value>
+    <value>Delete power preset</value>
   </data>
   <data name="MainWindow_Toggle" xml:space="preserve">
     <value>Toggle</value>
@@ -2701,28 +2701,28 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Overlay</value>
   </data>
   <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
-    <value>This is a default device profile and cannot be edited. These are comparable to the profiles provided by the devices original software.</value>
+    <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
   </data>
   <data name="PowerProfileLegionGoQuietName" xml:space="preserve">
     <value>Legion Go - Quiet</value>
   </data>
   <data name="PowerProfileLegionGoQuietDescription" xml:space="preserve">
-    <value>Profile similar to Quiet Mode in LS. TDP Limit: 8W</value>
+    <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
   </data>
   <data name="PowerProfileLegionGoBalancedName" xml:space="preserve">
     <value>Legion Go - Balanced</value>
   </data>
   <data name="PowerProfileLegionGoBalancedDescription" xml:space="preserve">
-    <value>Profile similar to Balanced Mode in LS. TDP Limit: 15W</value>
+    <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
   </data>
   <data name="PowerProfileLegionGoPerformanceName" xml:space="preserve">
     <value>Legion Go - Performance</value>
   </data>
   <data name="PowerProfileLegionGoPerformanceDescription" xml:space="preserve">
-    <value>Profile similar to Performance Mode in LS. TDP Limit: 20W</value>
+    <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
   </data>
   <data name="ProfilesPage_DefaultProfile" xml:space="preserve">
-    <value>This is the default profile, you cannot modify the fan curve on this profile.</value>
+    <value>This is the default preset, you cannot modify the fan curve on this preset.</value>
   </data>
   <data name="Hint_LegionGoServices" xml:space="preserve">
     <value>Legion Space Tasks and Services are active</value>
@@ -2744,5 +2744,20 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="ProfilesPage_GraphicsSettingsDesc" xml:space="preserve">
     <value>Change the graphics settings</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
+    <value>Preset selection</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelectionDesc" xml:space="preserve">
+    <value>Select the preset you would like to edit</value>
+  </data>
+  <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
+    <value>Device presets</value>
+  </data>
+  <data name="PowerProfilesPage_UserPresets" xml:space="preserve">
+    <value>User presets</value>
+  </data>
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
+    <value>Power settings</value>
   </data>
 </root>

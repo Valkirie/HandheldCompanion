@@ -711,11 +711,11 @@
                                         Glyph="&#xe945;" />
 
                                     <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
+                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerPreset}" />
                                         <TextBlock
                                             Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                             Style="{StaticResource CaptionTextBlockStyle}"
-                                            Text="{x:Static resx:Resources.ProfilesPage_PowerSettingsDesc}"
+                                            Text="{x:Static resx:Resources.ProfilesPage_PowerPresetDesc}"
                                             TextWrapping="Wrap" />
                                     </ui:SimpleStackPanel>
                                 </DockPanel>

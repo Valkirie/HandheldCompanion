@@ -2718,7 +2718,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
+        ///   Looks up a localized string similar to This is your default profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
         /// </summary>
         public static string Enum_ProfileErrorCode_Default {
             get {
@@ -5032,7 +5032,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Profile similar to Balanced Mode in LS. TDP Limit: 15W.
+        ///   Looks up a localized string similar to Preset similar to Balanced Mode in LS. TDP Limit: 15W.
         /// </summary>
         public static string PowerProfileLegionGoBalancedDescription {
             get {
@@ -5050,7 +5050,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Profile similar to Performance Mode in LS. TDP Limit: 20W.
+        ///   Looks up a localized string similar to Preset similar to Performance Mode in LS. TDP Limit: 20W.
         /// </summary>
         public static string PowerProfileLegionGoPerformanceDescription {
             get {
@@ -5068,7 +5068,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Profile similar to Quiet Mode in LS. TDP Limit: 8W.
+        ///   Looks up a localized string similar to Preset similar to Quiet Mode in LS. TDP Limit: 8W.
         /// </summary>
         public static string PowerProfileLegionGoQuietDescription {
             get {
@@ -5154,6 +5154,42 @@ namespace HandheldCompanion.Properties {
         public static string PowerProfileROGAllyTurboName {
             get {
                 return ResourceManager.GetString("PowerProfileROGAllyTurboName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device presets.
+        /// </summary>
+        public static string PowerProfilesPage_DevicePresets {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_DevicePresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preset selection.
+        /// </summary>
+        public static string PowerProfilesPage_PresetSelection {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_PresetSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the preset you would like to edit.
+        /// </summary>
+        public static string PowerProfilesPage_PresetSelectionDesc {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_PresetSelectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User presets.
+        /// </summary>
+        public static string PowerProfilesPage_UserPresets {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_UserPresets", resourceCulture);
             }
         }
         
@@ -5410,7 +5446,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create a new power profile.
+        ///   Looks up a localized string similar to Create a new power preset.
         /// </summary>
         public static string ProfilesPage_CreatePowerProfile {
             get {
@@ -5419,7 +5455,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create power profile.
+        ///   Looks up a localized string similar to Create power preset.
         /// </summary>
         public static string ProfilesPage_CreatePowerProfileButton {
             get {
@@ -5428,7 +5464,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is a default device profile and cannot be edited. These are comparable to the profiles provided by the devices original software..
+        ///   Looks up a localized string similar to This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software..
         /// </summary>
         public static string ProfilesPage_DefaultDeviceProfile {
             get {
@@ -5437,7 +5473,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is the default profile, you cannot modify the fan curve on this profile..
+        ///   Looks up a localized string similar to This is the default preset, you cannot modify the fan curve on this preset..
         /// </summary>
         public static string ProfilesPage_DefaultProfile {
             get {
@@ -5455,7 +5491,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete power profile.
+        ///   Looks up a localized string similar to Delete power preset.
         /// </summary>
         public static string ProfilesPage_DeletePowerProfileButton {
             get {
@@ -5788,20 +5824,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Power preset.
+        /// </summary>
+        public static string ProfilesPage_PowerPreset {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the selected power preset.
+        /// </summary>
+        public static string ProfilesPage_PowerPresetDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerPresetDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power settings.
         /// </summary>
         public static string ProfilesPage_PowerSettings {
             get {
                 return ResourceManager.GetString("ProfilesPage_PowerSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the power settings.
-        /// </summary>
-        public static string ProfilesPage_PowerSettingsDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_PowerSettingsDesc", resourceCulture);
             }
         }
         
