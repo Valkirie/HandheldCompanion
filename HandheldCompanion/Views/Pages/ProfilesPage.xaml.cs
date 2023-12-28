@@ -7,7 +7,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages.Profiles;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using Microsoft.Win32;
 using SharpDX.Win32;
 using System;

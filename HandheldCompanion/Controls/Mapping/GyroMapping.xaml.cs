@@ -3,7 +3,7 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;

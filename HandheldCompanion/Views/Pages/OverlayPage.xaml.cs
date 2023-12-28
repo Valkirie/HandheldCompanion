@@ -3,7 +3,7 @@ using ColorPicker.Models;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;

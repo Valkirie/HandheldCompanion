@@ -6,7 +6,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;

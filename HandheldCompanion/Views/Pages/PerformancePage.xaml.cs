@@ -3,7 +3,7 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using LiveCharts;
 using LiveCharts.Definitions.Series;
 using LiveCharts.Helpers;

@@ -5,7 +5,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Windows;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Xml.Linq;
-using Frame = Inkore.UI.WPF.Modern.Controls.Frame;
+using Frame = iNKORE.UI.WPF.Modern.Controls.Frame;
 using Page = System.Windows.Controls.Page;
 using Timer = System.Timers.Timer;
 

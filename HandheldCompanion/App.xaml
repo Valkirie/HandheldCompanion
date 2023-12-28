@@ -68,6 +68,10 @@
 
             <math:MathConverter x:Key="Math" />
 
+            <Style BasedOn="{StaticResource {x:Static ui:ThemeKeys.ExpanderCardStyleKey}}" TargetType="Expander">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
