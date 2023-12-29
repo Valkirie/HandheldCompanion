@@ -610,10 +610,7 @@ public static class ControllerManager
             if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
                 ClearTargetController();
             else
-            {
                 controller.Unplug();
-                controller = null;
-            }
 
             // controller was unplugged
             Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
@@ -850,10 +847,7 @@ public static class ControllerManager
             if (targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
                 ClearTargetController();
             else
-            {
                 controller.Unplug();
-                controller = null;
-            }
         }
 
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
