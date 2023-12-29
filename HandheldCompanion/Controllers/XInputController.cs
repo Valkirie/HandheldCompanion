@@ -159,11 +159,6 @@ public class XInputController : IController
         base.Unplug();
     }
 
-    public override void Cleanup()
-    {
-        TimerManager.Tick -= UpdateInputs;
-    }
-
     public static UserIndex TryGetUserIndex(PnPDetails details)
     {
         XInputCapabilitiesEx capabilitiesEx = new();

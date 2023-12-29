@@ -105,11 +105,6 @@ public class DualSenseController : JSController
         });
     }
 
-    public override void Cleanup()
-    {
-        TimerManager.Tick -= UpdateInputs;
-    }
-
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)

@@ -609,6 +609,11 @@ public static class ControllerManager
             // unplug controller, if needed
             if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
                 ClearTargetController();
+            else
+            {
+                controller.Unplug();
+                controller = null;
+            }
 
             // controller was unplugged
             Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
@@ -844,6 +849,11 @@ public static class ControllerManager
             // controller is current target
             if (targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
                 ClearTargetController();
+            else
+            {
+                controller.Unplug();
+                controller = null;
+            }
         }
 
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
@@ -863,7 +873,6 @@ public static class ControllerManager
             {
                 targetController.InputsUpdated -= UpdateInputs;
                 targetController.SetLightColor(0, 0, 0);
-                targetController.Cleanup();
                 targetController.Unplug();
                 targetController = null;
 

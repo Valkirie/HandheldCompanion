@@ -354,11 +354,6 @@ namespace HandheldCompanion.Controllers
             });
         }
 
-        // like Unplug but one that can be safely called when controller is already removed
-        public virtual void Cleanup()
-        {
-        }
-
         public bool IsHidden()
         {
             // bool hide_device = HidHide.IsRegistered(Details.deviceInstanceId);
