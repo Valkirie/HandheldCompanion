@@ -209,6 +209,7 @@ namespace HandheldCompanion.Managers
                     case "quickperformance":
                     case "quickprofiles":
                     case "quicksuspender":
+                    case "quickoverlay":
                         _goingForward = true;
                         break;
                 }
@@ -509,6 +510,7 @@ namespace HandheldCompanion.Managers
                                     case "quickperformance":
                                     case "quickprofiles":
                                     case "quicksuspender":
+                                    case "quickoverlay":
                                         {
                                             // set state
                                             _goingBack = true;
@@ -546,6 +548,7 @@ namespace HandheldCompanion.Managers
                                                     case "quickperformance":
                                                     case "quickprofiles":
                                                     case "quicksuspender":
+                                                    case "quickoverlay":
                                                         {
                                                             // set state
                                                             _goingBack = true;
