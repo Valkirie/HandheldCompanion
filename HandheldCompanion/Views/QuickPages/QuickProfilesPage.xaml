@@ -613,7 +613,7 @@
                                     SelectionChanged="GPUScalingComboBox_SelectionChanged">
                                     <ComboBoxItem Content="Preserve aspect ratio" />
                                     <ComboBoxItem Content="Full panel" />
-                                    <ComboBoxItem Content="Center" />
+                                    <ComboBoxItem Content="Center" IsEnabled="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource InvertBooleanConverter}}" />
                                 </ComboBox>
                             </Grid>
                         </StackPanel>
@@ -644,6 +644,7 @@
                                 Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
+                                IsEnabled="{Binding ElementName=GPUScalingToggle, Path=IsOn}"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="RSRToggle_Toggled" />
                         </Grid>
@@ -710,9 +711,38 @@
                                 Margin="12,0,0,0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
+                                IsEnabled="{Binding ElementName=GPUScalingToggle, Path=IsOn}"
                                 Style="{DynamicResource InvertedToggleSwitchStyle}"
                                 Toggled="IntegerScalingToggle_Toggled" />
                         </Grid>
+
+                        <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=IntegerScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                        <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=IntegerScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Resolution scale" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Resolution scale to which integer scaling will apply."
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+
+                                <ComboBox
+                                    Name="IntegerScalingComboBox"
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    SelectionChanged="IntegerScalingComboBox_SelectionChanged" />
+                            </Grid>
+                        </StackPanel>
                     </ui:SimpleStackPanel>
 
                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" />

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -80,56 +81,59 @@ public partial class ProfilesPage : Page
     {
         bool HasScalingModeSupport = ADLXWrapper.HasScalingModeSupport();
         bool HasIntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
+        bool HasRSRSupport = ADLXWrapper.HasRSRSupport();
         bool HasGPUScalingSupport = ADLXWrapper.HasGPUScalingSupport();
-        bool IsGPUScalingEnabled = ADLXWrapper.IsGPUScalingEnabled();
+        bool IsGPUScalingEnabled = ADLXWrapper.GetGPUScaling();
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && ADLXWrapper.GetRSRState() != -1;
-
+            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
             GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+
+            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+            desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
         });
     }
 
-    private void SystemManager_StateChanged_RSR(bool RSRSupport, int RSRState, int RSRSharpness)
+    private void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            StackProfileRSR.IsEnabled = RSRSupport;
-            RSRToggle.IsOn = RSRState <= 0 ? false : true;
-            RSRSlider.Value = RSRSharpness;
-        });
-    }
-
-    private void SystemManager_StateChanged_GPUScaling(bool GPUScaling, int ScalingMode)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(async () =>
-        {
-            GPUScalingToggle.IsOn = GPUScaling;
-            GPUScalingComboBox.SelectedIndex = ScalingMode;
-
-            switch (GPUScaling)
+            using (new ScopedLock(updateLock))
             {
-                case false:
-                    StackProfileRSR.IsEnabled = false;
-                    StackProfileIS.IsEnabled = false;
-                    break;
+                StackProfileRSR.IsEnabled = Supported;
             }
         });
     }
 
-    private void SystemManager_StateChanged_IntegerScaling(bool IntegerScalingSupport, bool IntegerScaling)
+    private void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(async () =>
+        {
+            using (new ScopedLock(updateLock))
+            {
+                GPUScalingToggle.IsEnabled = Supported;
+                StackProfileRIS.IsEnabled = Supported; // check if processor is AMD should be enough
+                StackProfileRSR.IsEnabled = Supported;
+                StackProfileIS.IsEnabled = Supported;
+            }
+        });
+    }
+
+    private void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            StackProfileIS.IsEnabled = IntegerScalingSupport;
-            IntegerScalingToggle.IsOn = IntegerScaling;
+            using (new ScopedLock(updateLock))
+            {
+                StackProfileIS.IsEnabled = Supported;
+            }
         });
     }
 
@@ -484,6 +488,7 @@ public partial class ProfilesPage : Page
         });
     }
 
+    private DesktopScreen desktopScreen;
     private void UpdateUI()
     {
         if (selectedProfile is null)
@@ -553,20 +558,28 @@ public partial class ProfilesPage : Page
 
                 UpdateMotionControlsVisibility();
 
+                // Framerate limit
+                desktopScreen = SystemManager.GetDesktopScreen();
+                if (desktopScreen is not null)
+                    cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+
+                // GPU Scaling
+                GPUScalingToggle.IsOn = selectedProfile.GPUScaling;
+                GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+
                 // RSR
                 RSRToggle.IsOn = selectedProfile.RSREnabled;
                 RSRSlider.Value = selectedProfile.RSRSharpness;
 
                 // Integer Scaling
                 IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
-                GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+
+                if (desktopScreen is not null)
+                    IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
 
                 // RIS
                 RISToggle.IsOn = selectedProfile.RISEnabled;
                 RISSlider.Value = selectedProfile.RISSharpness;
-
-                // Framerate limit
-                // FIXME
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
@@ -765,6 +778,7 @@ public partial class ProfilesPage : Page
     {
         if (profile.Default)
             return;
+
         ProfileUpdated(profile, source, true);
     }
 
@@ -775,8 +789,13 @@ public partial class ProfilesPage : Page
         {
             case UpdateSource.ProfilesPage:
             case UpdateSource.ProfilesPageUpdateOnly:
-            case UpdateSource.QuickProfilesPage:
                 return;
+            case UpdateSource.QuickProfilesPage:
+                {
+                    isCurrent = selectedProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (!isCurrent) return;
+                }
+                break;
         }
 
         // UI thread (async)
@@ -787,7 +806,7 @@ public partial class ProfilesPage : Page
             {
                 foreach (Profile pr in cB_Profiles.Items)
                 {
-                    var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
                     if (isCurrent)
                     {
                         idx = cB_Profiles.Items.IndexOf(pr);
@@ -977,16 +996,22 @@ public partial class ProfilesPage : Page
 
     private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        if (selectedProfile is null)
+            return;
+
         // wait until lock is released
         if (updateLock)
             return;
 
-        selectedProfile.RSREnabled = RSRToggle.IsOn;
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonSuperResolution, RSRToggle.IsOn);
         UpdateProfile();
     }
 
     private void RSRSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        if (selectedProfile is null)
+            return;
+
         if (!RSRSlider.IsInitialized)
             return;
 
@@ -1007,7 +1032,7 @@ public partial class ProfilesPage : Page
         if (updateLock)
             return;
 
-        selectedProfile.RISEnabled = RISToggle.IsOn;
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonImageSharpening, RISToggle.IsOn);
         UpdateProfile();
     }
 
@@ -1016,7 +1041,7 @@ public partial class ProfilesPage : Page
         if (selectedProfile is null)
             return;
 
-        if (!RSRSlider.IsInitialized)
+        if (!RISSlider.IsInitialized)
             return;
 
         // wait until lock is released
@@ -1036,7 +1061,26 @@ public partial class ProfilesPage : Page
         if (updateLock)
             return;
 
-        selectedProfile.IntegerScalingEnabled = IntegerScalingToggle.IsOn;
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.IntegerScaling, IntegerScalingToggle.IsOn);
+        UpdateProfile();
+    }
+
+    private void IntegerScalingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (IntegerScalingComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        var divider = 1;
+        if (IntegerScalingComboBox.SelectedItem is ScreenDivider screenDivider)
+        {
+            divider = screenDivider.divider;
+        }
+
+        selectedProfile.IntegerScalingDivider = divider;
         UpdateProfile();
     }
 
@@ -1049,13 +1093,32 @@ public partial class ProfilesPage : Page
         if (updateLock)
             return;
 
-        selectedProfile.ScalingMode = GPUScalingComboBox.SelectedIndex;
+        int selectedIndex = GPUScalingComboBox.SelectedIndex;
+        // RSR does not work with ScalingMode.Center
+        if (selectedProfile.RSREnabled && selectedIndex == 2)
+        {
+            selectedProfile.ScalingMode = 1;
+            GPUScalingComboBox.SelectedIndex = 1;
+        }
+        else
+        {
+            selectedProfile.ScalingMode = GPUScalingComboBox.SelectedIndex;
+        }
+     
         UpdateProfile();
     }
 
     private void GPUScaling_Toggled(object sender, RoutedEventArgs e)
     {
-        ADLXWrapper.SetGPUScaling(Convert.ToInt32(GPUScalingToggle.IsOn));
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.GPUScaling, GPUScalingToggle.IsOn);
+        UpdateProfile();
     }
 
     private void cB_EmulatedController_Changed(object sender, SelectionChangedEventArgs e)
@@ -1207,6 +1270,83 @@ public partial class ProfilesPage : Page
         {
             selectedProfile.FramerateValue = screenFramelimit.limit;
             UpdateProfile();
+        }
+    }
+
+    private enum UpdateGraphicsSettingsSource
+    {
+        GPUScaling,
+        RadeonSuperResolution,
+        RadeonImageSharpening,
+        IntegerScaling
+    }
+
+    private void UpdateGraphicsSettings(UpdateGraphicsSettingsSource source, bool isEnabled)
+    {
+        using (new ScopedLock(updateLock))
+        {
+            switch (source)
+            {
+                case UpdateGraphicsSettingsSource.GPUScaling:
+                    {
+                        selectedProfile.GPUScaling = isEnabled;
+                        if (!isEnabled)
+                        {
+                            selectedProfile.RSREnabled = false;
+                            selectedProfile.IntegerScalingEnabled = false;
+
+                            RSRToggle.IsOn = false;
+                            IntegerScalingToggle.IsOn = false;
+                        }
+                    }
+                    break;
+                // RSR is incompatible with RIS and IS
+                case UpdateGraphicsSettingsSource.RadeonSuperResolution:
+                    {
+                        selectedProfile.RSREnabled = isEnabled;
+                        if (isEnabled)
+                        {
+                            selectedProfile.RISEnabled = false;
+                            selectedProfile.IntegerScalingEnabled = false;
+
+                            RISToggle.IsOn = false;
+                            IntegerScalingToggle.IsOn = false;
+
+                            // RSR does not support ScalingMode.Center
+                            if (selectedProfile.ScalingMode == 2)
+                            {
+                                selectedProfile.ScalingMode = 1;
+                                GPUScalingComboBox.SelectedIndex = 1;
+                            }
+                        }
+                    }
+                    break;
+                // Image Sharpening is incompatible with RSR
+                case UpdateGraphicsSettingsSource.RadeonImageSharpening:
+                    {
+                        selectedProfile.RISEnabled = isEnabled;
+                        if (isEnabled)
+                        {
+                            selectedProfile.RSREnabled = false;
+
+                            RSRToggle.IsOn = false;
+                        }
+                    }
+                    break;
+
+                // Integer Scaling is incompatible with RSR
+                case UpdateGraphicsSettingsSource.IntegerScaling:
+                    {
+                        selectedProfile.IntegerScalingEnabled = isEnabled;
+                        if (isEnabled)
+                        {
+                            selectedProfile.RSREnabled = false;
+
+                            RSRToggle.IsOn = false;
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

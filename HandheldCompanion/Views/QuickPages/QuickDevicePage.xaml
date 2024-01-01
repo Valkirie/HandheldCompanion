@@ -24,81 +24,108 @@
             Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Device settings" />
 
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+            <ui:SimpleStackPanel Name="DisplayStack" Spacing="6">
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*" MinWidth="200" />
-                        <ColumnDefinition Width="5*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Glyph="&#xE799;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_DisplayResolution}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.QuickSettingsPage_DisplayResolutionDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ComboBox
+                            Name="ComboBoxResolution"
+                            Grid.Column="1"
+                            Margin="6,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            IsReadOnly="True"
+                            SelectionChanged="ComboBoxResolution_SelectionChanged" />
+
+                        <ui:SimpleStackPanel
+                            Name="ResolutionOverrideStack"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Margin="20,6,0,0"
                             HorizontalAlignment="Center"
-                            FontFamily="Segoe Fluent Icons"
-                            Glyph="&#xE799;" />
-
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_DisplayResolution}" />
+                            Orientation="Horizontal">
+                            <ui:FontIcon
+                                Height="20"
+                                Margin="10,0"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xe7ba;" />
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickSettingsPage_DisplayResolutionDesc}"
+                                Text="{x:Static resx:Resources.QuickSettingsPage_ResolutionOverrideWarning}"
                                 TextWrapping="Wrap" />
                         </ui:SimpleStackPanel>
-                    </DockPanel>
+                    </Grid>
+                </Border>
 
-                    <ComboBox
-                        Name="ComboBoxResolution"
-                        Grid.Column="1"
-                        Margin="6,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        IsReadOnly="True"
-                        SelectionChanged="ComboBoxResolution_SelectionChanged" />
-                </Grid>
-            </Border>
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
 
-            <Border
-                Padding="15,12,12,12"
-                Background="{DynamicResource ExpanderHeaderBackground}"
-                CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*" MinWidth="200" />
-                        <ColumnDefinition Width="5*" MinWidth="200" />
-                    </Grid.ColumnDefinitions>
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="Segoe UI Symbol"
+                                Glyph="&#xE2CB;" />
 
-                    <DockPanel>
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="Segoe UI Symbol"
-                            Glyph="&#xE2CB;" />
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_DisplayFrequency}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.QuickSettingsPage_DisplayFrequencyDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_DisplayFrequency}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickSettingsPage_DisplayFrequencyDesc}"
-                                TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ComboBox
-                        Name="ComboBoxFrequency"
-                        Grid.Column="1"
-                        Margin="6,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        IsReadOnly="True"
-                        SelectionChanged="ComboBoxFrequency_SelectionChanged" />
-                </Grid>
-            </Border>
+                        <ComboBox
+                            Name="ComboBoxFrequency"
+                            Grid.Column="1"
+                            Margin="6,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            IsReadOnly="True"
+                            SelectionChanged="ComboBoxFrequency_SelectionChanged" />
+                    </Grid>
+                </Border>
+            </ui:SimpleStackPanel>
 
             <Border
                 Padding="15,12,12,12"

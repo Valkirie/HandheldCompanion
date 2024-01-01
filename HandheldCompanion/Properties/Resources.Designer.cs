@@ -6699,6 +6699,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resolution is currently overridden by profile.
+        /// </summary>
+        public static string QuickSettingsPage_ResolutionOverrideWarning {
+            get {
+                return ResourceManager.GetString("QuickSettingsPage_ResolutionOverrideWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
         public static string QuickSettingsPage_Title {

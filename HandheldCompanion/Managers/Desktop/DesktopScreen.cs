@@ -47,6 +47,24 @@ public class ScreenFramelimit
     }
 }
 
+public class ScreenDivider
+{
+    public int divider;
+    public ScreenResolution resolution;
+
+    public ScreenDivider(int divider, ScreenResolution resolution)
+    {
+        this.divider = divider;
+        this.resolution = resolution;
+    }
+
+    // todo: localize me
+    public override string ToString()
+    {
+        return $"1/{divider} ({resolution.Width}x{resolution.Height})";
+    }
+}
+
 public struct ScreenRotation
 {
     public enum Rotations
@@ -110,7 +128,8 @@ public class DesktopScreen
 {
     public Display devMode;
     public Screen PrimaryScreen;
-    public List<ScreenResolution> resolutions = new();
+    public List<ScreenResolution> screenResolutions = new();
+    public List<ScreenDivider> screenDividers = new();
 
     private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = new();
 
@@ -121,7 +140,7 @@ public class DesktopScreen
 
     public bool HasResolution(ScreenResolution resolution)
     {
-        return resolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
+        return screenResolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
     }
 
     public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
@@ -147,7 +166,7 @@ public class DesktopScreen
         }
         */
 
-        return resolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
+        return screenResolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
     }
 
     public int GetCurrentFrequency()
@@ -213,9 +232,9 @@ public class DesktopScreen
 
     public ScreenFramelimit GetClosest(int fps)
     {
-        var limits = GetFramelimits();
+        List<ScreenFramelimit> limits = GetFramelimits();
 
-        var fpsInLimits = limits.FirstOrDefault(l => l.limit == fps);
+        ScreenFramelimit? fpsInLimits = limits.FirstOrDefault(l => l.limit == fps);
         if (fpsInLimits is not null) { return fpsInLimits; }
 
         var diffs = GetFramelimits().Select(limit => (Math.Abs(fps - limit.limit), limit))
@@ -238,6 +257,6 @@ public class DesktopScreen
 
     public void SortResolutions()
     {
-        resolutions = resolutions.OrderByDescending(a => a.Width).ThenByDescending(b => b.Height).ToList();
+        screenResolutions = screenResolutions.OrderByDescending(a => a.Width).ThenByDescending(b => b.Height).ToList();
     }
 }

@@ -4,34 +4,45 @@ namespace HandheldCompanion.Misc
 {
     public class ADLXBackend
     {
-        public const string CppFunctionsDLL = @"PerformanceMetrics.dll";
-        public const string CppFunctionsDLL1 = @"ADLX_3DSettings.dll";
-        public const string CppFunctionsDLL2 = @"ADLX_DisplaySettings.dll";
-        [DllImport(CppFunctionsDLL, CallingConvention = CallingConvention.Cdecl)] public static extern int GetFPSData();
-        [DllImport(CppFunctionsDLL, CallingConvention = CallingConvention.Cdecl)] public static extern int GetGPUMetrics(int GPU, int Sensor);
+        public const string ADLX_3DSettings = @"ADLX_3DSettings.dll";
+        public const string ADLX_DisplaySettings = @"ADLX_DisplaySettings.dll";
 
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetFPSLimit(int GPU, bool isEnabled, int FPS);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetAntiLag(int GPU, bool isEnabled);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetBoost(int GPU, bool isEnabled, int percent);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetRSR(bool isEnabled);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int GetRSRState();
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetRSRSharpness(int sharpness);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int GetRSRSharpness();
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetChill(int GPU, bool isEnabled, int maxFPS, int minFPS);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetImageSharpning(int GPU, bool isEnabled, int percent);
-        [DllImport(CppFunctionsDLL1, CallingConvention = CallingConvention.Cdecl)] public static extern int SetEnhancedSync(int GPU, bool isEnabled);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasRSRSupport();
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetRSR();
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetRSR(bool enable);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern int GetRSRSharpness();
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetRSRSharpness(int sharpness);
 
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasIntegerScalingSupport();
-        // 0 is disabled, 1 is enabled
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int SetIntegerScaling(int key);
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool IsIntegerScalingEnabled();
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasGPUScalingSupport();
-        // 0 is disabled, 1 is enabled
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int SetGPUScaling(int key);
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool IsGPUScalingEnabled();
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasScalingModeSupport();
-        // scaling mode: 0 is preserve aspect ration, 1 is full panel, 2 is center
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int SetScalingMode(int key);
-        [DllImport(CppFunctionsDLL2, CallingConvention = CallingConvention.Cdecl)] public static extern int GetScalingMode();        
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetAntiLag(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetAntiLag(int GPU, bool enable);
+
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetBoost(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetBoost(int GPU, bool enable);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern int GetBoostResolution(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetBoostResolution(int GPU, int minRes);
+
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetChill(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetChill(int GPU, bool enable);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern int GetChillMinFPS(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetChillMinFPS(int GPU, int minFPS);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern int GetChillMaxFPS(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetChillMaxFPS(int GPU, int maxFPS);
+
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetImageSharpening(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetImageSharpening(int GPU, bool enable);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern int GetImageSharpeningSharpness(int GPU);
+        [DllImport(ADLX_3DSettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetImageSharpeningSharpness(int GPU, int sharpness);
+
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasIntegerScalingSupport(int GPU);
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetIntegerScaling(int GPU);
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetIntegerScaling(int GPU, bool enabled);
+
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasGPUScalingSupport(int GPU);
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool GetGPUScaling(int GPU);
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetGPUScaling(int GPU, bool enabled);
+
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool HasScalingModeSupport(int GPU);
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern int GetScalingMode(int GPU);
+        [DllImport(ADLX_DisplaySettings, CallingConvention = CallingConvention.Cdecl)] public static extern bool SetScalingMode(int GPU, int mode);
     }
 }

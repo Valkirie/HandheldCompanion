@@ -135,7 +135,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
-        var QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
+        int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
         UpdateLocation(QuickToolsLocation);
     }
 
@@ -144,47 +144,23 @@ public partial class OverlayQuickTools : GamepadWindow
         switch (QuickToolsLocation)
         {
             // top, left
+            // bottom, left
             case 0:
-                {
-                    this.SetWindowPosition(WindowPositions.TopLeft, Screen.PrimaryScreen);
-                    Top += Margin.Top;
-                    Left += Margin.Left;
-                }
+            case 2:
+                this.SetWindowPosition(WindowPositions.Left, Screen.PrimaryScreen);
                 break;
 
             // top, right
-            case 1:
-                {
-                    this.SetWindowPosition(WindowPositions.TopRight, Screen.PrimaryScreen);
-                    Top += Margin.Top;
-                    Left -= Margin.Left;
-                }
-                break;
-
-            // bottom, left
-            case 2:
-                {
-                    this.SetWindowPosition(WindowPositions.BottomLeft, Screen.PrimaryScreen);
-                    Top -= Margin.Top;
-                    Left += Margin.Left;
-                }
-                break;
-
             // bottom, right
             default:
+            case 1:
             case 3:
-                {
-                    this.SetWindowPosition(WindowPositions.BottomRight, Screen.PrimaryScreen);
-                    Top -= Margin.Top;
-                    Left -= Margin.Left;
-                }
+                this.SetWindowPosition(WindowPositions.Right, Screen.PrimaryScreen);
                 break;
         }
 
-        // prevent window's from being too tall, add margin for top and bottom
-        var maxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - 2 * Margin.Top);
-        if (Height > maxHeight)
-            Height = maxHeight;
+        Height = MinHeight = MaxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - (2.0d * Margin.Top));
+        Top = Margin.Top;
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)

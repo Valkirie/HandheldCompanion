@@ -87,18 +87,21 @@ public partial class Profile : ICloneable, IComparable
     // power
     public Guid PowerProfile { get; set; } = new();
 
-    public int FramerateValue { get; set; } = 0;    // 0 = disabled
+    public int FramerateValue { get; set; } = 0; // default RTSS value
 
-    public bool RSREnabled { get; set; }
-    public int RSRSharpness { get; set; } = 20;
+    public bool GPUScaling { get; set;} = false;
+    public int ScalingMode { get; set; } = 0; // default AMD value
 
-    public bool IntegerScalingEnabled { get; set; }
-    public int ScalingMode { get; set; } = 0;
+    public bool RSREnabled { get; set; } = false;
+    public int RSRSharpness { get; set; } = 20; // default AMD value
 
-    public bool RISEnabled { get; set; }
-    public int RISSharpness { get; set; } = 80; // 80 is default value when enabled from AMD Settings
+    public bool IntegerScalingEnabled { get; set; } = false;
+    public int IntegerScalingDivider { get; set; } = 1;
 
-    public bool CPUCoreEnabled { get; set; }
+    public bool RISEnabled { get; set; } = false;
+    public int RISSharpness { get; set; } = 80; // default AMD value
+
+    public bool CPUCoreEnabled { get; set; } = false;
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
 
     // emulated controller type, default is default

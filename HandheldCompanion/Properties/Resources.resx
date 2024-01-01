@@ -2760,4 +2760,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>Power settings</value>
   </data>
+  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+    <value>Resolution is currently overridden by profile</value>
+  </data>
 </root>

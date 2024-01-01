@@ -113,6 +113,12 @@ public static class PerformanceManager
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
 
+        // move me
+        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
+        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
+        SystemManager.StateChanged_ImageSharpening += SystemManager_StateChanged_ImageSharpening;
+        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
+
         currentCoreCount = Environment.ProcessorCount;
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
     }
@@ -139,34 +145,70 @@ public static class PerformanceManager
 
     private static void ProfileManager_Applied(Profile profile, UpdateSource source)
     {
-        // apply profile define RSR
         try
         {
-            if (profile.RSREnabled)
+            // apply profile GPU Scaling
+            // apply profile scaling mode
+            if (profile.GPUScaling)
             {
-                ADLXWrapper.SetGPUScaling(1);
-                ADLXWrapper.SetRSR(true);
-                ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
+                ADLXWrapper.SetGPUScaling(true);
+
+                var scalingMode = profile.ScalingMode;
+                 
+                // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
+                // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
+                if (profile.ScalingMode == 2 && profile.RSREnabled)
+                    scalingMode = 1;
+
+                ADLXWrapper.SetScalingMode(scalingMode);
+
+                // apply profile RSR
+                if (profile.RSREnabled)
+                {
+                    // mutually exclusive
+                    ADLXWrapper.SetIntegerScaling(false);
+                    ADLXWrapper.SetImageSharpening(false);
+
+                    ADLXWrapper.SetRSR(true);
+                    ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
+                }
+                else if (ADLXWrapper.GetRSR())
+                {
+                    ADLXWrapper.SetRSR(false);
+                    ADLXWrapper.SetRSRSharpness(20);
+                }
+
+                // apply profile Integer Scaling
+                if (profile.IntegerScalingEnabled)
+                {
+                    // mutually exclusive
+                    ADLXWrapper.SetRSR(false);
+
+                    ADLXWrapper.SetIntegerScaling(true);
+                }
+                else if (ADLXWrapper.GetIntegerScaling())
+                {
+                    ADLXWrapper.SetIntegerScaling(false);
+                }
             }
-            else if (ADLXWrapper.GetRSRState() == 1)
+            else if (ADLXWrapper.GetGPUScaling())
             {
+                ADLXWrapper.SetGPUScaling(false);
+            }
+
+            // apply profile image sharpening
+            if (profile.RISEnabled)
+            {
+                // mutually exclusive
                 ADLXWrapper.SetRSR(false);
-                ADLXWrapper.SetRSRSharpness(20);
-            }
 
-            if (profile.IntegerScalingEnabled)
+                ADLXWrapper.SetImageSharpening(profile.RISEnabled);
+                ADLXWrapper.SetImageSharpeningSharpness(profile.RISSharpness);
+            }
+            else if (ADLXWrapper.GetImageSharpening())
             {
-                ADLXWrapper.SetGPUScaling(1);
-                ADLXWrapper.SetIntegerScaling(1);
+                ADLXWrapper.SetImageSharpening(false);
             }
-            else if (ADLXWrapper.IsIntegerScalingEnabled())
-            {
-                ADLXWrapper.SetIntegerScaling(0);
-            }
-
-            ADLXWrapper.SetImageSharpening(profile.RISEnabled, profile.RISSharpness);
-
-            ADLXWrapper.SetScalingMode(profile.ScalingMode);
         }
         catch { }
     }
@@ -175,25 +217,72 @@ public static class PerformanceManager
     {
         try
         {
+            // restore default GPU Scaling
+            if (profile.GPUScaling && ADLXWrapper.GetGPUScaling())
+            {
+                ADLXWrapper.SetGPUScaling(false);
+            }
+
             // restore default RSR
-            if (profile.RSREnabled)
+            if (profile.RSREnabled && ADLXWrapper.GetRSR())
             {
                 ADLXWrapper.SetRSR(false);
                 ADLXWrapper.SetRSRSharpness(20);
             }
             
-            // restore disabled integer scaling
-            if (profile.IntegerScalingEnabled)
+            // restore default integer scaling
+            if (profile.IntegerScalingEnabled && ADLXWrapper.GetIntegerScaling())
             {
-                ADLXWrapper.SetIntegerScaling(0);
+                ADLXWrapper.SetIntegerScaling(false);
             }
 
-            if (profile.RISEnabled)
+            // restore default image sharpening
+            if (profile.RISEnabled && ADLXWrapper.GetImageSharpening())
             {
-                ADLXWrapper.SetImageSharpening(false, 80);
+                ADLXWrapper.SetImageSharpening(false);
             }
         }
         catch { }
+    }
+    private static void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.RSREnabled)
+            ADLXWrapper.SetRSR(profile.RSREnabled);
+        if (Sharpness != profile.RSRSharpness)
+            ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
+    }
+
+    private static void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.GPUScaling)
+            ADLXWrapper.SetGPUScaling(profile.GPUScaling);
+        if (Mode != profile.ScalingMode)
+        {
+            // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
+            // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
+            if (profile.ScalingMode == 2 && profile.RSREnabled)
+                return;
+
+            ADLXWrapper.SetScalingMode(profile.ScalingMode);
+        }
+    }
+
+    private static void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.IntegerScalingEnabled)
+            ADLXWrapper.SetIntegerScaling(profile.IntegerScalingEnabled);
+    }
+
+    private static void SystemManager_StateChanged_ImageSharpening(bool Enabled, int Sharpness)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.RISEnabled)
+            ADLXWrapper.SetImageSharpening(profile.RISEnabled);
+        if (Sharpness != profile.RISSharpness)
+            ADLXWrapper.SetImageSharpeningSharpness(Sharpness);
     }
 
     private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)

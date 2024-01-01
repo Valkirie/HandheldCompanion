@@ -31,10 +31,59 @@ public partial class QuickDevicePage : Page
         SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
         SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        ProfileManager.Applied += ProfileManager_Applied;
+        ProfileManager.Discarded += ProfileManager_Discarded;
 
         radioTimer = new(1000);
         radioTimer.Elapsed += RadioTimer_Elapsed;
         radioTimer.Start();
+    }
+
+    private void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
+        // Go to profile integer scaling resolution
+        if (profile.IntegerScalingEnabled)
+        {
+            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+            var profileResolution = desktopScreen?.screenDividers.FirstOrDefault(d => d.divider == profile.IntegerScalingDivider);
+            if (profileResolution is not null)
+            {
+                SetResolution(profileResolution.resolution);
+            }
+        }
+        else
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                // Revert back to resolution in device settings
+                SetResolution();
+            });
+        }
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            var canChangeDisplay = !profile.IntegerScalingEnabled;
+            DisplayStack.IsEnabled = canChangeDisplay;
+            ResolutionOverrideStack.Visibility = canChangeDisplay ? Visibility.Collapsed : Visibility.Visible;
+
+        });
+    }
+
+    private void ProfileManager_Discarded(Profile profile)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            SetResolution();
+
+            if (profile.IntegerScalingEnabled)
+            {
+                DisplayStack.IsEnabled = true;
+                ResolutionOverrideStack.Visibility = Visibility.Collapsed;
+            }
+        });
     }
 
     public QuickDevicePage()
@@ -85,12 +134,17 @@ public partial class QuickDevicePage : Page
     private void DesktopManager_PrimaryScreenChanged(DesktopScreen screen)
     {
         ComboBoxResolution.Items.Clear();
-        foreach (ScreenResolution resolution in screen.resolutions)
+        foreach (ScreenResolution resolution in screen.screenResolutions)
             ComboBoxResolution.Items.Add(resolution);
     }
 
     private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
+        // We don't want to change the combobox when it's changed from profile integer scaling
+        var currentProfile = ProfileManager.GetCurrent();
+        if (ComboBoxResolution.SelectedItem is not null && currentProfile is not null && currentProfile.IntegerScalingEnabled)
+            return;
+
         ComboBoxResolution.SelectedItem = resolution;
 
         int screenFrequency = SystemManager.GetDesktopScreen().GetCurrentFrequency();
@@ -154,6 +208,12 @@ public partial class QuickDevicePage : Page
 
         // update current screen resolution
         SystemManager.SetResolution(resolution.Width, resolution.Height, frequency, resolution.BitsPerPel);
+    }
+
+    public void SetResolution(ScreenResolution resolution)
+    {
+        // update current screen resolution
+        SystemManager.SetResolution(resolution.Width, resolution.Height, SystemManager.GetDesktopScreen().GetCurrentFrequency(), resolution.BitsPerPel);
     }
 
     private void WIFIToggle_Toggled(object sender, RoutedEventArgs e)
