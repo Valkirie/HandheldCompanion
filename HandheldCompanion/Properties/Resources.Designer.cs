@@ -7509,6 +7509,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationLeft {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationRight {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Top left.
         /// </summary>
         public static string SettingsPage_QuickToolsWindowLocationTopLeft {
