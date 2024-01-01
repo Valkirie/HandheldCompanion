@@ -232,8 +232,8 @@ public partial class OverlayQuickTools : GamepadWindow
         // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
         if (hwndSource != null)
         {
-            //hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+            //hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
@@ -302,7 +302,11 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
-            default:
+                // Dirty fix to force (re)render the whole app
+            case 15:
+                WindowState prevState = MainWindow.GetCurrent().WindowState;
+                MainWindow.GetCurrent().WindowState = WindowState.Normal;
+                MainWindow.GetCurrent().WindowState = prevState;
                 // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
                 break;
         }
