@@ -141,26 +141,30 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void UpdateLocation(int QuickToolsLocation)
     {
-        switch (QuickToolsLocation)
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // top, left
-            // bottom, left
-            case 0:
-            case 2:
-                this.SetWindowPosition(WindowPositions.Left, Screen.PrimaryScreen);
-                break;
+            switch (QuickToolsLocation)
+            {
+                // top, left
+                // bottom, left
+                case 0:
+                case 2:
+                    this.SetWindowPosition(WindowPositions.Left, Screen.PrimaryScreen);
+                    break;
 
-            // top, right
-            // bottom, right
-            default:
-            case 1:
-            case 3:
-                this.SetWindowPosition(WindowPositions.Right, Screen.PrimaryScreen);
-                break;
-        }
+                // top, right
+                // bottom, right
+                default:
+                case 1:
+                case 3:
+                    this.SetWindowPosition(WindowPositions.Right, Screen.PrimaryScreen);
+                    break;
+            }
 
-        Height = MinHeight = MaxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - (2.0d * Margin.Top));
-        Top = Margin.Top;
+            Height = MinHeight = MaxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - (2.0d * Margin.Top));
+            Top = Margin.Top;
+        });
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)
