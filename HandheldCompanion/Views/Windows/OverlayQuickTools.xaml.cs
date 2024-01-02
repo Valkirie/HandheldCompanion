@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.System.Power;
@@ -26,6 +27,7 @@ using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemPowerManager = Windows.System.Power.PowerManager;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -41,6 +43,9 @@ public partial class OverlayQuickTools : GamepadWindow
     const UInt32 SWP_NOMOVE = 0x0002;
     const UInt32 SWP_NOACTIVATE = 0x0010;
     const UInt32 SWP_NOZORDER = 0x0004;
+
+    // Define the Win32 API constants and functions
+    const int WM_PAINT = 0x000F;
     const int WM_ACTIVATEAPP = 0x001C;
     const int WM_ACTIVATE = 0x0006;
     const int WM_SETFOCUS = 0x0007;
@@ -55,6 +60,7 @@ public partial class OverlayQuickTools : GamepadWindow
     const int GWL_EXSTYLE = -20;
 
     private HwndSource hwndSource;
+    private Timer WM_PAINT_TIMER = new();
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
@@ -84,6 +90,12 @@ public partial class OverlayQuickTools : GamepadWindow
         clockUpdateTimer = new DispatcherTimer();
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
         clockUpdateTimer.Tick += UpdateTime;
+
+        WM_PAINT_TIMER = new(1000)
+        {
+            AutoReset = false,   
+        };
+        WM_PAINT_TIMER.Elapsed += WM_PAINT_TIMER_Tick;
 
         // create manager(s)
         PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
@@ -306,18 +318,43 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
-                // Dirty fix to force (re)render the whole app
-            case 15:
-                WindowState prevState = MainWindow.GetCurrent().WindowState;
-                MainWindow.GetCurrent().WindowState = WindowState.Normal;
-                MainWindow.GetCurrent().WindowState = prevState;
-                // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
+            case WM_PAINT:
+                {
+                    // Loop through all visual elements in the window
+                    foreach (var element in WPFUtils.FindVisualChildren<UIElement>(this))
+                    {
+                        if (element.CacheMode is null)
+                            continue;
+
+                        // Store the previous CacheMode value
+                        cacheModes[element] = element.CacheMode;
+
+                        // Set the CacheMode to null
+                        element.CacheMode = null;
+                    }
+
+                    WM_PAINT_TIMER.Stop();
+                    WM_PAINT_TIMER.Start();
+                }
                 break;
         }
 
         return IntPtr.Zero;
     }
 
+    private void WM_PAINT_TIMER_Tick(object? sender, EventArgs e)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            // Set the CacheMode back to the previous value
+            foreach (UIElement element in cacheModes.Keys)
+                element.CacheMode = cacheModes[element];
+        });
+    }
+
+    // Create a dictionary to store the previous CacheMode values
+    private Dictionary<UIElement, CacheMode> cacheModes = new();
     private void HandleEsc(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
