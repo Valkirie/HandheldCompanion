@@ -21,6 +21,7 @@ using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using Application = System.Windows.Application;
+using ComboBox = System.Windows.Controls.ComboBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
@@ -93,7 +94,7 @@ public partial class OverlayQuickTools : GamepadWindow
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
         clockUpdateTimer.Tick += UpdateTime;
 
-        WM_PAINT_TIMER = new(1000) { AutoReset = false };
+        WM_PAINT_TIMER = new(250) { AutoReset = false };
         WM_PAINT_TIMER.Elapsed += WM_PAINT_TIMER_Tick;
 
         // create manager(s)
@@ -242,7 +243,7 @@ public partial class OverlayQuickTools : GamepadWindow
 
         if (hwndSource != null)
         {
-            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
@@ -316,14 +317,14 @@ public partial class OverlayQuickTools : GamepadWindow
                     // Loop through all visual elements in the window
                     foreach (var element in WPFUtils.FindVisualChildren<UIElement>(this))
                     {
-                        if (element.CacheMode is null)
-                            continue;
+                        if (element.CacheMode is not null)
+                        {
+                            // Store the previous CacheMode value
+                            cacheModes[element] = element.CacheMode.Clone();
 
-                        // Store the previous CacheMode value
-                        cacheModes[element] = element.CacheMode;
-
-                        // Set the CacheMode to null
-                        element.CacheMode = null;
+                            // Set the CacheMode to null
+                            element.CacheMode = null;
+                        }
                     }
 
                     WM_PAINT_TIMER.Stop();
