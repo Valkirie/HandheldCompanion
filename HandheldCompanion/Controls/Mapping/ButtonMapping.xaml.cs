@@ -182,7 +182,7 @@ public partial class ButtonMapping : IMapping
         Button2ButtonPressDelay.Visibility = Actions.PressType != PressType.Short ? Visibility.Visible : Visibility.Collapsed;
 
         // settings
-        LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
+        LongPressDelaySlider.Value = (int)this.Actions.ActionTimer;
         Toggle_Turbo.IsOn = this.Actions.Turbo;
         Turbo_Slider.Value = this.Actions.TurboDelay;
         Toggle_Toggle.IsOn = this.Actions.Toggle;
@@ -252,7 +252,7 @@ public partial class ButtonMapping : IMapping
         if (this.Actions is null)
             return;
 
-        this.Actions.LongPressTime = (int)LongPressDelaySlider.Value;
+        this.Actions.ActionTimer = (int)LongPressDelaySlider.Value;
 
         base.Update();
     }

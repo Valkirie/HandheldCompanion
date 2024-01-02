@@ -38,6 +38,7 @@ namespace HandheldCompanion.Actions
         Short = 0,
         Long = 1,
         Hold = 2,
+        Double = 3,
     }
 
     [Serializable]
@@ -79,8 +80,9 @@ namespace HandheldCompanion.Actions
 
         // TODO: multiple delay, delay ranges
         public PressType PressType = PressType.Short;
-        public int LongPressTime = 450; // default value for steam
+        public int ActionTimer = 450; // default value for steam
         protected int pressTimer = -1; // -1 inactive, >= 0 active
+        private bool pressStatus = false; // used to store previous press value for double tap
 
         public bool Turbo;
         public int TurboDelay = 30;
@@ -115,24 +117,10 @@ namespace HandheldCompanion.Actions
             {
                 case PressType.Long:
                     {
-                        if (value || (pressTimer <= LongPressTime && pressTimer >= 0))
-                        {
-                            pressTimer += TimerManager.GetPeriod();
-                            value = true;
-                        }
-                        else if(pressTimer >= LongPressTime)
-                        {
-                            pressTimer = -1;
-                        }
-                    }
-                    break;
-
-                case PressType.Hold:
-                    {
                         if (value)
                         {
                             pressTimer += TimerManager.GetPeriod();
-                            if (pressTimer >= LongPressTime)
+                            if (pressTimer >= ActionTimer)
                             {
                                 // do something
                             }
@@ -144,6 +132,64 @@ namespace HandheldCompanion.Actions
                         else
                         {
                             pressTimer = -1;
+                        }
+                    }
+                    break;
+
+                case PressType.Hold:
+                    {
+                        if (value || (pressTimer <= ActionTimer && pressTimer >= 0))
+                        {
+                            pressTimer += TimerManager.GetPeriod();
+                            value = true;
+                        }
+                        else if (pressTimer >= ActionTimer)
+                        {
+                            pressTimer = -1;
+                        }
+                    }
+                    break;
+
+                case PressType.Double:
+                    {
+                        if (value)
+                        {
+                            // first time the button is pressed
+                            if (!pressStatus)
+                            {
+                                pressStatus = true;
+                                value = false;
+                            }
+                            else if (pressTimer > 0)
+                            {
+                                // second time button is pressed
+                                if (pressTimer <= ActionTimer)
+                                {
+                                    // do something
+                                    pressTimer = ActionTimer;
+                                    break;
+                                }
+
+                                pressTimer = -1;
+                                value = false;
+                            }
+                            else
+                            {
+                                value = false;
+                            }
+                        }
+                        else
+                        {
+                            if (pressStatus)
+                            {
+                                pressTimer += TimerManager.GetPeriod();
+
+                                if (pressTimer > ActionTimer)
+                                {
+                                    pressStatus = false;
+                                    pressTimer = -1;
+                                }
+                            }
                         }
                     }
                     break;

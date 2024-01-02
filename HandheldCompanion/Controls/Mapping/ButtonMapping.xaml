@@ -39,13 +39,14 @@
                 <ComboBox
                     Name="PressComboBox"
                     Grid.Column="1"
-                    Width="120"
+                    Width="160"
                     VerticalAlignment="Center"
                     SelectedIndex="0"
                     SelectionChanged="Press_SelectionChanged">
-                    <ComboBoxItem Content="Short press" />
-                    <ComboBoxItem Content="Long press" />
-                    <ComboBoxItem Content="Held press" />
+                    <ComboBoxItem Content="Short press" ToolTip="Press the button and get an immediate action." />
+                    <ComboBoxItem Content="Long press" ToolTip="Hold the button down until a specified duration and get an action." />
+                    <ComboBoxItem Content="Hold press" ToolTip="Press the button and get an action for a specified duration." />
+                    <ComboBoxItem Content="Double press" ToolTip="Double press the button within a specified duration and get an action." />
                 </ComboBox>
 
                 <DockPanel Grid.Column="2" HorizontalAlignment="Right">
@@ -88,7 +89,7 @@
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Long press delay (ms, longest applies)" />
+                                            Text="Press duration (ms)" />
                                         <TextBox
                                             HorizontalAlignment="Right"
                                             HorizontalContentAlignment="Center"
