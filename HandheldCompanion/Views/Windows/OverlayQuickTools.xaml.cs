@@ -60,7 +60,9 @@ public partial class OverlayQuickTools : GamepadWindow
     const int GWL_EXSTYLE = -20;
 
     private HwndSource hwndSource;
-    private Timer WM_PAINT_TIMER = new();
+
+    private Dictionary<UIElement, CacheMode> cacheModes = new();
+    private Timer WM_PAINT_TIMER;
 
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
@@ -91,10 +93,7 @@ public partial class OverlayQuickTools : GamepadWindow
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
         clockUpdateTimer.Tick += UpdateTime;
 
-        WM_PAINT_TIMER = new(1000)
-        {
-            AutoReset = false,   
-        };
+        WM_PAINT_TIMER = new(1000) { AutoReset = false };
         WM_PAINT_TIMER.Elapsed += WM_PAINT_TIMER_Tick;
 
         // create manager(s)
@@ -117,10 +116,6 @@ public partial class OverlayQuickTools : GamepadWindow
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickOverlayPage", overlayPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
-
-        // update Position and Size
-        Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
-        navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
@@ -245,11 +240,9 @@ public partial class OverlayQuickTools : GamepadWindow
         hwndSource = PresentationSource.FromVisual(this) as HwndSource;
         hwndSource.AddHook(WndProc);
 
-        // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
         if (hwndSource != null)
         {
             hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-            //hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
@@ -353,8 +346,6 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    // Create a dictionary to store the previous CacheMode values
-    private Dictionary<UIElement, CacheMode> cacheModes = new();
     private void HandleEsc(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
@@ -393,17 +384,6 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
-        // position and size settings
-        switch (WindowState)
-        {
-            case WindowState.Normal:
-            case WindowState.Maximized:
-                SettingsManager.SetProperty("QuickToolsHeight", Height);
-                break;
-        }
-
-        SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
-
         e.Cancel = !isClosing;
 
         if (!isClosing)
