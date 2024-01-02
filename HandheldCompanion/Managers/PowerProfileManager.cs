@@ -158,7 +158,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // warn owner
-            bool isCurrent = profile.Guid == currentProfile.Guid;
+            bool isCurrent = profile.Guid == currentProfile?.Guid;
 
             if (isCurrent)
                 Applied?.Invoke(profile, source);
@@ -214,7 +214,7 @@ namespace HandheldCompanion.Managers
                 profiles.Remove(profile.Guid);
 
                 // warn owner
-                bool isCurrent = profile.Guid == currentProfile.Guid;
+                bool isCurrent = profile.Guid == currentProfile?.Guid;
 
                 // raise event
                 Discarded?.Invoke(profile);
