@@ -425,11 +425,11 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ui:SimpleStackPanel VerticalAlignment="Center">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="GPU Scaling" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_GPUScaling}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="GPU will scale up lower resolutions to fit the display"
+                                                Text="{x:Static resx:Resources.ProfilesPage_GPUScalingDesc}"
                                                 TextWrapping="Wrap" />
                                         </ui:SimpleStackPanel>
 
@@ -453,11 +453,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ui:SimpleStackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Scaling mode" />
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ScalingMode}" />
                                                 <TextBlock
                                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Choose the method used to stretch and position images to fir the display"
+                                                    Text="{x:Static resx:Resources.ProfilesPage_ScalingModeDesc}"
                                                     TextWrapping="Wrap" />
                                             </ui:SimpleStackPanel>
 
@@ -468,9 +468,9 @@
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 SelectionChanged="GPUScalingComboBox_SelectionChanged">
-                                                <ComboBoxItem Content="Preserve aspect ratio" />
-                                                <ComboBoxItem Content="Full panel" />
-                                                <ComboBoxItem Content="Center" IsEnabled="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource InvertBooleanConverter}}" />
+                                                <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_ScalingMode_PreserveAspectRatio}" />
+                                                <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_ScalingMode_FullPanel}" />
+                                                <ComboBoxItem Content="{x:Static resx:Resources.ProfilesPage_ScalingMode_Center}" IsEnabled="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource InvertBooleanConverter}}" />
                                             </ComboBox>
                                         </Grid>
                                     </StackPanel>
@@ -491,11 +491,11 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ui:SimpleStackPanel VerticalAlignment="Center">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Radeon Super Resolution" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_RSR}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="In-driver-based upscaling feature for faster framerates"
+                                                Text="{x:Static resx:Resources.ProfilesPage_RSRDesc}"
                                                 TextWrapping="Wrap" />
                                         </ui:SimpleStackPanel>
 
@@ -516,7 +516,7 @@
                                         <TextBlock
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
-                                            Text="Sharpen effect" />
+                                            Text="{x:Static resx:Resources.ProfilesPage_Sharpen}" />
                                         <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
                                                 Width="35"
@@ -562,11 +562,11 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ui:SimpleStackPanel VerticalAlignment="Center">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Integer scaling" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_IS}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Scales up resolution by multiplying each pixel by an integer"
+                                                Text="{x:Static resx:Resources.ProfilesPage_ISDesc}"
                                                 TextWrapping="Wrap" />
                                         </ui:SimpleStackPanel>
 
@@ -591,11 +591,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ui:SimpleStackPanel VerticalAlignment="Center">
-                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Resolution scale" />
+                                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ResolutionScale}" />
                                                 <TextBlock
                                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Text="Resolution scale to which integer scaling will apply."
+                                                    Text="{x:Static resx:Resources.ProfilesPage_ResolutionScaleDesc}"
                                                     TextWrapping="Wrap" />
                                             </ui:SimpleStackPanel>
 
@@ -625,11 +625,11 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ui:SimpleStackPanel VerticalAlignment="Center">
-                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Radeon Image Sharpening" />
+                                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ImageSharpening}" />
                                             <TextBlock
                                                 Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                                Text="Enhances visual detail"
+                                                Text="{x:Static resx:Resources.ProfilesPage_ImageSharpeningDesc}"
                                                 TextWrapping="Wrap" />
                                         </ui:SimpleStackPanel>
 
@@ -649,7 +649,7 @@
                                         <TextBlock
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
-                                            Text="Sharpen effect" />
+                                            Text="{x:Static resx:Resources.ProfilesPage_Sharpen}" />
                                         <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
                                             <TextBlock
                                                 Width="35"

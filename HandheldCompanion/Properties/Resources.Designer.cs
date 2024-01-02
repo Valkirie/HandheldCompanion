@@ -5680,6 +5680,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to GPU Scaling.
+        /// </summary>
+        public static string ProfilesPage_GPUScaling {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPUScaling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPU will scale up lower resolutions to fit the display.
+        /// </summary>
+        public static string ProfilesPage_GPUScalingDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPUScalingDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Graphics settings.
         /// </summary>
         public static string ProfilesPage_GraphicsSettings {
@@ -5734,6 +5752,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Radeon Image Sharpening.
+        /// </summary>
+        public static string ProfilesPage_ImageSharpening {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ImageSharpening", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enhances visual detail.
+        /// </summary>
+        public static string ProfilesPage_ImageSharpeningDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ImageSharpeningDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invert horizontal axis.
         /// </summary>
         public static string ProfilesPage_InvertHorizontalAxis {
@@ -5748,6 +5784,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_InvertVerticalAxis {
             get {
                 return ResourceManager.GetString("ProfilesPage_InvertVerticalAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integer scaling.
+        /// </summary>
+        public static string ProfilesPage_IS {
+            get {
+                return ResourceManager.GetString("ProfilesPage_IS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scales up resolution by multiplying each pixel by an integer.
+        /// </summary>
+        public static string ProfilesPage_ISDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ISDesc", resourceCulture);
             }
         }
         
@@ -5932,11 +5986,92 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resolution scale.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScale {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolution scale to which integer scaling will apply.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Roll.
         /// </summary>
         public static string ProfilesPage_Roll {
             get {
                 return ResourceManager.GetString("ProfilesPage_Roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radeon Super Resolution.
+        /// </summary>
+        public static string ProfilesPage_RSR {
+            get {
+                return ResourceManager.GetString("ProfilesPage_RSR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In-driver-based upscaling feature for faster framerates.
+        /// </summary>
+        public static string ProfilesPage_RSRDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_RSRDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scaling mode.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Center.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode_Center {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode_Center", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full panel.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode_FullPanel {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode_FullPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preserve aspect ratio.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode_PreserveAspectRatio {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode_PreserveAspectRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the method used to stretch and position images to fir the display.
+        /// </summary>
+        public static string ProfilesPage_ScalingModeDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingModeDesc", resourceCulture);
             }
         }
         
@@ -5955,6 +6090,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_SensitivityY {
             get {
                 return ResourceManager.GetString("ProfilesPage_SensitivityY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sharpen effect.
+        /// </summary>
+        public static string ProfilesPage_Sharpen {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Sharpen", resourceCulture);
             }
         }
         

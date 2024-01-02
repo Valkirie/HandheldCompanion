@@ -2769,4 +2769,52 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
     <value>Right</value>
   </data>
+  <data name="ProfilesPage_GPUScaling" xml:space="preserve">
+    <value>GPU Scaling</value>
+  </data>
+  <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
+    <value>GPU will scale up lower resolutions to fit the display</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
+    <value>Radeon Image Sharpening</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
+    <value>Enhances visual detail</value>
+  </data>
+  <data name="ProfilesPage_IS" xml:space="preserve">
+    <value>Integer scaling</value>
+  </data>
+  <data name="ProfilesPage_ISDesc" xml:space="preserve">
+    <value>Scales up resolution by multiplying each pixel by an integer</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScale" xml:space="preserve">
+    <value>Resolution scale</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleDesc" xml:space="preserve">
+    <value>Resolution scale to which integer scaling will apply</value>
+  </data>
+  <data name="ProfilesPage_RSR" xml:space="preserve">
+    <value>Radeon Super Resolution</value>
+  </data>
+  <data name="ProfilesPage_RSRDesc" xml:space="preserve">
+    <value>In-driver-based upscaling feature for faster framerates</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode" xml:space="preserve">
+    <value>Scaling mode</value>
+  </data>
+  <data name="ProfilesPage_ScalingModeDesc" xml:space="preserve">
+    <value>Choose the method used to stretch and position images to fir the display</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_Center" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_FullPanel" xml:space="preserve">
+    <value>Full panel</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_PreserveAspectRatio" xml:space="preserve">
+    <value>Preserve aspect ratio</value>
+  </data>
+  <data name="ProfilesPage_Sharpen" xml:space="preserve">
+    <value>Sharpen effect</value>
+  </data>
 </root>
