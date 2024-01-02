@@ -254,24 +254,24 @@ namespace HandheldCompanion.Managers
             if (control is null)
                 return;
 
-            // set focus to control
-            Keyboard.Focus(control);
-            control.Focus();
-
+            // set tooltip on focus
             ToolTipService.SetShowsToolTipOnKeyboardFocus(control, true);
 
+            // set tooltip initial delay
             string controlType = control.GetType().Name;
-
-            switch(controlType)
+            switch (controlType)
             {
                 case "Slider":
                     ToolTipService.SetInitialShowDelay(control, 0);
                     break;
                 default:
-                    ToolTipService.SetInitialShowDelay(control, 600);
+                    ToolTipService.SetInitialShowDelay(control, 250);
                     break;
             }
 
+            // set focus to control
+            Keyboard.Focus(control);
+            control.Focus();
             control.BringIntoView();
         }
 
