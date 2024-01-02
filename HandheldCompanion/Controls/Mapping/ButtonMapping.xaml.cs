@@ -179,7 +179,7 @@ public partial class ButtonMapping : IMapping
             PressComboBox.SelectedIndex = (int)this.Actions.PressType;
         else
             this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
-        Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+        Button2ButtonPressDelay.Visibility = Actions.PressType != PressType.Short ? Visibility.Visible : Visibility.Collapsed;
 
         // settings
         LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
@@ -242,7 +242,7 @@ public partial class ButtonMapping : IMapping
 
         this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
 
-        Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+        Button2ButtonPressDelay.Visibility = Actions.PressType != PressType.Short ? Visibility.Visible : Visibility.Collapsed;
 
         base.Update();
     }

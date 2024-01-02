@@ -37,6 +37,7 @@ namespace HandheldCompanion.Actions
     {
         Short = 0,
         Long = 1,
+        Hold = 2,
     }
 
     [Serializable]
@@ -120,6 +121,27 @@ namespace HandheldCompanion.Actions
                             value = true;
                         }
                         else if(pressTimer >= LongPressTime)
+                        {
+                            pressTimer = -1;
+                        }
+                    }
+                    break;
+
+                case PressType.Hold:
+                    {
+                        if (value)
+                        {
+                            pressTimer += TimerManager.GetPeriod();
+                            if (pressTimer >= LongPressTime)
+                            {
+                                // do something
+                            }
+                            else
+                            {
+                                value = false;
+                            }
+                        }
+                        else
                         {
                             pressTimer = -1;
                         }

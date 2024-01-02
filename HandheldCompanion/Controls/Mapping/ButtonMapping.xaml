@@ -45,6 +45,7 @@
                     SelectionChanged="Press_SelectionChanged">
                     <ComboBoxItem Content="Short press" />
                     <ComboBoxItem Content="Long press" />
+                    <ComboBoxItem Content="Held press" />
                 </ComboBox>
 
                 <DockPanel Grid.Column="2" HorizontalAlignment="Right">
