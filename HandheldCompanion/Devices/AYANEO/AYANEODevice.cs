@@ -19,12 +19,12 @@ namespace HandheldCompanion.Devices.AYANEO
         private byte maxIntensity = 100; // Use the max brightness for color brightness combination value
 
         private int prevBatteryLevelPercentage;
-        private PowerStatus prevPowerStatus;
+        private string prevPowerStatus;
 
         public AYANEODevice()
         {
-            prevPowerStatus = SystemInformation.PowerStatus;
-            prevBatteryLevelPercentage = (int)(prevPowerStatus.BatteryLifePercent * 100);
+            prevPowerStatus = SystemInformation.PowerStatus.PowerLineStatus.ToString();
+            prevBatteryLevelPercentage = (int)(SystemInformation.PowerStatus.BatteryLifePercent * 100);
             PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
         }
 
@@ -40,7 +40,7 @@ namespace HandheldCompanion.Devices.AYANEO
             int currentBatteryLevelPercentage = (int)(powerStatus.BatteryLifePercent * 100);
 
             // Check if the device went from battery to charging
-            if (powerStatus.PowerLineStatus == PowerLineStatus.Online && prevPowerStatus.PowerLineStatus == PowerLineStatus.Offline)
+            if (powerStatus.PowerLineStatus == PowerLineStatus.Online && prevPowerStatus.Equals("Offline"))
             {
                 LogManager.LogDebug("Ayaneo LED, device went from battery to charging, apply color");
                 base.PowerStatusChange(this);
@@ -64,7 +64,7 @@ namespace HandheldCompanion.Devices.AYANEO
 
             // Track battery level % and power status for next round
             prevBatteryLevelPercentage = currentBatteryLevelPercentage;
-            prevPowerStatus = powerStatus;
+            prevPowerStatus = powerStatus.PowerLineStatus.ToString();
         }
 
         private void SetJoystick(JoystickSelection joyStick)
