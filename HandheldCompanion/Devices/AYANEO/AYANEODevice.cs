@@ -46,6 +46,13 @@ namespace HandheldCompanion.Devices.AYANEO
                 base.PowerStatusChange(this);
             }
 
+            // Check if the device went from charging to battery
+            if (powerStatus.PowerLineStatus == PowerLineStatus.Offline && prevPowerStatus.Equals("Online"))
+            {
+                LogManager.LogDebug("Ayaneo LED, device went from charging to battery, apply color");
+                base.PowerStatusChange(this);
+            }
+
             // Check for the battery level change scenarios
 
             // Check if the battery went from 99 or lower to 100
