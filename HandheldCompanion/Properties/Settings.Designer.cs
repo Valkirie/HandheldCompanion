@@ -992,5 +992,29 @@ namespace HandheldCompanion.Properties {
                 this["LegionControllerPassthrough"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OnScreenDisplayToggle {
+            get {
+                return ((bool)(this["OnScreenDisplayToggle"]));
+            }
+            set {
+                this["OnScreenDisplayToggle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int LastOnScreenDisplayLevel {
+            get {
+                return ((int)(this["LastOnScreenDisplayLevel"]));
+            }
+            set {
+                this["LastOnScreenDisplayLevel"] = value;
+            }
+        }
     }
 }

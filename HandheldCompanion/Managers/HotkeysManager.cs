@@ -454,6 +454,25 @@ public static class HotkeysManager
                 case "shortcutKillApp":
                     if (fProcess is not null) fProcess.Process.Kill();
                     break;
+                case "OnScreenDisplayToggle":
+                    {
+                        // check current OSD level
+                        // .. if 0 (disabled) -> set OSD level to LastOnScreenDisplayLevel
+                        // .. else (enabled) -> set OSD level to 0
+                        int currentOSDLevel = SettingsManager.GetInt("OnScreenDisplayLevel");
+                        int lastOSDLevel = SettingsManager.GetInt("LastOnScreenDisplayLevel");
+
+                        switch (currentOSDLevel)
+                        {
+                            case 0:
+                                SettingsManager.SetProperty("OnScreenDisplayLevel", lastOSDLevel);
+                                break;
+                            default:
+                                SettingsManager.SetProperty("OnScreenDisplayLevel", 0);
+                                break;
+                        }
+                    }
+                    break;
                 case "OnScreenDisplayLevel":
                     {
                         var value = !SettingsManager.GetBoolean(listener);

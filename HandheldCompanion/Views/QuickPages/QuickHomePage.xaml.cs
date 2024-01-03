@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Managers;
+using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
@@ -28,6 +29,7 @@ public partial class QuickHomePage : Page
         SystemManager.Initialized += SystemManager_Initialized;
 
         ProfileManager.Applied += ProfileManager_Applied;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
     public QuickHomePage()
@@ -129,4 +131,31 @@ public partial class QuickHomePage : Page
             t_CurrentProfile.Text = profile.ToString();
         });
     }
+
+    private void SettingsManager_SettingValueChanged(string name, object value)
+    {
+        string[] onScreenDisplayLevels = {
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_Disabled,
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_Minimal,
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_Extended,
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_Full,
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_External,
+        };
+
+        switch (name)
+        {
+            case "OnScreenDisplayLevel":
+                {
+                    var overlayLevel = Convert.ToInt16(value);
+
+                    // UI thread (async)
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        t_CurrentOverlayLevel.Text = onScreenDisplayLevels[overlayLevel];
+                    });
+                }
+                break;
+        }
+    }
+
 }

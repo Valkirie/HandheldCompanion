@@ -3709,6 +3709,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to On Screen Overlay.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplayToggle {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle on screen overlay.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplayToggleDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Display 3D controller.
         /// </summary>
         public static string InputsHotkey_overlayGamepad {

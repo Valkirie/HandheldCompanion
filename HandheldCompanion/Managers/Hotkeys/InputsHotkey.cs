@@ -33,7 +33,12 @@ public class InputsHotkey
             new InputsHotkey(InputsHotkeyType.Overlay, "\uEDA4", "overlayTrackpads", "Segoe Fluent Icons", 20, false,
                 true, null, string.Empty)
         },
-
+        {
+            03,
+            new InputsHotkey(InputsHotkeyType.Overlay, "\uE78B", "OnScreenDisplayToggle", "Segoe Fluent Icons", 20, false,
+                true, null, string.Empty, false, true)
+        },
+        
         // Quicktools hotkeys
         {
             10,

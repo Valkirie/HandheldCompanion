@@ -347,8 +347,14 @@ public static class OSDManager
                 {
                     OverlayLevel = Convert.ToInt16(value);
 
+                    // set OSD toggle hotkey state
+                    SettingsManager.SetProperty("OnScreenDisplayToggle", Convert.ToBoolean(value));
+
                     if (OverlayLevel > 0)
                     {
+                        // set lastOSDLevel to be used in OSD toggle hotkey
+                        SettingsManager.SetProperty("LastOnScreenDisplayLevel", value);
+                        
                         if (OverlayLevel == 4)
                         {
                             // No need to update OSD in External

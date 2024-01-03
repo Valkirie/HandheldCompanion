@@ -2769,6 +2769,12 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
     <value>Right</value>
   </data>
+  <data name="InputsHotkey_OnScreenDisplayToggle" xml:space="preserve">
+    <value>On Screen Overlay</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
+    <value>Toggle on screen overlay</value>
+  </data>
   <data name="ProfilesPage_GPUScaling" xml:space="preserve">
     <value>GPU Scaling</value>
   </data>
