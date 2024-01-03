@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
+using HandheldCompanion.Misc;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Radios;
-using static HandheldCompanion.Utils.DeviceUtils;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.QuickPages;
@@ -91,6 +91,21 @@ public partial class QuickDevicePage : Page
         InitializeComponent();
 
         LegionGoPanel.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Collapsed;
+
+        NightLightToggle.IsEnabled = NightLight.Supported;
+        NightLightToggle.IsOn = NightLight.Enabled;
+
+        // manage events
+        NightLight.Toggled += NightLight_Toggled;
+    }
+
+    private void NightLight_Toggled(bool enabled)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            NightLightToggle.IsOn = enabled;
+        });
     }
 
     private void SettingsManager_SettingValueChanged(string? name, object value)
@@ -248,5 +263,10 @@ public partial class QuickDevicePage : Page
             ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
             device.SetFanFullSpeed(toggleSwitch.IsOn);
         }
+    }
+
+    private void NightLightToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        NightLight.Enabled = NightLightToggle.IsOn;
     }
 }

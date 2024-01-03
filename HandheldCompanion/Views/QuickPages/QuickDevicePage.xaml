@@ -198,6 +198,42 @@
                         Toggled="BluetoothToggle_Toggled" />
                 </Grid>
             </Border>
+
+            <Border
+                Padding="15,12,12,12"
+                Background="{DynamicResource ExpanderHeaderBackground}"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="0.2*" MinWidth="80" />
+                    </Grid.ColumnDefinitions>
+
+                    <DockPanel>
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xf08c;" />
+
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="Night light" />
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+
+                    <ui:ToggleSwitch
+                        Name="NightLightToggle"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        IsEnabled="False"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="NightLightToggle_Toggled" />
+                </Grid>
+            </Border>
         </ui:SimpleStackPanel>
 
         <!--  Dynamic lighting settings  -->
