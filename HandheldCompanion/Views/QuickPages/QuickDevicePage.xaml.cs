@@ -24,9 +24,9 @@ public partial class QuickDevicePage : Page
     private IReadOnlyList<Radio> radios;
     private Timer radioTimer;
 
-    public QuickDevicePage(string Tag) : this()
+    public QuickDevicePage()
     {
-        this.Tag = Tag;
+        InitializeComponent();
 
         SystemManager.PrimaryScreenChanged += DesktopManager_PrimaryScreenChanged;
         SystemManager.DisplaySettingsChanged += DesktopManager_DisplaySettingsChanged;
@@ -34,11 +34,23 @@ public partial class QuickDevicePage : Page
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
 
+        LegionGoPanel.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Collapsed;
+        DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+
+        NightLightToggle.IsEnabled = NightLight.Supported;
+        NightLightToggle.IsOn = NightLight.Enabled;
+
+        // manage events
+        NightLight.Toggled += NightLight_Toggled;
+
         radioTimer = new(1000);
         radioTimer.Elapsed += RadioTimer_Elapsed;
         radioTimer.Start();
+    }
 
-        DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
+    public QuickDevicePage(string Tag) : this()
+    {
+        this.Tag = Tag;
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
@@ -86,19 +98,6 @@ public partial class QuickDevicePage : Page
                 ResolutionOverrideStack.Visibility = Visibility.Collapsed;
             }
         });
-    }
-
-    public QuickDevicePage()
-    {
-        InitializeComponent();
-
-        LegionGoPanel.Visibility = MainWindow.CurrentDevice is LegionGo ? Visibility.Visible : Visibility.Collapsed;
-
-        NightLightToggle.IsEnabled = NightLight.Supported;
-        NightLightToggle.IsOn = NightLight.Enabled;
-
-        // manage events
-        NightLight.Toggled += NightLight_Toggled;
     }
 
     private void NightLight_Toggled(bool enabled)
