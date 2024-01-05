@@ -61,6 +61,52 @@
                 <!--  Separator  -->
                 <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
 
+                <!--  FullScreenOptimization  -->
+                <Grid IsEnabled="False">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="0.2*" MinWidth="80" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="Fullscreen optimizations" />
+
+                    <ui:ToggleSwitch
+                        Name="T_FullScreenOptimization"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="FullScreenOptimization_Toggled" />
+                </Grid>
+
+                <!--  Separator  -->
+                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
+
+                <!--  HighDPIAware  -->
+                <Grid IsEnabled="False">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="0.2*" MinWidth="80" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="High DPI awareness" />
+
+                    <ui:ToggleSwitch
+                        Name="T_HighDPIAware"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Style="{DynamicResource InvertedToggleSwitchStyle}"
+                        Toggled="HighDPIAware_Toggled" />
+                </Grid>
+
+                <!--  Separator  -->
+                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
+
                 <!--  Kill Process  -->
                 <Button
                     Name="B_KillProcess"

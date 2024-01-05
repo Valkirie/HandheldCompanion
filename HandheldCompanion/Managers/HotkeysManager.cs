@@ -445,7 +445,7 @@ public static class HotkeysManager
                         if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
                             break;
 
-                        if (sProcess.IsSuspended())
+                        if (sProcess.IsSuspended)
                             ProcessManager.ResumeProcess(sProcess);
                         else
                             ProcessManager.SuspendProcess(fProcess);

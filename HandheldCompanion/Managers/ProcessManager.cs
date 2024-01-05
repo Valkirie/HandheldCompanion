@@ -32,6 +32,8 @@ public static class ProcessManager
 
     // process vars
     private static readonly Timer ForegroundTimer;
+    private static readonly Timer ProcessWatcher;
+
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
     private static ProcessEx foregroundProcess;
     private static ProcessEx previousProcess;
@@ -57,6 +59,9 @@ public static class ProcessManager
 
         ForegroundTimer = new Timer(1000);
         ForegroundTimer.Elapsed += ForegroundCallback;
+
+        ProcessWatcher = new Timer(2000);
+        ProcessWatcher.Elapsed += ProcessWatcher_Elapsed;
     }
 
     private static void OnWindowOpened(object sender, AutomationEventArgs automationEventArgs)
@@ -98,6 +103,7 @@ public static class ProcessManager
 
         // start processes monitor
         ForegroundTimer.Start();
+        ProcessWatcher.Start();
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -113,8 +119,8 @@ public static class ProcessManager
         IsInitialized = false;
 
         // stop processes monitor
-        ForegroundTimer.Elapsed -= ForegroundCallback;
         ForegroundTimer.Stop();
+        ProcessWatcher.Stop();
 
         LogManager.LogInformation("{0} has stopped", "ProcessManager");
     }
@@ -126,7 +132,7 @@ public static class ProcessManager
 
     public static ProcessEx GetLastSuspendedProcess()
     {
-        return Processes.Values.LastOrDefault(item => item.IsSuspended());
+        return Processes.Values.LastOrDefault(item => item.IsSuspended);
     }
 
     public static ProcessEx GetProcess(int processId)
@@ -408,6 +414,16 @@ public static class ProcessManager
         return mainThread;
     }
 
+    private static void ProcessWatcher_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        Parallel.ForEach(Processes,
+            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, process =>
+            {
+                ProcessEx processEx = process.Value;
+                processEx.Refresh();
+            });
+    }
+
     public static void ResumeProcess(ProcessEx processEx)
     {
         // process has exited
@@ -422,7 +438,7 @@ public static class ProcessManager
         Parallel.ForEach(processEx.Children,
             new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
             {
-                var process = Process.GetProcessById(childId);
+                Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtResumeProcess(process.Handle);
             });
 
@@ -447,7 +463,7 @@ public static class ProcessManager
         Parallel.ForEach(processEx.Children,
             new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
             {
-                var process = Process.GetProcessById(childId);
+                Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtSuspendProcess(process.Handle);
             });
     }

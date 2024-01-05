@@ -422,8 +422,8 @@ public partial class QuickProfilesPage : Page
             {
                 // update profile name
                 CurrentProfileName.Text = selectedProfile.Name;
-                Toggle_ControllerLayout.IsEnabled = selectedProfile.Default ? false : true;
                 Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
+                Toggle_ControllerLayout.IsEnabled = !selectedProfile.Default;
 
                 // sub profiles
                 cb_SubProfiles.Items.Clear();

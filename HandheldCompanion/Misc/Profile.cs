@@ -84,25 +84,23 @@ public partial class Profile : ICloneable, IComparable
     public float FlickstickDuration { get; set; } = 0.1f;
     public float FlickstickSensivity { get; set; } = 3.0f;
 
-    // power
+    // power & graphics
     public Guid PowerProfile { get; set; } = new();
-
     public int FramerateValue { get; set; } = 0; // default RTSS value
-
     public bool GPUScaling { get; set;} = false;
     public int ScalingMode { get; set; } = 0; // default AMD value
-
     public bool RSREnabled { get; set; } = false;
     public int RSRSharpness { get; set; } = 20; // default AMD value
-
     public bool IntegerScalingEnabled { get; set; } = false;
     public int IntegerScalingDivider { get; set; } = 1;
-
     public bool RISEnabled { get; set; } = false;
     public int RISSharpness { get; set; } = 80; // default AMD value
-
     public bool CPUCoreEnabled { get; set; } = false;
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
+
+    // AppCompatFlags
+    public bool FullScreenOptimization { get; set; } = true;
+    public bool HighDPIAware { get; set; } = true;
 
     // emulated controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;

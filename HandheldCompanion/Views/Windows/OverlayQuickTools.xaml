@@ -30,7 +30,7 @@
 
     <ui:NavigationView
         Name="navView"
-        Margin="0,1,0,0"
+        Margin="0,-30,0,0"
         BackRequested="navView_BackRequested"
         IsPaneToggleButtonVisible="False"
         IsSettingsVisible="False"

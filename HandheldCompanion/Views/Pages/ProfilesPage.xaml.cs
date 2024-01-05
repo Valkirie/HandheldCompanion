@@ -509,6 +509,8 @@ public partial class ProfilesPage : Page
                 Toggle_ControllerLayout.IsEnabled = !selectedProfile.Default;
                 // prevent user from using Wrapper on default profile
                 cB_Wrapper.IsEnabled = !selectedProfile.Default;
+                UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
+                UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
 
                 // sub profiles
                 b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
@@ -580,6 +582,10 @@ public partial class ProfilesPage : Page
                 // RIS
                 RISToggle.IsOn = selectedProfile.RISEnabled;
                 RISSlider.Value = selectedProfile.RISSharpness;
+
+                // Compatibility settings
+                UseFullscreenOptimizations.IsOn = selectedProfile.FullScreenOptimization;
+                UseHighDPIAwareness.IsOn = selectedProfile.HighDPIAware;
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
@@ -1348,5 +1354,31 @@ public partial class ProfilesPage : Page
                     break;
             }
         }
+    }
+
+    private void UseFullscreenOptimizations_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.FullScreenOptimization = UseFullscreenOptimizations.IsOn;
+        UpdateProfile();
+    }
+
+    private void UseHighDPIAwareness_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.HighDPIAware = UseHighDPIAwareness.IsOn;
+        UpdateProfile();
     }
 }

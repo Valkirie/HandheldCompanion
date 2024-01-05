@@ -1,13 +1,20 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
+using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Windows.Foundation.Collections;
 
 namespace HandheldCompanion.Controls;
 
@@ -26,26 +33,30 @@ public partial class ProcessEx : UserControl, IDisposable
     }
 
     public string _Executable;
-
     private string _Title;
-
-    public ConcurrentList<int> Children = new();
+    public string Path;
 
     public ProcessFilter Filter;
+    public PlatformType Platform { get; set; }
 
     public ImageSource imgSource;
 
     public ProcessThread MainThread;
-
     public IntPtr MainWindowHandle;
-
-    public string Path;
 
     private ThreadState prevThreadState = ThreadState.Terminated;
     private ThreadWaitReason prevThreadWaitReason = ThreadWaitReason.UserRequest;
 
     public Process Process;
     private readonly int ProcessId;
+    private LockObject updateLock = new();
+
+    public ConcurrentList<int> Children = new();
+
+    private const string AppCompatRegistry = @"Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers";
+    public static string RunAsAdminRegistryValue = "RUNASADMIN";
+    public static string DisabledMaximizedWindowedValue = "DISABLEDXMAXIMIZEDWINDOWEDMODE";
+    public static string HighDPIAwareValue = "HIGHDPIAWARE";
 
     public ProcessEx()
     {
@@ -56,12 +67,9 @@ public partial class ProcessEx : UserControl, IDisposable
     {
         Process = process;
         ProcessId = process.Id;
-
         Path = path;
-
         Executable = executable;
         MainWindowTitle = path;
-
         Filter = filter;
 
         if (!string.IsNullOrEmpty(path) && File.Exists(path))
@@ -72,6 +80,76 @@ public partial class ProcessEx : UserControl, IDisposable
                 imgSource = icon.ToImageSource();
                 ProcessIcon.Source = imgSource;
             }
+        }
+    }
+
+    public static string GetAppCompatFlags(string Path)
+    {
+        if (string.IsNullOrEmpty(Path))
+            return string.Empty;
+
+        using (var key = Registry.CurrentUser.OpenSubKey(AppCompatRegistry))
+        {
+            string valueStr = (string)key?.GetValue(Path);
+            return valueStr;
+        }
+    }
+
+    public static void SetAppCompatFlag(string Path, string Flag, bool value)
+    {
+        if (string.IsNullOrEmpty(Path))
+            return;
+
+        using (var key = Registry.CurrentUser.CreateSubKey(AppCompatRegistry, RegistryKeyPermissionCheck.ReadWriteSubTree))
+        {
+            if (key != null)
+            {
+                List<string> values = new List<string> { "~" }; ;
+                string valueStr = (string)key.GetValue(Path);
+
+                if (!string.IsNullOrEmpty(valueStr))
+                    values = valueStr.Split(' ').ToList();
+
+                values.Remove(Flag);
+
+                if (value)
+                    values.Add(Flag);
+
+                if (values.Count == 1 && values[0] == "~" && !string.IsNullOrEmpty(valueStr))
+                    key.DeleteValue(Path);
+                else
+                    key.SetValue(Path, string.Join(" ", values), RegistryValueKind.String);
+            }
+        }
+    }
+
+    public bool FullScreenOptimization
+    {
+        get
+        {
+            string valueStr = GetAppCompatFlags(Path);
+            return !string.IsNullOrEmpty(valueStr)
+                && valueStr.Split(' ').Any(s => s == DisabledMaximizedWindowedValue);
+        }
+
+        set
+        {
+            SetAppCompatFlag(Path, DisabledMaximizedWindowedValue, value);
+        }
+    }
+
+    public bool HighDPIAware
+    {
+        get
+        {
+            string valueStr = GetAppCompatFlags(Path);
+            return !string.IsNullOrEmpty(valueStr)
+                && valueStr.Split(' ').Any(s => s == HighDPIAwareValue);
+        }
+
+        set
+        {
+            SetAppCompatFlag(Path, HighDPIAwareValue, value);
         }
     }
 
@@ -97,30 +175,28 @@ public partial class ProcessEx : UserControl, IDisposable
         }
     }
 
-    public PlatformType Platform { get; set; }
-
-    public void Dispose()
-    {
-        if (Process is not null)
-            Process.Dispose();
-        if (MainThread is not null)
-            MainThread.Dispose();
-        Children.Dispose();
-
-        GC.SuppressFinalize(this); //now, the finalizer won't be called
-    }
-
     public int GetProcessId()
     {
         return ProcessId;
     }
 
-    public bool HasExited()
+    public bool HasExited
     {
-        if (Process is not null)
-            return Process.HasExited;
+        get
+        {
+            if (Process is not null)
+                return Process.HasExited;
 
-        return true;
+            return true;
+        }
+    }
+
+    public bool IsSuspended
+    {
+        get
+        {
+            return prevThreadWaitReason == ThreadWaitReason.Suspended;
+        }
     }
 
     public void Refresh()
@@ -131,46 +207,47 @@ public partial class ProcessEx : UserControl, IDisposable
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (MainThread.ThreadState)
+            using (new ScopedLock(updateLock))
             {
-                case ThreadState.Wait:
-                    {
-                        // monitor if the process main thread was suspended or resumed
-                        if (MainThread.WaitReason != prevThreadWaitReason)
+                switch (MainThread.ThreadState)
+                {
+                    case ThreadState.Wait:
                         {
-                            prevThreadWaitReason = MainThread.WaitReason;
-
-                            switch (prevThreadWaitReason)
+                            // monitor if the process main thread was suspended or resumed
+                            if (MainThread.WaitReason != prevThreadWaitReason)
                             {
-                                case ThreadWaitReason.Suspended:
-                                    SuspendToggle.IsOn = true;
-                                    break;
+                                prevThreadWaitReason = MainThread.WaitReason;
 
-                                default:
-                                    SuspendToggle.IsOn = false;
-                                    break;
+                                switch (prevThreadWaitReason)
+                                {
+                                    case ThreadWaitReason.Suspended:
+                                        SuspendToggle.IsOn = true;
+                                        break;
+
+                                    default:
+                                        SuspendToggle.IsOn = false;
+                                        break;
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case ThreadState.Terminated:
-                    {
-                        // dispose from MainThread
-                        MainThread.Dispose();
-                        MainThread = null;
-                    }
-                    break;
+                    case ThreadState.Terminated:
+                        {
+                            // dispose from MainThread
+                            MainThread.Dispose();
+                            MainThread = null;
+                        }
+                        break;
+                }
+
+                // update previous state
+                prevThreadState = MainThread.ThreadState;
+
+                T_FullScreenOptimization.IsOn = !FullScreenOptimization;
+                T_HighDPIAware.IsOn = !HighDPIAware;
             }
-
-            // update previous state
-            prevThreadState = MainThread.ThreadState;
         });
-    }
-
-    public bool IsSuspended()
-    {
-        return prevThreadWaitReason == ThreadWaitReason.Suspended;
     }
 
     public void RefreshChildProcesses()
@@ -189,6 +266,10 @@ public partial class ProcessEx : UserControl, IDisposable
 
     private void SuspendToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
         switch (SuspendToggle.IsOn)
         {
             case true:
@@ -203,13 +284,40 @@ public partial class ProcessEx : UserControl, IDisposable
                 ProcessManager.ResumeProcess(this);
                 break;
         }
-
-        Refresh();
     }
 
     private void B_KillProcess_Clicked(object sender, RoutedEventArgs e)
     {
         if (Process is not null)
             Process.Kill();
+    }
+
+    public void Dispose()
+    {
+        if (Process is not null)
+            Process.Dispose();
+        if (MainThread is not null)
+            MainThread.Dispose();
+        Children.Dispose();
+
+        GC.SuppressFinalize(this); //now, the finalizer won't be called
+    }
+
+    private void FullScreenOptimization_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        FullScreenOptimization = !T_FullScreenOptimization.IsOn;
+    }
+
+    private void HighDPIAware_Toggled(object sender, RoutedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        HighDPIAware = !T_HighDPIAware.IsOn;
     }
 }

@@ -1,3 +1,4 @@
+using HandheldCompanion.Controls;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
@@ -105,6 +106,7 @@ public static class PerformanceManager
         // manage events
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
+        ProfileManager.Updated += ProfileManager_Updated;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
         PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
@@ -278,6 +280,14 @@ public static class PerformanceManager
         }
         catch { }
     }
+    
+    // todo: moveme
+    private static void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+    {
+        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.DisabledMaximizedWindowedValue, !profile.FullScreenOptimization);
+        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.HighDPIAwareValue, !profile.HighDPIAware);
+    }
+
     private static void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
     {
         Profile profile = ProfileManager.GetCurrent();
