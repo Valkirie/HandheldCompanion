@@ -77,6 +77,7 @@ public partial class QuickHomePage : Page
             {
                 SliderVolume.IsEnabled = true;
                 SliderVolume.Value = SystemManager.GetVolume();
+                UpdateVolumeIcon((float)SliderVolume.Value);
             }
         });
     }
@@ -88,7 +89,9 @@ public partial class QuickHomePage : Page
         {
             // wait until lock is released
             if (brightnessLock)
-                SliderBrightness.Value = brightness;
+                return;
+
+            SliderBrightness.Value = brightness;
         });
     }
 
@@ -97,11 +100,12 @@ public partial class QuickHomePage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // todo: update volume icon on update
-
             // wait until lock is released
             if (volumeLock)
-                SliderVolume.Value = Math.Round(volume);
+                return;
+
+            UpdateVolumeIcon(volume);
+            SliderVolume.Value = Math.Round(volume);
         });
     }
 
@@ -157,5 +161,28 @@ public partial class QuickHomePage : Page
                 break;
         }
     }
+    
+    private void UpdateVolumeIcon(float volume)
+    {
+        string glyph;
 
+        if (volume == 0)
+        {
+            glyph = "\uE992"; // Mute icon
+        }
+        else if (volume <= 33)
+        {
+            glyph = "\uE993"; // Low volume icon
+        }
+        else if (volume <= 65)
+        {
+            glyph = "\uE994"; // Medium volume icon
+        }
+        else
+        {
+            glyph = "\uE995"; // High volume icon (default)
+        }
+
+        VolumeIcon.Glyph = glyph;
+    }
 }
