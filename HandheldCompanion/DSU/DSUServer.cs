@@ -11,7 +11,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion;
 
@@ -73,7 +72,8 @@ public class DSUServer
 
     private const ushort MaxProtocolVersion = 1001;
     private SemaphoreSlim _pool;
-    private SocketAsyncEventArgs[] argsList;
+    //private SocketAsyncEventArgs[] argsList;
+    private byte[][] dataBuffers;
 
     private readonly Dictionary<IPEndPoint, ClientRequestTimes> clients = new();
 
@@ -93,12 +93,19 @@ public class DSUServer
     private uint serverId;
     private int udpPacketCount;
     private Socket udpSock;
-    private Timer udpTimer;
 
     public DSUServer()
     {
         PadMacAddress = new PhysicalAddress(new byte[] { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 });
         portInfoGet = GetPadDetailForIdx;
+        _pool = new SemaphoreSlim(ARG_BUFFER_LEN);
+        dataBuffers = new byte[ARG_BUFFER_LEN][];
+        for (int num = 0; num < ARG_BUFFER_LEN; num++)
+        {
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            args.Completed += SocketEvent_AsyncCompleted;
+            dataBuffers[num] = new byte[100];
+        }
 
         padMeta = new DualShockPadMeta()
         {
@@ -110,32 +117,6 @@ public class DSUServer
             Model = DsModel.DS4,
             PadState = DsState.Connected
         };
-
-        udpTimer = new(5000);
-        udpTimer.AutoReset = false;
-        udpTimer.Elapsed += UdpTimer_Elapsed;
-    }
-
-    private void ResetPool()
-    {
-        if (_pool is not null)
-            _pool.Release();
-
-        _pool = new SemaphoreSlim(ARG_BUFFER_LEN);
-
-        if (argsList is not null && argsList.Length != 0)
-            foreach(SocketAsyncEventArgs args in argsList)
-                args.Dispose();
-
-        argsList = new SocketAsyncEventArgs[ARG_BUFFER_LEN];
-
-        for (int num = 0; num < ARG_BUFFER_LEN; num++)
-        {
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.SetBuffer(new byte[100], 0, 100);
-            args.Completed += SocketEvent_Completed;
-            argsList[num] = args;
-        }
     }
 
     private void GetPadDetailForIdx(int padIdx, ref DualShockPadMeta meta)
@@ -152,14 +133,16 @@ public class DSUServer
         return GetType().Name;
     }
 
-    private void SocketEvent_Completed(object sender, SocketAsyncEventArgs e)
+    private void SocketEvent_AsyncCompleted(object sender, SocketAsyncEventArgs e)
     {
         _pool.Release();
+        e.Dispose();
     }
 
-    private void CompletedSynchronousSocketEvent()
+    private void CompletedSynchronousSocketEvent(SocketAsyncEventArgs args)
     {
         _pool.Release();
+        args.Dispose();
     }
 
     private int BeginPacket(byte[] packetBuf, ushort reqProtocolVersion = MaxProtocolVersion)
@@ -195,33 +178,37 @@ public class DSUServer
 
     private void SendPacket(IPEndPoint clientEP, byte[] usefulData, ushort reqProtocolVersion = MaxProtocolVersion)
     {
-        var packetData = new byte[usefulData.Length + 16];
-        var currIdx = BeginPacket(packetData, reqProtocolVersion);
+        byte[] packetData = new byte[usefulData.Length + 16];
+        int currIdx = BeginPacket(packetData, reqProtocolVersion);
         Array.Copy(usefulData, 0, packetData, currIdx, usefulData.Length);
         FinishPacket(packetData);
-        poolLock.EnterWriteLock();
+
         //try { udpSock.SendTo(packetData, clientEP); }
-        var temp = listInd;
+        int temp = 0;
+        poolLock.EnterWriteLock();
+        temp = listInd;
         listInd = ++listInd % ARG_BUFFER_LEN;
-        var args = argsList[temp];
+        SocketAsyncEventArgs args = new SocketAsyncEventArgs()
+        {
+            RemoteEndPoint = clientEP,
+        };
+        args.SetBuffer(dataBuffers[temp], 0, 100);
+        args.Completed += SocketEvent_AsyncCompleted;
         poolLock.ExitWriteLock();
 
         _pool.Wait();
-        args.RemoteEndPoint = clientEP;
         Array.Copy(packetData, args.Buffer, packetData.Length);
         //args.SetBuffer(packetData, 0, packetData.Length);
-        var sentAsync = false;
+        bool sentAsync = false;
         try
         {
             sentAsync = udpSock.SendToAsync(args);
-            if (!sentAsync) CompletedSynchronousSocketEvent();
+            //if (!sentAsync) CompletedSynchronousSocketEvent();
         }
-        catch (Exception /*e*/)
-        {
-        }
+        catch (Exception /*e*/) { }
         finally
         {
-            if (!sentAsync) CompletedSynchronousSocketEvent();
+            if (!sentAsync) CompletedSynchronousSocketEvent(args);
         }
     }
 
@@ -391,7 +378,6 @@ public class DSUServer
             if (running)
             {
                 ResetUDPConn();
-                return;
             }
         }
         catch (Exception /*e*/) { }
@@ -420,7 +406,7 @@ public class DSUServer
             if (running)
             {
                 ResetUDPConn();
-                return;
+                StartReceive();
             }
         }
         catch (Exception /*ex*/) { }
@@ -433,24 +419,14 @@ public class DSUServer
     /// </summary>
     private void ResetUDPConn()
     {
-        // suspend UDP
-        if (running)
-            Stop();
-
-        udpTimer.Stop();
-        udpTimer.Start();
-    }
-
-    private void UdpTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-    {
-        // resume UDP
-        Start();
+        uint IOC_IN = 0x80000000;
+        uint IOC_VENDOR = 0x18000000;
+        uint SIO_UDP_CONNRESET = IOC_IN | IOC_VENDOR | 12;
+        udpSock.IOControl((int)SIO_UDP_CONNRESET, new byte[] { Convert.ToByte(false) }, null);
     }
 
     public bool Start()
     {
-        ResetPool();
-
         try
         {
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -734,28 +710,30 @@ public class DSUServer
 
             foreach (var cl in clientsList)
             {
-                //try { udpSock.SendTo(outputData, cl); }
                 int temp = 0;
                 poolLock.EnterWriteLock();
                 temp = listInd;
                 listInd = ++listInd % ARG_BUFFER_LEN;
-                SocketAsyncEventArgs args = argsList[temp];
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs()
+                {
+                    RemoteEndPoint = cl,
+                };
+                args.SetBuffer(dataBuffers[temp], 0, 100);
+                args.Completed += SocketEvent_AsyncCompleted;
                 poolLock.ExitWriteLock();
 
                 _pool.Wait();
-                args.RemoteEndPoint = cl;
                 Array.Copy(outputData, args.Buffer, outputData.Length);
                 bool sentAsync = false;
                 try
                 {
                     bool sendAsync = udpSock.SendToAsync(args);
-                    if (!sendAsync) CompletedSynchronousSocketEvent();
                 }
                 catch (SocketException /*ex*/) { }
                 catch (Exception /*ex*/) { }
                 finally
                 {
-                    if (!sentAsync) CompletedSynchronousSocketEvent();
+                    if (!sentAsync) CompletedSynchronousSocketEvent(args);
                 }
             }
         }
