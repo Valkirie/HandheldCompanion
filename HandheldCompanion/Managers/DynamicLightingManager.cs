@@ -131,7 +131,6 @@ public static class DynamicLightingManager
             else
             {
                 // Handle other exceptions here
-                throw;
             }
         }
     }
