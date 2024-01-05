@@ -159,6 +159,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 case 0:
                 case 2:
                     this.SetWindowPosition(WindowPositions.Left, Screen.PrimaryScreen);
+                    Left += Margin.Left;
                     break;
 
                 // top, right
@@ -167,6 +168,7 @@ public partial class OverlayQuickTools : GamepadWindow
                 case 1:
                 case 3:
                     this.SetWindowPosition(WindowPositions.Right, Screen.PrimaryScreen);
+                    Left -= Margin.Right;
                     break;
             }
 
