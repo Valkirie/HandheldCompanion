@@ -37,6 +37,8 @@ public partial class QuickDevicePage : Page
         radioTimer = new(1000);
         radioTimer.Elapsed += RadioTimer_Elapsed;
         radioTimer.Start();
+
+        DynamicLightingPanel.IsEnabled = MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.DynamicLighting);
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
