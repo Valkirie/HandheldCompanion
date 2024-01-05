@@ -267,6 +267,7 @@
 
                     <DockPanel Grid.Column="1">
                         <ui:FontIcon
+                            Name="VolumeIcon"
                             Height="40"
                             HorizontalAlignment="Center"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
