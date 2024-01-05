@@ -47,8 +47,6 @@ public partial class QuickPerformancePage : Page
         PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
         PerformanceManager.Initialized += PerformanceManager_Initialized;
 
-        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
-
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
 
@@ -70,33 +68,6 @@ public partial class QuickPerformancePage : Page
 
         // force call
         RTSS_Updated(PlatformManager.RTSS.Status);
-    }
-
-    private void HotkeysManager_CommandExecuted(string listener)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch (listener)
-            {
-                case "increaseTDP":
-                    {
-                        if (selectedProfile is null || !selectedProfile.TDPOverrideEnabled)
-                            return;
-
-                        TDPSlider.Value++;
-                    }
-                    break;
-                case "decreaseTDP":
-                    {
-                        if (selectedProfile is null || !selectedProfile.TDPOverrideEnabled)
-                            return;
-
-                        TDPSlider.Value--;
-                    }
-                    break;
-            }
-        });
     }
 
     private void PowerProfileManager_Deleted(PowerProfile profile)

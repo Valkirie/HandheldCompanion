@@ -112,6 +112,7 @@ public static class PerformanceManager
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
+        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
         // move me
         SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
@@ -138,6 +139,39 @@ public static class PerformanceManager
                     TDPMax = Convert.ToDouble(value);
                     if (AutoTDPMax == 0d) AutoTDPMax = TDPMax;
                     AutoTDP = (TDPMax + TDPMin) / 2.0d;
+                }
+                break;
+        }
+    }
+
+    private static void HotkeysManager_CommandExecuted(string listener)
+    {
+        PowerProfile powerProfile = PowerProfileManager.GetCurrent();
+        if (powerProfile is null)
+            return;
+
+        switch (listener)
+        {
+            case "increaseTDP":
+                {
+                    if (powerProfile.TDPOverrideEnabled)
+                        return;
+
+                    for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+                        powerProfile.TDPOverrideValues[idx] = Math.Min(TDPMax, powerProfile.TDPOverrideValues[idx] + 1);
+
+                    PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
+                }
+                break;
+            case "decreaseTDP":
+                {
+                    if (powerProfile.TDPOverrideEnabled)
+                        return;
+
+                    for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+                        powerProfile.TDPOverrideValues[idx] = Math.Max(TDPMin, powerProfile.TDPOverrideValues[idx] - 1);
+
+                    PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
                 }
                 break;
         }
@@ -636,7 +670,7 @@ public static class PerformanceManager
             var MSRdone = false;
 
             // read current values and (re)apply requested TDP if needed
-            foreach (var type in (PowerType[])Enum.GetValues(typeof(PowerType)))
+            foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
             {
                 var idx = (int)type;
 
@@ -679,8 +713,8 @@ public static class PerformanceManager
             // processor specific
             if (processor is IntelProcessor)
             {
-                var TDPslow = (int)StoredTDP[(int)PowerType.Slow];
-                var TDPfast = (int)StoredTDP[(int)PowerType.Fast];
+                int TDPslow = (int)StoredTDP[(int)PowerType.Slow];
+                int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
 
                 // only request an update if current limit is different than stored
                 if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow ||
@@ -814,7 +848,7 @@ public static class PerformanceManager
         value = Math.Min(TDPMax, Math.Max(TDPMin, value));
 
         // update value read by timer
-        var idx = (int)type;
+        int idx = (int)type;
         StoredTDP[idx] = value;
 
         // immediately apply
@@ -827,7 +861,7 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        for (var idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+        for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
             // make sure we're not trying to run below or above specs
             values[idx] = Math.Min(TDPMax, Math.Max(TDPMin, values[idx]));

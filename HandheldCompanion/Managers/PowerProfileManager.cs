@@ -181,6 +181,15 @@ namespace HandheldCompanion.Managers
         {
             if (profiles.TryGetValue(guid, out var profile))
                 return profile;
+
+            return null;
+        }
+
+        public static PowerProfile GetCurrent()
+        {
+            if (currentProfile is not null)
+                return currentProfile;
+
             return null;
         }
 
