@@ -6870,6 +6870,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 1/1 only supports Exclusive Fullscreen..
+        /// </summary>
+        public static string QuickSettingsPage_ResScaleExclusiveFullscreen {
+            get {
+                return ResourceManager.GetString("QuickSettingsPage_ResScaleExclusiveFullscreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
         public static string QuickSettingsPage_Title {

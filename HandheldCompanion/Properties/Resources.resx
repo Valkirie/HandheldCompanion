@@ -2823,4 +2823,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ProfilesPage_Sharpen" xml:space="preserve">
     <value>Sharpen effect</value>
   </data>
+  <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
+    <value>1/1 only supports Exclusive Fullscreen.</value>
+  </data>
 </root>

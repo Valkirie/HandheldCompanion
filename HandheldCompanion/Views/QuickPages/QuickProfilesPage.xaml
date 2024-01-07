@@ -731,6 +731,11 @@
                                     <ColumnDefinition Width="5*" />
                                 </Grid.ColumnDefinitions>
 
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
                                 <ui:SimpleStackPanel VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ResolutionScale}" />
                                     <TextBlock
@@ -747,6 +752,27 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     SelectionChanged="IntegerScalingComboBox_SelectionChanged" />
+
+                                <ui:SimpleStackPanel
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    Height="20"
+                                    Margin="20,6,0,0"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Visibility="{Binding ElementName=IntegerScalingComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0}">
+                                    <ui:FontIcon
+                                        Height="20"
+                                        Margin="10,0"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Glyph="&#xe7ba;" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.QuickSettingsPage_ResScaleExclusiveFullscreen}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
                             </Grid>
                         </StackPanel>
                     </ui:SimpleStackPanel>
