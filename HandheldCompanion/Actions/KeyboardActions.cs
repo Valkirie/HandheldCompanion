@@ -20,7 +20,7 @@ namespace HandheldCompanion.Actions
 
         public KeyboardActions()
         {
-            this.ActionType = ActionType.Keyboard;
+            this.actionType = ActionType.Keyboard;
 
             this.Value = false;
             this.prevValue = false;

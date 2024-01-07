@@ -51,7 +51,7 @@ public partial class TriggerMapping : IMapping
         base.SetIActions(actions);
 
         // update UI
-        ActionComboBox.SelectedIndex = (int)actions.ActionType;
+        ActionComboBox.SelectedIndex = (int)actions.actionType;
     }
 
     private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -100,6 +100,10 @@ public partial class TriggerMapping : IMapping
             }
         }
 
+        // if no target element was selected, pick the first one
+        if (TargetComboBox.SelectedItem is null)
+            TargetComboBox.SelectedIndex = 0;
+
         // settings
         Trigger2TriggerInnerDeadzone.Value = ((TriggerActions)this.Actions).AxisDeadZoneInner;
         Trigger2TriggerOuterDeadzone.Value = ((TriggerActions)this.Actions).AxisDeadZoneOuter;
@@ -117,7 +121,7 @@ public partial class TriggerMapping : IMapping
             return;
 
         // generate IActions based on settings
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Trigger:
                 {
@@ -135,7 +139,7 @@ public partial class TriggerMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Trigger:
                 ((TriggerActions)this.Actions).AxisDeadZoneInner = (int)Trigger2TriggerInnerDeadzone.Value;
@@ -150,7 +154,7 @@ public partial class TriggerMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Trigger:
                 ((TriggerActions)this.Actions).AxisDeadZoneOuter = (int)Trigger2TriggerOuterDeadzone.Value;
@@ -165,7 +169,7 @@ public partial class TriggerMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Trigger:
                 ((TriggerActions)this.Actions).AxisAntiDeadZone = (int)Trigger2TriggerAntiDeadzone.Value;

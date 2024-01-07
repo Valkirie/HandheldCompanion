@@ -241,7 +241,7 @@
     <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
+    <value>Change the angle</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Options du contrôleur</value>

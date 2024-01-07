@@ -37,7 +37,7 @@
         </Expander.Header>
 
         <Expander.Content>
-            <ui:SimpleStackPanel Spacing="6">
+            <ui:SimpleStackPanel Margin="0,-4,0,-4" Spacing="6">
                 <!--  Suspend  -->
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -59,7 +59,7 @@
                 </Grid>
 
                 <!--  Separator  -->
-                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
+                <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
                 <!--  FullScreenOptimization  -->
                 <Grid IsEnabled="False">
@@ -82,7 +82,7 @@
                 </Grid>
 
                 <!--  Separator  -->
-                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
+                <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
                 <!--  HighDPIAware  -->
                 <Grid IsEnabled="False">
@@ -105,15 +105,17 @@
                 </Grid>
 
                 <!--  Separator  -->
-                <Separator Background="{DynamicResource ExpanderHeaderBackground}" />
+                <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
                 <!--  Kill Process  -->
-                <Button
-                    Name="B_KillProcess"
-                    HorizontalAlignment="Stretch"
-                    Click="B_KillProcess_Clicked"
-                    Content="Kill process"
-                    Style="{DynamicResource AccentButtonStyle}" />
+                <Grid Height="40">
+                    <Button
+                        Name="B_KillProcess"
+                        HorizontalAlignment="Stretch"
+                        Click="B_KillProcess_Clicked"
+                        Content="Kill process"
+                        Style="{DynamicResource AccentButtonStyle}" />
+                </Grid>
             </ui:SimpleStackPanel>
         </Expander.Content>
     </Expander>

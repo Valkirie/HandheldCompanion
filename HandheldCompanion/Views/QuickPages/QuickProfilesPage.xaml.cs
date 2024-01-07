@@ -48,8 +48,8 @@ public partial class QuickProfilesPage : Page
         ProfileManager.Applied += ProfileManager_Applied;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SystemManager.Initialized += SystemManager_Initialized;
+        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
         SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
         SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
         SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
@@ -245,9 +245,8 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
     {
-        DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread (async)
@@ -258,8 +257,7 @@ public partial class QuickProfilesPage : Page
             foreach (ScreenFramelimit frameLimit in frameLimits)
                 cB_Framerate.Items.Add(frameLimit);
 
-            if (selectedProfile is not null)
-                cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+            cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
         });
     }
 

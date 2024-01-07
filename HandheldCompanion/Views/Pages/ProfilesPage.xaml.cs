@@ -60,7 +60,7 @@ public partial class ProfilesPage : Page
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         SystemManager.Initialized += SystemManager_Initialized;
-        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
         SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
         SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
         SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
@@ -167,9 +167,8 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
     {
-        DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
         // UI thread (async)
@@ -478,7 +477,7 @@ public partial class ProfilesPage : Page
     {
         bool MotionMapped = false;
         if (selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
-            if (action is not null && action.ActionType != ActionType.Disabled)
+            if (action is not null && action.actionType != ActionType.Disabled)
                 MotionMapped = true;
 
         // UI thread (async)

@@ -16,7 +16,7 @@ namespace HandheldCompanion.Actions
 
         public TriggerActions()
         {
-            this.ActionType = ActionType.Trigger;
+            this.actionType = ActionType.Trigger;
             this.Value = (short)0;
         }
 

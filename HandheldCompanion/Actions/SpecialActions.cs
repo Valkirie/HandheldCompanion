@@ -32,7 +32,7 @@ namespace HandheldCompanion.Actions
 
         public SpecialActions()
         {
-            this.ActionType = ActionType.Special;
+            this.actionType = ActionType.Special;
         }
 
         public SpecialActions(SpecialActionsType type) : this()

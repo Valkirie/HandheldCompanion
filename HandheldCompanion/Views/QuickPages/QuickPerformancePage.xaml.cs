@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
@@ -39,16 +40,15 @@ public partial class QuickPerformancePage : Page
         PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
         */
 
+        // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         PlatformManager.RTSS.Updated += RTSS_Updated;
-
         PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
         PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
         PerformanceManager.Initialized += PerformanceManager_Initialized;
-
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
         // device settings
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -68,6 +68,15 @@ public partial class QuickPerformancePage : Page
 
         // force call
         RTSS_Updated(PlatformManager.RTSS.Status);
+    }
+
+    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            AutoTDPSlider.Maximum = desktopScreen.devMode.dmDisplayFrequency;
+        });
     }
 
     private void PowerProfileManager_Deleted(PowerProfile profile)
@@ -276,7 +285,7 @@ public partial class QuickPerformancePage : Page
 
                 // AutoTDP
                 AutoTDPToggle.IsOn = selectedProfile.AutoTDPEnabled;
-                AutoTDPRequestedFPSSlider.Value = selectedProfile.AutoTDPRequestedFPS;
+                AutoTDPSlider.Value = selectedProfile.AutoTDPRequestedFPS;
 
                 // EPP
                 EPPToggle.IsOn = selectedProfile.EPPOverrideEnabled;
@@ -344,7 +353,7 @@ public partial class QuickPerformancePage : Page
             return;
 
         selectedProfile.AutoTDPEnabled = AutoTDPToggle.IsOn;
-        AutoTDPRequestedFPSSlider.Value = selectedProfile.AutoTDPRequestedFPS;
+        AutoTDPSlider.Value = selectedProfile.AutoTDPRequestedFPS;
 
         UpdateProfile();
     }
@@ -357,7 +366,7 @@ public partial class QuickPerformancePage : Page
         if (updateLock)
             return;
 
-        selectedProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
+        selectedProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
         UpdateProfile();
     }
 

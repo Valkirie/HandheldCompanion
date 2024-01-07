@@ -95,6 +95,7 @@
                         <ui:NumberBox
                             Name="NumberBox_TDPMin"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             Minimum="3"
                             SpinButtonPlacementMode="Inline"
@@ -136,6 +137,7 @@
                         <ui:NumberBox
                             Name="NumberBox_TDPMax"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             Maximum="64"
                             SpinButtonPlacementMode="Inline"
@@ -219,12 +221,13 @@
                                 Grid.Column="1"
                                 Margin="12,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock
-                                    Width="35"
+                                <TextBox
+                                    Height="32"
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Text="{Binding Value, StringFormat=N0, ElementName=SliderLEDBrightness, Mode=OneWay}"
-                                    TextAlignment="Center" />
-                                <TextBlock VerticalAlignment="Center" Text="%" />
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLEDBrightness, Mode=OneWay}" />
                                 <Slider
                                     x:Name="SliderLEDBrightness"
                                     Margin="6,0,0,0"
@@ -355,12 +358,13 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBlock
-                                                Width="35"
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
-                                                Text="{Binding Value, StringFormat=N0, ElementName=SliderLEDSpeed, Mode=OneWay}"
-                                                TextAlignment="Center" />
-                                            <TextBlock VerticalAlignment="Center" Text="%" />
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderLEDSpeed, Mode=OneWay}" />
                                             <Slider
                                                 x:Name="SliderLEDSpeed"
                                                 Margin="6,0,0,0"
@@ -405,14 +409,14 @@
                                             Style="{StaticResource BodyTextBlockStyle}"
                                             Text="{x:Static resx:Resources.DevicePage_DynamicLighting_EffectDirection}" />
 
-                                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
-                                            <ComboBox
-                                                Name="LEDDirection"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                SelectedIndex="0"
-                                                SelectionChanged="LEDDirection_SelectionChanged" />
-                                        </DockPanel>
+                                        <ComboBox
+                                            Name="LEDDirection"
+                                            Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            SelectedIndex="0"
+                                            SelectionChanged="LEDDirection_SelectionChanged" />
                                     </Grid>
 
                                     <!--  Separator  -->

@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
@@ -48,13 +49,14 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
+            // manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
+            SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -75,6 +77,15 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
+        }
+
+        private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                AutoTDPSlider.Maximum = desktopScreen.devMode.dmDisplayFrequency;
+            });
         }
 
         private void PowerProfileManager_Deleted(PowerProfile profile)

@@ -371,7 +371,7 @@
     <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
+    <value>Change the angle</value>
   </data>
   <data name="OverlayPage_Color" xml:space="preserve">
     <value>Background Color</value>
@@ -575,7 +575,7 @@
     <value>Deadzone</value>
   </data>
   <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>Change the steering deadzone, in degree. Improves steering straight</value>
+    <value>Change the steering deadzone. Improves steering straight</value>
   </data>
   <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>Joystick game Input</value>
@@ -593,7 +593,7 @@
     <value>Max steering angle</value>
   </data>
   <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
-    <value>Change the maximum steering angle value, in degree</value>
+    <value>Change the maximum steering angle value</value>
   </data>
   <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
     <value>Steering linearity</value>
@@ -770,9 +770,9 @@
     <value>Motion activation</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
-    <value>With motion input disabled, hold selected button(s) to enable motion,
-with motion input enabled, hold selected button(s) to disable motion,
-with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa.</value>
+    <value>Motion input disabled: hold selected button(s) to enable motion.
+Motion input enabled: hold selected button(s) to disable motion.
+Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>

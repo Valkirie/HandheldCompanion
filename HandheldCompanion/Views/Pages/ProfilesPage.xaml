@@ -512,39 +512,38 @@
 
                                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                    <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <TextBlock
-                                            HorizontalAlignment="Left"
+                                    <DockPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        d:Visibility="Visible"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Visibility="{Binding ElementName=RSRToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                        <TextBox
+                                            Height="32"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Text="{x:Static resx:Resources.ProfilesPage_Sharpen}" />
-                                        <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBlock
-                                                Width="35"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding Value, StringFormat=N0, ElementName=RSRSlider, Mode=OneWay}"
-                                                TextAlignment="Center" />
-                                            <TextBlock
-                                                Width="30"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Text="%" />
-                                            <Slider
-                                                x:Name="RSRSlider"
-                                                VerticalAlignment="Center"
-                                                AutoToolTipPrecision="0"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="100"
-                                                Minimum="0"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                TickFrequency="5"
-                                                TickPlacement="BottomRight"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="RSRSlider_ValueChanged" />
-                                        </DockPanel>
-                                    </StackPanel>
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=RSRSlider, Mode=OneWay}" />
+
+                                        <Slider
+                                            x:Name="RSRSlider"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="5"
+                                            Maximum="100"
+                                            Minimum="0"
+                                            SmallChange="1"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="5"
+                                            TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                            ValueChanged="RSRSlider_ValueChanged" />
+                                    </DockPanel>
                                 </ui:SimpleStackPanel>
 
                                 <!--  Separator  -->
@@ -645,39 +644,38 @@
 
                                     <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                                    <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <TextBlock
-                                            HorizontalAlignment="Left"
+                                    <DockPanel
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        d:Visibility="Visible"
+                                        ScrollViewer.PanningMode="HorizontalOnly"
+                                        Visibility="{Binding ElementName=RISToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                        <TextBox
+                                            Height="32"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Text="{x:Static resx:Resources.ProfilesPage_Sharpen}" />
-                                        <DockPanel Margin="8,0,0,0" ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBlock
-                                                Width="35"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding Value, StringFormat=N0, ElementName=RISSlider, Mode=OneWay}"
-                                                TextAlignment="Center" />
-                                            <TextBlock
-                                                Width="30"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Text="%" />
-                                            <Slider
-                                                x:Name="RISSlider"
-                                                VerticalAlignment="Center"
-                                                AutoToolTipPrecision="0"
-                                                IsMoveToPointEnabled="True"
-                                                IsSnapToTickEnabled="True"
-                                                LargeChange="5"
-                                                Maximum="100"
-                                                Minimum="0"
-                                                SmallChange="1"
-                                                Style="{DynamicResource SliderStyle1}"
-                                                TickFrequency="5"
-                                                TickPlacement="BottomRight"
-                                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                                ValueChanged="RISSlider_ValueChanged" />
-                                        </DockPanel>
-                                    </StackPanel>
+                                            HorizontalContentAlignment="Center"
+                                            IsReadOnly="True"
+                                            Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=RISSlider, Mode=OneWay}" />
+
+                                        <Slider
+                                            x:Name="RISSlider"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            AutoToolTipPrecision="0"
+                                            IsMoveToPointEnabled="True"
+                                            IsSnapToTickEnabled="True"
+                                            LargeChange="5"
+                                            Maximum="100"
+                                            Minimum="0"
+                                            SmallChange="1"
+                                            Style="{DynamicResource SliderStyle1}"
+                                            TickFrequency="5"
+                                            TickPlacement="BottomRight"
+                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                            ValueChanged="RISSlider_ValueChanged" />
+                                    </DockPanel>
                                 </ui:SimpleStackPanel>
 
                                 <!--  Separator  -->
@@ -811,11 +809,13 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBlock
-                                                Width="35"
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
-                                                Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileGyroValue, Mode=OneWay}"
-                                                TextAlignment="Center" />
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=tb_ProfileGyroValue, Mode=OneWay}" />
                                             <Slider
                                                 x:Name="tb_ProfileGyroValue"
                                                 Margin="6,0,0,0"
@@ -859,11 +859,13 @@
                                             Grid.Column="1"
                                             Margin="12,0,0,0"
                                             ScrollViewer.PanningMode="HorizontalOnly">
-                                            <TextBlock
-                                                Width="35"
+                                            <TextBox
+                                                Height="32"
+                                                HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
-                                                Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}"
-                                                TextAlignment="Center" />
+                                                HorizontalContentAlignment="Center"
+                                                IsReadOnly="True"
+                                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=tb_ProfileAcceleroValue, Mode=OneWay}" />
                                             <Slider
                                                 x:Name="tb_ProfileAcceleroValue"
                                                 Margin="6,0,0,0"

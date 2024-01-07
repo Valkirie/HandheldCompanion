@@ -9,7 +9,7 @@
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     Name="Overlay"
     Title="{x:Static resx:Resources.OverlayPage_Overlay}"
-    d:Background="White"
+    d:Background="Black"
     d:DesignHeight="1800"
     d:DesignWidth="1000"
     KeepAlive="True"
@@ -55,6 +55,7 @@
                         <ComboBox
                             Name="OnScreenDisplayLevel"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             SelectionChanged="OnScreenDisplayLevel_SelectionChanged">
@@ -97,14 +98,17 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                x:Name="HelperOnScreenUpdateRate"
-                                Width="35"
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, ElementName=SliderOnScreenUpdateRate, Mode=OneWay}"
-                                TextAlignment="Center" />
-                            <TextBlock VerticalAlignment="Center" Text="{x:Static resx:Resources.OverlayPage_Millisecond}" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} ms, ElementName=SliderOnScreenUpdateRate, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderOnScreenUpdateRate"
                                 Margin="6,0,0,0"
@@ -162,6 +166,7 @@
                         <ComboBox
                             Name="OverlayModel"
                             Grid.Column="1"
+                            Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             SelectionChanged="OverlayModel_SelectionChanged">
@@ -207,7 +212,10 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <Grid Grid.Column="1" HorizontalAlignment="Left">
+                        <Grid
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Left">
                             <ui:SimpleStackPanel
                                 Name="OverlayControllerAlignment"
                                 HorizontalAlignment="Right"
@@ -297,12 +305,17 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N0, ElementName=SliderControllerSize, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} px, ElementName=SliderControllerSize, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderControllerSize"
                                 Margin="6,0,0,0"
@@ -351,12 +364,17 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N1, ElementName=SliderControllerOpacity, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderControllerOpacity, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderControllerOpacity"
                                 Margin="6,0,0,0"
@@ -406,7 +424,10 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
                             <colorpicker:PortableColorPicker
                                 Name="ColorPicker"
                                 ColorChanged="StandardColorPicker_ColorChanged"
@@ -532,12 +553,17 @@
                                         TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=Slider_Framerate, Mode=OneWay}"
-                                        TextAlignment="Center" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N0} FPS, ElementName=Slider_Framerate, Mode=OneWay}" />
                                     <Slider
                                         x:Name="Slider_Framerate"
                                         Margin="6,0,0,0"
@@ -662,12 +688,17 @@
                                         TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
+                                <DockPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    ScrollViewer.PanningMode="HorizontalOnly">
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N1, ElementName=Slider_RestingPitch, Mode=OneWay}"
-                                        TextAlignment="Center" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N1} °, ElementName=Slider_RestingPitch, Mode=OneWay}" />
                                     <Slider
                                         x:Name="Slider_RestingPitch"
                                         Margin="6,0,0,0"
@@ -726,7 +757,7 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <Grid Grid.Column="1">
+                        <Grid Grid.Column="1" Margin="12,0,0,0">
                             <ui:SimpleStackPanel
                                 Name="OverlayTrackpadsAlignment"
                                 HorizontalAlignment="Right"
@@ -780,12 +811,17 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N0, ElementName=SliderTrackpadsSize, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} px, ElementName=SliderTrackpadsSize, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderTrackpadsSize"
                                 Margin="6,0,0,0"
@@ -834,12 +870,17 @@
                             </ui:SimpleStackPanel>
                         </DockPanel>
 
-                        <DockPanel Grid.Column="1" ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N2, ElementName=SliderTrackpadsOpacity, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderTrackpadsOpacity, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderTrackpadsOpacity"
                                 Margin="6,0,0,0"

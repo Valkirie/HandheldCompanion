@@ -4600,7 +4600,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the angle, in degree.
+        ///   Looks up a localized string similar to Change the angle.
         /// </summary>
         public static string OverlayPage_CameraAnglePitchDesc {
             get {
@@ -6328,9 +6328,9 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to With motion input disabled, hold selected button(s) to enable motion,
-        ///with motion input enabled, hold selected button(s) to disable motion,
-        ///with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa..
+        ///   Looks up a localized string similar to Motion input disabled: hold selected button(s) to enable motion.
+        ///Motion input enabled: hold selected button(s) to disable motion.
+        ///Motion input toggle: press selected button(s) to switch motion state..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
@@ -7167,7 +7167,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the steering deadzone, in degree. Improves steering straight.
+        ///   Looks up a localized string similar to Change the steering deadzone. Improves steering straight.
         /// </summary>
         public static string SettingsMode1_DeadzoneDesc {
             get {
@@ -7221,7 +7221,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the maximum steering angle value, in degree.
+        ///   Looks up a localized string similar to Change the maximum steering angle value.
         /// </summary>
         public static string SettingsMode1_MaxSteeringAngleDesc {
             get {

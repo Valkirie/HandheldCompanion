@@ -53,7 +53,7 @@ public partial class AxisMapping : IMapping
         base.SetIActions(actions);
 
         // update UI
-        ActionComboBox.SelectedIndex = (int)actions.ActionType;
+        ActionComboBox.SelectedIndex = (int)actions.actionType;
     }
 
     private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -70,10 +70,10 @@ public partial class AxisMapping : IMapping
         TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
         // get current controller
-        var controller = ControllerManager.GetEmulatedController();
+        IController? controller = ControllerManager.GetEmulatedController();
 
         // populate target dropdown based on action type
-        var type = (ActionType)ActionComboBox.SelectedIndex;
+        ActionType type = (ActionType)ActionComboBox.SelectedIndex;
 
         if (type == ActionType.Disabled)
         {
@@ -91,10 +91,10 @@ public partial class AxisMapping : IMapping
             if (controller is null)
                 return;
 
-            foreach (var axis in IController.GetTargetAxis())
+            foreach (AxisLayoutFlags axis in IController.GetTargetAxis())
             {
                 // create a label, store ButtonFlags as Tag and Label as controller specific string
-                var buttonLabel = new Label { Tag = axis, Content = controller.GetAxisName(axis) };
+                Label buttonLabel = new Label { Tag = axis, Content = controller.GetAxisName(axis) };
                 TargetComboBox.Items.Add(buttonLabel);
 
                 if (axis.Equals(((AxisActions)Actions).Axis))
@@ -129,8 +129,7 @@ public partial class AxisMapping : IMapping
                 }
 
                 // create a label, store MouseActionsType as Tag and Label as controller specific string
-                var buttonLabel = new Label
-                { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
+                Label buttonLabel = new Label { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
                 TargetComboBox.Items.Add(buttonLabel);
 
                 if (mouseType.Equals(((MouseActions)Actions).MouseType))
@@ -148,6 +147,10 @@ public partial class AxisMapping : IMapping
             Axis2MouseFilterCutoff.Value = ((MouseActions)this.Actions).FilterCutoff;
         }
 
+        // if no target element was selected, pick the first one
+        if (TargetComboBox.SelectedItem is null)
+            TargetComboBox.SelectedIndex = 0;
+
         base.Update();
     }
 
@@ -160,7 +163,7 @@ public partial class AxisMapping : IMapping
             return;
 
         // generate IActions based on settings
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 {
@@ -191,7 +194,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AutoRotate = Axis2AxisAutoRotate.IsOn;
@@ -206,7 +209,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisInverted = (((int)Axis2AxisRotation.Value / 90) & 2) == 2;
@@ -222,7 +225,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisDeadZoneInner = (int)Axis2AxisInnerDeadzone.Value;
@@ -237,7 +240,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisDeadZoneOuter = (int)Axis2AxisOuterDeadzone.Value;
@@ -252,7 +255,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisAntiDeadZone = (int)Axis2AxisAntiDeadzone.Value;
@@ -267,7 +270,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).ImproveCircularity = Axis2AxisImproveCircularity.IsOn;
@@ -282,7 +285,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).Sensivity = (int)Axis2MousePointerSpeed.Value;
@@ -297,7 +300,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).AutoRotate = Axis2MouseAutoRotate.IsOn;
@@ -312,7 +315,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).AxisInverted = (((int)Axis2MouseRotation.Value / 90) & 2) == 2;
@@ -328,7 +331,7 @@ public partial class AxisMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).Deadzone = (int)Axis2MouseDeadzone.Value;
@@ -343,7 +346,7 @@ public partial class AxisMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)this.Actions).Acceleration = (float)Axis2MouseAcceleration.Value;
@@ -359,7 +362,7 @@ public partial class AxisMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)this.Actions).Filtering = Axis2MouseFiltering.IsOn;
@@ -374,7 +377,7 @@ public partial class AxisMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)this.Actions).FilterCutoff = (float)Axis2MouseFilterCutoff.Value;

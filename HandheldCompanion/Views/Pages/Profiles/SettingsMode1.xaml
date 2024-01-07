@@ -151,11 +151,13 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, ElementName=SliderSteeringAngle, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} °, ElementName=SliderSteeringAngle, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderSteeringAngle"
                                 Margin="6,0,0,0"
@@ -209,11 +211,13 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N1, ElementName=SliderPower, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderPower, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderPower"
                                 Margin="6,0,0,0"
@@ -267,11 +271,13 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, ElementName=SliderDeadzoneAngle, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N1} °, ElementName=SliderDeadzoneAngle, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderDeadzoneAngle"
                                 Margin="6,0,0,0"

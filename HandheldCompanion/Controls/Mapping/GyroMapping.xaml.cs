@@ -100,7 +100,7 @@ public partial class GyroMapping : IMapping
         GyroHotkey.inputsChord.State = ((GyroActions)actions).MotionTrigger.Clone() as ButtonState;
         GyroHotkey.DrawInput();
 
-        ActionComboBox.SelectedIndex = (int)actions.ActionType;
+        ActionComboBox.SelectedIndex = (int)actions.actionType;
     }
 
     private void Action_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -231,7 +231,7 @@ public partial class GyroMapping : IMapping
             return;
 
         // generate IActions based on settings
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 {
@@ -262,7 +262,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AutoRotate = Axis2AxisAutoRotate.IsOn;
@@ -277,7 +277,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisInverted = (((int)Axis2AxisRotation.Value / 90) & 2) == 2;
@@ -293,7 +293,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisDeadZoneInner = (int)Axis2AxisInnerDeadzone.Value;
@@ -308,7 +308,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisDeadZoneOuter = (int)Axis2AxisOuterDeadzone.Value;
@@ -323,7 +323,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).AxisAntiDeadZone = (int)Axis2AxisAntiDeadzone.Value;
@@ -338,7 +338,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Joystick:
                 ((AxisActions)Actions).ImproveCircularity = Axis2AxisImproveCircularity.IsOn;
@@ -353,7 +353,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).Sensivity = (int)Axis2MousePointerSpeed.Value;
@@ -368,7 +368,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).AutoRotate = Axis2MouseAutoRotate.IsOn;
@@ -383,7 +383,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).AxisInverted = (((int)Axis2MouseRotation.Value / 90) & 2) == 2;
@@ -399,7 +399,7 @@ public partial class GyroMapping : IMapping
         if (Actions is null)
             return;
 
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)Actions).Deadzone = (int)Axis2MouseDeadzone.Value;
@@ -414,7 +414,7 @@ public partial class GyroMapping : IMapping
         if (this.Actions is null)
             return;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Mouse:
                 ((MouseActions)this.Actions).Acceleration = (float)Axis2MouseAcceleration.Value;

@@ -7,12 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    d:Background="White"
+    d:Background="Black"
     d:DesignHeight="1000"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Expander HorizontalAlignment="Stretch">
+    <Expander HorizontalAlignment="Stretch" d:IsExpanded="True">
         <Expander.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -61,131 +61,154 @@
                 </DockPanel>
             </Grid>
         </Expander.Header>
+
         <Expander.Content>
-            <StackPanel>
+            <ui:SimpleStackPanel Margin="30,-10,0,-4" Spacing="6">
                 <!--  Trigger 2 Trigger  -->
-                <Grid
+                <ui:SimpleStackPanel
                     Name="Trigger2Trigger"
                     d:Visibility="Visible"
+                    Spacing="6"
                     Visibility="{Binding ElementName=ActionComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=5}">
 
-                    <ui:SimpleStackPanel Spacing="6">
-                        <ui:SimpleStackPanel Spacing="6">
+                    <!--  Inner deadzone  -->
+                    <Grid Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                            <!--  Inner deadzone  -->
-                            <Grid>
-                                <ui:SimpleStackPanel Spacing="6">
-                                    <Grid>
-                                        <TextBlock
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Inner deadzone (%)" />
-                                        <TextBox
-                                            HorizontalAlignment="Right"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, ElementName=Trigger2TriggerInnerDeadzone, Mode=OneWay}" />
-                                    </Grid>
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="Inner deadzone" />
 
-                                    <Slider
-                                        x:Name="Trigger2TriggerInnerDeadzone"
-                                        FlowDirection="LeftToRight"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="Trigger2TriggerInnerDeadzone_ValueChanged" />
-                                </ui:SimpleStackPanel>
-                            </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Trigger2TriggerInnerDeadzone, Mode=OneWay}" />
 
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
+                            <Slider
+                                x:Name="Trigger2TriggerInnerDeadzone"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                FlowDirection="LeftToRight"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                ScrollViewer.PanningMode="HorizontalOnly"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="Trigger2TriggerInnerDeadzone_ValueChanged" />
+                        </DockPanel>
+                    </Grid>
 
-                            <!--  Outer deadzone  -->
-                            <Grid>
-                                <ui:SimpleStackPanel Spacing="6">
-                                    <Grid>
-                                        <TextBlock
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Outer deadzone (%)" />
-                                        <TextBox
-                                            HorizontalAlignment="Right"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, ElementName=Trigger2TriggerOuterDeadzone, Mode=OneWay}" />
-                                    </Grid>
+                    <!--  Separator  -->
+                    <Separator
+                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        BorderThickness="0,1,0,0"
+                        Opacity="0.25" />
 
-                                    <Slider
-                                        x:Name="Trigger2TriggerOuterDeadzone"
-                                        FlowDirection="RightToLeft"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="Trigger2TriggerOuterDeadzone_ValueChanged" />
-                                </ui:SimpleStackPanel>
-                            </Grid>
+                    <!--  Outer deadzone  -->
+                    <Grid Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
 
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="Outer deadzone" />
 
-                            <!--  Inner deadzone  -->
-                            <Grid>
-                                <ui:SimpleStackPanel Spacing="6">
-                                    <Grid>
-                                        <TextBlock
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="Anti deadzone (%)" />
-                                        <TextBox
-                                            HorizontalAlignment="Right"
-                                            HorizontalContentAlignment="Center"
-                                            IsReadOnly="True"
-                                            Text="{Binding Value, ElementName=Trigger2TriggerAntiDeadzone, Mode=OneWay}" />
-                                    </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Trigger2TriggerOuterDeadzone, Mode=OneWay}" />
 
-                                    <Slider
-                                        x:Name="Trigger2TriggerAntiDeadzone"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Maximum="100"
-                                        Minimum="0"
-                                        ScrollViewer.PanningMode="HorizontalOnly"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="1"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="Trigger2TriggerAntiDeadzone_ValueChanged" />
-                                </ui:SimpleStackPanel>
-                            </Grid>
+                            <Slider
+                                x:Name="Trigger2TriggerOuterDeadzone"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                FlowDirection="RightToLeft"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                ScrollViewer.PanningMode="HorizontalOnly"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="Trigger2TriggerOuterDeadzone_ValueChanged" />
+                        </DockPanel>
+                    </Grid>
 
-                            <!--  Separator  -->
-                            <Separator
-                                BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                BorderThickness="0,1,0,0"
-                                Opacity="0.25" />
+                    <!--  Separator  -->
+                    <Separator
+                        BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        BorderThickness="0,1,0,0"
+                        Opacity="0.25" />
 
-                        </ui:SimpleStackPanel>
-                    </ui:SimpleStackPanel>
-                </Grid>
-            </StackPanel>
+                    <!--  Anti deadzone  -->
+                    <Grid Height="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="Anti deadzone" />
+
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=Trigger2TriggerAntiDeadzone, Mode=OneWay}" />
+
+                            <Slider
+                                x:Name="Trigger2TriggerAntiDeadzone"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Maximum="100"
+                                Minimum="0"
+                                ScrollViewer.PanningMode="HorizontalOnly"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="Trigger2TriggerAntiDeadzone_ValueChanged" />
+                        </DockPanel>
+                    </Grid>
+                </ui:SimpleStackPanel>
+            </ui:SimpleStackPanel>
         </Expander.Content>
     </Expander>
 </local:IMapping>

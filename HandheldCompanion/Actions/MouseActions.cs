@@ -59,7 +59,7 @@ namespace HandheldCompanion.Actions
 
         public MouseActions()
         {
-            this.ActionType = ActionType.Mouse;
+            this.actionType = ActionType.Mouse;
 
             this.Value = false;
             this.prevValue = false;

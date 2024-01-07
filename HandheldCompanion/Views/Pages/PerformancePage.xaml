@@ -11,7 +11,7 @@
     Name="Performance"
     Title="{x:Static resx:Resources.PerformancePage_Device}"
     d:Background="White"
-    d:DesignHeight="1800"
+    d:DesignHeight="2000"
     d:DesignWidth="1000"
     KeepAlive="True"
     Loaded="Page_Loaded"
@@ -64,8 +64,14 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 SelectionChanged="ProfilesPicker_SelectionChanged">
-                                <ComboBoxItem Name="OEMProfiles" IsEnabled="False" Content="{x:Static resx:Resources.PowerProfilesPage_DevicePresets}"></ComboBoxItem>
-                                <ComboBoxItem Name="UserProfiles" IsEnabled="False" Content="{x:Static resx:Resources.PowerProfilesPage_UserPresets}"></ComboBoxItem>
+                                <ComboBoxItem
+                                    Name="OEMProfiles"
+                                    Content="{x:Static resx:Resources.PowerProfilesPage_DevicePresets}"
+                                    IsEnabled="False" />
+                                <ComboBoxItem
+                                    Name="UserProfiles"
+                                    Content="{x:Static resx:Resources.PowerProfilesPage_UserPresets}"
+                                    IsEnabled="False" />
                             </ComboBox>
 
                             <!--  Create power profile  -->
@@ -174,14 +180,25 @@
                                 <ColumnDefinition MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Maximum CPU Count" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="Controls CPU unparked core count limit"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe964;" />
+
+                                <StackPanel
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Maximum CPU Count" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="Controls CPU unparked core count limit"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
 
                             <ui:ToggleSwitch
                                 Name="CPUCoreToggle"
@@ -198,41 +215,33 @@
                             Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Content  -->
-                        <Grid d:Visibility="Visible" Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <StackPanel>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="Cores" />
-
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=CPUCoreSlider, Mode=OneWay}"
-                                        TextAlignment="Center" />
-                                    <TextBlock
-                                        Width="30"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="C" />
-                                    <Slider
-                                        x:Name="CPUCoreSlider"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        Minimum="2"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="CPUCoreSlider_ValueChanged" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            d:Visibility="Visible"
+                            ScrollViewer.PanningMode="HorizontalOnly"
+                            Visibility="{Binding ElementName=CPUCoreToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} Cores, ElementName=CPUCoreSlider, Mode=OneWay}" />
+                            <Slider
+                                x:Name="CPUCoreSlider"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                Minimum="2"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="CPUCoreSlider_ValueChanged" />
+                        </DockPanel>
                     </ui:SimpleStackPanel>
                 </Border>
 
@@ -252,14 +261,25 @@
                                 <ColumnDefinition MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xeb3c;" />
+
+                                <StackPanel
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_TDPOverride}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_TDPOverrideDesc}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
 
                             <ui:ToggleSwitch
                                 Name="TDPToggle"
@@ -276,44 +296,36 @@
                             Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Content  -->
-                        <Grid d:Visibility="Visible" Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <StackPanel>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_PowerLimitTarget}" />
-
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=TDPSlider, Mode=OneWay}"
-                                        TextAlignment="Center" />
-                                    <TextBlock
-                                        Width="30"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_TDPUnitWatt}" />
-                                    <Slider
-                                        x:Name="TDPSlider"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="5"
-                                        Maximum="30"
-                                        Minimum="5"
-                                        SmallChange="1"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="TDPSlider_ValueChanged" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            d:Visibility="Visible"
+                            ScrollViewer.PanningMode="HorizontalOnly"
+                            Visibility="{Binding ElementName=TDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} W, ElementName=TDPSlider, Mode=OneWay}" />
+                            <Slider
+                                x:Name="TDPSlider"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="5"
+                                Maximum="30"
+                                Minimum="5"
+                                SmallChange="1"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="TDPSlider_ValueChanged" />
+                        </DockPanel>
                     </ui:SimpleStackPanel>
                 </Border>
 
@@ -332,15 +344,25 @@
                                 <ColumnDefinition Width="9*" MinWidth="200" />
                                 <ColumnDefinition MinWidth="200" />
                             </Grid.ColumnDefinitions>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xea86;" />
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                <StackPanel
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_AutoTDP}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_AutoTDPDesc}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
 
                             <ui:ToggleSwitch
                                 Name="AutoTDPToggle"
@@ -357,43 +379,35 @@
                             Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Content  -->
-                        <Grid Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <StackPanel>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_AutoTDPFPS}" />
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=AutoTDPSlider, Mode=OneWay}"
-                                        TextAlignment="Center" />
-                                    <TextBlock
-                                        Width="30"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_AutoTDPUnitFPS}" />
-                                    <Slider
-                                        x:Name="AutoTDPSlider"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="10"
-                                        Maximum="144"
-                                        Minimum="20"
-                                        SmallChange="1"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="1"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="AutoTDPSlider_ValueChanged" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly"
+                            Visibility="{Binding ElementName=AutoTDPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} FPS, ElementName=AutoTDPSlider, Mode=OneWay}" />
+                            <Slider
+                                x:Name="AutoTDPSlider"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="10"
+                                Maximum="60"
+                                Minimum="20"
+                                SmallChange="1"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="1"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="AutoTDPSlider_ValueChanged" />
+                        </DockPanel>
                     </ui:SimpleStackPanel>
                 </Border>
 
@@ -409,15 +423,25 @@
                                 <ColumnDefinition Width="9*" MinWidth="200" />
                                 <ColumnDefinition MinWidth="200" />
                             </Grid.ColumnDefinitions>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xe9e9;" />
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EPP}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.ProfilesPage_EPPDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                                <StackPanel
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_EPP}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_EPPDesc}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
 
                             <ui:ToggleSwitch
                                 Name="EPPToggle"
@@ -434,68 +458,46 @@
                             Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Content  -->
-                        <Grid Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <StackPanel>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly"
+                            Visibility="{Binding ElementName=EPPToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ui:SimpleStackPanel
+                                Margin="0,0,0,0"
+                                VerticalAlignment="Center"
+                                ScrollViewer.PanningMode="HorizontalOnly">
+                                <Slider
+                                    x:Name="EPPSlider"
+                                    Margin="6,0,0,0"
                                     VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_EPPBalance}" />
+                                    AutoToolTipPrecision="0"
+                                    IsMoveToPointEnabled="True"
+                                    IsSnapToTickEnabled="True"
+                                    LargeChange="10"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    SmallChange="1"
+                                    Style="{DynamicResource SliderStyle1}"
+                                    TickFrequency="10"
+                                    TickPlacement="BottomRight"
+                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ValueChanged="EPPSlider_ValueChanged" />
 
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
+                                <Grid Name="EPPGrid">
                                     <TextBlock
-                                        Width="35"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=EPPSlider, Mode=OneWay}"
-                                        TextAlignment="Center" />
-                                    <TextBlock
-                                        Width="30"
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="%" />
-
-                                    <ui:SimpleStackPanel
-                                        Margin="0,0,0,0"
-                                        VerticalAlignment="Center"
-                                        ScrollViewer.PanningMode="HorizontalOnly">
-                                        <Slider
-                                            x:Name="EPPSlider"
-                                            Margin="6,0,0,0"
-                                            VerticalAlignment="Center"
-                                            AutoToolTipPrecision="0"
-                                            IsMoveToPointEnabled="True"
-                                            IsSnapToTickEnabled="True"
-                                            LargeChange="10"
-                                            Maximum="100"
-                                            Minimum="0"
-                                            SmallChange="1"
-                                            Style="{DynamicResource SliderStyle1}"
-                                            TickFrequency="10"
-                                            TickPlacement="BottomRight"
-                                            ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                            ValueChanged="EPPSlider_ValueChanged" />
-
-                                        <Grid Name="EPPGrid">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Left"
-                                                Text="{x:Static resx:Resources.ProfilesPage_CPU}" />
-                                            <TextBlock
-                                                Grid.Column="2"
-                                                HorizontalAlignment="Right"
-                                                Text="{x:Static resx:Resources.ProfilesPage_GPU}" />
-                                        </Grid>
-                                    </ui:SimpleStackPanel>
-                                </DockPanel>
-                            </StackPanel>
-                        </Grid>
+                                        Text="{x:Static resx:Resources.ProfilesPage_CPU}" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="0,0,12,0"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Static resx:Resources.ProfilesPage_GPU}" />
+                                </Grid>
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
                     </ui:SimpleStackPanel>
                 </Border>
 
@@ -505,21 +507,32 @@
                     CornerRadius="{DynamicResource ControlCornerRadius}">
 
                     <ui:SimpleStackPanel Name="StackProfileCPUClock" Spacing="6">
-                        <!--  CPU  -->
+                        <!--  CPU Clock Control  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
                                 <ColumnDefinition MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUControl}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xecc6;" />
+
+                                <StackPanel
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUControl}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.QuickPerformancePage_CPUControlDesc}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
 
                             <ui:ToggleSwitch
                                 Name="CPUToggle"
@@ -536,41 +549,33 @@
                             Visibility="{Binding ElementName=CPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Content  -->
-                        <Grid Visibility="{Binding ElementName=CPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <StackPanel>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_CPUMhz}" />
-
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=CPUSlider, Mode=OneWay}"
-                                        TextAlignment="Center" />
-                                    <TextBlock
-                                        Width="30"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_CPUUnit}" />
-                                    <Slider
-                                        x:Name="CPUSlider"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="500"
-                                        SmallChange="100"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="100"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="CPUSlider_ValueChanged" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly"
+                            Visibility="{Binding ElementName=CPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} Mhz, ElementName=CPUSlider, Mode=OneWay}" />
+                            <Slider
+                                x:Name="CPUSlider"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="500"
+                                SmallChange="100"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="100"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="CPUSlider_ValueChanged" />
+                        </DockPanel>
                     </ui:SimpleStackPanel>
                 </Border>
 
@@ -583,21 +588,32 @@
                         Name="StackProfileGPUClock"
                         IsEnabled="False"
                         Spacing="6">
-                        <!--  GPU  -->
+                        <!--  GPU Clock Control  -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="9*" MinWidth="200" />
                                 <ColumnDefinition MinWidth="200" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                            <DockPanel>
+                                <ui:FontIcon
+                                    Height="40"
+                                    HorizontalAlignment="Center"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    Glyph="&#xecc6;" />
+
+                                <StackPanel
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_GPUControl}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.QuickPerformancePage_GPUControlDesc}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
 
                             <ui:ToggleSwitch
                                 Name="GPUToggle"
@@ -614,41 +630,33 @@
                             Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                         <!--  Content  -->
-                        <Grid Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <StackPanel>
-                                <TextBlock
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Static resx:Resources.ProfilesPage_GPUMhz}" />
-
-                                <DockPanel ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=GPUSlider, Mode=OneWay}"
-                                        TextAlignment="Center" />
-                                    <TextBlock
-                                        Width="30"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Static resx:Resources.QuickPerformancePage_GPUUnit}" />
-                                    <Slider
-                                        x:Name="GPUSlider"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        AutoToolTipPrecision="0"
-                                        IsMoveToPointEnabled="True"
-                                        IsSnapToTickEnabled="True"
-                                        LargeChange="500"
-                                        SmallChange="100"
-                                        Style="{DynamicResource SliderStyle1}"
-                                        TickFrequency="100"
-                                        TickPlacement="BottomRight"
-                                        ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                                        ValueChanged="GPUSlider_ValueChanged" />
-                                </DockPanel>
-                            </StackPanel>
-                        </Grid>
+                        <DockPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            ScrollViewer.PanningMode="HorizontalOnly"
+                            Visibility="{Binding ElementName=GPUToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N0} Mhz, ElementName=GPUSlider, Mode=OneWay}" />
+                            <Slider
+                                x:Name="GPUSlider"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center"
+                                AutoToolTipPrecision="0"
+                                IsMoveToPointEnabled="True"
+                                IsSnapToTickEnabled="True"
+                                LargeChange="500"
+                                SmallChange="100"
+                                Style="{DynamicResource SliderStyle1}"
+                                TickFrequency="100"
+                                TickPlacement="BottomRight"
+                                ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                ValueChanged="GPUSlider_ValueChanged" />
+                        </DockPanel>
                     </ui:SimpleStackPanel>
                 </Border>
 
@@ -659,14 +667,30 @@
                     Background="{DynamicResource ExpanderHeaderBackground}"
                     CornerRadius="{DynamicResource ControlCornerRadius}">
                     <Grid>
-                        <ui:SimpleStackPanel VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostMode}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}"
-                                TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xec4a;" />
+
+                            <StackPanel
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostMode}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.QuickPerformancePage_CPUBoostModeDesc}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </DockPanel>
 
                         <ui:ToggleSwitch
                             Name="CPUBoostToggle"
@@ -689,14 +713,25 @@
                             <ColumnDefinition Width="5*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
-                        <ui:SimpleStackPanel VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeDesc}"
-                                TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xec0a;" />
+
+                            <StackPanel
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickPerformancePage_PowerMode}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.QuickPerformancePage_PowerModeDesc}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <ComboBox
@@ -729,14 +764,25 @@
                             <ColumnDefinition Width="5*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Fan mode" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="Change the power profile fan mode"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xecad;" />
+
+                            <StackPanel
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="Fan mode" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="Change the power profile fan mode"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </DockPanel>
 
                         <DockPanel Grid.Column="1" Margin="12,0,0,0">
                             <ComboBox

@@ -20,6 +20,17 @@ namespace HandheldCompanion.Actions
     }
 
     [Serializable]
+    public enum ActionState
+    {
+        Stopped = 0,
+        Running = 1,
+        Aborted = 2,
+        Succeed = 3,
+        Suspended = 4,
+        Forced = 5,
+    }
+
+    [Serializable]
     public enum ModifierSet
     {
         None = 0,
@@ -36,8 +47,8 @@ namespace HandheldCompanion.Actions
     public enum PressType
     {
         Short = 0,
-        Long = 1,
-        Hold = 2,
+        Long = 1, // hold for x ms and get an action
+        Hold = 2, // press and hold the command for x ms
         Double = 3,
     }
 
@@ -73,16 +84,17 @@ namespace HandheldCompanion.Actions
             { ModifierSet.ShiftControlAlt, new KeyCode[] { KeyCode.LShift, KeyCode.LControl, KeyCode.LMenu } },
         };
 
-        public ActionType ActionType = ActionType.Disabled;
+        public ActionType actionType = ActionType.Disabled;
+        public PressType pressType = PressType.Short;
+        public ActionState actionState = ActionState.Stopped;
 
         protected object Value;
         protected object prevValue;
 
-        // TODO: multiple delay, delay ranges
-        public PressType PressType = PressType.Short;
-        public int ActionTimer = 450; // default value for steam
-        protected int pressTimer = -1; // -1 inactive, >= 0 active
-        private bool pressStatus = false; // used to store previous press value for double tap
+        public int ActionTimer = 200; // default value for steam
+        public int pressTimer = -1; // -1 inactive, >= 0 active
+
+        private int pressCount = 0; // used to store previous press value for double tap
 
         public bool Turbo;
         public int TurboDelay = 30;
@@ -91,6 +103,8 @@ namespace HandheldCompanion.Actions
 
         public bool Toggle;
         protected bool IsToggled;
+
+        public bool Interruptable = true;
 
         public HapticMode HapticMode = HapticMode.Off;
         public HapticStrength HapticStrength = HapticStrength.Low;
@@ -113,25 +127,89 @@ namespace HandheldCompanion.Actions
 
         public virtual void Execute(ButtonFlags button, bool value)
         {
-            switch(PressType)
+            if (actionState == ActionState.Suspended)
+            {
+                // bypass output
+                this.Value = false;
+                this.prevValue = value;
+                return;
+            }
+            else if (actionState == ActionState.Forced)
+            {
+                // bypass output
+                value = true;
+            }
+
+            switch (pressType)
             {
                 case PressType.Long:
                     {
                         if (value)
                         {
+                            // update state
+                            actionState = ActionState.Running;
+
+                            // update timer
                             pressTimer += TimerManager.GetPeriod();
+
                             if (pressTimer >= ActionTimer)
                             {
-                                // do something
+                                // update state
+                                actionState = ActionState.Succeed;
                             }
                             else
                             {
-                                value = false;
+                                // bypass output
+                                this.Value = false;
+                                this.prevValue = value;
+                                return;
                             }
                         }
                         else
                         {
-                            pressTimer = -1;
+                            // key was released too early
+                            if (actionState == ActionState.Running)
+                            {
+                                // update state
+                                actionState = ActionState.Aborted;
+
+                                // update timer
+                                pressTimer = Math.Max(50, pressTimer);
+                            }
+                            else if (actionState == ActionState.Succeed)
+                            {
+                                // update state
+                                actionState = ActionState.Stopped;
+
+                                // update timer
+                                pressTimer = -1;
+                            }
+                            else if (actionState == ActionState.Stopped)
+                            {
+                                // update timer
+                                pressTimer = -1;
+                            }
+
+                            if (actionState == ActionState.Aborted)
+                            {
+                                // set to aborted for a time equal to the actions was "running"
+                                if (pressTimer >= 0)
+                                {
+                                    // update state
+                                    actionState = ActionState.Aborted;
+
+                                    // update timer
+                                    pressTimer -= TimerManager.GetPeriod();
+                                }
+                                else
+                                {
+                                    // update state
+                                    actionState = ActionState.Stopped;
+
+                                    // update timer
+                                    pressTimer = -1;
+                                }
+                            }
                         }
                     }
                     break;
@@ -140,11 +218,21 @@ namespace HandheldCompanion.Actions
                     {
                         if (value || (pressTimer <= ActionTimer && pressTimer >= 0))
                         {
+                            // update state
+                            actionState = ActionState.Running;
+
+                            // update timer
                             pressTimer += TimerManager.GetPeriod();
+
+                            // bypass output (simple)
                             value = true;
                         }
                         else if (pressTimer >= ActionTimer)
                         {
+                            // update state
+                            actionState = ActionState.Stopped;
+
+                            // reset var(s)
                             pressTimer = -1;
                         }
                     }
@@ -154,42 +242,85 @@ namespace HandheldCompanion.Actions
                     {
                         if (value)
                         {
-                            // first time the button is pressed
-                            if (!pressStatus)
-                            {
-                                pressStatus = true;
-                                value = false;
-                            }
-                            else if (pressTimer > 0)
-                            {
-                                // second time button is pressed
-                                if (pressTimer <= ActionTimer)
-                                {
-                                    // do something
-                                    pressTimer = ActionTimer;
-                                    break;
-                                }
-
-                                pressTimer = -1;
-                                value = false;
-                            }
-                            else
-                            {
-                                value = false;
-                            }
+                            // increase press count
+                            if ((bool)prevValue != value)
+                                pressCount++;
                         }
-                        else
-                        {
-                            if (pressStatus)
-                            {
-                                pressTimer += TimerManager.GetPeriod();
 
-                                if (pressTimer > ActionTimer)
+                        switch (pressCount)
+                        {
+                            default:
                                 {
-                                    pressStatus = false;
-                                    pressTimer = -1;
+                                    if (actionState != ActionState.Stopped)
+                                    {
+                                        // update timer
+                                        pressTimer += TimerManager.GetPeriod();
+
+                                        if (pressTimer >= 50)
+                                        {
+                                            // update state
+                                            actionState = ActionState.Stopped;
+
+                                            // reset var(s)
+                                            pressCount = 0;
+                                            pressTimer = 0;
+                                        }
+                                    }
+
+                                    // bypass output
+                                    this.Value = false;
+                                    this.prevValue = value;
+                                    return;
                                 }
-                            }
+
+                            case 1:
+                                {
+                                    // update state
+                                    actionState = ActionState.Running;
+
+                                    // update timer
+                                    pressTimer += TimerManager.GetPeriod();
+
+                                    // too slow to press again ?
+                                    if (pressTimer > ActionTimer)
+                                    {
+                                        // update state
+                                        actionState = ActionState.Aborted;
+
+                                        // reset var(s)
+                                        pressCount = 0;
+                                        pressTimer = 0;
+                                    }
+
+                                    // bypass output
+                                    this.Value = false;
+                                    this.prevValue = value;
+                                    return;
+                                }
+
+                            case 2:
+                                {
+                                    // on time
+                                    if (pressTimer <= ActionTimer && value)
+                                    {
+                                        // update state
+                                        actionState = ActionState.Succeed;
+
+                                        // reset var(s)
+                                        pressCount = 2;
+                                        pressTimer = ActionTimer;
+                                    }
+                                    else
+                                    {
+                                        // update state
+                                        actionState = ActionState.Stopped;
+
+                                        // reset var(s)
+                                        pressCount = 0;
+                                        pressTimer = 0;
+                                    }
+                                }
+                                break;
                         }
                     }
                     break;

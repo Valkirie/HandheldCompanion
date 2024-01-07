@@ -175,7 +175,7 @@ namespace HandheldCompanion.Managers
                 (gyroAction.MotionMode == MotionMode.On && !controllerState.ButtonState.ContainsTrue(gyroAction.MotionTrigger)) ||
                 (gyroAction.MotionMode == MotionMode.Toggle && gyroAction.MotionToggleStatus);
 
-            bool MotionMapped = action?.ActionType != ActionType.Disabled;
+            bool MotionMapped = action?.actionType != ActionType.Disabled;
 
             // update sensorFusion, only when needed
             if (MotionMapped && MotionTriggered && (gyroAction.MotionInput == MotionInput.PlayerSpace ||
