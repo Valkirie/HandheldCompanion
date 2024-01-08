@@ -1499,12 +1499,6 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
     <value>Automaticamente desligar RTSS quando o Companion é encerrado</value>
   </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automaticamente desligar HWiNFO quando o Companion é encerrado</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
   <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
     <value>Padrão</value>
   </data>

@@ -26,15 +26,15 @@ public partial class QuickOverlayPage : Page
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
+        PlatformManager.LibreHardwareMonitor.Updated += LibreHardwareMonitor_Updated;
 
         // force call
         // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
-        HWiNFO_Updated(PlatformManager.HWiNFO.Status);
+        LibreHardwareMonitor_Updated(PlatformManager.LibreHardwareMonitor.Status);
     }
 
-    private void HWiNFO_Updated(PlatformStatus status)
+    private void LibreHardwareMonitor_Updated(PlatformStatus status)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>

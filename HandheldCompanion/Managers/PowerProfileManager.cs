@@ -26,7 +26,7 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(ProfilesPath))
                 Directory.CreateDirectory(ProfilesPath);
 
-            PlatformManager.OpenHardwareMonitor.CpuTemperatureChanged += OpenHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
 
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
@@ -61,13 +61,13 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "PowerProfileManager");
         }
 
-        private static void OpenHardwareMonitor_CpuTemperatureChanged(double value)
+        private static void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
-            if (currentProfile is null || currentProfile.FanProfile is null)
+            if (currentProfile is null || currentProfile.FanProfile is null || value is null)
                 return;
 
             // update fan profile
-            currentProfile.FanProfile.SetTemperature(value);
+            currentProfile.FanProfile.SetTemperature((float)value);
 
             switch (currentProfile.FanProfile.fanMode)
             {

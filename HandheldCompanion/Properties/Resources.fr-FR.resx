@@ -1536,12 +1536,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
     <value>Automatically turn RTSS off when companion is closed</value>
   </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automatically turn HWiNFO off when companion is closed</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
   <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
     <value>Default</value>
   </data>

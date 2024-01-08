@@ -109,8 +109,7 @@ public static class PerformanceManager
         ProfileManager.Updated += ProfileManager_Updated;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-        PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
-        PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
+        PlatformManager.LibreHardwareMonitor.GPUClockChanged += LibreHardwareMonitor_GPUClockChanged;
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
@@ -1103,34 +1102,13 @@ public static class PerformanceManager
 
     #region events
 
-    private static void HWiNFO_PowerLimitChanged(PowerType type, int limit)
+    private static void LibreHardwareMonitor_GPUClockChanged(float? value)
     {
-        var idx = (int)type;
-        CurrentTDP[idx] = limit;
+        if (value is null) return;
 
-        // workaround, HWiNFO doesn't have the ability to report MSR
-        switch (type)
-        {
-            case PowerType.Slow:
-                CurrentTDP[(int)PowerType.Stapm] = limit;
-                CurrentTDP[(int)PowerType.MsrSlow] = limit;
-                break;
-            case PowerType.Fast:
-                CurrentTDP[(int)PowerType.MsrFast] = limit;
-                break;
-        }
+        CurrentGfxClock = (float) value;
 
-        // raise event
-        PowerLimitChanged?.Invoke(type, limit);
-
-        LogManager.LogTrace("PowerLimitChanged: {0}\t{1} W", type, limit);
-    }
-
-    private static void HWiNFO_GPUFrequencyChanged(double value)
-    {
-        CurrentGfxClock = value;
-
-        LogManager.LogTrace("GPUFrequencyChanged: {0} Mhz", value);
+        LogManager.LogTrace("GPUClockChange: {0} Mhz", value);
     }
 
     private static void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)

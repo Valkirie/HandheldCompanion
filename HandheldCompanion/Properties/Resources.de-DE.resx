@@ -1497,12 +1497,6 @@ Wenn die Bewegungseingabe aktiviert ist, verwenden Sie die ausgewählte(n) Taste
   <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
     <value>Automatically turn RTSS off when companion is closed</value>
   </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automatically turn HWiNFO off when companion is closed</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
   <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
     <value>Standard</value>
   </data>

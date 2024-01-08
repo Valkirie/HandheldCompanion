@@ -57,7 +57,6 @@
             <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
             <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
             <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
-            <hints:Hint_HWiNFO12hLimitPassed d:Visibility="Visible" />
             <hints:Hint_CoreIsolationCheck d:Visibility="Visible" />
             <hints:Hint_AMD_IntegerScalingCheck d:Visibility="Visible" />
         </ui:SimpleStackPanel>

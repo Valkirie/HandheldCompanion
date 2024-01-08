@@ -3348,33 +3348,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HWiNFO Shared Memory limit was reached.
-        /// </summary>
-        public static string Hint_HWiNFO12hLimitPassed {
-            get {
-                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to HWiNFO has reached its shared memory time limit and disabled the shared memory support. This may result in missing or outdated sensor readings.
-        /// </summary>
-        public static string Hint_HWiNFO12hLimitPassedDesc {
-            get {
-                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassedDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You should manually re-activate the shared memory time limit in the HWiNFO settings.
-        /// </summary>
-        public static string Hint_HWiNFO12hLimitPassedReadme {
-            get {
-                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassedReadme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Legion Space Tasks and Services are active.
         /// </summary>
         public static string Hint_LegionGoServices {
@@ -6328,9 +6301,9 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Motion input disabled: hold selected button(s) to enable motion.
-        ///Motion input enabled: hold selected button(s) to disable motion.
-        ///Motion input toggle: press selected button(s) to switch motion state..
+        ///   Looks up a localized string similar to With motion input disabled, hold selected button(s) to enable motion,
+        ///with motion input enabled, hold selected button(s) to disable motion,
+        ///with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
@@ -7523,24 +7496,6 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_HideWhenLoseFocusDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_HideWhenLoseFocusDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to HWiNFO.
-        /// </summary>
-        public static string SettingsPage_HwInfo {
-            get {
-                return ResourceManager.GetString("SettingsPage_HwInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically turn HWiNFO off when companion is closed.
-        /// </summary>
-        public static string SettingsPage_HwInfoDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_HwInfoDesc", resourceCulture);
             }
         }
         

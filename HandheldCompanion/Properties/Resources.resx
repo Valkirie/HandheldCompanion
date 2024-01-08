@@ -1518,12 +1518,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
     <value>Automatically hide quick tools when the user clicks outside of window</value>
   </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automatically turn HWiNFO off when companion is closed</value>
-  </data>
   <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Power options</value>
   </data>
@@ -2633,15 +2627,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
     <value>Emulated controller is managed by profile</value>
-  </data>
-  <data name="Hint_HWiNFO12hLimitPassed" xml:space="preserve">
-    <value>HWiNFO Shared Memory limit was reached</value>
-  </data>
-  <data name="Hint_HWiNFO12hLimitPassedDesc" xml:space="preserve">
-    <value>HWiNFO has reached its shared memory time limit and disabled the shared memory support. This may result in missing or outdated sensor readings</value>
-  </data>
-  <data name="Hint_HWiNFO12hLimitPassedReadme" xml:space="preserve">
-    <value>You should manually re-activate the shared memory time limit in the HWiNFO settings</value>
   </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>

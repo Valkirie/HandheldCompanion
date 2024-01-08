@@ -337,15 +337,6 @@ begin
     '', True, False);
 end;
 
-procedure Dependency_AddHWiNFO;
-begin
-  Dependency_Add('hwi_766.exe',
-    '/silent',
-    'HWiNFO v7.6.6',
-    'https://github.com/Valkirie/HandheldCompanion/raw/main/redist/hwi_766.exe',
-    '', True, False);
-end;
-
 [Setup]
 ; -------------
 ; SETUP
@@ -370,7 +361,6 @@ end;
 #define UseViGem
 #define UseHideHide
 #define UseRTSS
-#define UseHWiNFO
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
@@ -585,10 +575,6 @@ begin
 
 #ifdef UseRTSS
   Dependency_AddRTSS;
-#endif
-
-#ifdef UseHWiNFO
-  Dependency_AddHWiNFO;
 #endif
 
   Result := True;

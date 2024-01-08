@@ -19,8 +19,7 @@ public enum PlatformType
     Origin = 2,
     UbisoftConnect = 3,
     GOG = 4,
-    RTSS = 5,
-    HWiNFO = 6
+    RTSS = 5
 }
 
 public enum PlatformStatus
