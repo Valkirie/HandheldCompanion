@@ -57,17 +57,4 @@ public class GPDWinMax2 : IDevice
 
         return defaultGlyph;
     }
-
-    public override string GetGlyph(ButtonFlags button)
-    {
-        switch (button)
-        {
-            case ButtonFlags.OEM2:
-                return "\u220E";
-            case ButtonFlags.OEM3:
-                return "\u220F";
-        }
-
-        return defaultGlyph;
-    }
 }
