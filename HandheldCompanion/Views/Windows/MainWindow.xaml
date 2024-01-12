@@ -66,7 +66,7 @@
                 Content="{x:Static resx:Resources.MainWindow_navPerformance}"
                 Tag="PerformancePage">
                 <ui:NavigationViewItem.Icon>
-                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE945;" />
+                    <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe9d9;" />
                 </ui:NavigationViewItem.Icon>
             </ui:NavigationViewItem>
 
@@ -121,7 +121,10 @@
                     <Grid>
                         <ui:FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea8f;" />
 
-                        <Grid Name="HasNotifications" Margin="11,-11,-11,11" Visibility="Hidden">
+                        <Grid
+                            Name="HasNotifications"
+                            Margin="11,-11,-11,11"
+                            Visibility="Hidden">
                             <ui:FontIcon
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Foreground="Red"

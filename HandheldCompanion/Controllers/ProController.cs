@@ -48,11 +48,6 @@ public class ProController : JSController
         base.Unplug();
     }
 
-    public override void Cleanup()
-    {
-        TimerManager.Tick -= UpdateInputs;
-    }
-
     public override void SetVibration(byte LargeMotor, byte SmallMotor)
     {
         // HD rumble isn't yet supported

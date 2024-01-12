@@ -26,7 +26,7 @@ namespace HandheldCompanion.Managers
             if (!Directory.Exists(ProfilesPath))
                 Directory.CreateDirectory(ProfilesPath);
 
-            PlatformManager.OpenHardwareMonitor.CpuTemperatureChanged += OpenHardwareMonitor_CpuTemperatureChanged;
+            PlatformManager.LibreHardwareMonitor.CPUTemperatureChanged += LibreHardwareMonitor_CpuTemperatureChanged;
 
             ProfileManager.Applied += ProfileManager_Applied;
             ProfileManager.Discarded += ProfileManager_Discarded;
@@ -39,13 +39,11 @@ namespace HandheldCompanion.Managers
             foreach (var fileName in fileEntries)
                 ProcessProfile(fileName);
 
-            // process device profiles
-            if (MainWindow.CurrentDevice.powerProfileQuiet is not null && !profiles.ContainsKey(MainWindow.CurrentDevice.powerProfileQuiet.Guid))
-                UpdateOrCreateProfile(MainWindow.CurrentDevice.powerProfileQuiet, UpdateSource.Serializer);
-            if (MainWindow.CurrentDevice.powerProfileCool is not null && !profiles.ContainsKey(MainWindow.CurrentDevice.powerProfileCool.Guid))
-                UpdateOrCreateProfile(MainWindow.CurrentDevice.powerProfileCool, UpdateSource.Serializer);
-            if (MainWindow.CurrentDevice.powerProfileBalanced is not null && !profiles.ContainsKey(MainWindow.CurrentDevice.powerProfileBalanced.Guid))
-                UpdateOrCreateProfile(MainWindow.CurrentDevice.powerProfileBalanced, UpdateSource.Serializer);
+            foreach (var devicePowerProfile in MainWindow.CurrentDevice.DevicePowerProfiles)
+            {
+                if(!profiles.ContainsKey(devicePowerProfile.Guid))
+                    UpdateOrCreateProfile(devicePowerProfile, UpdateSource.Serializer);
+            }
 
             IsInitialized = true;
             Initialized?.Invoke();
@@ -63,13 +61,13 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has stopped", "PowerProfileManager");
         }
 
-        private static void OpenHardwareMonitor_CpuTemperatureChanged(double value)
+        private static void LibreHardwareMonitor_CpuTemperatureChanged(float? value)
         {
-            if (currentProfile is null || currentProfile.FanProfile is null)
+            if (currentProfile is null || currentProfile.FanProfile is null || value is null)
                 return;
 
             // update fan profile
-            currentProfile.FanProfile.SetTemperature(value);
+            currentProfile.FanProfile.SetTemperature((float)value);
 
             switch (currentProfile.FanProfile.fanMode)
             {
@@ -160,7 +158,7 @@ namespace HandheldCompanion.Managers
                 return;
 
             // warn owner
-            bool isCurrent = profile.Guid == currentProfile.Guid;
+            bool isCurrent = profile.Guid == currentProfile?.Guid;
 
             if (isCurrent)
                 Applied?.Invoke(profile, source);
@@ -183,6 +181,15 @@ namespace HandheldCompanion.Managers
         {
             if (profiles.TryGetValue(guid, out var profile))
                 return profile;
+
+            return null;
+        }
+
+        public static PowerProfile GetCurrent()
+        {
+            if (currentProfile is not null)
+                return currentProfile;
+
             return null;
         }
 
@@ -216,7 +223,7 @@ namespace HandheldCompanion.Managers
                 profiles.Remove(profile.Guid);
 
                 // warn owner
-                bool isCurrent = profile.Guid == currentProfile.Guid;
+                bool isCurrent = profile.Guid == currentProfile?.Guid;
 
                 // raise event
                 Discarded?.Invoke(profile);

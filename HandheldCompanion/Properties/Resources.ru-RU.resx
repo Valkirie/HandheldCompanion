@@ -463,7 +463,7 @@
     <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
+    <value>Change the angle</value>
   </data>
   <data name="OverlayPage_Color" xml:space="preserve">
     <value>Цвет фона</value>
@@ -1004,7 +1004,7 @@
     <value>Мертвая зона</value>
   </data>
   <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>Change the steering deadzone, in degree. Improves steering straight</value>
+    <value>Change the steering deadzone. Improves steering straight</value>
   </data>
   <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>Joystick game Input</value>
@@ -1022,7 +1022,7 @@
     <value>Max steering angle</value>
   </data>
   <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
-    <value>Change the maximum steering angle value, in degree</value>
+    <value>Change the maximum steering angle value</value>
   </data>
   <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
     <value>Steering linearity</value>
@@ -1943,7 +1943,7 @@
     <value>DPad Left</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Right</value>
+    <value>DPad Right</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Up</value>
@@ -2232,12 +2232,6 @@
   </data>
   <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
     <value>Automatically hide quick tools when the user clicks outside of window</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automatically turn HWiNFO off when companion is closed</value>
   </data>
   <data name="SettingsPage_NativeDisplayOrientation" xml:space="preserve">
     <value>Native display orientation</value>

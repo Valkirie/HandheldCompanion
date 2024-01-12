@@ -4,11 +4,12 @@ using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace HandheldCompanion.Controls;
 
@@ -67,7 +68,7 @@ public partial class ButtonMapping : IMapping
         base.SetIActions(actions);
 
         // update UI
-        ActionComboBox.SelectedIndex = (int)actions.ActionType;
+        ActionComboBox.SelectedIndex = (int)actions.actionType;
     }
 
     public IActions GetIActions()
@@ -90,10 +91,10 @@ public partial class ButtonMapping : IMapping
         TargetComboBox.IsEnabled = ActionComboBox.SelectedIndex != 0;
 
         // get current controller
-        var controller = ControllerManager.GetEmulatedController();
+        IController controller = ControllerManager.GetEmulatedController();
 
         // populate target dropdown based on action type
-        var type = (ActionType)ActionComboBox.SelectedIndex;
+        ActionType type = (ActionType)ActionComboBox.SelectedIndex;
 
         if (type == ActionType.Disabled)
         {
@@ -107,21 +108,15 @@ public partial class ButtonMapping : IMapping
             if (Actions is null || Actions is not ButtonActions)
                 Actions = new ButtonActions();
 
-            foreach (var button in IController.GetTargetButtons())
+            foreach (ButtonFlags button in IController.GetTargetButtons())
             {
                 // create a label, store ButtonFlags as Tag and Label as controller specific string
-                var buttonLabel = new Label { Tag = button, Content = controller.GetButtonName(button) };
+                Label buttonLabel = new Label { Tag = button, Content = controller.GetButtonName(button) };
                 TargetComboBox.Items.Add(buttonLabel);
 
                 if (button.Equals(((ButtonActions)Actions).Button))
                     TargetComboBox.SelectedItem = buttonLabel;
             }
-
-            // settings
-            if (TargetComboBox.SelectedItem is not null)
-                PressComboBox.SelectedIndex = (int)this.Actions.PressType;
-            else
-                this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
 
             // button specific settings
         }
@@ -132,10 +127,8 @@ public partial class ButtonMapping : IMapping
 
             // use optimized lazily created list
             TargetComboBox.ItemsSource = keyList;
-
-            foreach (var keyLabel in keyList)
-                if (keyLabel.Tag.Equals(((KeyboardActions)this.Actions).Key))
-                    TargetComboBox.SelectedItem = keyLabel;
+            foreach (var keyLabel in keyList.Where(keyLabel => keyLabel.Tag.Equals(((KeyboardActions)this.Actions).Key)))
+                TargetComboBox.SelectedItem = keyLabel;
 
             // keyboard specific settings
             ModifierComboBox.SelectedIndex = (int)((KeyboardActions)this.Actions).Modifiers;
@@ -156,35 +149,34 @@ public partial class ButtonMapping : IMapping
                 }
 
                 // create a label, store MouseActionsType as Tag and Label as controller specific string
-                var buttonLabel = new Label
-                { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
+                Label buttonLabel = new Label { Tag = mouseType, Content = EnumUtils.GetDescriptionFromEnumValue(mouseType) };
                 TargetComboBox.Items.Add(buttonLabel);
 
                 if (mouseType.Equals(((MouseActions)Actions).MouseType))
                     TargetComboBox.SelectedItem = buttonLabel;
             }
 
-            // settings
-            if (TargetComboBox.SelectedItem is not null)
-                PressComboBox.SelectedIndex = (int)this.Actions.PressType;
-            else
-                this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
-
             // mouse specific settings
             ModifierComboBox.SelectedIndex = (int)((MouseActions)this.Actions).Modifiers;
         }
 
-        // press type is treated specially, it can be set before action 
+        // settings
         if (TargetComboBox.SelectedItem is not null)
-            PressComboBox.SelectedIndex = (int)this.Actions.PressType;
+            PressComboBox.SelectedIndex = (int)this.Actions.pressType;
         else
-            this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
-        Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+            this.Actions.pressType = (PressType)PressComboBox.SelectedIndex;
+
+        // if no target element was selected, pick the first one
+        if (TargetComboBox.SelectedItem is null)
+            TargetComboBox.SelectedIndex = 0;
+        
+        Button2ButtonPressDelay.Visibility = Actions.pressType != PressType.Short ? Visibility.Visible : Visibility.Collapsed;
 
         // settings
-        LongPressDelaySlider.Value = (int)this.Actions.LongPressTime;
+        LongPressDelaySlider.Value = (int)this.Actions.ActionTimer;
         Toggle_Turbo.IsOn = this.Actions.Turbo;
         Turbo_Slider.Value = this.Actions.TurboDelay;
+        Toggle_Interruptable.IsOn = this.Actions.Interruptable;
         Toggle_Toggle.IsOn = this.Actions.Toggle;
         HapticModeComboBox.SelectedIndex = (int)this.Actions.HapticMode;
         HapticStrengthComboBox.SelectedIndex = (int)this.Actions.HapticStrength;
@@ -201,7 +193,7 @@ public partial class ButtonMapping : IMapping
             return;
 
         // generate IActions based on settings
-        switch (Actions.ActionType)
+        switch (Actions.actionType)
         {
             case ActionType.Button:
                 {
@@ -240,9 +232,9 @@ public partial class ButtonMapping : IMapping
         if (this.Actions is null)
             return;
 
-        this.Actions.PressType = (PressType)PressComboBox.SelectedIndex;
+        this.Actions.pressType = (PressType)PressComboBox.SelectedIndex;
 
-        Button2ButtonPressDelay.Visibility = Actions.PressType == PressType.Long ? Visibility.Visible : Visibility.Collapsed;
+        Button2ButtonPressDelay.Visibility = Actions.pressType != PressType.Short ? Visibility.Visible : Visibility.Collapsed;
 
         base.Update();
     }
@@ -252,7 +244,7 @@ public partial class ButtonMapping : IMapping
         if (this.Actions is null)
             return;
 
-        this.Actions.LongPressTime = (int)LongPressDelaySlider.Value;
+        this.Actions.ActionTimer = (int)LongPressDelaySlider.Value;
 
         base.Update();
     }
@@ -264,7 +256,7 @@ public partial class ButtonMapping : IMapping
 
         ModifierSet mods = (ModifierSet)ModifierComboBox.SelectedIndex;
 
-        switch (this.Actions.ActionType)
+        switch (this.Actions.actionType)
         {
             case ActionType.Keyboard:
                 ((KeyboardActions)this.Actions).Modifiers = mods;
@@ -324,6 +316,16 @@ public partial class ButtonMapping : IMapping
             return;
 
         this.Actions.HapticStrength = (HapticStrength)HapticStrengthComboBox.SelectedIndex;
+
+        base.Update();
+    }
+
+    private void Toggle_Interruptable_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (this.Actions is null)
+            return;
+
+        this.Actions.Interruptable = Toggle_Interruptable.IsOn;
 
         base.Update();
     }

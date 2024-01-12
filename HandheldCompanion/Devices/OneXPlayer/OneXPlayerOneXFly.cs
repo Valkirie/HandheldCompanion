@@ -44,9 +44,9 @@ public class OneXPlayerOneXFly : IDevice
         // device specific capacities
         Capabilities = DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
+        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
         DynamicLightingCapabilities |= LEDLevel.Rainbow;
-        Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
         ECDetails = new ECDetails
         {

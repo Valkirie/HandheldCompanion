@@ -37,15 +37,22 @@ namespace HandheldCompanion.Controllers
             Y1 = 128,
         }
 
+        private enum ControllerState
+        {
+            Unk0 = 0,
+            Unk1 = 1,
+            Wired = 2,
+            Wireless = 3,
+        }
+
         private HidDevice hidDevice;
         private const byte FRONT_IDX = 17;
         private const byte BACK_IDX = 19;
         private const byte STATUS_IDX = 0;
-        private const byte PING_IDX = 40;
-        private HashSet<int> READY_STATES = new HashSet<int>() {25, 60};
+        private const byte LCONTROLLER_STATE_IDX = 11;
+        private const byte RCONTROLLER_STATE_IDX = 12;
 
-        private const byte MIN_WIRELESS_STATUS = 40;
-        private const byte MAX_WIRELESS_STATUS = 50;
+        private HashSet<int> READY_STATES = new HashSet<int>() {25, 60};
 
         private Thread dataThread;
         private bool dataThreadRunning;
@@ -64,8 +71,9 @@ namespace HandheldCompanion.Controllers
         {
             get
             {
-                byte status = GetStatus(PING_IDX);
-                return (status >= MIN_WIRELESS_STATUS && status <= MAX_WIRELESS_STATUS);
+                byte LControllerState = GetStatus(LCONTROLLER_STATE_IDX);
+                byte RControllerState = GetStatus(RCONTROLLER_STATE_IDX);
+                return LControllerState == (byte)ControllerState.Wireless || RControllerState == (byte)ControllerState.Wireless;
             }
         }
 
@@ -149,16 +157,20 @@ namespace HandheldCompanion.Controllers
         public override void Plug()
         {
             hidDevice = GetHidDevice();
-
             if (hidDevice is not null && hidDevice.IsConnected)
             {
                 if (!hidDevice.IsOpen)
                     hidDevice.OpenDevice();
 
-                dataThreadRunning = true;
-                dataThread = new Thread(dataThreadLoop);
-                dataThread.IsBackground = true;
-                dataThread.Start();
+                // start data thread
+                if (dataThread is null)
+                {
+                    dataThreadRunning = true;
+
+                    dataThread = new Thread(dataThreadLoop);
+                    dataThread.IsBackground = true;
+                    dataThread.Start();
+                }
             }
 
             base.Plug();
@@ -166,19 +178,21 @@ namespace HandheldCompanion.Controllers
 
         public override void Unplug()
         {
+            // kill data thread
+            if (dataThread is not null)
+            {
+                dataThreadRunning = false;
+                dataThread.Join();
+                dataThread = null;
+            }
+
             if (hidDevice is not null)
             {
-                // kill rumble thread
-                dataThreadRunning = false;
-                if (dataThread is not null)
-                    dataThread.Join();
-
                 if (hidDevice.IsConnected && hidDevice.IsOpen)
-                {
                     hidDevice.CloseDevice();
-                    hidDevice.Dispose();
-                    hidDevice = null;
-                }
+
+                hidDevice.Dispose();
+                hidDevice = null;
             }
 
             base.Unplug();
@@ -240,12 +254,13 @@ namespace HandheldCompanion.Controllers
                     continue;
 
                 HidReport report = hidDevice.ReadReport();
-
                 if (report is not null)
                 {
                     // check if packet is safe
                     if (READY_STATES.Contains(report.Data[STATUS_IDX]))
+                    {
                         Data = report.Data;
+                    }
                 }
             }
         }

@@ -1,4 +1,5 @@
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using Newtonsoft.Json;
 using System;
@@ -24,8 +25,10 @@ public enum UpdateSource
     Background = 0,
     ProfilesPage = 1,
     QuickProfilesPage = 2,
+    QuickProfilesCreation = 3,
     Creation = 4,
-    Serializer = 5
+    Serializer = 5,
+    ProfilesPageUpdateOnly = 6
 }
 
 [Serializable]
@@ -37,6 +40,8 @@ public partial class Profile : ICloneable, IComparable
 
     public string Name { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
+    public bool IsSubProfile { get; set; } = false;
+    public bool IsFavoriteSubProfile { get; set; } = false;
 
     public Guid Guid { get; set; } = Guid.NewGuid();
     public string Executable { get; set; } = string.Empty;
@@ -79,17 +84,23 @@ public partial class Profile : ICloneable, IComparable
     public float FlickstickDuration { get; set; } = 0.1f;
     public float FlickstickSensivity { get; set; } = 3.0f;
 
-    // power
+    // power & graphics
     public Guid PowerProfile { get; set; } = new();
-
-    public bool FramerateEnabled { get; set; }
-    public int FramerateValue { get; set; } = 0;
-
-    public bool RSREnabled { get; set; }
-    public int RSRSharpness { get; set; } = 20;
-
-    public bool CPUCoreEnabled { get; set; }
+    public int FramerateValue { get; set; } = 0; // default RTSS value
+    public bool GPUScaling { get; set;} = false;
+    public int ScalingMode { get; set; } = 0; // default AMD value
+    public bool RSREnabled { get; set; } = false;
+    public int RSRSharpness { get; set; } = 20; // default AMD value
+    public bool IntegerScalingEnabled { get; set; } = false;
+    public int IntegerScalingDivider { get; set; } = 1;
+    public bool RISEnabled { get; set; } = false;
+    public int RISSharpness { get; set; } = 80; // default AMD value
+    public bool CPUCoreEnabled { get; set; } = false;
     public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
+
+    // AppCompatFlags
+    public bool FullScreenOptimization { get; set; } = true;
+    public bool HighDPIAware { get; set; } = true;
 
     // emulated controller type, default is default
     public HIDmode HID { get; set; } = HIDmode.NotSelected;
@@ -155,12 +166,23 @@ public partial class Profile : ICloneable, IComparable
 
         if (!Default)
             name = System.IO.Path.GetFileNameWithoutExtension(Executable);
+        
+        // sub profile files will be of form "executable - #guid"
+        if (IsSubProfile)
+            name = $"{name} - {Guid}";
 
         return $"{name}.json";
     }
 
     public override string ToString()
     {
-        return Name;
+        // if sub profile, return the following (mainprofile.name - subprofile.name)
+        if (IsSubProfile)
+        {
+            string mainProfileName = ProfileManager.GetProfileForSubProfile(this).Name;
+            return $"{mainProfileName} - {Name}";
+        }
+        else
+            return Name;
     }
 }

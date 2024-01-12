@@ -8,7 +8,7 @@ namespace HandheldCompanion.Managers.Desktop;
 
 public class ScreenResolution
 {
-    public SortedDictionary<int, ScreenFrequency> Frequencies;
+    public SortedList<int, int> Frequencies;
     public int Height;
     public int Width;
     public int BitsPerPel;
@@ -18,7 +18,7 @@ public class ScreenResolution
         Width = dmPelsWidth;
         Height = dmPelsHeight;
         BitsPerPel = bitsPerPel;
-        Frequencies = new SortedDictionary<int, ScreenFrequency>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        Frequencies = new(Comparer<int>.Create((x, y) => y.CompareTo(x)));
     }
 
     public override string ToString()
@@ -27,44 +27,41 @@ public class ScreenResolution
     }
 }
 
-public enum Frequency
+public class ScreenFramelimit
 {
-    Quarter = 0,
-    Third = 1,
-    Half = 2,
-    Full = 3
-}
+    public int index;
+    public int limit;
 
-public class ScreenFrequency
-{
-    private readonly SortedDictionary<Frequency, double> Frequencies = new();
-
-    public ScreenFrequency(int frequency)
+    public ScreenFramelimit(int index, int limit)
     {
-        Frequencies[Frequency.Quarter] = Math.Round(frequency / 4.0d, 1);
-        Frequencies[Frequency.Third] = Math.Round(frequency / 3.0d, 1);
-        Frequencies[Frequency.Half] = Math.Round(frequency / 2.0d, 1);
-        Frequencies[Frequency.Full] = frequency;
-    }
-
-    public double GetValue(Frequency frequency)
-    {
-        return Frequencies[frequency];
+        this.index = index;
+        this.limit = limit;
     }
 
     public override string ToString()
     {
-        return $"{Frequencies[Frequency.Full]} Hz";
+        if (limit == 0)
+            return "Disabled";
+
+        return $"{limit} FPS";
+    }
+}
+
+public class ScreenDivider
+{
+    public int divider;
+    public ScreenResolution resolution;
+
+    public ScreenDivider(int divider, ScreenResolution resolution)
+    {
+        this.divider = divider;
+        this.resolution = resolution;
     }
 
-    public override bool Equals(object obj)
+    // todo: localize me
+    public override string ToString()
     {
-        if (obj is ScreenFrequency frequency)
-            foreach (var freq in (Frequency[])Enum.GetValues(typeof(Frequency)))
-                if (Frequencies[freq] != frequency.Frequencies[freq])
-                    return false;
-
-        return true;
+        return $"1/{divider} ({resolution.Width}x{resolution.Height})";
     }
 }
 
@@ -131,17 +128,19 @@ public class DesktopScreen
 {
     public Display devMode;
     public Screen PrimaryScreen;
-    public List<ScreenResolution> resolutions;
+    public List<ScreenResolution> screenResolutions = new();
+    public List<ScreenDivider> screenDividers = new();
+
+    private static Dictionary<int, List<ScreenFramelimit>> _cachedFrameLimits = new();
 
     public DesktopScreen(Screen primaryScreen)
     {
         PrimaryScreen = primaryScreen;
-        resolutions = new List<ScreenResolution>();
     }
 
     public bool HasResolution(ScreenResolution resolution)
     {
-        return resolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
+        return screenResolutions.Count(a => a.Width == resolution.Width && a.Height == resolution.Height) > 0;
     }
 
     public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
@@ -167,16 +166,97 @@ public class DesktopScreen
         }
         */
 
-        return resolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
+        return screenResolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
     }
 
-    public ScreenFrequency GetFrequency()
+    public int GetCurrentFrequency()
     {
-        return new ScreenFrequency(devMode.dmDisplayFrequency);
+        return devMode.dmDisplayFrequency;
+    }
+
+    // A function that takes a screen frequency int value and returns a list of integer values that are the quotient of the frequency and the closest divisor
+    public List<ScreenFramelimit> GetFramelimits()
+    {
+        // A list to store the quotients
+        List<ScreenFramelimit> Limits = [new(0,0)]; // (Comparer<int>.Create((x, y) => y.CompareTo(x)));
+
+        // A variable to store the divider value, rounded to nearest even number
+        int divider = 1;
+        int dmDisplayFrequency = RoundToEven(devMode.dmDisplayFrequency);
+
+        if (_cachedFrameLimits.ContainsKey(dmDisplayFrequency)) { return _cachedFrameLimits[dmDisplayFrequency]; }
+
+        int lowestFPS = dmDisplayFrequency;
+
+        HashSet<int> fpsLimits = new();
+
+        // A loop to find the lowest possible fps limit option and limits from division
+        do
+        {
+            // If the frequency is divisible by the divider, add the quotient to the list
+            if (dmDisplayFrequency % divider == 0)
+            {
+                int frequency = dmDisplayFrequency / divider;
+                if (frequency < 20)
+                {
+                    break;
+                }
+                fpsLimits.Add(frequency);
+                lowestFPS = frequency;
+            }
+
+            // Increase the divider by 1
+            divider++;
+        } while (true);
+
+        // loop to fill all possible fps limit options from lowest fps limit (e.g. getting 40FPS dor 60Hz)
+        int nrOptions = dmDisplayFrequency / lowestFPS;
+        for (int i = 1; i < nrOptions; i++)
+        {
+            fpsLimits.Add(lowestFPS * i);
+        }
+
+        // Fill limits
+
+        var orderedFpsLimits = fpsLimits.OrderByDescending(f => f);
+
+        for (int i = 0; i < orderedFpsLimits.Count(); i++)
+        {
+            Limits.Add(new(i+1, orderedFpsLimits.ElementAt(i)));
+        }
+
+        _cachedFrameLimits.Add(dmDisplayFrequency, Limits);
+        // Return the list of quotients
+        return Limits;
+    }
+
+    public ScreenFramelimit GetClosest(int fps)
+    {
+        List<ScreenFramelimit> limits = GetFramelimits();
+
+        ScreenFramelimit? fpsInLimits = limits.FirstOrDefault(l => l.limit == fps);
+        if (fpsInLimits is not null) { return fpsInLimits; }
+
+        var diffs = GetFramelimits().Select(limit => (Math.Abs(fps - limit.limit), limit))
+                                    .OrderBy(g => g.Item1).ThenBy(g => g.limit.limit).ToList();
+
+        var lowestDiff = diffs.First().Item1;
+        var lowestDiffs = diffs.Where(d => d.Item1 == lowestDiff);
+
+        return lowestDiffs.Last().limit;
+    }
+
+    // A function that takes an int as a parameter and returns the closest multiple of 10
+    private int RoundToEven(int num)
+    {
+        if (num % 2 == 0)
+            return num;
+
+        return num + 1;
     }
 
     public void SortResolutions()
     {
-        resolutions = resolutions.OrderByDescending(a => a.Width).ThenByDescending(b => b.Height).ToList();
+        screenResolutions = screenResolutions.OrderByDescending(a => a.Width).ThenByDescending(b => b.Height).ToList();
     }
 }

@@ -1,3 +1,4 @@
+using HandheldCompanion.Controls;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
@@ -11,7 +12,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 
-public static class PowerMode
+public static class OSPowerMode
 {
     /// <summary>
     ///     Better Battery mode.
@@ -30,59 +31,64 @@ public static class PowerMode
     public static Guid BestPerformance = new("ded574b5-45a0-4f42-8737-46345c09c238");
 }
 
-public class PerformanceManager : Manager
+public static class PerformanceManager
 {
     private const short INTERVAL_DEFAULT = 3000; // default interval between value scans
     private const short INTERVAL_AUTO = 1010; // default interval between value scans
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
     public static int MaxDegreeOfParallelism = 4;
 
-    public static readonly Guid[] PowerModes = new Guid[3] { PowerMode.BetterBattery, PowerMode.BetterPerformance, PowerMode.BestPerformance };
+    public static readonly Guid[] PowerModes = new Guid[3] { OSPowerMode.BetterBattery, OSPowerMode.BetterPerformance, OSPowerMode.BestPerformance };
 
-    private readonly Timer autoWatchdog;
-    private readonly Timer cpuWatchdog;
-    private readonly Timer gfxWatchdog;
-    private readonly Timer powerWatchdog;
+    private static readonly Timer autoWatchdog;
+    private static readonly Timer cpuWatchdog;
+    private static readonly Timer gfxWatchdog;
+    private static readonly Timer powerWatchdog;
 
-    private bool autoLock;
-    private bool cpuLock;
-    private bool gfxLock;
-    private bool powerLock;
+    private static bool autoLock;
+    private static bool cpuLock;
+    private static bool gfxLock;
+    private static bool powerLock;
 
     // AutoTDP
-    private double AutoTDP;
-    private double AutoTDPPrev;
-    private bool AutoTDPFirstRun = true;
-    private int AutoTDPFPSSetpointMetCounter;
-    private int AutoTDPFPSSmallDipCounter;
-    private double AutoTDPMax;
-    private double TDPMax;
-    private double TDPMin;
-    private int AutoTDPProcessId;
-    private double AutoTDPTargetFPS;
-    private bool cpuWatchdogPendingStop;
-    private uint currentEPP = 50;
-    private int currentCoreCount;
-    private double CurrentGfxClock;
+    private static double AutoTDP;
+    private static double AutoTDPPrev;
+    private static bool AutoTDPFirstRun = true;
+    private static int AutoTDPFPSSetpointMetCounter;
+    private static int AutoTDPFPSSmallDipCounter;
+    private static double AutoTDPMax;
+    private static double TDPMax;
+    private static double TDPMin;
+    private static int AutoTDPProcessId;
+    private static double AutoTDPTargetFPS;
+    private static bool cpuWatchdogPendingStop;
+    private static uint currentEPP = 50;
+    private static int currentCoreCount;
+    private static double CurrentGfxClock;
 
     // powercfg
-    private bool currentPerfBoostMode;
-    private Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
-    private readonly double[] CurrentTDP = new double[5]; // used to store current TDP
+    private static bool currentPerfBoostMode;
+    private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+    private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
 
     // GPU limits
-    private double FallbackGfxClock;
-    private readonly double[] FPSHistory = new double[6];
-    private bool gfxWatchdogPendingStop;
+    private static double FallbackGfxClock;
+    private static readonly double[] FPSHistory = new double[6];
+    private static bool gfxWatchdogPendingStop;
 
-    private Processor processor = new();
-    private double ProcessValueFPSPrevious;
-    private double StoredGfxClock;
+    private static Processor processor = new();
+    private static double ProcessValueFPSPrevious;
+    private static double StoredGfxClock;
 
     // TDP limits
-    private readonly double[] StoredTDP = new double[3]; // used to store TDP
+    private static readonly double[] StoredTDP = new double[3]; // used to store TDP
 
-    public PerformanceManager()
+    private static bool IsInitialized;
+
+    public static event InitializedEventHandler Initialized;
+    public delegate void InitializedEventHandler();
+
+    static PerformanceManager()
     {
         // initialize timer(s)
         powerWatchdog = new Timer { Interval = INTERVAL_DEFAULT, AutoReset = true, Enabled = false };
@@ -97,26 +103,29 @@ public class PerformanceManager : Manager
         autoWatchdog = new Timer { Interval = INTERVAL_AUTO, AutoReset = true, Enabled = false };
         autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
+        // manage events
         ProfileManager.Applied += ProfileManager_Applied;
         ProfileManager.Discarded += ProfileManager_Discarded;
-
+        ProfileManager.Updated += ProfileManager_Updated;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-
-        PlatformManager.HWiNFO.PowerLimitChanged += HWiNFO_PowerLimitChanged;
-        PlatformManager.HWiNFO.GPUFrequencyChanged += HWiNFO_GPUFrequencyChanged;
-
+        PlatformManager.LibreHardwareMonitor.GPUClockChanged += LibreHardwareMonitor_GPUClockChanged;
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
-
-        // initialize settings
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
+        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
+
+        // move me
+        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
+        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
+        SystemManager.StateChanged_ImageSharpening += SystemManager_StateChanged_ImageSharpening;
+        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
 
         currentCoreCount = Environment.ProcessorCount;
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
     }
 
-    private void SettingsManagerOnSettingValueChanged(string name, object value)
+    private static void SettingsManagerOnSettingValueChanged(string name, object value)
     {
         switch (name)
         {
@@ -136,40 +145,190 @@ public class PerformanceManager : Manager
         }
     }
 
-    private void ProfileManager_Applied(Profile profile, UpdateSource source)
+    private static void HotkeysManager_CommandExecuted(string listener)
     {
-        // apply profile define RSR
+        PowerProfile powerProfile = PowerProfileManager.GetCurrent();
+        if (powerProfile is null)
+            return;
+
+        switch (listener)
+        {
+            case "increaseTDP":
+                {
+                    if (powerProfile.TDPOverrideEnabled)
+                        return;
+
+                    for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+                        powerProfile.TDPOverrideValues[idx] = Math.Min(TDPMax, powerProfile.TDPOverrideValues[idx] + 1);
+
+                    PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
+                }
+                break;
+            case "decreaseTDP":
+                {
+                    if (powerProfile.TDPOverrideEnabled)
+                        return;
+
+                    for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+                        powerProfile.TDPOverrideValues[idx] = Math.Max(TDPMin, powerProfile.TDPOverrideValues[idx] - 1);
+
+                    PowerProfileManager.UpdateOrCreateProfile(powerProfile, UpdateSource.Background);
+                }
+                break;
+        }
+    }
+
+    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
+    {
         try
         {
-            if (profile.RSREnabled)
+            // apply profile GPU Scaling
+            // apply profile scaling mode
+            if (profile.GPUScaling)
             {
-                ADLXBackend.SetRSR(true);
-                ADLXBackend.SetRSRSharpness(profile.RSRSharpness);
+                ADLXWrapper.SetGPUScaling(true);
+
+                var scalingMode = profile.ScalingMode;
+                 
+                // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
+                // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
+                if (profile.ScalingMode == 2 && profile.RSREnabled)
+                    scalingMode = 1;
+
+                ADLXWrapper.SetScalingMode(scalingMode);
+
+                // apply profile RSR
+                if (profile.RSREnabled)
+                {
+                    // mutually exclusive
+                    ADLXWrapper.SetIntegerScaling(false);
+                    ADLXWrapper.SetImageSharpening(false);
+
+                    ADLXWrapper.SetRSR(true);
+                    ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
+                }
+                else if (ADLXWrapper.GetRSR())
+                {
+                    ADLXWrapper.SetRSR(false);
+                    ADLXWrapper.SetRSRSharpness(20);
+                }
+
+                // apply profile Integer Scaling
+                if (profile.IntegerScalingEnabled)
+                {
+                    // mutually exclusive
+                    ADLXWrapper.SetRSR(false);
+
+                    ADLXWrapper.SetIntegerScaling(true);
+                }
+                else if (ADLXWrapper.GetIntegerScaling())
+                {
+                    ADLXWrapper.SetIntegerScaling(false);
+                }
             }
-            else if (ADLXBackend.GetRSRState() == 1)
+            else if (ADLXWrapper.GetGPUScaling())
             {
-                ADLXBackend.SetRSR(false);
-                ADLXBackend.SetRSRSharpness(20);
+                ADLXWrapper.SetGPUScaling(false);
+            }
+
+            // apply profile image sharpening
+            if (profile.RISEnabled)
+            {
+                // mutually exclusive
+                ADLXWrapper.SetRSR(false);
+
+                ADLXWrapper.SetImageSharpening(profile.RISEnabled);
+                ADLXWrapper.SetImageSharpeningSharpness(profile.RISSharpness);
+            }
+            else if (ADLXWrapper.GetImageSharpening())
+            {
+                ADLXWrapper.SetImageSharpening(false);
             }
         }
         catch { }
     }
 
-    private void ProfileManager_Discarded(Profile profile)
+    private static void ProfileManager_Discarded(Profile profile)
     {
         try
         {
+            // restore default GPU Scaling
+            if (profile.GPUScaling && ADLXWrapper.GetGPUScaling())
+            {
+                ADLXWrapper.SetGPUScaling(false);
+            }
+
             // restore default RSR
-            if (profile.RSREnabled)
+            if (profile.RSREnabled && ADLXWrapper.GetRSR())
             {
-                ADLXBackend.SetRSR(false);
-                ADLXBackend.SetRSRSharpness(20);
+                ADLXWrapper.SetRSR(false);
+                ADLXWrapper.SetRSRSharpness(20);
+            }
+            
+            // restore default integer scaling
+            if (profile.IntegerScalingEnabled && ADLXWrapper.GetIntegerScaling())
+            {
+                ADLXWrapper.SetIntegerScaling(false);
+            }
+
+            // restore default image sharpening
+            if (profile.RISEnabled && ADLXWrapper.GetImageSharpening())
+            {
+                ADLXWrapper.SetImageSharpening(false);
             }
         }
         catch { }
     }
+    
+    // todo: moveme
+    private static void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
+    {
+        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.DisabledMaximizedWindowedValue, !profile.FullScreenOptimization);
+        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.HighDPIAwareValue, !profile.HighDPIAware);
+    }
 
-    private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
+    private static void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.RSREnabled)
+            ADLXWrapper.SetRSR(profile.RSREnabled);
+        if (Sharpness != profile.RSRSharpness)
+            ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
+    }
+
+    private static void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.GPUScaling)
+            ADLXWrapper.SetGPUScaling(profile.GPUScaling);
+        if (Mode != profile.ScalingMode)
+        {
+            // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
+            // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
+            if (profile.ScalingMode == 2 && profile.RSREnabled)
+                return;
+
+            ADLXWrapper.SetScalingMode(profile.ScalingMode);
+        }
+    }
+
+    private static void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.IntegerScalingEnabled)
+            ADLXWrapper.SetIntegerScaling(profile.IntegerScalingEnabled);
+    }
+
+    private static void SystemManager_StateChanged_ImageSharpening(bool Enabled, int Sharpness)
+    {
+        Profile profile = ProfileManager.GetCurrent();
+        if (Enabled != profile.RISEnabled)
+            ADLXWrapper.SetImageSharpening(profile.RISEnabled);
+        if (Sharpness != profile.RISSharpness)
+            ADLXWrapper.SetImageSharpeningSharpness(Sharpness);
+    }
+
+    private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         // apply profile defined TDP
         if (profile.TDPOverrideEnabled && profile.TDPOverrideValues is not null)
@@ -273,7 +432,7 @@ public class PerformanceManager : Manager
         RequestPowerMode(profile.OSPowerMode);
     }
 
-    private void PowerProfileManager_Discarded(PowerProfile profile)
+    private static void PowerProfileManager_Discarded(PowerProfile profile)
     {
         // restore default TDP
         if (profile.TDPOverrideEnabled)
@@ -322,38 +481,38 @@ public class PerformanceManager : Manager
             RequestPerfBoostMode(false);
         }
 
-        // restore PowerMode.BetterPerformance 
-        RequestPowerMode(PowerMode.BetterPerformance);
+        // restore OSPowerMode.BetterPerformance 
+        RequestPowerMode(OSPowerMode.BetterPerformance);
     }
 
-    private void RestoreTDP(bool immediate)
+    private static void RestoreTDP(bool immediate)
     {
         for (PowerType pType = PowerType.Slow; pType <= PowerType.Fast; pType++)
             RequestTDP(pType, MainWindow.CurrentDevice.cTDP[1], immediate);
     }
 
-    private void RestoreCPUClock(bool immediate)
+    private static void RestoreCPUClock(bool immediate)
     {
         uint maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
         RequestCPUClock(maxClock);
     }
 
-    private void RestoreGPUClock(bool immediate)
+    private static void RestoreGPUClock(bool immediate)
     {
         RequestGPUClock(255 * 50, immediate);
     }
 
-    private void RTSS_Hooked(AppEntry appEntry)
+    private static void RTSS_Hooked(AppEntry appEntry)
     {
         AutoTDPProcessId = appEntry.ProcessId;
     }
 
-    private void RTSS_Unhooked(int processId)
+    private static void RTSS_Unhooked(int processId)
     {
         AutoTDPProcessId = 0;
     }
 
-    private void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void AutoTDPWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         // We don't have any hooked process
         if (AutoTDPProcessId == 0)
@@ -404,7 +563,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private double AutoTDPDipper(double FPSActual, double FPSSetpoint)
+    private static double AutoTDPDipper(double FPSActual, double FPSSetpoint)
     {
         // Dipper
         // Add small positive "error" if actual and target FPS are similar for a duration
@@ -447,7 +606,7 @@ public class PerformanceManager : Manager
         return Modifier;
     }
 
-    private double AutoTDPDamper(double FPSActual)
+    private static double AutoTDPDamper(double FPSActual)
     {
         // (PI)D derivative control component to dampen FPS fluctuations
         if (double.IsNaN(ProcessValueFPSPrevious)) ProcessValueFPSPrevious = FPSActual;
@@ -463,7 +622,7 @@ public class PerformanceManager : Manager
         return TDPDamping;
     }
 
-    private void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (!powerLock)
         {
@@ -506,7 +665,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private async void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static async void cpuWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -520,7 +679,7 @@ public class PerformanceManager : Manager
             var MSRdone = false;
 
             // read current values and (re)apply requested TDP if needed
-            foreach (var type in (PowerType[])Enum.GetValues(typeof(PowerType)))
+            foreach (PowerType type in (PowerType[])Enum.GetValues(typeof(PowerType)))
             {
                 var idx = (int)type;
 
@@ -533,7 +692,7 @@ public class PerformanceManager : Manager
                 if (processor is AMDProcessor)
                 {
                     // AMD reduces TDP by 10% when OS power mode is set to Best power efficiency
-                    if (currentPowerMode == PowerMode.BetterBattery)
+                    if (currentPowerMode == OSPowerMode.BetterBattery)
                         TDP = (int)Math.Truncate(TDP * 0.9);
                 }
                 else if (processor is IntelProcessor)
@@ -563,8 +722,8 @@ public class PerformanceManager : Manager
             // processor specific
             if (processor is IntelProcessor)
             {
-                var TDPslow = (int)StoredTDP[(int)PowerType.Slow];
-                var TDPfast = (int)StoredTDP[(int)PowerType.Fast];
+                int TDPslow = (int)StoredTDP[(int)PowerType.Slow];
+                int TDPfast = (int)StoredTDP[(int)PowerType.Fast];
 
                 // only request an update if current limit is different than stored
                 if (CurrentTDP[(int)PowerType.MsrSlow] != TDPslow ||
@@ -593,7 +752,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    private void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
+    private static void gfxWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -651,45 +810,45 @@ public class PerformanceManager : Manager
         }
     }
 
-    internal void StartGPUWatchdog()
+    private static void StartGPUWatchdog()
     {
         gfxWatchdogPendingStop = false;
         gfxWatchdog.Interval = INTERVAL_DEFAULT;
         gfxWatchdog.Start();
     }
 
-    internal void StopGPUWatchdog(bool immediate = false)
+    private static void StopGPUWatchdog(bool immediate = false)
     {
         gfxWatchdogPendingStop = true;
         if (immediate)
             gfxWatchdog.Stop();
     }
 
-    internal void StartTDPWatchdog()
+    private static void StartTDPWatchdog()
     {
         cpuWatchdogPendingStop = false;
         cpuWatchdog.Interval = INTERVAL_DEFAULT;
         cpuWatchdog.Start();
     }
 
-    internal void StopTDPWatchdog(bool immediate = false)
+    private static void StopTDPWatchdog(bool immediate = false)
     {
         cpuWatchdogPendingStop = true;
         if (immediate)
             cpuWatchdog.Stop();
     }
 
-    internal void StartAutoTDPWatchdog()
+    private static void StartAutoTDPWatchdog()
     {
         autoWatchdog.Start();
     }
 
-    internal void StopAutoTDPWatchdog(bool immediate = false)
+    private static void StopAutoTDPWatchdog(bool immediate = false)
     {
         autoWatchdog.Stop();
     }
 
-    public void RequestTDP(PowerType type, double value, bool immediate = false)
+    private static void RequestTDP(PowerType type, double value, bool immediate = false)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -698,7 +857,7 @@ public class PerformanceManager : Manager
         value = Math.Min(TDPMax, Math.Max(TDPMin, value));
 
         // update value read by timer
-        var idx = (int)type;
+        int idx = (int)type;
         StoredTDP[idx] = value;
 
         // immediately apply
@@ -706,12 +865,12 @@ public class PerformanceManager : Manager
             processor.SetTDPLimit((PowerType)idx, value, immediate);
     }
 
-    public async void RequestTDP(double[] values, bool immediate = false)
+    private static async void RequestTDP(double[] values, bool immediate = false)
     {
         if (processor is null || !processor.IsInitialized)
             return;
 
-        for (var idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
+        for (int idx = (int)PowerType.Slow; idx <= (int)PowerType.Fast; idx++)
         {
             // make sure we're not trying to run below or above specs
             values[idx] = Math.Min(TDPMax, Math.Max(TDPMin, values[idx]));
@@ -728,7 +887,7 @@ public class PerformanceManager : Manager
         }
     }
 
-    public void RequestGPUClock(double value, bool immediate = false)
+    private static void RequestGPUClock(double value, bool immediate = false)
     {
         if (processor is null || !processor.IsInitialized)
             return;
@@ -741,7 +900,7 @@ public class PerformanceManager : Manager
             processor.SetGPUClock(value);
     }
 
-    public void RequestPowerMode(Guid guid)
+    private static void RequestPowerMode(Guid guid)
     {
         currentPowerMode = guid;
         LogManager.LogDebug("User requested power scheme: {0}", currentPowerMode);
@@ -750,7 +909,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested power scheme: {0}", currentPowerMode);
     }
 
-    public void RequestEPP(uint EPPOverrideValue)
+    private static void RequestEPP(uint EPPOverrideValue)
     {
         currentEPP = EPPOverrideValue;
 
@@ -777,7 +936,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested EPP");
     }
 
-    public void RequestCPUCoreCount(int CoreCount)
+    private static void RequestCPUCoreCount(int CoreCount)
     {
         currentCoreCount = CoreCount;
 
@@ -811,7 +970,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested CPMAXCORES");
     }
 
-    public void RequestPerfBoostMode(bool value)
+    private static void RequestPerfBoostMode(bool value)
     {
         currentPerfBoostMode = value;
 
@@ -821,7 +980,7 @@ public class PerformanceManager : Manager
         LogManager.LogDebug("User requested perfboostmode: {0}", value);
     }
 
-    private void RequestCPUClock(uint cpuClock)
+    private static void RequestCPUClock(uint cpuClock)
     {
         double maxClock = MotherboardInfo.ProcessorMaxTurboSpeed;
 
@@ -843,7 +1002,7 @@ public class PerformanceManager : Manager
             LogManager.LogWarning("Failed to set requested PROCFREQMAX");
     }
 
-    public override void Start()
+    public static void Start()
     {
         // initialize watchdog(s)
         powerWatchdog.Start();
@@ -864,25 +1023,31 @@ public class PerformanceManager : Manager
         processor.MiscChanged += Processor_MiscChanged;
         */
 
-        base.Start();
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "PerformanceManager");
     }
 
-    public override void Stop()
+    public static void Stop()
     {
         if (!IsInitialized)
             return;
 
-        processor.Stop();
+        if (processor.IsInitialized)
+            processor.Stop();
 
         powerWatchdog.Stop();
         cpuWatchdog.Stop();
         gfxWatchdog.Stop();
         autoWatchdog.Stop();
 
-        base.Stop();
+        IsInitialized = false;
+
+        LogManager.LogInformation("{0} has started", "PerformanceManager");
     }
 
-    public Processor GetProcessor()
+    public static Processor GetProcessor()
     {
         return processor;
     }
@@ -909,27 +1074,27 @@ public class PerformanceManager : Manager
 
     #region events
 
-    public event LimitChangedHandler PowerLimitChanged;
+    public static event LimitChangedHandler PowerLimitChanged;
 
     public delegate void LimitChangedHandler(PowerType type, int limit);
 
-    public event ValueChangedHandler PowerValueChanged;
+    public static event ValueChangedHandler PowerValueChanged;
 
     public delegate void ValueChangedHandler(PowerType type, float value);
 
-    public event StatusChangedHandler ProcessorStatusChanged;
+    public static event StatusChangedHandler ProcessorStatusChanged;
 
     public delegate void StatusChangedHandler(bool CanChangeTDP, bool CanChangeGPU);
 
-    public event PowerModeChangedEventHandler PowerModeChanged;
+    public static event PowerModeChangedEventHandler PowerModeChanged;
 
     public delegate void PowerModeChangedEventHandler(int idx);
 
-    public event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
+    public static event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
 
     public delegate void PerfBoostModeChangedEventHandler(bool value);
 
-    public event EPPChangedEventHandler EPPChanged;
+    public static event EPPChangedEventHandler EPPChanged;
 
     public delegate void EPPChangedEventHandler(uint EPP);
 
@@ -937,49 +1102,28 @@ public class PerformanceManager : Manager
 
     #region events
 
-    private void HWiNFO_PowerLimitChanged(PowerType type, int limit)
+    private static void LibreHardwareMonitor_GPUClockChanged(float? value)
     {
-        var idx = (int)type;
-        CurrentTDP[idx] = limit;
+        if (value is null) return;
 
-        // workaround, HWiNFO doesn't have the ability to report MSR
-        switch (type)
-        {
-            case PowerType.Slow:
-                CurrentTDP[(int)PowerType.Stapm] = limit;
-                CurrentTDP[(int)PowerType.MsrSlow] = limit;
-                break;
-            case PowerType.Fast:
-                CurrentTDP[(int)PowerType.MsrFast] = limit;
-                break;
-        }
+        CurrentGfxClock = (float) value;
 
-        // raise event
-        PowerLimitChanged?.Invoke(type, limit);
-
-        LogManager.LogTrace("PowerLimitChanged: {0}\t{1} W", type, limit);
+        LogManager.LogTrace("GPUClockChange: {0} Mhz", value);
     }
 
-    private void HWiNFO_GPUFrequencyChanged(double value)
-    {
-        CurrentGfxClock = value;
-
-        LogManager.LogTrace("GPUFrequencyChanged: {0} Mhz", value);
-    }
-
-    private void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
+    private static void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
     {
         ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
     }
 
     [Obsolete("Method is deprecated.")]
-    private void Processor_ValueChanged(PowerType type, float value)
+    private static void Processor_ValueChanged(PowerType type, float value)
     {
         PowerValueChanged?.Invoke(type, value);
     }
 
     [Obsolete("Method is deprecated.")]
-    private void Processor_LimitChanged(PowerType type, int limit)
+    private static void Processor_LimitChanged(PowerType type, int limit)
     {
         var idx = (int)type;
         CurrentTDP[idx] = limit;
@@ -989,7 +1133,7 @@ public class PerformanceManager : Manager
     }
 
     [Obsolete("Method is deprecated.")]
-    private void Processor_MiscChanged(string misc, float value)
+    private static void Processor_MiscChanged(string misc, float value)
     {
         switch (misc)
         {

@@ -28,55 +28,53 @@
     WindowStyle="ToolWindow"
     mc:Ignorable="d">
 
-    <Grid>
-        <ui:NavigationView
-            Name="navView"
-            Margin="0,1,0,0"
-            BackRequested="navView_BackRequested"
-            IsPaneToggleButtonVisible="False"
-            IsSettingsVisible="False"
-            ItemInvoked="navView_ItemInvoked"
-            Loaded="navView_Loaded"
-            PaneDisplayMode="Top"
-            SelectionFollowsFocus="Enabled">
+    <ui:NavigationView
+        Name="navView"
+        Margin="0,-30,0,0"
+        BackRequested="navView_BackRequested"
+        IsPaneToggleButtonVisible="False"
+        IsSettingsVisible="False"
+        ItemInvoked="navView_ItemInvoked"
+        Loaded="navView_Loaded"
+        PaneDisplayMode="Top"
+        SelectionFollowsFocus="Enabled">
 
-            <ui:NavigationView.Header>
-                <TextBlock x:Name="navHeader" Margin="-34,-30,0,0" />
-            </ui:NavigationView.Header>
+        <ui:NavigationView.Header>
+            <TextBlock x:Name="navHeader" Margin="-34,-30,0,0" />
+        </ui:NavigationView.Header>
 
-            <ui:NavigationView.FooterMenuItems>
-                <ui:NavigationViewItem IsEnabled="False">
-                    <DockPanel Height="40">
-                        <ui:FontIcon
-                            Name="BatteryIndicatorIcon"
-                            VerticalAlignment="Center"
-                            FontSize="30" />
-                        <TextBlock
-                            Name="BatteryIndicatorPercentage"
-                            Margin="2,0,0,0"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Name="BatteryIndicatorLifeRemaining"
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Name="Time"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource BodyTextBlockStyle}" />
-                    </DockPanel>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem IsEnabled="False" />
-            </ui:NavigationView.FooterMenuItems>
+        <ui:NavigationView.FooterMenuItems>
+            <ui:NavigationViewItem IsEnabled="False">
+                <DockPanel Height="40">
+                    <ui:FontIcon
+                        Name="BatteryIndicatorIcon"
+                        VerticalAlignment="Center"
+                        FontSize="30" />
+                    <TextBlock
+                        Name="BatteryIndicatorPercentage"
+                        Margin="2,0,0,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Name="BatteryIndicatorLifeRemaining"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Name="Time"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+                </DockPanel>
+            </ui:NavigationViewItem>
+            <ui:NavigationViewItem IsEnabled="False" />
+        </ui:NavigationView.FooterMenuItems>
 
-            <common:TouchScrollViewer
-                x:Name="scrollViewer"
-                Margin="0,-20,0,12"
-                PanningMode="VerticalOnly">
-                <ui:Frame Name="ContentFrame" />
-            </common:TouchScrollViewer>
-        </ui:NavigationView>
-    </Grid>
+        <common:TouchScrollViewer
+            x:Name="scrollViewer"
+            Margin="0,-20,0,12"
+            PanningMode="VerticalOnly">
+            <ui:Frame Name="ContentFrame" />
+        </common:TouchScrollViewer>
+    </ui:NavigationView>
 </common:GamepadWindow>

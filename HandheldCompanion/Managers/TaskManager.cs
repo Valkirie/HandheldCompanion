@@ -4,25 +4,27 @@ using System.Security.Principal;
 
 namespace HandheldCompanion.Managers;
 
-public class TaskManager : Manager
+public static class TaskManager
 {
-    private readonly string TaskName;
-    private readonly string TaskExecutable;
+    private const string TaskName = "HandheldCompanion";
+    private static string TaskExecutable;
 
     // TaskManager vars
-    private Task task;
-    private TaskDefinition taskDefinition;
-    private TaskService taskService;
+    private static Task task;
+    private static TaskDefinition taskDefinition;
+    private static TaskService taskService;
 
-    public TaskManager(string TaskName, string Executable)
+    private static bool IsInitialized;
+
+    public static event InitializedEventHandler Initialized;
+    public delegate void InitializedEventHandler();
+
+    static TaskManager()
     {
-        this.TaskName = TaskName;
-        TaskExecutable = Executable;
-
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
-    private void SettingsManager_SettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value)
     {
         switch (name)
         {
@@ -32,16 +34,23 @@ public class TaskManager : Manager
         }
     }
 
-    public override void Start()
+    public static void Start(string Executable)
     {
+        TaskExecutable = Executable;
         taskService = new TaskService();
-        task = taskService.FindTask(TaskName);
 
         try
         {
+            // get current task, if any, delete it
+            task = taskService.FindTask(TaskName);
             if (task is not null)
                 taskService.RootFolder.DeleteTask(TaskName);
+        }
+        catch { }
 
+        try
+        {
+            // create a new task
             taskDefinition = TaskService.Instance.NewTask();
             taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
             taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;
@@ -56,22 +65,27 @@ public class TaskManager : Manager
             task = TaskService.Instance.RootFolder.RegisterTaskDefinition(TaskName, taskDefinition);
             task.Enabled = SettingsManager.GetBoolean("RunAtStartup");
         }
-        catch
-        {
-        }
+        catch { }
 
-        base.Start();
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "TaskManager");
     }
 
-    public override void Stop()
+    public static void Stop()
     {
         if (!IsInitialized)
             return;
 
-        base.Stop();
+        IsInitialized = false;
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        LogManager.LogInformation("{0} has stopped", "TaskManager");
     }
 
-    public void UpdateTask(bool value)
+    private static void UpdateTask(bool value)
     {
         if (task is null)
             return;

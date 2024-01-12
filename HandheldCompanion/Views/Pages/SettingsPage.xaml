@@ -463,10 +463,8 @@
                             Margin="12,0,0,0"
                             HorizontalAlignment="Stretch"
                             SelectionChanged="cB_QuicktoolsPosition_SelectionChanged">
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopLeft}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationTopRight}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomLeft}" />
-                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationBottomRight}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationLeft}" />
+                            <ComboBoxItem Content="{x:Static resx:Resources.SettingsPage_QuickToolsWindowLocationRight}" />
                         </ComboBox>
                     </Grid>
                 </Border>
@@ -831,44 +829,6 @@
                             HorizontalAlignment="Right"
                             Style="{DynamicResource InvertedToggleSwitchStyle}"
                             Toggled="Toggle_RTSS_Toggled" />
-                    </Grid>
-                </Border>
-
-                <!--  HWiNFO  -->
-                <Border
-                    Padding="15,12,12,12"
-                    Background="{DynamicResource ExpanderHeaderBackground}"
-                    CornerRadius="{DynamicResource ControlCornerRadius}">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel>
-                            <ui:FontIcon
-                                Height="40"
-                                HorizontalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE870;" />
-
-                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_HwInfo}" />
-                                <TextBlock
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Static resx:Resources.SettingsPage_HwInfoDesc}"
-                                    TextWrapping="Wrap" />
-                            </ui:SimpleStackPanel>
-                        </DockPanel>
-
-                        <ui:ToggleSwitch
-                            Name="Toggle_HWiNFO"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="Toggle_HWiNFO_Toggled" />
                     </Grid>
                 </Border>
             </ui:SimpleStackPanel>

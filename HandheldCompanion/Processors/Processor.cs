@@ -67,9 +67,9 @@ public class Processor
     public virtual void Initialize()
     {
         StatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-        Initialized?.Invoke();
+        Initialized?.Invoke(this);
 
-        // deprecated, we're using HWiNFO to provide values and limits
+        // deprecated, we're using LibreHardwareMonitor to provide values and limits
         /*
         if (CanChangeTDP)
             updateTimer.Start();
@@ -78,7 +78,7 @@ public class Processor
 
     public virtual void Stop()
     {
-        // deprecated, we're using HWiNFO to provide values and limits
+        // deprecated, we're using LibreHardwareMonitor to provide values and limits
         /*
         if (CanChangeTDP)
             updateTimer.Stop();
@@ -160,7 +160,7 @@ public class Processor
 
     public event InitializedEventHandler Initialized;
 
-    public delegate void InitializedEventHandler();
+    public delegate void InitializedEventHandler(Processor processor);
 
     #endregion
 }

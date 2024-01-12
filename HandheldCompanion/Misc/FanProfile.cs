@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HandheldCompanion.Views;
+using System;
 using System.Linq;
 
 namespace HandheldCompanion.Misc
@@ -60,11 +61,20 @@ namespace HandheldCompanion.Misc
         }
 
         // A public method that takes a temperature as a parameter and returns the corresponding fan speed by linear interpolation
+        private bool TjmaxReached = false;
         public double GetFanSpeed(double temp)
         {
-            // Check if the temperature is within the range of 0°C to 100°C
-            if (temp < 0 || temp > 100)
-                return 50.0d;
+            // Check if the temperature is within the °C range of Tjmax
+            if (temp >= MainWindow.CurrentDevice.Tjmax)
+                TjmaxReached = true;
+
+            if (TjmaxReached)
+            {
+                if (temp <= 80)
+                    TjmaxReached = false;
+                else
+                    return 100.0d;
+            }
 
             // Find the two closest points that bracket the temperature
             int low = (int)Math.Floor(temp / fanSpeeds.Length);

@@ -36,14 +36,15 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 - AYA Neo Next and its different versions
 - AYA Neo Air and it's different versions
 - AYA Neo 2, Geek, 2S Geek 1S
-- Ayn Loki (all models)
+- AYA Neo KUN
 - ONEXPLAYER MINI and its different versions (Intel, AMD, Gundam)
-- GPD WIN Max 2 (Intel and AMD)
+- GPD WIN Max 2 (INTEL, AMD)
 - GPD Win 2
 - GPD Win 3
 - GPD Win 4
-- Steam Deck (LCD and OLED)
-- Lenovo Legion Go (WIP)
+- Steam Deck (LCD, OLED)
+- Ayn Loki (all models)
+- Lenovo Legion Go
 
 ## Supported Sensors
 - Bosch BMI160 (and similar)

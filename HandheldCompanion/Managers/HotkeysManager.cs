@@ -6,7 +6,7 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -445,7 +445,7 @@ public static class HotkeysManager
                         if (sProcess is null || sProcess.Filter != ProcessEx.ProcessFilter.Allowed)
                             break;
 
-                        if (sProcess.IsSuspended())
+                        if (sProcess.IsSuspended)
                             ProcessManager.ResumeProcess(sProcess);
                         else
                             ProcessManager.SuspendProcess(fProcess);
@@ -453,6 +453,25 @@ public static class HotkeysManager
                     break;
                 case "shortcutKillApp":
                     if (fProcess is not null) fProcess.Process.Kill();
+                    break;
+                case "OnScreenDisplayToggle":
+                    {
+                        // check current OSD level
+                        // .. if 0 (disabled) -> set OSD level to LastOnScreenDisplayLevel
+                        // .. else (enabled) -> set OSD level to 0
+                        int currentOSDLevel = SettingsManager.GetInt("OnScreenDisplayLevel");
+                        int lastOSDLevel = SettingsManager.GetInt("LastOnScreenDisplayLevel");
+
+                        switch (currentOSDLevel)
+                        {
+                            case 0:
+                                SettingsManager.SetProperty("OnScreenDisplayLevel", lastOSDLevel);
+                                break;
+                            default:
+                                SettingsManager.SetProperty("OnScreenDisplayLevel", 0);
+                                break;
+                        }
+                    }
                     break;
                 case "OnScreenDisplayLevel":
                     {
@@ -485,6 +504,18 @@ public static class HotkeysManager
                             default:
                                 break;
                         }
+                        break;
+                    }
+
+                // Profiles
+                case "previousSubProfile":
+                    {
+                        ProfileManager.CycleSubProfiles(true);
+                        break;
+                    }
+                case "nextSubProfile":
+                    {
+                        ProfileManager.CycleSubProfiles(false);
                         break;
                     }
 

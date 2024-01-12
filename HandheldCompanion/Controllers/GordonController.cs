@@ -282,11 +282,6 @@ namespace HandheldCompanion.Controllers
             catch { }
         }
 
-        public override void Cleanup()
-        {
-            TimerManager.Tick -= UpdateInputs;
-        }
-
         public ushort GetHapticIntensity(byte input, ushort maxIntensity)
         {
             return (ushort)(input * maxIntensity * VibrationStrength / 255);

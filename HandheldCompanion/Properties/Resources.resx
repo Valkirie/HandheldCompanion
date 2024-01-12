@@ -371,7 +371,7 @@
     <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
+    <value>Change the angle</value>
   </data>
   <data name="OverlayPage_Color" xml:space="preserve">
     <value>Background Color</value>
@@ -575,7 +575,7 @@
     <value>Deadzone</value>
   </data>
   <data name="SettingsMode1_DeadzoneDesc" xml:space="preserve">
-    <value>Change the steering deadzone, in degree. Improves steering straight</value>
+    <value>Change the steering deadzone. Improves steering straight</value>
   </data>
   <data name="SettingsMode1_JoystickGameInput" xml:space="preserve">
     <value>Joystick game Input</value>
@@ -593,7 +593,7 @@
     <value>Max steering angle</value>
   </data>
   <data name="SettingsMode1_MaxSteeringAngleDesc" xml:space="preserve">
-    <value>Change the maximum steering angle value, in degree</value>
+    <value>Change the maximum steering angle value</value>
   </data>
   <data name="SettingsMode1_SteeringLinearity" xml:space="preserve">
     <value>Steering linearity</value>
@@ -683,16 +683,16 @@
     <value>Motion control settings</value>
   </data>
   <data name="ProfilesPage_MotionControlSettingsDesc" xml:space="preserve">
-    <value>Change the global motion control settings</value>
+    <value>Change the motion control settings</value>
   </data>
   <data name="ProfilesPage_OK" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
-    <value>Power settings</value>
+  <data name="ProfilesPage_PowerPreset" xml:space="preserve">
+    <value>Power preset</value>
   </data>
-  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
-    <value>Change the power settings</value>
+  <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
+    <value>Change the selected power preset</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Profile details</value>
@@ -770,9 +770,9 @@
     <value>Motion activation</value>
   </data>
   <data name="ProfilesPage_UMCMotionOnOffDesc" xml:space="preserve">
-    <value>With motion input disabled, hold selected button(s) to enable motion,
-with motion input enabled, hold selected button(s) to disable motion,
-with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa.</value>
+    <value>Motion input disabled: hold selected button(s) to enable motion.
+Motion input enabled: hold selected button(s) to disable motion.
+Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="ProfilesPage_UMCSelectionRightLeftDesc" xml:space="preserve">
     <value>Select the device that will receive the motion commands</value>
@@ -1518,12 +1518,6 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="SettingsPage_HideWhenLoseFocusDesc" xml:space="preserve">
     <value>Automatically hide quick tools when the user clicks outside of window</value>
   </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automatically turn HWiNFO off when companion is closed</value>
-  </data>
   <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Power options</value>
   </data>
@@ -1708,7 +1702,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Right joystick</value>
   </data>
   <data name="Enum.ProfileErrorCode.Default" xml:space="preserve">
-    <value>This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
+    <value>This is your default profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled.</value>
   </data>
   <data name="Enum.ProfileErrorCode.MissingExecutable" xml:space="preserve">
     <value>Oops. It seems this profile does not have an executable. How is this even possible?</value>
@@ -1861,7 +1855,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>DPad Left</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Right</value>
+    <value>DPad Right</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Up</value>
@@ -2442,23 +2436,23 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="PowerProfileManualName" xml:space="preserve">
     <value>Manual mode: {0}</value>
   </data>
-  <data name="PowerProfilePerformanceDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyPerformanceDescription" xml:space="preserve">
     <value>Balances performance, temperature and acoustic for any scenario.</value>
   </data>
-  <data name="PowerProfilePerformanceName" xml:space="preserve">
-    <value>Performance</value>
+  <data name="PowerProfileROGAllyPerformanceName" xml:space="preserve">
+    <value>ROG Ally - Performance</value>
   </data>
-  <data name="PowerProfileSilentDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllySilentDescription" xml:space="preserve">
     <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
   </data>
-  <data name="PowerProfileSilentName" xml:space="preserve">
-    <value>Silent</value>
+  <data name="PowerProfileROGAllySilentName" xml:space="preserve">
+    <value>ROG Ally - Silent</value>
   </data>
-  <data name="PowerProfileTurboDescription" xml:space="preserve">
+  <data name="PowerProfileROGAllyTurboDescription" xml:space="preserve">
     <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
   </data>
-  <data name="PowerProfileTurboName" xml:space="preserve">
-    <value>Turbo</value>
+  <data name="PowerProfileROGAllyTurboName" xml:space="preserve">
+    <value>ROG Ally - Turbo</value>
   </data>
   <data name="QuickDevicePage_Desc" xml:space="preserve">
     <value>Settings, display profile</value>
@@ -2485,7 +2479,7 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Profiles</value>
   </data>
   <data name="QuickSettingsPage_Desc" xml:space="preserve">
-    <value>Preferred actions, device settings</value>
+    <value>Preferred actions</value>
   </data>
   <data name="QuickSettingsPage_Title" xml:space="preserve">
     <value>Actions</value>
@@ -2509,13 +2503,13 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
     <value>Change the fan settings</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
-    <value>Create a new power profile</value>
+    <value>Create a new power preset</value>
   </data>
   <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
-    <value>Create power profile</value>
+    <value>Create power preset</value>
   </data>
   <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
-    <value>Delete power profile</value>
+    <value>Delete power preset</value>
   </data>
   <data name="MainWindow_Toggle" xml:space="preserve">
     <value>Toggle</value>
@@ -2601,15 +2595,6 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="ControllerPage_TryAgain" xml:space="preserve">
     <value>Try again</value>
   </data>
-  <data name="Hint_LegionGoDaemon" xml:space="preserve">
-    <value>LSDaemon is active</value>
-  </data>
-  <data name="Hint_LegionGoDaemonReadme" xml:space="preserve">
-    <value>You should quit LSDaemon, so that the application can run properly and without any errors</value>
-  </data>
-  <data name="Hint_LegionGoDaemonDesc" xml:space="preserve">
-    <value>LSDaemon is already active on your console. This may cause compatibility issues with the application</value>
-  </data>
   <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
     <value>ASUS services are running</value>
   </data>
@@ -2618,9 +2603,6 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   </data>
   <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
     <value>ASUS services are already running on your device. This may interfere with the application</value>
-  </data>
-  <data name="Hint_LegionGoDaemonAction" xml:space="preserve">
-    <value>Quit LSDaemon</value>
   </data>
   <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
     <value>Disable ASUS services</value>
@@ -2646,15 +2628,6 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
     <value>Emulated controller is managed by profile</value>
   </data>
-  <data name="Hint_HWiNFO12hLimitPassed" xml:space="preserve">
-    <value>HWiNFO Shared Memory limit was reached</value>
-  </data>
-  <data name="Hint_HWiNFO12hLimitPassedDesc" xml:space="preserve">
-    <value>HWiNFO has reached its shared memory time limit and disabled the shared memory support. This may result in missing or outdated sensor readings</value>
-  </data>
-  <data name="Hint_HWiNFO12hLimitPassedReadme" xml:space="preserve">
-    <value>You should manually re-activate the shared memory time limit in the HWiNFO settings</value>
-  </data>
   <data name="Hint_CoreIsolationCheck" xml:space="preserve">
     <value>Core isolation features are turned on</value>
   </data>
@@ -2667,22 +2640,175 @@ with motion input toggle, press selected button(s) to switch from enabled to dis
   <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
     <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
   </data>
+  <data name="ProfilesPage_SubProfiles" xml:space="preserve">
+    <value>Sub Profiles</value>
+  </data>
+  <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>Add different profiles to the same game</value>
+  </data>
+  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>Select a sub profile to apply</value>
+  </data>
+  <data name="InputsHotkey_nextSubProfile" xml:space="preserve">
+    <value>Select next sub profile</value>
+  </data>
+  <data name="InputsHotkey_nextSubProfileDesc" xml:space="preserve">
+    <value>Apply next sub profile for the current game</value>
+  </data>
+  <data name="InputsHotkey_previousSubProfile" xml:space="preserve">
+    <value>Select previous sub profile</value>
+  </data>
+  <data name="InputsHotkey_previousSubProfileDesc" xml:space="preserve">
+    <value>Apply previous sub profile for the current game</value>
+  </data>
   <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
     <value>Sets the fan to max speed</value>
   </data>
   <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
     <value>Fan max speed override</value>
   </data>
+  <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
+    <value>Integer scaling is not available</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
+    <value>Deploy integer scaling</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckDesc" xml:space="preserve">
+    <value>Integer scaling feature is not installed, therefore you won't be able to enable or disable it</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckReadme" xml:space="preserve">
+    <value>We need to execute some script to deploy the integer scaling on your system</value>
+  </data>
+  <data name="QuickOverlayPage_Desc" xml:space="preserve">
+    <value>Manage on-screen overlay</value>
+  </data>
+  <data name="QuickOverlayPage_Title" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
+    <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
+  </data>
+  <data name="PowerProfileLegionGoQuietName" xml:space="preserve">
+    <value>Legion Go - Quiet</value>
+  </data>
+  <data name="PowerProfileLegionGoQuietDescription" xml:space="preserve">
+    <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
+  </data>
+  <data name="PowerProfileLegionGoBalancedName" xml:space="preserve">
+    <value>Legion Go - Balanced</value>
+  </data>
+  <data name="PowerProfileLegionGoBalancedDescription" xml:space="preserve">
+    <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
+  </data>
+  <data name="PowerProfileLegionGoPerformanceName" xml:space="preserve">
+    <value>Legion Go - Performance</value>
+  </data>
+  <data name="PowerProfileLegionGoPerformanceDescription" xml:space="preserve">
+    <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
+  </data>
+  <data name="ProfilesPage_DefaultProfile" xml:space="preserve">
+    <value>This is the default preset, you cannot modify the fan curve on this preset.</value>
+  </data>
   <data name="Hint_LegionGoServices" xml:space="preserve">
-    <value>Legion Space Daemon is active</value>
+    <value>Legion Space Tasks and Services are active</value>
   </data>
   <data name="Hint_LegionGoServicesAction" xml:space="preserve">
-    <value>Disable Legion Space Daemon</value>
+    <value>Disable Legion Space</value>
   </data>
   <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
-    <value>Legion Space Daemon is already active on your console. This may cause compatibility issues with the application.</value>
+    <value>Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application.</value>
   </data>
   <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
-    <value>You should disable Legion Space Daemon, so that the application can run properly and without any errors</value>
+    <value>You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors</value>
+  </data>
+  <data name="DevicePage_UseSecondColor" xml:space="preserve">
+    <value>Use second color</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
+    <value>Graphics settings</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSettingsDesc" xml:space="preserve">
+    <value>Change the graphics settings</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
+    <value>Preset selection</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelectionDesc" xml:space="preserve">
+    <value>Select the preset you would like to edit</value>
+  </data>
+  <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
+    <value>Device presets</value>
+  </data>
+  <data name="PowerProfilesPage_UserPresets" xml:space="preserve">
+    <value>User presets</value>
+  </data>
+  <data name="ProfilesPage_PowerSettings" xml:space="preserve">
+    <value>Power settings</value>
+  </data>
+  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+    <value>Resolution is currently overridden by profile</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayToggle" xml:space="preserve">
+    <value>On Screen Overlay</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
+    <value>Toggle on screen overlay</value>
+  </data>
+  <data name="ProfilesPage_GPUScaling" xml:space="preserve">
+    <value>GPU Scaling</value>
+  </data>
+  <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
+    <value>GPU will scale up lower resolutions to fit the display</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
+    <value>Radeon Image Sharpening</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
+    <value>Enhances visual detail</value>
+  </data>
+  <data name="ProfilesPage_IS" xml:space="preserve">
+    <value>Integer scaling</value>
+  </data>
+  <data name="ProfilesPage_ISDesc" xml:space="preserve">
+    <value>Scales up resolution by multiplying each pixel by an integer</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScale" xml:space="preserve">
+    <value>Resolution scale</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleDesc" xml:space="preserve">
+    <value>Resolution scale to which integer scaling will apply</value>
+  </data>
+  <data name="ProfilesPage_RSR" xml:space="preserve">
+    <value>Radeon Super Resolution</value>
+  </data>
+  <data name="ProfilesPage_RSRDesc" xml:space="preserve">
+    <value>In-driver-based upscaling feature for faster framerates</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode" xml:space="preserve">
+    <value>Scaling mode</value>
+  </data>
+  <data name="ProfilesPage_ScalingModeDesc" xml:space="preserve">
+    <value>Choose the method used to stretch and position images to fir the display</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_Center" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_FullPanel" xml:space="preserve">
+    <value>Full panel</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_PreserveAspectRatio" xml:space="preserve">
+    <value>Preserve aspect ratio</value>
+  </data>
+  <data name="ProfilesPage_Sharpen" xml:space="preserve">
+    <value>Sharpen effect</value>
+  </data>
+  <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
+    <value>1/1 only supports Exclusive Fullscreen.</value>
   </data>
 </root>

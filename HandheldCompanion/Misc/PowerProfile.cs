@@ -1,5 +1,5 @@
 ﻿using HandheldCompanion.Managers;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,6 +56,7 @@ namespace HandheldCompanion.Misc
 
         public string FileName { get; set; }
         public bool Default {  get; set; }
+        public bool DeviceDefault { get; set; }
 
         public Version Version { get; set; } = new();
         public Guid Guid { get; set; } = Guid.NewGuid();
@@ -83,7 +84,7 @@ namespace HandheldCompanion.Misc
         public FanProfile FanProfile { get; set; } = new();
 
         public int OEMPowerMode { get; set; } = 0xFF;
-        public Guid OSPowerMode { get; set; } = PowerMode.BetterPerformance;
+        public Guid OSPowerMode { get; set; } = Managers.OSPowerMode.BetterPerformance;
 
         private Dictionary<Page, UIElement> uIElements = new();
 

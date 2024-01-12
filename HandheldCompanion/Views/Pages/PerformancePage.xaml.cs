@@ -1,9 +1,10 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using LiveCharts;
 using LiveCharts.Definitions.Series;
 using LiveCharts.Helpers;
@@ -48,13 +49,14 @@ namespace HandheldCompanion.Views.Pages
         {
             this.Tag = Tag;
 
+            // manage events
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             PowerProfileManager.Updated += PowerProfileManager_Updated;
             PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-
-            MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
-            MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
-            MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
+            PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+            PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+            PerformanceManager.Initialized += PerformanceManager_Initialized;
+            SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -75,6 +77,15 @@ namespace HandheldCompanion.Views.Pages
 
         public void Page_Closed()
         {
+        }
+
+        private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                AutoTDPSlider.Maximum = desktopScreen.devMode.dmDisplayFrequency;
+            });
         }
 
         private void PowerProfileManager_Deleted(PowerProfile profile)
@@ -224,7 +235,7 @@ namespace HandheldCompanion.Views.Pages
 
         private void PerformanceManager_Initialized()
         {
-            Processor processor = MainWindow.performanceManager.GetProcessor();
+            Processor processor = PerformanceManager.GetProcessor();
             if (processor is null)
                 return;
 
@@ -407,12 +418,31 @@ namespace HandheldCompanion.Views.Pages
             {
                 using (new ScopedLock(updateLock))
                 {
+                    if (selectedProfile.DeviceDefault)
+                    {
+                        WarningBorder.Visibility = Visibility.Visible;
+                        WarningContent.Text = Properties.Resources.ProfilesPage_DefaultDeviceProfile;
+                    }
+                    else if (selectedProfile.Default)
+                    {
+                        WarningBorder.Visibility = Visibility.Visible;
+                        WarningContent.Text = Properties.Resources.ProfilesPage_DefaultProfile;
+                    }
+                    else
+                    {
+                        WarningBorder.Visibility = Visibility.Collapsed;
+                        WarningContent.Text = string.Empty;
+                    }
+
+                    // Disable everything for device power profiles
+                    PowerPanel.IsEnabled = !selectedProfile.DeviceDefault;
+                    FanPanel.IsEnabled = !selectedProfile.DeviceDefault;
+
                     // update PowerProfile settings
                     PowerProfileName.Text = selectedProfile.Name;
                     PowerProfileDescription.Text = selectedProfile.Description;
 
                     // we shouldn't allow users to modify some of default profile settings
-                    FanMode.IsEnabled = !selectedProfile.Default;
                     ButtonProfileDelete.IsEnabled = !selectedProfile.Default;
                     ButtonProfileMore.IsEnabled = !selectedProfile.Default;
 

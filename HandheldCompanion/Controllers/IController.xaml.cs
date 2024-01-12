@@ -2,7 +2,7 @@
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -352,11 +352,6 @@ namespace HandheldCompanion.Controllers
             {
                 ui_button_hook.IsEnabled = true;
             });
-        }
-
-        // like Unplug but one that can be safely called when controller is already removed
-        public virtual void Cleanup()
-        {
         }
 
         public bool IsHidden()

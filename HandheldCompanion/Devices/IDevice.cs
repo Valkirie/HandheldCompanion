@@ -5,7 +5,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using LibreHardwareMonitor.Hardware.Motherboard;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
@@ -31,7 +31,8 @@ public enum DeviceCapabilities : ushort
     ExternalSensor = 2,
     FanControl = 4,
     DynamicLighting = 8,
-    DynamicLightingBrightness = 16
+    DynamicLightingBrightness = 16,
+    DynamicLightingSecondLEDColor = 32,
 }
 
 public struct ECDetails
@@ -111,18 +112,19 @@ public abstract class IDevice
     public double[] nTDP = { 15, 15, 20 };
 
     // device maximum operating temperature
-    public double Tjmax = 100;
+    public double Tjmax = 95;
 
     // power profile(s)
-    // we might want to create an array instead
-    public PowerProfile powerProfileQuiet;
-    public PowerProfile powerProfileBalanced = new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+    public List<PowerProfile> DevicePowerProfiles = new List<PowerProfile>()
     {
-        Default = true,
-        Guid = PowerMode.BetterPerformance,
-        OSPowerMode = PowerMode.BetterPerformance,
+        // Default profile
+        new(Properties.Resources.PowerProfileDefaultName, Properties.Resources.PowerProfileDefaultDescription)
+        {
+            Default = true,
+            Guid = Guid.Empty,
+            OSPowerMode = OSPowerMode.BetterPerformance
+        }
     };
-    public PowerProfile powerProfileCool;
 
     public List<double[]> fanPresets = new()
     {
@@ -260,6 +262,9 @@ public abstract class IDevice
                         case "AYANEO 2021 Pro":
                         case "AYANEO 2021 Pro Retro Power":
                             device = new AYANEO2021Pro();
+                            break;
+                        case "KUN":
+                            device = new AYANEOKUN();
                             break;
                         case "NEXT Pro":
                         case "NEXT Advance":

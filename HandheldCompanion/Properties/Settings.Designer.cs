@@ -7,11 +7,10 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-
 using System.Configuration;
 
-namespace HandheldCompanion.Properties {
 
+namespace HandheldCompanion.Properties {
 
     [SettingsProvider(typeof(CustomSettingsProvider))]
     internal sealed partial class Settings : ApplicationSettingsBase
@@ -722,18 +721,6 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool PlatformHWiNFOEnabled {
-            get {
-                return ((bool)(this["PlatformHWiNFOEnabled"]));
-            }
-            set {
-                this["PlatformHWiNFOEnabled"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int QuickToolsLocation {
             get {
@@ -901,6 +888,18 @@ namespace HandheldCompanion.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LEDUseSecondColor {
+            get {
+                return ((bool)(this["LEDUseSecondColor"]));
+            }
+            set {
+                this["LEDUseSecondColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int LEDSettingsLevel {
             get {
@@ -979,6 +978,30 @@ namespace HandheldCompanion.Properties {
             }
             set {
                 this["LegionControllerPassthrough"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OnScreenDisplayToggle {
+            get {
+                return ((bool)(this["OnScreenDisplayToggle"]));
+            }
+            set {
+                this["OnScreenDisplayToggle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int LastOnScreenDisplayLevel {
+            get {
+                return ((int)(this["LastOnScreenDisplayLevel"]));
+            }
+            set {
+                this["LastOnScreenDisplayLevel"] = value;
             }
         }
     }

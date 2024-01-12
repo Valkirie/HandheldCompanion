@@ -53,14 +53,12 @@
             </Grid>
         </Border>
         <ui:SimpleStackPanel Name="Notifications" Spacing="6">
-
-            <hints:Hint_LegionGoDaemon d:Visibility="Visible" />
-            <hints:Hint_LegionGoServices d:Visibility="Visible" />
+            <hints:Hint_LegionGoLegionSpace d:Visibility="Visible" />
             <hints:Hint_RogAllyServiceCheck d:Visibility="Visible" />
             <hints:Hint_SteamNeptuneDesktop d:Visibility="Visible" />
             <hints:Hint_SteamXboxDrivers d:Visibility="Visible" />
-            <hints:Hint_HWiNFO12hLimitPassed d:Visibility="Visible" />
             <hints:Hint_CoreIsolationCheck d:Visibility="Visible" />
+            <hints:Hint_AMD_IntegerScalingCheck d:Visibility="Visible" />
         </ui:SimpleStackPanel>
     </ui:SimpleStackPanel>
 </Page>

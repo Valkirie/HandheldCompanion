@@ -1007,6 +1007,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use second color.
+        /// </summary>
+        public static string DevicePage_UseSecondColor {
+            get {
+                return ResourceManager.GetString("DevicePage_UseSecondColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
         /// </summary>
         public static string Dialog_ForceRestartDesc {
@@ -2709,7 +2718,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is your default controller profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
+        ///   Looks up a localized string similar to This is your default profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
         /// </summary>
         public static string Enum_ProfileErrorCode_Default {
             get {
@@ -3024,7 +3033,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PPad Right.
+        ///   Looks up a localized string similar to DPad Right.
         /// </summary>
         public static string Enum_XInputController_ButtonFlags_DPadRight {
             get {
@@ -3267,6 +3276,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Integer scaling is not available.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheck {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deploy integer scaling.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheckAction {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integer scaling feature is not installed, therefore you won&apos;t be able to enable or disable it.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheckDesc {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We need to execute some script to deploy the integer scaling on your system.
+        /// </summary>
+        public static string Hint_AMD_IntegerScalingCheckReadme {
+            get {
+                return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckReadme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Core isolation features are turned on.
         /// </summary>
         public static string Hint_CoreIsolationCheck {
@@ -3303,70 +3348,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HWiNFO Shared Memory limit was reached.
-        /// </summary>
-        public static string Hint_HWiNFO12hLimitPassed {
-            get {
-                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to HWiNFO has reached its shared memory time limit and disabled the shared memory support. This may result in missing or outdated sensor readings.
-        /// </summary>
-        public static string Hint_HWiNFO12hLimitPassedDesc {
-            get {
-                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassedDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You should manually re-activate the shared memory time limit in the HWiNFO settings.
-        /// </summary>
-        public static string Hint_HWiNFO12hLimitPassedReadme {
-            get {
-                return ResourceManager.GetString("Hint_HWiNFO12hLimitPassedReadme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LSDaemon is active.
-        /// </summary>
-        public static string Hint_LegionGoDaemon {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Quit LSDaemon.
-        /// </summary>
-        public static string Hint_LegionGoDaemonAction {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemonAction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LSDaemon is already active on your console. This may cause compatibility issues with the application.
-        /// </summary>
-        public static string Hint_LegionGoDaemonDesc {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemonDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You should quit LSDaemon, so that the application can run properly and without any errors.
-        /// </summary>
-        public static string Hint_LegionGoDaemonReadme {
-            get {
-                return ResourceManager.GetString("Hint_LegionGoDaemonReadme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Legion Space Daemon is active.
+        ///   Looks up a localized string similar to Legion Space Tasks and Services are active.
         /// </summary>
         public static string Hint_LegionGoServices {
             get {
@@ -3375,7 +3357,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Disable Legion Space Daemon.
+        ///   Looks up a localized string similar to Disable Legion Space.
         /// </summary>
         public static string Hint_LegionGoServicesAction {
             get {
@@ -3384,7 +3366,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Legion Space Daemon is already active on your console. This may cause compatibility issues with the application..
+        ///   Looks up a localized string similar to Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application..
         /// </summary>
         public static string Hint_LegionGoServicesDesc {
             get {
@@ -3393,7 +3375,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You should disable Legion Space Daemon, so that the application can run properly and without any errors.
+        ///   Looks up a localized string similar to You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors.
         /// </summary>
         public static string Hint_LegionGoServicesReadme {
             get {
@@ -3664,6 +3646,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select next sub profile.
+        /// </summary>
+        public static string InputsHotkey_nextSubProfile {
+            get {
+                return ResourceManager.GetString("InputsHotkey_nextSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply next sub profile for the current game.
+        /// </summary>
+        public static string InputsHotkey_nextSubProfileDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_nextSubProfileDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to On-screen display.
         /// </summary>
         public static string InputsHotkey_OnScreenDisplay {
@@ -3678,6 +3678,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_OnScreenDisplayDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_OnScreenDisplayDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On Screen Overlay.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplayToggle {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle on screen overlay.
+        /// </summary>
+        public static string InputsHotkey_OnScreenDisplayToggleDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggleDesc", resourceCulture);
             }
         }
         
@@ -3714,6 +3732,24 @@ namespace HandheldCompanion.Properties {
         public static string InputsHotkey_overlayTrackpadsDesc {
             get {
                 return ResourceManager.GetString("InputsHotkey_overlayTrackpadsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select previous sub profile.
+        /// </summary>
+        public static string InputsHotkey_previousSubProfile {
+            get {
+                return ResourceManager.GetString("InputsHotkey_previousSubProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply previous sub profile for the current game.
+        /// </summary>
+        public static string InputsHotkey_previousSubProfileDesc {
+            get {
+                return ResourceManager.GetString("InputsHotkey_previousSubProfileDesc", resourceCulture);
             }
         }
         
@@ -4537,7 +4573,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the angle, in degree.
+        ///   Looks up a localized string similar to Change the angle.
         /// </summary>
         public static string OverlayPage_CameraAnglePitchDesc {
             get {
@@ -4987,6 +5023,60 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preset similar to Balanced Mode in LS. TDP Limit: 15W.
+        /// </summary>
+        public static string PowerProfileLegionGoBalancedDescription {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoBalancedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Go - Balanced.
+        /// </summary>
+        public static string PowerProfileLegionGoBalancedName {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoBalancedName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preset similar to Performance Mode in LS. TDP Limit: 20W.
+        /// </summary>
+        public static string PowerProfileLegionGoPerformanceDescription {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoPerformanceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Go - Performance.
+        /// </summary>
+        public static string PowerProfileLegionGoPerformanceName {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoPerformanceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preset similar to Quiet Mode in LS. TDP Limit: 8W.
+        /// </summary>
+        public static string PowerProfileLegionGoQuietDescription {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoQuietDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Legion Go - Quiet.
+        /// </summary>
+        public static string PowerProfileLegionGoQuietName {
+            get {
+                return ResourceManager.GetString("PowerProfileLegionGoQuietName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User-defined power and fan speed..
         /// </summary>
         public static string PowerProfileManualDescription {
@@ -5007,54 +5097,90 @@ namespace HandheldCompanion.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Balances performance, temperature and acoustic for any scenario..
         /// </summary>
-        public static string PowerProfilePerformanceDescription {
+        public static string PowerProfileROGAllyPerformanceDescription {
             get {
-                return ResourceManager.GetString("PowerProfilePerformanceDescription", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyPerformanceDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Performance.
+        ///   Looks up a localized string similar to ROG Ally - Performance.
         /// </summary>
-        public static string PowerProfilePerformanceName {
+        public static string PowerProfileROGAllyPerformanceName {
             get {
-                return ResourceManager.GetString("PowerProfilePerformanceName", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyPerformanceName", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Limits CPU and GPU power, but keeps noise levels quiet..
         /// </summary>
-        public static string PowerProfileSilentDescription {
+        public static string PowerProfileROGAllySilentDescription {
             get {
-                return ResourceManager.GetString("PowerProfileSilentDescription", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllySilentDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Silent.
+        ///   Looks up a localized string similar to ROG Ally - Silent.
         /// </summary>
-        public static string PowerProfileSilentName {
+        public static string PowerProfileROGAllySilentName {
             get {
-                return ResourceManager.GetString("PowerProfileSilentName", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllySilentName", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans..
         /// </summary>
-        public static string PowerProfileTurboDescription {
+        public static string PowerProfileROGAllyTurboDescription {
             get {
-                return ResourceManager.GetString("PowerProfileTurboDescription", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyTurboDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Turbo.
+        ///   Looks up a localized string similar to ROG Ally - Turbo.
         /// </summary>
-        public static string PowerProfileTurboName {
+        public static string PowerProfileROGAllyTurboName {
             get {
-                return ResourceManager.GetString("PowerProfileTurboName", resourceCulture);
+                return ResourceManager.GetString("PowerProfileROGAllyTurboName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device presets.
+        /// </summary>
+        public static string PowerProfilesPage_DevicePresets {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_DevicePresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preset selection.
+        /// </summary>
+        public static string PowerProfilesPage_PresetSelection {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_PresetSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select the preset you would like to edit.
+        /// </summary>
+        public static string PowerProfilesPage_PresetSelectionDesc {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_PresetSelectionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User presets.
+        /// </summary>
+        public static string PowerProfilesPage_UserPresets {
+            get {
+                return ResourceManager.GetString("PowerProfilesPage_UserPresets", resourceCulture);
             }
         }
         
@@ -5311,7 +5437,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create a new power profile.
+        ///   Looks up a localized string similar to Create a new power preset.
         /// </summary>
         public static string ProfilesPage_CreatePowerProfile {
             get {
@@ -5320,11 +5446,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create power profile.
+        ///   Looks up a localized string similar to Create power preset.
         /// </summary>
         public static string ProfilesPage_CreatePowerProfileButton {
             get {
                 return ResourceManager.GetString("ProfilesPage_CreatePowerProfileButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software..
+        /// </summary>
+        public static string ProfilesPage_DefaultDeviceProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DefaultDeviceProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is the default preset, you cannot modify the fan curve on this preset..
+        /// </summary>
+        public static string ProfilesPage_DefaultProfile {
+            get {
+                return ResourceManager.GetString("ProfilesPage_DefaultProfile", resourceCulture);
             }
         }
         
@@ -5338,7 +5482,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete power profile.
+        ///   Looks up a localized string similar to Delete power preset.
         /// </summary>
         public static string ProfilesPage_DeletePowerProfileButton {
             get {
@@ -5527,6 +5671,42 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to GPU Scaling.
+        /// </summary>
+        public static string ProfilesPage_GPUScaling {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPUScaling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPU will scale up lower resolutions to fit the display.
+        /// </summary>
+        public static string ProfilesPage_GPUScalingDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GPUScalingDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Graphics settings.
+        /// </summary>
+        public static string ProfilesPage_GraphicsSettings {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the graphics settings.
+        /// </summary>
+        public static string ProfilesPage_GraphicsSettingsDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_GraphicsSettingsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gyrometer multiplier.
         /// </summary>
         public static string ProfilesPage_GyrometerMultiplier {
@@ -5563,6 +5743,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Radeon Image Sharpening.
+        /// </summary>
+        public static string ProfilesPage_ImageSharpening {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ImageSharpening", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enhances visual detail.
+        /// </summary>
+        public static string ProfilesPage_ImageSharpeningDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ImageSharpeningDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invert horizontal axis.
         /// </summary>
         public static string ProfilesPage_InvertHorizontalAxis {
@@ -5577,6 +5775,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_InvertVerticalAxis {
             get {
                 return ResourceManager.GetString("ProfilesPage_InvertVerticalAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integer scaling.
+        /// </summary>
+        public static string ProfilesPage_IS {
+            get {
+                return ResourceManager.GetString("ProfilesPage_IS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scales up resolution by multiplying each pixel by an integer.
+        /// </summary>
+        public static string ProfilesPage_ISDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ISDesc", resourceCulture);
             }
         }
         
@@ -5626,7 +5842,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the global motion control settings.
+        ///   Looks up a localized string similar to Change the motion control settings.
         /// </summary>
         public static string ProfilesPage_MotionControlSettingsDesc {
             get {
@@ -5653,20 +5869,29 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Power preset.
+        /// </summary>
+        public static string ProfilesPage_PowerPreset {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change the selected power preset.
+        /// </summary>
+        public static string ProfilesPage_PowerPresetDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_PowerPresetDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power settings.
         /// </summary>
         public static string ProfilesPage_PowerSettings {
             get {
                 return ResourceManager.GetString("ProfilesPage_PowerSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Change the power settings.
-        /// </summary>
-        public static string ProfilesPage_PowerSettingsDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_PowerSettingsDesc", resourceCulture);
             }
         }
         
@@ -5752,11 +5977,92 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resolution scale.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScale {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolution scale to which integer scaling will apply.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Roll.
         /// </summary>
         public static string ProfilesPage_Roll {
             get {
                 return ResourceManager.GetString("ProfilesPage_Roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radeon Super Resolution.
+        /// </summary>
+        public static string ProfilesPage_RSR {
+            get {
+                return ResourceManager.GetString("ProfilesPage_RSR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In-driver-based upscaling feature for faster framerates.
+        /// </summary>
+        public static string ProfilesPage_RSRDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_RSRDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scaling mode.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Center.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode_Center {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode_Center", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full panel.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode_FullPanel {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode_FullPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preserve aspect ratio.
+        /// </summary>
+        public static string ProfilesPage_ScalingMode_PreserveAspectRatio {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingMode_PreserveAspectRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the method used to stretch and position images to fir the display.
+        /// </summary>
+        public static string ProfilesPage_ScalingModeDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ScalingModeDesc", resourceCulture);
             }
         }
         
@@ -5775,6 +6081,15 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_SensitivityY {
             get {
                 return ResourceManager.GetString("ProfilesPage_SensitivityY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sharpen effect.
+        /// </summary>
+        public static string ProfilesPage_Sharpen {
+            get {
+                return ResourceManager.GetString("ProfilesPage_Sharpen", resourceCulture);
             }
         }
         
@@ -5811,6 +6126,24 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_StyleofOutputTooltip {
             get {
                 return ResourceManager.GetString("ProfilesPage_StyleofOutputTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sub Profiles.
+        /// </summary>
+        public static string ProfilesPage_SubProfiles {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SubProfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add different profiles to the same game.
+        /// </summary>
+        public static string ProfilesPage_SubProfilesDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_SubProfilesDesc", resourceCulture);
             }
         }
         
@@ -5968,9 +6301,9 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to With motion input disabled, hold selected button(s) to enable motion,
-        ///with motion input enabled, hold selected button(s) to disable motion,
-        ///with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa..
+        ///   Looks up a localized string similar to Motion input disabled: hold selected button(s) to enable motion.
+        ///Motion input enabled: hold selected button(s) to disable motion.
+        ///Motion input toggle: press selected button(s) to switch motion state..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
@@ -6137,6 +6470,24 @@ namespace HandheldCompanion.Properties {
         public static string QuickHomePage_Title {
             get {
                 return ResourceManager.GetString("QuickHomePage_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage on-screen overlay.
+        /// </summary>
+        public static string QuickOverlayPage_Desc {
+            get {
+                return ResourceManager.GetString("QuickOverlayPage_Desc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay.
+        /// </summary>
+        public static string QuickOverlayPage_Title {
+            get {
+                return ResourceManager.GetString("QuickOverlayPage_Title", resourceCulture);
             }
         }
         
@@ -6411,6 +6762,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select a sub profile to apply.
+        /// </summary>
+        public static string QuickProfilesPage_SubProfilesDesc {
+            get {
+                return ResourceManager.GetString("QuickProfilesPage_SubProfilesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
         public static string QuickProfilesPage_Title {
@@ -6429,7 +6789,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preferred actions, device settings.
+        ///   Looks up a localized string similar to Preferred actions.
         /// </summary>
         public static string QuickSettingsPage_Desc {
             get {
@@ -6470,6 +6830,24 @@ namespace HandheldCompanion.Properties {
         public static string QuickSettingsPage_DisplayResolutionDesc {
             get {
                 return ResourceManager.GetString("QuickSettingsPage_DisplayResolutionDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolution is currently overridden by profile.
+        /// </summary>
+        public static string QuickSettingsPage_ResolutionOverrideWarning {
+            get {
+                return ResourceManager.GetString("QuickSettingsPage_ResolutionOverrideWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1/1 only supports Exclusive Fullscreen..
+        /// </summary>
+        public static string QuickSettingsPage_ResScaleExclusiveFullscreen {
+            get {
+                return ResourceManager.GetString("QuickSettingsPage_ResScaleExclusiveFullscreen", resourceCulture);
             }
         }
         
@@ -6771,7 +7149,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the steering deadzone, in degree. Improves steering straight.
+        ///   Looks up a localized string similar to Change the steering deadzone. Improves steering straight.
         /// </summary>
         public static string SettingsMode1_DeadzoneDesc {
             get {
@@ -6825,7 +7203,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change the maximum steering angle value, in degree.
+        ///   Looks up a localized string similar to Change the maximum steering angle value.
         /// </summary>
         public static string SettingsMode1_MaxSteeringAngleDesc {
             get {
@@ -7122,24 +7500,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HWiNFO.
-        /// </summary>
-        public static string SettingsPage_HwInfo {
-            get {
-                return ResourceManager.GetString("SettingsPage_HwInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatically turn HWiNFO off when companion is closed.
-        /// </summary>
-        public static string SettingsPage_HwInfoDesc {
-            get {
-                return ResourceManager.GetString("SettingsPage_HwInfoDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Install now.
         /// </summary>
         public static string SettingsPage_InstallNow {
@@ -7271,6 +7631,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_QuickToolsWindowLocationDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationLeft {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        public static string SettingsPage_QuickToolsWindowLocationRight {
+            get {
+                return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationRight", resourceCulture);
             }
         }
         

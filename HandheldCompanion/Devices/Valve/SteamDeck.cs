@@ -28,12 +28,26 @@ public class SteamDeck : IDevice
     private static readonly IntPtr XBID = new(0xFE700300 + 0xBD);
     private static readonly IntPtr PDCT = new(0xFE700C00 + 0x01);
 
+    /*
+     * SteamDeck LCD:
+     * F7A0107 (PD ver: 0xB030)
+     * F7A0110 (PD ver: 0xB030)
+     * F7A0113 (PD ver: 0xB030)
+     * F7A0115 (PD ver: 0xB030)
+     * F7A0116 (PD ver: 0xB030)
+     * F7A0119 (PD ver: 0xB030)
+     * 
+     * SteamDeck OLED:
+     * F7G0107 (PD ver: 0x1050)
+     */
+
     public static readonly ushort[] SupportedFirmwares =
     {
         // Steam Deck - LCD version
         0xB030,
         // Steam Deck - OLED version
-        0x1030,
+        0x1050, // BIOS 107
+        0x1030, // BIOS 105
         0x1010,
     };
 

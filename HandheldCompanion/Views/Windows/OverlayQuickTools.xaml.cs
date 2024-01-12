@@ -3,7 +3,7 @@ using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.QuickPages;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,18 +14,21 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using Application = System.Windows.Application;
+using ComboBox = System.Windows.Controls.ComboBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
 using PowerManager = HandheldCompanion.Managers.PowerManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemPowerManager = Windows.System.Power.PowerManager;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Views.Windows;
 
@@ -41,6 +44,9 @@ public partial class OverlayQuickTools : GamepadWindow
     const UInt32 SWP_NOMOVE = 0x0002;
     const UInt32 SWP_NOACTIVATE = 0x0010;
     const UInt32 SWP_NOZORDER = 0x0004;
+
+    // Define the Win32 API constants and functions
+    const int WM_PAINT = 0x000F;
     const int WM_ACTIVATEAPP = 0x001C;
     const int WM_ACTIVATE = 0x0006;
     const int WM_SETFOCUS = 0x0007;
@@ -56,6 +62,9 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private HwndSource hwndSource;
 
+    private Dictionary<UIElement, CacheMode> cacheModes = new();
+    private Timer WM_PAINT_TIMER;
+
     // page vars
     private readonly Dictionary<string, Page> _pages = new();
 
@@ -64,10 +73,10 @@ public partial class OverlayQuickTools : GamepadWindow
     private readonly DispatcherTimer clockUpdateTimer;
 
     public QuickHomePage homePage;
-    public QuickSettingsPage settingsPage;
     public QuickDevicePage devicePage;
     public QuickPerformancePage performancePage;
     public QuickProfilesPage profilesPage;
+    public QuickOverlayPage overlayPage;
     public QuickSuspenderPage suspenderPage;
 
     private string preNavItemTag;
@@ -85,6 +94,9 @@ public partial class OverlayQuickTools : GamepadWindow
         clockUpdateTimer.Interval = TimeSpan.FromMilliseconds(500);
         clockUpdateTimer.Tick += UpdateTime;
 
+        WM_PAINT_TIMER = new(250) { AutoReset = false };
+        WM_PAINT_TIMER.Elapsed += WM_PAINT_TIMER_Tick;
+
         // create manager(s)
         PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
 
@@ -93,22 +105,18 @@ public partial class OverlayQuickTools : GamepadWindow
 
         // create pages
         homePage = new("quickhome");
-        settingsPage = new("quicksettings");
         devicePage = new("quickdevice");
         performancePage = new("quickperformance");
         profilesPage = new("quickprofiles");
+        overlayPage = new("quickoverlay");
         suspenderPage = new("quicksuspender");
 
         _pages.Add("QuickHomePage", homePage);
-        _pages.Add("QuickSettingsPage", settingsPage);
         _pages.Add("QuickDevicePage", devicePage);
         _pages.Add("QuickPerformancePage", performancePage);
         _pages.Add("QuickProfilesPage", profilesPage);
+        _pages.Add("QuickOverlayPage", overlayPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
-
-        // update Position and Size
-        Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("QuickToolsHeight"));
-        navView.IsPaneOpen = SettingsManager.GetBoolean("QuickToolsIsPaneOpen");
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)
@@ -135,56 +143,38 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
     {
-        var QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
+        int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
         UpdateLocation(QuickToolsLocation);
     }
 
     private void UpdateLocation(int QuickToolsLocation)
     {
-        switch (QuickToolsLocation)
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // top, left
-            case 0:
-                {
-                    this.SetWindowPosition(WindowPositions.TopLeft, Screen.PrimaryScreen);
-                    Top += Margin.Top;
+            switch (QuickToolsLocation)
+            {
+                // top, left
+                // bottom, left
+                case 0:
+                case 2:
+                    this.SetWindowPosition(WindowPositions.Left, Screen.PrimaryScreen);
                     Left += Margin.Left;
-                }
-                break;
+                    break;
 
-            // top, right
-            case 1:
-                {
-                    this.SetWindowPosition(WindowPositions.TopRight, Screen.PrimaryScreen);
-                    Top += Margin.Top;
-                    Left -= Margin.Left;
-                }
-                break;
+                // top, right
+                // bottom, right
+                default:
+                case 1:
+                case 3:
+                    this.SetWindowPosition(WindowPositions.Right, Screen.PrimaryScreen);
+                    Left -= Margin.Right;
+                    break;
+            }
 
-            // bottom, left
-            case 2:
-                {
-                    this.SetWindowPosition(WindowPositions.BottomLeft, Screen.PrimaryScreen);
-                    Top -= Margin.Top;
-                    Left += Margin.Left;
-                }
-                break;
-
-            // bottom, right
-            default:
-            case 3:
-                {
-                    this.SetWindowPosition(WindowPositions.BottomRight, Screen.PrimaryScreen);
-                    Top -= Margin.Top;
-                    Left -= Margin.Left;
-                }
-                break;
-        }
-
-        // prevent window's from being too tall, add margin for top and bottom
-        var maxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - 2 * Margin.Top);
-        if (Height > maxHeight)
-            Height = maxHeight;
+            Height = MinHeight = MaxHeight = (int)(Screen.PrimaryScreen.WpfBounds.Height - (2.0d * Margin.Top));
+            Top = Margin.Top;
+        });
     }
 
     private void PowerManager_PowerStatusChanged(PowerStatus status)
@@ -253,11 +243,9 @@ public partial class OverlayQuickTools : GamepadWindow
         hwndSource = PresentationSource.FromVisual(this) as HwndSource;
         hwndSource.AddHook(WndProc);
 
-        // workaround: fix the stalled UI rendering, at the cost of forcing the window to render over CPU at 30fps
         if (hwndSource != null)
         {
-            hwndSource.CompositionTarget.RenderMode = RenderMode.Default;
-            // hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
+            hwndSource.CompositionTarget.RenderMode = RenderMode.SoftwareOnly;
             WinAPI.SetWindowPos(hwndSource.Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE);
         }
     }
@@ -326,12 +314,39 @@ public partial class OverlayQuickTools : GamepadWindow
                 }
                 break;
 
-            default:
-                // Debug.WriteLine($"{msg}\t\t{wParam}\t\t\t{lParam}");
+            case WM_PAINT:
+                {
+                    // Loop through all visual elements in the window
+                    foreach (var element in WPFUtils.FindVisualChildren<UIElement>(this))
+                    {
+                        if (element.CacheMode is not null)
+                        {
+                            // Store the previous CacheMode value
+                            cacheModes[element] = element.CacheMode.Clone();
+
+                            // Set the CacheMode to null
+                            element.CacheMode = null;
+                        }
+                    }
+
+                    WM_PAINT_TIMER.Stop();
+                    WM_PAINT_TIMER.Start();
+                }
                 break;
         }
 
         return IntPtr.Zero;
+    }
+
+    private void WM_PAINT_TIMER_Tick(object? sender, EventArgs e)
+    {
+        // UI thread
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            // Set the CacheMode back to the previous value
+            foreach (UIElement element in cacheModes.Keys)
+                element.CacheMode = cacheModes[element];
+        });
     }
 
     private void HandleEsc(object sender, KeyEventArgs e)
@@ -372,24 +387,14 @@ public partial class OverlayQuickTools : GamepadWindow
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
-        // position and size settings
-        switch (WindowState)
-        {
-            case WindowState.Normal:
-            case WindowState.Maximized:
-                SettingsManager.SetProperty("QuickToolsHeight", Height);
-                break;
-        }
-
-        SettingsManager.SetProperty("QuickToolsIsPaneOpen", navView.IsPaneOpen);
-
         e.Cancel = !isClosing;
 
         if (!isClosing)
             ToggleVisibility();
         else
         {
-            settingsPage.Close();
+            // close pages
+            devicePage.Close();
         }
     }
 

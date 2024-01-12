@@ -2,7 +2,7 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System.Collections.Generic;
 using System.Windows;
 using Page = System.Windows.Controls.Page;

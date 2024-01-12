@@ -4,9 +4,10 @@ using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
-using Inkore.UI.WPF.Modern;
-using Inkore.UI.WPF.Modern.Controls;
-using Inkore.UI.WPF.Modern.Controls.Primitives;
+using iNKORE.UI.WPF.Modern;
+using iNKORE.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls.Helpers;
+using iNKORE.UI.WPF.Modern.Helpers.Styles;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -46,17 +47,15 @@ public partial class SettingsPage : Page
         UpdateDevice();
 
         // initialize manager(s)
-        MainWindow.updateManager.Updated += UpdateManager_Updated;
+        UpdateManager.Updated += UpdateManager_Updated;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
 
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        PlatformManager.HWiNFO.Updated += HWiNFO_Updated;
 
         // force call
         // todo: make PlatformManager static
         RTSS_Updated(PlatformManager.RTSS.Status);
-        HWiNFO_Updated(PlatformManager.HWiNFO.Status);
     }
 
     public SettingsPage(string? Tag) : this()
@@ -70,23 +69,6 @@ public partial class SettingsPage : Page
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             SensorController.IsEnabled = Controller.Capabilities.HasFlag(ControllerCapabilities.MotionSensor);
-        });
-    }
-
-    private void HWiNFO_Updated(PlatformStatus status)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch (status)
-            {
-                case PlatformStatus.Ready:
-                    Toggle_HWiNFO.IsEnabled = true;
-                    break;
-                case PlatformStatus.Stalled:
-                    Toggle_HWiNFO.IsOn = false;
-                    break;
-            }
         });
     }
 
@@ -226,10 +208,6 @@ public partial class SettingsPage : Page
                 case "PlatformRTSSEnabled":
                     Toggle_RTSS.IsOn = Convert.ToBoolean(value);
                     break;
-                case "PlatformHWiNFOEnabled":
-                    Toggle_HWiNFO.IsOn = Convert.ToBoolean(value);
-                    break;
-
                 case "QuickToolsLocation":
                     cB_QuicktoolsPosition.SelectedIndex = Convert.ToInt32(value);
                     break;
@@ -252,7 +230,7 @@ public partial class SettingsPage : Page
 
     private void Page_Loaded(object? sender, RoutedEventArgs? e)
     {
-        MainWindow.updateManager.Start();
+        UpdateManager.Start();
     }
 
     public void Page_Closed()
@@ -323,7 +301,7 @@ public partial class SettingsPage : Page
                         {
                             LabelUpdate.Text = Properties.Resources.SettingsPage_UpToDate;
                             LabelUpdateDate.Text = Properties.Resources.SettingsPage_LastChecked +
-                                                   MainWindow.updateManager.GetTime();
+                                                   UpdateManager.GetTime();
 
                             LabelUpdateDate.Visibility = Visibility.Visible;
                             GridUpdateSymbol.Visibility = Visibility.Visible;
@@ -358,13 +336,13 @@ public partial class SettingsPage : Page
                             // Set download button action
                             update.updateDownload.Click += (sender, e) =>
                             {
-                                MainWindow.updateManager.DownloadUpdateFile(update);
+                                UpdateManager.DownloadUpdateFile(update);
                             };
 
                             // Set button action
                             update.updateInstall.Click += (sender, e) =>
                             {
-                                MainWindow.updateManager.InstallUpdate(update);
+                                UpdateManager.InstallUpdate(update);
                             };
 
                             CurrentUpdates.Children.Add(border);
@@ -408,7 +386,7 @@ public partial class SettingsPage : Page
 
     private void B_CheckUpdate_Click(object? sender, RoutedEventArgs? e)
     {
-        new Thread(() => { MainWindow.updateManager.StartProcess(); }).Start();
+        new Thread(() => { UpdateManager.StartProcess(); }).Start();
     }
 
     private void cB_Language_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
@@ -575,14 +553,6 @@ public partial class SettingsPage : Page
             return;
 
         SettingsManager.SetProperty("PlatformRTSSEnabled", Toggle_RTSS.IsOn);
-    }
-
-    private void Toggle_HWiNFO_Toggled(object sender, RoutedEventArgs e)
-    {
-        if (!IsLoaded)
-            return;
-
-        SettingsManager.SetProperty("PlatformHWiNFOEnabled", Toggle_HWiNFO.IsOn);
     }
 
     private void cB_QuicktoolsPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)

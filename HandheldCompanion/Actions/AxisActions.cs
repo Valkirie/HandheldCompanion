@@ -21,7 +21,7 @@ namespace HandheldCompanion.Actions
 
         public AxisActions()
         {
-            this.ActionType = ActionType.Joystick;
+            this.actionType = ActionType.Joystick;
             this.Value = new Vector2();
         }
 

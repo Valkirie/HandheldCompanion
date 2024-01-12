@@ -241,7 +241,7 @@
     <value>Stationary pitch</value>
   </data>
   <data name="OverlayPage_CameraAnglePitchDesc" xml:space="preserve">
-    <value>Change the angle, in degree</value>
+    <value>Change the angle</value>
   </data>
   <data name="OverlayPage_ControllerOptions" xml:space="preserve">
     <value>Options du contrôleur</value>
@@ -1536,12 +1536,6 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
     <value>Automatically turn RTSS off when companion is closed</value>
   </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Automatically turn HWiNFO off when companion is closed</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
   <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
     <value>Default</value>
   </data>
@@ -1895,7 +1889,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
     <value>DPad Left</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Right</value>
+    <value>DPad Right</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Up</value>

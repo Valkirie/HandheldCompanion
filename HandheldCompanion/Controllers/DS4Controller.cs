@@ -112,11 +112,6 @@ public class DS4Controller : JSController
         });
     }
 
-    public override void Cleanup()
-    {
-        TimerManager.Tick -= UpdateInputs;
-    }
-
     public override string GetGlyph(ButtonFlags button)
     {
         switch (button)

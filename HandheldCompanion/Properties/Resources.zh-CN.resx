@@ -1486,12 +1486,6 @@
   <data name="SettingsPage_RivaTunerStatisticsServerDesc" xml:space="preserve">
     <value>当程序退出时自动退出RTSS</value>
   </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>当应用退出时自动退出HWiNFO</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
-  </data>
   <data name="QuickProfilesPage_CurrentProfileDefault" xml:space="preserve">
     <value>默认</value>
   </data>

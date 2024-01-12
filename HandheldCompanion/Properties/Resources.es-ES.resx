@@ -1432,14 +1432,8 @@
   <data name="DevicePage_PowerOptions" xml:space="preserve">
     <value>Opciones de energía</value>
   </data>
-  <data name="SettingsPage_HwInfoDesc" xml:space="preserve">
-    <value>Desactiva automáticamente HWiNFO cuando HC está cerrado</value>
-  </data>
   <data name="ButtonsPage_ABXY" xml:space="preserve">
     <value>A,B,X,Y</value>
-  </data>
-  <data name="SettingsPage_HwInfo" xml:space="preserve">
-    <value>HWiNFO</value>
   </data>
   <data name="ButtonsPage_Back_Grips" xml:space="preserve">
     <value>CONTROLES TRASEROS</value>
@@ -1829,7 +1823,7 @@
     <value>DPad Izquierda</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadRight" xml:space="preserve">
-    <value>PPad Derecha</value>
+    <value>DPad Derecha</value>
   </data>
   <data name="Enum.XInputController.ButtonFlags.DPadUp" xml:space="preserve">
     <value>DPad Arriba</value>

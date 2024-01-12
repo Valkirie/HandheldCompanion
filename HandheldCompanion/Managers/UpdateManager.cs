@@ -1,7 +1,7 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,8 +14,9 @@ using System.Reflection;
 
 namespace HandheldCompanion.Managers;
 
-public class UpdateManager : Manager
+public static class UpdateManager
 {
+    public static event UpdatedEventHandler Updated;
     public delegate void UpdatedEventHandler(UpdateStatus status, UpdateFile? update, object? value);
 
     public enum UpdateStatus
@@ -31,17 +32,23 @@ public class UpdateManager : Manager
         Failed
     }
 
-    private readonly Assembly assembly;
+    private static readonly Assembly assembly;
 
-    private readonly Version build;
-    private DateTime lastchecked;
+    private static readonly Version build;
+    private static DateTime lastchecked;
 
-    private UpdateStatus status;
-    private readonly Dictionary<string, UpdateFile> updateFiles = new();
-    private string url;
-    private readonly WebClient webClient;
+    private static UpdateStatus status;
+    private static readonly Dictionary<string, UpdateFile> updateFiles = new();
+    private static string url;
+    private static readonly WebClient webClient;
+    private static readonly string InstallPath;
 
-    public UpdateManager()
+    private static bool IsInitialized;
+
+    public static event InitializedEventHandler Initialized;
+    public delegate void InitializedEventHandler();
+
+    static UpdateManager()
     {
         // check assembly
         assembly = Assembly.GetExecutingAssembly();
@@ -65,9 +72,7 @@ public class UpdateManager : Manager
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
     }
 
-    public event UpdatedEventHandler Updated;
-
-    private void SettingsManager_SettingValueChanged(string name, object value)
+    private static void SettingsManager_SettingValueChanged(string name, object value)
     {
         switch (name)
         {
@@ -77,7 +82,7 @@ public class UpdateManager : Manager
         }
     }
 
-    private int GetFileSize(Uri uriPath)
+    private static int GetFileSize(Uri uriPath)
     {
         try
         {
@@ -96,7 +101,7 @@ public class UpdateManager : Manager
         }
     }
 
-    private void WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
+    private static void WebClient_DownloadFileCompleted(object? sender, AsyncCompletedEventArgs e)
     {
         if (status != UpdateStatus.Downloading)
             return;
@@ -112,7 +117,7 @@ public class UpdateManager : Manager
         Updated?.Invoke(status, update, null);
     }
 
-    private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    private static void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
         if (status != UpdateStatus.Download && status != UpdateStatus.Downloading)
             return;
@@ -126,7 +131,7 @@ public class UpdateManager : Manager
         }
     }
 
-    private void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+    private static void WebClient_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
     {
         // something went wrong with the connection
         if (e.Error is not null)
@@ -163,7 +168,7 @@ public class UpdateManager : Manager
         }
     }
 
-    public void DownloadUpdateFile(UpdateFile update)
+    public static void DownloadUpdateFile(UpdateFile update)
     {
         if (webClient.IsBusy)
             return; // lazy
@@ -176,7 +181,7 @@ public class UpdateManager : Manager
         webClient.DownloadFileAsync(update.uri, filename, update.filename);
     }
 
-    private void ParseLatest(string contentsJson)
+    private static void ParseLatest(string contentsJson)
     {
         try
         {
@@ -244,7 +249,7 @@ public class UpdateManager : Manager
         }
     }
 
-    public override void Start()
+    public static void Start()
     {
         var dateTime = SettingsManager.GetDateTime("UpdateLastChecked");
 
@@ -253,29 +258,36 @@ public class UpdateManager : Manager
         status = UpdateStatus.Initialized;
         Updated?.Invoke(status, null, null);
 
-        base.Start();
+        IsInitialized = true;
+        Initialized?.Invoke();
+
+        LogManager.LogInformation("{0} has started", "UpdateManager");
     }
 
-    public override void Stop()
+    public static void Stop()
     {
         if (!IsInitialized)
             return;
 
-        base.Stop();
+        IsInitialized = false;
+
+        SettingsManager.SettingValueChanged -= SettingsManager_SettingValueChanged;
+
+        LogManager.LogInformation("{0} has stopped", "UpdateManager");
     }
 
-    public DateTime GetTime()
+    public static DateTime GetTime()
     {
         return lastchecked;
     }
 
-    public void UpdateTime()
+    private static void UpdateTime()
     {
         lastchecked = DateTime.Now;
         SettingsManager.SetProperty("UpdateLastChecked", lastchecked);
     }
 
-    public void StartProcess()
+    public static void StartProcess()
     {
         // Update UI
         status = UpdateStatus.Checking;
@@ -285,7 +297,7 @@ public class UpdateManager : Manager
         webClient.DownloadStringAsync(new Uri($"{url}/releases/latest"));
     }
 
-    public void InstallUpdate(UpdateFile updateFile)
+    public static void InstallUpdate(UpdateFile updateFile)
     {
         var filename = Path.Combine(InstallPath, updateFile.filename);
 

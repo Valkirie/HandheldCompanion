@@ -373,12 +373,13 @@
                                 Grid.Column="1"
                                 Margin="12,0,0,0"
                                 ScrollViewer.PanningMode="HorizontalOnly">
-                                <TextBlock
-                                    Width="35"
+                                <TextBox
+                                    Height="32"
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Text="{Binding Value, StringFormat=N0, ElementName=SliderStrength, Mode=OneWay}"
-                                    TextAlignment="Center" />
-                                <TextBlock VerticalAlignment="Center" Text="%" />
+                                    HorizontalContentAlignment="Center"
+                                    IsReadOnly="True"
+                                    Text="{Binding Value, StringFormat={}{0:N0} %, ElementName=SliderStrength, Mode=OneWay}" />
                                 <Slider
                                     x:Name="SliderStrength"
                                     Margin="6,0,0,0"
@@ -392,7 +393,7 @@
                                     Style="{DynamicResource SliderStyle1}"
                                     TickFrequency="5"
                                     TickPlacement="BottomRight"
-                                    ToolTip="{Binding Value, StringFormat=N0, RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                    ToolTip="{Binding Value, StringFormat={}{0:N0} %, RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                     ValueChanged="SliderStrength_ValueChanged"
                                     Value="100" />
                             </DockPanel>

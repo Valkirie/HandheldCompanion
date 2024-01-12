@@ -52,11 +52,13 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityX, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderSensitivityX, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderSensitivityX"
                                 Margin="6,0,0,0"
@@ -111,11 +113,13 @@
                             Grid.Column="1"
                             Margin="12,0,0,0"
                             ScrollViewer.PanningMode="HorizontalOnly">
-                            <TextBlock
-                                Width="35"
+                            <TextBox
+                                Height="32"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Text="{Binding Value, StringFormat=N1, ElementName=SliderSensitivityY, Mode=OneWay}"
-                                TextAlignment="Center" />
+                                HorizontalContentAlignment="Center"
+                                IsReadOnly="True"
+                                Text="{Binding Value, StringFormat={}{0:N1}, ElementName=SliderSensitivityY, Mode=OneWay}" />
                             <Slider
                                 x:Name="SliderSensitivityY"
                                 Margin="6,0,0,0"
@@ -176,11 +180,13 @@
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}"
-                                        TextAlignment="Center" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N1}, ElementName=tb_ProfileAimingDownSightsMultiplier, Mode=OneWay}" />
                                     <Slider
                                         x:Name="tb_ProfileAimingDownSightsMultiplier"
                                         Margin="6,0,0,0"
@@ -297,11 +303,13 @@
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N0, ElementName=tb_ProfileFlickDuration, Mode=OneWay}"
-                                        TextAlignment="Center" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N0} ms, ElementName=tb_ProfileFlickDuration, Mode=OneWay}" />
                                     <Slider
                                         x:Name="tb_ProfileFlickDuration"
                                         Margin="6,0,0,0"
@@ -347,11 +355,13 @@
                                     Grid.Column="1"
                                     Margin="12,0,0,0"
                                     ScrollViewer.PanningMode="HorizontalOnly">
-                                    <TextBlock
-                                        Width="35"
+                                    <TextBox
+                                        Height="32"
+                                        HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
-                                        Text="{Binding Value, StringFormat=N1, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}"
-                                        TextAlignment="Center" />
+                                        HorizontalContentAlignment="Center"
+                                        IsReadOnly="True"
+                                        Text="{Binding Value, StringFormat={}{0:N1}, ElementName=tb_ProfileStickSensitivity, Mode=OneWay}" />
                                     <Slider
                                         x:Name="tb_ProfileStickSensitivity"
                                         Margin="6,0,0,0"

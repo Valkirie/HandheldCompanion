@@ -352,51 +352,59 @@ public static class XInputPlus
         return true;
     }
 
+    private static object writeLock = new();
     public static bool WriteXInputPlusINI(string directoryPath, bool x64bit)
     {
-        var IniPath = Path.Combine(directoryPath, "XInputPlus.ini");
-
-        if (!FileUtils.IsFileWritable(IniPath))
-            return false;
-
-        // prepare index array
-        List<int> userIndex = new() { 1, 2, 3, 4 };
-
-        // prepare IniFile
-        File.WriteAllText(IniPath, IniContent);
-        IniFile IniFile = new IniFile(IniPath);
-        IniFile.Write("FileVersion", x64bit ? "X64" : "X86", "Misc");
-
-        // reset controller index values
-        for (int i = 0; i < userIndex.Count; i++)
-            IniFile.Write($"Controller{i + 1}", "0", "ControllerNumber");
-
-        // we need to define Controller index overwrite
-        XInputController vController = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
-        if (vController is null)
-            return false;
-
-        // get virtual controller index and update IniFile
-        int idx = vController.GetUserIndex() + 1;
-        IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
-
-        // remove virtual controller index from it
-        userIndex.Remove(idx);
-
-        // remove all hidden physical controllers from the list
-        foreach(XInputController pController in ControllerManager.GetPhysicalControllers().OfType<XInputController>().Where(c => c.IsHidden()))
-            userIndex.Remove(pController.GetUserIndex() + 1);
-
-        for (int i = 0; i < userIndex.Count; i++)
+        lock (writeLock)
         {
-            int cIdx = userIndex[i];
-            IniFile.Write($"Controller{i + 2}", Convert.ToString(cIdx), "ControllerNumber");
+            string IniPath = Path.Combine(directoryPath, "XInputPlus.ini");
+
+            if (!FileUtils.IsFileWritable(IniPath))
+                return false;
+
+            // prepare index array
+            List<int> userIndex = new() { 1, 2, 3, 4 };
+
+            // prepare IniFile
+            try
+            {
+                File.WriteAllText(IniPath, IniContent);
+                IniFile IniFile = new IniFile(IniPath);
+                IniFile.Write("FileVersion", x64bit ? "X64" : "X86", "Misc");
+
+                // reset controller index values
+                for (int i = 0; i < userIndex.Count; i++)
+                    IniFile.Write($"Controller{i + 1}", "0", "ControllerNumber");
+
+                // we need to define Controller index overwrite
+                XInputController vController = ControllerManager.GetVirtualControllers().OfType<XInputController>().FirstOrDefault();
+                if (vController is null)
+                    return false;
+
+                // get virtual controller index and update IniFile
+                int idx = vController.GetUserIndex() + 1;
+                IniFile.Write("Controller1", Convert.ToString(idx), "ControllerNumber");
+
+                // remove virtual controller index from it
+                userIndex.Remove(idx);
+
+                // remove all hidden physical controllers from the list
+                foreach (XInputController pController in ControllerManager.GetPhysicalControllers().OfType<XInputController>().Where(c => c.IsHidden()))
+                    userIndex.Remove(pController.GetUserIndex() + 1);
+
+                for (int i = 0; i < userIndex.Count; i++)
+                {
+                    int cIdx = userIndex[i];
+                    IniFile.Write($"Controller{i + 2}", Convert.ToString(cIdx), "ControllerNumber");
+                }
+
+                LogManager.LogDebug("XInputPlus INI wrote in {0}. Controller1 set to UserIndex: {1}",
+                    directoryPath, idx);
+
+                return true;
+            }
+            catch { return false; }
         }
-
-        LogManager.LogDebug("XInputPlus INI wrote in {0}. Controller1 set to UserIndex: {1}",
-            directoryPath, idx);
-
-        return true;
     }
 
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684139%28v=vs.85%29.aspx

@@ -1,7 +1,5 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers.Desktop;
+﻿using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
-using HandheldCompanion.Views;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -12,6 +10,7 @@ using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -20,8 +19,8 @@ namespace HandheldCompanion.Managers;
 
 public static class SystemManager
 {
-    private static DesktopScreen DesktopScreen;
-    private static ScreenRotation ScreenOrientation;
+    private static DesktopScreen desktopScreen;
+    private static ScreenRotation screenOrientation;
 
     private static readonly MMDeviceEnumerator DevEnum;
     private static MMDevice multimediaDevice;
@@ -32,19 +31,30 @@ public static class SystemManager
 
     private static bool VolumeSupport;
     private static readonly bool BrightnessSupport;
-    private static bool FanControlSupport;
 
-    private const int UpdateInterval = 1000;
+    private const int ADLXUpdateInterval = 2000;
     private static readonly Timer ADLXTimer;
-    private static int prevRSRState = -2;
+
+    private static bool prevRSRSupport = false;
+    private static bool prevRSR = false;
     private static int prevRSRSharpness = -1;
+
+    private static bool prevGPUScalingSupport = false;
+    private static bool prevGPUScaling = false;
+    private static int prevScalingMode = -1;
+
+    private static bool prevIntegerScaling = false;
+    private static bool prevIntegerScalingSupport = false;
+
+    private static bool prevImageSharpening = false;
+    private static int prevImageSharpeningSharpness = -1;
 
     public static bool IsInitialized;
 
     static SystemManager()
     {
         // ADLX
-        ADLXTimer = new Timer(UpdateInterval);
+        ADLXTimer = new Timer(ADLXUpdateInterval);
         ADLXTimer.AutoReset = true;
         ADLXTimer.Elapsed += ADLXTimer_Elapsed;
 
@@ -62,35 +72,120 @@ public static class SystemManager
         BrightnessWatcher = new ManagementEventWatcher(Scope, new EventQuery("Select * From WmiMonitorBrightnessEvent"));
         BrightnessWatcher.EventArrived += onWMIEvent;
 
-        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-
         // check if we have control over brightness
         BrightnessSupport = GetBrightness() != -1;
 
-        if (MainWindow.CurrentDevice.IsOpen && MainWindow.CurrentDevice.IsSupported)
-            if (MainWindow.CurrentDevice.Capabilities.HasFlag(DeviceCapabilities.FanControl))
-                FanControlSupport = true;
-
+        // manage events
+        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
     }
 
+    // create a lock object
+    private static object ADLXlockObject = new object();
     private static void ADLXTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        try
+        if (Monitor.TryEnter(ADLXlockObject))
         {
-            var RSRState = ADLXBackend.GetRSRState();
-            var RSRSharpness = ADLXBackend.GetRSRSharpness();
+            bool GPUScaling = false;
 
-            if ((RSRState != prevRSRState) || (RSRSharpness != prevRSRSharpness))
+            try
             {
-                RSRStateChanged?.Invoke(RSRState, RSRSharpness);
+                // check for GPU Scaling support
+                // if yes, get GPU Scaling (bool)
+                bool GPUScalingSupport = ADLXWrapper.HasGPUScalingSupport();
+                if (GPUScalingSupport)
+                    GPUScaling = ADLXWrapper.GetGPUScaling();
 
-                prevRSRState = RSRState;
-                prevRSRSharpness = RSRSharpness;
+                // check for Scaling Mode support
+                // if yes, get Scaling Mode (int)
+                bool ScalingSupport = ADLXWrapper.HasScalingModeSupport();
+                int ScalingMode = 0;
+                if (ScalingSupport)
+                    ScalingMode = ADLXWrapper.GetScalingMode();
+
+                if ((GPUScalingSupport != prevGPUScalingSupport) || (GPUScaling != prevGPUScaling) || (ScalingMode != prevScalingMode))
+                {
+                    // raise event
+                    StateChanged_GPUScaling?.Invoke(GPUScalingSupport, GPUScaling, ScalingMode);
+
+                    prevGPUScaling = GPUScaling;
+                    prevScalingMode = ScalingMode;
+                    prevGPUScalingSupport = GPUScalingSupport;
+                }
             }
+            catch { }
+
+            try
+            {
+                // get rsr
+                bool RSRSupport = false;
+                bool RSR = false;
+                int RSRSharpness = ADLXWrapper.GetRSRSharpness();
+
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                while (DateTime.Now < timeout && !RSRSupport)
+                {
+                    RSRSupport = ADLXWrapper.HasRSRSupport();
+                    Thread.Sleep(250);
+                }
+                RSR = ADLXWrapper.GetRSR();
+
+                if ((RSRSupport != prevRSRSupport) || (RSR != prevRSR) || (RSRSharpness != prevRSRSharpness))
+                {
+                    // raise event
+                    StateChanged_RSR?.Invoke(RSRSupport, RSR, RSRSharpness);
+
+                    prevRSRSupport = RSRSupport;
+                    prevRSR = RSR;
+                    prevRSRSharpness = RSRSharpness;
+                }
+            }
+            catch { }
+
+            try
+            {
+                // get gpu scaling and scaling mode
+                bool IntegerScalingSupport = false;
+                bool IntegerScaling = false;
+
+                DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(3));
+                while (DateTime.Now < timeout && !IntegerScalingSupport)
+                {
+                    IntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
+                    Thread.Sleep(250);
+                }
+                IntegerScaling = ADLXWrapper.GetIntegerScaling();
+
+                if ((IntegerScalingSupport != prevIntegerScalingSupport) || (IntegerScaling != prevIntegerScaling))
+                {
+                    // raise event
+                    StateChanged_IntegerScaling?.Invoke(IntegerScalingSupport, IntegerScaling);
+
+                    prevIntegerScalingSupport = IntegerScalingSupport;
+                    prevIntegerScaling = IntegerScaling;
+                }
+            }
+            catch { }
+
+            try
+            {
+                bool ImageSharpening = ADLXWrapper.GetImageSharpening();
+                int ImageSharpeningSharpness = ADLXWrapper.GetImageSharpeningSharpness();
+
+                if ((ImageSharpening != prevImageSharpening) || (ImageSharpeningSharpness != prevImageSharpeningSharpness))
+                {
+                    // raise event
+                    StateChanged_ImageSharpening?.Invoke(ImageSharpening, ImageSharpeningSharpness);
+
+                    prevImageSharpening = ImageSharpening;
+                    prevImageSharpeningSharpness = ImageSharpeningSharpness;
+                }
+            }
+            catch { }
+
+            Monitor.Exit(ADLXlockObject);
         }
-        catch { }
     }
 
     private static void AudioEndpointVolume_OnVolumeNotification(AudioVolumeNotificationData data)
@@ -136,12 +231,12 @@ public static class SystemManager
                     if (!IsInitialized)
                         return;
 
-                    var oldOrientation = ScreenOrientation.rotation;
-                    ScreenOrientation = new ScreenRotation(ScreenOrientation.rotationUnnormalized, nativeOrientation);
+                    var oldOrientation = screenOrientation.rotation;
+                    screenOrientation = new ScreenRotation(screenOrientation.rotationUnnormalized, nativeOrientation);
 
-                    if (oldOrientation != ScreenOrientation.rotation)
+                    if (oldOrientation != screenOrientation.rotation)
                         // Though the real orientation didn't change, raise event because the interpretation of it changed
-                        DisplayOrientationChanged?.Invoke(ScreenOrientation);
+                        DisplayOrientationChanged?.Invoke(screenOrientation);
                 }
                 break;
         }
@@ -192,75 +287,78 @@ public static class SystemManager
     {
         Screen PrimaryScreen = Screen.PrimaryScreen;
 
-        if (DesktopScreen is null || DesktopScreen.PrimaryScreen.DeviceName != PrimaryScreen.DeviceName)
+        if (desktopScreen is null || desktopScreen.PrimaryScreen.DeviceName != PrimaryScreen.DeviceName)
         {
             // update current desktop screen
-            DesktopScreen = new DesktopScreen(PrimaryScreen);
+            desktopScreen = new DesktopScreen(PrimaryScreen);
+            desktopScreen.devMode = GetDisplay(desktopScreen.PrimaryScreen.DeviceName);
 
             // pull resolutions details
-            List<Display> resolutions = GetResolutions(DesktopScreen.PrimaryScreen.DeviceName);
-
-            foreach (var mode in resolutions)
+            List<Display> resolutions = GetResolutions(desktopScreen.PrimaryScreen.DeviceName);
+            foreach (Display mode in resolutions)
             {
                 ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
 
                 List<int> frequencies = resolutions
                     .Where(a => a.dmPelsWidth == mode.dmPelsWidth && a.dmPelsHeight == mode.dmPelsHeight)
                     .Select(b => b.dmDisplayFrequency).Distinct().ToList();
-                foreach (int frequency in frequencies)
-                    res.Frequencies[frequency] = new ScreenFrequency(frequency);
 
-                if (!DesktopScreen.HasResolution(res))
-                    DesktopScreen.resolutions.Add(res);
+                foreach (int frequency in frequencies)
+                    res.Frequencies.Add(frequency, frequency);
+
+                if (!desktopScreen.HasResolution(res))
+                    desktopScreen.screenResolutions.Add(res);
             }
 
             // sort resolutions
-            DesktopScreen.SortResolutions();
+            desktopScreen.SortResolutions();
 
             // raise event
-            PrimaryScreenChanged?.Invoke(DesktopScreen);
+            PrimaryScreenChanged?.Invoke(desktopScreen);
+        }
+        else
+        {
+            // update current desktop resolution
+            desktopScreen.devMode = GetDisplay(desktopScreen.PrimaryScreen.DeviceName);
         }
 
-        // update current desktop resolution
-        DesktopScreen.devMode = GetDisplay(DesktopScreen.PrimaryScreen.DeviceName);
-        ScreenResolution ScreenResolution = DesktopScreen.GetResolution(DesktopScreen.devMode.dmPelsWidth, DesktopScreen.devMode.dmPelsHeight);
-
-        ScreenRotation.Rotations oldOrientation = ScreenOrientation.rotation;
+        ScreenRotation.Rotations oldOrientation = screenOrientation.rotation;
 
         if (!IsInitialized)
         {
             var nativeScreenRotation = (ScreenRotation.Rotations)SettingsManager.GetInt("NativeDisplayOrientation");
-            ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)DesktopScreen.devMode.dmDisplayOrientation,
+            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation,
                 nativeScreenRotation);
             oldOrientation = ScreenRotation.Rotations.UNSET;
 
             if (nativeScreenRotation == ScreenRotation.Rotations.UNSET)
-                SettingsManager.SetProperty("NativeDisplayOrientation", (int)ScreenOrientation.rotationNativeBase,
+                SettingsManager.SetProperty("NativeDisplayOrientation", (int)screenOrientation.rotationNativeBase,
                     true);
         }
         else
         {
-            ScreenOrientation = new ScreenRotation((ScreenRotation.Rotations)DesktopScreen.devMode.dmDisplayOrientation,
-                ScreenOrientation.rotationNativeBase);
+            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation,
+                screenOrientation.rotationNativeBase);
         }
 
         // raise event
-        if (ScreenResolution is not null)
-            DisplaySettingsChanged?.Invoke(ScreenResolution);
+        ScreenResolution screenResolution = desktopScreen.GetResolution(desktopScreen.devMode.dmPelsWidth, desktopScreen.devMode.dmPelsHeight);
+        if (screenResolution is not null)
+            DisplaySettingsChanged?.Invoke(screenResolution);
 
-        if (oldOrientation != ScreenOrientation.rotation)
-            // raise event
-            DisplayOrientationChanged?.Invoke(ScreenOrientation);
+        // raise event
+        if (oldOrientation != screenOrientation.rotation)
+            DisplayOrientationChanged?.Invoke(screenOrientation);
     }
 
     public static DesktopScreen GetDesktopScreen()
     {
-        return DesktopScreen;
+        return desktopScreen;
     }
 
     public static ScreenRotation GetScreenOrientation()
     {
-        return ScreenOrientation;
+        return screenOrientation;
     }
 
     public static void Start()
@@ -271,6 +369,23 @@ public static class SystemManager
 
         // force trigger events
         SystemEvents_DisplaySettingsChanged(null, null);
+
+        // get native resolution
+        ScreenResolution nativeResolution = desktopScreen.screenResolutions.First();
+
+        // get integer scaling dividers
+        int idx = 1;
+
+        while (true)
+        {
+            int height = nativeResolution.Height / idx;
+            var dividedRes = desktopScreen.screenResolutions.FirstOrDefault(r => r.Height == height);
+            if (dividedRes is null)
+                break;
+
+            desktopScreen.screenDividers.Add(new(idx, dividedRes));
+            idx++;
+        }
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -598,32 +713,34 @@ public static class SystemManager
 
     #region events
 
-    public static event RSRStateChangedEventHandler RSRStateChanged;
+    public static event RSRStateChangedEventHandler StateChanged_RSR;
+    public delegate void RSRStateChangedEventHandler(bool Supported, bool Enabled, int Sharpness);
 
-    public delegate void RSRStateChangedEventHandler(int RSRState, int RSRSharpness);
+    public static event IntegerScalingStateChangedEventHandler StateChanged_IntegerScaling;
+    public delegate void IntegerScalingStateChangedEventHandler(bool Supported, bool Enabled);
+
+    public static event ImageSharpeningISStateChangedEventHandler StateChanged_ImageSharpening;
+    public delegate void ImageSharpeningISStateChangedEventHandler(bool Enabled, int Sharpness);
+
+    public static event GPUScalingStateChangedEventHandler StateChanged_GPUScaling;
+    public delegate void GPUScalingStateChangedEventHandler(bool Supported, bool Enabled, int Mode);
 
     public static event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
-
     public delegate void DisplaySettingsChangedEventHandler(ScreenResolution resolution);
 
     public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
-
     public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
 
     public static event DisplayOrientationChangedEventHandler DisplayOrientationChanged;
-
     public delegate void DisplayOrientationChangedEventHandler(ScreenRotation rotation);
 
     public static event VolumeNotificationEventHandler VolumeNotification;
-
     public delegate void VolumeNotificationEventHandler(float volume);
 
     public static event BrightnessNotificationEventHandler BrightnessNotification;
-
     public delegate void BrightnessNotificationEventHandler(int brightness);
 
     public static event InitializedEventHandler Initialized;
-
     public delegate void InitializedEventHandler();
 
     #endregion

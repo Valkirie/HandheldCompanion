@@ -203,22 +203,22 @@ public class AMDProcessor : Processor
 
                 default:
                     {
-                        int error1, error2, error3;
+                        int error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
 
+                        /*
                         if (clock == 12750)
                         {
-                            error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
                             error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)MainWindow.CurrentDevice.GfxClock[0]);
                             error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)MainWindow.CurrentDevice.GfxClock[1]);
                         }
                         else
                         {
-                            error1 = RyzenAdj.set_gfx_clk(ry, (uint)clock);
                             error2 = RyzenAdj.set_min_gfxclk_freq(ry, (uint)clock);
                             error3 = RyzenAdj.set_max_gfxclk_freq(ry, (uint)clock);
                         }
+                        */
 
-                        base.SetGPUClock(clock, error1 + error2 + error3);
+                        base.SetGPUClock(clock, error1);
                     }
                     break;
             }

@@ -4,13 +4,17 @@ using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages.Profiles;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using Microsoft.Win32;
+using SharpDX.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +32,7 @@ public partial class ProfilesPage : Page
 {
     // when set on start cannot be null anymore
     public static Profile selectedProfile;
+    private static Profile selectedMainProfile;
 
     private readonly SettingsMode0 page0 = new("SettingsMode0");
     private readonly SettingsMode1 page1 = new("SettingsMode1");
@@ -37,56 +42,115 @@ public partial class ProfilesPage : Page
     private const int UpdateInterval = 500;
     private static Timer UpdateTimer;
 
+    public ProfilesPage(string Tag) : this()
+    {
+        this.Tag = Tag;
+    }
+
     public ProfilesPage()
     {
         InitializeComponent();
+        
+        // manage events
+        ProfileManager.Deleted += ProfileDeleted;
+        ProfileManager.Updated += ProfileUpdated;
+        ProfileManager.Applied += ProfileApplied;
+        ProfileManager.Initialized += ProfileManagerLoaded;
+        PowerProfileManager.Updated += PowerProfileManager_Updated;
+        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+        SystemManager.Initialized += SystemManager_Initialized;
+        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
+        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
+        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
+        PlatformManager.RTSS.Updated += RTSS_Updated;
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
         UpdateTimer.Elapsed += (sender, e) => SubmitProfile();
-    }
-
-    public ProfilesPage(string Tag) : this()
-    {
-        this.Tag = Tag;
-
-        ProfileManager.Deleted += ProfileDeleted;
-        ProfileManager.Updated += ProfileUpdated;
-        ProfileManager.Applied += ProfileApplied;
-
-        PowerProfileManager.Updated += PowerProfileManager_Updated;
-        PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-
-        ProfileManager.Initialized += ProfileManagerLoaded;
-
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
-        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
-        SystemManager.RSRStateChanged += SystemManager_RSRStateChanged;
 
         // auto-sort
         cB_Profiles.Items.SortDescriptions.Add(new SortDescription(string.Empty, ListSortDirection.Descending));
+
+        // force call
+        RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
-    private void SystemManager_RSRStateChanged(int RSRState, int RSRSharpness)
+    private void SystemManager_Initialized()
+    {
+        bool HasScalingModeSupport = ADLXWrapper.HasScalingModeSupport();
+        bool HasIntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
+        bool HasRSRSupport = ADLXWrapper.HasRSRSupport();
+        bool HasGPUScalingSupport = ADLXWrapper.HasGPUScalingSupport();
+        bool IsGPUScalingEnabled = ADLXWrapper.GetGPUScaling();
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
+            StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
+            GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
+            GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+
+            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+            desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
+        });
+    }
+
+    private void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (RSRState)
+            using (new ScopedLock(updateLock))
             {
-                case -1:
-                    RSRToggle.IsEnabled = false;
+                StackProfileRSR.IsEnabled = Supported;
+            }
+        });
+    }
+
+    private void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(async () =>
+        {
+            using (new ScopedLock(updateLock))
+            {
+                GPUScalingToggle.IsEnabled = Supported;
+                StackProfileRIS.IsEnabled = Supported; // check if processor is AMD should be enough
+                StackProfileRSR.IsEnabled = Supported;
+                StackProfileIS.IsEnabled = Supported;
+            }
+        });
+    }
+
+    private void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            using (new ScopedLock(updateLock))
+            {
+                StackProfileIS.IsEnabled = Supported;
+            }
+        });
+    }
+
+    private void RTSS_Updated(PlatformStatus status)
+    {
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            switch (status)
+            {
+                case PlatformStatus.Ready:
+                    var Processor = PerformanceManager.GetProcessor();
+                    StackProfileFramerate.IsEnabled = true;
                     break;
-                case 0:
-                    RSRToggle.IsEnabled = true;
-                    RSRToggle.IsOn = false;
-                    RSRSlider.Value = RSRSharpness;
-                    break;
-                case 1:
-                    RSRToggle.IsEnabled = true;
-                    RSRToggle.IsOn = true;
-                    RSRSlider.Value = RSRSharpness;
+                case PlatformStatus.Stalled:
+                    // StackProfileFramerate.IsEnabled = false;
+                    // StackProfileAutoTDP.IsEnabled = false;
                     break;
             }
         });
@@ -103,17 +167,19 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
     {
+        List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var screenFrequency = SystemManager.GetDesktopScreen().GetFrequency();
+            cB_Framerate.Items.Clear();
 
-            FramerateQuarter.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Quarter));
-            FramerateThird.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Third));
-            FramerateHalf.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Half));
-            FramerateFull.Content = Convert.ToString(screenFrequency.GetValue(Frequency.Full));
+            foreach (ScreenFramelimit frameLimit in frameLimits)
+                cB_Framerate.Items.Add(frameLimit);
+
+            cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
         });
     }
 
@@ -403,23 +469,15 @@ public partial class ProfilesPage : Page
         if (cB_Profiles.SelectedItem is null)
             return;
 
-        // if an update is pending, cut it short, it will disturb profile selection though
-        if (UpdateTimer.Enabled)
-        {
-            UpdateTimer.Stop();
-            SubmitProfile();
-        }
-
-        selectedProfile = (Profile)cB_Profiles.SelectedItem;
-
-        UpdateUI();
+        selectedMainProfile = (Profile)cB_Profiles.SelectedItem;
+        UpdateSubProfiles();
     }
 
     private void UpdateMotionControlsVisibility()
     {
         bool MotionMapped = false;
         if (selectedProfile.Layout.GyroLayout.TryGetValue(AxisLayoutFlags.Gyroscope, out IActions action))
-            if (action is not null && action.ActionType != ActionType.Disabled)
+            if (action is not null && action.actionType != ActionType.Disabled)
                 MotionMapped = true;
 
         // UI thread (async)
@@ -429,6 +487,7 @@ public partial class ProfilesPage : Page
         });
     }
 
+    private DesktopScreen desktopScreen;
     private void UpdateUI()
     {
         if (selectedProfile is null)
@@ -439,19 +498,36 @@ public partial class ProfilesPage : Page
         {
             using (new ScopedLock(updateLock))
             {
-                // disable delete button if is default profile or running
-                b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running);
+                // disable delete button if is default profile or any sub profile is running
+                b_DeleteProfile.IsEnabled = !selectedProfile.ErrorCode.HasFlag(ProfileErrorCode.Default & ProfileErrorCode.Running); //TODO consider sub profiles pertaining to this main profile is running
                 // prevent user from renaming default profile
-                tB_ProfileName.IsEnabled = !selectedProfile.Default;
+                b_ProfileRename.IsEnabled = !selectedMainProfile.Default;
                 // prevent user from disabling default profile
                 Toggle_EnableProfile.IsEnabled = !selectedProfile.Default;
                 // prevent user from disabling default profile layout
                 Toggle_ControllerLayout.IsEnabled = !selectedProfile.Default;
                 // prevent user from using Wrapper on default profile
                 cB_Wrapper.IsEnabled = !selectedProfile.Default;
+                UseFullscreenOptimizations.IsEnabled = !selectedProfile.Default;
+                UseHighDPIAwareness.IsEnabled = !selectedProfile.Default;
+
+                // sub profiles
+                b_SubProfileCreate.IsEnabled = !selectedMainProfile.Default;
+
+                // enable delete and rename if not default sub profile
+                if (cb_SubProfilePicker.SelectedIndex == 0) // main profile
+                {
+                    b_SubProfileDelete.IsEnabled = false;
+                    b_SubProfileRename.IsEnabled = false;
+                }
+                else // actual sub profile
+                {
+                    b_SubProfileDelete.IsEnabled = true;
+                    b_SubProfileRename.IsEnabled = true;
+                }
 
                 // Profile info
-                tB_ProfileName.Text = selectedProfile.Name;
+                tB_ProfileName.Text = selectedMainProfile.Name;
                 tB_ProfilePath.Text = selectedProfile.Path;
                 Toggle_EnableProfile.IsOn = selectedProfile.Enabled;
 
@@ -483,13 +559,32 @@ public partial class ProfilesPage : Page
 
                 UpdateMotionControlsVisibility();
 
+                // Framerate limit
+                desktopScreen = SystemManager.GetDesktopScreen();
+                if (desktopScreen is not null)
+                    cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
+
+                // GPU Scaling
+                GPUScalingToggle.IsOn = selectedProfile.GPUScaling;
+                GPUScalingComboBox.SelectedIndex = selectedProfile.ScalingMode;
+
                 // RSR
                 RSRToggle.IsOn = selectedProfile.RSREnabled;
                 RSRSlider.Value = selectedProfile.RSRSharpness;
 
-                // Framerate limit
-                FramerateToggle.IsOn = selectedProfile.FramerateEnabled;
-                FramerateSlider.Value = selectedProfile.FramerateValue;
+                // Integer Scaling
+                IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
+
+                if (desktopScreen is not null)
+                    IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
+
+                // RIS
+                RISToggle.IsOn = selectedProfile.RISEnabled;
+                RISSlider.Value = selectedProfile.RISSharpness;
+
+                // Compatibility settings
+                UseFullscreenOptimizations.IsOn = selectedProfile.FullScreenOptimization;
+                UseHighDPIAwareness.IsOn = selectedProfile.HighDPIAware;
 
                 // Layout settings
                 Toggle_ControllerLayout.IsOn = selectedProfile.LayoutEnabled;
@@ -535,8 +630,46 @@ public partial class ProfilesPage : Page
                         cB_Wrapper_Redirection.IsEnabled = false;
                         break;
                 }
+
+                // update dropdown lists
+                cB_Profiles.Items.Refresh();
+                cb_SubProfilePicker.Items.Refresh();
             }
         });
+    }
+
+    private void UpdateSubProfiles()
+    {
+        if (selectedMainProfile is null)
+            return;
+
+        var ind = 0; // default or main profile itself
+
+        // add main profile as first subprofile
+        cb_SubProfilePicker.Items.Clear();
+        cb_SubProfilePicker.Items.Add(selectedMainProfile);
+
+        // if main profile is not default, occupy sub profiles dropdown list
+        if (!selectedMainProfile.Default)
+        {
+            foreach (Profile subprofile in ProfileManager.GetSubProfilesFromPath(selectedMainProfile.Path, false))
+            {
+                cb_SubProfilePicker.Items.Add(subprofile);
+
+                // select sub profile if it's favorite for main profile
+                if (subprofile.IsFavoriteSubProfile)
+                    ind = cb_SubProfilePicker.Items.IndexOf(subprofile);
+            }
+        }
+
+        // refresh sub profiles dropdown
+        cb_SubProfilePicker.Items.Refresh();
+
+        // set subprofile to be applied
+        cb_SubProfilePicker.SelectedIndex = ind;
+
+        // update UI elements
+        UpdateUI();
     }
 
     private async void b_DeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -545,7 +678,7 @@ public partial class ProfilesPage : Page
             return;
 
         var result = Dialog.ShowAsync(
-            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedProfile.Name}\"?",
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{selectedMainProfile.Name}\"?",
             $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
@@ -555,7 +688,7 @@ public partial class ProfilesPage : Page
         switch (result.Result)
         {
             case ContentDialogResult.Primary:
-                ProfileManager.DeleteProfile(selectedProfile);
+                ProfileManager.DeleteProfile(selectedMainProfile);
                 cB_Profiles.SelectedIndex = 0;
                 break;
         }
@@ -613,65 +746,6 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
-    private void FramerateToggle_Toggled(object sender, RoutedEventArgs e)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            if (FramerateToggle.IsOn)
-            {
-                FramerateSlider_ValueChanged(null, null);
-            }
-            else
-            {
-                foreach (Control control in FramerateModeGrid.Children)
-                {
-                    if (control is not Label)
-                        continue;
-
-                    control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-                }
-            }
-        });
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        selectedProfile.FramerateEnabled = FramerateToggle.IsOn;
-        UpdateProfile();
-    }
-
-    private void FramerateSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            var value = (int)FramerateSlider.Value;
-
-            foreach (Control control in FramerateModeGrid.Children)
-            {
-                if (control is not Label)
-                    continue;
-
-                control.SetResourceReference(Control.ForegroundProperty, "SystemControlForegroundBaseMediumBrush");
-            }
-
-            Label label = (Label)FramerateModeGrid.Children[value];
-            label.SetResourceReference(Control.ForegroundProperty, "AccentButtonBackground");
-        });
-
-        if (!FramerateSlider.IsInitialized)
-            return;
-
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        selectedProfile.FramerateValue = (int)FramerateSlider.Value;
-        UpdateProfile();
-    }
-
     private void ControllerSettingsButton_Click(object sender, RoutedEventArgs e)
     {
         // prepare layout editor
@@ -715,28 +789,56 @@ public partial class ProfilesPage : Page
 
     public void ProfileUpdated(Profile profile, UpdateSource source, bool isCurrent)
     {
+        // self call - update ui and return
+        switch (source)
+        {
+            case UpdateSource.ProfilesPage:
+            case UpdateSource.ProfilesPageUpdateOnly:
+                return;
+            case UpdateSource.QuickProfilesPage:
+                {
+                    isCurrent = selectedProfile.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (!isCurrent) return;
+                }
+                break;
+        }
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var idx = -1;
-            foreach (Profile pr in cB_Profiles.Items)
+            if (!profile.IsSubProfile && cb_SubProfilePicker.Items.IndexOf(profile) != 0)
             {
-                var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                if (isCurrent)
+                foreach (Profile pr in cB_Profiles.Items)
                 {
-                    idx = cB_Profiles.Items.IndexOf(pr);
-                    break;
+                    bool isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (isCurrent)
+                    {
+                        idx = cB_Profiles.Items.IndexOf(pr);
+                        break;
+                    }
                 }
+
+                if (idx != -1)
+                    cB_Profiles.Items[idx] = profile;
+                else
+                    cB_Profiles.Items.Add(profile);
+
+                cB_Profiles.Items.Refresh();
+
+                cB_Profiles.SelectedItem = profile;
             }
 
-            if (idx != -1)
-                cB_Profiles.Items[idx] = profile;
-            else
-                cB_Profiles.Items.Add(profile);
+            else if (!profile.IsFavoriteSubProfile)
+                cB_Profiles.SelectedItem = profile;
 
-            cB_Profiles.Items.Refresh();
+            else // TODO updateUI to show main & sub profile selected
+            {
+                Profile mainProfile = ProfileManager.GetProfileForSubProfile(profile);
+                cB_Profiles.SelectedItem = mainProfile;
+            }
 
-            cB_Profiles.SelectedItem = profile;
+            UpdateSubProfiles(); // TODO check
         });
     }
 
@@ -745,18 +847,42 @@ public partial class ProfilesPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            var idx = -1;
-            foreach (Profile pr in cB_Profiles.Items)
+            if (!profile.IsSubProfile)
             {
-                var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
-                if (isCurrent)
+                // Profiles
+                var idx = -1;
+                foreach (Profile pr in cB_Profiles.Items)
                 {
-                    idx = cB_Profiles.Items.IndexOf(pr);
-                    break;
+                    var isCurrent = pr.Path.Equals(profile.Path, StringComparison.InvariantCultureIgnoreCase);
+                    if (isCurrent)
+                    {
+                        idx = cB_Profiles.Items.IndexOf(pr);
+                        break;
+                    }
                 }
-            }
 
-            cB_Profiles.Items.RemoveAt(idx);
+                cB_Profiles.Items.RemoveAt(idx);
+            }
+            else
+            {
+                var idx = -1;
+                foreach (Profile pr in cb_SubProfilePicker.Items)
+                {
+                    // sub profiles
+                    var isCurrent = profile.Guid == pr.Guid;
+                    if (isCurrent)
+                    {
+                        idx = cb_SubProfilePicker.Items.IndexOf(pr);
+                        break;
+                    }
+                }
+
+                if (idx == -1)
+                    return;
+
+                cb_SubProfilePicker.Items.RemoveAt(idx);
+                cb_SubProfilePicker.SelectedIndex = 0;
+            }
         });
     }
 
@@ -767,16 +893,6 @@ public partial class ProfilesPage : Page
     }
 
     #endregion
-
-    private void tB_ProfileName_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        // wait until lock is released
-        if (updateLock)
-            return;
-
-        selectedProfile.Name = tB_ProfileName.Text;
-        UpdateProfile();
-    }
 
     private void tb_ProfileGyroValue_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
@@ -869,22 +985,38 @@ public partial class ProfilesPage : Page
     {
         if (selectedProfile is null)
             return;
+        
+        LogManager.LogInformation($"Submitting profile in ProfilesPage: {selectedProfile} - is Sub Profile? {selectedProfile.IsSubProfile}");
 
-        ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+        switch (source)
+        {
+            case UpdateSource.ProfilesPageUpdateOnly: // when renaming main profile, update main profile only but don't apply it
+                ProfileManager.UpdateOrCreateProfile(selectedMainProfile, source);
+                break;
+            default:
+                ProfileManager.UpdateOrCreateProfile(selectedProfile, source);
+                break;
+        }
     }
 
     private void RSRToggle_Toggled(object sender, RoutedEventArgs e)
     {
+        if (selectedProfile is null)
+            return;
+
         // wait until lock is released
         if (updateLock)
             return;
 
-        selectedProfile.RSREnabled = RSRToggle.IsOn;
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonSuperResolution, RSRToggle.IsOn);
         UpdateProfile();
     }
 
     private void RSRSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
+        if (selectedProfile is null)
+            return;
+
         if (!RSRSlider.IsInitialized)
             return;
 
@@ -893,6 +1025,104 @@ public partial class ProfilesPage : Page
             return;
 
         selectedProfile.RSRSharpness = (int)RSRSlider.Value;
+        UpdateProfile();
+    }
+
+    private void RISToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.RadeonImageSharpening, RISToggle.IsOn);
+        UpdateProfile();
+    }
+
+    private void RISSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        if (!RISSlider.IsInitialized)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.RISSharpness = (int)RISSlider.Value;
+        UpdateProfile();
+    }
+
+    private void IntegerScalingToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.IntegerScaling, IntegerScalingToggle.IsOn);
+        UpdateProfile();
+    }
+
+    private void IntegerScalingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (IntegerScalingComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        var divider = 1;
+        if (IntegerScalingComboBox.SelectedItem is ScreenDivider screenDivider)
+        {
+            divider = screenDivider.divider;
+        }
+
+        selectedProfile.IntegerScalingDivider = divider;
+        UpdateProfile();
+    }
+
+    private void GPUScalingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (GPUScalingComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        int selectedIndex = GPUScalingComboBox.SelectedIndex;
+        // RSR does not work with ScalingMode.Center
+        if (selectedProfile.RSREnabled && selectedIndex == 2)
+        {
+            selectedProfile.ScalingMode = 1;
+            GPUScalingComboBox.SelectedIndex = 1;
+        }
+        else
+        {
+            selectedProfile.ScalingMode = GPUScalingComboBox.SelectedIndex;
+        }
+     
+        UpdateProfile();
+    }
+
+    private void GPUScaling_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        UpdateGraphicsSettings(UpdateGraphicsSettingsSource.GPUScaling, GPUScalingToggle.IsOn);
         UpdateProfile();
     }
 
@@ -916,4 +1146,238 @@ public partial class ProfilesPage : Page
         UpdateProfile();
     }
 
+    private void cb_SubProfilePicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        if (cb_SubProfilePicker.SelectedIndex == -1)
+            return;
+
+        LogManager.LogInformation($"Subprofile changed in ProfilesPage - ind: {cb_SubProfilePicker.SelectedIndex} - {cb_SubProfilePicker.SelectedItem}");
+
+        // selected sub profile
+        if (selectedProfile != cb_SubProfilePicker.SelectedItem)
+        {
+            selectedProfile = (Profile)cb_SubProfilePicker.SelectedItem;
+            UpdateProfile();
+        }
+
+        UpdateUI();
+    }
+
+    private void b_SubProfileCreate_Click(object sender, RoutedEventArgs e)
+    {
+        // create a new sub profile matching the original profile's settings
+        Profile newSubProfile = (Profile)selectedProfile.Clone();
+        newSubProfile.Name = "(New Sub Profile)";
+        newSubProfile.Guid = Guid.NewGuid(); // must be unique
+        newSubProfile.IsSubProfile = true;
+        newSubProfile.IsFavoriteSubProfile = true;
+        ProfileManager.UpdateOrCreateProfile(newSubProfile);
+        UpdateSubProfiles();
+    }
+
+    private async void b_SubProfileDelete_Click(object sender, RoutedEventArgs e)
+    {
+        // return if original profile or nothing is selected
+        if (cb_SubProfilePicker.SelectedIndex <= 0)
+            return;
+
+        // get selected subprofile from dropdown
+        Profile subProfile = (Profile)cb_SubProfilePicker.SelectedItem;
+
+        // user confirmation
+        var result = Dialog.ShowAsync(
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete1} \"{subProfile.Name}\"?",
+            $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
+            ContentDialogButton.Primary,
+            $"{Properties.Resources.ProfilesPage_Cancel}",
+            $"{Properties.Resources.ProfilesPage_Delete}");
+        await result; // sync call
+
+        // delete sub profile if confirmed
+        switch (result.Result)
+        {
+            case ContentDialogResult.Primary:
+                ProfileManager.DeleteSubProfile(subProfile);
+                break;
+        }
+    }
+
+    private void b_SubProfileRename_Click(object sender, RoutedEventArgs e)
+    {
+        tb_SubProfileName.Text = selectedProfile.Name;
+        SubProfileRenameDialog.ShowAsync();
+    }
+
+    private void SubProfileRenameDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // update subprofile name
+        selectedProfile.Name = tb_SubProfileName.Text;
+
+        // serialize subprofile
+        SubmitProfile();
+
+        UpdateSubProfiles();
+    }
+
+    private void SubProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // restore subprofile rename dialog
+        tb_SubProfileName.Text = selectedProfile.Name;
+    }
+
+    private void ProfileRenameDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // restore profile name textbox
+        tB_ProfileName.Text = selectedMainProfile.Name;
+    }
+
+    private void ProfileRenameDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        // change main profile name
+        selectedMainProfile.Name = tB_ProfileName.Text;
+
+        // change it in 
+        int ind = cB_Profiles.Items.IndexOf(selectedMainProfile);
+        cB_Profiles.Items[ind] = selectedMainProfile;
+        cB_Profiles.Items.Refresh();
+        cB_Profiles.SelectedIndex = ind;
+
+        SubmitProfile(UpdateSource.ProfilesPageUpdateOnly);
+    }
+
+    private void b_ProfileRename_Click(object sender, RoutedEventArgs e)
+    {
+        tB_ProfileName.Text = selectedMainProfile.Name;
+        ProfileRenameDialog.ShowAsync();
+    }
+
+    private void cB_Framerate_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        // return if combobox selected item is null
+        if (cB_Framerate.SelectedIndex == -1)
+            return;
+
+        if (cB_Framerate.SelectedItem is ScreenFramelimit screenFramelimit)
+        {
+            selectedProfile.FramerateValue = screenFramelimit.limit;
+            UpdateProfile();
+        }
+    }
+
+    private enum UpdateGraphicsSettingsSource
+    {
+        GPUScaling,
+        RadeonSuperResolution,
+        RadeonImageSharpening,
+        IntegerScaling
+    }
+
+    private void UpdateGraphicsSettings(UpdateGraphicsSettingsSource source, bool isEnabled)
+    {
+        using (new ScopedLock(updateLock))
+        {
+            switch (source)
+            {
+                case UpdateGraphicsSettingsSource.GPUScaling:
+                    {
+                        selectedProfile.GPUScaling = isEnabled;
+                        if (!isEnabled)
+                        {
+                            selectedProfile.RSREnabled = false;
+                            selectedProfile.IntegerScalingEnabled = false;
+
+                            RSRToggle.IsOn = false;
+                            IntegerScalingToggle.IsOn = false;
+                        }
+                    }
+                    break;
+                // RSR is incompatible with RIS and IS
+                case UpdateGraphicsSettingsSource.RadeonSuperResolution:
+                    {
+                        selectedProfile.RSREnabled = isEnabled;
+                        if (isEnabled)
+                        {
+                            selectedProfile.RISEnabled = false;
+                            selectedProfile.IntegerScalingEnabled = false;
+
+                            RISToggle.IsOn = false;
+                            IntegerScalingToggle.IsOn = false;
+
+                            // RSR does not support ScalingMode.Center
+                            if (selectedProfile.ScalingMode == 2)
+                            {
+                                selectedProfile.ScalingMode = 1;
+                                GPUScalingComboBox.SelectedIndex = 1;
+                            }
+                        }
+                    }
+                    break;
+                // Image Sharpening is incompatible with RSR
+                case UpdateGraphicsSettingsSource.RadeonImageSharpening:
+                    {
+                        selectedProfile.RISEnabled = isEnabled;
+                        if (isEnabled)
+                        {
+                            selectedProfile.RSREnabled = false;
+
+                            RSRToggle.IsOn = false;
+                        }
+                    }
+                    break;
+
+                // Integer Scaling is incompatible with RSR
+                case UpdateGraphicsSettingsSource.IntegerScaling:
+                    {
+                        selectedProfile.IntegerScalingEnabled = isEnabled;
+                        if (isEnabled)
+                        {
+                            selectedProfile.RSREnabled = false;
+
+                            RSRToggle.IsOn = false;
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void UseFullscreenOptimizations_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.FullScreenOptimization = UseFullscreenOptimizations.IsOn;
+        UpdateProfile();
+    }
+
+    private void UseHighDPIAwareness_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.HighDPIAware = UseHighDPIAwareness.IsOn;
+        UpdateProfile();
+    }
 }

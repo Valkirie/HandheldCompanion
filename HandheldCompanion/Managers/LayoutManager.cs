@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -310,7 +311,7 @@ internal static class LayoutManager
         // except the main gyroscope state that's not re-mappable (6 values)
         outputState.GyroState = controllerState.GyroState;
 
-        foreach (var buttonState in controllerState.ButtonState.State)
+        foreach (KeyValuePair<ButtonFlags, bool> buttonState in controllerState.ButtonState.State)
         {
             ButtonFlags button = buttonState.Key;
             bool value = buttonState.Value;
@@ -319,9 +320,10 @@ internal static class LayoutManager
             if (!currentLayout.ButtonLayout.TryGetValue(button, out List<IActions> actions))
                 continue;
 
-            foreach (var action in actions)
+            List<IActions> sortedActions = actions.OrderByDescending(a => (int)a.pressType).ToList();
+            foreach (IActions action in sortedActions)
             {
-                switch (action.ActionType)
+                switch (action.actionType)
                 {
                     // button to button
                     case ActionType.Button:
@@ -350,10 +352,58 @@ internal static class LayoutManager
                         }
                         break;
                 }
+
+                switch (action.actionState)
+                {
+                    case ActionState.Aborted:
+                    case ActionState.Stopped:
+                        foreach (IActions action2 in sortedActions)
+                        {
+                            if (action2 == action)
+                                continue;
+
+                            if (!action2.Interruptable)
+                                continue;
+
+                            if (action2.actionState == ActionState.Succeed)
+                                continue;
+
+                            if (action2.actionState != ActionState.Stopped && action2.actionState != ActionState.Aborted)
+                                action2.actionState = ActionState.Stopped;
+                        }
+
+                        if (action.actionState == ActionState.Aborted)
+                        {
+                            int idx = sortedActions.IndexOf(action);
+                            if (idx < sortedActions.Count)
+                            {
+                                IActions nAction = sortedActions[idx + 1]; // next action
+                                if (nAction.Interruptable)
+                                    nAction.actionState = ActionState.Forced;
+                            }
+                        }
+                        break;
+
+                    case ActionState.Running:
+                        foreach (IActions action2 in sortedActions)
+                        {
+                            if (action2 == action)
+                                continue;
+
+                            if (!action2.Interruptable)
+                                continue;
+
+                            if (action2.actionState == ActionState.Succeed)
+                                continue;
+
+                            action2.actionState = ActionState.Suspended;
+                        }
+                        break;
+                }
             }
         }
 
-        foreach (var axisLayout in currentLayout.AxisLayout)
+        foreach (KeyValuePair<AxisLayoutFlags, IActions> axisLayout in currentLayout.AxisLayout)
         {
             AxisLayoutFlags flags = axisLayout.Key;
 
@@ -371,7 +421,7 @@ internal static class LayoutManager
             if (action is null)
                 continue;
 
-            switch (action.ActionType)
+            switch (action.actionType)
             {
                 case ActionType.Joystick:
                     {
@@ -436,7 +486,7 @@ internal static class LayoutManager
             if (action is null)
                 continue;
 
-            switch (action.ActionType)
+            switch (action.actionType)
             {
                 case ActionType.Joystick:
                     {

@@ -5,6 +5,7 @@ using HandheldCompanion.Platforms;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
+using HandheldCompanion.Views.Pages;
 using Nefarius.Utilities.DeviceManagement.Drivers;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -608,6 +609,8 @@ public static class ControllerManager
             // unplug controller, if needed
             if (GetTargetController()?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
                 ClearTargetController();
+            else
+                controller.Unplug();
 
             // controller was unplugged
             Controllers.TryRemove(details.baseContainerDeviceInstanceId, out _);
@@ -843,6 +846,8 @@ public static class ControllerManager
             // controller is current target
             if (targetController?.GetContainerInstancePath() == details.baseContainerDeviceInstanceId)
                 ClearTargetController();
+            else
+                controller.Unplug();
         }
 
         LogManager.LogDebug("XInput controller {0} unplugged", controller.ToString());
@@ -862,7 +867,6 @@ public static class ControllerManager
             {
                 targetController.InputsUpdated -= UpdateInputs;
                 targetController.SetLightColor(0, 0, 0);
-                targetController.Cleanup();
                 targetController.Unplug();
                 targetController = null;
 
@@ -1100,7 +1104,17 @@ public static class ControllerManager
 
     internal static IController GetEmulatedController()
     {
-        var HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+        // get HIDmode for the selected profile (could be different than HIDmode in settings if profile has HIDmode)
+        HIDmode HIDmode = HIDmode.NoController;
+
+        // if profile is selected, get its HIDmode
+        if (ProfilesPage.selectedProfile != null)
+            HIDmode = ProfilesPage.selectedProfile.HID;
+
+        // if profile HID is NotSelected, use HIDmode from settings
+        if (HIDmode == HIDmode.NotSelected)
+            HIDmode = (HIDmode)SettingsManager.GetInt("HIDmode", true);
+
         switch (HIDmode)
         {
             default:

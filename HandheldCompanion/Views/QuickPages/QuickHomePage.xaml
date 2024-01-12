@@ -17,7 +17,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="9*" />
+            <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -25,40 +25,25 @@
             Margin="0,6,0,6"
             VerticalAlignment="Top"
             Spacing="6">
-            <Button
-                Name="QuickSettingsPage"
-                Height="66"
-                Padding="15,12,12,12"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                Click="QuickButton_Click">
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_Title}" />
 
-                <Grid>
-                    <DockPanel HorizontalAlignment="Left">
-                        <ui:FontIcon
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            Glyph="&#xE8A9;" />
+            <!--  Shortcuts  -->
+            <UniformGrid
+                Name="QuickHotkeys"
+                VerticalAlignment="Top"
+                Columns="4">
+                <UniformGrid.Resources>
+                    <Style TargetType="{x:Type ui:SimpleStackPanel}">
+                        <Setter Property="Margin" Value="6" />
+                    </Style>
+                </UniformGrid.Resources>
+            </UniformGrid>
+        </ui:SimpleStackPanel>
 
-                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickSettingsPage_Title}" />
-                            <TextBlock
-                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                Style="{StaticResource CaptionTextBlockStyle}"
-                                Text="{x:Static resx:Resources.QuickSettingsPage_Desc}"
-                                TextWrapping="Wrap" />
-                        </ui:SimpleStackPanel>
-                    </DockPanel>
-
-                    <ui:FontIcon
-                        Margin="0,0,7,0"
-                        HorizontalAlignment="Right"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        FontSize="12"
-                        Glyph="&#xE974;" />
-                </Grid>
-            </Button>
+        <ui:SimpleStackPanel
+            Grid.Row="1"
+            VerticalAlignment="Bottom"
+            Spacing="6">
 
             <Button
                 Name="QuickDevicePage"
@@ -121,6 +106,59 @@
                         </ui:SimpleStackPanel>
                     </DockPanel>
 
+                    <TextBlock
+                        Name="t_CurrentProfile"
+                        Grid.Column="1"
+                        Margin="0,0,32,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+
+                    <ui:FontIcon
+                        Margin="0,0,7,0"
+                        HorizontalAlignment="Right"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        FontSize="12"
+                        Glyph="&#xE974;" />
+                </Grid>
+            </Button>
+
+            <Button
+                Name="QuickOverlayPage"
+                Height="66"
+                Padding="15,12,12,12"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Click="QuickButton_Click">
+
+                <Grid>
+                    <DockPanel HorizontalAlignment="Left">
+                        <ui:FontIcon
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            Glyph="&#xE78B;" />
+
+                        <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.QuickOverlayPage_Title}" />
+                            <TextBlock
+                                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Text="{x:Static resx:Resources.QuickOverlayPage_Desc}"
+                                TextWrapping="Wrap" />
+                        </ui:SimpleStackPanel>
+                    </DockPanel>
+
+                    <TextBlock
+                        Name="t_CurrentOverlayLevel"
+                        Grid.Column="1"
+                        Margin="0,0,32,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+
                     <ui:FontIcon
                         Margin="0,0,7,0"
                         HorizontalAlignment="Right"
@@ -164,13 +202,7 @@
                         Glyph="&#xE974;" />
                 </Grid>
             </Button>
-        </ui:SimpleStackPanel>
 
-        <ui:SimpleStackPanel
-            Grid.Row="1"
-            Margin="0,6,0,6"
-            VerticalAlignment="Bottom"
-            Spacing="6">
             <Border
                 Padding="15,12,12,12"
                 Background="{DynamicResource ExpanderHeaderBackground}"
@@ -235,6 +267,7 @@
 
                     <DockPanel Grid.Column="1">
                         <ui:FontIcon
+                            Name="VolumeIcon"
                             Height="40"
                             HorizontalAlignment="Center"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"

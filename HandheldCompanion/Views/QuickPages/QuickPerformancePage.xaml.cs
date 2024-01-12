@@ -1,10 +1,11 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Managers;
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Timers;
 using System.Windows;
@@ -34,23 +35,20 @@ public partial class QuickPerformancePage : Page
         InitializeComponent();
 
         /*
-        MainWindow.performanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
-        MainWindow.performanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
-        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        PerformanceManager.PowerModeChanged += PerformanceManager_PowerModeChanged;
+        PerformanceManager.PerfBoostModeChanged += PerformanceManager_PerfBoostModeChanged;
+        PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
         */
 
+        // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         PlatformManager.RTSS.Updated += RTSS_Updated;
-
-        MainWindow.performanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
-        MainWindow.performanceManager.EPPChanged += PerformanceManager_EPPChanged;
-        MainWindow.performanceManager.Initialized += PerformanceManager_Initialized;
-
-        HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
-
+        PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
+        PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
+        PerformanceManager.Initialized += PerformanceManager_Initialized;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
+        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
         // device settings
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -72,30 +70,12 @@ public partial class QuickPerformancePage : Page
         RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
-    private void HotkeysManager_CommandExecuted(string listener)
+    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            switch (listener)
-            {
-                case "increaseTDP":
-                    {
-                        if (selectedProfile is null || !selectedProfile.TDPOverrideEnabled)
-                            return;
-
-                        TDPSlider.Value++;
-                    }
-                    break;
-                case "decreaseTDP":
-                    {
-                        if (selectedProfile is null || !selectedProfile.TDPOverrideEnabled)
-                            return;
-
-                        TDPSlider.Value--;
-                    }
-                    break;
-            }
+            AutoTDPSlider.Maximum = desktopScreen.devMode.dmDisplayFrequency;
         });
     }
 
@@ -130,7 +110,7 @@ public partial class QuickPerformancePage : Page
             switch (status)
             {
                 case PlatformStatus.Ready:
-                    var Processor = MainWindow.performanceManager.GetProcessor();
+                    var Processor = PerformanceManager.GetProcessor();
                     StackProfileAutoTDP.IsEnabled = true && Processor is not null ? Processor.CanChangeTDP : false;
                     break;
                 case PlatformStatus.Stalled:
@@ -181,7 +161,7 @@ public partial class QuickPerformancePage : Page
 
     private void PerformanceManager_Initialized()
     {
-        Processor processor = MainWindow.performanceManager.GetProcessor();
+        Processor processor = PerformanceManager.GetProcessor();
         if (processor is null)
             return;
 
@@ -281,18 +261,8 @@ public partial class QuickPerformancePage : Page
         {
             using (new ScopedLock(updateLock))
             {
-                switch (selectedProfile.Default)
-                {
-                    case true:
-                        // we shouldn't allow users to mess with default profile fan mode
-                        FanMode.IsEnabled = false;
-                        break;
-                    case false:
-                        FanMode.IsEnabled = true;
-                        break;
-                }
-
                 // we shouldn't allow users to modify some of default profile settings
+                PowerSettingsPanel.IsEnabled = !selectedProfile.DeviceDefault;
                 Button_PowerSettings_Delete.IsEnabled = !selectedProfile.Default;
 
                 // page name
@@ -315,7 +285,7 @@ public partial class QuickPerformancePage : Page
 
                 // AutoTDP
                 AutoTDPToggle.IsOn = selectedProfile.AutoTDPEnabled;
-                AutoTDPRequestedFPSSlider.Value = selectedProfile.AutoTDPRequestedFPS;
+                AutoTDPSlider.Value = selectedProfile.AutoTDPRequestedFPS;
 
                 // EPP
                 EPPToggle.IsOn = selectedProfile.EPPOverrideEnabled;
@@ -383,7 +353,7 @@ public partial class QuickPerformancePage : Page
             return;
 
         selectedProfile.AutoTDPEnabled = AutoTDPToggle.IsOn;
-        AutoTDPRequestedFPSSlider.Value = selectedProfile.AutoTDPRequestedFPS;
+        AutoTDPSlider.Value = selectedProfile.AutoTDPRequestedFPS;
 
         UpdateProfile();
     }
@@ -396,7 +366,7 @@ public partial class QuickPerformancePage : Page
         if (updateLock)
             return;
 
-        selectedProfile.AutoTDPRequestedFPS = (int)AutoTDPRequestedFPSSlider.Value;
+        selectedProfile.AutoTDPRequestedFPS = (int)AutoTDPSlider.Value;
         UpdateProfile();
     }
 

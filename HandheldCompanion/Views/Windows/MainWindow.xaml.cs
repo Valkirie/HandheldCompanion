@@ -6,7 +6,7 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
 using HandheldCompanion.Views.Windows;
-using Inkore.UI.WPF.Modern.Controls;
+using iNKORE.UI.WPF.Modern.Controls;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;
@@ -58,12 +58,6 @@ public partial class MainWindow : GamepadWindow
     public static OverlayModel overlayModel;
     public static OverlayTrackpad overlayTrackpad;
     public static OverlayQuickTools overlayquickTools;
-
-    // manager(s) vars
-    private static readonly List<Manager> _managers = new();
-    public static TaskManager taskManager;
-    public static PerformanceManager performanceManager;
-    public static UpdateManager updateManager;
 
     public static string CurrentExe, CurrentPath;
 
@@ -197,61 +191,45 @@ public partial class MainWindow : GamepadWindow
             SettingsManager.SetProperty("FirstStart", false);
         }
 
-        // load manager(s)
-        // todo: make me static
-        loadManagers();
-
         // load window(s)
         loadWindows();
 
         // load page(s)
         loadPages();
 
-        // start static managers in sequence
-        // managers that has to be stopped/started when session status changes shouldn't be put here
+        // manage events
+        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
+        PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
         ToastManager.Start();
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
+        // start static managers in sequence
         PowerProfileManager.Start();
         ProfileManager.Start();
-
-        ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.Start();
         HotkeysManager.Start();
-
-        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
-        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         DeviceManager.Start();
-
         OSDManager.Start();
         LayoutManager.Start();
-
-        // todo: improve overall threading logic
-        new Thread(() =>
-        {
-            PlatformManager.Start();
-            ProcessManager.Start();
-        }).Start();
-
-        PowerManager.SystemStatusChanged += OnSystemStatusChanged;
         PowerManager.Start();
-
         DynamicLightingManager.Start();
-
         SystemManager.Start();
         VirtualManager.Start();
-
-        InputsManager.TriggerRaised += InputsManager_TriggerRaised;
         InputsManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
 
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
-
-        // start managers asynchroneously
-        foreach (var manager in _managers)
-            new Thread(manager.Start).Start();
+        // todo: improve overall threading logic
+        new Thread(() => { PlatformManager.Start(); }).Start();
+        new Thread(() => { ProcessManager.Start(); }).Start();
+        new Thread(() => { TaskManager.Start(CurrentExe); }).Start();
+        new Thread(() => { PerformanceManager.Start(); }).Start();
+        new Thread(() => { UpdateManager.Start(); }).Start();
 
         // start setting last
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -443,19 +421,6 @@ public partial class MainWindow : GamepadWindow
         overlayModel = new OverlayModel();
         overlayTrackpad = new OverlayTrackpad();
         overlayquickTools = new OverlayQuickTools();
-    }
-
-    private void loadManagers()
-    {
-        // initialize managers
-        taskManager = new TaskManager("HandheldCompanion", CurrentExe);
-        performanceManager = new PerformanceManager();
-        updateManager = new UpdateManager();
-
-        // store managers
-        _managers.Add(taskManager);
-        _managers.Add(performanceManager);
-        _managers.Add(updateManager);
     }
 
     private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
@@ -689,15 +654,10 @@ public partial class MainWindow : GamepadWindow
         overlayTrackpad.Close();
         overlayquickTools.Close(true);
 
-        // TODO: Make static
-        taskManager.Stop();
-        performanceManager.Stop();
-
         VirtualManager.Stop();
         SystemManager.Stop();
         MotionManager.Stop();
         SensorsManager.Stop();
-
         ControllerManager.Stop();
         InputsManager.Stop();
         DeviceManager.Stop();
@@ -709,6 +669,9 @@ public partial class MainWindow : GamepadWindow
         PowerManager.Stop();
         ProcessManager.Stop();
         ToastManager.Stop();
+        TaskManager.Stop();
+        PerformanceManager.Stop();
+        UpdateManager.Stop();
 
         // closing page(s)
         controllerPage.Page_Closed();

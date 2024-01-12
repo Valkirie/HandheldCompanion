@@ -76,31 +76,45 @@ public class LegionGo : IDevice
 
         // dynamic lighting capacities
         DynamicLightingCapabilities |= LEDLevel.SolidColor;
-        DynamicLightingCapabilities |= LEDLevel.Ambilight;
+        DynamicLightingCapabilities |= LEDLevel.Breathing;
+        DynamicLightingCapabilities |= LEDLevel.Rainbow;
+        DynamicLightingCapabilities |= LEDLevel.Wheel;
 
-        powerProfileQuiet = new(Properties.Resources.PowerProfileSilentName, Properties.Resources.PowerProfileSilentDescription)
+        // Legion Go - Quiet
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoQuietName, Properties.Resources.PowerProfileLegionGoQuietDescription) 
         {
             Default = true,
-            OSPowerMode = PowerMode.BetterBattery,
-            OEMPowerMode = (int)LegionMode.Quiet,
-            Guid = PowerMode.BetterBattery
-        };
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterBattery,
+            OEMPowerMode = (int) LegionMode.Quiet,
+            Guid = new("961cc777-2547-4f9d-8174-7d86181b8a7a"),
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 8.0d, 8.0d, 8.0d }
+        });
 
-        powerProfileBalanced = new(Properties.Resources.PowerProfilePerformanceName, Properties.Resources.PowerProfilePerformanceDescription)
+        // Legion Go - Balanced
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoBalancedName, Properties.Resources.PowerProfileLegionGoBalancedDescription)
         {
             Default = true,
-            OSPowerMode = PowerMode.BetterPerformance,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BetterPerformance,
             OEMPowerMode = (int)LegionMode.Balanced,
-            Guid = PowerMode.BetterPerformance
-        };
+            Guid = new("3af9B8d9-7c97-431d-ad78-34a8bfea439f"),
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 15.0d, 15.0d, 15.0d }
+        });
 
-        powerProfileCool = new(Properties.Resources.PowerProfileTurboName, Properties.Resources.PowerProfileTurboDescription)
+        // Legion Go - Performance
+        DevicePowerProfiles.Add(new(Properties.Resources.PowerProfileLegionGoPerformanceName, Properties.Resources.PowerProfileLegionGoPerformanceDescription)
         {
             Default = true,
-            OSPowerMode = PowerMode.BestPerformance,
+            DeviceDefault = true,
+            OSPowerMode = OSPowerMode.BestPerformance,
             OEMPowerMode = (int)LegionMode.Performance,
-            Guid = PowerMode.BestPerformance
-        };
+            Guid = new("ded574b5-45a0-4f42-8737-46345c09c238"),
+            TDPOverrideEnabled = true,
+            TDPOverrideValues = new[] { 20.0d, 20.0d, 20.0d }
+        });
 
         PowerProfileManager.Applied += PowerProfileManager_Applied;
 
@@ -328,19 +342,59 @@ public class LegionGo : IDevice
 
     public override bool SetLedColor(Color MainColor, Color SecondaryColor, LEDLevel level, int speed = 100)
     {
+        // Speed is inverted for Legion Go
+        lightProfileL.speed = 100 - speed;
+        lightProfileR.speed = 100 - speed;
+
+        // 1 - solid color
+        // 2 - breathing
+        // 3 - rainbow
+        // 4 - spiral rainbow
+        switch (level)
+        {
+            case LEDLevel.Breathing:
+                {
+                    lightProfileL.effect = 2;
+                    lightProfileR.effect = 2;
+                    SetLightProfileColors(MainColor, MainColor);
+                }
+                break;
+            case LEDLevel.Rainbow:
+                {
+                    lightProfileL.effect = 3;
+                    lightProfileR.effect = 3;
+                }
+                break;
+            case LEDLevel.Wheel:
+                {
+                    lightProfileL.effect = 4;
+                    lightProfileR.effect = 4;
+                }
+                break;
+            default:
+                {
+                    lightProfileL.effect = 1;
+                    lightProfileR.effect = 1;
+                    SetLightProfileColors(MainColor, MainColor);
+                }
+                break;
+        }
+
+        SetLightingEffectProfileID(3, lightProfileL);
+        SetLightingEffectProfileID(4, lightProfileR);
+
+        return true;
+    }
+
+    private void SetLightProfileColors(Color MainColor, Color SecondaryColor)
+    {
         lightProfileL.r = MainColor.R;
         lightProfileL.g = MainColor.G;
         lightProfileL.b = MainColor.B;
-        lightProfileL.speed = speed;
-        SetLightingEffectProfileID(3, lightProfileL);
 
         lightProfileR.r = SecondaryColor.R;
         lightProfileR.g = SecondaryColor.G;
         lightProfileR.b = SecondaryColor.B;
-        lightProfileR.speed = speed;
-        SetLightingEffectProfileID(4, lightProfileR);
-
-        return true;
     }
 
     public override string GetGlyph(ButtonFlags button)
