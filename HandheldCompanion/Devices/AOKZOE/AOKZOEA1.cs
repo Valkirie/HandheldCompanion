@@ -128,4 +128,19 @@ public class AOKZOEA1 : IDevice
 
         return defaultGlyph;
     }
+
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u220C";
+            case ButtonFlags.OEM2:
+                return "\u2210";
+            case ButtonFlags.OEM3:
+                return "\u2211";
+        }
+
+        return defaultGlyph;
+    }
 }

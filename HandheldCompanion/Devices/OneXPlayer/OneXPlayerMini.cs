@@ -72,6 +72,20 @@ public class OneXPlayerMini : IDevice
 
         return defaultGlyph;
     }
+    public override string GetGlyph(ButtonFlags button)
+    {
+        switch (button)
+        {
+            case ButtonFlags.OEM1:
+                return "\u2219";
+            case ButtonFlags.OEM2:
+                return "\u2210";
+            case ButtonFlags.OEM3:
+                return "\u2218";
+        }
+
+        return defaultGlyph;
+    }
 
     public override bool Open()
     {

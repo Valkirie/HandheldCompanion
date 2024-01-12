@@ -14,6 +14,7 @@ labels: bug
 - [ ] GPD
 - [ ] ONEXPLAYER
 - [ ] VALVE
+- [ ] LENOVO
 
 **Device model**
 Your device model
