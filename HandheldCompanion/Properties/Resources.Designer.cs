@@ -6301,9 +6301,9 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to With motion input disabled, hold selected button(s) to enable motion,
-        ///with motion input enabled, hold selected button(s) to disable motion,
-        ///with motion input toggle, press selected button(s) to switch from enabled to disabled and viceversa..
+        ///   Looks up a localized string similar to Motion input disabled: hold selected button(s) to enable motion.
+        ///Motion input enabled: hold selected button(s) to disable motion.
+        ///Motion input toggle: press selected button(s) to switch motion state..
         /// </summary>
         public static string ProfilesPage_UMCMotionOnOffDesc {
             get {
