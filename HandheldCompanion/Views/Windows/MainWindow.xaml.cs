@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
+using HandheldCompanion.IGCL;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.UI;
@@ -253,6 +254,7 @@ public partial class MainWindow : GamepadWindow
         InputsManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
+        GPUManager.Start();
 
         // todo: improve overall threading logic
         new Thread(() => { PlatformManager.Start(); }).Start();
