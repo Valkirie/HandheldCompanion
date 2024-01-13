@@ -3,6 +3,7 @@ using HandheldCompanion.Devices;
 using HandheldCompanion.IGCL;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Classes;
 using HandheldCompanion.Views.Pages;
@@ -216,6 +217,9 @@ public partial class MainWindow : GamepadWindow
 
             SettingsManager.SetProperty("FirstStart", false);
         }
+
+        // initialize UI sounds board
+        UISounds uiSounds = new UISounds();
 
         // load window(s)
         loadWindows();

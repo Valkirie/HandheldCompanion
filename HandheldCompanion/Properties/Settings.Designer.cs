@@ -1004,5 +1004,17 @@ namespace HandheldCompanion.Properties {
                 this["LastOnScreenDisplayLevel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UISounds {
+            get {
+                return ((bool)(this["UISounds"]));
+            }
+            set {
+                this["UISounds"] = value;
+            }
+        }
     }
 }

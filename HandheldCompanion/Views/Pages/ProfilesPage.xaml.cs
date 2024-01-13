@@ -311,7 +311,7 @@ public partial class ProfilesPage : Page
                         string.Format(Properties.Resources.ProfilesPage_AreYouSureOverwrite2, profile.Name),
                         ContentDialogButton.Primary,
                         $"{Properties.Resources.ProfilesPage_Cancel}",
-                        $"{Properties.Resources.ProfilesPage_Yes}");
+                        $"{Properties.Resources.ProfilesPage_Yes}", string.Empty, MainWindow.GetCurrent());
 
                     await result; // sync call
 
@@ -699,7 +699,7 @@ public partial class ProfilesPage : Page
             $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Delete}");
+            $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, MainWindow.GetCurrent());
         await result; // sync call
 
         switch (result.Result)
@@ -1211,7 +1211,7 @@ public partial class ProfilesPage : Page
             $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Delete}");
+            $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, MainWindow.GetCurrent());
         await result; // sync call
 
         // delete sub profile if confirmed

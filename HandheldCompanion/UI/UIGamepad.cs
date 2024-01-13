@@ -1,6 +1,7 @@
 ﻿using GregsStack.InputSimulatorStandard.Native;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.UI;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using HandheldCompanion.Views.Classes;
@@ -22,7 +23,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers
 {
-    public class GamepadFocusManager
+    public class UIGamepad
     {
         #region events
         public static event GotFocusEventHandler GotFocus;
@@ -50,7 +51,7 @@ namespace HandheldCompanion.Managers
         // key: Page
         private ConcurrentDictionary<object, Control> prevControl = new();
 
-        public GamepadFocusManager(GamepadWindow gamepadWindow, Frame contentFrame)
+        public UIGamepad(GamepadWindow gamepadWindow, Frame contentFrame)
         {
             // set current window
             _currentWindow = gamepadWindow;
@@ -62,6 +63,8 @@ namespace HandheldCompanion.Managers
 
             _currentWindow.GotGamepadWindowFocus += _currentWindow_GotGamepadWindowFocus;
             _currentWindow.LostGamepadWindowFocus += _currentWindow_LostGamepadWindowFocus;
+            _currentWindow.ContentDialogOpened += _currentWindow_ContentDialogOpened;
+            _currentWindow.ContentDialogClosed += _currentWindow_ContentDialogClosed;
 
             _currentWindow.Activated += (sender, e) => _currentWindow_GotFocus(sender, null);
             _currentWindow.Deactivated += (sender, e) => _currentWindow_LostFocus(sender, null);
@@ -84,6 +87,18 @@ namespace HandheldCompanion.Managers
 
             _gamepadTimer = new Timer(250) { AutoReset = false };
             _gamepadTimer.Elapsed += _gamepadFrame_PageRendered;
+        }
+
+        private void _currentWindow_ContentDialogClosed()
+        {
+            if (prevControl.TryGetValue(_gamepadPage.Tag, out Control control))
+                Focus(control);
+        }
+
+        private void _currentWindow_ContentDialogOpened()
+        {
+            Control control = _currentWindow.controlElements.OfType<Button>().FirstOrDefault();
+            Focus(control);
         }
 
         private void _currentWindow_GotGamepadWindowFocus()
@@ -227,7 +242,7 @@ namespace HandheldCompanion.Managers
                         Focus(control);
                     else
                     {
-                        control = WPFUtils.GetTopLeftControl<Control>(_currentWindow.elements);
+                        control = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
                         Focus(control);
                     }
                 }
@@ -306,12 +321,12 @@ namespace HandheldCompanion.Managers
                             if (prevNavigation is not null)
                             {
                                 // a new page opened
-                                controlFocused = WPFUtils.GetTopLeftControl<Control>(window.elements);
+                                controlFocused = WPFUtils.GetTopLeftControl<Control>(window.controlElements);
                             }
                             else
                             {
                                 // first start
-                                prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
+                                prevNavigation = controlFocused = WPFUtils.GetTopLeftControl<NavigationViewItem>(window.controlElements);
                             }
                         }
                         break;
@@ -352,12 +367,12 @@ namespace HandheldCompanion.Managers
                 else if (window is MainWindow)
                 {
                     // pick the top left NavigationViewItem
-                    return WPFUtils.GetTopLeftControl<NavigationViewItem>(window.elements);
+                    return WPFUtils.GetTopLeftControl<NavigationViewItem>(window.controlElements);
                 }
                 else if (window is OverlayQuickTools)
                 {
                     // pick the top left Control
-                    return WPFUtils.GetTopLeftControl<Control>(window.elements);
+                    return WPFUtils.GetTopLeftControl<Control>(window.controlElements);
                 }
             }
 
@@ -390,8 +405,8 @@ namespace HandheldCompanion.Managers
                     // check if the button state has been the same for at least 600ms
                     if ((currentTime - lastChangeTime).TotalMilliseconds >= 600)
                     {
-                        // check if the function has been called within the last 120ms
-                        if ((currentTime - lastCallTime).TotalMilliseconds >= 120)
+                        // check if the function has been called within the last 100ms
+                        if ((currentTime - lastCallTime).TotalMilliseconds >= 100)
                         {
                             // update the last call time
                             lastCallTime = currentTime;
@@ -438,6 +453,7 @@ namespace HandheldCompanion.Managers
                     switch (elementType)
                     {
                         case "Button":
+                        case "RepeatButton":
                             WPFUtils.SendKeyToControl(focusedElement, (int)VirtualKeyCode.RETURN);
                             break;
                         case "ToggleSwitch":
@@ -452,6 +468,9 @@ namespace HandheldCompanion.Managers
 
                         case "NavigationViewItem":
                             {
+                                // play sound
+                                UISounds.PlayOggFile(UISounds.Expanded);
+
                                 // set state
                                 _goingForward = true;
 
@@ -460,7 +479,7 @@ namespace HandheldCompanion.Managers
                                 else
                                 {
                                     // get the nearest non-navigation control
-                                    focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.elements);
+                                    focusedElement = WPFUtils.GetTopLeftControl<Control>(_currentWindow.controlElements);
                                     Focus(focusedElement);
                                 }
                             }
@@ -480,6 +499,9 @@ namespace HandheldCompanion.Managers
                 }
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.B2))
                 {
+                    if (_currentWindow.currentDialog is not null)
+                        _currentWindow.currentDialog.Hide();
+
                     // lazy
                     // todo: implement proper RoutedEvent call
                     switch (elementType)
@@ -499,11 +521,10 @@ namespace HandheldCompanion.Managers
                                         }
                                         return;
 
+                                    // todo: shouldn't be hardcoded
                                     case "layout":
                                     case "SettingsMode0":
                                     case "SettingsMode1":
-
-                                    // todo: shouldn't be hardcoded
                                     case "quickhome":
                                     case "quicksettings":
                                     case "quickdevice":
@@ -514,6 +535,9 @@ namespace HandheldCompanion.Managers
                                         {
                                             // set state
                                             _goingBack = true;
+
+                                            // play sound
+                                            UISounds.PlayOggFile(UISounds.Collapse);
 
                                             // go back to previous page
                                             if (_gamepadFrame.CanGoBack)
@@ -635,7 +659,7 @@ namespace HandheldCompanion.Managers
                     {
                         case "NavigationViewItem":
                             {
-                                focusedElement = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, _currentWindow.elements, direction);
+                                focusedElement = WPFUtils.GetClosestControl<NavigationViewItem>(focusedElement, _currentWindow.controlElements, direction);
                                 Focus(focusedElement);
                             }
                             return;
@@ -678,7 +702,7 @@ namespace HandheldCompanion.Managers
                                 {
                                     case WPFUtils.Direction.Up:
                                     case WPFUtils.Direction.Down:
-                                        focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.elements, direction, new List<Type>() { typeof(NavigationViewItem) });
+                                        focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, new List<Type>() { typeof(NavigationViewItem) });
                                         Focus(focusedElement);
                                         return;
 
@@ -694,7 +718,7 @@ namespace HandheldCompanion.Managers
                     }
 
                     // default
-                    focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.elements, direction, new List<Type>() { typeof(NavigationViewItem) });
+                    focusedElement = WPFUtils.GetClosestControl<Control>(focusedElement, _currentWindow.controlElements, direction, new List<Type>() { typeof(NavigationViewItem) });
                     Focus(focusedElement);
                 }
             });

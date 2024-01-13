@@ -1,16 +1,26 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using iNKORE.UI.WPF.Modern.Controls;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Classes
 {
     public class GamepadWindow : Window
     {
-        public List<Control> elements = new();
-        protected GamepadFocusManager gamepadFocusManager;
+        public List<Control> controlElements = new();
+        public List<FrameworkElement> frameworkElements = new();
+
+        public ContentDialog currentDialog;
+        protected UIGamepad gamepadFocusManager;
 
         public GamepadWindow()
         {
@@ -21,17 +31,48 @@ namespace HandheldCompanion.Views.Classes
         {
             // Track when objects are added and removed
             if (visualAdded != null && visualAdded is Control)
-                elements.Add((Control)visualAdded);
+                controlElements.Add((Control)visualAdded);
 
             if (visualRemoved != null && visualRemoved is Control)
-                elements.Remove((Control)visualRemoved);
+                controlElements.Remove((Control)visualRemoved);
 
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
         }
 
         private void OnLayoutUpdated(object? sender, EventArgs e)
         {
-            elements = WPFUtils.FindChildren(this);
+            if (!this.IsActive || this.Visibility != Visibility.Visible)
+                return;
+
+            // get all FrameworkElement(s)
+            frameworkElements = WPFUtils.FindChildren(this);
+
+            // do we have a popup ?
+            ContentDialog dialog = ContentDialog.GetOpenDialog(this);
+            if (dialog is not null)
+            {
+                if (currentDialog is null)
+                {
+                    currentDialog = dialog;
+
+                    frameworkElements = WPFUtils.FindChildren(this);
+
+                    // get all Control(s)
+                    controlElements = WPFUtils.GetElementsFromPopup<Control>(frameworkElements);
+
+                    ContentDialogOpened?.Invoke();
+                }
+            }
+            else if (dialog is null)
+            {
+                // get all Control(s)
+                controlElements = frameworkElements.OfType<Control>().ToList();
+
+                if (currentDialog is not null)
+                {
+                    currentDialog = null;
+                }
+            }
         }
 
         protected void InvokeGotGamepadWindowFocus()
@@ -50,6 +91,12 @@ namespace HandheldCompanion.Views.Classes
 
         public event LostGamepadWindowFocusEventHandler LostGamepadWindowFocus;
         public delegate void LostGamepadWindowFocusEventHandler();
+
+        public event ContentDialogOpenedEventHandler ContentDialogOpened;
+        public delegate void ContentDialogOpenedEventHandler();
+
+        public event ContentDialogClosedEventHandler ContentDialogClosed;
+        public delegate void ContentDialogClosedEventHandler();
         #endregion
     }
 }

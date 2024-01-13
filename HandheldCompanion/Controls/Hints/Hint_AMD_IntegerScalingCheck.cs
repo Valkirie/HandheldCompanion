@@ -2,6 +2,8 @@
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;
@@ -55,7 +57,7 @@ namespace HandheldCompanion.Controls.Hints
                 $"{Properties.Resources.Dialog_ForceRestartDesc}",
                 ContentDialogButton.Primary, null,
                 $"{Properties.Resources.Dialog_Yes}",
-                $"{Properties.Resources.Dialog_No}");
+                $"{Properties.Resources.Dialog_No}", MainWindow.GetCurrent());
             
             await result;
 

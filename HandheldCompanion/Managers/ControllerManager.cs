@@ -72,8 +72,8 @@ public static class ControllerManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        GamepadFocusManager.GotFocus += GamepadFocusManager_GotFocus;
-        GamepadFocusManager.LostFocus += GamepadFocusManager_LostFocus;
+        UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
+        UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 

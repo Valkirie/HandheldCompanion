@@ -343,7 +343,7 @@ namespace HandheldCompanion.Views.Pages
                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                 ContentDialogButton.Primary,
                 $"{Properties.Resources.ProfilesPage_Cancel}",
-                $"{Properties.Resources.ProfilesPage_Delete}");
+                $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, MainWindow.GetCurrent());
             await result; // sync call
 
             switch (result.Result)

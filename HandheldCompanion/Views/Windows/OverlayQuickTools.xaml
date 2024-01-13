@@ -70,11 +70,14 @@
             <ui:NavigationViewItem IsEnabled="False" />
         </ui:NavigationView.FooterMenuItems>
 
-        <common:TouchScrollViewer
-            x:Name="scrollViewer"
-            Margin="0,-20,0,12"
-            PanningMode="VerticalOnly">
-            <ui:Frame Name="ContentFrame" />
-        </common:TouchScrollViewer>
+        <Grid>
+            <ui:ContentDialog Name="ContentDialog" />
+            <common:TouchScrollViewer
+                x:Name="scrollViewer"
+                Margin="0,-20,0,12"
+                PanningMode="VerticalOnly">
+                <ui:Frame Name="ContentFrame" />
+            </common:TouchScrollViewer>
+        </Grid>
     </ui:NavigationView>
 </common:GamepadWindow>

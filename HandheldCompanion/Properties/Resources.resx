@@ -2811,6 +2811,12 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
     <value>1/1 only supports Exclusive Fullscreen.</value>
   </data>
+  <data name="SettingsPage_UISounds" xml:space="preserve">
+    <value>Enable UI sounds</value>
+  </data>
+  <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
+    <value>Enable or disable UI sounds on navigation</value>
+  </data>
   <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
     <value>Scaling type</value>
   </data>

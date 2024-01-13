@@ -7950,6 +7950,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable UI sounds.
+        /// </summary>
+        public static string SettingsPage_UISounds {
+            get {
+                return ResourceManager.GetString("SettingsPage_UISounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable UI sounds on navigation.
+        /// </summary>
+        public static string SettingsPage_UISoundsDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_UISoundsDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Updates available.
         /// </summary>
         public static string SettingsPage_UpdateAvailable {

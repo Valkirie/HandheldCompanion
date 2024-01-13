@@ -79,11 +79,13 @@ public partial class OverlayQuickTools : GamepadWindow
     public QuickOverlayPage overlayPage;
     public QuickSuspenderPage suspenderPage;
 
+    private static OverlayQuickTools CurrentWindow;
     private string preNavItemTag;
 
     public OverlayQuickTools()
     {
         InitializeComponent();
+        CurrentWindow = this;
 
         // used by gamepad navigation
         Tag = "QuickTools";
@@ -117,6 +119,11 @@ public partial class OverlayQuickTools : GamepadWindow
         _pages.Add("QuickProfilesPage", profilesPage);
         _pages.Add("QuickOverlayPage", overlayPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
+    }
+
+    public static OverlayQuickTools GetCurrent()
+    {
+        return CurrentWindow;
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)

@@ -141,7 +141,7 @@ namespace HandheldCompanion.Views.Pages
                 var result = Dialog.ShowAsync(
                     "Warning",
                     "Altering minimum and maximum CPU power values might cause instabilities. Product warranties may not apply if the processor is operated beyond its specifications. Use at your own risk.",
-                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK);
+                    ContentDialogButton.Primary, "Cancel", Properties.Resources.ProfilesPage_OK, string.Empty, MainWindow.GetCurrent());
 
                 await result; // sync call
 

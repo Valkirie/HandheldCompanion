@@ -6,6 +6,7 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
@@ -276,7 +277,7 @@ public static class HotkeysManager
                     {
                         _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
                             $"You can't pin more than {PIN_LIMIT} hotkeys",
-                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
 
                         return;
                     }

@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Properties;
 using HandheldCompanion.Views;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;
@@ -146,13 +147,13 @@ public static class UpdateManager
 
                 _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
                     Resources.SettingsPage_UpdateFailedDownload,
-                    ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+                    ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
             }
             else
             {
                 _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
                     Resources.SettingsPage_UpdateFailedGithub,
-                    ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+                    ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
             }
 
             status = UpdateStatus.Failed;
@@ -305,7 +306,7 @@ public static class UpdateManager
         {
             _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
                 Resources.SettingsPage_UpdateFailedInstall,
-                ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+                ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
             return;
         }
 

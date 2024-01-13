@@ -5,6 +5,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Timers;
@@ -498,7 +499,7 @@ public partial class QuickPerformancePage : Page
                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                 ContentDialogButton.Primary,
                 $"{Properties.Resources.ProfilesPage_Cancel}",
-                $"{Properties.Resources.ProfilesPage_Delete}");
+                $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, OverlayQuickTools.GetCurrent());
         await result; // sync call
 
         switch (result.Result)

@@ -422,6 +422,44 @@
                             SelectionChanged="cB_Language_SelectionChanged" />
                     </Grid>
                 </Border>
+
+                <!--  UI sounds  -->
+                <Border
+                    Padding="15,12,12,12"
+                    Background="{DynamicResource ExpanderHeaderBackground}"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="5*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel>
+                            <ui:FontIcon
+                                Height="40"
+                                HorizontalAlignment="Center"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Glyph="&#xe7f5;" />
+
+                            <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.SettingsPage_UISounds}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{x:Static resx:Resources.SettingsPage_UISoundsDesc}"
+                                    TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+                        </DockPanel>
+
+                        <ui:ToggleSwitch
+                            Name="Toggle_UISounds"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{DynamicResource InvertedToggleSwitchStyle}"
+                            Toggled="Toggle_UISounds_Toggled" />
+                    </Grid>
+                </Border>
             </ui:SimpleStackPanel>
 
             <!--  Quicktools options  -->

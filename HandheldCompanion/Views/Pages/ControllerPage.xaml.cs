@@ -3,6 +3,7 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Linq;
@@ -278,7 +279,7 @@ public partial class ControllerPage : Page
                     $"We've failed to reorder your controllers. For maximum compatibility, we encourage you to restart HandheldCompanion",
                     ContentDialogButton.Close,
                     Properties.Resources.ControllerPage_TryAgain,
-                    Properties.Resources.ControllerPage_Close);
+                    Properties.Resources.ControllerPage_Close, string.Empty, MainWindow.GetCurrent());
 
                 await result; // sync call
 
