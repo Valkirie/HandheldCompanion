@@ -29,7 +29,74 @@ public class LegionGo : IDevice
         Custom = 0xFF,
     }
 
-    private FanTable fanTable = new();
+    public enum CapabilityID
+    {
+        IGPUMode = 0x00010000,
+        FlipToStart = 0x00030000,
+        NvidiaGPUDynamicDisplaySwitching = 0x00040000,
+        AMDSmartShiftMode = 0x00050001,
+        AMDSkinTemperatureTracking = 0x00050002,
+        SupportedPowerModes = 0x00070000,
+        LegionZoneSupportVersion = 0x00090000,
+        IGPUModeChangeStatus = 0x000F0000,
+        CPUShortTermPowerLimit = 0x0101FF00,
+        CPULongTermPowerLimit = 0x0102FF00,
+        CPUPeakPowerLimit = 0x0103FF00,
+        CPUTemperatureLimit = 0x0104FF00,
+        APUsPPTPowerLimit = 0x0105FF00,
+        CPUCrossLoadingPowerLimit = 0x0106FF00,
+        CPUPL1Tau = 0x0107FF00,
+        GPUPowerBoost = 0x0201FF00,
+        GPUConfigurableTGP = 0x0202FF00,
+        GPUTemperatureLimit = 0x0203FF00,
+        GPUTotalProcessingPowerTargetOnAcOffsetFromBaseline = 0x0204FF00,
+        GPUStatus = 0x02070000,
+        GPUDidVid = 0x02090000,
+        InstantBootAc = 0x03010001,
+        InstantBootUsbPowerDelivery = 0x03010002,
+        FanFullSpeed = 0x04020000,
+        CpuCurrentFanSpeed = 0x04030001,
+        GpuCurrentFanSpeed = 0x04030002,
+        CpuCurrentTemperature = 0x05040000,
+        GpuCurrentTemperature = 0x05050000
+    }
+
+    private Task<bool> GetFanFullSpeedAsync() =>
+        WMI.CallAsync("root\\WMI",
+            $"SELECT * FROM LENOVO_OTHER_METHOD",
+            "GetFeatureValue",
+            new() { { "IDs", (int)CapabilityID.FanFullSpeed } },
+            pdc => Convert.ToInt32(pdc["Value"].Value) == 1);
+
+    public Task SetFanFullSpeedAsync(bool enabled) =>
+        WMI.CallAsync("root\\WMI",
+            $"SELECT * FROM LENOVO_OTHER_METHOD",
+            "SetFeatureValue",
+            new()
+            {
+                { "IDs", (int)CapabilityID.FanFullSpeed },
+                { "value", enabled ? 1 : 0 },
+            });
+
+    private Task SetFanTable(FanTable fanTable) => WMI.CallAsync("root\\WMI",
+        $"SELECT * FROM LENOVO_FAN_METHOD",
+        "Fan_Set_Table",
+        new() { { "FanTable", fanTable.GetBytes() } });
+
+    private Task SetSmartFanMode(int fanMode) => WMI.CallAsync("root\\WMI",
+        $"SELECT * FROM LENOVO_GAMEZONE_DATA",
+        "SetSmartFanMode",
+        new() { { "Data", fanMode } });
+
+    private Task SetCPUPowerLimit(CapabilityID capabilityID, int limit) =>
+        WMI.CallAsync("root\\WMI",
+            $"SELECT * FROM LENOVO_OTHER_METHOD",
+            "SetFeatureValue",
+            new()
+            {
+                { "IDs", (int)capabilityID },
+                { "value", limit },
+            });
 
     public const byte INPUT_HID_ID = 0x04;
 
@@ -70,7 +137,7 @@ public class LegionGo : IDevice
 
         // device specific capacities
         Capabilities |= DeviceCapabilities.None;
-        // Capabilities |= DeviceCapabilities.FanControl;
+        Capabilities |= DeviceCapabilities.FanControl;
         Capabilities |= DeviceCapabilities.DynamicLighting;
         Capabilities |= DeviceCapabilities.DynamicLightingBrightness;
 
@@ -139,29 +206,16 @@ public class LegionGo : IDevice
         DefaultLayout.ButtonLayout[ButtonFlags.B8] = new List<IActions>() { new MouseActions { MouseType = MouseActionsType.ScrollDown } };
 
         Init();
-    }
 
-    public override void SetFanControl(bool enable, int mode = 0)
-    {
-        // do something
-    }
-
-    public void SetFanFullSpeed(bool enabled)
-    {
-        // Fan control: Default, Full (0, 1)
-        ECRAMWrite(0x8A, (byte)(enabled ? 1 : 0));
-    }
-
-    public override void SetFanDuty(double percent)
-    {
-        // do something
+        Task<bool> task = Task.Run(async () => await GetFanFullSpeedAsync());
+        bool FanFullSpeed = task.Result;
     }
 
     private void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
-        if (profile.FanProfile.fanMode == FanMode.Hardware)
-            fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
-        else
+        FanTable fanTable = new(new ushort[] { 44, 48, 55, 60, 71, 79, 87, 87, 100, 100 });
+        if (profile.FanProfile.fanMode != FanMode.Hardware)
+        {
             fanTable = new(new ushort[] {
                 (ushort)profile.FanProfile.fanSpeeds[1],
                 (ushort)profile.FanProfile.fanSpeeds[2],
@@ -174,81 +228,19 @@ public class LegionGo : IDevice
                 (ushort)profile.FanProfile.fanSpeeds[9],
                 (ushort)profile.FanProfile.fanSpeeds[10],
             });
+        }
 
-        try
+        SetFanTable(fanTable);
+        SetSmartFanMode(profile.OEMPowerMode);
+
+        /*
+        if (profile.TDPOverrideEnabled && !profile.AutoTDPEnabled)
         {
-            // Fan control
-            ManagementScope managementScope = new ManagementScope("root\\WMI");
-            managementScope.Connect();
-            ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_FAN_METHOD");
-            using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
-            {
-                var obj = searcher.Cast<object>().FirstOrDefault();
-                if (obj is ManagementObject mo)
-                {
-                    using (mo)
-                    {
-                        // Invoke the Fan_Set_Table method
-                        var inParams = mo.GetMethodParameters("Fan_Set_Table");
-                        inParams["FanTable"] = fanTable.GetBytes();
-                        mo.InvokeMethod("Fan_Set_Table", inParams, null);
-
-                        // Invoke the Fan_Get_Table method
-                        inParams = mo.GetMethodParameters("Fan_Get_Table");
-                        inParams["FanID"] = 1;
-                        inParams["SensorID"] = 0;
-
-                        ManagementBaseObject outParams = mo.InvokeMethod("Fan_Get_Table", inParams, null);
-
-                        /* Read output
-                        uint fanTableSize = (uint)outParams["FanTableSize"];
-                        uint[] fanTableArray = (uint[])outParams["FanTable"];
-                        uint sensorTableSize = (uint)outParams["SensorTableSize"];
-                        uint[] sensorTableArray = (uint[])outParams["SensorTable"];
-                        Debug.WriteLine("fanTable:{0}", string.Join(',', fanTable));
-                        */
-                    }
-                }
-            }
-        } catch { }
-
-        Task.Run(async () =>
-        {
-            // Power mode
-            int GetSmartFanMode = -1;
-
-            DateTime timeout = DateTime.Now.Add(TimeSpan.FromSeconds(4));
-            while (DateTime.Now < timeout && GetSmartFanMode != profile.OEMPowerMode)
-            {
-                try
-                {
-
-                    ManagementScope managementScope = new ManagementScope("root\\WMI");
-                    managementScope.Connect();
-                    ObjectQuery objectQuery = new ObjectQuery("SELECT * FROM LENOVO_GAMEZONE_DATA");
-                    using (ManagementObjectCollection searcher = new ManagementObjectSearcher(managementScope, objectQuery).Get())
-                    {
-                        var obj = searcher.Cast<object>().FirstOrDefault();
-                        if (obj is ManagementObject mo)
-                        {
-                            using (mo)
-                            {
-                                // Update value
-                                ManagementBaseObject param = mo.GetMethodParameters("SetSmartFanMode");
-                                param["Data"] = profile.OEMPowerMode;
-                                mo.InvokeMethod("SetSmartFanMode", param, null);
-
-                                // Read output
-                                GetSmartFanMode = Convert.ToInt32(mo.InvokeMethod("GetSmartFanMode", null, null)?.Properties["Data"].Value);
-                            }
-                        }
-                    }
-                }
-                catch { }
-
-                await Task.Delay(1000);
-            }
-        });
+            SetCPUPowerLimit(CapabilityID.CPUShortTermPowerLimit, (int)profile.TDPOverrideValues[0]);
+            SetCPUPowerLimit(CapabilityID.CPULongTermPowerLimit, (int)profile.TDPOverrideValues[1]);
+            SetCPUPowerLimit(CapabilityID.CPUPeakPowerLimit, (int)profile.TDPOverrideValues[2]);
+        }
+        */
     }
 
     public override bool Open()
@@ -289,7 +281,7 @@ public class LegionGo : IDevice
         }
 
         // Reset the fan speed to default before device shutdown/restart
-        SetFanFullSpeed(false);
+        SetFanFullSpeedAsync(false);
 
         base.Close();
     }

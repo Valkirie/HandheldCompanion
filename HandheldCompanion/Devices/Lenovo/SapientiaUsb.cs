@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace HandheldCompanion.Devices.Lenovo
 {
@@ -136,9 +137,28 @@ namespace HandheldCompanion.Devices.Lenovo
         //恢复出厂设置 device: 1：RX，2：Dongle; 3:左手柄 4:右手柄
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern bool SetDeviceDefault(int device);
+        //手柄版本信息
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern VERSION getUSBVerify(int device);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct VERSION
+        {
+            public int verPro;
+            public int verCMD;
+            public int verFir;
+            public int verHard;
+
+            public VERSION(int verPro, int verCMD, int verFir, int verHard)
+            {
+                this.verPro = verPro;
+                this.verCMD = verCMD;
+                this.verFir = verFir;
+                this.verHard = verHard;
+            }
+        }
 
         //导出类
-
         [StructLayout(LayoutKind.Sequential)]
         public struct LightionProfile
         {

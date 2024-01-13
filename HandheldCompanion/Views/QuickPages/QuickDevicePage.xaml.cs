@@ -262,7 +262,7 @@ public partial class QuickDevicePage : Page
         if (MainWindow.CurrentDevice is LegionGo device)
         {
             ToggleSwitch toggleSwitch = (ToggleSwitch)sender;
-            device.SetFanFullSpeed(toggleSwitch.IsOn);
+            device.SetFanFullSpeedAsync(toggleSwitch.IsOn);
         }
     }
 
