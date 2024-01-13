@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace HandheldCompanion.Misc
+namespace HandheldCompanion.ADLX
 {
     public class ADLXBackend
     {

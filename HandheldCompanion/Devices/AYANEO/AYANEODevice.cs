@@ -25,7 +25,7 @@ namespace HandheldCompanion.Devices.AYANEO
         {
             prevPowerStatus = SystemInformation.PowerStatus.PowerLineStatus;
             prevBatteryLevelPercentage = (int)(SystemInformation.PowerStatus.BatteryLifePercent * 100);
-            PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
+            SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
         }
 
         private void PowerManager_PowerStatusChanged(PowerStatus powerStatus)

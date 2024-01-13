@@ -56,7 +56,7 @@ namespace HandheldCompanion.Views.Pages
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
-            SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+            MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];

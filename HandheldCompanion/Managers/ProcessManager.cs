@@ -280,6 +280,7 @@ public static class ProcessManager
 
             processEx.MainWindowHandle = hWnd;
             processEx.MainThread = GetMainThread(proc);
+            processEx.MainThread.Disposed += (sender, e) => processEx.MainThreadDisposed();
             processEx.Platform = PlatformManager.GetPlatform(proc);
 
             Processes.TryAdd(ProcessID, processEx);
@@ -377,7 +378,7 @@ public static class ProcessManager
         }
     }
 
-    private static ProcessThread GetMainThread(Process process)
+    public static ProcessThread GetMainThread(Process process)
     {
         ProcessThread mainThread = null;
         var startTime = DateTime.MaxValue;

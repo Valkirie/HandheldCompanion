@@ -1,6 +1,8 @@
 ﻿using HandheldCompanion.Views;
+using System;
 using System.Collections.Generic;
 using System.Management;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace HandheldCompanion;
 
@@ -18,6 +20,9 @@ public static class MotherboardInfo
     private static readonly ManagementObjectSearcher displaySearcher = new("root\\CIMV2", "SELECT * FROM Win32_DisplayConfiguration");
     private static ManagementObjectCollection displayCollection;
 
+    private static readonly ManagementObjectSearcher videoControllerSearcher = new("root\\CIMV2", "SELECT * FROM Win32_VideoController");
+    private static ManagementObjectCollection videoControllerCollection;
+
     public static void UpdateMotherboard()
     {
         // slow task, don't call me more than once
@@ -25,6 +30,25 @@ public static class MotherboardInfo
         motherboardCollection = motherboardSearcher.Get();
         processorCollection = processorSearcher.Get();
         displayCollection = displaySearcher.Get();
+        videoControllerCollection = videoControllerSearcher.Get();
+    }
+
+    public static string VideoController
+    {
+        get
+        {
+            string manufacturer = string.Empty;
+            foreach (ManagementObject videoController in videoControllerCollection)
+            {
+                manufacturer = videoController["AdapterCompatibility"].ToString();
+                if (manufacturer.Contains("Intel"))
+                    break;
+                else if (manufacturer.Contains("AMD"))
+                    break;
+            }
+
+            return manufacturer;
+        }
     }
 
     public static string Availability

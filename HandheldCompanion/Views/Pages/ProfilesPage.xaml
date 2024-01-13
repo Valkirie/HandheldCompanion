@@ -483,7 +483,12 @@
                                     BorderThickness="0,1,0,0" />
 
                                 <!--  RSR  -->
-                                <ui:SimpleStackPanel Name="StackProfileRSR" Spacing="6">
+                                <ui:SimpleStackPanel
+                                    Name="StackProfileRSR"
+                                    d:Background="Red"
+                                    d:Visibility="Visible"
+                                    Spacing="6"
+                                    Visibility="Collapsed">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="5*" />
@@ -550,7 +555,8 @@
                                 <Separator
                                     Margin="-46,0,-16,0"
                                     BorderBrush="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                                    BorderThickness="0,1,0,0" />
+                                    BorderThickness="0,1,0,0"
+                                    Visibility="{Binding ElementName=StackProfileRSR, Path=Visibility}" />
 
                                 <!--  Integer Scaling  -->
                                 <ui:SimpleStackPanel Name="StackProfileIS" Spacing="6">

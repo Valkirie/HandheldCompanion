@@ -47,7 +47,7 @@ public static class DynamicLightingManager
         rightLedTracker = new ColorTracker();
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         MainWindow.CurrentDevice.PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
         ambilightThread = new Thread(ambilightThreadLoop);
@@ -60,7 +60,7 @@ public static class DynamicLightingManager
         DynamicLightingTimer.Elapsed += (sender, e) => UpdateLED();
     }
 
-    public static void Start(bool service = false)
+    public static void Start()
     {
         IsInitialized = true;
         Initialized?.Invoke();

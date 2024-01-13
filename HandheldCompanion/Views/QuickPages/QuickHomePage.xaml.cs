@@ -24,9 +24,9 @@ public partial class QuickHomePage : Page
         HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
         HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
-        SystemManager.VolumeNotification += SystemManager_VolumeNotification;
-        SystemManager.BrightnessNotification += SystemManager_BrightnessNotification;
-        SystemManager.Initialized += SystemManager_Initialized;
+        MultimediaManager.VolumeNotification += SystemManager_VolumeNotification;
+        MultimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
+        MultimediaManager.Initialized += SystemManager_Initialized;
 
         ProfileManager.Applied += ProfileManager_Applied;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -67,16 +67,16 @@ public partial class QuickHomePage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            if (SystemManager.HasBrightnessSupport())
+            if (MultimediaManager.HasBrightnessSupport())
             {
                 SliderBrightness.IsEnabled = true;
-                SliderBrightness.Value = SystemManager.GetBrightness();
+                SliderBrightness.Value = MultimediaManager.GetBrightness();
             }
 
-            if (SystemManager.HasVolumeSupport())
+            if (MultimediaManager.HasVolumeSupport())
             {
                 SliderVolume.IsEnabled = true;
-                SliderVolume.Value = SystemManager.GetVolume();
+                SliderVolume.Value = MultimediaManager.GetVolume();
                 UpdateVolumeIcon((float)SliderVolume.Value);
             }
         });
@@ -115,7 +115,7 @@ public partial class QuickHomePage : Page
             return;
 
         using (new ScopedLock(brightnessLock))
-            SystemManager.SetBrightness(SliderBrightness.Value);
+            MultimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -124,7 +124,7 @@ public partial class QuickHomePage : Page
             return;
 
         using (new ScopedLock(volumeLock))
-            SystemManager.SetVolume(SliderVolume.Value);
+            MultimediaManager.SetVolume(SliderVolume.Value);
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)

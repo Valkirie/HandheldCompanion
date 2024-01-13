@@ -527,7 +527,7 @@ public static class HotkeysManager
             LogManager.LogDebug("Executed Hotkey: {0}", listener);
 
             // play a tune to notify a command was executed
-            SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
+            MultimediaManager.PlayWindowsMedia("Windows Navigation Start.wav");
 
             // raise an event
             CommandExecuted?.Invoke(listener);

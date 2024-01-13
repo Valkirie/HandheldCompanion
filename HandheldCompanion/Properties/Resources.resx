@@ -2767,7 +2767,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>GPU will scale up lower resolutions to fit the display</value>
   </data>
   <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
-    <value>Radeon Image Sharpening</value>
+    <value>Image Sharpening</value>
   </data>
   <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
     <value>Enhances visual detail</value>
@@ -2810,5 +2810,17 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
     <value>1/1 only supports Exclusive Fullscreen.</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
+    <value>Scaling type</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeDesc" xml:space="preserve">
+    <value>Select scaling type to adapt the scaling aspect ratio</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
+    <value>Integer Scaling</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
+    <value>Nearest Neighbor</value>
   </data>
 </root>

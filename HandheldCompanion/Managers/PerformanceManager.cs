@@ -1,3 +1,4 @@
+using HandheldCompanion.ADLX;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
@@ -76,7 +77,7 @@ public static class PerformanceManager
     private static readonly double[] FPSHistory = new double[6];
     private static bool gfxWatchdogPendingStop;
 
-    private static Processor processor = new();
+    private static Processor processor;
     private static double ProcessValueFPSPrevious;
     private static double StoredGfxClock;
 
@@ -104,9 +105,6 @@ public static class PerformanceManager
         autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
         // manage events
-        ProfileManager.Applied += ProfileManager_Applied;
-        ProfileManager.Discarded += ProfileManager_Discarded;
-        ProfileManager.Updated += ProfileManager_Updated;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
         PlatformManager.LibreHardwareMonitor.GPUClockChanged += LibreHardwareMonitor_GPUClockChanged;
@@ -114,12 +112,6 @@ public static class PerformanceManager
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
-
-        // move me
-        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
-        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
-        SystemManager.StateChanged_ImageSharpening += SystemManager_StateChanged_ImageSharpening;
-        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
 
         currentCoreCount = Environment.ProcessorCount;
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
@@ -176,156 +168,6 @@ public static class PerformanceManager
                 }
                 break;
         }
-    }
-
-    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
-    {
-        try
-        {
-            // apply profile GPU Scaling
-            // apply profile scaling mode
-            if (profile.GPUScaling)
-            {
-                ADLXWrapper.SetGPUScaling(true);
-
-                var scalingMode = profile.ScalingMode;
-                 
-                // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
-                // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
-                if (profile.ScalingMode == 2 && profile.RSREnabled)
-                    scalingMode = 1;
-
-                ADLXWrapper.SetScalingMode(scalingMode);
-
-                // apply profile RSR
-                if (profile.RSREnabled)
-                {
-                    // mutually exclusive
-                    ADLXWrapper.SetIntegerScaling(false);
-                    ADLXWrapper.SetImageSharpening(false);
-
-                    ADLXWrapper.SetRSR(true);
-                    ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
-                }
-                else if (ADLXWrapper.GetRSR())
-                {
-                    ADLXWrapper.SetRSR(false);
-                    ADLXWrapper.SetRSRSharpness(20);
-                }
-
-                // apply profile Integer Scaling
-                if (profile.IntegerScalingEnabled)
-                {
-                    // mutually exclusive
-                    ADLXWrapper.SetRSR(false);
-
-                    ADLXWrapper.SetIntegerScaling(true);
-                }
-                else if (ADLXWrapper.GetIntegerScaling())
-                {
-                    ADLXWrapper.SetIntegerScaling(false);
-                }
-            }
-            else if (ADLXWrapper.GetGPUScaling())
-            {
-                ADLXWrapper.SetGPUScaling(false);
-            }
-
-            // apply profile image sharpening
-            if (profile.RISEnabled)
-            {
-                // mutually exclusive
-                ADLXWrapper.SetRSR(false);
-
-                ADLXWrapper.SetImageSharpening(profile.RISEnabled);
-                ADLXWrapper.SetImageSharpeningSharpness(profile.RISSharpness);
-            }
-            else if (ADLXWrapper.GetImageSharpening())
-            {
-                ADLXWrapper.SetImageSharpening(false);
-            }
-        }
-        catch { }
-    }
-
-    private static void ProfileManager_Discarded(Profile profile)
-    {
-        try
-        {
-            // restore default GPU Scaling
-            if (profile.GPUScaling && ADLXWrapper.GetGPUScaling())
-            {
-                ADLXWrapper.SetGPUScaling(false);
-            }
-
-            // restore default RSR
-            if (profile.RSREnabled && ADLXWrapper.GetRSR())
-            {
-                ADLXWrapper.SetRSR(false);
-                ADLXWrapper.SetRSRSharpness(20);
-            }
-            
-            // restore default integer scaling
-            if (profile.IntegerScalingEnabled && ADLXWrapper.GetIntegerScaling())
-            {
-                ADLXWrapper.SetIntegerScaling(false);
-            }
-
-            // restore default image sharpening
-            if (profile.RISEnabled && ADLXWrapper.GetImageSharpening())
-            {
-                ADLXWrapper.SetImageSharpening(false);
-            }
-        }
-        catch { }
-    }
-    
-    // todo: moveme
-    private static void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
-    {
-        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.DisabledMaximizedWindowedValue, !profile.FullScreenOptimization);
-        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.HighDPIAwareValue, !profile.HighDPIAware);
-    }
-
-    private static void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.RSREnabled)
-            ADLXWrapper.SetRSR(profile.RSREnabled);
-        if (Sharpness != profile.RSRSharpness)
-            ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
-    }
-
-    private static void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.GPUScaling)
-            ADLXWrapper.SetGPUScaling(profile.GPUScaling);
-        if (Mode != profile.ScalingMode)
-        {
-            // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
-            // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
-            if (profile.ScalingMode == 2 && profile.RSREnabled)
-                return;
-
-            ADLXWrapper.SetScalingMode(profile.ScalingMode);
-        }
-    }
-
-    private static void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.IntegerScalingEnabled)
-            ADLXWrapper.SetIntegerScaling(profile.IntegerScalingEnabled);
-    }
-
-    private static void SystemManager_StateChanged_ImageSharpening(bool Enabled, int Sharpness)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.RISEnabled)
-            ADLXWrapper.SetImageSharpening(profile.RISEnabled);
-        if (Sharpness != profile.RISSharpness)
-            ADLXWrapper.SetImageSharpeningSharpness(Sharpness);
     }
 
     private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)

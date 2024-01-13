@@ -209,6 +209,9 @@ public partial class ProcessEx : UserControl, IDisposable
         {
             using (new ScopedLock(updateLock))
             {
+                if (MainThread is null)
+                    return;
+
                 switch (MainThread.ThreadState)
                 {
                     case ThreadState.Wait:
@@ -319,5 +322,10 @@ public partial class ProcessEx : UserControl, IDisposable
             return;
 
         HighDPIAware = !T_HighDPIAware.IsOn;
+    }
+
+    internal void MainThreadDisposed()
+    {
+        MainThread = ProcessManager.GetMainThread(Process);
     }
 }

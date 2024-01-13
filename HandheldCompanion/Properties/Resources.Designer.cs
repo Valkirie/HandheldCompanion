@@ -5743,7 +5743,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Radeon Image Sharpening.
+        ///   Looks up a localized string similar to Image Sharpening.
         /// </summary>
         public static string ProfilesPage_ImageSharpening {
             get {
@@ -5991,6 +5991,42 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_ResolutionScaleDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scaling type.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleType {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select scaling type to adapt the scaling aspect ratio.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleTypeDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integer Scaling.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleTypeInteger {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nearest Neighbor.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleTypeNearest {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeNearest", resourceCulture);
             }
         }
         

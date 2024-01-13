@@ -274,7 +274,7 @@ public partial class SettingsPage : Page
         if (!IsLoaded)
             return;
 
-        var rotation = SystemManager.GetScreenOrientation();
+        var rotation = MultimediaManager.GetScreenOrientation();
         rotation = new ScreenRotation(rotation.rotationUnnormalized, ScreenRotation.Rotations.UNSET);
         SettingsManager.SetProperty("NativeDisplayOrientation", (int)rotation.rotationNativeBase);
     }

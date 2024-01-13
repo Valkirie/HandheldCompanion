@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -48,14 +49,12 @@ public partial class QuickProfilesPage : Page
         ProfileManager.Applied += ProfileManager_Applied;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-        SystemManager.Initialized += SystemManager_Initialized;
-        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
-        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
-        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
-        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
+        MultimediaManager.Initialized += MultimediaManager_Initialized;
+        MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
         HotkeysManager.HotkeyCreated += TriggerCreated;
         InputsManager.TriggerUpdated += TriggerUpdated;
         PlatformManager.RTSS.Updated += RTSS_Updated;
+        GPUManager.Initialized += GPUManager_Initialized;
 
         foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
         {
@@ -165,29 +164,49 @@ public partial class QuickProfilesPage : Page
         RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
-    private void SystemManager_Initialized()
+    private void MultimediaManager_Initialized()
     {
-        bool HasScalingModeSupport = ADLXWrapper.HasScalingModeSupport();
-        bool HasIntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
-        bool HasRSRSupport = ADLXWrapper.HasRSRSupport();
-        bool HasGPUScalingSupport = ADLXWrapper.HasGPUScalingSupport();
-        bool IsGPUScalingEnabled = ADLXWrapper.GetGPUScaling();
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
+            desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
+        });
+    }
+
+    private void GPUManager_Initialized(GPU GPU)
+    {
+        bool HasRSRSupport = false;
+        if (GPU is AMDGPU amdGPU)
+        {
+            amdGPU.RSRStateChanged += OnRSRStateChanged;
+            HasRSRSupport = amdGPU.HasRSRSupport();
+        }
+
+        GPU.IntegerScalingChanged += OnIntegerScalingChanged;
+        GPU.GPUScalingChanged += OnGPUScalingChanged;
+
+        bool HasScalingModeSupport = GPU.HasScalingModeSupport();
+        bool HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
+        bool HasGPUScalingSupport = GPU.HasGPUScalingSupport();
+        bool IsGPUScalingEnabled = GPU.GetGPUScaling();
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
+            // GPU-specific settings
+            StackProfileRSR.Visibility = GPU is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
+            IntegerScalingTypeGrid.Visibility = GPU is IntelGPU ? Visibility.Visible : Visibility.Collapsed;
+
             StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
             GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
-
-            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
-            desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
         });
     }
 
-    private void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
+    private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
@@ -199,7 +218,7 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
+    private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(async () =>
@@ -214,7 +233,7 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
+    private void OnIntegerScalingChanged(bool Supported, bool Enabled)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
@@ -490,7 +509,7 @@ public partial class QuickProfilesPage : Page
                 }
 
                 // Framerate limit
-                desktopScreen = SystemManager.GetDesktopScreen();
+                desktopScreen = MultimediaManager.GetDesktopScreen();
                 if (desktopScreen is not null)
                     cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
@@ -504,6 +523,7 @@ public partial class QuickProfilesPage : Page
 
                 // Integer Scaling
                 IntegerScalingToggle.IsOn = selectedProfile.IntegerScalingEnabled;
+                IntegerScalingTypeComboBox.SelectedIndex = selectedProfile.IntegerScalingType;
 
                 if (desktopScreen is not null)
                     IntegerScalingComboBox.SelectedItem = desktopScreen.screenDividers.FirstOrDefault(d => d.divider == selectedProfile.IntegerScalingDivider);
@@ -973,6 +993,19 @@ public partial class QuickProfilesPage : Page
         }
 
         selectedProfile.IntegerScalingDivider = divider;
+        UpdateProfile();
+    }
+
+    private void IntegerScalingTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (IntegerScalingTypeComboBox.SelectedIndex == -1 || selectedProfile is null)
+            return;
+
+        // wait until lock is released
+        if (updateLock)
+            return;
+
+        selectedProfile.IntegerScalingType = (byte)IntegerScalingTypeComboBox.SelectedIndex;
         UpdateProfile();
     }
 

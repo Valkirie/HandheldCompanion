@@ -1,5 +1,6 @@
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Devices;
+using HandheldCompanion.IGCL;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
@@ -224,7 +225,7 @@ public partial class MainWindow : GamepadWindow
 
         // manage events
         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
-        PowerManager.SystemStatusChanged += OnSystemStatusChanged;
+        SystemManager.SystemStatusChanged += OnSystemStatusChanged;
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
@@ -241,13 +242,14 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.Start();
         OSDManager.Start();
         LayoutManager.Start();
-        PowerManager.Start();
-        DynamicLightingManager.Start();
         SystemManager.Start();
+        DynamicLightingManager.Start();
+        MultimediaManager.Start();
         VirtualManager.Start();
         InputsManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
+        GPUManager.Start();
 
         // todo: improve overall threading logic
         new Thread(() => { PlatformManager.Start(); }).Start();
@@ -561,17 +563,17 @@ public partial class MainWindow : GamepadWindow
     }
 
     // no code from the cases inside this function will be called on program start
-    private async void OnSystemStatusChanged(PowerManager.SystemStatus status, PowerManager.SystemStatus prevStatus)
+    private async void OnSystemStatusChanged(SystemManager.SystemStatus status, SystemManager.SystemStatus prevStatus)
     {
         if (status == prevStatus)
             return;
 
         switch (status)
         {
-            case PowerManager.SystemStatus.SystemReady:
+            case SystemManager.SystemStatus.SystemReady:
                 {
                     // resume from sleep
-                    if (prevStatus == PowerManager.SystemStatus.SystemPending)
+                    if (prevStatus == SystemManager.SystemStatus.SystemPending)
                     {
                         // use device-specific delay
                         await Task.Delay(CurrentDevice.ResumeDelay);
@@ -602,7 +604,7 @@ public partial class MainWindow : GamepadWindow
                 }
                 break;
 
-            case PowerManager.SystemStatus.SystemPending:
+            case SystemManager.SystemStatus.SystemPending:
                 // sleep
                 {
                     // stop the virtual controller
@@ -680,7 +682,8 @@ public partial class MainWindow : GamepadWindow
         overlayquickTools.Close(true);
 
         VirtualManager.Stop();
-        SystemManager.Stop();
+        MultimediaManager.Stop();
+        GPUManager.Stop();
         MotionManager.Stop();
         SensorsManager.Stop();
         ControllerManager.Stop();
@@ -691,7 +694,7 @@ public partial class MainWindow : GamepadWindow
         PowerProfileManager.Stop();
         ProfileManager.Stop();
         LayoutManager.Stop();
-        PowerManager.Stop();
+        SystemManager.Stop();
         ProcessManager.Stop();
         ToastManager.Stop();
         TaskManager.Stop();

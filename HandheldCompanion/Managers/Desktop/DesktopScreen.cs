@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using static HandheldCompanion.Managers.SystemManager;
+using static HandheldCompanion.Managers.MultimediaManager;
 
 namespace HandheldCompanion.Managers.Desktop;
 

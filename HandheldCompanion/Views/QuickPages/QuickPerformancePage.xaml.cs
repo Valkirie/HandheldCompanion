@@ -48,7 +48,7 @@ public partial class QuickPerformancePage : Page
         PerformanceManager.Initialized += PerformanceManager_Initialized;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+        MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
         // device settings
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];

@@ -25,7 +25,7 @@ using ComboBox = System.Windows.Controls.ComboBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
-using PowerManager = HandheldCompanion.Managers.PowerManager;
+using SystemManager = HandheldCompanion.Managers.SystemManager;
 using Screen = WpfScreenHelper.Screen;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 using Timer = System.Timers.Timer;
@@ -98,9 +98,9 @@ public partial class OverlayQuickTools : GamepadWindow
         WM_PAINT_TIMER.Elapsed += WM_PAINT_TIMER_Tick;
 
         // create manager(s)
-        PowerManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
+        SystemManager.PowerStatusChanged += PowerManager_PowerStatusChanged;
 
-        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
         // create pages
@@ -211,7 +211,7 @@ public partial class OverlayQuickTools : GamepadWindow
             // set key
             var Key = $"Battery{KeyStatus}{KeyValue}";
 
-            if (PowerManager.PowerStatusIcon.TryGetValue(Key, out var glyph))
+            if (SystemManager.PowerStatusIcon.TryGetValue(Key, out var glyph))
                 BatteryIndicatorIcon.Glyph = glyph;
 
             if (status.BatteryLifeRemaining > 0)

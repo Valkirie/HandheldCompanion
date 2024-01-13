@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Managers.Desktop;
@@ -9,7 +10,6 @@ using HandheldCompanion.Utils;
 using HandheldCompanion.Views.Pages.Profiles;
 using iNKORE.UI.WPF.Modern.Controls;
 using Microsoft.Win32;
-using SharpDX.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,12 +59,10 @@ public partial class ProfilesPage : Page
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        SystemManager.Initialized += SystemManager_Initialized;
-        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
-        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
-        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
-        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
+        MultimediaManager.Initialized += MultimediaManager_Initialized;
+        MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
+        GPUManager.Initialized += GPUManager_Initialized;
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
@@ -77,28 +75,47 @@ public partial class ProfilesPage : Page
         RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
-    private void SystemManager_Initialized()
+    private void MultimediaManager_Initialized()
     {
-        bool HasScalingModeSupport = ADLXWrapper.HasScalingModeSupport();
-        bool HasIntegerScalingSupport = ADLXWrapper.HasIntegerScalingSupport();
-        bool HasRSRSupport = ADLXWrapper.HasRSRSupport();
-        bool HasGPUScalingSupport = ADLXWrapper.HasGPUScalingSupport();
-        bool IsGPUScalingEnabled = ADLXWrapper.GetGPUScaling();
-
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
-            StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
-            GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
-            GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
-
-            DesktopScreen desktopScreen = SystemManager.GetDesktopScreen();
+            DesktopScreen desktopScreen = MultimediaManager.GetDesktopScreen();
             desktopScreen.screenDividers.ForEach(d => IntegerScalingComboBox.Items.Add(d));
         });
     }
 
-    private void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
+    private void GPUManager_Initialized(GPU GPU)
+    {
+        bool HasRSRSupport = false;
+        if (GPU is AMDGPU amdGPU)
+        {
+            amdGPU.RSRStateChanged += OnRSRStateChanged;
+            HasRSRSupport = amdGPU.HasRSRSupport();
+        }
+
+        GPU.IntegerScalingChanged += OnIntegerScalingChanged;
+        GPU.GPUScalingChanged += OnGPUScalingChanged;
+
+        bool HasScalingModeSupport = GPU.HasScalingModeSupport();
+        bool HasIntegerScalingSupport = GPU.HasIntegerScalingSupport();
+        bool HasGPUScalingSupport = GPU.HasGPUScalingSupport();
+        bool IsGPUScalingEnabled = GPU.GetGPUScaling();
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            // GPU-specific settings
+            StackProfileRSR.Visibility = GPU is AMDGPU ? Visibility.Visible : Visibility.Collapsed;
+
+            StackProfileRSR.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasRSRSupport;
+            StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
+            GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
+            GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+        });
+    }
+
+    private void OnRSRStateChanged(bool Supported, bool Enabled, int Sharpness)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
@@ -110,7 +127,7 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
+    private void OnGPUScalingChanged(bool Supported, bool Enabled, int Mode)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(async () =>
@@ -125,7 +142,7 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
+    private void OnIntegerScalingChanged(bool Supported, bool Enabled)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
@@ -560,7 +577,7 @@ public partial class ProfilesPage : Page
                 UpdateMotionControlsVisibility();
 
                 // Framerate limit
-                desktopScreen = SystemManager.GetDesktopScreen();
+                desktopScreen = MultimediaManager.GetDesktopScreen();
                 if (desktopScreen is not null)
                     cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
