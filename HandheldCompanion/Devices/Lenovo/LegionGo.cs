@@ -102,6 +102,9 @@ public class LegionGo : IDevice
 
     public override bool IsOpen => hidDevices.ContainsKey(INPUT_HID_ID) && hidDevices[INPUT_HID_ID].IsOpen;
 
+    public static int LeftJoyconIndex = 3;
+    public static int RightJoyconIndex = 4;
+
     public LegionGo()
     {
         // device specific settings
@@ -319,8 +322,8 @@ public class LegionGo : IDevice
         lightProfileL.brightness = brightness;
         lightProfileR.brightness = brightness;
 
-        SetLightingEffectProfileID(3, lightProfileL);
-        SetLightingEffectProfileID(4, lightProfileR);
+        SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
+        SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
 
         return true;
     }
@@ -372,8 +375,8 @@ public class LegionGo : IDevice
                 break;
         }
 
-        SetLightingEffectProfileID(3, lightProfileL);
-        SetLightingEffectProfileID(4, lightProfileR);
+        SetLightingEffectProfileID(LeftJoyconIndex, lightProfileL);
+        SetLightingEffectProfileID(RightJoyconIndex, lightProfileR);
 
         return true;
     }
