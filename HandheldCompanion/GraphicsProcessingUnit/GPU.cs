@@ -39,7 +39,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevImageSharpening = false;
         protected int prevImageSharpeningSharpness = -1;
 
-        protected LockObject updateLock = new();
+        protected object updateLock = new();
+        protected object telemetryLock = new();
 
         protected static object wrapperLock = new();
         protected static T Execute<T>(Func<T> func, T defaultValue)

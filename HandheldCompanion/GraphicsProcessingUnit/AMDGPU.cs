@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using HandheldCompanion.ADLX;
-using HandheldCompanion.Utils;
 using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
 
@@ -89,7 +89,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            TelemetryData = ADLXBackend.GetTelemetryData();
+            if (Monitor.TryEnter(telemetryLock))
+            {
+                TelemetryData = ADLXBackend.GetTelemetryData();
+                Debug.WriteLine("W:{0}", TelemetryData.gpuPowerValue);
+
+                Monitor.Exit(telemetryLock);
+            }
         }
 
         public override void Start()
@@ -105,7 +111,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            using (new ScopedLock(updateLock))
+            if (Monitor.TryEnter(updateLock))
             {
                 bool GPUScaling = false;
 
@@ -147,7 +153,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     while (DateTime.Now < timeout && !RSRSupport)
                     {
                         RSRSupport = HasRSRSupport();
-                        await Task.Delay(250);
+                        Thread.Sleep(250);
                     }
                     RSR = GetRSR();
 
@@ -173,7 +179,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     while (DateTime.Now < timeout && !IntegerScalingSupport)
                     {
                         IntegerScalingSupport = HasIntegerScalingSupport();
-                        await Task.Delay(250);
+                        Thread.Sleep(250);
                     }
                     IntegerScaling = GetIntegerScaling();
 
@@ -203,6 +209,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                     }
                 }
                 catch { }
+
+                Monitor.Exit(updateLock);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System.Threading;
+using System.Timers;
 using HandheldCompanion.IGCL;
 using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
@@ -46,7 +47,12 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            TelemetryData = IGCLBackend.GetTelemetryData();
+            if (Monitor.TryEnter(telemetryLock))
+            {
+                TelemetryData = IGCLBackend.GetTelemetryData();
+
+                Monitor.Exit(telemetryLock);
+            }
         }
 
         public override void Start()
