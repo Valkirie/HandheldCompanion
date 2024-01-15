@@ -329,20 +329,77 @@ namespace HandheldCompanion.IGCL
             public string reserved;           // [out] Reserved
         }
 
-        [DllImport("IGCL_Wrapper.dll")]
-        private static extern ctl_api_handle_t Init();
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ctl_telemetry_data
+        {
+            // GPU TDP
+            public bool GpuEnergySupported;
+            public double GpuEnergyValue;
+
+            // GPU Voltage
+            public bool GpuVoltageSupported;
+            public double GpuVoltagValue; // Note: Typo in the original C++ code, should be "GpuVoltageValue" instead of "GpuVoltagValue"
+
+            // GPU Core Frequency
+            public bool GpuCurrentClockFrequencySupported;
+            public double GpuCurrentClockFrequencyValue;
+
+            // GPU Core Temperature
+            public bool GpuCurrentTemperatureSupported;
+            public double GpuCurrentTemperatureValue;
+
+            // GPU Usage
+            public bool GlobalActivitySupported;
+            public double GlobalActivityValue;
+
+            // Render Engine Usage
+            public bool RenderComputeActivitySupported;
+            public double RenderComputeActivityValue;
+
+            // Media Engine Usage
+            public bool MediaActivitySupported;
+            public double MediaActivityValue;
+
+            // VRAM Power Consumption
+            public bool VramEnergySupported;
+            public double VramEnergyValue;
+
+            // VRAM Voltage
+            public bool VramVoltageSupported;
+            public double VramVoltageValue;
+
+            // VRAM Frequency
+            public bool VramCurrentClockFrequencySupported;
+            public double VramCurrentClockFrequencyValue;
+
+            // VRAM Read Bandwidth
+            public bool VramReadBandwidthSupported;
+            public double VramReadBandwidthValue;
+
+            // VRAM Write Bandwidth
+            public bool VramWriteBandwidthSupported;
+            public double VramWriteBandwidthValue;
+
+            // VRAM Temperature
+            public bool VramCurrentTemperatureSupported;
+            public double VramCurrentTemperatureValue;
+
+            // Fanspeed (n Fans)
+            public bool FanSpeedSupported;
+            public double FanSpeedValue;
+        }
 
         [DllImport("IGCL_Wrapper.dll")]
-        private static extern bool Terminate();
+        private static extern ctl_result_t IntializeIgcl();
+
+        [DllImport("IGCL_Wrapper.dll")]
+        private static extern void CloseIgcl();
 
         [DllImport("IGCL_Wrapper.dll")]
         public static extern uint GetAdapterCounts();
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate IntPtr GetIntelDevicesDelegate(ctl_api_handle_t hAPIHandle, ref uint pAdapterCount);
-
         [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr GetDevices(ctl_api_handle_t hAPIHandle, ref uint pAdapterCount);
+        private static extern IntPtr GetDevices(ref uint pAdapterCount);
 
         [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern ctl_result_t GetDeviceProperties(ctl_device_adapter_handle_t hDevice, ref ctl_device_adapter_properties_t StDeviceAdapterProperties);
@@ -377,31 +434,36 @@ namespace HandheldCompanion.IGCL
         [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
         static extern ctl_result_t SetSharpnessSettings(ctl_device_adapter_handle_t hDevice, uint idx, ctl_sharpness_settings_t SetSharpness);
 
+        [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern ctl_result_t GetTelemetryData(ctl_device_adapter_handle_t hDevice, ref ctl_telemetry_data TelemetryData);
+
         [DllImport("kernel32", SetLastError = true)]
         static extern IntPtr LocalFree(IntPtr mem);
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         public static nint deviceIdx = 0;
 
-        public static void Initialize()
+        public static bool Initialize()
         {
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
+
             // Call Init and check the result
-            ctl_api_handle_t handle = Init();
-            if (handle.handle == IntPtr.Zero)
-                return;
+            Result = IntializeIgcl();
+            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
+                return false;
 
             uint adapterCount = 0;
 
             // Get the number of Intel devices
-            IntPtr hDevices = GetDevices(handle, ref adapterCount);
+            IntPtr hDevices = GetDevices(ref adapterCount);
             if (hDevices == IntPtr.Zero)
-                return;
+                return false;
 
             // Convert the device handles to an array of IntPtr
             devices = new IntPtr[adapterCount];
             Marshal.Copy(hDevices, devices, 0, (int)adapterCount);
             if (devices.Length == 0)
-                return;
+                return false;
 
             for (int idx = 0; idx < devices.Length; idx++)
             {
@@ -413,31 +475,35 @@ namespace HandheldCompanion.IGCL
                     handle = devices[idx]
                 };
 
-                ctl_result_t Result = GetDeviceProperties(hDevice, ref StDeviceAdapterProperties);
+                Result = GetDeviceProperties(hDevice, ref StDeviceAdapterProperties);
                 if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                     continue;
 
                 switch (adapterCount)
                 {
-                    default:
                     case 1:
                         deviceIdx = idx;
-                        return;
+                        return true;
 
-                    case 2:
-                    case 3:
-                    case 4:
+                    default:
                         {
                             adapterFlag = StDeviceAdapterProperties.graphics_adapter_properties;
                             if (!adapterFlag.HasFlag(ctl_adapter_properties_flag_t.CTL_ADAPTER_PROPERTIES_FLAG_INTEGRATED))
                             {
                                 deviceIdx = idx;
-                                return;
+                                return true;
                             }
                         }
                         break;
                 }
             }
+
+            return false;
+        }
+
+        public static void Terminate()
+        {
+            CloseIgcl();
         }
 
         internal static bool HasGPUScalingSupport(nint deviceIdx, uint displayIdx)
@@ -781,6 +847,27 @@ namespace HandheldCompanion.IGCL
                 return false;
 
             return RetroScalingSettings.Enable == enabled;
+        }
+
+        internal static ctl_telemetry_data GetTelemetryData()
+        {
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
+            ctl_telemetry_data TelemetryData = new();
+
+            IntPtr device = devices[deviceIdx];
+            if (device == IntPtr.Zero)
+                return TelemetryData;
+
+            ctl_device_adapter_handle_t hDevice = new()
+            {
+                handle = device
+            };
+
+            Result = GetTelemetryData(hDevice, ref TelemetryData);
+            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
+                return TelemetryData;
+
+            return TelemetryData;
         }
     }
 }

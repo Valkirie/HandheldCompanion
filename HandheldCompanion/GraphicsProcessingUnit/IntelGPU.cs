@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading;
-using System.Timers;
-using HandheldCompanion.ADLX;
+﻿using System.Timers;
 using HandheldCompanion.IGCL;
+using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
@@ -28,18 +26,37 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override bool SetScalingMode(int mode) => Execute(() => IGCLBackend.SetScalingMode(IGCLBackend.deviceIdx, 0, mode), false);
         public override bool SetIntegerScaling(bool enabled, byte type) => Execute(() => IGCLBackend.SetIntegerScaling(IGCLBackend.deviceIdx, enabled, type), false);
 
+        public override float GetLoad()
+        {
+            return (float)TelemetryData.GlobalActivityValue;
+        }
+
+        public override float GetPower()
+        {
+            return (float)TelemetryData.GpuEnergyValue;
+        }
+
+        protected ctl_telemetry_data TelemetryData = new();
+
         public IntelGPU()
         {
+            IGCLBackend.Initialize();
+            TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
+        }
+
+        private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            TelemetryData = IGCLBackend.GetTelemetryData();
         }
 
         public override void Start()
         {
-            IGCLBackend.Initialize();
             base.Start();
         }
 
         public override void Stop()
         {
+            IGCLBackend.Terminate();
             base.Stop();
         }
     }

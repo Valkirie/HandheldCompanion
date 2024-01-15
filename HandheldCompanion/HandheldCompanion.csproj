@@ -224,10 +224,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ADLX_3DSettings.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ADLX_DisplaySettings.dll">
+    <None Update="ADLX_Wrapper.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="IGCL_Wrapper.dll">

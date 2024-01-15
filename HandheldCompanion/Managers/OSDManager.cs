@@ -1,10 +1,9 @@
-﻿using PrecisionTiming;
+﻿using HandheldCompanion.GraphicsProcessingUnit;
+using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace HandheldCompanion.Managers;
 
@@ -128,6 +127,8 @@ public static class OSDManager
     public static string Draw(int processId)
     {
         Content = new List<string>();
+        GPU gpu = GPU.GetCurrent();
+
         switch (OverlayLevel)
         {
             default:
@@ -161,8 +162,8 @@ public static class OSDManager
                     OverlayRow row1 = new();
 
                     OverlayEntry GPUentry = new("GPU", "C1");
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPULoad, "%");
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPUPower, "W");
+                    AddElementIfNotNull(GPUentry, gpu.GetLoad(), "%");
+                    AddElementIfNotNull(GPUentry, gpu.GetPower(), "W");
                     row1.entries.Add(GPUentry);
 
                     OverlayEntry CPUentry = new("CPU", "C2");

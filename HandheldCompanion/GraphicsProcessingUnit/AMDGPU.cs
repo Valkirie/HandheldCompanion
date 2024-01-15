@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using HandheldCompanion.ADLX;
-using HandheldCompanion.IGCL;
 using HandheldCompanion.Utils;
-using Windows.ApplicationModel.Store;
+using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
@@ -65,20 +64,52 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override bool SetGPUScaling(bool enabled) => Execute(() => ADLXBackend.SetGPUScaling(0, enabled), false);
         public override bool SetScalingMode(int mode) => Execute(() => ADLXBackend.SetScalingMode(0, mode), false);
 
+        public override float GetLoad()
+        {
+            return (float)TelemetryData.gpuUsageValue;
+        }
+
+        public override float GetPower()
+        {
+            return (float)TelemetryData.gpuPowerValue;
+        }
+
+        protected AdlxTelemetryData TelemetryData = new();
+
         public AMDGPU()
         {
+            ADLXBackend.IntializeAdlx();
+
             UpdateTimer = new Timer(UpdateInterval);
             UpdateTimer.AutoReset = true;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+
+            TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
+        }
+
+        private void TelemetryTimer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            TelemetryData = ADLXBackend.GetTelemetryData();
         }
 
         public override void Start()
         {
+            new Task(async () =>
+            {
+                while (true)
+                {
+                    AdlxTelemetryData test = ADLXBackend.GetTelemetryData();
+                    await Task.Delay(1000);
+                    Debug.WriteLine("gpuPowerValue: {0}", test.gpuPowerValue);
+                }
+            }).Start();
+
             base.Start();
         }
 
         public override void Stop()
         {
+            ADLXBackend.CloseAdlx();
             base.Stop();
         }
 

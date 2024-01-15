@@ -25,6 +25,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected const int UpdateInterval = 2000;
         protected Timer UpdateTimer;
 
+        protected const int TelemetryInterval = 1000;
+        protected Timer TelemetryTimer;
+
         protected bool prevGPUScalingSupport = false;
         protected bool prevGPUScaling = false;
         protected int prevScalingMode = -1;
@@ -56,6 +59,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public GPU()
         {
             Manufacturer = MotherboardInfo.VideoController;
+
+            TelemetryTimer = new Timer(TelemetryInterval);
+            TelemetryTimer.AutoReset = true;
         }
 
         public static GPU GetCurrent()
@@ -80,12 +86,18 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             if (UpdateTimer != null)
                 UpdateTimer.Start();
+
+            if (TelemetryTimer != null)
+                TelemetryTimer.Start();
         }
 
         public virtual void Stop()
         {
             if (UpdateTimer != null)
                 UpdateTimer.Stop();
+
+            if (TelemetryTimer != null)
+                TelemetryTimer.Stop();
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
@@ -158,14 +170,24 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return false;
         }
 
-        internal virtual int GetScalingMode()
+        public virtual int GetScalingMode()
         {
             return 0;
         }
 
-        internal virtual int GetImageSharpeningSharpness()
+        public virtual int GetImageSharpeningSharpness()
         {
             return 0;
+        }
+
+        public virtual float GetLoad()
+        {
+            return 0.0f;
+        }
+
+        public virtual float GetPower()
+        {
+            return 0.0f;
         }
     }
 }
