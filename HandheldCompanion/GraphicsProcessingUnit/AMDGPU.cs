@@ -94,16 +94,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override void Start()
         {
-            new Task(async () =>
-            {
-                while (true)
-                {
-                    AdlxTelemetryData test = ADLXBackend.GetTelemetryData();
-                    await Task.Delay(1000);
-                    Debug.WriteLine("gpuPowerValue: {0}", test.gpuPowerValue);
-                }
-            }).Start();
-
             base.Start();
         }
 
