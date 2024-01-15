@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
@@ -185,6 +184,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 return false;
 
             return Execute(() => ADLXBackend.SetScalingMode(0, mode), false);
+        }
+
+        public override float GetClock()
+        {
+            return (float)TelemetryData.gpuClockSpeedValue;
         }
 
         public override float GetClock()
