@@ -1,5 +1,6 @@
 using HandheldCompanion.ADLX;
 using HandheldCompanion.Controls;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
@@ -65,7 +66,6 @@ public static class PerformanceManager
     private static bool cpuWatchdogPendingStop;
     private static uint currentEPP = 50;
     private static int currentCoreCount;
-    private static double CurrentGfxClock;
 
     // powercfg
     private static bool currentPerfBoostMode;
@@ -107,7 +107,6 @@ public static class PerformanceManager
         // manage events
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-        PlatformManager.LibreHardwareMonitor.GPUClockChanged += LibreHardwareMonitor_GPUClockChanged;
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
@@ -605,6 +604,7 @@ public static class PerformanceManager
             gfxLock = true;
 
             var GPUdone = false;
+            var CurrentGfxClock = GPU.GetCurrent().GetClock();
 
             if (CurrentGfxClock != 0)
                 gfxWatchdog.Interval = INTERVAL_DEFAULT;
@@ -943,48 +943,9 @@ public static class PerformanceManager
     #endregion
 
     #region events
-
-    private static void LibreHardwareMonitor_GPUClockChanged(float? value)
-    {
-        if (value is null) return;
-
-        CurrentGfxClock = (float) value;
-
-        LogManager.LogTrace("GPUClockChange: {0} Mhz", value);
-    }
-
     private static void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
     {
         ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private static void Processor_ValueChanged(PowerType type, float value)
-    {
-        PowerValueChanged?.Invoke(type, value);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private static void Processor_LimitChanged(PowerType type, int limit)
-    {
-        var idx = (int)type;
-        CurrentTDP[idx] = limit;
-
-        // raise event
-        PowerLimitChanged?.Invoke(type, limit);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private static void Processor_MiscChanged(string misc, float value)
-    {
-        switch (misc)
-        {
-            case "gfx_clk":
-                {
-                    CurrentGfxClock = value;
-                }
-                break;
-        }
     }
 
     #endregion

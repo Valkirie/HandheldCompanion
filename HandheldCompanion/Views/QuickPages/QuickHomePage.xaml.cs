@@ -143,6 +143,7 @@ public partial class QuickHomePage : Page
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Minimal,
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Extended,
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Full,
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_Custom,
             Properties.Resources.OverlayPage_OverlayDisplayLevel_External,
         };
 
@@ -161,7 +162,7 @@ public partial class QuickHomePage : Page
                 break;
         }
     }
-    
+
     private void UpdateVolumeIcon(float volume)
     {
         string glyph;

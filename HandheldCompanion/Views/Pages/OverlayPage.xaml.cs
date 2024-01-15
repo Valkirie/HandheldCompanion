@@ -104,11 +104,34 @@ public partial class OverlayPage : Page
                 case "OverlayControllerMotion":
                     Toggle_MotionActivated.IsOn = Convert.ToBoolean(value);
                     break;
-                case "OnScreenDisplayLevel":
-                    OnScreenDisplayLevel.SelectedIndex = Convert.ToInt32(value);
-                    break;
                 case "OnScreenDisplayRefreshRate":
                     SliderOnScreenUpdateRate.Value = Convert.ToDouble(value);
+                    break;
+                case "OnScreenDisplayLevel":
+                    var index = Convert.ToInt32(value);
+                    OnScreenDisplayLevel.SelectedIndex = index;
+                    StackCustomSettings.Visibility = index == 4 ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+                case "OnScreenDisplayTimeLevel":
+                    ComboBoxOnScreenDisplayTimeLevel.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "OnScreenDisplayFPSLevel":
+                    ComboBoxOnScreenDisplayFPSLevel.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "OnScreenDisplayCPULevel":
+                    ComboBoxOnScreenDisplayCPULevel.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "OnScreenDisplayGPULevel":
+                    ComboBoxOnScreenDisplayGPULevel.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "OnScreenDisplayRAMLevel":
+                    ComboBoxOnScreenDisplayRAMLevel.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "OnScreenDisplayVRAMLevel":
+                    ComboBoxOnScreenDisplayVRAMLevel.SelectedIndex = Convert.ToInt32(value);
+                    break;
+                case "OnScreenDisplayBATTLevel":
+                    ComboBoxOnScreenDisplayBATTLevel.SelectedIndex = Convert.ToInt32(value);
                     break;
             }
         });
@@ -336,6 +359,14 @@ public partial class OverlayPage : Page
         SettingsManager.SetProperty("OverlayControllerAlwaysOnTop", Toggle_AlwaysOnTop.IsOn);
     }
 
+    private void SliderOnScreenUpdateRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayRefreshRate", SliderOnScreenUpdateRate.Value);
+    }
+
     private void OnScreenDisplayLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)
@@ -344,11 +375,60 @@ public partial class OverlayPage : Page
         SettingsManager.SetProperty("OnScreenDisplayLevel", OnScreenDisplayLevel.SelectedIndex);
     }
 
-    private void SliderOnScreenUpdateRate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void ComboBoxOnScreenDisplayTimeLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayRefreshRate", SliderOnScreenUpdateRate.Value);
+        SettingsManager.SetProperty("OnScreenDisplayTimeLevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+    }
+
+
+    private void ComboBoxOnScreenDisplayFPSLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayFPSLevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+    }
+
+    private void ComboBoxOnScreenDisplayCPULevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayCPULevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+    }
+
+    private void ComboBoxOnScreenDisplayRAMLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayRAMLevel", ComboBoxOnScreenDisplayRAMLevel.SelectedIndex);
+    }
+
+    private void ComboBoxOnScreenDisplayGPULevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayGPULevel", ComboBoxOnScreenDisplayGPULevel.SelectedIndex);
+    }
+
+    private void ComboBoxOnScreenDisplayVRAMLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayVRAMLevel", ComboBoxOnScreenDisplayVRAMLevel.SelectedIndex);
+    }
+
+    private void ComboBoxOnScreenDisplayBATTLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("OnScreenDisplayBATTLevel", ComboBoxOnScreenDisplayBATTLevel.SelectedIndex);
     }
 }

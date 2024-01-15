@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using HandheldCompanion.ADLX;
 using static HandheldCompanion.ADLX.ADLXBackend;
@@ -64,6 +63,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override bool SetGPUScaling(bool enabled) => Execute(() => ADLXBackend.SetGPUScaling(0, enabled), false);
         public override bool SetScalingMode(int mode) => Execute(() => ADLXBackend.SetScalingMode(0, mode), false);
 
+        public override float GetClock()
+        {
+            return (float)TelemetryData.gpuClockSpeedValue;
+        }
+
         public override float GetLoad()
         {
             return (float)TelemetryData.gpuUsageValue;
@@ -72,6 +76,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override float GetPower()
         {
             return (float)TelemetryData.gpuPowerValue;
+        }
+
+        public override float GetTemperature()
+        {
+            return (float)TelemetryData.gpuTemperatureValue;
+        }
+
+        public override float GetVRAMUsage()
+        {
+            return (float)TelemetryData.gpuVramValue;
         }
 
         protected AdlxTelemetryData TelemetryData = new();

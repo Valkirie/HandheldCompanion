@@ -16,14 +16,7 @@ namespace HandheldCompanion.Platforms
         public float? CPUPower;
         public float? CPUTemperatur;
 
-        public float? GPULoad;
-        public float? GPUClock;
-        public float? GPUPower;
-        public float? GPUTemperatur;
-
-        public float? MemoryLoad;
-
-        public float? VRAMLoad;
+        public float? MemoryUsage;
 
         public float? BatteryLevel;
         public float? BatteryPower;
@@ -44,7 +37,6 @@ namespace HandheldCompanion.Platforms
             computer = new Computer
             {
                 IsCpuEnabled = true,
-                IsGpuEnabled = true,
                 IsMemoryEnabled = true,
                 IsBatteryEnabled = true,
             };
@@ -81,11 +73,6 @@ namespace HandheldCompanion.Platforms
                 {
                     case HardwareType.Cpu:
                         HandleCPU(hardware);
-                        break;
-                    case HardwareType.GpuAmd:
-                    case HardwareType.GpuIntel:
-                    case HardwareType.GpuNvidia:
-                        HandleGPU(hardware);
                         break;
                     case HardwareType.Memory:
                         HandleMemory(hardware);
@@ -126,7 +113,7 @@ namespace HandheldCompanion.Platforms
             if (sensor.Name == "CPU Total")
             {
                 CPULoad = (float)sensor.Value;
-                CPUPowerChanged?.Invoke(CPULoad);
+                CPULoadChanged?.Invoke(CPULoad);
             }
         }
 
@@ -150,7 +137,7 @@ namespace HandheldCompanion.Platforms
             if (sensor.Name == "Package")
             {
                 CPUPower = (float)sensor.Value;
-                CPULoadChanged?.Invoke(CPUPower);
+                CPUPowerChanged?.Invoke(CPUPower);
             }
         }
 
@@ -173,78 +160,6 @@ namespace HandheldCompanion.Platforms
         }
         #endregion
 
-        #region gpu updates
-        private void HandleGPU(IHardware cpu)
-        {
-            float highestClock = 0;
-            foreach (var sensor in cpu.Sensors)
-            {
-                switch (sensor.SensorType)
-                {
-                    case SensorType.Load:
-                        HandleGPU_Load(sensor);
-                        break;
-                    case SensorType.Clock:
-                        highestClock = HandleGPU_Clock(sensor, highestClock);
-                        break;
-                    case SensorType.Power:
-                        HandleGPU_Power(sensor);
-                        break;
-                    case SensorType.Temperature:
-                        HandleGPU_Temperatur(sensor);
-                        break;
-                }
-            }
-        }
-
-        private void HandleGPU_Load(ISensor sensor)
-        {
-            if (sensor.Name == "GPU Core")
-            {
-                GPULoad = (float)sensor.Value;
-                GPULoadChanged?.Invoke(GPULoad);
-            }
-            if (sensor.Name == "GPU Memory")
-            {
-                VRAMLoad = (float)sensor.Value;
-                VRAMLoadChanged?.Invoke(VRAMLoad);
-            }
-        }
-
-        private float HandleGPU_Clock(ISensor sensor, float currentHighest)
-        {
-            if (sensor.Name == "GPU Core")
-            {
-                var value = (float)sensor.Value;
-                if (value > currentHighest)
-                {
-                    GPUClock = (float)sensor.Value;
-                    GPUClockChanged?.Invoke(GPUClock);
-                    return value;
-                }
-            }
-            return currentHighest;
-        }
-
-        private void HandleGPU_Power(ISensor sensor)
-        {
-            if (sensor.Name == "GPU Core")
-            {
-                GPUPower = (float)sensor.Value;
-                GPUPowerChanged?.Invoke(GPUPower);
-            }
-        }
-
-        private void HandleGPU_Temperatur(ISensor sensor)
-        {
-            if (sensor.Name == "GPU Core")
-            {
-                GPUTemperatur = (float)sensor.Value;
-                GPUTemperatureChanged?.Invoke(GPUTemperatur);
-            }
-        }
-        #endregion
-
         #region memory updates
         private void HandleMemory(IHardware cpu)
         {
@@ -252,19 +167,19 @@ namespace HandheldCompanion.Platforms
             {
                 switch (sensor.SensorType)
                 {
-                    case SensorType.Load:
-                        HandleMemory_Load(sensor);
+                    case SensorType.Data:
+                        HandleMemory_Data(sensor);
                         break;
                 }
             }
         }
 
-        private void HandleMemory_Load(ISensor sensor)
+        private void HandleMemory_Data(ISensor sensor)
         {
-            if (sensor.Name == "Memory")
+            if (sensor.Name == "Memory Used")
             {
-                MemoryLoad = (float)sensor.Value;
-                MemoryLoadChanged?.Invoke(MemoryLoad);
+                MemoryUsage = ((float)sensor.Value) * 1024;
+                MemoryUsageChanged?.Invoke(MemoryUsage);
             }
         }
         #endregion
@@ -330,14 +245,7 @@ namespace HandheldCompanion.Platforms
         public event ChangedHandler CPUClockChanged;
         public event ChangedHandler CPUTemperatureChanged;
 
-        public event ChangedHandler GPULoadChanged;
-        public event ChangedHandler GPUClockChanged;
-        public event ChangedHandler GPUPowerChanged;
-        public event ChangedHandler GPUTemperatureChanged;
-
-        public event ChangedHandler MemoryLoadChanged;
-
-        public event ChangedHandler VRAMLoadChanged;
+        public event ChangedHandler MemoryUsageChanged;
 
         public event ChangedHandler BatteryLevelChanged;
         public event ChangedHandler BatteryPowerChanged;

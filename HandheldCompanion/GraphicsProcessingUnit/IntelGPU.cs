@@ -27,6 +27,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override bool SetScalingMode(int mode) => Execute(() => IGCLBackend.SetScalingMode(IGCLBackend.deviceIdx, 0, mode), false);
         public override bool SetIntegerScaling(bool enabled, byte type) => Execute(() => IGCLBackend.SetIntegerScaling(IGCLBackend.deviceIdx, enabled, type), false);
 
+        public override float GetClock()
+        {
+            return (float)TelemetryData.GpuCurrentClockFrequencyValue;
+        }
+
         public override float GetLoad()
         {
             return (float)TelemetryData.GlobalActivityValue;
@@ -35,6 +40,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public override float GetPower()
         {
             return (float)TelemetryData.GpuEnergyValue;
+        }
+
+        public override float GetTemperature()
+        {
+            return (float)TelemetryData.GpuCurrentTemperatureValue;
         }
 
         protected ctl_telemetry_data TelemetryData = new();

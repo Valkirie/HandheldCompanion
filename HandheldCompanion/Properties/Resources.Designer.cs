@@ -8,10 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HandheldCompanion.Properties {
+namespace HandheldCompanion.Properties
+{
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -22,8151 +23,10168 @@ namespace HandheldCompanion.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
-        
+    public class Resources
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resources()
+        {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        public static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("HandheldCompanion.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
+        public static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        public static string AboutPage_About {
-            get {
+        public static string AboutPage_About
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_About", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A combination of a Windows service and a touch interface optimized GUI to increase your handheld gaming computer experience. Features include: motion control a.k.a. gyro control, virtual controller simulation, quick tools overlay, virtual touchpads, 3D controller model, per application based profile settings system. Handheld Companion relies on ViGEmBus driver and ViGEmClient libraries as well as HidHide kernel-mode filter driver. Motion control algorithms are based on work by Jibbsmart and availible inform [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string AboutPage_AboutDescription {
-            get {
+        public static string AboutPage_AboutDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_AboutDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Accelerometer.
         /// </summary>
-        public static string AboutPage_Accelerometer {
-            get {
+        public static string AboutPage_Accelerometer
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Accelerometer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Author.
         /// </summary>
-        public static string AboutPage_Author {
-            get {
+        public static string AboutPage_Author
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Author", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Contributors.
         /// </summary>
-        public static string AboutPage_Contributors {
-            get {
+        public static string AboutPage_Contributors
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Contributors", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
-        public static string AboutPage_Description {
-            get {
+        public static string AboutPage_Description
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Description", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Donate.
         /// </summary>
-        public static string AboutPage_Donate {
-            get {
+        public static string AboutPage_Donate
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Donate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gyrometer.
         /// </summary>
-        public static string AboutPage_Gyrometer {
-            get {
+        public static string AboutPage_Gyrometer
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Gyrometer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Inclinometer.
         /// </summary>
-        public static string AboutPage_Inclinometer {
-            get {
+        public static string AboutPage_Inclinometer
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Inclinometer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Manufacturer.
         /// </summary>
-        public static string AboutPage_Manufacturer {
-            get {
+        public static string AboutPage_Manufacturer
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Manufacturer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
-        public static string AboutPage_NotApplicable {
-            get {
+        public static string AboutPage_NotApplicable
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_NotApplicable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Partner.
         /// </summary>
-        public static string AboutPage_Partner {
-            get {
+        public static string AboutPage_Partner
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Partner", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Product name.
         /// </summary>
-        public static string AboutPage_ProductName {
-            get {
+        public static string AboutPage_ProductName
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_ProductName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Related Links.
         /// </summary>
-        public static string AboutPage_RelatedLinks {
-            get {
+        public static string AboutPage_RelatedLinks
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_RelatedLinks", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to External.
         /// </summary>
-        public static string AboutPage_SensorExternal {
-            get {
+        public static string AboutPage_SensorExternal
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_SensorExternal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Internal.
         /// </summary>
-        public static string AboutPage_SensorInternal {
-            get {
+        public static string AboutPage_SensorInternal
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_SensorInternal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensor name.
         /// </summary>
-        public static string AboutPage_SensorName {
-            get {
+        public static string AboutPage_SensorName
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_SensorName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensor specification.
         /// </summary>
-        public static string AboutPage_SensorSpecification {
-            get {
+        public static string AboutPage_SensorSpecification
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_SensorSpecification", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Service.
         /// </summary>
-        public static string AboutPage_Service {
-            get {
+        public static string AboutPage_Service
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Service", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Source code.
         /// </summary>
-        public static string AboutPage_SourceCode {
-            get {
+        public static string AboutPage_SourceCode
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_SourceCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Version.
         /// </summary>
-        public static string AboutPage_Version {
-            get {
+        public static string AboutPage_Version
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Version", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Wiki.
         /// </summary>
-        public static string AboutPage_Wiki {
-            get {
+        public static string AboutPage_Wiki
+        {
+            get
+            {
                 return ResourceManager.GetString("AboutPage_Wiki", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Administrator.
         /// </summary>
-        public static string Administrator {
-            get {
+        public static string Administrator
+        {
+            get
+            {
                 return ResourceManager.GetString("Administrator", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A,B,X,Y.
         /// </summary>
-        public static string ButtonsPage_ABXY {
-            get {
+        public static string ButtonsPage_ABXY
+        {
+            get
+            {
                 return ResourceManager.GetString("ButtonsPage_ABXY", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to BACK GRIPS.
         /// </summary>
-        public static string ButtonsPage_Back_Grips {
-            get {
+        public static string ButtonsPage_Back_Grips
+        {
+            get
+            {
                 return ResourceManager.GetString("ButtonsPage_Back_Grips", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to BUMPERS.
         /// </summary>
-        public static string ButtonsPage_Bumpers {
-            get {
+        public static string ButtonsPage_Bumpers
+        {
+            get
+            {
                 return ResourceManager.GetString("ButtonsPage_Bumpers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to MENU.
         /// </summary>
-        public static string ButtonsPage_Menu {
-            get {
+        public static string ButtonsPage_Menu
+        {
+            get
+            {
                 return ResourceManager.GetString("ButtonsPage_Menu", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OEM.
         /// </summary>
-        public static string ButtonsPage_OEM {
-            get {
+        public static string ButtonsPage_OEM
+        {
+            get
+            {
                 return ResourceManager.GetString("ButtonsPage_OEM", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] chord_neptune {
-            get {
+        public static byte[] chord_neptune
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("chord_neptune", resourceCulture);
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
-        public static string Controller_Connect {
-            get {
+        public static string Controller_Connect
+        {
+            get
+            {
                 return ResourceManager.GetString("Controller_Connect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
-        public static string Controller_Disconnect {
-            get {
+        public static string Controller_Disconnect
+        {
+            get
+            {
                 return ResourceManager.GetString("Controller_Disconnect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide.
         /// </summary>
-        public static string Controller_Hide {
-            get {
+        public static string Controller_Hide
+        {
+            get
+            {
                 return ResourceManager.GetString("Controller_Hide", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unhide.
         /// </summary>
-        public static string Controller_Unhide {
-            get {
+        public static string Controller_Unhide
+        {
+            get
+            {
                 return ResourceManager.GetString("Controller_Unhide", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Virtual .
         /// </summary>
-        public static string Controller_Virtual {
-            get {
+        public static string Controller_Virtual
+        {
+            get
+            {
                 return ResourceManager.GetString("Controller_Virtual", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide controller on connect.
         /// </summary>
-        public static string ControllerPage_CloakDevice {
-            get {
+        public static string ControllerPage_CloakDevice
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_CloakDevice", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide physical controller when connected.
         /// </summary>
-        public static string ControllerPage_CloakDeviceDesc {
-            get {
+        public static string ControllerPage_CloakDeviceDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_CloakDeviceDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
-        public static string ControllerPage_Close {
-            get {
+        public static string ControllerPage_Close
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_Close", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Connect.
         /// </summary>
-        public static string ControllerPage_Connect {
-            get {
+        public static string ControllerPage_Connect
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_Connect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller.
         /// </summary>
-        public static string ControllerPage_Controller {
-            get {
+        public static string ControllerPage_Controller
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_Controller", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller management.
         /// </summary>
-        public static string ControllerPage_ControllerManagement {
-            get {
+        public static string ControllerPage_ControllerManagement
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_ControllerManagement", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatically manage your controllers for greater compatibility.
         /// </summary>
-        public static string ControllerPage_ControllerManagementDesc {
-            get {
+        public static string ControllerPage_ControllerManagementDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_ControllerManagementDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Desktop layout.
         /// </summary>
-        public static string ControllerPage_DesktopLayout {
-            get {
+        public static string ControllerPage_DesktopLayout
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DesktopLayout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Define desktop layout.
         /// </summary>
-        public static string ControllerPage_DesktopLayoutDefine {
-            get {
+        public static string ControllerPage_DesktopLayoutDefine
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DesktopLayoutDefine", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Define controller layout when in desktop mode.
         /// </summary>
-        public static string ControllerPage_DesktopLayoutDefineController {
-            get {
+        public static string ControllerPage_DesktopLayoutDefineController
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DesktopLayoutDefineController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
-        public static string ControllerPage_DesktopLayoutEdit {
-            get {
+        public static string ControllerPage_DesktopLayoutEdit
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DesktopLayoutEdit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable desktop layout.
         /// </summary>
-        public static string ControllerPage_DesktopLayoutEnable {
-            get {
+        public static string ControllerPage_DesktopLayoutEnable
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DesktopLayoutEnable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller cloaking.
         /// </summary>
-        public static string ControllerPage_DeviceCloaking {
-            get {
+        public static string ControllerPage_DeviceCloaking
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DeviceCloaking", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Virtual controller settings.
         /// </summary>
-        public static string ControllerPage_DeviceSettings {
-            get {
+        public static string ControllerPage_DeviceSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DeviceSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller settings.
         /// </summary>
-        public static string ControllerPage_DeviceSpecificSettings {
-            get {
+        public static string ControllerPage_DeviceSpecificSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_DeviceSpecificSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
-        public static string ControllerPage_Disconnect {
-            get {
+        public static string ControllerPage_Disconnect
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_Disconnect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Go to profiles settings to change per-game emulated controller type preference..
         /// </summary>
-        public static string ControllerPage_HIDManagedByProfileAction {
-            get {
+        public static string ControllerPage_HIDManagedByProfileAction
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_HIDManagedByProfileAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The emulated controller type is being managed by the currently applied game profile..
         /// </summary>
-        public static string ControllerPage_HIDManagedByProfileDesc {
-            get {
+        public static string ControllerPage_HIDManagedByProfileDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_HIDManagedByProfileDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated controller is managed by profile.
         /// </summary>
-        public static string ControllerPage_HIDManagedByProfileWarning {
-            get {
+        public static string ControllerPage_HIDManagedByProfileWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_HIDManagedByProfileWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Input devices.
         /// </summary>
-        public static string ControllerPage_InputDevices {
-            get {
+        public static string ControllerPage_InputDevices
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_InputDevices", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Touchpad passthrough.
         /// </summary>
-        public static string ControllerPage_LegionGoPassthrough {
-            get {
+        public static string ControllerPage_LegionGoPassthrough
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_LegionGoPassthrough", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping.
         /// </summary>
-        public static string ControllerPage_LegionGoPassthroughDesc {
-            get {
+        public static string ControllerPage_LegionGoPassthroughDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_LegionGoPassthroughDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Non-game controller layouts.
         /// </summary>
-        public static string ControllerPage_NonGameControllerLayouts {
-            get {
+        public static string ControllerPage_NonGameControllerLayouts
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NonGameControllerLayouts", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You might want to click on Connect next to your plugged controller..
         /// </summary>
-        public static string ControllerPage_NoPhysicalControllerAction {
-            get {
+        public static string ControllerPage_NoPhysicalControllerAction
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoPhysicalControllerAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You have no physical controller connected. No inputs will be sent to HC or its service..
         /// </summary>
-        public static string ControllerPage_NoPhysicalControllerDesc {
-            get {
+        public static string ControllerPage_NoPhysicalControllerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please make sure you connected a compatible XInput or DInput device..
         /// </summary>
-        public static string ControllerPage_NoPhysicalControllerDetectedAction {
-            get {
+        public static string ControllerPage_NoPhysicalControllerDetectedAction
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDetectedAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No physical controller detected.
         /// </summary>
-        public static string ControllerPage_NoPhysicalControllerDetectedWarning {
-            get {
+        public static string ControllerPage_NoPhysicalControllerDetectedWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoPhysicalControllerDetectedWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No physical controller connected.
         /// </summary>
-        public static string ControllerPage_NoPhysicalControllerWarning {
-            get {
+        public static string ControllerPage_NoPhysicalControllerWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoPhysicalControllerWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You might want to start companion service or make sure your virtual controller status is set to: Connected.
         /// </summary>
-        public static string ControllerPage_NoVirtualControllerAction {
-            get {
+        public static string ControllerPage_NoVirtualControllerAction
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoVirtualControllerAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your physical controller is hidden, yet you have no virtual controller available. No inputs will be sent to games..
         /// </summary>
-        public static string ControllerPage_NoVirtualControllerDesc {
-            get {
+        public static string ControllerPage_NoVirtualControllerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoVirtualControllerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No virtual controller detected.
         /// </summary>
-        public static string ControllerPage_NoVirtualControllerWarning {
-            get {
+        public static string ControllerPage_NoVirtualControllerWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_NoVirtualControllerWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You might want to unmute your virtual controller or unhide your physical controller..
         /// </summary>
-        public static string ControllerPage_PhysicalControllerHiddenAction {
-            get {
+        public static string ControllerPage_PhysicalControllerHiddenAction
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_PhysicalControllerHiddenAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your physical controller is hidden, yet you have muted your virtual controller..
         /// </summary>
-        public static string ControllerPage_PhysicalControllerHiddenDesc {
-            get {
+        public static string ControllerPage_PhysicalControllerHiddenDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_PhysicalControllerHiddenDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Physical controller is hidden.
         /// </summary>
-        public static string ControllerPage_PhysicalControllerHiddenWarning {
-            get {
+        public static string ControllerPage_PhysicalControllerHiddenWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_PhysicalControllerHiddenWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You might want to hide your physical controller or mute your virtual controller..
         /// </summary>
-        public static string ControllerPage_PhysicalControllerNotHiddenAction {
-            get {
+        public static string ControllerPage_PhysicalControllerNotHiddenAction
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_PhysicalControllerNotHiddenAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your physical controller is not hidden, yet you have an unmuted virtual controller. You might encounter double inputs in games..
         /// </summary>
-        public static string ControllerPage_PhysicalControllerNotHiddenDesc {
-            get {
+        public static string ControllerPage_PhysicalControllerNotHiddenDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_PhysicalControllerNotHiddenDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Physical controller is not hidden.
         /// </summary>
-        public static string ControllerPage_PhysicalControllerNotHiddenWarning {
-            get {
+        public static string ControllerPage_PhysicalControllerNotHiddenWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_PhysicalControllerNotHiddenWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to HD rumble.
         /// </summary>
-        public static string ControllerPage_SteamControllerHDRumble {
-            get {
+        public static string ControllerPage_SteamControllerHDRumble
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_SteamControllerHDRumble", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use high-definition rumble engine, at the cost of higher CPU usage.
         /// </summary>
-        public static string ControllerPage_SteamControllerHDRumbleDesc {
-            get {
+        public static string ControllerPage_SteamControllerHDRumbleDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_SteamControllerHDRumbleDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mute virtual controller.
         /// </summary>
-        public static string ControllerPage_SteamControllerMute {
-            get {
+        public static string ControllerPage_SteamControllerMute
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_SteamControllerMute", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mute virtual controller on steam related applications.
         /// </summary>
-        public static string ControllerPage_SteamControllerMuteDesc {
-            get {
+        public static string ControllerPage_SteamControllerMuteDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_SteamControllerMuteDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Try again.
         /// </summary>
-        public static string ControllerPage_TryAgain {
-            get {
+        public static string ControllerPage_TryAgain
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_TryAgain", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Unhide controller on close.
         /// </summary>
-        public static string ControllerPage_UncloakOnClose {
-            get {
+        public static string ControllerPage_UncloakOnClose
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_UncloakOnClose", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Restore visibility of all physical controllers when application is exited.
         /// </summary>
-        public static string ControllerPage_UncloakOnCloseDesc {
-            get {
+        public static string ControllerPage_UncloakOnCloseDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_UncloakOnCloseDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Vibrate controller on connect.
         /// </summary>
-        public static string ControllerPage_VibrateDevice {
-            get {
+        public static string ControllerPage_VibrateDevice
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_VibrateDevice", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Vibrate physical controller when connected.
         /// </summary>
-        public static string ControllerPage_VibrateDeviceDesc {
-            get {
+        public static string ControllerPage_VibrateDeviceDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_VibrateDeviceDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Vibration strength.
         /// </summary>
-        public static string ControllerPage_VibrationStrength {
-            get {
+        public static string ControllerPage_VibrationStrength
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_VibrationStrength", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change controller vibration strength.
         /// </summary>
-        public static string ControllerPage_VibrationStrengthExpl {
-            get {
+        public static string ControllerPage_VibrationStrengthExpl
+        {
+            get
+            {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ambilight Vertical Blackbar detection.
         /// </summary>
-        public static string DevicePage_AmbilightVerticalBlackBarDetection {
-            get {
+        public static string DevicePage_AmbilightVerticalBlackBarDetection
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_AmbilightVerticalBlackBarDetection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Vertical black bar detection for 4:3 aspect ratio games or videos.
         /// </summary>
-        public static string DevicePage_AmbilightVerticalBlackBarDetectionDesc {
-            get {
+        public static string DevicePage_AmbilightVerticalBlackBarDetectionDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_AmbilightVerticalBlackBarDetectionDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Device.
         /// </summary>
-        public static string DevicePage_Device {
-            get {
+        public static string DevicePage_Device
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_Device", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Effects.
         /// </summary>
-        public static string DevicePage_DynamicLighting {
-            get {
+        public static string DevicePage_DynamicLighting
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Ambilight.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Ambilight {
-            get {
+        public static string DevicePage_DynamicLighting_Ambilight
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Ambilight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Breathing.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Breathing {
-            get {
+        public static string DevicePage_DynamicLighting_Breathing
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Breathing", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Brightness.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Brightness {
-            get {
+        public static string DevicePage_DynamicLighting_Brightness
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Brightness", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the brightness of your lights.
         /// </summary>
-        public static string DevicePage_DynamicLighting_BrightnessDesc {
-            get {
+        public static string DevicePage_DynamicLighting_BrightnessDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_BrightnessDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Direction.
         /// </summary>
-        public static string DevicePage_DynamicLighting_EffectDirection {
-            get {
+        public static string DevicePage_DynamicLighting_EffectDirection
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_EffectDirection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Effect speed.
         /// </summary>
-        public static string DevicePage_DynamicLighting_EffectSpeed {
-            get {
+        public static string DevicePage_DynamicLighting_EffectSpeed
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_EffectSpeed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gradient.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Gradient {
-            get {
+        public static string DevicePage_DynamicLighting_Gradient
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Gradient", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Main color.
         /// </summary>
-        public static string DevicePage_DynamicLighting_MainColorSelection {
-            get {
+        public static string DevicePage_DynamicLighting_MainColorSelection
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_MainColorSelection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Match my Windows accent color.
         /// </summary>
-        public static string DevicePage_DynamicLighting_MatchAccentColor {
-            get {
+        public static string DevicePage_DynamicLighting_MatchAccentColor
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_MatchAccentColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
-        public static string DevicePage_DynamicLighting_None {
-            get {
+        public static string DevicePage_DynamicLighting_None
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Rainbow.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Rainbow {
-            get {
+        public static string DevicePage_DynamicLighting_Rainbow
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Rainbow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Second color.
         /// </summary>
-        public static string DevicePage_DynamicLighting_SecondColorSelection {
-            get {
+        public static string DevicePage_DynamicLighting_SecondColorSelection
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_SecondColorSelection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Solid Color.
         /// </summary>
-        public static string DevicePage_DynamicLighting_SolidColor {
-            get {
+        public static string DevicePage_DynamicLighting_SolidColor
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_SolidColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Wave.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Wave {
-            get {
+        public static string DevicePage_DynamicLighting_Wave
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Wave", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Wheel.
         /// </summary>
-        public static string DevicePage_DynamicLighting_Wheel {
-            get {
+        public static string DevicePage_DynamicLighting_Wheel
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLighting_Wheel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose color themes and effects for your lighting.
         /// </summary>
-        public static string DevicePage_DynamicLightingDesc {
-            get {
+        public static string DevicePage_DynamicLightingDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_DynamicLightingDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sets the fan to max speed.
         /// </summary>
-        public static string DevicePage_FullFanSpeedDesc {
-            get {
+        public static string DevicePage_FullFanSpeedDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_FullFanSpeedDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fan max speed override.
         /// </summary>
-        public static string DevicePage_FullFanSpeedText {
-            get {
+        public static string DevicePage_FullFanSpeedText
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_FullFanSpeedText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Power options.
         /// </summary>
-        public static string DevicePage_PowerOptions {
-            get {
+        public static string DevicePage_PowerOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_PowerOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use second color.
         /// </summary>
-        public static string DevicePage_UseSecondColor {
-            get {
+        public static string DevicePage_UseSecondColor
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicePage_UseSecondColor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your device must be restarted in order for the changes to take effect. Would you like to restart now?.
         /// </summary>
-        public static string Dialog_ForceRestartDesc {
-            get {
+        public static string Dialog_ForceRestartDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Dialog_ForceRestartDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Restart required.
         /// </summary>
-        public static string Dialog_ForceRestartTitle {
-            get {
+        public static string Dialog_ForceRestartTitle
+        {
+            get
+            {
                 return ResourceManager.GetString("Dialog_ForceRestartTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
-        public static string Dialog_No {
-            get {
+        public static string Dialog_No
+        {
+            get
+            {
                 return ResourceManager.GetString("Dialog_No", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
-        public static string Dialog_Yes {
-            get {
+        public static string Dialog_Yes
+        {
+            get
+            {
                 return ResourceManager.GetString("Dialog_Yes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DIRECTIONAL PAD.
         /// </summary>
-        public static string DPadPage_DPad {
-            get {
+        public static string DPadPage_DPad
+        {
+            get
+            {
                 return ResourceManager.GetString("DPadPage_DPad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] empty_neptune {
-            get {
+        public static byte[] empty_neptune
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("empty_neptune", resourceCulture);
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
-        public static string Enum_AYANEO2_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_AYANEO2_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ≈.
         /// </summary>
-        public static string Enum_AYANEO2_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_AYANEO2_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RC.
         /// </summary>
-        public static string Enum_AYANEO2_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_AYANEO2_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LC.
         /// </summary>
-        public static string Enum_AYANEO2_ButtonFlags_OEM4 {
-            get {
+        public static string Enum_AYANEO2_ButtonFlags_OEM4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2.ButtonFlags.OEM4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Win.
         /// </summary>
-        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Esc.
         /// </summary>
-        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to KB.
         /// </summary>
-        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_AYANEO2021Pro_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEO2021Pro.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
-        public static string Enum_AYANEOAIR_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ≈.
         /// </summary>
-        public static string Enum_AYANEOAIR_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RC.
         /// </summary>
-        public static string Enum_AYANEOAIR_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LC.
         /// </summary>
-        public static string Enum_AYANEOAIR_ButtonFlags_OEM4 {
-            get {
+        public static string Enum_AYANEOAIR_ButtonFlags_OEM4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIR.ButtonFlags.OEM4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
-        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ≈.
         /// </summary>
-        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RC.
         /// </summary>
-        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LC.
         /// </summary>
-        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM4 {
-            get {
+        public static string Enum_AYANEOAIRLite_ButtonFlags_OEM4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRLite.ButtonFlags.OEM4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to AYA.
         /// </summary>
-        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ≈.
         /// </summary>
-        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RC.
         /// </summary>
-        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LC.
         /// </summary>
-        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM4 {
-            get {
+        public static string Enum_AYANEOAIRPro_ButtonFlags_OEM4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.AYANEOAIRPro.ButtonFlags.OEM4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-touch swipe.
         /// </summary>
-        public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad {
-            get {
+        public static string Enum_DS4Controller_AxisLayoutFlags_LeftPad
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.AxisLayoutFlags.LeftPad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multi-touch swipe.
         /// </summary>
-        public static string Enum_DS4Controller_AxisLayoutFlags_RightPad {
-            get {
+        public static string Enum_DS4Controller_AxisLayoutFlags_RightPad
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.AxisLayoutFlags.RightPad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cross.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B1 {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_B1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Circle.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B2 {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_B2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Square.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B3 {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_B3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Triangle.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_B4 {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_B4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.B4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Share.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_Back {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-touch click.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_LeftPadClick {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_LeftPadClick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.LeftPadClick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-touch tap.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_LeftPadTouch
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.LeftPadTouch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multi-touch click.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_RightPadClick {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_RightPadClick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.RightPadClick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multi-touch tap.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_RightPadTouch {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_RightPadTouch
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.RightPadTouch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sony.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_Special {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_Special
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Special", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
-        public static string Enum_DS4Controller_ButtonFlags_Start {
-            get {
+        public static string Enum_DS4Controller_ButtonFlags_Start
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DS4Controller.ButtonFlags.Start", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-touch swipe.
         /// </summary>
-        public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad {
-            get {
+        public static string Enum_DualSenseController_AxisLayoutFlags_LeftPad
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.AxisLayoutFlags.LeftPad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multi-touch swipe.
         /// </summary>
-        public static string Enum_DualSenseController_AxisLayoutFlags_RightPad {
-            get {
+        public static string Enum_DualSenseController_AxisLayoutFlags_RightPad
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.AxisLayoutFlags.RightPad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cross.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B1 {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_B1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Circle.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B2 {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_B2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Square.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B3 {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_B3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Triangle.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_B4 {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_B4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.B4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Share.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_Back {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-touch click.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_LeftPadClick {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_LeftPadClick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.LeftPadClick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Single-touch tap.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_LeftPadTouch
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.LeftPadTouch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multi-touch click.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_RightPadClick {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_RightPadClick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.RightPadClick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multi-touch tap.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_RightPadTouch {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_RightPadTouch
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.RightPadTouch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sony.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_Special {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_Special
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Special", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
-        public static string Enum_DualSenseController_ButtonFlags_Start {
-            get {
+        public static string Enum_DualSenseController_ButtonFlags_Start
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.DualSenseController.ButtonFlags.Start", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_A {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_A
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.A", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always On.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_AlwaysOn {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_AlwaysOn
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.AlwaysOn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_B {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_B
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.B", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_Back {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Down.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadDown {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_DPadDown
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadDown", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Left.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadLeft {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_DPadLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Right.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadRight {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_DPadRight
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Up.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_DPadUp {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_DPadUp
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.DPadUp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Shoulder.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_LeftShoulder {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_LeftShoulder
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftShoulder", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_LeftThumb {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_LeftThumb
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftThumb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Trigger.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_LeftTrigger {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_LeftTrigger
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.LeftTrigger", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Shoulder.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_RightShoulder {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_RightShoulder
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightShoulder", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_RightThumb {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_RightThumb
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightThumb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Trigger.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_RightTrigger {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_RightTrigger
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.RightTrigger", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Start.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_Start {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_Start
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Start", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_X {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_X
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.X", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
-        public static string Enum_GamepadButtonFlagsExt_Y {
-            get {
+        public static string Enum_GamepadButtonFlagsExt_Y
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.GamepadButtonFlagsExt.Y", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated DualShock 4 controller.
         /// </summary>
-        public static string Enum_HIDmode_DualShock4Controller {
-            get {
+        public static string Enum_HIDmode_DualShock4Controller
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.HIDmode.DualShock4Controller", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No emulated controller.
         /// </summary>
-        public static string Enum_HIDmode_NoController {
-            get {
+        public static string Enum_HIDmode_NoController
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.HIDmode.NoController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated XBOX 360 controller.
         /// </summary>
-        public static string Enum_HIDmode_Xbox360Controller {
-            get {
+        public static string Enum_HIDmode_Xbox360Controller
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.HIDmode.Xbox360Controller", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Connected.
         /// </summary>
-        public static string Enum_HIDstatus_Connected {
-            get {
+        public static string Enum_HIDstatus_Connected
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.HIDstatus.Connected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disconnected.
         /// </summary>
-        public static string Enum_HIDstatus_Disconnected {
-            get {
+        public static string Enum_HIDstatus_Disconnected
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.HIDstatus.Disconnected", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Auto Roll Yaw Swap.
         /// </summary>
-        public static string Enum_Input_AutoRollYawSwap {
-            get {
+        public static string Enum_Input_AutoRollYawSwap
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.Input.AutoRollYawSwap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick camera.
         /// </summary>
-        public static string Enum_Input_JoystickCamera {
-            get {
+        public static string Enum_Input_JoystickCamera
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.Input.JoystickCamera", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering.
         /// </summary>
-        public static string Enum_Input_JoystickSteering {
-            get {
+        public static string Enum_Input_JoystickSteering
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.Input.JoystickSteering", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Player space.
         /// </summary>
-        public static string Enum_Input_PlayerSpace {
-            get {
+        public static string Enum_Input_PlayerSpace
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.Input.PlayerSpace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Custom.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Custom {
-            get {
+        public static string Enum_InputsHotkeyType_Custom
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.Custom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Device.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Device {
-            get {
+        public static string Enum_InputsHotkeyType_Device
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.Device", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Handheld {
-            get {
+        public static string Enum_InputsHotkeyType_Handheld
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.Handheld", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
-        public static string Enum_InputsHotkeyType_HC {
-            get {
+        public static string Enum_InputsHotkeyType_HC
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.HC", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Overlay {
-            get {
+        public static string Enum_InputsHotkeyType_Overlay
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.Overlay", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Quick tools.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Quicktools {
-            get {
+        public static string Enum_InputsHotkeyType_Quicktools
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.Quicktools", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Windows.
         /// </summary>
-        public static string Enum_InputsHotkeyType_Windows {
-            get {
+        public static string Enum_InputsHotkeyType_Windows
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.InputsHotkeyType.Windows", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A.
         /// </summary>
-        public static string Enum_KeyFlags_A {
-            get {
+        public static string Enum_KeyFlags_A
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.A", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Alt.
         /// </summary>
-        public static string Enum_KeyFlags_Alt {
-            get {
+        public static string Enum_KeyFlags_Alt
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Alt", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Apostrophe.
         /// </summary>
-        public static string Enum_KeyFlags_Apostrophe {
-            get {
+        public static string Enum_KeyFlags_Apostrophe
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Apostrophe", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B.
         /// </summary>
-        public static string Enum_KeyFlags_B {
-            get {
+        public static string Enum_KeyFlags_B
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.B", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Backslash.
         /// </summary>
-        public static string Enum_KeyFlags_Backslash {
-            get {
+        public static string Enum_KeyFlags_Backslash
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Backslash", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Backspace.
         /// </summary>
-        public static string Enum_KeyFlags_Backspace {
-            get {
+        public static string Enum_KeyFlags_Backspace
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Backspace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to C.
         /// </summary>
-        public static string Enum_KeyFlags_C {
-            get {
+        public static string Enum_KeyFlags_C
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.C", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Comma.
         /// </summary>
-        public static string Enum_KeyFlags_Comma {
-            get {
+        public static string Enum_KeyFlags_Comma
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Comma", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Control.
         /// </summary>
-        public static string Enum_KeyFlags_Control {
-            get {
+        public static string Enum_KeyFlags_Control
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Control", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to D.
         /// </summary>
-        public static string Enum_KeyFlags_D {
-            get {
+        public static string Enum_KeyFlags_D
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.D", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
-        public static string Enum_KeyFlags_Delete {
-            get {
+        public static string Enum_KeyFlags_Delete
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Delete", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to E.
         /// </summary>
-        public static string Enum_KeyFlags_E {
-            get {
+        public static string Enum_KeyFlags_E
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.E", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to End.
         /// </summary>
-        public static string Enum_KeyFlags_End {
-            get {
+        public static string Enum_KeyFlags_End
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.End", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enter.
         /// </summary>
-        public static string Enum_KeyFlags_Enter {
-            get {
+        public static string Enum_KeyFlags_Enter
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Enter", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Equal.
         /// </summary>
-        public static string Enum_KeyFlags_Equal {
-            get {
+        public static string Enum_KeyFlags_Equal
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Equal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Escape.
         /// </summary>
-        public static string Enum_KeyFlags_Escape {
-            get {
+        public static string Enum_KeyFlags_Escape
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Escape", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F.
         /// </summary>
-        public static string Enum_KeyFlags_F {
-            get {
+        public static string Enum_KeyFlags_F
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F1.
         /// </summary>
-        public static string Enum_KeyFlags_F1 {
-            get {
+        public static string Enum_KeyFlags_F1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F10.
         /// </summary>
-        public static string Enum_KeyFlags_F10 {
-            get {
+        public static string Enum_KeyFlags_F10
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F10", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F11.
         /// </summary>
-        public static string Enum_KeyFlags_F11 {
-            get {
+        public static string Enum_KeyFlags_F11
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F11", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F12.
         /// </summary>
-        public static string Enum_KeyFlags_F12 {
-            get {
+        public static string Enum_KeyFlags_F12
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F12", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F2.
         /// </summary>
-        public static string Enum_KeyFlags_F2 {
-            get {
+        public static string Enum_KeyFlags_F2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F3.
         /// </summary>
-        public static string Enum_KeyFlags_F3 {
-            get {
+        public static string Enum_KeyFlags_F3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F4.
         /// </summary>
-        public static string Enum_KeyFlags_F4 {
-            get {
+        public static string Enum_KeyFlags_F4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F5.
         /// </summary>
-        public static string Enum_KeyFlags_F5 {
-            get {
+        public static string Enum_KeyFlags_F5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F6.
         /// </summary>
-        public static string Enum_KeyFlags_F6 {
-            get {
+        public static string Enum_KeyFlags_F6
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F6", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F7.
         /// </summary>
-        public static string Enum_KeyFlags_F7 {
-            get {
+        public static string Enum_KeyFlags_F7
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F7", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F8.
         /// </summary>
-        public static string Enum_KeyFlags_F8 {
-            get {
+        public static string Enum_KeyFlags_F8
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F8", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to F9.
         /// </summary>
-        public static string Enum_KeyFlags_F9 {
-            get {
+        public static string Enum_KeyFlags_F9
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.F9", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to G.
         /// </summary>
-        public static string Enum_KeyFlags_G {
-            get {
+        public static string Enum_KeyFlags_G
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.G", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Grave.
         /// </summary>
-        public static string Enum_KeyFlags_Grave {
-            get {
+        public static string Enum_KeyFlags_Grave
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Grave", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to H.
         /// </summary>
-        public static string Enum_KeyFlags_H {
-            get {
+        public static string Enum_KeyFlags_H
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.H", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
-        public static string Enum_KeyFlags_Home {
-            get {
+        public static string Enum_KeyFlags_Home
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Home", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to I.
         /// </summary>
-        public static string Enum_KeyFlags_I {
-            get {
+        public static string Enum_KeyFlags_I
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.I", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Insert.
         /// </summary>
-        public static string Enum_KeyFlags_Insert {
-            get {
+        public static string Enum_KeyFlags_Insert
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Insert", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to J.
         /// </summary>
-        public static string Enum_KeyFlags_J {
-            get {
+        public static string Enum_KeyFlags_J
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.J", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to K.
         /// </summary>
-        public static string Enum_KeyFlags_K {
-            get {
+        public static string Enum_KeyFlags_K
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.K", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L.
         /// </summary>
-        public static string Enum_KeyFlags_L {
-            get {
+        public static string Enum_KeyFlags_L
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.L", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to M.
         /// </summary>
-        public static string Enum_KeyFlags_M {
-            get {
+        public static string Enum_KeyFlags_M
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.M", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Minus.
         /// </summary>
-        public static string Enum_KeyFlags_Minus {
-            get {
+        public static string Enum_KeyFlags_Minus
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Minus", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to N.
         /// </summary>
-        public static string Enum_KeyFlags_N {
-            get {
+        public static string Enum_KeyFlags_N
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.N", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to O.
         /// </summary>
-        public static string Enum_KeyFlags_O {
-            get {
+        public static string Enum_KeyFlags_O
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.O", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to P.
         /// </summary>
-        public static string Enum_KeyFlags_P {
-            get {
+        public static string Enum_KeyFlags_P
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.P", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Pause.
         /// </summary>
-        public static string Enum_KeyFlags_Pause {
-            get {
+        public static string Enum_KeyFlags_Pause
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Pause", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Period.
         /// </summary>
-        public static string Enum_KeyFlags_Period {
-            get {
+        public static string Enum_KeyFlags_Period
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Period", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Q.
         /// </summary>
-        public static string Enum_KeyFlags_Q {
-            get {
+        public static string Enum_KeyFlags_Q
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Q", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R.
         /// </summary>
-        public static string Enum_KeyFlags_R {
-            get {
+        public static string Enum_KeyFlags_R
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.R", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to S.
         /// </summary>
-        public static string Enum_KeyFlags_S {
-            get {
+        public static string Enum_KeyFlags_S
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.S", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Semicolon.
         /// </summary>
-        public static string Enum_KeyFlags_Semicolon {
-            get {
+        public static string Enum_KeyFlags_Semicolon
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Semicolon", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Shift.
         /// </summary>
-        public static string Enum_KeyFlags_Shift {
-            get {
+        public static string Enum_KeyFlags_Shift
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Shift", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Slash.
         /// </summary>
-        public static string Enum_KeyFlags_Slash {
-            get {
+        public static string Enum_KeyFlags_Slash
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Slash", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Space.
         /// </summary>
-        public static string Enum_KeyFlags_Space {
-            get {
+        public static string Enum_KeyFlags_Space
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Space", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to T.
         /// </summary>
-        public static string Enum_KeyFlags_T {
-            get {
+        public static string Enum_KeyFlags_T
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.T", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tab.
         /// </summary>
-        public static string Enum_KeyFlags_Tab {
-            get {
+        public static string Enum_KeyFlags_Tab
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Tab", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to U.
         /// </summary>
-        public static string Enum_KeyFlags_U {
-            get {
+        public static string Enum_KeyFlags_U
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.U", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to V.
         /// </summary>
-        public static string Enum_KeyFlags_V {
-            get {
+        public static string Enum_KeyFlags_V
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.V", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to W.
         /// </summary>
-        public static string Enum_KeyFlags_W {
-            get {
+        public static string Enum_KeyFlags_W
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.W", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
-        public static string Enum_KeyFlags_X {
-            get {
+        public static string Enum_KeyFlags_X
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.X", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
-        public static string Enum_KeyFlags_Y {
-            get {
+        public static string Enum_KeyFlags_Y
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Y", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Z.
         /// </summary>
-        public static string Enum_KeyFlags_Z {
-            get {
+        public static string Enum_KeyFlags_Z
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.KeyFlags.Z", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to M2.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_B5 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_B5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mouse wheel click.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_B6 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_B6
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B6", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mouse wheel up.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_B7 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_B7
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B7", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mouse wheel down.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_B8 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_B8
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.B8", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y1.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_L4 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_L4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.L4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y2.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_L5 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_L5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.L5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to M3.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_R4 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_R4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.R4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y3.
         /// </summary>
-        public static string Enum_LegionController_ButtonFlags_R5 {
-            get {
+        public static string Enum_LegionController_ButtonFlags_R5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionController.ButtonFlags.R5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LegionR.
         /// </summary>
-        public static string Enum_LegionGo_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_LegionGo_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionGo.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LegionL.
         /// </summary>
-        public static string Enum_LegionGo_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_LegionGo_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.LegionGo.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Auto Roll Yaw Swap.
         /// </summary>
-        public static string Enum_MotionInput_AutoRollYawSwap {
-            get {
+        public static string Enum_MotionInput_AutoRollYawSwap
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a simple joystick. Ideal for laptop and clamshell type handhelds, automatic yaw roll swap based on how device is being held (90 or 180 degree open)..
         /// </summary>
-        public static string Enum_MotionInput_AutoRollYawSwap_Desc {
-            get {
+        public static string Enum_MotionInput_AutoRollYawSwap_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.AutoRollYawSwap.Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick Camera.
         /// </summary>
-        public static string Enum_MotionInput_JoystickCamera {
-            get {
+        public static string Enum_MotionInput_JoystickCamera
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.JoystickCamera", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a simple joystick. This is intended for traditional joystick applications.
         /// </summary>
-        public static string Enum_MotionInput_JoystickCamera_Desc {
-            get {
+        public static string Enum_MotionInput_JoystickCamera_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.JoystickCamera.Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick Steering.
         /// </summary>
-        public static string Enum_MotionInput_JoystickSteering {
-            get {
+        public static string Enum_MotionInput_JoystickSteering
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.JoystickSteering", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a steering wheel or a racing game.
         /// </summary>
-        public static string Enum_MotionInput_JoystickSteering_Desc {
-            get {
+        public static string Enum_MotionInput_JoystickSteering_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.JoystickSteering.Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Player Space.
         /// </summary>
-        public static string Enum_MotionInput_PlayerSpace {
-            get {
+        public static string Enum_MotionInput_PlayerSpace
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.PlayerSpace", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This input will operate as a joystick optimized for controlling a first or third person camera.
         /// </summary>
-        public static string Enum_MotionInput_PlayerSpace_Desc {
-            get {
+        public static string Enum_MotionInput_PlayerSpace_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionInput.PlayerSpace.Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LeftStick.
         /// </summary>
-        public static string Enum_MotionOuput_LeftStick {
-            get {
+        public static string Enum_MotionOuput_LeftStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionOuput.LeftStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to MoveCursor.
         /// </summary>
-        public static string Enum_MotionOuput_MoveCursor {
-            get {
+        public static string Enum_MotionOuput_MoveCursor
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionOuput.MoveCursor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RightStick.
         /// </summary>
-        public static string Enum_MotionOuput_RightStick {
-            get {
+        public static string Enum_MotionOuput_RightStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionOuput.RightStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ScrollWheel.
         /// </summary>
-        public static string Enum_MotionOuput_ScrollWheel {
-            get {
+        public static string Enum_MotionOuput_ScrollWheel
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionOuput.ScrollWheel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Stick.
         /// </summary>
-        public static string Enum_MotionOutput_LeftStick {
-            get {
+        public static string Enum_MotionOutput_LeftStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionOutput.LeftStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Stick.
         /// </summary>
-        public static string Enum_MotionOutput_RightStick {
-            get {
+        public static string Enum_MotionOutput_RightStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.MotionOutput.RightStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_B1 {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_B1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_B2 {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_B2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_B3 {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_B3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_B4 {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_B4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.B4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to View.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_Back {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to STEAM.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_Special {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_Special
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Special", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Menu.
         /// </summary>
-        public static string Enum_NeptuneController_ButtonFlags_Start {
-            get {
+        public static string Enum_NeptuneController_ButtonFlags_Start
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.NeptuneController.ButtonFlags.Start", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left joystick.
         /// </summary>
-        public static string Enum_Output_LeftStick {
-            get {
+        public static string Enum_Output_LeftStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.Output.LeftStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right joystick.
         /// </summary>
-        public static string Enum_Output_RightStick {
-            get {
+        public static string Enum_Output_RightStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.Output.RightStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ZL.
         /// </summary>
-        public static string Enum_ProController_AxisLayoutFlags_L2 {
-            get {
+        public static string Enum_ProController_AxisLayoutFlags_L2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.AxisLayoutFlags.L2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ZR.
         /// </summary>
-        public static string Enum_ProController_AxisLayoutFlags_R2 {
-            get {
+        public static string Enum_ProController_AxisLayoutFlags_R2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.AxisLayoutFlags.R2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_B1 {
-            get {
+        public static string Enum_ProController_ButtonFlags_B1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.B1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_B2 {
-            get {
+        public static string Enum_ProController_ButtonFlags_B2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.B2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_B3 {
-            get {
+        public static string Enum_ProController_ButtonFlags_B3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.B3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_B4 {
-            get {
+        public static string Enum_ProController_ButtonFlags_B4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.B4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Minus.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_Back {
-            get {
+        public static string Enum_ProController_ButtonFlags_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_L1 {
-            get {
+        public static string Enum_ProController_ButtonFlags_L1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.L1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_R1 {
-            get {
+        public static string Enum_ProController_ButtonFlags_R1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.R1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_Special {
-            get {
+        public static string Enum_ProController_ButtonFlags_Special
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.Special", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Capture.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_Special2 {
-            get {
+        public static string Enum_ProController_ButtonFlags_Special2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.Special2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Plus.
         /// </summary>
-        public static string Enum_ProController_ButtonFlags_Start {
-            get {
+        public static string Enum_ProController_ButtonFlags_Start
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProController.ButtonFlags.Start", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This is your default profile. This profile will be applied for all your applications that do not have a specific profile. Some options requiring an executable might be disabled..
         /// </summary>
-        public static string Enum_ProfileErrorCode_Default {
-            get {
+        public static string Enum_ProfileErrorCode_Default
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.Default", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Oops. This profile seems to be running. Some options requiring an executable may be disabled..
         /// </summary>
-        public static string Enum_ProfileErrorCode_IsRunning {
-            get {
+        public static string Enum_ProfileErrorCode_IsRunning
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.IsRunning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Oops. It seems this profile does not have an executable. How is this even possible?.
         /// </summary>
-        public static string Enum_ProfileErrorCode_MissingExecutable {
-            get {
+        public static string Enum_ProfileErrorCode_MissingExecutable
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.MissingExecutable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Oops. It seems this profile does not have a path to the application. Some options requiring an executable might be disabled..
         /// </summary>
-        public static string Enum_ProfileErrorCode_MissingPath {
-            get {
+        public static string Enum_ProfileErrorCode_MissingPath
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Oops. It seems you do not have the necessary permission level to modify the content of this application. Make sure you have started this program in administrator mode..
         /// </summary>
-        public static string Enum_ProfileErrorCode_MissingPermission {
-            get {
+        public static string Enum_ProfileErrorCode_MissingPermission
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.MissingPermission", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Nothing to see here..
         /// </summary>
-        public static string Enum_ProfileErrorCode_None {
-            get {
+        public static string Enum_ProfileErrorCode_None
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.None", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Oops. It seems this profile excutable is running. Some options requiring an executable might be disabled..
         /// </summary>
-        public static string Enum_ProfileErrorCode_Running {
-            get {
+        public static string Enum_ProfileErrorCode_Running
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ProfileErrorCode.Running", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string Enum_QualityOfServiceLevel_Default {
-            get {
+        public static string Enum_QualityOfServiceLevel_Default
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.QualityOfServiceLevel.Default", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Eco.
         /// </summary>
-        public static string Enum_QualityOfServiceLevel_Eco {
-            get {
+        public static string Enum_QualityOfServiceLevel_Eco
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.QualityOfServiceLevel.Eco", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to High.
         /// </summary>
-        public static string Enum_QualityOfServiceLevel_High {
-            get {
+        public static string Enum_QualityOfServiceLevel_High
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.QualityOfServiceLevel.High", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Command center.
         /// </summary>
-        public static string Enum_ROGAlly_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_ROGAlly_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Armory crate.
         /// </summary>
-        public static string Enum_ROGAlly_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_ROGAlly_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to M1.
         /// </summary>
-        public static string Enum_ROGAlly_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_ROGAlly_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to M2.
         /// </summary>
-        public static string Enum_ROGAlly_ButtonFlags_OEM4 {
-            get {
+        public static string Enum_ROGAlly_ButtonFlags_OEM4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ROGAlly.ButtonFlags.OEM4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatic.
         /// </summary>
-        public static string Enum_ServiceStartMode_Automatic {
-            get {
+        public static string Enum_ServiceStartMode_Automatic
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ServiceStartMode.Automatic", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disabled.
         /// </summary>
-        public static string Enum_ServiceStartMode_Disabled {
-            get {
+        public static string Enum_ServiceStartMode_Disabled
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ServiceStartMode.Disabled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Manual.
         /// </summary>
-        public static string Enum_ServiceStartMode_Manual {
-            get {
+        public static string Enum_ServiceStartMode_Manual
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.ServiceStartMode.Manual", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Options.
         /// </summary>
-        public static string Enum_SteamDeck_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_SteamDeck_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.SteamDeck.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L2.
         /// </summary>
-        public static string Enum_XInputController_AxisLayoutFlags_L2 {
-            get {
+        public static string Enum_XInputController_AxisLayoutFlags_L2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.L2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LeftStick.
         /// </summary>
-        public static string Enum_XInputController_AxisLayoutFlags_LeftStick {
-            get {
+        public static string Enum_XInputController_AxisLayoutFlags_LeftStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.LeftStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb.
         /// </summary>
-        public static string Enum_XInputController_AxisLayoutFlags_LeftThumb {
-            get {
+        public static string Enum_XInputController_AxisLayoutFlags_LeftThumb
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.LeftThumb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R2.
         /// </summary>
-        public static string Enum_XInputController_AxisLayoutFlags_R2 {
-            get {
+        public static string Enum_XInputController_AxisLayoutFlags_R2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.R2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RightStick.
         /// </summary>
-        public static string Enum_XInputController_AxisLayoutFlags_RightStick {
-            get {
+        public static string Enum_XInputController_AxisLayoutFlags_RightStick
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.RightStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb.
         /// </summary>
-        public static string Enum_XInputController_AxisLayoutFlags_RightThumb {
-            get {
+        public static string Enum_XInputController_AxisLayoutFlags_RightThumb
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.AxisLayoutFlags.RightThumb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to A.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B1 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B2 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B3 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B4 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B5.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B5 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B6.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B6 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B6
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B6", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B7.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B7 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B7
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B7", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to B8.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_B8 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_B8
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.B8", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to View.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_Back {
-            get {
+        public static string Enum_XInputController_ButtonFlags_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Down.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_DPadDown {
-            get {
+        public static string Enum_XInputController_ButtonFlags_DPadDown
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadDown", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Left.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_DPadLeft {
-            get {
+        public static string Enum_XInputController_ButtonFlags_DPadLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Right.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_DPadRight {
-            get {
+        public static string Enum_XInputController_ButtonFlags_DPadRight
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to DPad Up.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_DPadUp {
-            get {
+        public static string Enum_XInputController_ButtonFlags_DPadUp
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.DPadUp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LB.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_L1 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_L1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L2.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_L2 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_L2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L3.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_L3 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_L3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L4.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_L4 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_L4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to L5.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_L5 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_L5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.L5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_LeftThumb {
-            get {
+        public static string Enum_XInputController_ButtonFlags_LeftThumb
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb Down.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_LeftThumbDown {
-            get {
+        public static string Enum_XInputController_ButtonFlags_LeftThumbDown
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbDown", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb Left.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_LeftThumbLeft {
-            get {
+        public static string Enum_XInputController_ButtonFlags_LeftThumbLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb Right.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_LeftThumbRight {
-            get {
+        public static string Enum_XInputController_ButtonFlags_LeftThumbRight
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left Thumb Up.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_LeftThumbUp {
-            get {
+        public static string Enum_XInputController_ButtonFlags_LeftThumbUp
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.LeftThumbUp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OEM1.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_OEM1 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_OEM1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OEM2.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_OEM2 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_OEM2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OEM3.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_OEM3 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_OEM3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.OEM3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RB.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_R1 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_R1
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R2.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_R2 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_R2
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R3.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_R3 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_R3
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R3", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R4.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_R4 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_R4
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to R5.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_R5 {
-            get {
+        public static string Enum_XInputController_ButtonFlags_R5
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.R5", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_RightThumb {
-            get {
+        public static string Enum_XInputController_ButtonFlags_RightThumb
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumb", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb Down.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_RightThumbDown {
-            get {
+        public static string Enum_XInputController_ButtonFlags_RightThumbDown
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbDown", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb Left.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_RightThumbLeft {
-            get {
+        public static string Enum_XInputController_ButtonFlags_RightThumbLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb Right.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_RightThumbRight {
-            get {
+        public static string Enum_XInputController_ButtonFlags_RightThumbRight
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right Thumb Up.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_RightThumbUp {
-            get {
+        public static string Enum_XInputController_ButtonFlags_RightThumbUp
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.RightThumbUp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Guide.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_Special {
-            get {
+        public static string Enum_XInputController_ButtonFlags_Special
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Special", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Menu.
         /// </summary>
-        public static string Enum_XInputController_ButtonFlags_Start {
-            get {
+        public static string Enum_XInputController_ButtonFlags_Start
+        {
+            get
+            {
                 return ResourceManager.GetString("Enum.XInputController.ButtonFlags.Start", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Integer scaling is not available.
         /// </summary>
-        public static string Hint_AMD_IntegerScalingCheck {
-            get {
+        public static string Hint_AMD_IntegerScalingCheck
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_AMD_IntegerScalingCheck", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Deploy integer scaling.
         /// </summary>
-        public static string Hint_AMD_IntegerScalingCheckAction {
-            get {
+        public static string Hint_AMD_IntegerScalingCheckAction
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Integer scaling feature is not installed, therefore you won&apos;t be able to enable or disable it.
         /// </summary>
-        public static string Hint_AMD_IntegerScalingCheckDesc {
-            get {
+        public static string Hint_AMD_IntegerScalingCheckDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to We need to execute some script to deploy the integer scaling on your system.
         /// </summary>
-        public static string Hint_AMD_IntegerScalingCheckReadme {
-            get {
+        public static string Hint_AMD_IntegerScalingCheckReadme
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_AMD_IntegerScalingCheckReadme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Core isolation features are turned on.
         /// </summary>
-        public static string Hint_CoreIsolationCheck {
-            get {
+        public static string Hint_CoreIsolationCheck
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_CoreIsolationCheck", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable Core isolation.
         /// </summary>
-        public static string Hint_CoreIsolationCheckAction {
-            get {
+        public static string Hint_CoreIsolationCheckAction
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_CoreIsolationCheckAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Your system core isolation features are turned on, therefore TDP read/write and fan control might be disabled.
         /// </summary>
-        public static string Hint_CoreIsolationCheckDesc {
-            get {
+        public static string Hint_CoreIsolationCheckDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_CoreIsolationCheckDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You might want to turn off core isolation and restart your system to enable TDP manipulations.
         /// </summary>
-        public static string Hint_CoreIsolationCheckReadme {
-            get {
+        public static string Hint_CoreIsolationCheckReadme
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_CoreIsolationCheckReadme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Legion Space Tasks and Services are active.
         /// </summary>
-        public static string Hint_LegionGoServices {
-            get {
+        public static string Hint_LegionGoServices
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_LegionGoServices", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable Legion Space.
         /// </summary>
-        public static string Hint_LegionGoServicesAction {
-            get {
+        public static string Hint_LegionGoServicesAction
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_LegionGoServicesAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application..
         /// </summary>
-        public static string Hint_LegionGoServicesDesc {
-            get {
+        public static string Hint_LegionGoServicesDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_LegionGoServicesDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors.
         /// </summary>
-        public static string Hint_LegionGoServicesReadme {
-            get {
+        public static string Hint_LegionGoServicesReadme
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_LegionGoServicesReadme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ASUS services are running.
         /// </summary>
-        public static string Hint_RogAllyServiceCheck {
-            get {
+        public static string Hint_RogAllyServiceCheck
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_RogAllyServiceCheck", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disable ASUS services.
         /// </summary>
-        public static string Hint_RogAllyServiceCheckAction {
-            get {
+        public static string Hint_RogAllyServiceCheckAction
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_RogAllyServiceCheckAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ASUS services are already running on your device. This may interfere with the application.
         /// </summary>
-        public static string Hint_RogAllyServiceCheckDesc {
-            get {
+        public static string Hint_RogAllyServiceCheckDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_RogAllyServiceCheckDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You should disable ASUS services, so that the application can run smoothly and without any conflicts.
         /// </summary>
-        public static string Hint_RogAllyServiceCheckReadme {
-            get {
+        public static string Hint_RogAllyServiceCheckReadme
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_RogAllyServiceCheckReadme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Restart Steam.
         /// </summary>
-        public static string Hint_SteamNeptuneAction {
-            get {
+        public static string Hint_SteamNeptuneAction
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamNeptuneAction", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Steam Desktop Layout is applied.
         /// </summary>
-        public static string Hint_SteamNeptuneDesktop {
-            get {
+        public static string Hint_SteamNeptuneDesktop
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamNeptuneDesktop", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Steam is already running and Steam Desktop Layout is applied. This may result in double input.
         /// </summary>
-        public static string Hint_SteamNeptuneDesktopDesc {
-            get {
+        public static string Hint_SteamNeptuneDesktopDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamNeptuneDesktopDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input.
         /// </summary>
-        public static string Hint_SteamNeptuneReadme {
-            get {
+        public static string Hint_SteamNeptuneReadme
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamNeptuneReadme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver is installed.
         /// </summary>
-        public static string Hint_SteamXboxDrivers {
-            get {
+        public static string Hint_SteamXboxDrivers
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamXboxDrivers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller.
         /// </summary>
-        public static string Hint_SteamXboxDriversDesc {
-            get {
+        public static string Hint_SteamXboxDriversDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamXboxDriversDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You might want to uninstall Steam Xbox Controller Enhanced Features Driver.
         /// </summary>
-        public static string Hint_SteamXboxDriversReadme {
-            get {
+        public static string Hint_SteamXboxDriversReadme
+        {
+            get
+            {
                 return ResourceManager.GetString("Hint_SteamXboxDriversReadme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap icon {
-            get {
+        public static System.Drawing.Bitmap icon
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gamepad: {0}.
         /// </summary>
-        public static string IController_ControllerIndex {
-            get {
+        public static string IController_ControllerIndex
+        {
+            get
+            {
                 return ResourceManager.GetString("IController_ControllerIndex", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decrease brightness.
         /// </summary>
-        public static string InputsHotkey_decreaseBrightness {
-            get {
+        public static string InputsHotkey_decreaseBrightness
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_decreaseBrightness", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decrease the current display brightness by 5%.
         /// </summary>
-        public static string InputsHotkey_decreaseBrightnessDesc {
-            get {
+        public static string InputsHotkey_decreaseBrightnessDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_decreaseBrightnessDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decrease thermal power limit (TDP).
         /// </summary>
-        public static string InputsHotkey_decreaseTDP {
-            get {
+        public static string InputsHotkey_decreaseTDP
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_decreaseTDP", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decrease system or currently applied profile TDP by one watt.
         /// </summary>
-        public static string InputsHotkey_decreaseTDPDesc {
-            get {
+        public static string InputsHotkey_decreaseTDPDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_decreaseTDPDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decrease volume.
         /// </summary>
-        public static string InputsHotkey_decreaseVolume {
-            get {
+        public static string InputsHotkey_decreaseVolume
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_decreaseVolume", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Decrease the system volume by 5%.
         /// </summary>
-        public static string InputsHotkey_decreaseVolumeDesc {
-            get {
+        public static string InputsHotkey_decreaseVolumeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_decreaseVolumeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Desktop layout.
         /// </summary>
-        public static string InputsHotkey_DesktopLayoutEnabled {
-            get {
+        public static string InputsHotkey_DesktopLayoutEnabled
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle Desktop controller layout.
         /// </summary>
-        public static string InputsHotkey_DesktopLayoutEnabledDesc {
-            get {
+        public static string InputsHotkey_DesktopLayoutEnabledDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_DesktopLayoutEnabledDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press to define trigger.
         /// </summary>
-        public static string InputsHotkey_fallbackInput {
-            get {
+        public static string InputsHotkey_fallbackInput
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_fallbackInput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press to define keyboard output.
         /// </summary>
-        public static string InputsHotkey_fallbackOutput {
-            get {
+        public static string InputsHotkey_fallbackOutput
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_fallbackOutput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Increase brightness.
         /// </summary>
-        public static string InputsHotkey_increaseBrightness {
-            get {
+        public static string InputsHotkey_increaseBrightness
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_increaseBrightness", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Increase the current display brightness by 5%.
         /// </summary>
-        public static string InputsHotkey_increaseBrightnessDesc {
-            get {
+        public static string InputsHotkey_increaseBrightnessDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_increaseBrightnessDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Increase thermal power limit (TDP).
         /// </summary>
-        public static string InputsHotkey_increaseTDP {
-            get {
+        public static string InputsHotkey_increaseTDP
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_increaseTDP", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Increase system or currently applied profile TDP by one watt.
         /// </summary>
-        public static string InputsHotkey_increaseTDPDesc {
-            get {
+        public static string InputsHotkey_increaseTDPDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_increaseTDPDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Increase volume.
         /// </summary>
-        public static string InputsHotkey_increaseVolume {
-            get {
+        public static string InputsHotkey_increaseVolume
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_increaseVolume", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Increase the system volume by 5%.
         /// </summary>
-        public static string InputsHotkey_increaseVolumeDesc {
-            get {
+        public static string InputsHotkey_increaseVolumeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_increaseVolumeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select next sub profile.
         /// </summary>
-        public static string InputsHotkey_nextSubProfile {
-            get {
+        public static string InputsHotkey_nextSubProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_nextSubProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Apply next sub profile for the current game.
         /// </summary>
-        public static string InputsHotkey_nextSubProfileDesc {
-            get {
+        public static string InputsHotkey_nextSubProfileDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_nextSubProfileDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to On-screen display.
         /// </summary>
-        public static string InputsHotkey_OnScreenDisplay {
-            get {
+        public static string InputsHotkey_OnScreenDisplay
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_OnScreenDisplay", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable on-screen display support.
         /// </summary>
-        public static string InputsHotkey_OnScreenDisplayDesc {
-            get {
+        public static string InputsHotkey_OnScreenDisplayDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_OnScreenDisplayDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to On Screen Overlay.
         /// </summary>
-        public static string InputsHotkey_OnScreenDisplayToggle {
-            get {
+        public static string InputsHotkey_OnScreenDisplayToggle
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle on screen overlay.
         /// </summary>
-        public static string InputsHotkey_OnScreenDisplayToggleDesc {
-            get {
+        public static string InputsHotkey_OnScreenDisplayToggleDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_OnScreenDisplayToggleDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display 3D controller.
         /// </summary>
-        public static string InputsHotkey_overlayGamepad {
-            get {
+        public static string InputsHotkey_overlayGamepad
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_overlayGamepad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_overlayGamepadDesc {
-            get {
+        public static string InputsHotkey_overlayGamepadDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_overlayGamepadDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display virtual trackpads.
         /// </summary>
-        public static string InputsHotkey_overlayTrackpads {
-            get {
+        public static string InputsHotkey_overlayTrackpads
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_overlayTrackpads", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_overlayTrackpadsDesc {
-            get {
+        public static string InputsHotkey_overlayTrackpadsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_overlayTrackpadsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select previous sub profile.
         /// </summary>
-        public static string InputsHotkey_previousSubProfile {
-            get {
+        public static string InputsHotkey_previousSubProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_previousSubProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Apply previous sub profile for the current game.
         /// </summary>
-        public static string InputsHotkey_previousSubProfileDesc {
-            get {
+        public static string InputsHotkey_previousSubProfileDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_previousSubProfileDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Summon quick tools window.
         /// </summary>
-        public static string InputsHotkey_quickTools {
-            get {
+        public static string InputsHotkey_quickTools
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_quickTools", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_quickToolsDesc {
-            get {
+        public static string InputsHotkey_quickToolsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_quickToolsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fan override.
         /// </summary>
-        public static string InputsHotkey_QuietModeToggled {
-            get {
+        public static string InputsHotkey_QuietModeToggled
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_QuietModeToggled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Set the fan duty cycle to user-defined value.
         /// </summary>
-        public static string InputsHotkey_QuietModeToggledDesc {
-            get {
+        public static string InputsHotkey_QuietModeToggledDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_QuietModeToggledDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle emulated controller type.
         /// </summary>
-        public static string InputsHotkey_shortcutChangeHIDMode {
-            get {
+        public static string InputsHotkey_shortcutChangeHIDMode
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle between Xbox 360 and Dualshock 4 emulated controllers.
         /// </summary>
-        public static string InputsHotkey_shortcutChangeHIDModeDesc {
-            get {
+        public static string InputsHotkey_shortcutChangeHIDModeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutChangeHIDModeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display Action center.
         /// </summary>
-        public static string InputsHotkey_shortcutControlCenter {
-            get {
+        public static string InputsHotkey_shortcutControlCenter
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutControlCenter", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display and hide Windows Action center.
         /// </summary>
-        public static string InputsHotkey_shortcutControlCenterDesc {
-            get {
+        public static string InputsHotkey_shortcutControlCenterDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutControlCenterDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Custom shortcut.
         /// </summary>
-        public static string InputsHotkey_shortcutCustom {
-            get {
+        public static string InputsHotkey_shortcutCustom
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutCustom", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_shortcutCustomDesc {
-            get {
+        public static string InputsHotkey_shortcutCustomDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutCustomDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display and hide the desktop.
         /// </summary>
-        public static string InputsHotkey_shortcutDesktop {
-            get {
+        public static string InputsHotkey_shortcutDesktop
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutDesktop", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press this key: Windows + D.
         /// </summary>
-        public static string InputsHotkey_shortcutDesktopDesc {
-            get {
+        public static string InputsHotkey_shortcutDesktopDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutDesktopDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Escape.
         /// </summary>
-        public static string InputsHotkey_shortcutESC {
-            get {
+        public static string InputsHotkey_shortcutESC
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutESC", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press this key: Escape.
         /// </summary>
-        public static string InputsHotkey_shortcutESCDesc {
-            get {
+        public static string InputsHotkey_shortcutESCDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutESCDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Switches between window and full screen.
         /// </summary>
-        public static string InputsHotkey_shortcutExpand {
-            get {
+        public static string InputsHotkey_shortcutExpand
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutExpand", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press this key: Alt + Enter.
         /// </summary>
-        public static string InputsHotkey_shortcutExpandDesc {
-            get {
+        public static string InputsHotkey_shortcutExpandDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutExpandDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Guide or PS button.
         /// </summary>
-        public static string InputsHotkey_shortcutGuide {
-            get {
+        public static string InputsHotkey_shortcutGuide
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutGuide", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Simulate a Xbox Guide or Sony PS button input.
         /// </summary>
-        public static string InputsHotkey_shortcutGuideDesc {
-            get {
+        public static string InputsHotkey_shortcutGuideDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutGuideDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display touch keyboard.
         /// </summary>
-        public static string InputsHotkey_shortcutKeyboard {
-            get {
+        public static string InputsHotkey_shortcutKeyboard
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutKeyboard", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_shortcutKeyboardDesc {
-            get {
+        public static string InputsHotkey_shortcutKeyboardDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutKeyboardDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Force application shutdown.
         /// </summary>
-        public static string InputsHotkey_shortcutKillApp {
-            get {
+        public static string InputsHotkey_shortcutKillApp
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutKillApp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_shortcutKillAppDesc {
-            get {
+        public static string InputsHotkey_shortcutKillAppDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutKillAppDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display and hide main window.
         /// </summary>
-        public static string InputsHotkey_shortcutMainwindow {
-            get {
+        public static string InputsHotkey_shortcutMainwindow
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutMainwindow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change hotkey by pressing a button or a special key.
         /// </summary>
-        public static string InputsHotkey_shortcutMainwindowDesc {
-            get {
+        public static string InputsHotkey_shortcutMainwindowDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutMainwindowDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open Snipping tool.
         /// </summary>
-        public static string InputsHotkey_shortcutPrintScreen {
-            get {
+        public static string InputsHotkey_shortcutPrintScreen
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutPrintScreen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press this key: Windows + Shift + S.
         /// </summary>
-        public static string InputsHotkey_shortcutPrintScreenDesc {
-            get {
+        public static string InputsHotkey_shortcutPrintScreenDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutPrintScreenDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open Task Manager.
         /// </summary>
-        public static string InputsHotkey_shortcutTaskManager {
-            get {
+        public static string InputsHotkey_shortcutTaskManager
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutTaskManager", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press this key: Ctrl + Shift + Esc.
         /// </summary>
-        public static string InputsHotkey_shortcutTaskManagerDesc {
-            get {
+        public static string InputsHotkey_shortcutTaskManagerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutTaskManagerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open Task view.
         /// </summary>
-        public static string InputsHotkey_shortcutTaskview {
-            get {
+        public static string InputsHotkey_shortcutTaskview
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutTaskview", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Press this key: Windows + Tab.
         /// </summary>
-        public static string InputsHotkey_shortcutTaskviewDesc {
-            get {
+        public static string InputsHotkey_shortcutTaskviewDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_shortcutTaskviewDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle Suspender.
         /// </summary>
-        public static string InputsHotkey_suspendResumeTask {
-            get {
+        public static string InputsHotkey_suspendResumeTask
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_suspendResumeTask", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Suspend or resume the foreground application.
         /// </summary>
-        public static string InputsHotkey_suspendResumeTaskDesc {
-            get {
+        public static string InputsHotkey_suspendResumeTaskDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("InputsHotkey_suspendResumeTaskDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LEFT JOYSTICK.
         /// </summary>
-        public static string JoystickPage_Joystick_Left {
-            get {
+        public static string JoystickPage_Joystick_Left
+        {
+            get
+            {
                 return ResourceManager.GetString("JoystickPage_Joystick_Left", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LEFT JOYSTICK BUTTONS.
         /// </summary>
-        public static string JoystickPage_Joystick_Left_Buttons {
-            get {
+        public static string JoystickPage_Joystick_Left_Buttons
+        {
+            get
+            {
                 return ResourceManager.GetString("JoystickPage_Joystick_Left_Buttons", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RIGHT JOYSTICK.
         /// </summary>
-        public static string JoystickPage_Joystick_Right {
-            get {
+        public static string JoystickPage_Joystick_Right
+        {
+            get
+            {
                 return ResourceManager.GetString("JoystickPage_Joystick_Right", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RIGHT JOYSTICK BUTTONS.
         /// </summary>
-        public static string JoystickPage_Joystick_Right_Buttons {
-            get {
+        public static string JoystickPage_Joystick_Right_Buttons
+        {
+            get
+            {
                 return ResourceManager.GetString("JoystickPage_Joystick_Right_Buttons", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Apply template.
         /// </summary>
-        public static string LayoutPage_ApplyTemplate {
-            get {
+        public static string LayoutPage_ApplyTemplate
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_ApplyTemplate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Buttons.
         /// </summary>
-        public static string LayoutPage_Buttons {
-            get {
+        public static string LayoutPage_Buttons
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Buttons", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        public static string LayoutPage_Cancel {
-            get {
+        public static string LayoutPage_Cancel
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Cancel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to COMMUNITY.
         /// </summary>
-        public static string LayoutPage_Community {
-            get {
+        public static string LayoutPage_Community
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Community", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
-        public static string LayoutPage_Confirm {
-            get {
+        public static string LayoutPage_Confirm
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Confirm", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dpad.
         /// </summary>
-        public static string LayoutPage_Dpad {
-            get {
+        public static string LayoutPage_Dpad
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Dpad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Export for current controller.
         /// </summary>
-        public static string LayoutPage_ExportCurrentController {
-            get {
+        public static string LayoutPage_ExportCurrentController
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_ExportCurrentController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Export layout.
         /// </summary>
-        public static string LayoutPage_ExportLayout {
-            get {
+        public static string LayoutPage_ExportLayout
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_ExportLayout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gyro.
         /// </summary>
-        public static string LayoutPage_Gyro {
-            get {
+        public static string LayoutPage_Gyro
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Gyro", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joysticks.
         /// </summary>
-        public static string LayoutPage_Joysticks {
-            get {
+        public static string LayoutPage_Joysticks
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Joysticks", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Layout author.
         /// </summary>
-        public static string LayoutPage_LayoutAuthor {
-            get {
+        public static string LayoutPage_LayoutAuthor
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_LayoutAuthor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Layout description.
         /// </summary>
-        public static string LayoutPage_LayoutDesc {
-            get {
+        public static string LayoutPage_LayoutDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_LayoutDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Layout title.
         /// </summary>
-        public static string LayoutPage_LayoutTitle {
-            get {
+        public static string LayoutPage_LayoutTitle
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_LayoutTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Save game information with the layout.
         /// </summary>
-        public static string LayoutPage_SaveGameInfoLayout {
-            get {
+        public static string LayoutPage_SaveGameInfoLayout
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_SaveGameInfoLayout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Make this the default layout.
         /// </summary>
-        public static string LayoutPage_SetAsDefault {
-            get {
+        public static string LayoutPage_SetAsDefault
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_SetAsDefault", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Show current controller templates only.
         /// </summary>
-        public static string LayoutPage_ShowCurrentControllerTemplates {
-            get {
+        public static string LayoutPage_ShowCurrentControllerTemplates
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_ShowCurrentControllerTemplates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Layout template picker.
         /// </summary>
-        public static string LayoutPage_TemplatePicker {
-            get {
+        public static string LayoutPage_TemplatePicker
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_TemplatePicker", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to TEMPLATES.
         /// </summary>
-        public static string LayoutPage_Templates {
-            get {
+        public static string LayoutPage_Templates
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Templates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Trackpads.
         /// </summary>
-        public static string LayoutPage_Trackpads {
-            get {
+        public static string LayoutPage_Trackpads
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Trackpads", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Triggers.
         /// </summary>
-        public static string LayoutPage_Triggers {
-            get {
+        public static string LayoutPage_Triggers
+        {
+            get
+            {
                 return ResourceManager.GetString("LayoutPage_Triggers", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
-        public static string MainWindow_Back {
-            get {
+        public static string MainWindow_Back
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_Back", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
-        public static string MainWindow_ControllerManagementClosePrimary {
-            get {
+        public static string MainWindow_ControllerManagementClosePrimary
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_ControllerManagementClosePrimary", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
-        public static string MainWindow_ControllerManagementCloseSecondary {
-            get {
+        public static string MainWindow_ControllerManagementCloseSecondary
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_ControllerManagementCloseSecondary", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Improve virtual controller detection might not work if you close Handheld Companion. Are you sure ?.
         /// </summary>
-        public static string MainWindow_ControllerManagementCloseText {
-            get {
+        public static string MainWindow_ControllerManagementCloseText
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_ControllerManagementCloseText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
-        public static string MainWindow_ControllerManagementCloseTitle {
-            get {
+        public static string MainWindow_ControllerManagementCloseTitle
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_ControllerManagementCloseTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
-        public static string MainWindow_Exit {
-            get {
+        public static string MainWindow_Exit
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_Exit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Handheld Companion.
         /// </summary>
-        public static string MainWindow_HandheldCompanion {
-            get {
+        public static string MainWindow_HandheldCompanion
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_HandheldCompanion", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Main Window.
         /// </summary>
-        public static string MainWindow_MainWindow {
-            get {
+        public static string MainWindow_MainWindow
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_MainWindow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
-        public static string MainWindow_navAbout {
-            get {
+        public static string MainWindow_navAbout
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navAbout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller.
         /// </summary>
-        public static string MainWindow_navController {
-            get {
+        public static string MainWindow_navController
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Device.
         /// </summary>
-        public static string MainWindow_navDevice {
-            get {
+        public static string MainWindow_navDevice
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navDevice", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hotkeys.
         /// </summary>
-        public static string MainWindow_navHotkeys {
-            get {
+        public static string MainWindow_navHotkeys
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navHotkeys", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Navigate.
         /// </summary>
-        public static string MainWindow_Navigate {
-            get {
+        public static string MainWindow_Navigate
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_Navigate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Notifications.
         /// </summary>
-        public static string MainWindow_navNotifications {
-            get {
+        public static string MainWindow_navNotifications
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navNotifications", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
-        public static string MainWindow_navOverlay {
-            get {
+        public static string MainWindow_navOverlay
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navOverlay", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Performance.
         /// </summary>
-        public static string MainWindow_navPerformance {
-            get {
+        public static string MainWindow_navPerformance
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navPerformance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
-        public static string MainWindow_navProfiles {
-            get {
+        public static string MainWindow_navProfiles
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_navProfiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
-        public static string MainWindow_OK {
-            get {
+        public static string MainWindow_OK
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_OK", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Quick Tools.
         /// </summary>
-        public static string MainWindow_QuickTools {
-            get {
+        public static string MainWindow_QuickTools
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_QuickTools", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select.
         /// </summary>
-        public static string MainWindow_Select {
-            get {
+        public static string MainWindow_Select
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_Select", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
-        public static string MainWindow_Settings {
-            get {
+        public static string MainWindow_Settings
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_Settings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle.
         /// </summary>
-        public static string MainWindow_Toggle {
-            get {
+        public static string MainWindow_Toggle
+        {
+            get
+            {
                 return ResourceManager.GetString("MainWindow_Toggle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No notifications yet.
         /// </summary>
-        public static string NotificationsPage_NothingToSee {
-            get {
+        public static string NotificationsPage_NothingToSee
+        {
+            get
+            {
                 return ResourceManager.GetString("NotificationsPage_NothingToSee", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You have no notifications right now..
         /// </summary>
-        public static string NotificationsPage_NothingToSeeDesc {
-            get {
+        public static string NotificationsPage_NothingToSeeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("NotificationsPage_NothingToSeeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
-        public static string Overlay_Overlay {
-            get {
+        public static string Overlay_Overlay
+        {
+            get
+            {
                 return ResourceManager.GetString("Overlay_Overlay", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to 8BitDo Lite 2.
         /// </summary>
-        public static string OverlayPage_8BitDoLite2Controller {
-            get {
+        public static string OverlayPage_8BitDoLite2Controller
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_8BitDoLite2Controller", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Alignment.
         /// </summary>
-        public static string OverlayPage_Alignment {
-            get {
+        public static string OverlayPage_Alignment
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Alignment", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay alignment.
         /// </summary>
-        public static string OverlayPage_AlignmentDesc {
-            get {
+        public static string OverlayPage_AlignmentDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_AlignmentDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change trackpads overlay alignment.
         /// </summary>
-        public static string OverlayPage_AlignmentTrackpadDesc {
-            get {
+        public static string OverlayPage_AlignmentTrackpadDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_AlignmentTrackpadDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Always on top.
         /// </summary>
-        public static string OverlayPage_AlwaysOnTop {
-            get {
+        public static string OverlayPage_AlwaysOnTop
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_AlwaysOnTop", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to When toggled, 3D controller overlay will stay on top of other windows.
         /// </summary>
-        public static string OverlayPage_AlwaysOnTopDesc {
-            get {
+        public static string OverlayPage_AlwaysOnTopDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_AlwaysOnTopDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
-        public static string OverlayPage_BackButton {
-            get {
+        public static string OverlayPage_BackButton
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_BackButton", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Battery Level.
+        /// </summary>
+        public static string OverlayPage_BATTLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_BATTLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your battery..
+        /// </summary>
+        public static string OverlayPage_BATTLevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_BATTLevelDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Face camera.
         /// </summary>
-        public static string OverlayPage_CameraAngle {
-            get {
+        public static string OverlayPage_CameraAngle
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_CameraAngle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay model behaviour for facing the camera.
         /// </summary>
-        public static string OverlayPage_CameraAngleDesc {
-            get {
+        public static string OverlayPage_CameraAngleDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_CameraAngleDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Stationary pitch.
         /// </summary>
-        public static string OverlayPage_CameraAnglePitch {
-            get {
+        public static string OverlayPage_CameraAnglePitch
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_CameraAnglePitch", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the angle.
         /// </summary>
-        public static string OverlayPage_CameraAnglePitchDesc {
-            get {
+        public static string OverlayPage_CameraAnglePitchDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_CameraAnglePitchDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Background Color.
         /// </summary>
-        public static string OverlayPage_Color {
-            get {
+        public static string OverlayPage_Color
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Color", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay background color.
         /// </summary>
-        public static string OverlayPage_ColorDesc {
-            get {
+        public static string OverlayPage_ColorDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_ColorDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller options.
         /// </summary>
-        public static string OverlayPage_ControllerOptions {
-            get {
+        public static string OverlayPage_ControllerOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_ControllerOptions", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to CPU Level.
+        /// </summary>
+        public static string OverlayPage_CPULevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_CPULevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your CPU..
+        /// </summary>
+        public static string OverlayPage_CPULevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_CPULevelDesc", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Settings.
+        /// </summary>
+        public static string OverlayPage_CustomSettings
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_CustomSettings", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to PlayStation DualSense.
         /// </summary>
-        public static string OverlayPage_DualSenseController {
-            get {
+        public static string OverlayPage_DualSenseController
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_DualSenseController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated controller.
         /// </summary>
-        public static string OverlayPage_EmulatedController {
-            get {
+        public static string OverlayPage_EmulatedController
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_EmulatedController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Face camera.
         /// </summary>
-        public static string OverlayPage_FaceCamera {
-            get {
+        public static string OverlayPage_FaceCamera
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_FaceCamera", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to 3D Model slowly rotates to face camera as default position.
         /// </summary>
-        public static string OverlayPage_FaceCameraDesc {
-            get {
+        public static string OverlayPage_FaceCameraDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_FaceCameraDesc", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to FPS Level.
+        /// </summary>
+        public static string OverlayPage_FPSLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_FPSLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your FPS..
+        /// </summary>
+        public static string OverlayPage_FPSLevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_FPSLevelDesc", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to GPU Level.
+        /// </summary>
+        public static string OverlayPage_GPULevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_GPULevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your GPU..
+        /// </summary>
+        public static string OverlayPage_GPULevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_GPULevelDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Listening....
         /// </summary>
-        public static string OverlayPage_Listening {
-            get {
+        public static string OverlayPage_Listening
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Listening", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to MACHENIKE HG510.
         /// </summary>
-        public static string OverlayPage_MachenikeHG510Controller {
-            get {
+        public static string OverlayPage_MachenikeHG510Controller
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_MachenikeHG510Controller", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Main trigger.
         /// </summary>
-        public static string OverlayPage_MainTrigger {
-            get {
+        public static string OverlayPage_MainTrigger
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_MainTrigger", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay main trigger.
         /// </summary>
-        public static string OverlayPage_MainTriggerDesc {
-            get {
+        public static string OverlayPage_MainTriggerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_MainTriggerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ms.
         /// </summary>
-        public static string OverlayPage_Millisecond {
-            get {
+        public static string OverlayPage_Millisecond
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Millisecond", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Motion.
         /// </summary>
-        public static string OverlayPage_MotionActivated {
-            get {
+        public static string OverlayPage_MotionActivated
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_MotionActivated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Model will move in accordance with user movements based on sensor information.
         /// </summary>
-        public static string OverlayPage_MotionActivatedDesc {
-            get {
+        public static string OverlayPage_MotionActivatedDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_MotionActivatedDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to N64.
         /// </summary>
-        public static string OverlayPage_N64Controller {
-            get {
+        public static string OverlayPage_N64Controller
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_N64Controller", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OEM controller.
         /// </summary>
-        public static string OverlayPage_OEMController {
-            get {
+        public static string OverlayPage_OEMController
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OEMController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Opacity.
         /// </summary>
-        public static string OverlayPage_Opacity {
-            get {
+        public static string OverlayPage_Opacity
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Opacity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay opacity.
         /// </summary>
-        public static string OverlayPage_OpacityControllerDesc {
-            get {
+        public static string OverlayPage_OpacityControllerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OpacityControllerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change trackpads overlay opacity.
         /// </summary>
-        public static string OverlayPage_OpacityTrackpadDesc {
-            get {
+        public static string OverlayPage_OpacityTrackpadDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OpacityTrackpadDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
-        public static string OverlayPage_Overlay {
-            get {
+        public static string OverlayPage_Overlay
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Overlay", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Overlay display level.
-        /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel {
-            get {
-                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disabled.
         /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel_Disabled {
-            get {
-                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Disabled", resourceCulture);
+        public static string OverlayPage_OverlayDisplayCustomLevel_Disabled
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayCustomLevel_Disabled", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Extended.
-        /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel_Extended {
-            get {
-                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Extended", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to External.
-        /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel_External {
-            get {
-                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_External", resourceCulture);
-            }
-        }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Full.
         /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel_Full {
-            get {
-                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Full", resourceCulture);
+        public static string OverlayPage_OverlayDisplayCustomLevel_Full
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayCustomLevel_Full", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Minimal.
         /// </summary>
-        public static string OverlayPage_OverlayDisplayLevel_Minimal {
-            get {
+        public static string OverlayPage_OverlayDisplayCustomLevel_Minimal
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayCustomLevel_Minimal", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay display level.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Custom.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Custom
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Custom", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Disabled
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Disabled", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Extended.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Extended
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Extended", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to External.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_External
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_External", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Full.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Full
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Full", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Minimal.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Minimal
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Minimal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the on-screen display level of information.
         /// </summary>
-        public static string OverlayPage_OverlayDisplayLevelDesc {
-            get {
+        public static string OverlayPage_OverlayDisplayLevelDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayLevelDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Update rate.
         /// </summary>
-        public static string OverlayPage_OverlayDisplayUpdateRate {
-            get {
+        public static string OverlayPage_OverlayDisplayUpdateRate
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayUpdateRate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the on-screen display update rate.
         /// </summary>
-        public static string OverlayPage_OverlayDisplayUpdateRateDesc {
-            get {
+        public static string OverlayPage_OverlayDisplayUpdateRateDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayUpdateRateDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay model.
         /// </summary>
-        public static string OverlayPage_OverlayModel {
-            get {
+        public static string OverlayPage_OverlayModel
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayModel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay model.
         /// </summary>
-        public static string OverlayPage_OverlayModelDesc {
-            get {
+        public static string OverlayPage_OverlayModelDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayModelDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay preview.
         /// </summary>
-        public static string OverlayPage_OverlayPreview {
-            get {
+        public static string OverlayPage_OverlayPreview
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_OverlayPreview", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to RAM Level.
+        /// </summary>
+        public static string OverlayPage_RAMLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_RAMLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your RAM..
+        /// </summary>
+        public static string OverlayPage_RAMLevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_RAMLevelDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Render settings.
         /// </summary>
-        public static string OverlayPage_RenderSettings {
-            get {
+        public static string OverlayPage_RenderSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_RenderSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Anti-Aliasing.
         /// </summary>
-        public static string OverlayPage_RenderSettingsAntialiasing {
-            get {
+        public static string OverlayPage_RenderSettingsAntialiasing
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_RenderSettingsAntialiasing", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the render anti-aliasing status.
         /// </summary>
-        public static string OverlayPage_RenderSettingsAntialiasingDesc {
-            get {
+        public static string OverlayPage_RenderSettingsAntialiasingDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_RenderSettingsAntialiasingDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the render settings of your stationary 3D overlay controller model.
         /// </summary>
-        public static string OverlayPage_RenderSettingsDesc {
-            get {
+        public static string OverlayPage_RenderSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_RenderSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Update rate.
         /// </summary>
-        public static string OverlayPage_RenderSettingsFramerate {
-            get {
+        public static string OverlayPage_RenderSettingsFramerate
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_RenderSettingsFramerate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the render update rate, in update per second.
         /// </summary>
-        public static string OverlayPage_RenderSettingsFramerateDesc {
-            get {
+        public static string OverlayPage_RenderSettingsFramerateDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_RenderSettingsFramerateDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Size.
         /// </summary>
-        public static string OverlayPage_Size {
-            get {
+        public static string OverlayPage_Size
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_Size", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change 3D controller overlay size.
         /// </summary>
-        public static string OverlayPage_SizeDesc {
-            get {
+        public static string OverlayPage_SizeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_SizeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change trackpads overlay size.
         /// </summary>
-        public static string OverlayPage_SizeOverlayDesc {
-            get {
+        public static string OverlayPage_SizeOverlayDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_SizeOverlayDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Start.
         /// </summary>
-        public static string OverlayPage_StartButton {
-            get {
+        public static string OverlayPage_StartButton
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_StartButton", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Time Level.
+        /// </summary>
+        public static string OverlayPage_TimeLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_TimeLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your time..
+        /// </summary>
+        public static string OverlayPage_TimeLevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_TimeLevelDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Fisher-Price controller.
         /// </summary>
-        public static string OverlayPage_ToyController {
-            get {
+        public static string OverlayPage_ToyController
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_ToyController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Trackpads options.
         /// </summary>
-        public static string OverlayPage_TrackpadsOptions {
-            get {
+        public static string OverlayPage_TrackpadsOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_TrackpadsOptions", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to VRAM Level.
+        /// </summary>
+        public static string OverlayPage_VRAMLevel
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_VRAMLevel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your VRAM..
+        /// </summary>
+        public static string OverlayPage_VRAMLevelDesc
+        {
+            get
+            {
+                return ResourceManager.GetString("OverlayPage_VRAMLevelDesc", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Xbox One.
         /// </summary>
-        public static string OverlayPage_XboxOneController {
-            get {
+        public static string OverlayPage_XboxOneController
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_XboxOneController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ZD O+.
         /// </summary>
-        public static string OverlayPage_ZDOPlusController {
-            get {
+        public static string OverlayPage_ZDOPlusController
+        {
+            get
+            {
                 return ResourceManager.GetString("OverlayPage_ZDOPlusController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Performance.
         /// </summary>
-        public static string PerformancePage_Device {
-            get {
+        public static string PerformancePage_Device
+        {
+            get
+            {
                 return ResourceManager.GetString("PerformancePage_Device", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default power and fan speed for optimal performance, temperature, noise, and battery life..
         /// </summary>
-        public static string PowerProfileDefaultDescription {
-            get {
+        public static string PowerProfileDefaultDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileDefaultDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string PowerProfileDefaultName {
-            get {
+        public static string PowerProfileDefaultName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileDefaultName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preset similar to Balanced Mode in LS. TDP Limit: 15W.
         /// </summary>
-        public static string PowerProfileLegionGoBalancedDescription {
-            get {
+        public static string PowerProfileLegionGoBalancedDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileLegionGoBalancedDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Legion Go - Balanced.
         /// </summary>
-        public static string PowerProfileLegionGoBalancedName {
-            get {
+        public static string PowerProfileLegionGoBalancedName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileLegionGoBalancedName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preset similar to Performance Mode in LS. TDP Limit: 20W.
         /// </summary>
-        public static string PowerProfileLegionGoPerformanceDescription {
-            get {
+        public static string PowerProfileLegionGoPerformanceDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileLegionGoPerformanceDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Legion Go - Performance.
         /// </summary>
-        public static string PowerProfileLegionGoPerformanceName {
-            get {
+        public static string PowerProfileLegionGoPerformanceName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileLegionGoPerformanceName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preset similar to Quiet Mode in LS. TDP Limit: 8W.
         /// </summary>
-        public static string PowerProfileLegionGoQuietDescription {
-            get {
+        public static string PowerProfileLegionGoQuietDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileLegionGoQuietDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Legion Go - Quiet.
         /// </summary>
-        public static string PowerProfileLegionGoQuietName {
-            get {
+        public static string PowerProfileLegionGoQuietName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileLegionGoQuietName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User-defined power and fan speed..
         /// </summary>
-        public static string PowerProfileManualDescription {
-            get {
+        public static string PowerProfileManualDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileManualDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Manual mode: {0}.
         /// </summary>
-        public static string PowerProfileManualName {
-            get {
+        public static string PowerProfileManualName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileManualName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Balances performance, temperature and acoustic for any scenario..
         /// </summary>
-        public static string PowerProfileROGAllyPerformanceDescription {
-            get {
+        public static string PowerProfileROGAllyPerformanceDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileROGAllyPerformanceDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ROG Ally - Performance.
         /// </summary>
-        public static string PowerProfileROGAllyPerformanceName {
-            get {
+        public static string PowerProfileROGAllyPerformanceName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileROGAllyPerformanceName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Limits CPU and GPU power, but keeps noise levels quiet..
         /// </summary>
-        public static string PowerProfileROGAllySilentDescription {
-            get {
+        public static string PowerProfileROGAllySilentDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileROGAllySilentDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ROG Ally - Silent.
         /// </summary>
-        public static string PowerProfileROGAllySilentName {
-            get {
+        public static string PowerProfileROGAllySilentName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileROGAllySilentName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans..
         /// </summary>
-        public static string PowerProfileROGAllyTurboDescription {
-            get {
+        public static string PowerProfileROGAllyTurboDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileROGAllyTurboDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to ROG Ally - Turbo.
         /// </summary>
-        public static string PowerProfileROGAllyTurboName {
-            get {
+        public static string PowerProfileROGAllyTurboName
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfileROGAllyTurboName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Device presets.
         /// </summary>
-        public static string PowerProfilesPage_DevicePresets {
-            get {
+        public static string PowerProfilesPage_DevicePresets
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfilesPage_DevicePresets", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preset selection.
         /// </summary>
-        public static string PowerProfilesPage_PresetSelection {
-            get {
+        public static string PowerProfilesPage_PresetSelection
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfilesPage_PresetSelection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select the preset you would like to edit.
         /// </summary>
-        public static string PowerProfilesPage_PresetSelectionDesc {
-            get {
+        public static string PowerProfilesPage_PresetSelectionDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfilesPage_PresetSelectionDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User presets.
         /// </summary>
-        public static string PowerProfilesPage_UserPresets {
-            get {
+        public static string PowerProfilesPage_UserPresets
+        {
+            get
+            {
                 return ResourceManager.GetString("PowerProfilesPage_UserPresets", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Resume.
         /// </summary>
-        public static string ProcessEx_processResume {
-            get {
+        public static string ProcessEx_processResume
+        {
+            get
+            {
                 return ResourceManager.GetString("ProcessEx_processResume", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Suspend.
         /// </summary>
-        public static string ProcessEx_processSuspend {
-            get {
+        public static string ProcessEx_processSuspend
+        {
+            get
+            {
                 return ResourceManager.GetString("ProcessEx_processSuspend", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Accelerometer multiplier.
         /// </summary>
-        public static string ProfilesPage_AccelerometerMultiplier {
-            get {
+        public static string ProfilesPage_AccelerometerMultiplier
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AccelerometerMultiplier", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the system reported accelerometer value.
         /// </summary>
-        public static string ProfilesPage_AccelerometerMultiplierDesc {
-            get {
+        public static string ProfilesPage_AccelerometerMultiplierDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AccelerometerMultiplierDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
-        public static string ProfilesPage_AdditionalSettings {
-            get {
+        public static string ProfilesPage_AdditionalSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AdditionalSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Anti-deadzone.
         /// </summary>
-        public static string ProfilesPage_AntiDeadzone {
-            get {
+        public static string ProfilesPage_AntiDeadzone
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AntiDeadzone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the in-game anti-deadzone, in percentage.
         /// </summary>
-        public static string ProfilesPage_AntiDeadzoneDesc {
-            get {
+        public static string ProfilesPage_AntiDeadzoneDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AntiDeadzoneDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  %.
         /// </summary>
-        public static string ProfilesPage_AntiDeadzoneUnitPercentage {
-            get {
+        public static string ProfilesPage_AntiDeadzoneUnitPercentage
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AntiDeadzoneUnitPercentage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to apply this template? All layout settings will be overridden..
         /// </summary>
-        public static string ProfilesPage_AreYouSureApplyTemplate1 {
-            get {
+        public static string ProfilesPage_AreYouSureApplyTemplate1
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AreYouSureApplyTemplate1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You can&apos;t undo this action. Previously applied template: {0}.
         /// </summary>
-        public static string ProfilesPage_AreYouSureApplyTemplate2 {
-            get {
+        public static string ProfilesPage_AreYouSureApplyTemplate2
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AreYouSureApplyTemplate2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete?.
         /// </summary>
-        public static string ProfilesPage_AreYouSureDelete1 {
-            get {
+        public static string ProfilesPage_AreYouSureDelete1
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AreYouSureDelete1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This item will be deleted immediatly. You can&apos;t undo this action..
         /// </summary>
-        public static string ProfilesPage_AreYouSureDelete2 {
-            get {
+        public static string ProfilesPage_AreYouSureDelete2
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AreYouSureDelete2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to overwrite this profile?.
         /// </summary>
-        public static string ProfilesPage_AreYouSureOverwrite1 {
-            get {
+        public static string ProfilesPage_AreYouSureOverwrite1
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AreYouSureOverwrite1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} will be overwriten. You can&apos;t undo this action..
         /// </summary>
-        public static string ProfilesPage_AreYouSureOverwrite2 {
-            get {
+        public static string ProfilesPage_AreYouSureOverwrite2
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AreYouSureOverwrite2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatic TDP.
         /// </summary>
-        public static string ProfilesPage_AutoTDP {
-            get {
+        public static string ProfilesPage_AutoTDP
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AutoTDP", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatic adjustment of TDP based on measured FPS and requested FPS target.
         /// </summary>
-        public static string ProfilesPage_AutoTDPDesc {
-            get {
+        public static string ProfilesPage_AutoTDPDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AutoTDPDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Framerate target.
         /// </summary>
-        public static string ProfilesPage_AutoTDPFPS {
-            get {
+        public static string ProfilesPage_AutoTDPFPS
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AutoTDPFPS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Desired FPS target value for automatic TDP controller.
         /// </summary>
-        public static string ProfilesPage_AutoTDPFPSDesc {
-            get {
+        public static string ProfilesPage_AutoTDPFPSDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_AutoTDPFPSDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Boost power limit.
         /// </summary>
-        public static string ProfilesPage_BoostPower {
-            get {
+        public static string ProfilesPage_BoostPower
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_BoostPower", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change boost thermal power limit.
         /// </summary>
-        public static string ProfilesPage_BoostPowerDesc {
-            get {
+        public static string ProfilesPage_BoostPowerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_BoostPowerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        public static string ProfilesPage_Cancel {
-            get {
+        public static string ProfilesPage_Cancel
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Cancel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller layout.
         /// </summary>
-        public static string ProfilesPage_ControllerLayout {
-            get {
+        public static string ProfilesPage_ControllerLayout
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ControllerLayout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the virtual controller layout.
         /// </summary>
-        public static string ProfilesPage_ControllerLayoutDesc {
-            get {
+        public static string ProfilesPage_ControllerLayoutDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ControllerLayoutDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller settings.
         /// </summary>
-        public static string ProfilesPage_ControllerSettings {
-            get {
+        public static string ProfilesPage_ControllerSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ControllerSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the virtual controller settings.
         /// </summary>
-        public static string ProfilesPage_ControllerSettingsDesc {
-            get {
+        public static string ProfilesPage_ControllerSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ControllerSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to CPU.
         /// </summary>
-        public static string ProfilesPage_CPU {
-            get {
+        public static string ProfilesPage_CPU
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_CPU", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to CPU Clock max frequency.
         /// </summary>
-        public static string ProfilesPage_CPUMhz {
-            get {
+        public static string ProfilesPage_CPUMhz
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_CPUMhz", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create a new profile.
         /// </summary>
-        public static string ProfilesPage_CreateNewProfile {
-            get {
+        public static string ProfilesPage_CreateNewProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_CreateNewProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create a new power preset.
         /// </summary>
-        public static string ProfilesPage_CreatePowerProfile {
-            get {
+        public static string ProfilesPage_CreatePowerProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_CreatePowerProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create power preset.
         /// </summary>
-        public static string ProfilesPage_CreatePowerProfileButton {
-            get {
+        public static string ProfilesPage_CreatePowerProfileButton
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_CreatePowerProfileButton", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software..
         /// </summary>
-        public static string ProfilesPage_DefaultDeviceProfile {
-            get {
+        public static string ProfilesPage_DefaultDeviceProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_DefaultDeviceProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to This is the default preset, you cannot modify the fan curve on this preset..
         /// </summary>
-        public static string ProfilesPage_DefaultProfile {
-            get {
+        public static string ProfilesPage_DefaultProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_DefaultProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
-        public static string ProfilesPage_Delete {
-            get {
+        public static string ProfilesPage_Delete
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Delete", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete power preset.
         /// </summary>
-        public static string ProfilesPage_DeletePowerProfileButton {
-            get {
+        public static string ProfilesPage_DeletePowerProfileButton
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_DeletePowerProfileButton", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Delete profile.
         /// </summary>
-        public static string ProfilesPage_DeleteProfile {
-            get {
+        public static string ProfilesPage_DeleteProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_DeleteProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated controller type.
         /// </summary>
-        public static string ProfilesPage_EmulatedController {
-            get {
+        public static string ProfilesPage_EmulatedController
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EmulatedController", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string ProfilesPage_EmulatedControllerDefault {
-            get {
+        public static string ProfilesPage_EmulatedControllerDefault
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EmulatedControllerDefault", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The emulated controller to be used when this profile is active.
         /// </summary>
-        public static string ProfilesPage_EmulatedControllerDesc {
-            get {
+        public static string ProfilesPage_EmulatedControllerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EmulatedControllerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated DualShock 4 controller.
         /// </summary>
-        public static string ProfilesPage_EmulatedControllerDS4 {
-            get {
+        public static string ProfilesPage_EmulatedControllerDS4
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EmulatedControllerDS4", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Emulated XBOX 360 controller.
         /// </summary>
-        public static string ProfilesPage_EmulatedControllerXbox {
-            get {
+        public static string ProfilesPage_EmulatedControllerXbox
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EmulatedControllerXbox", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User per-game profile.
         /// </summary>
-        public static string ProfilesPage_EnableProfile {
-            get {
+        public static string ProfilesPage_EnableProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EnableProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The profile will be automatically applied when the associated application is detected.
         /// </summary>
-        public static string ProfilesPage_EnableProfileDesc {
-            get {
+        public static string ProfilesPage_EnableProfileDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EnableProfileDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Energy performance preference (EPP).
         /// </summary>
-        public static string ProfilesPage_EPP {
-            get {
+        public static string ProfilesPage_EPP
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EPP", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to CPU/GPU power balance.
         /// </summary>
-        public static string ProfilesPage_EPPBalance {
-            get {
+        public static string ProfilesPage_EPPBalance
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EPPBalance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Specifies power distribution policy between CPU and GPU.
         /// </summary>
-        public static string ProfilesPage_EPPDesc {
-            get {
+        public static string ProfilesPage_EPPDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_EPPDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fan settings.
         /// </summary>
-        public static string ProfilesPage_FanSettings {
-            get {
+        public static string ProfilesPage_FanSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_FanSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the fan settings.
         /// </summary>
-        public static string ProfilesPage_FanSettingsDesc {
-            get {
+        public static string ProfilesPage_FanSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_FanSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Framerate limit.
         /// </summary>
-        public static string ProfilesPage_FramerateLimit {
-            get {
+        public static string ProfilesPage_FramerateLimit
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_FramerateLimit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Limits framerate for 3D applications.
         /// </summary>
-        public static string ProfilesPage_FramerateLimitDesc {
-            get {
+        public static string ProfilesPage_FramerateLimitDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_FramerateLimitDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Global settings.
         /// </summary>
-        public static string ProfilesPage_GlobalSettings {
-            get {
+        public static string ProfilesPage_GlobalSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GlobalSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the global profiles settings.
         /// </summary>
-        public static string ProfilesPage_GlobalSettingsDesc {
-            get {
+        public static string ProfilesPage_GlobalSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GlobalSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GPU.
         /// </summary>
-        public static string ProfilesPage_GPU {
-            get {
+        public static string ProfilesPage_GPU
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GPU", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GPU Clock max frequency.
         /// </summary>
-        public static string ProfilesPage_GPUMhz {
-            get {
+        public static string ProfilesPage_GPUMhz
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GPUMhz", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Maximum clock speed of the GPU in Mhz.
         /// </summary>
-        public static string ProfilesPage_GPUMhzDesc {
-            get {
+        public static string ProfilesPage_GPUMhzDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GPUMhzDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GPU Scaling.
         /// </summary>
-        public static string ProfilesPage_GPUScaling {
-            get {
+        public static string ProfilesPage_GPUScaling
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GPUScaling", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to GPU will scale up lower resolutions to fit the display.
         /// </summary>
-        public static string ProfilesPage_GPUScalingDesc {
-            get {
+        public static string ProfilesPage_GPUScalingDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GPUScalingDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Graphics settings.
         /// </summary>
-        public static string ProfilesPage_GraphicsSettings {
-            get {
+        public static string ProfilesPage_GraphicsSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GraphicsSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the graphics settings.
         /// </summary>
-        public static string ProfilesPage_GraphicsSettingsDesc {
-            get {
+        public static string ProfilesPage_GraphicsSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GraphicsSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gyrometer multiplier.
         /// </summary>
-        public static string ProfilesPage_GyrometerMultiplier {
-            get {
+        public static string ProfilesPage_GyrometerMultiplier
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GyrometerMultiplier", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the system reported gyrometer value.
         /// </summary>
-        public static string ProfilesPage_GyrometerMultiplierDesc {
-            get {
+        public static string ProfilesPage_GyrometerMultiplierDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GyrometerMultiplierDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Gyro steering axis.
         /// </summary>
-        public static string ProfilesPage_GyroSteeringAxis {
-            get {
+        public static string ProfilesPage_GyroSteeringAxis
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GyroSteeringAxis", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to For controlling the horizontal movement of the controller, you can use either the yaw or roll axis.
         /// </summary>
-        public static string ProfilesPage_GyroSteeringAxisDesc {
-            get {
+        public static string ProfilesPage_GyroSteeringAxisDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_GyroSteeringAxisDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Image Sharpening.
         /// </summary>
-        public static string ProfilesPage_ImageSharpening {
-            get {
+        public static string ProfilesPage_ImageSharpening
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ImageSharpening", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enhances visual detail.
         /// </summary>
-        public static string ProfilesPage_ImageSharpeningDesc {
-            get {
+        public static string ProfilesPage_ImageSharpeningDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ImageSharpeningDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invert horizontal axis.
         /// </summary>
-        public static string ProfilesPage_InvertHorizontalAxis {
-            get {
+        public static string ProfilesPage_InvertHorizontalAxis
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_InvertHorizontalAxis", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invert vertical axis.
         /// </summary>
-        public static string ProfilesPage_InvertVerticalAxis {
-            get {
+        public static string ProfilesPage_InvertVerticalAxis
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_InvertVerticalAxis", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Integer scaling.
         /// </summary>
-        public static string ProfilesPage_IS {
-            get {
+        public static string ProfilesPage_IS
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_IS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Scales up resolution by multiplying each pixel by an integer.
         /// </summary>
-        public static string ProfilesPage_ISDesc {
-            get {
+        public static string ProfilesPage_ISDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ISDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick deadzone % left.
         /// </summary>
-        public static string ProfilesPage_JoystickDeadZoneLeft {
-            get {
+        public static string ProfilesPage_JoystickDeadZoneLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the left joystick.
         /// </summary>
-        public static string ProfilesPage_JoystickDeadZoneLeftDesc {
-            get {
+        public static string ProfilesPage_JoystickDeadZoneLeftDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneLeftDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick deadzone % right.
         /// </summary>
-        public static string ProfilesPage_JoystickDeadZoneRight {
-            get {
+        public static string ProfilesPage_JoystickDeadZoneRight
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the right joystick.
         /// </summary>
-        public static string ProfilesPage_JoystickDeadZoneRightDesc {
-            get {
+        public static string ProfilesPage_JoystickDeadZoneRightDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_JoystickDeadZoneRightDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Motion control settings.
         /// </summary>
-        public static string ProfilesPage_MotionControlSettings {
-            get {
+        public static string ProfilesPage_MotionControlSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_MotionControlSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the motion control settings.
         /// </summary>
-        public static string ProfilesPage_MotionControlSettingsDesc {
-            get {
+        public static string ProfilesPage_MotionControlSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_MotionControlSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
-        public static string ProfilesPage_OK {
-            get {
+        public static string ProfilesPage_OK
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_OK", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Power limit target.
         /// </summary>
-        public static string ProfilesPage_PowerLimitTarget {
-            get {
+        public static string ProfilesPage_PowerLimitTarget
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_PowerLimitTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Power preset.
         /// </summary>
-        public static string ProfilesPage_PowerPreset {
-            get {
+        public static string ProfilesPage_PowerPreset
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_PowerPreset", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the selected power preset.
         /// </summary>
-        public static string ProfilesPage_PowerPresetDesc {
-            get {
+        public static string ProfilesPage_PowerPresetDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_PowerPresetDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Power settings.
         /// </summary>
-        public static string ProfilesPage_PowerSettings {
-            get {
+        public static string ProfilesPage_PowerSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_PowerSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profile details.
         /// </summary>
-        public static string ProfilesPage_ProfileDetails {
-            get {
+        public static string ProfilesPage_ProfileDetails
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileDetails", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profile name.
         /// </summary>
-        public static string ProfilesPage_ProfileName {
-            get {
+        public static string ProfilesPage_ProfileName
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profile path.
         /// </summary>
-        public static string ProfilesPage_ProfilePath {
-            get {
+        public static string ProfilesPage_ProfilePath
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfilePath", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
-        public static string ProfilesPage_Profiles {
-            get {
+        public static string ProfilesPage_Profiles
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Profiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profile selection.
         /// </summary>
-        public static string ProfilesPage_ProfileSelection {
-            get {
+        public static string ProfilesPage_ProfileSelection
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileSelection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select the profile you would like to edit.
         /// </summary>
-        public static string ProfilesPage_ProfileSelectionDesc {
-            get {
+        public static string ProfilesPage_ProfileSelectionDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileSelectionDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profile settings.
         /// </summary>
-        public static string ProfilesPage_ProfileSettings {
-            get {
+        public static string ProfilesPage_ProfileSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profile updated.
         /// </summary>
-        public static string ProfilesPage_ProfileUpdated1 {
-            get {
+        public static string ProfilesPage_ProfileUpdated1
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileUpdated1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to was updated..
         /// </summary>
-        public static string ProfilesPage_ProfileUpdated2 {
-            get {
+        public static string ProfilesPage_ProfileUpdated2
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ProfileUpdated2", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Resolution scale.
         /// </summary>
-        public static string ProfilesPage_ResolutionScale {
-            get {
+        public static string ProfilesPage_ResolutionScale
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScale", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Resolution scale to which integer scaling will apply.
         /// </summary>
-        public static string ProfilesPage_ResolutionScaleDesc {
-            get {
+        public static string ProfilesPage_ResolutionScaleDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Scaling type.
         /// </summary>
-        public static string ProfilesPage_ResolutionScaleType {
-            get {
+        public static string ProfilesPage_ResolutionScaleType
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select scaling type to adapt the scaling aspect ratio.
         /// </summary>
-        public static string ProfilesPage_ResolutionScaleTypeDesc {
-            get {
+        public static string ProfilesPage_ResolutionScaleTypeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Integer Scaling.
         /// </summary>
-        public static string ProfilesPage_ResolutionScaleTypeInteger {
-            get {
+        public static string ProfilesPage_ResolutionScaleTypeInteger
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeInteger", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Nearest Neighbor.
         /// </summary>
-        public static string ProfilesPage_ResolutionScaleTypeNearest {
-            get {
+        public static string ProfilesPage_ResolutionScaleTypeNearest
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeNearest", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Roll.
         /// </summary>
-        public static string ProfilesPage_Roll {
-            get {
+        public static string ProfilesPage_Roll
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Roll", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Radeon Super Resolution.
         /// </summary>
-        public static string ProfilesPage_RSR {
-            get {
+        public static string ProfilesPage_RSR
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_RSR", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to In-driver-based upscaling feature for faster framerates.
         /// </summary>
-        public static string ProfilesPage_RSRDesc {
-            get {
+        public static string ProfilesPage_RSRDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_RSRDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Scaling mode.
         /// </summary>
-        public static string ProfilesPage_ScalingMode {
-            get {
+        public static string ProfilesPage_ScalingMode
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ScalingMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Center.
         /// </summary>
-        public static string ProfilesPage_ScalingMode_Center {
-            get {
+        public static string ProfilesPage_ScalingMode_Center
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ScalingMode_Center", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Full panel.
         /// </summary>
-        public static string ProfilesPage_ScalingMode_FullPanel {
-            get {
+        public static string ProfilesPage_ScalingMode_FullPanel
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ScalingMode_FullPanel", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preserve aspect ratio.
         /// </summary>
-        public static string ProfilesPage_ScalingMode_PreserveAspectRatio {
-            get {
+        public static string ProfilesPage_ScalingMode_PreserveAspectRatio
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ScalingMode_PreserveAspectRatio", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Choose the method used to stretch and position images to fir the display.
         /// </summary>
-        public static string ProfilesPage_ScalingModeDesc {
-            get {
+        public static string ProfilesPage_ScalingModeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ScalingModeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to X.
         /// </summary>
-        public static string ProfilesPage_SensitivityX {
-            get {
+        public static string ProfilesPage_SensitivityX
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_SensitivityX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Y.
         /// </summary>
-        public static string ProfilesPage_SensitivityY {
-            get {
+        public static string ProfilesPage_SensitivityY
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_SensitivityY", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sharpen effect.
         /// </summary>
-        public static string ProfilesPage_Sharpen {
-            get {
+        public static string ProfilesPage_Sharpen
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Sharpen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Style of input.
         /// </summary>
-        public static string ProfilesPage_StyleofInput {
-            get {
+        public static string ProfilesPage_StyleofInput
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_StyleofInput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The physical inputs of the controller can be programmed to act like different types of devices.
         /// </summary>
-        public static string ProfilesPage_StyleofInputTooltip {
-            get {
+        public static string ProfilesPage_StyleofInputTooltip
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_StyleofInputTooltip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Output device.
         /// </summary>
-        public static string ProfilesPage_StyleofOutput {
-            get {
+        public static string ProfilesPage_StyleofOutput
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_StyleofOutput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select the device that will receive the motion commands.
         /// </summary>
-        public static string ProfilesPage_StyleofOutputTooltip {
-            get {
+        public static string ProfilesPage_StyleofOutputTooltip
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_StyleofOutputTooltip", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sub Profiles.
         /// </summary>
-        public static string ProfilesPage_SubProfiles {
-            get {
+        public static string ProfilesPage_SubProfiles
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_SubProfiles", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Add different profiles to the same game.
         /// </summary>
-        public static string ProfilesPage_SubProfilesDesc {
-            get {
+        public static string ProfilesPage_SubProfilesDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_SubProfilesDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sustained power limit.
         /// </summary>
-        public static string ProfilesPage_SustainedPower {
-            get {
+        public static string ProfilesPage_SustainedPower
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_SustainedPower", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change sustained thermal power limit.
         /// </summary>
-        public static string ProfilesPage_SustainedPowerDesc {
-            get {
+        public static string ProfilesPage_SustainedPowerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_SustainedPowerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Thermal Power (TDP) limit.
         /// </summary>
-        public static string ProfilesPage_TDPOverride {
-            get {
+        public static string ProfilesPage_TDPOverride
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_TDPOverride", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Limits processor power for less total power.
         /// </summary>
-        public static string ProfilesPage_TDPOverrideDesc {
-            get {
+        public static string ProfilesPage_TDPOverrideDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_TDPOverrideDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Improve the stick circularity.
         /// </summary>
-        public static string ProfilesPage_ThumbImproveCircularityDesc {
-            get {
+        public static string ProfilesPage_ThumbImproveCircularityDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Circularity stick left.
         /// </summary>
-        public static string ProfilesPage_ThumbImproveCircularityLeft {
-            get {
+        public static string ProfilesPage_ThumbImproveCircularityLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Circularity stick right.
         /// </summary>
-        public static string ProfilesPage_ThumbImproveCircularityRight {
-            get {
+        public static string ProfilesPage_ThumbImproveCircularityRight
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_ThumbImproveCircularityRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left trigger deadzone %.
         /// </summary>
-        public static string ProfilesPage_TriggerDeadZoneLeft {
-            get {
+        public static string ProfilesPage_TriggerDeadZoneLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the left trigger.
         /// </summary>
-        public static string ProfilesPage_TriggerDeadZoneLeftDesc {
-            get {
+        public static string ProfilesPage_TriggerDeadZoneLeftDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneLeftDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right trigger deadzone %.
         /// </summary>
-        public static string ProfilesPage_TriggerDeadZoneRight {
-            get {
+        public static string ProfilesPage_TriggerDeadZoneRight
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adjust the inner and outer deadzone percentage of the right trigger.
         /// </summary>
-        public static string ProfilesPage_TriggerDeadZoneRightDesc {
-            get {
+        public static string ProfilesPage_TriggerDeadZoneRightDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_TriggerDeadZoneRightDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Motion anti-deadzone.
         /// </summary>
-        public static string ProfilesPage_UMCAntiDeadzone {
-            get {
+        public static string ProfilesPage_UMCAntiDeadzone
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCAntiDeadzone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Compensate for in game deadzone, improve registration of small movements.
         /// </summary>
-        public static string ProfilesPage_UMCAntiDeadzoneDesc {
-            get {
+        public static string ProfilesPage_UMCAntiDeadzoneDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCAntiDeadzoneDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable universal motion controller.
         /// </summary>
-        public static string ProfilesPage_UMCEnable {
-            get {
+        public static string ProfilesPage_UMCEnable
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCEnable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disabled, turn on with button(s).
         /// </summary>
-        public static string ProfilesPage_UMCMotionOff {
-            get {
+        public static string ProfilesPage_UMCMotionOff
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCMotionOff", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enabled, turn off with button(s).
         /// </summary>
-        public static string ProfilesPage_UMCMotionOn {
-            get {
+        public static string ProfilesPage_UMCMotionOn
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCMotionOn", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Motion activation.
         /// </summary>
-        public static string ProfilesPage_UMCMotionOnOff {
-            get {
+        public static string ProfilesPage_UMCMotionOnOff
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCMotionOnOff", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Motion input disabled: hold selected button(s) to enable motion.
         ///Motion input enabled: hold selected button(s) to disable motion.
         ///Motion input toggle: press selected button(s) to switch motion state..
         /// </summary>
-        public static string ProfilesPage_UMCMotionOnOffDesc {
-            get {
+        public static string ProfilesPage_UMCMotionOnOffDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCMotionOnOffDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toggle between enabled or disabled with button(s).
         /// </summary>
-        public static string ProfilesPage_UMCMotionToggle {
-            get {
+        public static string ProfilesPage_UMCMotionToggle
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCMotionToggle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select the device that will receive the motion commands.
         /// </summary>
-        public static string ProfilesPage_UMCSelectionRightLeftDesc {
-            get {
+        public static string ProfilesPage_UMCSelectionRightLeftDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCSelectionRightLeftDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Universal motion control settings.
         /// </summary>
-        public static string ProfilesPage_UMCSettings {
-            get {
+        public static string ProfilesPage_UMCSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Translate device motions into controller inputs.
         /// </summary>
-        public static string ProfilesPage_UMCSettingsDesc {
-            get {
+        public static string ProfilesPage_UMCSettingsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UMCSettingsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Update profile.
         /// </summary>
-        public static string ProfilesPage_UpdateProfile {
-            get {
+        public static string ProfilesPage_UpdateProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_UpdateProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Allow the application to access device physical controller.
         /// </summary>
-        public static string ProfilesPage_Whitelist {
-            get {
+        public static string ProfilesPage_Whitelist
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Whitelist", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Extended compatibility (XInputPlus).
         /// </summary>
-        public static string ProfilesPage_Wrapper {
-            get {
+        public static string ProfilesPage_Wrapper
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Wrapper", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disabled.
         /// </summary>
-        public static string ProfilesPage_Wrapper_Disabled {
-            get {
+        public static string ProfilesPage_Wrapper_Disabled
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Wrapper_Disabled", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Injection (recommended).
         /// </summary>
-        public static string ProfilesPage_Wrapper_Injection {
-            get {
+        public static string ProfilesPage_Wrapper_Injection
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Wrapper_Injection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Redirection.
         /// </summary>
-        public static string ProfilesPage_Wrapper_Redirection {
-            get {
+        public static string ProfilesPage_Wrapper_Redirection
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Wrapper_Redirection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        public static string ProfilesPage_WrapperDesc {
-            get {
+        public static string ProfilesPage_WrapperDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_WrapperDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yaw.
         /// </summary>
-        public static string ProfilesPage_Yaw {
-            get {
+        public static string ProfilesPage_Yaw
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Yaw", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
-        public static string ProfilesPage_Yes {
-            get {
+        public static string ProfilesPage_Yes
+        {
+            get
+            {
                 return ResourceManager.GetString("ProfilesPage_Yes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
-        public static string Properties_Resources_ControllerPage_Disconnect {
-            get {
+        public static string Properties_Resources_ControllerPage_Disconnect
+        {
+            get
+            {
                 return ResourceManager.GetString("Properties.Resources.ControllerPage_Disconnect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Settings, display profile.
         /// </summary>
-        public static string QuickDevicePage_Desc {
-            get {
+        public static string QuickDevicePage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickDevicePage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Device.
         /// </summary>
-        public static string QuickDevicePage_Title {
-            get {
+        public static string QuickDevicePage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickDevicePage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        public static string QuickHomePage_Desc {
-            get {
+        public static string QuickHomePage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickHomePage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Home.
         /// </summary>
-        public static string QuickHomePage_Title {
-            get {
+        public static string QuickHomePage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickHomePage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Manage on-screen overlay.
         /// </summary>
-        public static string QuickOverlayPage_Desc {
-            get {
+        public static string QuickOverlayPage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickOverlayPage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Overlay.
         /// </summary>
-        public static string QuickOverlayPage_Title {
-            get {
+        public static string QuickOverlayPage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickOverlayPage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to FPS.
         /// </summary>
-        public static string QuickPerformancePage_AutoTDPUnitFPS {
-            get {
+        public static string QuickPerformancePage_AutoTDPUnitFPS
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_AutoTDPUnitFPS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to CPU boost mode.
         /// </summary>
-        public static string QuickPerformancePage_CPUBoostMode {
-            get {
+        public static string QuickPerformancePage_CPUBoostMode
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_CPUBoostMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Set current CPU boost mode.
         /// </summary>
-        public static string QuickPerformancePage_CPUBoostModeDesc {
-            get {
+        public static string QuickPerformancePage_CPUBoostModeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_CPUBoostModeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Manual CPU Clock Control.
         /// </summary>
-        public static string QuickPerformancePage_CPUControl {
-            get {
+        public static string QuickPerformancePage_CPUControl
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_CPUControl", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sets the CPU to a fixed clock.
         /// </summary>
-        public static string QuickPerformancePage_CPUControlDesc {
-            get {
+        public static string QuickPerformancePage_CPUControlDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_CPUControlDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  Mhz.
         /// </summary>
-        public static string QuickPerformancePage_CPUUnit {
-            get {
+        public static string QuickPerformancePage_CPUUnit
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_CPUUnit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        public static string QuickPerformancePage_Desc {
-            get {
+        public static string QuickPerformancePage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Fan override.
         /// </summary>
-        public static string QuickPerformancePage_FanOverride {
-            get {
+        public static string QuickPerformancePage_FanOverride
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_FanOverride", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Set the fan duty cycle to user-defined value.
         /// </summary>
-        public static string QuickPerformancePage_FanOverrideDesc {
-            get {
+        public static string QuickPerformancePage_FanOverrideDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_FanOverrideDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to %.
         /// </summary>
-        public static string QuickPerformancePage_FanOverridePercentage {
-            get {
+        public static string QuickPerformancePage_FanOverridePercentage
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_FanOverridePercentage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Manual GPU Clock Control.
         /// </summary>
-        public static string QuickPerformancePage_GPUControl {
-            get {
+        public static string QuickPerformancePage_GPUControl
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_GPUControl", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sets the GPU to a fixed clock.
         /// </summary>
-        public static string QuickPerformancePage_GPUControlDesc {
-            get {
+        public static string QuickPerformancePage_GPUControlDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_GPUControlDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  MHz.
         /// </summary>
-        public static string QuickPerformancePage_GPUUnit {
-            get {
+        public static string QuickPerformancePage_GPUUnit
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_GPUUnit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Power mode.
         /// </summary>
-        public static string QuickPerformancePage_PowerMode {
-            get {
+        public static string QuickPerformancePage_PowerMode
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_PowerMode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Balanced.
         /// </summary>
-        public static string QuickPerformancePage_PowerModeBalanced {
-            get {
+        public static string QuickPerformancePage_PowerModeBalanced
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_PowerModeBalanced", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Optimize your device based on power use and performance.
         /// </summary>
-        public static string QuickPerformancePage_PowerModeDesc {
-            get {
+        public static string QuickPerformancePage_PowerModeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_PowerModeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Efficiency.
         /// </summary>
-        public static string QuickPerformancePage_PowerModeEfficiency {
-            get {
+        public static string QuickPerformancePage_PowerModeEfficiency
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_PowerModeEfficiency", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Performance.
         /// </summary>
-        public static string QuickPerformancePage_PowerModePerformance {
-            get {
+        public static string QuickPerformancePage_PowerModePerformance
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_PowerModePerformance", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Boost.
         /// </summary>
-        public static string QuickPerformancePage_TDPBoost {
-            get {
+        public static string QuickPerformancePage_TDPBoost
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_TDPBoost", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Thermal Power (TDP) Limit.
         /// </summary>
-        public static string QuickPerformancePage_TDPLimit {
-            get {
+        public static string QuickPerformancePage_TDPLimit
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_TDPLimit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Limits processor power for less total power.
         /// </summary>
-        public static string QuickPerformancePage_TDPLimitDesc {
-            get {
+        public static string QuickPerformancePage_TDPLimitDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_TDPLimitDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Thermal Power Limit is overwritten by a profile.
         /// </summary>
-        public static string QuickPerformancePage_TDPOverWrittenWarning {
-            get {
+        public static string QuickPerformancePage_TDPOverWrittenWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_TDPOverWrittenWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sustained.
         /// </summary>
-        public static string QuickPerformancePage_TDPSustained {
-            get {
+        public static string QuickPerformancePage_TDPSustained
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_TDPSustained", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to  W.
         /// </summary>
-        public static string QuickPerformancePage_TDPUnitWatt {
-            get {
+        public static string QuickPerformancePage_TDPUnitWatt
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_TDPUnitWatt", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Performance.
         /// </summary>
-        public static string QuickPerformancePage_Title {
-            get {
+        public static string QuickPerformancePage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickPerformancePage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Create profile.
         /// </summary>
-        public static string QuickProfilesPage_Create {
-            get {
+        public static string QuickProfilesPage_Create
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_Create", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Current profile:.
         /// </summary>
-        public static string QuickProfilesPage_CurrentProfile {
-            get {
+        public static string QuickProfilesPage_CurrentProfile
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_CurrentProfile", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string QuickProfilesPage_CurrentProfileDefault {
-            get {
+        public static string QuickProfilesPage_CurrentProfileDefault
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_CurrentProfileDefault", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Performance, motion control, graphics.
         /// </summary>
-        public static string QuickProfilesPage_Desc {
-            get {
+        public static string QuickProfilesPage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Power limit target.
         /// </summary>
-        public static string QuickProfilesPage_PowerLimitTarget {
-            get {
+        public static string QuickProfilesPage_PowerLimitTarget
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_PowerLimitTarget", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select a sub profile to apply.
         /// </summary>
-        public static string QuickProfilesPage_SubProfilesDesc {
-            get {
+        public static string QuickProfilesPage_SubProfilesDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_SubProfilesDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Profiles.
         /// </summary>
-        public static string QuickProfilesPage_Title {
-            get {
+        public static string QuickProfilesPage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Waiting for foreground process....
         /// </summary>
-        public static string QuickProfilesPage_Waiting {
-            get {
+        public static string QuickProfilesPage_Waiting
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickProfilesPage_Waiting", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preferred actions.
         /// </summary>
-        public static string QuickSettingsPage_Desc {
-            get {
+        public static string QuickSettingsPage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Refresh rate.
         /// </summary>
-        public static string QuickSettingsPage_DisplayFrequency {
-            get {
+        public static string QuickSettingsPage_DisplayFrequency
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_DisplayFrequency", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adjust main refresh rate.
         /// </summary>
-        public static string QuickSettingsPage_DisplayFrequencyDesc {
-            get {
+        public static string QuickSettingsPage_DisplayFrequencyDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_DisplayFrequencyDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Display resolution.
         /// </summary>
-        public static string QuickSettingsPage_DisplayResolution {
-            get {
+        public static string QuickSettingsPage_DisplayResolution
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_DisplayResolution", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Adjust main display resolution.
         /// </summary>
-        public static string QuickSettingsPage_DisplayResolutionDesc {
-            get {
+        public static string QuickSettingsPage_DisplayResolutionDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_DisplayResolutionDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Resolution is currently overridden by profile.
         /// </summary>
-        public static string QuickSettingsPage_ResolutionOverrideWarning {
-            get {
+        public static string QuickSettingsPage_ResolutionOverrideWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_ResolutionOverrideWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to 1/1 only supports Exclusive Fullscreen..
         /// </summary>
-        public static string QuickSettingsPage_ResScaleExclusiveFullscreen {
-            get {
+        public static string QuickSettingsPage_ResScaleExclusiveFullscreen
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_ResScaleExclusiveFullscreen", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
-        public static string QuickSettingsPage_Title {
-            get {
+        public static string QuickSettingsPage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSettingsPage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Suspend and resume apps.
         /// </summary>
-        public static string QuickSuspenderPage_Desc {
-            get {
+        public static string QuickSuspenderPage_Desc
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSuspenderPage_Desc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Suspender.
         /// </summary>
-        public static string QuickSuspenderPage_Title {
-            get {
+        public static string QuickSuspenderPage_Title
+        {
+            get
+            {
                 return ResourceManager.GetString("QuickSuspenderPage_Title", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Provides gyroscope and accelerometer support to Windows handheld gaming computers through a virtual controller. If the service is enabled, embedded controller will be cloaked to applications outside the whitelist. If the service is disabled, embedded controller will be uncloaked and the virtual controller disabled..
         /// </summary>
-        public static string ServiceDescription {
-            get {
+        public static string ServiceDescription
+        {
+            get
+            {
                 return ResourceManager.GetString("ServiceDescription", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller Service.
         /// </summary>
-        public static string ServiceName {
-            get {
+        public static string ServiceName
+        {
+            get
+            {
                 return ResourceManager.GetString("ServiceName", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
-        public static string SettingsMode0_AdditionalSettings {
-            get {
+        public static string SettingsMode0_AdditionalSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_AdditionalSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Aiming down sights motion multiplier.
         /// </summary>
-        public static string SettingsMode0_AimingDownSights {
-            get {
+        public static string SettingsMode0_AimingDownSights
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_AimingDownSights", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Activation button.
         /// </summary>
-        public static string SettingsMode0_AimingDownSightsActivation {
-            get {
+        public static string SettingsMode0_AimingDownSightsActivation
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_AimingDownSightsActivation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to An additional motion sensitivity multiplier when aiming down sights or scope through the use of the configured activation button.
         /// </summary>
-        public static string SettingsMode0_AimingDownSightsDesc {
-            get {
+        public static string SettingsMode0_AimingDownSightsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_AimingDownSightsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Multiplier value.
         /// </summary>
-        public static string SettingsMode0_AimingDownSightsMultiplier {
-            get {
+        public static string SettingsMode0_AimingDownSightsMultiplier
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_AimingDownSightsMultiplier", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Camera options.
         /// </summary>
-        public static string SettingsMode0_CameraOptions {
-            get {
+        public static string SettingsMode0_CameraOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CameraOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Custom response curve.
         /// </summary>
-        public static string SettingsMode0_CustomResponseCurve {
-            get {
+        public static string SettingsMode0_CustomResponseCurve
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponseCurve", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Output sent to game.
         /// </summary>
-        public static string SettingsMode0_CustomResponseCurveGameOutput {
-            get {
+        public static string SettingsMode0_CustomResponseCurveGameOutput
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponseCurveGameOutput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Movement intensity.
         /// </summary>
-        public static string SettingsMode0_CustomResponseIntensity {
-            get {
+        public static string SettingsMode0_CustomResponseIntensity
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponseIntensity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Agressive.
         /// </summary>
-        public static string SettingsMode0_CustomResponsePresetAgressive {
-            get {
+        public static string SettingsMode0_CustomResponsePresetAgressive
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponsePresetAgressive", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Default.
         /// </summary>
-        public static string SettingsMode0_CustomResponsePresetDefault {
-            get {
+        public static string SettingsMode0_CustomResponsePresetDefault
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponsePresetDefault", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Preset options.
         /// </summary>
-        public static string SettingsMode0_CustomResponsePresetOptions {
-            get {
+        public static string SettingsMode0_CustomResponsePresetOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponsePresetOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Precise.
         /// </summary>
-        public static string SettingsMode0_CustomResponsePresetPrecise {
-            get {
+        public static string SettingsMode0_CustomResponsePresetPrecise
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_CustomResponsePresetPrecise", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Flick duration.
         /// </summary>
-        public static string SettingsMode0_FlickDuration {
-            get {
+        public static string SettingsMode0_FlickDuration
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_FlickDuration", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the flick duration, calibrate to 180 degree turn, in milliseconds.
         /// </summary>
-        public static string SettingsMode0_FlickDurationDesc {
-            get {
+        public static string SettingsMode0_FlickDurationDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_FlickDurationDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Flick stick (experimental).
         /// </summary>
-        public static string SettingsMode0_FlickStick {
-            get {
+        public static string SettingsMode0_FlickStick
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_FlickStick", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Point camera in direction of (right) joystick flick, rotate camera purely in horizontal plane by rotating.
         /// </summary>
-        public static string SettingsMode0_FlickStickDesc {
-            get {
+        public static string SettingsMode0_FlickStickDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_FlickStickDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable flick stick.
         /// </summary>
-        public static string SettingsMode0_FlickStickEnable {
-            get {
+        public static string SettingsMode0_FlickStickEnable
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_FlickStickEnable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensitivity.
         /// </summary>
-        public static string SettingsMode0_Sensitivity {
-            get {
+        public static string SettingsMode0_Sensitivity
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_Sensitivity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensitivity of the horizontal and vertical axis.
         /// </summary>
-        public static string SettingsMode0_SensitivityDesc {
-            get {
+        public static string SettingsMode0_SensitivityDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_SensitivityDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensitivity X.
         /// </summary>
-        public static string SettingsMode0_SensitivityX {
-            get {
+        public static string SettingsMode0_SensitivityX
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_SensitivityX", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensitivity of the horizontal axis.
         /// </summary>
-        public static string SettingsMode0_SensitivityXDesc {
-            get {
+        public static string SettingsMode0_SensitivityXDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_SensitivityXDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensitivity Y.
         /// </summary>
-        public static string SettingsMode0_SensitivityY {
-            get {
+        public static string SettingsMode0_SensitivityY
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_SensitivityY", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the motion sensitivity of the vertical axis.
         /// </summary>
-        public static string SettingsMode0_SensitivityYDesc {
-            get {
+        public static string SettingsMode0_SensitivityYDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_SensitivityYDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Stick sensitivtity.
         /// </summary>
-        public static string SettingsMode0_StickSensitivtity {
-            get {
+        public static string SettingsMode0_StickSensitivtity
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_StickSensitivtity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the rotation rate.
         /// </summary>
-        public static string SettingsMode0_StickSensitivtityDesc {
-            get {
+        public static string SettingsMode0_StickSensitivtityDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode0_StickSensitivtityDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Additional settings.
         /// </summary>
-        public static string SettingsMode1_AdditionalSettings {
-            get {
+        public static string SettingsMode1_AdditionalSettings
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_AdditionalSettings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Deadzone.
         /// </summary>
-        public static string SettingsMode1_Deadzone {
-            get {
+        public static string SettingsMode1_Deadzone
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_Deadzone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the steering deadzone. Improves steering straight.
         /// </summary>
-        public static string SettingsMode1_DeadzoneDesc {
-            get {
+        public static string SettingsMode1_DeadzoneDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_DeadzoneDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick game Input.
         /// </summary>
-        public static string SettingsMode1_JoystickGameInput {
-            get {
+        public static string SettingsMode1_JoystickGameInput
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_JoystickGameInput", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering.
         /// </summary>
-        public static string SettingsMode1_JoystickSteering {
-            get {
+        public static string SettingsMode1_JoystickSteering
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_JoystickSteering", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering options.
         /// </summary>
-        public static string SettingsMode1_JoystickSteeringOptions {
-            get {
+        public static string SettingsMode1_JoystickSteeringOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_JoystickSteeringOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Joystick steering preview.
         /// </summary>
-        public static string SettingsMode1_JoystickSteeringPreview {
-            get {
+        public static string SettingsMode1_JoystickSteeringPreview
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_JoystickSteeringPreview", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Max steering angle.
         /// </summary>
-        public static string SettingsMode1_MaxSteeringAngle {
-            get {
+        public static string SettingsMode1_MaxSteeringAngle
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_MaxSteeringAngle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Change the maximum steering angle value.
         /// </summary>
-        public static string SettingsMode1_MaxSteeringAngleDesc {
-            get {
+        public static string SettingsMode1_MaxSteeringAngleDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_MaxSteeringAngleDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Steering linearity.
         /// </summary>
-        public static string SettingsMode1_SteeringLinearity {
-            get {
+        public static string SettingsMode1_SteeringLinearity
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_SteeringLinearity", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mapping between input and steering. Lower values provide more accuracy near full lock but less accuracy near the center. Higher values provide more accuracy near the center but less accuracy near full lock. 1.0 is a linear mapping.
         /// </summary>
-        public static string SettingsMode1_SteeringLinearityDesc {
-            get {
+        public static string SettingsMode1_SteeringLinearityDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsMode1_SteeringLinearityDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Language.
         /// </summary>
-        public static string SettingsPage_AppLanguage {
-            get {
+        public static string SettingsPage_AppLanguage
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AppLanguage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The application language.
         /// </summary>
-        public static string SettingsPage_AppLanguageDesc {
-            get {
+        public static string SettingsPage_AppLanguageDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AppLanguageDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Restart required.
         /// </summary>
-        public static string SettingsPage_AppLanguageWarning {
-            get {
+        public static string SettingsPage_AppLanguageWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AppLanguageWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to In order for the changes to take effect, please restart the application.
         /// </summary>
-        public static string SettingsPage_AppLanguageWarningDesc {
-            get {
+        public static string SettingsPage_AppLanguageWarningDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AppLanguageWarningDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Application theme.
         /// </summary>
-        public static string SettingsPage_AppTheme {
-            get {
+        public static string SettingsPage_AppTheme
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AppTheme", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The application theme, light or dark mode.
         /// </summary>
-        public static string SettingsPage_AppThemeDesc {
-            get {
+        public static string SettingsPage_AppThemeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AppThemeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Auto-start application.
         /// </summary>
-        public static string SettingsPage_AutoStartApp {
-            get {
+        public static string SettingsPage_AutoStartApp
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AutoStartApp", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The application will start automatically when I sign in to Windows.
         /// </summary>
-        public static string SettingsPage_AutoStartAppDesc {
-            get {
+        public static string SettingsPage_AutoStartAppDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_AutoStartAppDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Application backdrop.
         /// </summary>
-        public static string SettingsPage_Backdrop {
-            get {
+        public static string SettingsPage_Backdrop
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_Backdrop", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Acrylic.
         /// </summary>
-        public static string SettingsPage_BackdropAcrylic {
-            get {
+        public static string SettingsPage_BackdropAcrylic
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_BackdropAcrylic", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The application backdrop, none, mica, tabbed, acrylic.
         /// </summary>
-        public static string SettingsPage_BackdropDesc {
-            get {
+        public static string SettingsPage_BackdropDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_BackdropDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Mica.
         /// </summary>
-        public static string SettingsPage_BackdropMica {
-            get {
+        public static string SettingsPage_BackdropMica
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_BackdropMica", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
-        public static string SettingsPage_BackdropNone {
-            get {
+        public static string SettingsPage_BackdropNone
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_BackdropNone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Tabbed.
         /// </summary>
-        public static string SettingsPage_BackdropTabbed {
-            get {
+        public static string SettingsPage_BackdropTabbed
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_BackdropTabbed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Check for updates.
         /// </summary>
-        public static string SettingsPage_CheckForUpdates {
-            get {
+        public static string SettingsPage_CheckForUpdates
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_CheckForUpdates", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Close minimizes.
         /// </summary>
-        public static string SettingsPage_CloseMinimizes {
-            get {
+        public static string SettingsPage_CloseMinimizes
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_CloseMinimizes", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The application will be minimized instead of closed.
         /// </summary>
-        public static string SettingsPage_CloseMinimizesDesc {
-            get {
+        public static string SettingsPage_CloseMinimizesDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_CloseMinimizesDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
-        public static string SettingsPage_ControllerManagementDependencyPrimary {
-            get {
+        public static string SettingsPage_ControllerManagementDependencyPrimary
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyPrimary", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
-        public static string SettingsPage_ControllerManagementDependencySecondary {
-            get {
+        public static string SettingsPage_ControllerManagementDependencySecondary
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ControllerManagementDependencySecondary", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Disabling this setting will also disable &quot;Improve virtual controller detection&quot;. Do you want to continue?.
         /// </summary>
-        public static string SettingsPage_ControllerManagementDependencyText {
-            get {
+        public static string SettingsPage_ControllerManagementDependencyText
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyText", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
-        public static string SettingsPage_ControllerManagementDependencyTitle {
-            get {
+        public static string SettingsPage_ControllerManagementDependencyTitle
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ControllerManagementDependencyTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Download.
         /// </summary>
-        public static string SettingsPage_Download {
-            get {
+        public static string SettingsPage_Download
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_Download", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Downloading - .
         /// </summary>
-        public static string SettingsPage_DownloadingPercentage {
-            get {
+        public static string SettingsPage_DownloadingPercentage
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_DownloadingPercentage", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Smart efficiency.
         /// </summary>
-        public static string SettingsPage_EcoQoS {
-            get {
+        public static string SettingsPage_EcoQoS
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_EcoQoS", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Smart efficiency mode reduces the priority of background processes and improves energy efficiency.
         /// </summary>
-        public static string SettingsPage_EcoQoSDesc {
-            get {
+        public static string SettingsPage_EcoQoSDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_EcoQoSDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable desktop profile on start.
         /// </summary>
-        public static string SettingsPage_EnableDesktopProfileOnStart {
-            get {
+        public static string SettingsPage_EnableDesktopProfileOnStart
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_EnableDesktopProfileOnStart", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The desktop profile will be automatically enabled on application start.
         /// </summary>
-        public static string SettingsPage_EnableDesktopProfileOnStartDesc {
-            get {
+        public static string SettingsPage_EnableDesktopProfileOnStartDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_EnableDesktopProfileOnStartDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to General options.
         /// </summary>
-        public static string SettingsPage_GeneralOptions {
-            get {
+        public static string SettingsPage_GeneralOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_GeneralOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Hide when loses focus.
         /// </summary>
-        public static string SettingsPage_HideWhenLoseFocus {
-            get {
+        public static string SettingsPage_HideWhenLoseFocus
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_HideWhenLoseFocus", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatically hide quick tools when the user clicks outside of window.
         /// </summary>
-        public static string SettingsPage_HideWhenLoseFocusDesc {
-            get {
+        public static string SettingsPage_HideWhenLoseFocusDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_HideWhenLoseFocusDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Install now.
         /// </summary>
-        public static string SettingsPage_InstallNow {
-            get {
+        public static string SettingsPage_InstallNow
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_InstallNow", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Last checked: .
         /// </summary>
-        public static string SettingsPage_LastChecked {
-            get {
+        public static string SettingsPage_LastChecked
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_LastChecked", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Native display orientation.
         /// </summary>
-        public static string SettingsPage_NativeDisplayOrientation {
-            get {
+        public static string SettingsPage_NativeDisplayOrientation
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_NativeDisplayOrientation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Some features depend on knowing the native display orientation to work properly. If this was not detected properly, set your display&apos;s orientation to the orientation that matches your controller, then click Detect.
         /// </summary>
-        public static string SettingsPage_NativeDisplayOrientationDesc {
-            get {
+        public static string SettingsPage_NativeDisplayOrientationDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Detect.
         /// </summary>
-        public static string SettingsPage_NativeDisplayOrientationDetect {
-            get {
+        public static string SettingsPage_NativeDisplayOrientationDetect
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationDetect", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Not set.
         /// </summary>
-        public static string SettingsPage_NativeDisplayOrientationNotSet {
-            get {
+        public static string SettingsPage_NativeDisplayOrientationNotSet
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_NativeDisplayOrientationNotSet", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Notification options.
         /// </summary>
-        public static string SettingsPage_NotificationOptions {
-            get {
+        public static string SettingsPage_NotificationOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_NotificationOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Open application in background.
         /// </summary>
-        public static string SettingsPage_OpenAppBackground {
-            get {
+        public static string SettingsPage_OpenAppBackground
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_OpenAppBackground", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The application will initially start minimized and appear on the taskbar.
         /// </summary>
-        public static string SettingsPage_OpenAppBackgroundDesc {
-            get {
+        public static string SettingsPage_OpenAppBackgroundDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_OpenAppBackgroundDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Quicktools backdrop, none, mica, tabbed, acrylic.
         /// </summary>
-        public static string SettingsPage_QuickToolsBackdrop {
-            get {
+        public static string SettingsPage_QuickToolsBackdrop
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsBackdrop", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Quicktools options.
         /// </summary>
-        public static string SettingsPage_QuickToolsOptions {
-            get {
+        public static string SettingsPage_QuickToolsOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Window location.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocation {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocation
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocation", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Bottom left.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationBottomLeft {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationBottomLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationBottomLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Bottom right.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationBottomRight {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationBottomRight
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationBottomRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Define quicktools window location.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationDesc {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Left.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationLeft {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Right.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationRight {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationRight
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Top left.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationTopLeft {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationTopLeft
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopLeft", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Top right.
         /// </summary>
-        public static string SettingsPage_QuickToolsWindowLocationTopRight {
-            get {
+        public static string SettingsPage_QuickToolsWindowLocationTopRight
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_QuickToolsWindowLocationTopRight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RivaTuner Statistics Server.
         /// </summary>
-        public static string SettingsPage_RivaTunerStatisticsServer {
-            get {
+        public static string SettingsPage_RivaTunerStatisticsServer
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_RivaTunerStatisticsServer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Automatically turn RTSS off when companion is closed.
         /// </summary>
-        public static string SettingsPage_RivaTunerStatisticsServerDesc {
-            get {
+        public static string SettingsPage_RivaTunerStatisticsServerDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_RivaTunerStatisticsServerDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to External.
         /// </summary>
-        public static string SettingsPage_SensorExternal {
-            get {
+        public static string SettingsPage_SensorExternal
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorExternal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Internal.
         /// </summary>
-        public static string SettingsPage_SensorInternal {
-            get {
+        public static string SettingsPage_SensorInternal
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorInternal", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
-        public static string SettingsPage_SensorNone {
-            get {
+        public static string SettingsPage_SensorNone
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorNone", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensor options.
         /// </summary>
-        public static string SettingsPage_SensorOptions {
-            get {
+        public static string SettingsPage_SensorOptions
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorOptions", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to External sensor placement direction.
         /// </summary>
-        public static string SettingsPage_SensorPlacementDirection {
-            get {
+        public static string SettingsPage_SensorPlacementDirection
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorPlacementDirection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select on which side of the device the senor has been mounted.
         /// </summary>
-        public static string SettingsPage_SensorPlacementDirectionDesc {
-            get {
+        public static string SettingsPage_SensorPlacementDirectionDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorPlacementDirectionDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to External sensor upside down.
         /// </summary>
-        public static string SettingsPage_SensorPlacementUpsideDown {
-            get {
+        public static string SettingsPage_SensorPlacementUpsideDown
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorPlacementUpsideDown", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensor has been mounted upside down, possible with USB-C convertor.
         /// </summary>
-        public static string SettingsPage_SensorPlacementUpsideDownDesc {
-            get {
+        public static string SettingsPage_SensorPlacementUpsideDownDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorPlacementUpsideDownDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sensor selection.
         /// </summary>
-        public static string SettingsPage_SensorSelection {
-            get {
+        public static string SettingsPage_SensorSelection
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorSelection", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Select the desired sensor used for motion input.
         /// </summary>
-        public static string SettingsPage_SensorSelectionDesc {
-            get {
+        public static string SettingsPage_SensorSelectionDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_SensorSelectionDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
-        public static string SettingsPage_Settings {
-            get {
+        public static string SettingsPage_Settings
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_Settings", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Startup type.
         /// </summary>
-        public static string SettingsPage_StartupType {
-            get {
+        public static string SettingsPage_StartupType
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_StartupType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Used by the service manager to define the service startup type.
         /// </summary>
-        public static string SettingsPage_StartupTypeDesc {
-            get {
+        public static string SettingsPage_StartupTypeDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_StartupTypeDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Maximum Power.
         /// </summary>
-        public static string SettingsPage_TDPMax {
-            get {
+        public static string SettingsPage_TDPMax
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_TDPMax", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The maximum power in watts supplied to the processor.
         /// </summary>
-        public static string SettingsPage_TDPMaxDesc {
-            get {
+        public static string SettingsPage_TDPMaxDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_TDPMaxDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Minimum Power.
         /// </summary>
-        public static string SettingsPage_TDPMin {
-            get {
+        public static string SettingsPage_TDPMin
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_TDPMin", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The minimum power in watts supplied to the processor.
         /// </summary>
-        public static string SettingsPage_TDPMinDesc {
-            get {
+        public static string SettingsPage_TDPMinDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_TDPMinDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Configurable power (cTDP) override.
         /// </summary>
-        public static string SettingsPage_TDPRangeOverride {
-            get {
+        public static string SettingsPage_TDPRangeOverride
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_TDPRangeOverride", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Allows to modify the minimum and maximum power values (TDP) beyond the CPU specifications.
         /// </summary>
-        public static string SettingsPage_TDPRangeOverrideDesc {
-            get {
+        public static string SettingsPage_TDPRangeOverrideDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_TDPRangeOverrideDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Dark.
         /// </summary>
-        public static string SettingsPage_ThemeDark {
-            get {
+        public static string SettingsPage_ThemeDark
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ThemeDark", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Use system setting.
         /// </summary>
-        public static string SettingsPage_ThemeDefault {
-            get {
+        public static string SettingsPage_ThemeDefault
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ThemeDefault", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Light.
         /// </summary>
-        public static string SettingsPage_ThemeLight {
-            get {
+        public static string SettingsPage_ThemeLight
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ThemeLight", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Third-party applications.
         /// </summary>
-        public static string SettingsPage_ThirdPartyApps {
-            get {
+        public static string SettingsPage_ThirdPartyApps
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ThirdPartyApps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Toast notification.
         /// </summary>
-        public static string SettingsPage_ToastNotification {
-            get {
+        public static string SettingsPage_ToastNotification
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ToastNotification", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Get notifications from the application in the Windows action center.
         /// </summary>
-        public static string SettingsPage_ToastNotificationDesc {
-            get {
+        public static string SettingsPage_ToastNotificationDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_ToastNotificationDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable UI sounds.
         /// </summary>
-        public static string SettingsPage_UISounds {
-            get {
+        public static string SettingsPage_UISounds
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UISounds", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Enable or disable UI sounds on navigation.
         /// </summary>
-        public static string SettingsPage_UISoundsDesc {
-            get {
+        public static string SettingsPage_UISoundsDesc
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UISoundsDesc", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Updates available.
         /// </summary>
-        public static string SettingsPage_UpdateAvailable {
-            get {
+        public static string SettingsPage_UpdateAvailable
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpdateAvailable", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Checking for updates....
         /// </summary>
-        public static string SettingsPage_UpdateCheck {
-            get {
+        public static string SettingsPage_UpdateCheck
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpdateCheck", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to We couldn&apos;t download the update file..
         /// </summary>
-        public static string SettingsPage_UpdateFailedDownload {
-            get {
+        public static string SettingsPage_UpdateFailedDownload
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpdateFailedDownload", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to We couldn&apos;t reach github..
         /// </summary>
-        public static string SettingsPage_UpdateFailedGithub {
-            get {
+        public static string SettingsPage_UpdateFailedGithub
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpdateFailedGithub", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to We couldn&apos;t locate the update file..
         /// </summary>
-        public static string SettingsPage_UpdateFailedInstall {
-            get {
+        public static string SettingsPage_UpdateFailedInstall
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpdateFailedInstall", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Oups. There was an issue..
         /// </summary>
-        public static string SettingsPage_UpdateWarning {
-            get {
+        public static string SettingsPage_UpdateWarning
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpdateWarning", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to You&apos;re up to date.
         /// </summary>
-        public static string SettingsPage_UpToDate {
-            get {
+        public static string SettingsPage_UpToDate
+        {
+            get
+            {
                 return ResourceManager.GetString("SettingsPage_UpToDate", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Controller is now cloaked and inputs forwarded to virtual controller.
         /// </summary>
-        public static string ToastNewControllerEx {
-            get {
+        public static string ToastNewControllerEx
+        {
+            get
+            {
                 return ResourceManager.GetString("ToastNewControllerEx", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LEFT TRACKPAD.
         /// </summary>
-        public static string TrackPadsPage_Trackpad_Left {
-            get {
+        public static string TrackPadsPage_Trackpad_Left
+        {
+            get
+            {
                 return ResourceManager.GetString("TrackPadsPage_Trackpad_Left", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LEFT TRACKPAD BUTTONS.
         /// </summary>
-        public static string TrackPadsPage_Trackpad_Left_Buttons {
-            get {
+        public static string TrackPadsPage_Trackpad_Left_Buttons
+        {
+            get
+            {
                 return ResourceManager.GetString("TrackPadsPage_Trackpad_Left_Buttons", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RIGHT TRACKPAD.
         /// </summary>
-        public static string TrackPadsPage_Trackpad_Right {
-            get {
+        public static string TrackPadsPage_Trackpad_Right
+        {
+            get
+            {
                 return ResourceManager.GetString("TrackPadsPage_Trackpad_Right", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RIGHT TRACKPAD BUTTONS.
         /// </summary>
-        public static string TrackPadsPage_Trackpad_Right_Buttons {
-            get {
+        public static string TrackPadsPage_Trackpad_Right_Buttons
+        {
+            get
+            {
                 return ResourceManager.GetString("TrackPadsPage_Trackpad_Right_Buttons", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LEFT TRIGGER.
         /// </summary>
-        public static string TriggersPage_Trigger_Left {
-            get {
+        public static string TriggersPage_Trigger_Left
+        {
+            get
+            {
                 return ResourceManager.GetString("TriggersPage_Trigger_Left", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to LEFT TRIGGER BUTTONS.
         /// </summary>
-        public static string TriggersPage_Trigger_Left_Button {
-            get {
+        public static string TriggersPage_Trigger_Left_Button
+        {
+            get
+            {
                 return ResourceManager.GetString("TriggersPage_Trigger_Left_Button", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RIGHT TRIGGER.
         /// </summary>
-        public static string TriggersPage_Trigger_Right {
-            get {
+        public static string TriggersPage_Trigger_Right
+        {
+            get
+            {
                 return ResourceManager.GetString("TriggersPage_Trigger_Right", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RIGHT TRIGGER BUTTONS.
         /// </summary>
-        public static string TriggersPage_Trigger_Right_Button {
-            get {
+        public static string TriggersPage_Trigger_Right_Button
+        {
+            get
+            {
                 return ResourceManager.GetString("TriggersPage_Trigger_Right_Button", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
-        public static string User {
-            get {
+        public static string User
+        {
+            get
+            {
                 return ResourceManager.GetString("User", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Run this tool as Administrator to unlock these settings.
         /// </summary>
-        public static string WarningElevated {
-            get {
+        public static string WarningElevated
+        {
+            get
+            {
                 return ResourceManager.GetString("WarningElevated", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] xinput1_x64 {
-            get {
+        public static byte[] xinput1_x64
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("xinput1_x64", resourceCulture);
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] xinput1_x86 {
-            get {
+        public static byte[] xinput1_x86
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("xinput1_x86", resourceCulture);
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing..
         /// </summary>
-        public static string XInputController_Warning_BTH {
-            get {
+        public static string XInputController_Warning_BTH
+        {
+            get
+            {
                 return ResourceManager.GetString("XInputController_Warning_BTH", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Please wait a moment while we power cycle your controller..
         /// </summary>
-        public static string XInputController_Warning_USB {
-            get {
+        public static string XInputController_Warning_USB
+        {
+            get
+            {
                 return ResourceManager.GetString("XInputController_Warning_USB", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to [General]
         ///iniFileVersion=4150
@@ -8209,27 +10227,33 @@ namespace HandheldCompanion.Properties {
         ///DeadZone=0
         ///Saturati [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string XInputPlus {
-            get {
+        public static string XInputPlus
+        {
+            get
+            {
                 return ResourceManager.GetString("XInputPlus", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] XInputPlusInjector {
-            get {
+        public static byte[] XInputPlusInjector
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("XInputPlusInjector", resourceCulture);
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] XInputPlusInjector64 {
-            get {
+        public static byte[] XInputPlusInjector64
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("XInputPlusInjector64", resourceCulture);
                 return ((byte[])(obj));
             }

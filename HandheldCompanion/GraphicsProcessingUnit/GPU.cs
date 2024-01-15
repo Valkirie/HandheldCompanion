@@ -1,8 +1,11 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using System;
+using System.Diagnostics;
+using System.Management;
 using System.Threading.Tasks;
 using System.Timers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {
@@ -83,7 +86,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return gpu;
         }
 
-        public virtual void Start() 
+        public virtual void Start()
         {
             if (UpdateTimer != null)
                 UpdateTimer.Start();
@@ -181,6 +184,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             return 0;
         }
 
+        public virtual float GetClock()
+        {
+            return 0.0f;
+        }
+
         public virtual float GetLoad()
         {
             return 0.0f;
@@ -188,6 +196,25 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public virtual float GetPower()
         {
+            return 0.0f;
+        }
+
+        public virtual float GetTemperature()
+        {
+            return 0.0f;
+        }
+
+        public virtual float GetVRAMUsage()
+        {
+            ObjectQuery query = new ObjectQuery("SELECT AdapterRAM FROM Win32_VideoController");
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+            ManagementObjectCollection queryCollection = searcher.Get();
+
+            foreach (ManagementObject m in queryCollection)
+            {
+                return Convert.ToUInt64(m["AdapterRAM"].ToString()) / 1024 / 1024;
+            }
+
             return 0.0f;
         }
     }
