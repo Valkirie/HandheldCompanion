@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
@@ -375,7 +375,7 @@ internal static class LayoutManager
                         if (action.actionState == ActionState.Aborted)
                         {
                             int idx = sortedActions.IndexOf(action);
-                            if (idx < sortedActions.Count)
+                            if (idx < sortedActions.Count - 1)
                             {
                                 IActions nAction = sortedActions[idx + 1]; // next action
                                 if (nAction.Interruptable)
