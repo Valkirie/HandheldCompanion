@@ -478,7 +478,7 @@ namespace HandheldCompanion.Views.Pages
                     GPUSlider.Value = selectedProfile.GPUOverrideValue != 0 ? selectedProfile.GPUOverrideValue : 255 * 50;
 
                     // CPU Boost
-                    CPUBoostToggle.IsOn = selectedProfile.CPUBoostEnabled;
+                    CPUBoostLevel.SelectedIndex = selectedProfile.CPUBoostLevel;
 
                     // Power Mode
                     PowerMode.SelectedIndex = Array.IndexOf(PerformanceManager.PowerModes, selectedProfile.OSPowerMode);
@@ -673,15 +673,18 @@ namespace HandheldCompanion.Views.Pages
             UpdateProfile();
         }
 
-        private void CPUBoostToggle_Toggled(object sender, RoutedEventArgs e)
+        private void CPUBoostLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (CPUBoostLevel.SelectedIndex == -1)
+                return;
+
             if (selectedProfile is null)
                 return;
 
             if (updateLock)
                 return;
 
-            selectedProfile.CPUBoostEnabled = CPUBoostToggle.IsOn;
+            selectedProfile.CPUBoostLevel = CPUBoostLevel.SelectedIndex;
             UpdateProfile();
         }
 

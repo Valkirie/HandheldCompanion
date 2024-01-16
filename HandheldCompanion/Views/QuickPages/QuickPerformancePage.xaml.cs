@@ -226,15 +226,18 @@ public partial class QuickPerformancePage : Page
         UpdateProfile();
     }
 
-    private void CPUBoostToggle_Toggled(object sender, RoutedEventArgs e)
+    private void CPUBoostLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (CPUBoostLevel.SelectedIndex == -1)
+            return;
+
         if (selectedProfile is null)
             return;
 
         if (updateLock)
             return;
 
-        selectedProfile.CPUBoostEnabled = CPUBoostToggle.IsOn;
+        selectedProfile.CPUBoostLevel = CPUBoostLevel.SelectedIndex;
         UpdateProfile();
     }
 
@@ -297,7 +300,7 @@ public partial class QuickPerformancePage : Page
                 CPUCoreSlider.Value = selectedProfile.CPUCoreCount;
 
                 // CPU Boost
-                CPUBoostToggle.IsOn = selectedProfile.CPUBoostEnabled;
+                CPUBoostLevel.SelectedIndex = selectedProfile.CPUBoostLevel;
 
                 // Power Mode
                 PowerMode.SelectedIndex = Array.IndexOf(PerformanceManager.PowerModes, selectedProfile.OSPowerMode);

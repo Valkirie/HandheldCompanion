@@ -8,6 +8,7 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -50,7 +51,7 @@ public static class PerformanceManager
     private static bool autoLock;
     private static bool cpuLock;
     private static bool gfxLock;
-    private static bool powerLock;
+    private static object powerLock = new();
 
     // AutoTDP
     private static double AutoTDP;
@@ -68,7 +69,7 @@ public static class PerformanceManager
     private static int currentCoreCount;
 
     // powercfg
-    private static bool currentPerfBoostMode;
+    private static uint currentPerfBoostMode;
     private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
     private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
 
@@ -267,7 +268,7 @@ public static class PerformanceManager
         }
 
         // apply profile define CPU Boost
-        RequestPerfBoostMode(profile.CPUBoostEnabled);
+        RequestPerfBoostMode((uint)profile.CPUBoostLevel);
 
         // apply profile Power Mode
         RequestPowerMode(profile.OSPowerMode);
@@ -316,11 +317,8 @@ public static class PerformanceManager
             RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
-        // (un)apply profile define CPU Boost
-        if (profile.CPUBoostEnabled)
-        {
-            RequestPerfBoostMode(false);
-        }
+        // restore profile define CPU Boost
+        RequestPerfBoostMode((uint)PerfBoostMode.Disabled);
 
         // restore OSPowerMode.BetterPerformance 
         RequestPowerMode(OSPowerMode.BetterPerformance);
@@ -463,28 +461,26 @@ public static class PerformanceManager
         return TDPDamping;
     }
 
+    // todo: update this function to force (re)apply profile settings
     private static void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        if (!powerLock)
+        if (Monitor.TryEnter(powerLock))
         {
-            // set lock
-            powerLock = true;
-
             // Checking if active power shceme has changed to reflect that
-            if (PowerGetEffectiveOverlayScheme(out var activeScheme) == 0)
+            if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
+            {
                 if (activeScheme != currentPowerMode)
                 {
                     currentPowerMode = activeScheme;
-                    var idx = Array.IndexOf(PowerModes, activeScheme);
+                    int idx = Array.IndexOf(PowerModes, activeScheme);
                     if (idx != -1)
                         PowerModeChanged?.Invoke(idx);
                 }
+            }
 
             // read perfboostmode
-            var result = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
-            var perfboostmode = result[(int)PowerIndexType.AC] == (uint)PerfBoostMode.Aggressive &&
-                                result[(int)PowerIndexType.DC] == (uint)PerfBoostMode.Aggressive;
-
+            uint[] result = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
+            uint perfboostmode = result[(int)PowerIndexType.AC];
             if (perfboostmode != currentPerfBoostMode)
             {
                 currentPerfBoostMode = perfboostmode;
@@ -492,8 +488,8 @@ public static class PerformanceManager
             }
 
             // Checking if current EPP value has changed to reflect that
-            var EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
-            var DCvalue = EPP[(int)PowerIndexType.DC];
+            uint[] EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
+            uint DCvalue = EPP[(int)PowerIndexType.DC];
 
             if (DCvalue != currentEPP)
             {
@@ -502,7 +498,7 @@ public static class PerformanceManager
             }
 
             // release lock
-            powerLock = false;
+            Monitor.Exit(powerLock);
         }
     }
 
@@ -812,12 +808,11 @@ public static class PerformanceManager
             LogManager.LogWarning("Failed to set requested CPMAXCORES");
     }
 
-    private static void RequestPerfBoostMode(bool value)
+    private static void RequestPerfBoostMode(uint value)
     {
         currentPerfBoostMode = value;
 
-        var perfboostmode = value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Enabled;
-        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, perfboostmode, perfboostmode);
+        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, value, value);
 
         LogManager.LogDebug("User requested perfboostmode: {0}", value);
     }
@@ -934,7 +929,7 @@ public static class PerformanceManager
 
     public static event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
 
-    public delegate void PerfBoostModeChangedEventHandler(bool value);
+    public delegate void PerfBoostModeChangedEventHandler(uint value);
 
     public static event EPPChangedEventHandler EPPChanged;
 
