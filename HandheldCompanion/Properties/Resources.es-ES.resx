@@ -192,13 +192,13 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Encubrimiento del controlador</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>Opciones del mando</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Desconectar</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
     <value>Dispositivos de entrada</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
@@ -1264,7 +1264,7 @@
   <data name="ControllerPage_PhysicalControllerNotHiddenWarning" xml:space="preserve">
     <value>El controlador físico no está oculto.</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>Opciones del controlador</value>
   </data>
   <data name="LayoutPage_Gyro" xml:space="preserve">

@@ -30,21 +30,13 @@ public partial class ControllerPage : Page
     {
         InitializeComponent();
 
-        // initialize components
-        foreach (var mode in ((HIDmode[])Enum.GetValues(typeof(HIDmode))).Where(a => a != HIDmode.NoController && a != HIDmode.NotSelected))
-            cB_HidMode.Items.Add(EnumUtils.GetDescriptionFromEnumValue(mode));
-
-        foreach (var status in (HIDstatus[])Enum.GetValues(typeof(HIDstatus)))
-            cB_ServiceSwitch.Items.Add(EnumUtils.GetDescriptionFromEnumValue(status));
-
+        // manage events
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-
         ControllerManager.ControllerPlugged += ControllerPlugged;
         ControllerManager.ControllerUnplugged += ControllerUnplugged;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
         ControllerManager.Working += ControllerManager_Working;
         ProfileManager.Applied += ProfileManager_Applied;
-
         VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
     }
 
@@ -108,7 +100,6 @@ public partial class ControllerPage : Page
                     break;
                 case "HIDstatus":
                     cB_ServiceSwitch.SelectedIndex = Convert.ToInt32(value);
-                    UpdateControllerImage();
                     break;
             }
         });
@@ -127,23 +118,23 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
+            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
+
             // Search for an existing controller, remove it
-            foreach (IController ctrl in InputDevices.Children)
+            foreach (IController ctrl in targetPanel.Children)
             {
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                 {
                     if (!IsPowerCycling)
                     {
-                        InputDevices.Children.Remove(ctrl);
-                        ControllerRefresh();
+                        targetPanel.Children.Remove(ctrl);
                         break;
                     }
                 }
             }
-        });
 
-        if (Controller.IsVirtual())
-            Controller.UserIndexChanged -= Controller_UserIndexChanged;
+            ControllerRefresh();
+        });
     }
 
     private void ControllerPlugged(IController Controller, bool IsPowerCycling)
@@ -151,82 +142,31 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
+            SimpleStackPanel targetPanel = Controller.IsVirtual() ? VirtualDevices : PhysicalDevices;
+
             // Search for an existing controller, remove it
-            foreach (IController ctrl in InputDevices.Children)
+            foreach (IController ctrl in targetPanel.Children)
                 if (ctrl.GetContainerInstancePath() == Controller.GetContainerInstancePath())
                     return;
 
             // Add new controller to list if no existing controller was found
-            InputDevices.Children.Add(Controller);
+            targetPanel.Children.Add(Controller);
 
             // todo: move me
-            var ui_button_hook = Controller.GetButtonHook();
+            Button ui_button_hook = Controller.GetButtonHook();
             ui_button_hook.Click += (sender, e) => ControllerHookClicked(Controller);
 
-            var ui_button_hide = Controller.GetButtonHide();
+            Button ui_button_hide = Controller.GetButtonHide();
             ui_button_hide.Click += (sender, e) => ControllerHideClicked(Controller);
 
             ControllerRefresh();
         });
-
-        if (Controller.IsVirtual())
-            Controller.UserIndexChanged += Controller_UserIndexChanged;
     }
 
     private void ControllerManager_ControllerSelected(IController Controller)
     {
         // UI thread (async)
         ControllerRefresh();
-    }
-
-    private void SetVirtualControllerVisualIndex(int value)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            foreach (FrameworkElement frameworkElement in UserIndexPanel.Children)
-            {
-                if (frameworkElement is not Border)
-                    continue;
-
-                Border border = (Border)frameworkElement;
-                int idx = UserIndexPanel.Children.IndexOf(border);
-
-                if (idx == value)
-                    border.SetResourceReference(BackgroundProperty, "AccentAAFillColorDefaultBrush");
-                else
-                    border.SetResourceReference(BackgroundProperty, "SystemControlForegroundBaseLowBrush");
-            }
-        });
-    }
-
-    private int workingIdx = 0;
-    private Thread workingThread;
-    private bool workingThreadRunning;
-
-    private void workingThreadLoop(object? obj)
-    {
-        int maxIdx = 8;
-        int direction = 1; // 1 for increasing, -1 for decreasing
-
-        // UI thread (async)
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            maxIdx = UserIndexPanel.Children.Count;
-        });
-
-        while (workingThreadRunning)
-        {
-            workingIdx += direction; // increment or decrement the index
-            if (workingIdx == maxIdx - 1 || workingIdx == 0) // if the index reaches the limit or zero
-            {
-                direction = -direction; // reverse the direction
-            }
-
-            SetVirtualControllerVisualIndex(workingIdx);
-
-            Thread.Sleep(100);
-        }
     }
 
     private void ControllerManager_Working(int status)
@@ -239,34 +179,18 @@ public partial class ControllerPage : Page
             {
                 case 0:
                     ControllerLoading.Visibility = Visibility.Visible;
-                    InputDevices.IsEnabled = false;
-                    ControllerGrid.IsEnabled = false;
-
-                    if (!workingThreadRunning)
-                    {
-                        workingThreadRunning = true;
-
-                        workingThread = new Thread(workingThreadLoop);
-                        workingThread.IsBackground = true;
-                        workingThread.Start();
-                    }
+                    VirtualDevices.IsEnabled = false;
+                    PhysicalDevices.IsEnabled = false;
+                    MainGrid.IsEnabled = false;
                     break;
                 case 1:
                 case 2:
                     ControllerLoading.Visibility = Visibility.Hidden;
-                    InputDevices.IsEnabled = true;
-                    ControllerGrid.IsEnabled = true;
-
-                    if (workingThreadRunning)
-                    {
-                        workingThreadRunning = false;
-                        workingThread.Join();
-                    }
+                    VirtualDevices.IsEnabled = true;
+                    PhysicalDevices.IsEnabled = true;
+                    MainGrid.IsEnabled = true;
                     break;
             }
-
-            while (workingThread is not null && workingThread.IsAlive)
-                await Task.Delay(1000);
 
             ControllerRefresh();
 
@@ -295,11 +219,6 @@ public partial class ControllerPage : Page
                 }
             }
         });
-    }
-
-    private void Controller_UserIndexChanged(byte UserIndex)
-    {
-        SetVirtualControllerVisualIndex(UserIndex);
     }
 
     private void VirtualManager_ControllerSelected(HIDmode mode)
@@ -349,20 +268,16 @@ public partial class ControllerPage : Page
             bool hasTarget = ControllerManager.GetTargetController() != null;
 
             // check: do we have any plugged physical controller
-            InputDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
+            PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
             IController targetController = ControllerManager.GetTargetController();
-            IController virtualController = ControllerManager.GetVirtualControllers().LastOrDefault();
-            int idx = virtualController is null ? 255 : virtualController.GetUserIndex();
-            SetVirtualControllerVisualIndex(idx);
 
             bool isPlugged = hasTarget;
             bool isHidden = hasTarget && targetController.IsHidden();
             bool isSteam = hasTarget && (targetController is NeptuneController || targetController is GordonController);
             bool isMuted = SettingsManager.GetBoolean("SteamControllerMute");
 
-            DeviceSpecificPanel.Visibility = targetController is SteamController || targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
             MuteVirtualController.Visibility = targetController is SteamController ? Visibility.Visible : Visibility.Collapsed;
             TouchpadPassthrough.Visibility = targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
 
@@ -372,7 +287,8 @@ public partial class ControllerPage : Page
 
             // hint: Has physical controller (not Neptune) hidden, but no virtual controller
             bool hiddenbutnovirtual = isHidden && !hasVirtual;
-            HintsNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
+            VirtualDevices.Visibility = !hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
+            WarningNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
             bool neptunehidden = isHidden && isSteam && isMuted;
@@ -384,36 +300,12 @@ public partial class ControllerPage : Page
         });
     }
 
-    private void UpdateControllerImage()
-    {
-        BitmapImage controllerImage;
-        if (controllerMode == HIDmode.NoController || controllerStatus == HIDstatus.Disconnected)
-            controllerImage = new BitmapImage(new Uri($"pack://application:,,,/Resources/controller_2_0.png"));
-        else
-            controllerImage = new BitmapImage(new Uri($"pack://application:,,,/Resources/controller_{Convert.ToInt32(controllerMode)}_{Convert.ToInt32(controllerStatus)}.png"));
-
-        // update UI icon to match HIDmode
-        ImageBrush uniformToFillBrush = new ImageBrush()
-        {
-            Stretch = Stretch.Uniform,
-            ImageSource = controllerImage,
-        };
-        uniformToFillBrush.Freeze();
-
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            ControllerGrid.Background = uniformToFillBrush;
-        });
-    }
-
     private async void cB_HidMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (cB_HidMode.SelectedIndex == -1)
             return;
 
         controllerMode = (HIDmode)cB_HidMode.SelectedIndex;
-        UpdateControllerImage();
 
         // only change HIDmode setting if current profile is default or set to default controller
         var currentProfile = ProfileManager.GetCurrent();
@@ -429,7 +321,6 @@ public partial class ControllerPage : Page
             return;
 
         controllerStatus = (HIDstatus)cB_ServiceSwitch.SelectedIndex;
-        UpdateControllerImage();
 
         SettingsManager.SetProperty("HIDstatus", cB_ServiceSwitch.SelectedIndex);
     }

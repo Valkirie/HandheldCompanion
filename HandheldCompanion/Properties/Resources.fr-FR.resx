@@ -189,7 +189,7 @@
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Déconnecter</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
     <value>Dispositifs d'entrée</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
@@ -1107,7 +1107,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
     <value>Enable desktop layout</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>Controller settings</value>
   </data>
   <data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
@@ -1167,7 +1167,7 @@ with motion input enabled, use selected button(s) to disable motion.</value>
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>Mute virtual controller on steam related applications</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>Paramètres du contrôleur</value>
   </data>
   <data name="ControllerPage_VibrateDevice" xml:space="preserve">

@@ -195,7 +195,7 @@
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>断开连接</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
     <value>输入设备</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
@@ -1057,7 +1057,7 @@
   <data name="ControllerPage_DesktopLayoutEnable" xml:space="preserve">
     <value>激活桌面布局</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>手柄设置</value>
   </data>
   <data name="ControllerPage_NonGameControllerLayouts" xml:space="preserve">
@@ -1117,7 +1117,7 @@
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>对Steam相关程序禁用虚拟手柄</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>控制器设置</value>
   </data>
   <data name="ControllerPage_VibrateDevice" xml:space="preserve">

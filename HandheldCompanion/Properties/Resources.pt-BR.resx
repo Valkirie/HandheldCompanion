@@ -192,13 +192,13 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Ocultamento de controle</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>configurações de controle</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Desconectar</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
     <value>Dispositivos de entrada</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
@@ -1337,7 +1337,7 @@ com a entrada de movimento ligada, use o(s) botão(ões) selecionado(s) para des
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Usar o motor de tremida de alta definição, ao custo de maior uso de CPU</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>Configurações do controlador</value>
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">

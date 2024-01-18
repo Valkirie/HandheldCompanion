@@ -1074,7 +1074,7 @@
                         </Grid>
                     </Border>
 
-                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_DeviceSettings}" />
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ControllerPage_VirtualDeviceSettings}" />
 
                     <!--  Controller settings  -->
                     <Border

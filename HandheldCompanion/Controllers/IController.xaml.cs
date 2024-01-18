@@ -6,6 +6,7 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,41 +44,6 @@ namespace HandheldCompanion.Controllers
             AxisLayoutFlags.L2, AxisLayoutFlags.R2,
         };
 
-        public static readonly string defaultGlyph = "\u2753";
-
-        public ControllerCapabilities Capabilities = ControllerCapabilities.None;
-        protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
-
-        protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = new();
-        protected FontFamily DefaultFontFamily = new("Segeo WP");
-
-        public PnPDetails Details;
-
-        // UI
-        protected FontFamily GlyphFontFamily = new("PromptFont");
-
-        public ButtonState InjectedButtons = new();
-
-        public ControllerState Inputs = new();
-        public virtual bool IsReady => true;
-
-        public bool IsBusy
-        {
-            get
-            {
-                return !IsEnabled;
-            }
-            set
-            {
-                // UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    IsEnabled = !value;
-                    ProgressBarPanel.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-                });
-            }
-        }
-
         protected List<AxisLayoutFlags> SourceAxis = new()
         {
             // same as target, we assume all controllers have those axes
@@ -101,7 +67,76 @@ namespace HandheldCompanion.Controllers
             ButtonFlags.RightStickUp, ButtonFlags.RightStickDown, ButtonFlags.RightStickLeft, ButtonFlags.RightStickRight
         };
 
+        protected FontFamily GlyphFontFamily = new("PromptFont");
+        public static readonly string defaultGlyph = "\u2753";
+        public ControllerCapabilities Capabilities = ControllerCapabilities.None;
+        protected SortedDictionary<AxisLayoutFlags, Brush> ColoredAxis = new();
+        protected SortedDictionary<ButtonFlags, Brush> ColoredButtons = new();
+        protected FontFamily DefaultFontFamily = new("Segeo WP");
+
+        public PnPDetails Details;
+
+        public ButtonState InjectedButtons = new();
+        public ControllerState Inputs = new();
+
+        protected double VibrationStrength = 1.0d;
         private byte _UserIndex = 255;
+        private readonly int MaxUserIndex = 10;
+
+        private int workingIdx = 0;
+        private Thread workingThread;
+        private bool workingThreadRunning;
+
+        public virtual bool IsReady => true;
+
+        public bool IsBusy
+        {
+            get
+            {
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    return !IsEnabled;
+                });
+
+                return false;
+            }
+            set
+            {
+                // UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    IsEnabled = !value;
+                    ProgressBarWarning.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                });
+
+                switch (value)
+                {
+                    case false:
+                        {
+                            if (workingThreadRunning)
+                            {
+                                workingThreadRunning = false;
+                                workingThread.Join();
+                            }
+
+                            // visually update user index
+                            SetVirtualControllerVisualIndex(UserIndex);
+                        }
+                        break;
+
+                    case true:
+                        {
+                            workingThreadRunning = true;
+                            workingThread = new Thread(workingThreadLoop);
+                            workingThread.IsBackground = true;
+                            workingThread.Start();
+                        }
+                        return;
+                }
+            }
+        }
+
         protected byte UserIndex
         {
             get
@@ -113,31 +148,55 @@ namespace HandheldCompanion.Controllers
                 _UserIndex = value;
                 UserIndexChanged?.Invoke(value);
 
-                // UI thread (async)
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    foreach(FrameworkElement frameworkElement in UserIndexPanel.Children)
-                    {
-                        if (frameworkElement is not Border)
-                            continue;
+                if (IsBusy)
+                    return;
 
-                        Border border = (Border)frameworkElement;
-                        int idx = UserIndexPanel.Children.IndexOf(border);
-
-                        if (idx == value)
-                            border.SetResourceReference(BackgroundProperty, "AccentAAFillColorDefaultBrush");
-                        else
-                            border.SetResourceReference(BackgroundProperty, "SystemControlForegroundBaseLowBrush");
-                    }
-                });
+                // visually update user index
+                SetVirtualControllerVisualIndex(value);
             }
         }
 
-        protected double VibrationStrength = 1.0d;
+        private void SetVirtualControllerVisualIndex(int value)
+        {
+            // UI thread (async)
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                foreach (FrameworkElement frameworkElement in UserIndexPanel.Children)
+                {
+                    if (frameworkElement is not Border)
+                        continue;
+
+                    Border border = (Border)frameworkElement;
+                    int idx = UserIndexPanel.Children.IndexOf(border);
+
+                    if (idx == value)
+                        border.SetResourceReference(BackgroundProperty, "AccentAAFillColorDefaultBrush");
+                    else
+                        border.SetResourceReference(BackgroundProperty, "SystemControlForegroundBaseLowBrush");
+                }
+            });
+        }
+
+        private void workingThreadLoop()
+        {
+            int direction = 1; // 1 for increasing, -1 for decreasing
+
+            while (workingThreadRunning)
+            {
+                workingIdx += direction; // increment or decrement the index
+                if (workingIdx == MaxUserIndex - 1 || workingIdx == 0) // if the index reaches the limit or zero
+                    direction = -direction; // reverse the direction
+
+                SetVirtualControllerVisualIndex(workingIdx);
+
+                Thread.Sleep(100);
+            }
+        }
 
         public IController()
         {
             InitializeComponent();
+            MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
         public virtual void AttachDetails(PnPDetails details)
@@ -206,13 +265,21 @@ namespace HandheldCompanion.Controllers
             // update name
             ControllerName.Text = (IsVirtual() ? Properties.Resources.Controller_Virtual : string.Empty) + ToString();
 
-            // virtual controller shouldn't be visible
+            // some elements of virtual controllers shouldn't be visible
             if (IsVirtual())
-                this.Visibility = Visibility.Collapsed;
+            {
+                ui_button_hook.Visibility = Visibility.Collapsed;
+                ui_button_hide.Visibility = Visibility.Collapsed;
+                ui_button_calibrate.Visibility = Visibility.Collapsed;
+            }
         }
 
         protected void UpdateUI()
         {
+            // some elements of virtual controllers shouldn't be visible
+            if (IsVirtual())
+                return;
+
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>
             {

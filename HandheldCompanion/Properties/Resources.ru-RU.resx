@@ -210,13 +210,13 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Маскировка контроллера</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>Настойки контроллера</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Отключить</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
     <value>Устройства ввода</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
@@ -1336,7 +1336,7 @@
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>Временно отключает виртуальный контрллер в Steam приложених</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>Настройки контроллера</value>
   </data>
   <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
