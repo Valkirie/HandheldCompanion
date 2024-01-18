@@ -1,8 +1,8 @@
-﻿using System;
+﻿using HandheldCompanion.ADLX;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Timers;
-using HandheldCompanion.ADLX;
 using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
 

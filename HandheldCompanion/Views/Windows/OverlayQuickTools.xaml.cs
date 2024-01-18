@@ -21,12 +21,11 @@ using Windows.System.Power;
 using WpfScreenHelper;
 using WpfScreenHelper.Enum;
 using Application = System.Windows.Application;
-using ComboBox = System.Windows.Controls.ComboBox;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Page = System.Windows.Controls.Page;
 using PowerLineStatus = System.Windows.Forms.PowerLineStatus;
-using SystemManager = HandheldCompanion.Managers.SystemManager;
 using Screen = WpfScreenHelper.Screen;
+using SystemManager = HandheldCompanion.Managers.SystemManager;
 using SystemPowerManager = Windows.System.Power.PowerManager;
 using Timer = System.Timers.Timer;
 

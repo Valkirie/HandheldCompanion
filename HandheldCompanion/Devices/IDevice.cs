@@ -6,7 +6,6 @@ using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using iNKORE.UI.WPF.Modern.Controls;
-using LibreHardwareMonitor.Hardware.Motherboard;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using System;
 using System.Collections.Generic;

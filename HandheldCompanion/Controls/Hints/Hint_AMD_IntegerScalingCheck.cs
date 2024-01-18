@@ -3,11 +3,9 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;
-using System.Management;
 using System.Windows;
 
 namespace HandheldCompanion.Controls.Hints

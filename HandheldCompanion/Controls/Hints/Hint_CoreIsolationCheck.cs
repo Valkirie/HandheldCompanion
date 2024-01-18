@@ -1,7 +1,6 @@
 ﻿using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Diagnostics;

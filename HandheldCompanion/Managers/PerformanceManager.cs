@@ -1,5 +1,3 @@
-using HandheldCompanion.ADLX;
-using HandheldCompanion.Controls;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;

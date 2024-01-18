@@ -1,8 +1,7 @@
-﻿using System.Threading;
+﻿using HandheldCompanion.IGCL;
+using System.Threading;
 using System.Timers;
-using HandheldCompanion.IGCL;
 using static HandheldCompanion.IGCL.IGCLBackend;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {

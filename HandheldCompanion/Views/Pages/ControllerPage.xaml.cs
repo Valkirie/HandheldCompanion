@@ -3,16 +3,10 @@ using HandheldCompanion.Controls;
 using HandheldCompanion.Managers;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Utils;
-using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;

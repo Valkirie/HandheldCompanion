@@ -1,11 +1,7 @@
-﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Utils;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Management;
 using System.Threading.Tasks;
 using System.Timers;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {

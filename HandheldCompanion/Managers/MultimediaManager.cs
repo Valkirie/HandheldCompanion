@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.ADLX;
-using HandheldCompanion.Managers.Desktop;
+﻿using HandheldCompanion.Managers.Desktop;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
@@ -10,10 +9,7 @@ using System.Linq;
 using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
-using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.Managers;
 

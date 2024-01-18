@@ -10,7 +10,6 @@ using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;

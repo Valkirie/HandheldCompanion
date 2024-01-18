@@ -1,10 +1,5 @@
-﻿using SharpDX;
-using SharpDX.Direct3D9;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Documents;
-using static HandheldCompanion.IGCL.IGCLBackend;
 
 namespace HandheldCompanion.IGCL
 {

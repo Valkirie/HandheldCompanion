@@ -1,16 +1,11 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using iNKORE.UI.WPF.Modern.Controls;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Interop;
-using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Classes
 {

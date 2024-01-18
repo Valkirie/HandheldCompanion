@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;

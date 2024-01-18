@@ -1,5 +1,4 @@
 ﻿using iNKORE.UI.WPF.Modern.Controls;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

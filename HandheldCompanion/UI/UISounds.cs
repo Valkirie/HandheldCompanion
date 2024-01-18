@@ -1,17 +1,14 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
+﻿using HandheldCompanion.Managers;
+using iNKORE.UI.WPF.Modern.Controls;
 using NAudio.Vorbis;
 using NAudio.Wave;
-using System.Threading.Tasks;
+using System;
 using System.IO;
-using iNKORE.UI.WPF.Modern.Controls;
-using System.Windows.Controls.Primitives;
+using System.Threading.Tasks;
 using System.Timers;
-using System.Diagnostics;
-using Frame = iNKORE.UI.WPF.Modern.Controls.Frame;
-using System.Windows.Navigation;
-using HandheldCompanion.Managers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace HandheldCompanion.UI
 {

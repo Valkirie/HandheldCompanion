@@ -6,7 +6,6 @@ using HandheldCompanion.Properties;
 using HandheldCompanion.Simulators;
 using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
-using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using Newtonsoft.Json;
 using System;

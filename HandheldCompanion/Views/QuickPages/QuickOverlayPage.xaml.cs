@@ -1,7 +1,5 @@
-﻿using HandheldCompanion.Devices;
-using HandheldCompanion.Managers;
+﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Platforms;
-using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;

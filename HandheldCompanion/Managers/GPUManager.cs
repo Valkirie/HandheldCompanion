@@ -1,5 +1,4 @@
-﻿using HandheldCompanion.ADLX;
-using HandheldCompanion.Controls;
+﻿using HandheldCompanion.Controls;
 using HandheldCompanion.GraphicsProcessingUnit;
 
 namespace HandheldCompanion.Managers
