@@ -256,6 +256,12 @@ public partial class ControllerPage : Page
 
     private void ControllerRefresh()
     {
+        IController targetController = ControllerManager.GetTargetController();
+        bool hasPhysical = ControllerManager.HasPhysicalController();
+        bool hasVirtual = ControllerManager.HasVirtualController();
+        bool hasTarget = targetController != null;
+        bool isMuted = SettingsManager.GetBoolean("SteamControllerMute");
+
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
@@ -263,20 +269,12 @@ public partial class ControllerPage : Page
             if (ControllerLoading.Visibility is Visibility.Visible)
                 return;
 
-            bool hasPhysical = ControllerManager.HasPhysicalController();
-            bool hasVirtual = ControllerManager.HasVirtualController();
-            bool hasTarget = ControllerManager.GetTargetController() != null;
-
-            // check: do we have any plugged physical controller
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
-
-            IController targetController = ControllerManager.GetTargetController();
 
             bool isPlugged = hasTarget;
             bool isHidden = hasTarget && targetController.IsHidden();
             bool isSteam = hasTarget && (targetController is NeptuneController || targetController is GordonController);
-            bool isMuted = SettingsManager.GetBoolean("SteamControllerMute");
 
             MuteVirtualController.Visibility = targetController is SteamController ? Visibility.Visible : Visibility.Collapsed;
             TouchpadPassthrough.Visibility = targetController is LegionController ? Visibility.Visible : Visibility.Collapsed;
