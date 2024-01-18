@@ -210,8 +210,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
             ManagementObjectCollection queryCollection = searcher.Get();
 
+            // todo: we shouldn't loop through all video controllers but instead only look for "main" one
             foreach (ManagementObject m in queryCollection)
             {
+                object AdapterRAM = m["AdapterRAM"];
+                if (AdapterRAM is null)
+                    continue;
+
                 return Convert.ToUInt64(m["AdapterRAM"].ToString()) / 1024 / 1024;
             }
 
