@@ -297,6 +297,11 @@ public partial class ControllerPage : Page
             // hint: Has physical controller not hidden, and virtual controller
             bool notmuted = !isHidden && hasVirtual && (!isSteam || (isSteam && !isMuted));
             HintsNotMuted.Visibility = notmuted ? Visibility.Visible : Visibility.Collapsed;
+
+            Hints.Visibility =  (HintsNoPhysicalConnected.Visibility == Visibility.Visible ||
+                                HintsHIDManagedByProfile.Visibility == Visibility.Visible ||
+                                HintsNeptuneHidden.Visibility == Visibility.Visible ||
+                                HintsNotMuted.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
         });
     }
 
