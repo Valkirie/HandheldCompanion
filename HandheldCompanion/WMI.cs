@@ -1,10 +1,10 @@
-﻿using System;
+﻿using HandheldCompanion.Extensions;
+using HandheldCompanion.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Threading.Tasks;
-using HandheldCompanion.Extensions;
-using HandheldCompanion.Utils;
 
 namespace HandheldCompanion
 {

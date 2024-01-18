@@ -1,8 +1,6 @@
 ﻿using HandheldCompanion.Views;
-using System;
 using System.Collections.Generic;
 using System.Management;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace HandheldCompanion;
 
