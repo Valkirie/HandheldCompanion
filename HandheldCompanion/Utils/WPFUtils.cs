@@ -234,6 +234,14 @@ public static class WPFUtils
             string currentType = current.GetType().Name;
             switch (currentType)
             {
+                case "TextBox":
+                    {
+                        TextBox textBox = (TextBox)current;
+                        if (!textBox.IsReadOnly)
+                            goto case "Button";
+                    }
+                    break;
+
                 case "Button":
                 case "Slider":
                 case "ToggleSwitch":
@@ -245,7 +253,6 @@ public static class WPFUtils
                 case "CheckBox":
                 case "RadioButton":
                 case "RepeatButton":
-                case "TextBox":
                     {
                         FrameworkElement asType = (FrameworkElement)current;
                         if (asType.IsEnabled && asType.Focusable && asType.IsVisible)
