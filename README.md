@@ -66,6 +66,8 @@ The software is built for Windows 10/Windows 11 (x86 and amd64).
 
 [DroiX](https://droix.net/?ref=dxhc), are trusted and respected sellers for PC gaming handhelds including GPD, AYA NEO, ONEXPLAYER & AOKZOE. Shipping worldwide with local return centers, their expert customer service is there to provide support, answer any queries and ensure you get the best support for your purchase. Try them today!
 
+[Droix Discord](https://go.droix.co.uk/discord)
+
 ## Visuals
 ![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/c6aec83c-cf8e-43bf-a577-1b05aedc55aa)
 ![image](https://github.com/Valkirie/HandheldCompanion/assets/14330834/dba3ab8a-4b73-4e61-a278-7fe37c66b85d)
