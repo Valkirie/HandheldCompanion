@@ -2466,9 +2466,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="PerformancePage_Device" xml:space="preserve">
     <value>Performance</value>
   </data>
-  <data name="ProfilesPage_WrapperDesc" xml:space="preserve">
-    <value />
-  </data>
   <data name="ProfilesPage_CPUMhz" xml:space="preserve">
     <value>CPU Clock max frequency</value>
   </data>
@@ -2517,14 +2514,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="QuickDevicePage_Title" xml:space="preserve">
     <value>Device</value>
   </data>
-  <data name="QuickHomePage_Desc" xml:space="preserve">
-    <value />
-  </data>
   <data name="QuickHomePage_Title" xml:space="preserve">
     <value>Home</value>
-  </data>
-  <data name="QuickPerformancePage_Desc" xml:space="preserve">
-    <value />
   </data>
   <data name="QuickPerformancePage_Title" xml:space="preserve">
     <value>Performance</value>
@@ -2906,5 +2897,32 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
     <value>Change virtual controller type</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
+    <value>Auto Sleep Time</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
+    <value>Joystick Deadzone</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
+    <value>Left Legion Controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
+    <value>Change settings for the left legion controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
+    <value>Right Legion Controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
+    <value>Change settings for the right legion controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
+    <value>Trigger Deadzone</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
+    <value>Trigger Margin</value>
+  </data>
+  <data name="DevicePage_Lenovo_Settings" xml:space="preserve">
+    <value>Lenovo Legion Go settings</value>
   </data>
 </root>

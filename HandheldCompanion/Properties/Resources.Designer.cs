@@ -1061,6 +1061,87 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Auto Sleep Time.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerAutoSleepTime {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerAutoSleepTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick Deadzone.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerJoystickDeadzone {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerJoystickDeadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Legion Controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerLeft {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change settings for the left legion controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerLeftDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerLeftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Legion Controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerRight {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change settings for the right legion controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerRightDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerRightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger Deadzone.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerTriggerDeadzone {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerTriggerDeadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger Margin.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerTriggerMargin {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerTriggerMargin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lenovo Legion Go settings.
+        /// </summary>
+        public static string DevicePage_Lenovo_Settings {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Power options.
         /// </summary>
         public static string DevicePage_PowerOptions {
@@ -6672,15 +6753,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string ProfilesPage_WrapperDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_WrapperDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Yaw.
         /// </summary>
         public static string ProfilesPage_Yaw {
@@ -6722,15 +6794,6 @@ namespace HandheldCompanion.Properties {
         public static string QuickDevicePage_Title {
             get {
                 return ResourceManager.GetString("QuickDevicePage_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string QuickHomePage_Desc {
-            get {
-                return ResourceManager.GetString("QuickHomePage_Desc", resourceCulture);
             }
         }
         
@@ -6812,15 +6875,6 @@ namespace HandheldCompanion.Properties {
         public static string QuickPerformancePage_CPUUnit {
             get {
                 return ResourceManager.GetString("QuickPerformancePage_CPUUnit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string QuickPerformancePage_Desc {
-            get {
-                return ResourceManager.GetString("QuickPerformancePage_Desc", resourceCulture);
             }
         }
         
