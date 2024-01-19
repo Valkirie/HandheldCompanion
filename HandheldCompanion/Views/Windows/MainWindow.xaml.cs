@@ -253,7 +253,6 @@ public partial class MainWindow : GamepadWindow
         InputsManager.Start();
         SensorsManager.Start();
         TimerManager.Start();
-        GPUManager.Start();
 
         // todo: improve overall threading logic
         new Thread(() => { PlatformManager.Start(); }).Start();
