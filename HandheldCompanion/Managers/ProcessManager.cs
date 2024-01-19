@@ -353,24 +353,26 @@ public static class ProcessManager
                 return ProcessFilter.Restricted;
 
             // Desktop
-            case "radeonsoftware.exe":
             case "applicationframehost.exe":
+            case "ashotplugctrl.exe":
+            case "asmultidisplaycontrol.exe":
+            case "asusosd.exe":
+            case "explorer.exe":
+            case "gamebuzz.exe":
+            case "gameinputsvc.exe":
+            case "gamepadcustomizeosd":
+            case "gog galaxy notifications renderer.exe":
+            case "hwinfo64.exe":
+            case "lockapp.exe":
+            case "logioverlay.exe":
+            case "MSPCManager.exe":
+            case "PowerToys.MouseWithoutBordersHelper.exe":
+            case "radeonsoftware.exe":
+            case "rtkuwp.exe":
+            case "searchapp.exe":
+            case "searchhost.exe":
             case "shellexperiencehost.exe":
             case "startmenuexperiencehost.exe":
-            case "searchhost.exe":
-            case "explorer.exe":
-            case "hwinfo64.exe":
-            case "searchapp.exe":
-            case "logioverlay.exe":
-            case "gog galaxy notifications renderer.exe":
-            case "ashotplugctrl.exe":
-            case "gameinputsvc.exe":
-            case "gamebuzz.exe":
-            case "asmultidisplaycontrol.exe":
-            case "lockapp.exe":
-            case "asusosd.exe":
-            case "gamepadcustomizeosd":
-            case "rtkuwp.exe":
                 return ProcessFilter.Desktop;
 
             default:
