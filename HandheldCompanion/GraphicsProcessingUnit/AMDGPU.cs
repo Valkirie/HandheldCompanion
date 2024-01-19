@@ -19,49 +19,172 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private bool prevRSR = false;
         private int prevRSRSharpness = -1;
 
-        public bool HasRSRSupport() => Execute(ADLXBackend.HasRSRSupport, false);
-        public override bool HasIntegerScalingSupport() => Execute(() => ADLXBackend.HasIntegerScalingSupport(0), false);
-        public override bool HasGPUScalingSupport() => Execute(() => ADLXBackend.HasGPUScalingSupport(0), false);
-        public override bool HasScalingModeSupport() => Execute(() => ADLXBackend.HasScalingModeSupport(0), false);
-
-        public bool GetRSR() => Execute(ADLXBackend.GetRSR, false);
-        public int GetRSRSharpness() => Execute(ADLXBackend.GetRSRSharpness, -1);
-        public override bool GetImageSharpening() => Execute(() => ADLXBackend.GetImageSharpening(0), false);
-        public int GetImageSharpeningSharpness() => Execute(() => ADLXBackend.GetImageSharpeningSharpness(0), -1);
-        public override bool GetIntegerScaling() => Execute(() => ADLXBackend.GetIntegerScaling(0), false);
-        public override bool GetGPUScaling() => Execute(() => ADLXBackend.GetGPUScaling(0), false);
-        public int GetScalingMode() => Execute(() => ADLXBackend.GetScalingMode(0), -1);
-
-        public bool SetRSRSharpness(int sharpness) => Execute(() => ADLXBackend.SetRSRSharpness(sharpness), false);
-        public override bool SetImageSharpening(bool enable) => Execute(() => ADLXBackend.SetImageSharpening(0, enable), false);
-        public bool SetRSR(bool enable) => Execute(() =>
+        public bool HasRSRSupport()
         {
-            // mutually exclusive
-            if (enable)
-            {
-                if (ADLXBackend.GetIntegerScaling(0))
-                    ADLXBackend.SetIntegerScaling(0, false);
+            if (!IsInitialized)
+                return false;
 
-                if (ADLXBackend.GetImageSharpening(0))
-                    ADLXBackend.SetImageSharpening(0, false);
-            }
-
-            return ADLXBackend.SetRSR(enable);
-        }, false);
-        public override bool SetImageSharpeningSharpness(int sharpness) => Execute(() => ADLXBackend.SetImageSharpeningSharpness(0, sharpness), false);
-        public override bool SetIntegerScaling(bool enabled, byte type = 0) => Execute(() =>
+            return Execute(ADLXBackend.HasRSRSupport, false);
+        }
+        
+        public override bool HasIntegerScalingSupport()
         {
-            // mutually exclusive
-            if (enabled)
-            {
-                if (ADLXBackend.GetRSR())
-                    ADLXBackend.SetRSR(false);
-            }
+            if (!IsInitialized)
+                return false;
 
-            return ADLXBackend.SetIntegerScaling(0, enabled);
-        }, false);
-        public override bool SetGPUScaling(bool enabled) => Execute(() => ADLXBackend.SetGPUScaling(0, enabled), false);
-        public override bool SetScalingMode(int mode) => Execute(() => ADLXBackend.SetScalingMode(0, mode), false);
+            return Execute(() => ADLXBackend.HasIntegerScalingSupport(0), false);
+        }
+
+        public override bool HasGPUScalingSupport()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.HasGPUScalingSupport(0), false);
+        }
+
+        public override bool HasScalingModeSupport()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.HasScalingModeSupport(0), false);
+        }
+
+        public bool GetRSR()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(ADLXBackend.GetRSR, false);
+        }
+
+        public int GetRSRSharpness()
+        {
+            if (!IsInitialized)
+                return -1;
+
+            return Execute(ADLXBackend.GetRSRSharpness, -1);
+        }
+
+        public override bool GetImageSharpening()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.GetImageSharpening(0), false);
+        }
+
+        public override int GetImageSharpeningSharpness()
+        {
+            if (!IsInitialized)
+                return -1;
+
+            return Execute(() => ADLXBackend.GetImageSharpeningSharpness(0), -1);
+        }
+
+        public override bool GetIntegerScaling()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.GetIntegerScaling(0), false);
+        }
+
+        public override bool GetGPUScaling()
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.GetGPUScaling(0), false);
+        }
+
+        public override int GetScalingMode()
+        {
+            if (!IsInitialized)
+                return -1;
+
+            return Execute(() => ADLXBackend.GetScalingMode(0), -1);
+        }
+
+        public bool SetRSRSharpness(int sharpness)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.SetRSRSharpness(sharpness), false);
+        }
+
+        public override bool SetImageSharpening(bool enable)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.SetImageSharpening(0, enable), false);
+        }
+
+        public bool SetRSR(bool enable)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() =>
+            {
+                // mutually exclusive
+                if (enable)
+                {
+                    if (ADLXBackend.GetIntegerScaling(0))
+                        ADLXBackend.SetIntegerScaling(0, false);
+
+                    if (ADLXBackend.GetImageSharpening(0))
+                        ADLXBackend.SetImageSharpening(0, false);
+                }
+
+                return ADLXBackend.SetRSR(enable);
+            }, false);
+        }
+
+        public override bool SetImageSharpeningSharpness(int sharpness)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.SetImageSharpeningSharpness(0, sharpness), false);
+        }
+
+        public override bool SetIntegerScaling(bool enabled, byte type = 0)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() =>
+            {
+                // mutually exclusive
+                if (enabled)
+                {
+                    if (ADLXBackend.GetRSR())
+                        ADLXBackend.SetRSR(false);
+                }
+
+                return ADLXBackend.SetIntegerScaling(0, enabled);
+            }, false);
+        }
+
+        public override bool SetGPUScaling(bool enabled)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.SetGPUScaling(0, enabled), false);
+        }
+
+        public override bool SetScalingMode(int mode)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return Execute(() => ADLXBackend.SetScalingMode(0, mode), false);
+        }
 
         public override float GetClock()
         {
@@ -92,12 +215,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public AMDGPU()
         {
-            ADLXBackend.IntializeAdlx();
+            IsInitialized = ADLXBackend.IntializeAdlx();
+            if (!IsInitialized)
+                return;
 
             UpdateTimer = new Timer(UpdateInterval);
             UpdateTimer.AutoReset = true;
             UpdateTimer.Elapsed += UpdateTimer_Elapsed;
 
+            TelemetryTimer = new Timer(TelemetryInterval);
+            TelemetryTimer.AutoReset = true;
             TelemetryTimer.Elapsed += TelemetryTimer_Elapsed;
         }
 
@@ -119,8 +246,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override void Stop()
         {
-            ADLXBackend.CloseAdlx();
             base.Stop();
+            ADLXBackend.CloseAdlx();
         }
 
         private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)

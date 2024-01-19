@@ -21,6 +21,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         private static GPU gpu;
         private static string Manufacturer;
 
+        protected bool IsInitialized = false;
+
         protected const int UpdateInterval = 2000;
         protected Timer UpdateTimer;
 
@@ -46,10 +48,21 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         {
             lock (wrapperLock)
             {
-                Task<T> task = Task.Run(func);
-                if (task.Wait(TimeSpan.FromSeconds(5)))
+                try
                 {
-                    return task.Result;
+                    Task<T> task = Task.Run(func);
+                    if (task.Wait(TimeSpan.FromSeconds(5)))
+                    {
+                        return task.Result;
+                    }
+                }
+                catch (AccessViolationException ex)
+                {
+                    // Handle or log the exception as needed
+                }
+                catch (Exception ex)
+                {
+                    // Handle other exceptions
                 }
 
                 return defaultValue;
@@ -59,9 +72,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public GPU()
         {
             Manufacturer = MotherboardInfo.VideoController;
-
-            TelemetryTimer = new Timer(TelemetryInterval);
-            TelemetryTimer.AutoReset = true;
         }
 
         public static GPU GetCurrent()
