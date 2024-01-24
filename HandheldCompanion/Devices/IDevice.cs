@@ -309,6 +309,17 @@ public abstract class IDevice
                         case "WIN2":
                             device = new GPDWin2();
                             break;
+                        case "G1617-01":
+                            switch (Processor)
+                            {
+                                case "AMD Ryzen 5 7640U w/ Radeon 760M Graphics":
+                                    device = new GPDWinMini_7640U();
+                                    break;
+                                case "AMD Ryzen 7 7840U w/ Radeon 780M Graphics":
+                                    device = new GPDWinMini_7840U();
+                                    break;
+                            }
+                            break;
                         case "G1618-03":
                             device = new GPDWin3();
                             break;
