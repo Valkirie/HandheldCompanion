@@ -45,9 +45,11 @@ namespace HandheldCompanion.Platforms
         public override bool Start()
         {
             // open computer, slow
-            computer.Open();
+            if (computer is not null)
+                computer.Open();
 
-            updateTimer.Start();
+            if (updateTimer is not null)
+                updateTimer.Start();
 
             return base.Start();
         }

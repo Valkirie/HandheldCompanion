@@ -49,6 +49,9 @@ public static class PlatformManager
             UpdateCurrentNeeds_OnScreenDisplay(OSDManager.OverlayLevel);
         }
 
+        if (LibreHardwareMonitor.IsInstalled)
+            LibreHardwareMonitor.Start();
+
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         ProfileManager.Applied += ProfileManager_Applied;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
@@ -132,7 +135,6 @@ public static class PlatformManager
     {
         /*
          * Dependencies:
-         * LibreHardwareMonitor (LHM): OSD
          * RTSS: AutoTDP, framerate limiter, OSD
          */
 
@@ -144,27 +146,13 @@ public static class PlatformManager
         {
             // If OSD is needed, start RTSS and start LHM only if OnScreenDisplayComplex is true
             if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay))
+            {
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
                 {
                     // Start RTSS
                     RTSS.Start();
                 }
-            if (CurrentNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
-            {
-                // This condition checks if OnScreenDisplayComplex is true
-                // OnScreenDisplayComplex is a new flag that indicates if the OSD needs more information from LHM
-                if (!PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) ||
-                    !PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
-                    // Only start LHM if it was not running before or if OnScreenDisplayComplex was false
-                    LibreHardwareMonitor.Start();
-            }
-            else
-            {
-                // If OnScreenDisplayComplex is false, stop LHM if it was running before
-                if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplay) &&
-                    PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
-                    LibreHardwareMonitor.Stop(true);
             }
         }
         else if (CurrentNeeds.HasFlag(PlatformNeeds.AutoTDP) || CurrentNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
@@ -174,10 +162,6 @@ public static class PlatformManager
                 // Only start RTSS if it was not running before and if it is installed
                 if (RTSS.IsInstalled)
                     RTSS.Start();
-
-            // Only stop LHM if it was running before
-            if (PreviousNeeds.HasFlag(PlatformNeeds.OnScreenDisplayComplex))
-                LibreHardwareMonitor.Stop(true);
         }
         else
         {
@@ -186,7 +170,6 @@ public static class PlatformManager
                 PreviousNeeds.HasFlag(PlatformNeeds.FramerateLimiter))
             {
                 // Only stop LHM and RTSS if they were running before and if they are installed
-                LibreHardwareMonitor.Stop(true);
                 if (RTSS.IsInstalled)
                 {
                     // Stop RTSS
