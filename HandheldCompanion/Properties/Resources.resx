@@ -2811,4 +2811,13 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
     <value>1/1 only supports Exclusive Fullscreen.</value>
   </data>
+  <data name="ControllerPage_ConnectLast" xml:space="preserve">
+    <value>Connect to the newest device</value>
+  </data>
+  <data name="ControllerPage_ConnectLastDesc" xml:space="preserve">
+    <value>Connect to the last controller detected by HC</value>
+  </data>
+  <data name="ControllerPage_ConnectLastNotHideDesc" xml:space="preserve">
+    <value>Unhide the other connected controllers</value>
+  </data>
 </root>

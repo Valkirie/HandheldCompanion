@@ -404,6 +404,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connect to the newest device.
+        /// </summary>
+        public static string ControllerPage_ConnectLast {
+            get {
+                return ResourceManager.GetString("ControllerPage_ConnectLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect to the last controller detected by HC.
+        /// </summary>
+        public static string ControllerPage_ConnectLastDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_ConnectLastDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unhide the other connected controllers.
+        /// </summary>
+        public static string ControllerPage_ConnectLastNotHideDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_ConnectLastNotHideDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controller.
         /// </summary>
         public static string ControllerPage_Controller {

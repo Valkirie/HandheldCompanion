@@ -218,9 +218,9 @@
     <Setting Name="LEDAmbilightVerticalBlackBarDetection" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-	<Setting Name="LEDUseSecondColor" Type="System.Boolean" Scope="User">
-	  <Value Profile="(Default)">False</Value>
-	</Setting>
+    <Setting Name="LEDUseSecondColor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
     <Setting Name="LEDSettingsLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
@@ -247,6 +247,12 @@
     </Setting>
     <Setting Name="LastOnScreenDisplayLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="HIDConnectLast" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HIDConnectLastNotHide" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

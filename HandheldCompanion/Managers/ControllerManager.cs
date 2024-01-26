@@ -560,6 +560,25 @@ public static class ControllerManager
         // remove controller from powercyclers
         PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
 
+        // connect to last controller as soon as its discovered
+        if (SettingsManager.GetBoolean("HIDConnectLast"))
+        {
+            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+        }
+        if (SettingsManager.GetBoolean("HIDConnectLastNotHide"))
+        {
+            if (GetControllers().Count > 2)
+            {
+                foreach (var controllersUnhide in GetControllers())
+                {
+                    if (controllersUnhide.GetContainerInstancePath() != controller.GetContainerInstancePath())
+                    {
+                        controllersUnhide.Unhide(false);
+                    }
+                }
+            }
+        }
+
         // new controller logic
         if (DeviceManager.IsInitialized)
         {
@@ -620,6 +639,23 @@ public static class ControllerManager
 
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+
+        // connect to previous last controller as soon as main one is unplugged
+        try
+        {
+            if (SettingsManager.GetBoolean("HIDConnectLast"))
+            {
+                SetTargetController(GetControllers()[GetControllers().Count - 2].Details.baseContainerDeviceInstanceId, IsPowerCycling);
+            }
+            if (SettingsManager.GetBoolean("HIDConnectLast"))
+            {
+                if (GetControllers().Count == 2)
+                {
+                    SetTargetController(GetControllers()[1].Details.baseContainerDeviceInstanceId, IsPowerCycling);
+                }
+            }
+        }
+        catch { LogManager.LogInformation("Could not find a controller to retroactively connect"); }
     }
 
     private static void watchdogThreadLoop(object? obj)
@@ -793,6 +829,25 @@ public static class ControllerManager
         // remove controller from powercyclers
         PowerCyclers.TryRemove(controller.GetContainerInstancePath(), out _);
 
+        // connect to last controller as soon as its discovered
+        if (SettingsManager.GetBoolean("HIDConnectLast"))
+        {
+            SetTargetController(controller.GetContainerInstancePath(), IsPowerCycling);
+        }
+        if (SettingsManager.GetBoolean("HIDConnectLastNotHide"))
+        {
+            if (GetControllers().Count > 2)
+            {
+                foreach (var controllersUnhide in GetControllers())
+                {
+                    if (controllersUnhide.GetContainerInstancePath() != controller.GetContainerInstancePath())
+                    {
+                        controllersUnhide.Unhide(false);
+                    }
+                }
+            }
+        }
+
         // new controller logic
         if (DeviceManager.IsInitialized)
         {
@@ -854,6 +909,23 @@ public static class ControllerManager
 
         // raise event
         ControllerUnplugged?.Invoke(controller, IsPowerCycling);
+
+        // connect to previous last controller as soon as main one is unplugged
+        try
+        {
+            if (SettingsManager.GetBoolean("HIDConnectLast"))
+            {
+                SetTargetController(GetControllers()[GetControllers().Count - 2].Details.baseContainerDeviceInstanceId, IsPowerCycling);
+            }
+            if (SettingsManager.GetBoolean("HIDConnectLast"))
+            {
+                if (GetControllers().Count == 2)
+                {
+                    SetTargetController(GetControllers()[1].Details.baseContainerDeviceInstanceId, IsPowerCycling);
+                }
+            }
+        }
+        catch { LogManager.LogInformation("Could not find a controller to retroactively connect"); }
     }
 
     private static object targetLock = new object();

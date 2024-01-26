@@ -86,6 +86,12 @@ public partial class ControllerPage : Page
                 case "HIDvibrateonconnect":
                     Toggle_Vibrate.IsOn = Convert.ToBoolean(value);
                     break;
+                case "HIDConnectLast":
+                    Toggle_ConnectLast.IsOn = Convert.ToBoolean(value);
+                    break;
+                case "HIDConnectLastNotHide":
+                    Toggle_ConnectLastNotHide.IsOn = Convert.ToBoolean(value);
+                    break;
                 case "ControllerManagement":
                     Toggle_ControllerManagement.IsOn = Convert.ToBoolean(value);
                     break;
@@ -479,6 +485,16 @@ public partial class ControllerPage : Page
         SettingsManager.SetProperty("HIDvibrateonconnect", Toggle_Vibrate.IsOn);
     }
 
+    private void Toggle_ConnectLast_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+        if (!Toggle_ConnectLast.IsOn)
+            SettingsManager.SetProperty("HIDConnectLastNotHide", false);
+
+        SettingsManager.SetProperty("HIDConnectLast", Toggle_ConnectLast.IsOn);
+    }
+
     private void Toggle_ControllerManagement_Toggled(object sender, RoutedEventArgs e)
     {
         if (!IsLoaded)
@@ -522,5 +538,13 @@ public partial class ControllerPage : Page
             return;
 
         SettingsManager.SetProperty("LegionControllerPassthrough", Toggle_TouchpadPassthrough.IsOn);
+    }
+
+    private void Toggle_ConnectLastNotHide_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!IsLoaded)
+            return;
+
+        SettingsManager.SetProperty("HIDConnectLastNotHide", Toggle_ConnectLastNotHide.IsOn);
     }
 }
