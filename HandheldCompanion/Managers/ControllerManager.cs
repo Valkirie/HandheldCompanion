@@ -646,9 +646,6 @@ public static class ControllerManager
             if (SettingsManager.GetBoolean("HIDConnectLast"))
             {
                 SetTargetController(GetControllers()[GetControllers().Count - 2].Details.baseContainerDeviceInstanceId, IsPowerCycling);
-            }
-            if (SettingsManager.GetBoolean("HIDConnectLast"))
-            {
                 if (GetControllers().Count == 2)
                 {
                     SetTargetController(GetControllers()[1].Details.baseContainerDeviceInstanceId, IsPowerCycling);
@@ -916,9 +913,6 @@ public static class ControllerManager
             if (SettingsManager.GetBoolean("HIDConnectLast"))
             {
                 SetTargetController(GetControllers()[GetControllers().Count - 2].Details.baseContainerDeviceInstanceId, IsPowerCycling);
-            }
-            if (SettingsManager.GetBoolean("HIDConnectLast"))
-            {
                 if (GetControllers().Count == 2)
                 {
                     SetTargetController(GetControllers()[1].Details.baseContainerDeviceInstanceId, IsPowerCycling);
