@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.ADLX.ADLXBackend;
 using Timer = System.Timers.Timer;
