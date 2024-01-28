@@ -19,16 +19,16 @@ public class GPDWinMini_7840U : IDevice
         ProductIllustration = "device_gpd_winmini";
 
         // device specific capacities
-        //Capabilities = DeviceCapabilities.FanControl;
+        Capabilities = DeviceCapabilities.FanControl;
 
         ECDetails = new ECDetails
         {
-            AddressFanControl = 0x275,
-            AddressFanDuty = 0x1809,
-            AddressStatusCommandPort = 0x4E,
-            AddressDataPort = 0x4F,
-            FanValueMin = 0,
-            FanValueMax = 184
+            AddressFanControl = 0x47A,          // Fan % setpoint address, 0 for off, 1 to 244 for 0 - 100%
+            AddressFanDuty = 0x47A,             // Fan duty and control are the same for this device
+            AddressStatusCommandPort = 0x4E,    // Unverified
+            AddressDataPort = 0x4F,             // Unverified
+            FanValueMin = 0,                    // 0 is off, but functions do + lowest value, so 0 required
+            FanValueMax = 244                   // 100% ~6000 RPM
         };
 
         GyrometerAxis = new Vector3(1.0f, 1.0f, -1.0f);
@@ -79,5 +79,32 @@ public class GPDWinMini_7840U : IDevice
         }
 
         return defaultGlyph;
+    }
+
+    public override float ReadFanDuty()
+    {
+        // Does not work, reads 255 255
+        // Define memory addresses for fan speed data
+        byte Address1 = 0x78;
+        byte Address2 = 0x79;
+
+        // Initialize the fan speed percentage
+        int fanSpeedPercentageActual = 0;
+
+        // Read the two bytes from memory (assumed to represent fan speed)
+        uint data1 = ECRamReadByte(Address1);
+        uint data2 = ECRamReadByte(Address2);
+
+        //LogManager.LogDebug("ReadFanDuty data1 {0} data2 {1}", data1, data2);
+
+        // Combine the two bytes into a 16-bit integer (fanSpeed)
+        short fanSpeed = (short)((data2 << 8) | data1);
+
+        // Assign the fan speed as a percentage to fanSpeedPercentageActual
+        fanSpeedPercentageActual = fanSpeed;
+
+        //LogManager.LogDebug("ReadFanDuty percentage actual {0}", fanSpeedPercentageActual);
+
+        return fanSpeedPercentageActual;
     }
 }

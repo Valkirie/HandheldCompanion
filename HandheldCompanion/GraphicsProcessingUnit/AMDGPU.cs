@@ -233,7 +233,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             if (Monitor.TryEnter(telemetryLock))
             {
                 TelemetryData = ADLXBackend.GetTelemetryData();
-                Debug.WriteLine("W:{0}", TelemetryData.gpuPowerValue);
+                //Debug.WriteLine("W:{0}", TelemetryData.gpuPowerValue);
 
                 Monitor.Exit(telemetryLock);
             }
