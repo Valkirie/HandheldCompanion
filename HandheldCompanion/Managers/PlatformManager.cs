@@ -1,4 +1,6 @@
-﻿using HandheldCompanion.Platforms;
+﻿using HandheldCompanion.Misc;
+using HandheldCompanion.Platforms;
+using HandheldCompanion.Views;
 using System;
 using System.Diagnostics;
 using System.Timers;
@@ -67,7 +69,7 @@ public static class PlatformManager
         LogManager.LogInformation("{0} has started", "PlatformManager");
     }
 
-    private static void PowerProfileManager_Applied(Misc.PowerProfile profile, UpdateSource source)
+    private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
     {
         // AutoTDP
         if (profile.AutoTDPEnabled)

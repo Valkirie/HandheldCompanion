@@ -268,8 +268,20 @@ public static class PerformanceManager
         // apply profile define CPU Boost
         RequestPerfBoostMode((uint)profile.CPUBoostLevel);
 
-        // apply profile Power Mode
+        // apply profile Power mode
         RequestPowerMode(profile.OSPowerMode);
+
+        // apply profile Fan mode
+        switch (profile.FanProfile.fanMode)
+        {
+            default:
+            case FanMode.Hardware:
+                MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
+                break;
+            case FanMode.Software:
+                MainWindow.CurrentDevice.SetFanControl(true);
+                break;
+        }
     }
 
     private static void PowerProfileManager_Discarded(PowerProfile profile)
@@ -320,6 +332,9 @@ public static class PerformanceManager
 
         // restore OSPowerMode.BetterPerformance 
         RequestPowerMode(OSPowerMode.BetterPerformance);
+
+        // restore default Fan mode
+        MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
     }
 
     private static void RestoreTDP(bool immediate)
