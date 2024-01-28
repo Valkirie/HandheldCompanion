@@ -259,10 +259,6 @@ public partial class ControllerPage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            // we're busy
-            if (ControllerLoading.Visibility is Visibility.Visible)
-                return;
-
             PhysicalDevices.Visibility = hasPhysical ? Visibility.Visible : Visibility.Collapsed;
             WarningNoPhysical.Visibility = !hasPhysical ? Visibility.Visible : Visibility.Collapsed;
 
@@ -278,9 +274,8 @@ public partial class ControllerPage : Page
                 hasPhysical && !isPlugged ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (not Neptune) hidden, but no virtual controller
-            bool hiddenbutnovirtual = isHidden && !hasVirtual;
-            VirtualDevices.Visibility = !hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
-            WarningNoVirtual.Visibility = hiddenbutnovirtual ? Visibility.Visible : Visibility.Collapsed;
+            VirtualDevices.Visibility = hasVirtual ? Visibility.Visible : Visibility.Collapsed;
+            WarningNoVirtual.Visibility = !hasVirtual ? Visibility.Visible : Visibility.Collapsed;
 
             // hint: Has physical controller (Neptune) hidden, but virtual controller is muted
             bool neptunehidden = isHidden && isSteam && isMuted;

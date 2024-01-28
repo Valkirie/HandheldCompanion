@@ -101,6 +101,7 @@ namespace HandheldCompanion.Controllers
 
                 return false;
             }
+
             set
             {
                 // UI thread
@@ -114,10 +115,14 @@ namespace HandheldCompanion.Controllers
                 {
                     case false:
                         {
-                            if (workingThreadRunning)
+                            // kill working thread
+                            if (workingThread is not null)
                             {
                                 workingThreadRunning = false;
-                                workingThread.Join();
+                                // Ensure the thread has finished execution
+                                if (workingThread.IsAlive)
+                                    workingThread.Join();
+                                workingThread = null;
                             }
 
                             // visually update user index
@@ -143,6 +148,7 @@ namespace HandheldCompanion.Controllers
             {
                 return _UserIndex;
             }
+
             set
             {
                 _UserIndex = value;
@@ -180,6 +186,7 @@ namespace HandheldCompanion.Controllers
         private void workingThreadLoop()
         {
             int direction = 1; // 1 for increasing, -1 for decreasing
+            workingIdx = 0;
 
             while (workingThreadRunning)
             {

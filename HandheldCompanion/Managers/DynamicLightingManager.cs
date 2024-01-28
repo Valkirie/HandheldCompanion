@@ -73,8 +73,7 @@ public static class DynamicLightingManager
         if (!IsInitialized)
             return;
 
-        ambilightThreadRunning = false;
-        ambilightThread.Join();
+        StopAmbilight();
         
         ReleaseDirect3DDevice();
 
@@ -309,11 +308,15 @@ public static class DynamicLightingManager
 
     private static void StopAmbilight()
     {
-        if (!ambilightThreadRunning)
-            return;
-
-        ambilightThreadRunning = false;
-        ambilightThread.Join();
+        // suspend watchdog
+        if (ambilightThread is not null)
+        {
+            ambilightThreadRunning = false;
+            // Ensure the thread has finished execution
+            if (ambilightThread.IsAlive)
+                ambilightThread.Join();
+            ambilightThread = null;
+        }
     }
 
     private static Color CalculateColorAverage(int x, int y)
