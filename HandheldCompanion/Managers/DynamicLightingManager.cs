@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Timer = System.Timers.Timer;
@@ -106,7 +107,7 @@ public static class DynamicLightingManager
             StartAmbilight();
     }
 
-    private static void InitializeDirect3DDevice()
+    private static async void InitializeDirect3DDevice()
     {
         try
         {
@@ -121,7 +122,7 @@ public static class DynamicLightingManager
             if (ex.ResultCode == ResultCode.DeviceLost)
             {
                 while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
 
                 // Recreate the device and resources
                 ReleaseDirect3DDevice();
