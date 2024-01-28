@@ -120,7 +120,7 @@ public static class DynamicLightingManager
         {
             if (ex.ResultCode == ResultCode.DeviceLost)
             {
-                while (device.TestCooperativeLevel() == ResultCode.DeviceLost)
+                while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
                     Thread.Sleep(100);
 
                 // Recreate the device and resources
