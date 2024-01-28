@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.IGCL;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using static HandheldCompanion.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
@@ -153,9 +154,14 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             base.Start();
         }
 
-        public override void Stop()
+        public override async void Stop()
         {
             base.Stop();
+
+            // wait until the current IGCL tasks are completed
+            while (!Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock))
+                await Task.Delay(100);
+
             IGCLBackend.Terminate();
         }
     }
