@@ -118,7 +118,7 @@ public partial class QuickOverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayTimeLevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayTimeLevel", ComboBoxOnScreenDisplayTimeLevel.SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayFPSLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -126,7 +126,7 @@ public partial class QuickOverlayPage : Page
         if (!IsLoaded)
             return;
 
-        SettingsManager.SetProperty("OnScreenDisplayFPSLevel", ComboBoxOnScreenDisplayCPULevel.SelectedIndex);
+        SettingsManager.SetProperty("OnScreenDisplayFPSLevel", ComboBoxOnScreenDisplayFPSLevel.SelectedIndex);
     }
 
     private void ComboBoxOnScreenDisplayCPULevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
