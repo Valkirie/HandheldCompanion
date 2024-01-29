@@ -86,11 +86,8 @@ public partial class QuickHomePage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // wait until lock is released
-            if (brightnessLock)
-                return;
-
-            SliderBrightness.Value = brightness;
+            using (new ScopedLock(brightnessLock))
+                SliderBrightness.Value = brightness;
         });
     }
 
@@ -99,12 +96,11 @@ public partial class QuickHomePage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // wait until lock is released
-            if (volumeLock)
-                return;
-
-            UpdateVolumeIcon(volume);
-            SliderVolume.Value = Math.Round(volume);
+            using (new ScopedLock(volumeLock))
+            {
+                UpdateVolumeIcon(volume);
+                SliderVolume.Value = Math.Round(volume);
+            }
         });
     }
 
@@ -113,8 +109,11 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        using (new ScopedLock(brightnessLock))
-            MultimediaManager.SetBrightness(SliderBrightness.Value);
+        // wait until lock is released
+        if (brightnessLock)
+            return;
+
+       MultimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -122,8 +121,11 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        using (new ScopedLock(volumeLock))
-            MultimediaManager.SetVolume(SliderVolume.Value);
+        // wait until lock is released
+        if (volumeLock)
+            return;
+
+        MultimediaManager.SetVolume(SliderVolume.Value);
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
