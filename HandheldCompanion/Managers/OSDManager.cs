@@ -356,7 +356,7 @@ public static class OSDManager
                 {
                     case 2:
                     case 1:
-                        AddElementIfNotNull(entry, gpu.GetVRAMUsage(), "%");
+                        AddElementIfNotNull(entry, gpu.GetVRAMUsage(), "MiB");
                         break;
                 }
                 break;
