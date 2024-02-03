@@ -1,4 +1,4 @@
-﻿using HandheldCompanion.Actions;
+using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Controls;
 using HandheldCompanion.Inputs;
@@ -65,7 +65,7 @@ internal static class LayoutManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        SystemManager.DisplayOrientationChanged += DesktopManager_DisplayOrientationChanged;
+        MultimediaManager.DisplayOrientationChanged += DesktopManager_DisplayOrientationChanged;
     }
 
     public static FileSystemWatcher layoutWatcher { get; set; }

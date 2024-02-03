@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using static HandheldCompanion.Utils.DeviceUtils;
 using Timer = System.Timers.Timer;
@@ -47,7 +48,7 @@ public static class DynamicLightingManager
         rightLedTracker = new ColorTracker();
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        SystemManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
         MainWindow.CurrentDevice.PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
         ambilightThread = new Thread(ambilightThreadLoop);
@@ -60,7 +61,7 @@ public static class DynamicLightingManager
         DynamicLightingTimer.Elapsed += (sender, e) => UpdateLED();
     }
 
-    public static void Start(bool service = false)
+    public static void Start()
     {
         IsInitialized = true;
         Initialized?.Invoke();
@@ -73,8 +74,7 @@ public static class DynamicLightingManager
         if (!IsInitialized)
             return;
 
-        ambilightThreadRunning = false;
-        ambilightThread.Join();
+        StopAmbilight();
         
         ReleaseDirect3DDevice();
 
@@ -107,7 +107,7 @@ public static class DynamicLightingManager
             StartAmbilight();
     }
 
-    private static void InitializeDirect3DDevice()
+    private static async void InitializeDirect3DDevice()
     {
         try
         {
@@ -121,8 +121,8 @@ public static class DynamicLightingManager
         {
             if (ex.ResultCode == ResultCode.DeviceLost)
             {
-                while (device.TestCooperativeLevel() == ResultCode.DeviceLost)
-                    Thread.Sleep(100);
+                while (device is not null && device.TestCooperativeLevel() == ResultCode.DeviceLost)
+                    await Task.Delay(100);
 
                 // Recreate the device and resources
                 ReleaseDirect3DDevice();
@@ -309,11 +309,15 @@ public static class DynamicLightingManager
 
     private static void StopAmbilight()
     {
-        if (!ambilightThreadRunning)
-            return;
-
-        ambilightThreadRunning = false;
-        ambilightThread.Join();
+        // suspend watchdog
+        if (ambilightThread is not null)
+        {
+            ambilightThreadRunning = false;
+            // Ensure the thread has finished execution
+            if (ambilightThread.IsAlive)
+                ambilightThread.Join();
+            ambilightThread = null;
+        }
     }
 
     private static Color CalculateColorAverage(int x, int y)

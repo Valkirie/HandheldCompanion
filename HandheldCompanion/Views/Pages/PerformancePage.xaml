@@ -692,12 +692,20 @@
                             </StackPanel>
                         </DockPanel>
 
-                        <ui:ToggleSwitch
-                            Name="CPUBoostToggle"
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Style="{DynamicResource InvertedToggleSwitchStyle}"
-                            Toggled="CPUBoostToggle_Toggled" />
+                        <DockPanel Grid.Column="1" Margin="12,0,0,0">
+                            <ComboBox
+                                Name="CPUBoostLevel"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                SelectedIndex="0"
+                                SelectionChanged="CPUBoostLevel_SelectionChanged">
+                                <ComboBoxItem Content="Disabled" />
+                                <ComboBoxItem Content="Enabled" />
+                                <ComboBoxItem Content="Agressive" />
+                                <ComboBoxItem Content="Efficient enabled" />
+                                <ComboBoxItem Content="Efficient aggressive" />
+                            </ComboBox>
+                        </DockPanel>
                     </Grid>
                 </Border>
 

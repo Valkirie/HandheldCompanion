@@ -1,10 +1,9 @@
-﻿using PrecisionTiming;
+﻿using HandheldCompanion.GraphicsProcessingUnit;
+using PrecisionTiming;
 using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace HandheldCompanion.Managers;
 
@@ -19,10 +18,19 @@ public static class OSDManager
     // C5: BATT
     // C6: FPS
     private const string Header =
-        "<C0=FFFFFF><C1=458A6E><C2=4C8DB2><C3=AD7B95><C4=A369A6><C5=F19F86><C6=D76D76><A0=-4><A1=5><A2=-2><A3=-3><A4=-4><A5=-5><S0=-50><S1=50>";
+        "<C0=FFFFFF><C1=8000FF><A0=-4><S0=-50><S1=50>";
 
     private static bool IsInitialized;
+    public static string[] OverlayOrder;
+    public static int OverlayCount;
     public static short OverlayLevel;
+    public static short OverlayTimeLevel;
+    public static short OverlayFPSLevel;
+    public static short OverlayCPULevel;
+    public static short OverlayRAMLevel;
+    public static short OverlayGPULevel;
+    public static short OverlayVRAMLevel;
+    public static short OverlayBATTLevel;
 
     private static readonly PrecisionTimer RefreshTimer;
     private static int RefreshInterval = 100;
@@ -128,6 +136,8 @@ public static class OSDManager
     public static string Draw(int processId)
     {
         Content = new List<string>();
+        GPU gpu = GPU.GetCurrent();
+
         switch (OverlayLevel)
         {
             default:
@@ -138,17 +148,9 @@ public static class OSDManager
                 {
                     OverlayRow row1 = new();
 
-                    OverlayEntry FPSentry = new("<APP>", "C6");
-                    FPSentry.elements.Add(new OverlayEntryElement
-                    {
-                        Value = "<FR>",
-                        SzUnit = "FPS"
-                    });
-                    FPSentry.elements.Add(new OverlayEntryElement
-                    {
-                        Value = "<FT>",
-                        SzUnit = "ms"
-                    });
+                    OverlayEntry FPSentry = new("<APP>", "FF0000");
+                    FPSentry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
+                    FPSentry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
                     row1.entries.Add(FPSentry);
 
                     // add header to row1
@@ -159,38 +161,32 @@ public static class OSDManager
             case 2: // Extended
                 {
                     OverlayRow row1 = new();
+                    OverlayEntry FPSentry = new("FPS", "FF0000");
+                    FPSentry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
+                    FPSentry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
+                    row1.entries.Add(FPSentry);
 
-                    OverlayEntry GPUentry = new("GPU", "C1");
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPULoad, "%");
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPUPower, "W");
+                    OverlayEntry GPUentry = new("GPU", "8040");
+                    AddElementIfNotNull(GPUentry, gpu.GetLoad(), "%");
+                    AddElementIfNotNull(GPUentry, gpu.GetPower(), "W");
                     row1.entries.Add(GPUentry);
 
-                    OverlayEntry CPUentry = new("CPU", "C2");
+                    OverlayEntry CPUentry = new("CPU", "80FF");
                     AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.CPULoad, "%");
                     AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.CPUPower, "W");
                     row1.entries.Add(CPUentry);
-
-                    OverlayEntry RAMentry = new("RAM", "C3");
-                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.MemoryLoad, "%");
+                    OverlayEntry RAMentry = new("RAM", "FF80C0");
+                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.MemoryUsage, "MiB");
                     row1.entries.Add(RAMentry);
 
-                    OverlayEntry BATTentry = new("BATT", "C5");
+                    OverlayEntry VRAMentry = new("VRAM", "8000FF");
+                    AddElementIfNotNull(VRAMentry, gpu.GetVRAMUsage(), "MiB");
+                    row1.entries.Add(VRAMentry);
+
+                    OverlayEntry BATTentry = new("BATT", "FF8000");
                     AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.BatteryLevel, "%");
                     AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.BatteryTimeSpan, "min");
                     row1.entries.Add(BATTentry);
-
-                    OverlayEntry FPSentry = new("<APP>", "C6");
-                    FPSentry.elements.Add(new OverlayEntryElement
-                    {
-                        Value = "<FR>",
-                        SzUnit = "FPS"
-                    });
-                    FPSentry.elements.Add(new OverlayEntryElement
-                    {
-                        Value = "<FT>",
-                        SzUnit = "ms"
-                    });
-                    row1.entries.Add(FPSentry);
 
                     // add header to row1
                     Content.Add(Header + row1);
@@ -206,43 +202,35 @@ public static class OSDManager
                     OverlayRow row5 = new();
                     OverlayRow row6 = new();
 
-                    OverlayEntry GPUentry = new("GPU", "C1", true);
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPULoad, "%");
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPUPower, "W");
-                    AddElementIfNotNull(GPUentry, PlatformManager.LibreHardwareMonitor.GPUTemperatur, "C");
+                    OverlayEntry GPUentry = new("GPU", "8040", true);
+                    AddElementIfNotNull(GPUentry, gpu.GetLoad(), "%");
+                    AddElementIfNotNull(GPUentry, gpu.GetPower(), "W");
+                    AddElementIfNotNull(GPUentry, gpu.GetTemperature(), "C");
                     row1.entries.Add(GPUentry);
 
-                    OverlayEntry CPUentry = new("CPU", "C2", true);
+                    OverlayEntry CPUentry = new("CPU", "80FF", true);
                     AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.CPULoad, "%");
                     AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.CPUPower, "W");
                     AddElementIfNotNull(CPUentry, PlatformManager.LibreHardwareMonitor.CPUTemperatur, "C");
                     row2.entries.Add(CPUentry);
 
-                    OverlayEntry RAMentry = new("RAM", "C3", true);
-                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.MemoryLoad, "%");
-                    row3.entries.Add(RAMentry);
-
-                    OverlayEntry VRAMentry = new("VRAM", "C4", true);
-                    AddElementIfNotNull(VRAMentry, PlatformManager.LibreHardwareMonitor.VRAMLoad, "%");
+                    OverlayEntry VRAMentry = new("VRAM", "8000FF", true);
+                    AddElementIfNotNull(VRAMentry, gpu.GetVRAMUsage(), "MiB");
                     row4.entries.Add(VRAMentry);
 
-                    OverlayEntry BATTentry = new("BATT", "C5", true);
+                    OverlayEntry RAMentry = new("RAM", "FF80C0", true);
+                    AddElementIfNotNull(RAMentry, PlatformManager.LibreHardwareMonitor.MemoryUsage, "MiB");
+                    row3.entries.Add(RAMentry);
+
+                    OverlayEntry BATTentry = new("BATT", "FF8000", true);
                     AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.BatteryLevel, "%");
                     AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.BatteryPower, "W");
                     AddElementIfNotNull(BATTentry, PlatformManager.LibreHardwareMonitor.BatteryTimeSpan, "min");
                     row5.entries.Add(BATTentry);
 
-                    OverlayEntry FPSentry = new("<APP>", "C6");
-                    FPSentry.elements.Add(new OverlayEntryElement
-                    {
-                        Value = "<FR>",
-                        SzUnit = "FPS"
-                    });
-                    FPSentry.elements.Add(new OverlayEntryElement
-                    {
-                        Value = "<FT>",
-                        SzUnit = "ms"
-                    });
+                    OverlayEntry FPSentry = new("FPS", "FF0000", true);
+                    FPSentry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
+                    FPSentry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
                     row6.entries.Add(FPSentry);
 
                     // add header to row1
@@ -255,7 +243,22 @@ public static class OSDManager
                 }
                 break;
 
-            case 4: // External
+            case 4:
+                {
+                    for (int i = 0; i < OverlayCount; i++)
+                    {
+                        var name = OverlayOrder[i];
+                        var content = EntryContent(name, gpu);
+                        if (content == "") continue;
+                        Content.Add(content);
+                    }
+
+                    // Add header to row1
+                    if (Content.Count > 0) Content[0] = Header + Content[0];
+                }
+                break;
+
+            case 5: // External
                 {
                     /*
                      * Intended to simply allow RTSS/HWINFO to run, and let the user configure the overlay within those
@@ -284,6 +287,121 @@ public static class OSDManager
         LogManager.LogInformation("{0} has stopped", "OSDManager");
     }
 
+    private static string EntryContent(String name, GPU gpu)
+    {
+        OverlayRow row = new();
+        OverlayEntry entry = new(name, EntryColor(name), true);
+        switch (name.ToUpper())
+        {
+            case "TIME":
+                switch (OverlayTimeLevel)
+                {
+                    case 2:
+                    case 1:
+                        entry.elements.Add(new OverlayEntryElement(DateTime.Now.ToString(), ""));
+                        break;
+                }
+                break;
+            case "FPS":
+                switch (OverlayFPSLevel)
+                {
+                    case 2:
+                        entry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
+                        entry.elements.Add(new OverlayEntryElement("<FT>", "ms"));
+                        break;
+                    case 1:
+                        entry.elements.Add(new OverlayEntryElement("<FR>", "FPS"));
+                        break;
+                }
+                break;
+            case "CPU":
+                switch (OverlayCPULevel)
+                {
+                    case 2:
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.CPULoad, "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.CPUPower, "W");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.CPUTemperatur, "C");
+                        break;
+                    case 1:
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.CPULoad, "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.CPUPower, "W");
+                        break;
+                }
+                break;
+            case "RAM":
+                switch (OverlayRAMLevel)
+                {
+                    case 2:
+                    case 1:
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.MemoryUsage, "MiB");
+                        break;
+                }
+                break;
+            case "GPU":
+                switch (OverlayGPULevel)
+                {
+                    case 2:
+                        AddElementIfNotNull(entry, gpu.GetLoad(), "%");
+                        AddElementIfNotNull(entry, gpu.GetPower(), "W");
+                        AddElementIfNotNull(entry, gpu.GetTemperature(), "C");
+                        break;
+                    case 1:
+                        AddElementIfNotNull(entry, gpu.GetLoad(), "%");
+                        AddElementIfNotNull(entry, gpu.GetPower(), "W");
+                        break;
+                }
+                break;
+            case "VRAM":
+                switch (OverlayVRAMLevel)
+                {
+                    case 2:
+                    case 1:
+                        AddElementIfNotNull(entry, gpu.GetVRAMUsage(), "MiB");
+                        break;
+                }
+                break;
+            case "BATT":
+                switch (OverlayBATTLevel)
+                {
+                    case 2:
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.BatteryLevel, "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.BatteryPower, "W");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.BatteryTimeSpan, "min");
+                        break;
+                    case 1:
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.BatteryLevel, "%");
+                        AddElementIfNotNull(entry, PlatformManager.LibreHardwareMonitor.BatteryTimeSpan, "min");
+                        break;
+                }
+                break;
+        }
+        // Skip empty rows
+        if (entry.elements.Count == 0) return "";
+        row.entries.Add(entry);
+        return row.ToString();
+    }
+
+    private static string EntryColor(String name)
+    {
+        switch (name.ToUpper())
+        {
+            case "FPS":
+                return "FF0000";
+            case "CPU":
+                return "80FF";
+            case "GPU":
+                return "8040";
+            case "RAM":
+                return "FF80C0";
+            case "VRAM":
+                return "FF80FF";
+            case "BATT":
+                return "FF8000";
+            default:
+                return "FFFFFF";
+        }
+    }
+
     private static void AddElementIfNotNull(OverlayEntry entry, float? value, String unit)
     {
         if (value is not null)
@@ -296,6 +414,19 @@ public static class OSDManager
     {
         switch (name)
         {
+            case "OnScreenDisplayRefreshRate":
+                {
+                    RefreshInterval = Convert.ToInt32(value);
+
+                    if (RefreshTimer.IsRunning())
+                    {
+                        RefreshTimer.Stop();
+                        RefreshTimer.SetPeriod(RefreshInterval);
+                        RefreshTimer.Start();
+                    }
+                }
+                break;
+
             case "OnScreenDisplayLevel":
                 {
                     OverlayLevel = Convert.ToInt16(value);
@@ -307,8 +438,8 @@ public static class OSDManager
                     {
                         // set lastOSDLevel to be used in OSD toggle hotkey
                         SettingsManager.SetProperty("LastOnScreenDisplayLevel", value);
-                        
-                        if (OverlayLevel == 4)
+
+                        if (OverlayLevel == 5)
                         {
                             // No need to update OSD in External
                             RefreshTimer.Stop();
@@ -341,17 +472,30 @@ public static class OSDManager
                 }
                 break;
 
-            case "OnScreenDisplayRefreshRate":
-                {
-                    RefreshInterval = Convert.ToInt32(value);
-
-                    if (RefreshTimer.IsRunning())
-                    {
-                        RefreshTimer.Stop();
-                        RefreshTimer.SetPeriod(RefreshInterval);
-                        RefreshTimer.Start();
-                    }
-                }
+            case "OnScreenDisplayOrder":
+                OverlayOrder = value.ToString().Split(",");
+                OverlayCount = OverlayOrder.Length;
+                break;
+            case "OnScreenDisplayTimeLevel":
+                OverlayTimeLevel = Convert.ToInt16(value);
+                break;
+            case "OnScreenDisplayFPSLevel":
+                OverlayFPSLevel = Convert.ToInt16(value);
+                break;
+            case "OnScreenDisplayCPULevel":
+                OverlayCPULevel = Convert.ToInt16(value);
+                break;
+            case "OnScreenDisplayRAMLevel":
+                OverlayRAMLevel = Convert.ToInt16(value);
+                break;
+            case "OnScreenDisplayGPULevel":
+                OverlayGPULevel = Convert.ToInt16(value);
+                break;
+            case "OnScreenDisplayVRAMLevel":
+                OverlayVRAMLevel = Convert.ToInt16(value);
+                break;
+            case "OnScreenDisplayBATTLevel":
+                OverlayBATTLevel = Convert.ToInt16(value);
                 break;
         }
     }
@@ -372,6 +516,12 @@ public struct OverlayEntryElement
         Value = string.Format("{0:00}", value);
         SzUnit = unit;
     }
+
+    public OverlayEntryElement(string value, String unit)
+    {
+        Value = value;
+        SzUnit = unit;
+    }
 }
 
 public class OverlayEntry : IDisposable
@@ -383,7 +533,7 @@ public class OverlayEntry : IDisposable
         Name = indent ? name + "\t" : name;
 
         if (!string.IsNullOrEmpty(colorScheme))
-            Name = "<" + colorScheme + ">" + Name + "<C>";
+            Name = "<C=" + colorScheme + ">" + Name + "<C>";
     }
 
     public string Name { get; set; }
@@ -423,6 +573,6 @@ public class OverlayRow : IDisposable
             rowStr.Add(ItemStr);
         }
 
-        return string.Join(" | ", rowStr);
+        return string.Join("<C1> | <C>", rowStr);
     }
 }
