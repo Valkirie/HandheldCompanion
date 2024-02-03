@@ -330,8 +330,14 @@ public class NeptuneController : SteamController
         try
         {
             // kill rumble thread
-            rumbleThreadRunning = false;
-            rumbleThread.Join();
+            if (rumbleThread is not null)
+            {
+                rumbleThreadRunning = false;
+                // Ensure the thread has finished execution
+                if (rumbleThread.IsAlive)
+                    rumbleThread.Join();
+                rumbleThread = null;
+            }
 
             // close controller
             Close();

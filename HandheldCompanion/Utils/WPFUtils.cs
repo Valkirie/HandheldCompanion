@@ -1,10 +1,12 @@
-﻿using System;
+﻿using iNKORE.UI.WPF.Modern.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Control = System.Windows.Controls.Control;
@@ -220,10 +222,10 @@ public static class WPFUtils
         return 9999.0d;
     }
 
-    public static List<Control> FindChildren(DependencyObject startNode)
+    public static List<FrameworkElement> FindChildren(DependencyObject startNode)
     {
         int count = VisualTreeHelper.GetChildrenCount(startNode);
-        List<Control> childs = new List<Control>();
+        List<FrameworkElement> childs = new();
 
         for (int i = 0; i < count; i++)
         {
@@ -232,6 +234,14 @@ public static class WPFUtils
             string currentType = current.GetType().Name;
             switch (currentType)
             {
+                case "TextBox":
+                    {
+                        TextBox textBox = (TextBox)current;
+                        if (!textBox.IsReadOnly)
+                            goto case "Button";
+                    }
+                    break;
+
                 case "Button":
                 case "Slider":
                 case "ToggleSwitch":
@@ -242,9 +252,9 @@ public static class WPFUtils
                 case "ToggleButton":
                 case "CheckBox":
                 case "RadioButton":
+                case "RepeatButton":
                     {
-                        Control asType = (Control)current;
-
+                        FrameworkElement asType = (FrameworkElement)current;
                         if (asType.IsEnabled && asType.Focusable && asType.IsVisible)
                             childs.Add(asType);
                     }
@@ -300,6 +310,41 @@ public static class WPFUtils
                 }
             }
         }
+    }
+
+    // Returns all FrameworkElement of specified type from a list, where their parent or parents of their parent is oftype() Popup
+    public static List<T> GetElementsFromPopup<T>(List<FrameworkElement> elements) where T : FrameworkElement
+    {
+        // Create an empty list to store the result
+        List<T> result = new List<T>();
+
+        // Loop through each element in the input list
+        foreach (FrameworkElement element in elements)
+        {
+            // Check if the element is of the specified type
+            if (element is T)
+            {
+                // Get the parent of the element
+                FrameworkElement parent = element.Parent as FrameworkElement;
+
+                // Loop until the parent is null or a Popup
+                while (parent != null && (!(parent is Popup) && !(parent is ContentDialog)))
+                {
+                    // Get the parent of the parent
+                    parent = parent.Parent as FrameworkElement;
+                }
+
+                // Check if the parent is a Popup
+                if (parent is Popup || parent is ContentDialog)
+                {
+                    // Add the element to the result list
+                    result.Add(element as T);
+                }
+            }
+        }
+
+        // Return the result list
+        return result;
     }
 
     public static void SendKeyToControl(Control control, int keyCode)

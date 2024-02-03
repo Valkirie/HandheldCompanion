@@ -65,6 +65,7 @@
             <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
             <converters:PercentageConverter x:Key="PercentageConverter" />
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
+            <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
 
             <math:MathConverter x:Key="Math" />
 

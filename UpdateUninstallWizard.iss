@@ -141,8 +141,7 @@ begin
     keepHidhideCheckbox.Left := UninstallProgressForm.StatusLabel.Left;
     keepHidhideCheckbox.Top := keepVigemCheckbox.Top + PageText.height + 6;
     keepHidhideCheckbox.Caption := 'Keep HidHide';
-    keepHidhideCheckbox.checked := false;
-    keepHidhideCheckbox.Enabled  := false;
+    keepHidhideCheckbox.checked := true;
   
     UninstallNextButton := TNewButton.Create(UninstallProgressForm);
     UninstallNextButton.Parent := UninstallProgressForm;

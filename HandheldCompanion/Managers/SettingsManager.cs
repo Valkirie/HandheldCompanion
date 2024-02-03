@@ -176,10 +176,10 @@ public static class SettingsManager
                 }
 
             case "HasBrightnessSupport":
-                return SystemManager.HasBrightnessSupport();
+                return MultimediaManager.HasBrightnessSupport();
 
             case "HasVolumeSupport":
-                return SystemManager.HasVolumeSupport();
+                return MultimediaManager.HasVolumeSupport();
 
             default:
                 {

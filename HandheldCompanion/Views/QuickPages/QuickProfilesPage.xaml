@@ -10,7 +10,7 @@
     Title="{x:Static resx:Resources.QuickProfilesPage_Title}"
     Margin="15,0,0,0"
     d:Background="Black"
-    d:DesignHeight="1500"
+    d:DesignHeight="2000"
     d:DesignWidth="640"
     KeepAlive="True"
     mc:Ignorable="d">
@@ -139,7 +139,10 @@
         <ui:SimpleStackPanel Name="GridProfile" Spacing="6">
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_PowerSettings}" />
 
-            <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+            <Expander
+                HorizontalAlignment="Stretch"
+                d:IsExpanded="true"
+                IsExpanded="True">
                 <Expander.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -205,7 +208,10 @@
             </Expander>
 
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_MotionControlSettings}" />
-            <Expander HorizontalAlignment="Stretch" IsExpanded="False">
+            <Expander
+                HorizontalAlignment="Stretch"
+                d:IsExpanded="true"
+                IsExpanded="False">
                 <Expander.Header>
                     <DockPanel Margin="0,12,12,12">
                         <ui:FontIcon
@@ -545,7 +551,10 @@
 
             <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="Graphics settings" />
 
-            <Expander HorizontalAlignment="Stretch" IsExpanded="False">
+            <Expander
+                HorizontalAlignment="Stretch"
+                d:IsExpanded="true"
+                IsExpanded="False">
                 <Expander.Header>
                     <DockPanel Margin="0,12,12,12">
                         <ui:FontIcon
@@ -629,8 +638,13 @@
                     <!--  Separator  -->
                     <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
-                    <!--  RSR  -->
-                    <ui:SimpleStackPanel Name="StackProfileRSR" Spacing="6">
+                    <!--  RSR (AMD)  -->
+                    <ui:SimpleStackPanel
+                        Name="StackProfileRSR"
+                        d:Background="Red"
+                        d:Visibility="Visible"
+                        Spacing="6"
+                        Visibility="Collapsed">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5*" />
@@ -692,14 +706,17 @@
                     </ui:SimpleStackPanel>
 
                     <!--  Separator  -->
-                    <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                    <Separator
+                        Margin="-16,0,-16,0"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                        Visibility="{Binding ElementName=StackProfileRSR, Path=Visibility}" />
 
                     <!--  Integer Scaling  -->
                     <ui:SimpleStackPanel Name="StackProfileIS" Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" />
-                                <ColumnDefinition Width="5*" />
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="3*" />
                             </Grid.ColumnDefinitions>
 
                             <ui:SimpleStackPanel VerticalAlignment="Center">
@@ -724,17 +741,15 @@
 
                         <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=IntegerScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                        <StackPanel d:Visibility="Visible" Visibility="{Binding ElementName=IntegerScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ui:SimpleStackPanel
+                            d:Visibility="Visible"
+                            Spacing="6"
+                            Visibility="{Binding ElementName=IntegerScalingToggle, Path=IsOn, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="5*" />
                                     <ColumnDefinition Width="5*" />
                                 </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
 
                                 <ui:SimpleStackPanel VerticalAlignment="Center">
                                     <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ResolutionScale}" />
@@ -752,35 +767,72 @@
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center"
                                     SelectionChanged="IntegerScalingComboBox_SelectionChanged" />
+                            </Grid>
 
-                                <ui:SimpleStackPanel
-                                    Grid.Row="1"
-                                    Grid.ColumnSpan="2"
-                                    Height="20"
-                                    Margin="20,6,0,0"
-                                    HorizontalAlignment="Center"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    d:Visibility="Visible"
                                     Orientation="Horizontal"
                                     Visibility="{Binding ElementName=IntegerScalingComboBox, Path=SelectedIndex, Converter={StaticResource IndexToVisibilityConverter}, ConverterParameter=0}">
                                     <ui:FontIcon
                                         Height="20"
-                                        Margin="10,0"
-                                        HorizontalAlignment="Center"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Glyph="&#xe7ba;" />
                                     <TextBlock
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
                                         Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Text="{x:Static resx:Resources.QuickSettingsPage_ResScaleExclusiveFullscreen}"
                                         TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
+                                </StackPanel>
                             </Grid>
-                        </StackPanel>
+
+                            <Separator Background="{DynamicResource ExpanderHeaderBackground}" Visibility="{Binding ElementName=IntegerScalingTypeGrid, Path=Visibility}" />
+
+                            <Grid
+                                Name="IntegerScalingTypeGrid"
+                                MinHeight="40"
+                                d:Background="Blue">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="5*" />
+                                </Grid.ColumnDefinitions>
+
+                                <ui:SimpleStackPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{x:Static resx:Resources.ProfilesPage_ResolutionScaleType}" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Static resx:Resources.ProfilesPage_ResolutionScaleTypeDesc}"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+
+                                <ComboBox
+                                    Name="IntegerScalingTypeComboBox"
+                                    Grid.Column="1"
+                                    Margin="12,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    SelectionChanged="IntegerScalingTypeComboBox_SelectionChanged">
+                                    <ComboBoxItem Name="IntegerScalingTypeInteger" Content="{x:Static resx:Resources.ProfilesPage_ResolutionScaleTypeInteger}" />
+                                    <ComboBoxItem Name="IntegerScalingTypeNearest" Content="{x:Static resx:Resources.ProfilesPage_ResolutionScaleTypeNearest}" />
+                                </ComboBox>
+                            </Grid>
+                        </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
 
                     <!--  Separator  -->
                     <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
-                    <!--  RIS  -->
+                    <!--  RIS (AMD)  -->
                     <ui:SimpleStackPanel Name="StackProfileRIS" Spacing="6">
                         <Grid>
                             <Grid.ColumnDefinitions>

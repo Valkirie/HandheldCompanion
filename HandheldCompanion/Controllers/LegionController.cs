@@ -166,7 +166,6 @@ namespace HandheldCompanion.Controllers
                 if (dataThread is null)
                 {
                     dataThreadRunning = true;
-
                     dataThread = new Thread(dataThreadLoop);
                     dataThread.IsBackground = true;
                     dataThread.Start();
@@ -178,11 +177,13 @@ namespace HandheldCompanion.Controllers
 
         public override void Unplug()
         {
-            // kill data thread
+            // Kill data thread
             if (dataThread is not null)
             {
                 dataThreadRunning = false;
-                dataThread.Join();
+                // Ensure the thread has finished execution
+                if (dataThread.IsAlive)
+                    dataThread.Join();
                 dataThread = null;
             }
 

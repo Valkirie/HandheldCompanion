@@ -192,14 +192,14 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Controller cloaking</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>Virtual controller settings</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Disconnect</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
-    <value>Input devices</value>
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
+    <value>Physical controllers</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
     <value>Unhide controller on close</value>
@@ -1371,8 +1371,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="ControllerPage_SteamControllerHDRumbleDesc" xml:space="preserve">
     <value>Use high-definition rumble engine, at the cost of higher CPU usage</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
-    <value>Controller settings</value>
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
+    <value>Physical controllers settings</value>
   </data>
   <data name="LayoutPage_ApplyTemplate" xml:space="preserve">
     <value>Apply template</value>
@@ -1446,8 +1446,65 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="OverlayPage_OverlayDisplayLevel_Minimal" xml:space="preserve">
     <value>Minimal</value>
   </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
   <data name="OverlayPage_OverlayDisplayLevel_External" xml:space="preserve">
     <value>External</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
+    <value>Minimal</value>
+  </data>
+  <data name="OverlayPage_CustomSettings" xml:space="preserve">
+    <value>Custom Settings</value>
+  </data>
+  <data name="OverlayPage_TimeLevel" xml:space="preserve">
+    <value>Time Level</value>
+  </data>
+  <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
+    <value>The level of information for your time.</value>
+  </data>
+  <data name="OverlayPage_FPSLevel" xml:space="preserve">
+    <value>FPS Level</value>
+  </data>
+  <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
+    <value>The level of information for your FPS.</value>
+  </data>
+  <data name="OverlayPage_CPULevel" xml:space="preserve">
+    <value>CPU Level</value>
+  </data>
+  <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
+    <value>The level of information for your CPU.</value>
+  </data>
+  <data name="OverlayPage_RAMLevel" xml:space="preserve">
+    <value>RAM Level</value>
+  </data>
+  <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
+    <value>The level of information for your RAM.</value>
+  </data>
+  <data name="OverlayPage_GPULevel" xml:space="preserve">
+    <value>GPU Level</value>
+  </data>
+  <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
+    <value>The level of information for your GPU.</value>
+  </data>
+  <data name="OverlayPage_VRAMLevel" xml:space="preserve">
+    <value>VRAM Level</value>
+  </data>
+  <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
+    <value>The level of information for your VRAM.</value>
+  </data>
+  <data name="OverlayPage_BATTLevel" xml:space="preserve">
+    <value>Battery Level</value>
+  </data>
+  <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
+    <value>The level of information for your battery.</value>
   </data>
   <data name="ProfilesPage_ControllerLayoutDesc" xml:space="preserve">
     <value>Change the virtual controller layout</value>
@@ -2409,9 +2466,6 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="PerformancePage_Device" xml:space="preserve">
     <value>Performance</value>
   </data>
-  <data name="ProfilesPage_WrapperDesc" xml:space="preserve">
-    <value />
-  </data>
   <data name="ProfilesPage_CPUMhz" xml:space="preserve">
     <value>CPU Clock max frequency</value>
   </data>
@@ -2460,14 +2514,8 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   <data name="QuickDevicePage_Title" xml:space="preserve">
     <value>Device</value>
   </data>
-  <data name="QuickHomePage_Desc" xml:space="preserve">
-    <value />
-  </data>
   <data name="QuickHomePage_Title" xml:space="preserve">
     <value>Home</value>
-  </data>
-  <data name="QuickPerformancePage_Desc" xml:space="preserve">
-    <value />
   </data>
   <data name="QuickPerformancePage_Title" xml:space="preserve">
     <value>Performance</value>
@@ -2767,7 +2815,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>GPU will scale up lower resolutions to fit the display</value>
   </data>
   <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
-    <value>Radeon Image Sharpening</value>
+    <value>Image Sharpening</value>
   </data>
   <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
     <value>Enhances visual detail</value>
@@ -2810,5 +2858,71 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
   </data>
   <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
     <value>1/1 only supports Exclusive Fullscreen.</value>
+  </data>
+  <data name="SettingsPage_UISounds" xml:space="preserve">
+    <value>Enable UI sounds</value>
+  </data>
+  <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
+    <value>Enable or disable UI sounds on navigation</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
+    <value>Scaling type</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeDesc" xml:space="preserve">
+    <value>Select scaling type to adapt the scaling aspect ratio</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
+    <value>Integer Scaling</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
+    <value>Nearest Neighbor</value>
+  </data>
+  <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
+    <value>connected to the computer</value>
+  </data>
+  <data name="ControllerPage_VirtualDevices" xml:space="preserve">
+    <value>Virtual controller</value>
+  </data>
+  <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
+    <value>is what the computer uses</value>
+  </data>
+  <data name="ControllerPage_VirtualStatus" xml:space="preserve">
+    <value>Controller status</value>
+  </data>
+  <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
+    <value>Change virtual controller status</value>
+  </data>
+  <data name="ControllerPage_VirtualType" xml:space="preserve">
+    <value>Controller type</value>
+  </data>
+  <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
+    <value>Change virtual controller type</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
+    <value>Auto Sleep Time</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
+    <value>Joystick Deadzone</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
+    <value>Left Legion Controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
+    <value>Change settings for the left legion controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
+    <value>Right Legion Controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
+    <value>Change settings for the right legion controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
+    <value>Trigger Deadzone</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
+    <value>Trigger Margin</value>
+  </data>
+  <data name="DevicePage_Lenovo_Settings" xml:space="preserve">
+    <value>Lenovo Legion Go settings</value>
   </data>
 </root>
