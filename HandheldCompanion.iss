@@ -312,10 +312,10 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
-  Dependency_Add('HidHide_1.4.192_x64.exe',
+  Dependency_Add('HidHide_1.4.202_x64.exe',
     '/quiet /norestart',
     'HidHide Drivers',
-    'https://github.com/nefarius/HidHide/releases/download/v1.4.192.0/HidHide_1.4.192_x64.exe',
+    'https://github.com/nefarius/HidHide/releases/download/v1.4.202.0/HidHide_1.4.202_x64.exe',
     '', True, False);
 end;
 
