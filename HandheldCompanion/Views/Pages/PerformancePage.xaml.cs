@@ -56,7 +56,7 @@ namespace HandheldCompanion.Views.Pages
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
-            SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+            MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -343,7 +343,7 @@ namespace HandheldCompanion.Views.Pages
                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                 ContentDialogButton.Primary,
                 $"{Properties.Resources.ProfilesPage_Cancel}",
-                $"{Properties.Resources.ProfilesPage_Delete}");
+                $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, MainWindow.GetCurrent());
             await result; // sync call
 
             switch (result.Result)
@@ -478,7 +478,7 @@ namespace HandheldCompanion.Views.Pages
                     GPUSlider.Value = selectedProfile.GPUOverrideValue != 0 ? selectedProfile.GPUOverrideValue : 255 * 50;
 
                     // CPU Boost
-                    CPUBoostToggle.IsOn = selectedProfile.CPUBoostEnabled;
+                    CPUBoostLevel.SelectedIndex = selectedProfile.CPUBoostLevel;
 
                     // Power Mode
                     PowerMode.SelectedIndex = Array.IndexOf(PerformanceManager.PowerModes, selectedProfile.OSPowerMode);
@@ -673,15 +673,18 @@ namespace HandheldCompanion.Views.Pages
             UpdateProfile();
         }
 
-        private void CPUBoostToggle_Toggled(object sender, RoutedEventArgs e)
+        private void CPUBoostLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (CPUBoostLevel.SelectedIndex == -1)
+                return;
+
             if (selectedProfile is null)
                 return;
 
             if (updateLock)
                 return;
 
-            selectedProfile.CPUBoostEnabled = CPUBoostToggle.IsOn;
+            selectedProfile.CPUBoostLevel = CPUBoostLevel.SelectedIndex;
             UpdateProfile();
         }
 

@@ -312,10 +312,10 @@ end;
 
 procedure Dependency_AddHideHide;
 begin
-  Dependency_Add('HidHide_1.4.192_x64.exe',
+  Dependency_Add('HidHide_1.4.202_x64.exe',
     '/quiet /norestart',
     'HidHide Drivers',
-    'https://github.com/nefarius/HidHide/releases/download/v1.4.192.0/HidHide_1.4.192_x64.exe',
+    'https://github.com/nefarius/HidHide/releases/download/v1.4.202.0/HidHide_1.4.202_x64.exe',
     '', True, False);
 end;
 
@@ -364,7 +364,7 @@ end;
 
 #define MyAppSetupName 'Handheld Companion'
 #define MyBuildId 'HandheldCompanion'
-#define MyAppVersion '0.20.3.1'
+#define MyAppVersion '0.20.4.0'
 #define MyAppPublisher 'BenjaminLSR'
 #define MyAppCopyright 'Copyright @ BenjaminLSR'
 #define MyAppURL 'https://github.com/Valkirie/HandheldCompanion'
@@ -482,7 +482,7 @@ begin
                    
     if not(keepHidhideCheckbox.Checked) then
     begin 
-      if(ShellExec('', 'msiexec.exe', '/X{BE49B9DE-F8EB-4F54-B312-DD4B601985FC}', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then  
+      if(ShellExec('', 'msiexec.exe', '/X{50D7EB6D-6A4A-4A38-B09C-CC28F75F082E} /L*V "C:\HidHide-Uninstall.log"', '', SW_SHOW, ewWaitUntilTerminated, resultCode)) then 
       begin
         log('Successfully executed Hidhide uninstaller');
         if(resultCode = 0) then

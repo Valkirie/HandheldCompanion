@@ -155,9 +155,15 @@ namespace hidapi
 
         public void EndRead()
         {
-            _reading = false;
-            _readThread.Join();
-            _readThread = null;
+            // kill read thread
+            if (_readThread != null)
+            {
+                _reading = false;
+                // Ensure the thread has finished execution
+                if (_readThread.IsAlive)
+                    _readThread.Join();
+                _readThread = null;
+            }
         }
 
         public void Close()

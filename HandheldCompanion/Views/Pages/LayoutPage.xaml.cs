@@ -373,7 +373,7 @@ public partial class LayoutPage : Page
             string.Format(Properties.Resources.ProfilesPage_AreYouSureApplyTemplate2, currentTemplate.Name),
             ContentDialogButton.Primary,
             $"{Properties.Resources.ProfilesPage_Cancel}",
-            $"{Properties.Resources.ProfilesPage_Yes}");
+            $"{Properties.Resources.ProfilesPage_Yes}", string.Empty, MainWindow.GetCurrent());
 
         await result; // sync call
 
@@ -432,7 +432,7 @@ public partial class LayoutPage : Page
             LayoutFlyout.Hide();
             _ = Dialog.ShowAsync("Layout template name cannot be empty",
                 "Layout was not exported.",
-                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+                ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
             return;
         }
 
@@ -444,7 +444,7 @@ public partial class LayoutPage : Page
         LayoutFlyout.Hide();
         _ = Dialog.ShowAsync("Layout template exported",
             $"{newLayout.Name} was exported.",
-            ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}");
+            ContentDialogButton.Primary, null, $"{Properties.Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
     }
 
     private void Flyout_Opening(object sender, object e)

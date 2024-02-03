@@ -1,5 +1,4 @@
 ﻿using HandheldCompanion.Managers;
-using HandheldCompanion.Properties;
 using HandheldCompanion.Utils;
 using System;
 using System.Linq;
@@ -24,9 +23,9 @@ public partial class QuickHomePage : Page
         HotkeysManager.HotkeyCreated += HotkeysManager_HotkeyCreated;
         HotkeysManager.HotkeyUpdated += HotkeysManager_HotkeyUpdated;
 
-        SystemManager.VolumeNotification += SystemManager_VolumeNotification;
-        SystemManager.BrightnessNotification += SystemManager_BrightnessNotification;
-        SystemManager.Initialized += SystemManager_Initialized;
+        MultimediaManager.VolumeNotification += SystemManager_VolumeNotification;
+        MultimediaManager.BrightnessNotification += SystemManager_BrightnessNotification;
+        MultimediaManager.Initialized += SystemManager_Initialized;
 
         ProfileManager.Applied += ProfileManager_Applied;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
@@ -67,16 +66,16 @@ public partial class QuickHomePage : Page
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            if (SystemManager.HasBrightnessSupport())
+            if (MultimediaManager.HasBrightnessSupport())
             {
                 SliderBrightness.IsEnabled = true;
-                SliderBrightness.Value = SystemManager.GetBrightness();
+                SliderBrightness.Value = MultimediaManager.GetBrightness();
             }
 
-            if (SystemManager.HasVolumeSupport())
+            if (MultimediaManager.HasVolumeSupport())
             {
                 SliderVolume.IsEnabled = true;
-                SliderVolume.Value = SystemManager.GetVolume();
+                SliderVolume.Value = MultimediaManager.GetVolume();
                 UpdateVolumeIcon((float)SliderVolume.Value);
             }
         });
@@ -87,11 +86,8 @@ public partial class QuickHomePage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // wait until lock is released
-            if (brightnessLock)
-                return;
-
-            SliderBrightness.Value = brightness;
+            using (new ScopedLock(brightnessLock))
+                SliderBrightness.Value = brightness;
         });
     }
 
@@ -100,12 +96,11 @@ public partial class QuickHomePage : Page
         // UI thread
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // wait until lock is released
-            if (volumeLock)
-                return;
-
-            UpdateVolumeIcon(volume);
-            SliderVolume.Value = Math.Round(volume);
+            using (new ScopedLock(volumeLock))
+            {
+                UpdateVolumeIcon(volume);
+                SliderVolume.Value = Math.Round(volume);
+            }
         });
     }
 
@@ -114,8 +109,11 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        using (new ScopedLock(brightnessLock))
-            SystemManager.SetBrightness(SliderBrightness.Value);
+        // wait until lock is released
+        if (brightnessLock)
+            return;
+
+       MultimediaManager.SetBrightness(SliderBrightness.Value);
     }
 
     private void SliderVolume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -123,8 +121,11 @@ public partial class QuickHomePage : Page
         if (!IsLoaded)
             return;
 
-        using (new ScopedLock(volumeLock))
-            SystemManager.SetVolume(SliderVolume.Value);
+        // wait until lock is released
+        if (volumeLock)
+            return;
+
+        MultimediaManager.SetVolume(SliderVolume.Value);
     }
 
     private void ProfileManager_Applied(Profile profile, UpdateSource source)
@@ -143,6 +144,7 @@ public partial class QuickHomePage : Page
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Minimal,
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Extended,
             Properties.Resources.OverlayPage_OverlayDisplayLevel_Full,
+            Properties.Resources.OverlayPage_OverlayDisplayLevel_Custom,
             Properties.Resources.OverlayPage_OverlayDisplayLevel_External,
         };
 
@@ -161,7 +163,7 @@ public partial class QuickHomePage : Page
                 break;
         }
     }
-    
+
     private void UpdateVolumeIcon(float volume)
     {
         string glyph;

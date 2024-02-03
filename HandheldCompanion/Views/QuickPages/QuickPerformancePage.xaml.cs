@@ -5,6 +5,7 @@ using HandheldCompanion.Misc;
 using HandheldCompanion.Platforms;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views.Windows;
 using iNKORE.UI.WPF.Modern.Controls;
 using System;
 using System.Timers;
@@ -48,7 +49,7 @@ public partial class QuickPerformancePage : Page
         PerformanceManager.Initialized += PerformanceManager_Initialized;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-        SystemManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+        MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
 
         // device settings
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -225,15 +226,18 @@ public partial class QuickPerformancePage : Page
         UpdateProfile();
     }
 
-    private void CPUBoostToggle_Toggled(object sender, RoutedEventArgs e)
+    private void CPUBoostLevel_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (CPUBoostLevel.SelectedIndex == -1)
+            return;
+
         if (selectedProfile is null)
             return;
 
         if (updateLock)
             return;
 
-        selectedProfile.CPUBoostEnabled = CPUBoostToggle.IsOn;
+        selectedProfile.CPUBoostLevel = CPUBoostLevel.SelectedIndex;
         UpdateProfile();
     }
 
@@ -296,7 +300,7 @@ public partial class QuickPerformancePage : Page
                 CPUCoreSlider.Value = selectedProfile.CPUCoreCount;
 
                 // CPU Boost
-                CPUBoostToggle.IsOn = selectedProfile.CPUBoostEnabled;
+                CPUBoostLevel.SelectedIndex = selectedProfile.CPUBoostLevel;
 
                 // Power Mode
                 PowerMode.SelectedIndex = Array.IndexOf(PerformanceManager.PowerModes, selectedProfile.OSPowerMode);
@@ -498,7 +502,7 @@ public partial class QuickPerformancePage : Page
                 $"{Properties.Resources.ProfilesPage_AreYouSureDelete2}",
                 ContentDialogButton.Primary,
                 $"{Properties.Resources.ProfilesPage_Cancel}",
-                $"{Properties.Resources.ProfilesPage_Delete}");
+                $"{Properties.Resources.ProfilesPage_Delete}", string.Empty, OverlayQuickTools.GetCurrent());
         await result; // sync call
 
         switch (result.Result)

@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HandheldCompanion.Controllers"
-    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -30,20 +30,67 @@
                         FontSize="30"
                         Glyph="&#x243C;" />
 
-                    <ui:SimpleStackPanel Margin="12,0,0,0" VerticalAlignment="Center" Spacing="2">
+                    <ui:SimpleStackPanel
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center"
+                        Spacing="2">
                         <TextBlock Name="ControllerName" Style="{StaticResource BodyTextBlockStyle}" />
-                        
-                        <ui:SimpleStackPanel Spacing="2" HorizontalAlignment="Left" Orientation="Horizontal" Name="UserIndexPanel">
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
-                            <Border CornerRadius="2" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" Width="12" Height="12"></Border>
+
+                        <ui:SimpleStackPanel
+                            Name="UserIndexPanel"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal"
+                            Spacing="2">
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
+                            <Border
+                                Width="12"
+                                Height="12"
+                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                CornerRadius="2" />
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </DockPanel>
@@ -53,8 +100,8 @@
                         Name="ui_button_hook"
                         Width="100"
                         Click="ui_button_hook_Click"
-                        FontSize="14"
                         Content="{x:Static resx:Resources.Controller_Connect}"
+                        FontSize="14"
                         Style="{DynamicResource AccentButtonStyle}" />
                     <Button
                         Name="ui_button_hide"
@@ -75,19 +122,12 @@
                 </DockPanel>
             </Grid>
 
-            <ui:SimpleStackPanel
-                Name="ProgressBarPanel"
-                d:Visibility="Visible"
-                Spacing="6"
-                Visibility="Collapsed">
-                <ui:ProgressBar Name="ProgressBarUpdate" IsIndeterminate="True" />
-                <TextBlock
-                    Name="ProgressBarWarning"
-                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" />
-            </ui:SimpleStackPanel>
+            <TextBlock
+                Name="ProgressBarWarning"
+                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
         </ui:SimpleStackPanel>
     </Border>
 </UserControl>

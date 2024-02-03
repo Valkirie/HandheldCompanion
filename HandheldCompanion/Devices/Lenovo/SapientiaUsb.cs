@@ -136,9 +136,61 @@ namespace HandheldCompanion.Devices.Lenovo
         //恢复出厂设置 device: 1：RX，2：Dongle; 3:左手柄 4:右手柄
         [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
         public static extern bool SetDeviceDefault(int device);
+        //手柄版本信息
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern VERSION getUSBVerify(int device);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct VERSION
+        {
+            public int verPro;
+            public int verCMD;
+            public int verFir;
+            public int verHard;
+
+            public VERSION(int verPro, int verCMD, int verFir, int verHard)
+            {
+                this.verPro = verPro;
+                this.verCMD = verCMD;
+                this.verFir = verFir;
+                this.verHard = verHard;
+            }
+        }
+
+        // Below are converted by @MSeys
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern LegionJoystickCurveProfile GetStickCustomCurve(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SetStickCustomCurve(int device, LegionJoystickCurveProfile curveProfile);
+
+        // Deadzone Range is 0-99 (LS shows 1%-100%)
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern int GetStickCustomDeadzone(int device);
+
+        // Deadzone Range is 0-99 (LS shows 1%-100%)
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SetStickCustomDeadzone(int device, int deadzone);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool GetGyroSensorDataOnorOff(int device);
+
+        // Range is 0-99 on Deadzone and Margin
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern LegionTriggerDeadzone GetTriggerDeadzoneAndMargin(int device);
+
+        // Range is 0-99 on Deadzone and Margin
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SetTriggerDeadzoneAndMargin(int device, LegionTriggerDeadzone deadzone);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern int GetAutoSleepTime(int device);
+
+        [DllImport("SapientiaUsb.dll", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool SetAutoSleepTime(int device, int autosleeptime);
 
         //导出类
-
         [StructLayout(LayoutKind.Sequential)]
         public struct LightionProfile
         {
@@ -158,6 +210,34 @@ namespace HandheldCompanion.Devices.Lenovo
                 brightness = 0;
                 speed = 0;
                 profile = 0;
+            }
+        };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct LegionJoystickCurveProfile
+        {
+            public int X1;
+            public int X2;
+            public int Y1;
+            public int Y2;
+            public LegionJoystickCurveProfile()
+            {
+                X1 = 60;
+                Y1 = 60;
+                X2 = 90;
+                Y2 = 90;
+            }
+        };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct LegionTriggerDeadzone
+        {
+            public int Deadzone;
+            public int Margin;
+            public LegionTriggerDeadzone()
+            {
+                Deadzone = 5;
+                Margin = 5;
             }
         };
     }

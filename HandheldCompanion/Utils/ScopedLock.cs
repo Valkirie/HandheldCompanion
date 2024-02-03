@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace HandheldCompanion.Utils
 {
@@ -20,9 +19,6 @@ namespace HandheldCompanion.Utils
 
         public ScopedLock(LockObject lockVariable)
         {
-            // not re-entrant, at least for now
-            Debug.Assert(lockVariable == false);
-
             lockRef = lockVariable;
             lockVariable.locked = true;
         }

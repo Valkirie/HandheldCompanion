@@ -72,8 +72,8 @@ public static class ControllerManager
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
 
-        GamepadFocusManager.GotFocus += GamepadFocusManager_GotFocus;
-        GamepadFocusManager.LostFocus += GamepadFocusManager_LostFocus;
+        UIGamepad.GotFocus += GamepadFocusManager_GotFocus;
+        UIGamepad.LostFocus += GamepadFocusManager_LostFocus;
 
         ProcessManager.ForegroundChanged += ProcessManager_ForegroundChanged;
 
@@ -268,10 +268,14 @@ public static class ControllerManager
                                 break;
                             case false:
                                 {
-                                    if (watchdogThreadRunning)
+                                    // suspend watchdog
+                                    if (watchdogThread is not null)
                                     {
                                         watchdogThreadRunning = false;
-                                        watchdogThread.Join();
+                                        // Ensure the thread has finished execution
+                                        if (watchdogThread.IsAlive)
+                                            watchdogThread.Join();
+                                        watchdogThread = null;
                                     }
                                 }
                                 break;
@@ -649,6 +653,8 @@ public static class ControllerManager
             {
                 foreach (XInputController xInputController in Controllers.Values.Where(c => c.Details is not null && c.Details.isXInput))
                     xInputController.AttachController(byte.MaxValue);
+
+                Thread.Sleep(2000);
             }
 
             if (VirtualManager.HIDmode == HIDmode.Xbox360Controller && VirtualManager.HIDstatus == HIDstatus.Connected)
@@ -675,8 +681,14 @@ public static class ControllerManager
                             Working?.Invoke(2);
 
                             // suspend watchdog
-                            watchdogThreadRunning = false;
-                            watchdogThread.Join();
+                            if (watchdogThread is not null)
+                            {
+                                watchdogThreadRunning = false;
+                                // Ensure the thread has finished execution
+                                if (watchdogThread.IsAlive)
+                                    watchdogThread.Join();
+                                watchdogThread = null;
+                            }
                         }
                         else
                         {
@@ -689,7 +701,10 @@ public static class ControllerManager
 
                             // suspend all physical controllers
                             foreach (XInputController xInputController in GetPhysicalControllers().OfType<XInputController>())
+                            {
+                                xInputController.IsBusy = true;
                                 SuspendController(xInputController.Details.baseContainerDeviceInstanceId);
+                            }
 
                             // resume virtual controller
                             VirtualManager.Resume();

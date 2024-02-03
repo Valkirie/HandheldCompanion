@@ -93,6 +93,7 @@ public partial class Profile : ICloneable, IComparable
     public int RSRSharpness { get; set; } = 20; // default AMD value
     public bool IntegerScalingEnabled { get; set; } = false;
     public int IntegerScalingDivider { get; set; } = 1;
+    public byte IntegerScalingType { get; set; } = 0;
     public bool RISEnabled { get; set; } = false;
     public int RISSharpness { get; set; } = 80; // default AMD value
     public bool CPUCoreEnabled { get; set; } = false;

@@ -485,24 +485,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Virtual controller settings.
-        /// </summary>
-        public static string ControllerPage_DeviceSettings {
-            get {
-                return ResourceManager.GetString("ControllerPage_DeviceSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Controller settings.
-        /// </summary>
-        public static string ControllerPage_DeviceSpecificSettings {
-            get {
-                return ResourceManager.GetString("ControllerPage_DeviceSpecificSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
         public static string ControllerPage_Disconnect {
@@ -535,15 +517,6 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_HIDManagedByProfileWarning {
             get {
                 return ResourceManager.GetString("ControllerPage_HIDManagedByProfileWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Input devices.
-        /// </summary>
-        public static string ControllerPage_InputDevices {
-            get {
-                return ResourceManager.GetString("ControllerPage_InputDevices", resourceCulture);
             }
         }
         
@@ -701,6 +674,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Physical controllers.
+        /// </summary>
+        public static string ControllerPage_PhysicalDevices {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to connected to the computer.
+        /// </summary>
+        public static string ControllerPage_PhysicalDevicesDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalDevicesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Physical controllers settings.
+        /// </summary>
+        public static string ControllerPage_PhysicalDeviceSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_PhysicalDeviceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HD rumble.
         /// </summary>
         public static string ControllerPage_SteamControllerHDRumble {
@@ -796,6 +796,69 @@ namespace HandheldCompanion.Properties {
         public static string ControllerPage_VibrationStrengthExpl {
             get {
                 return ResourceManager.GetString("ControllerPage_VibrationStrengthExpl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual controller.
+        /// </summary>
+        public static string ControllerPage_VirtualDevices {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to is what the computer uses.
+        /// </summary>
+        public static string ControllerPage_VirtualDevicesDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualDevicesDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Virtual controller settings.
+        /// </summary>
+        public static string ControllerPage_VirtualDeviceSettings {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualDeviceSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller status.
+        /// </summary>
+        public static string ControllerPage_VirtualStatus {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change virtual controller status.
+        /// </summary>
+        public static string ControllerPage_VirtualStatusDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualStatusDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller type.
+        /// </summary>
+        public static string ControllerPage_VirtualType {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change virtual controller type.
+        /// </summary>
+        public static string ControllerPage_VirtualTypeDesc {
+            get {
+                return ResourceManager.GetString("ControllerPage_VirtualTypeDesc", resourceCulture);
             }
         }
         
@@ -994,6 +1057,87 @@ namespace HandheldCompanion.Properties {
         public static string DevicePage_FullFanSpeedText {
             get {
                 return ResourceManager.GetString("DevicePage_FullFanSpeedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Sleep Time.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerAutoSleepTime {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerAutoSleepTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joystick Deadzone.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerJoystickDeadzone {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerJoystickDeadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Legion Controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerLeft {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change settings for the left legion controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerLeftDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerLeftDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right Legion Controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerRight {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change settings for the right legion controller.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerRightDesc {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerRightDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger Deadzone.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerTriggerDeadzone {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerTriggerDeadzone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger Margin.
+        /// </summary>
+        public static string DevicePage_Lenovo_ControllerTriggerMargin {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_ControllerTriggerMargin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lenovo Legion Go settings.
+        /// </summary>
+        public static string DevicePage_Lenovo_Settings {
+            get {
+                return ResourceManager.GetString("DevicePage_Lenovo_Settings", resourceCulture);
             }
         }
         
@@ -4546,6 +4690,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Battery Level.
+        /// </summary>
+        public static string OverlayPage_BATTLevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_BATTLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your battery..
+        /// </summary>
+        public static string OverlayPage_BATTLevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_BATTLevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Face camera.
         /// </summary>
         public static string OverlayPage_CameraAngle {
@@ -4609,6 +4771,33 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CPU Level.
+        /// </summary>
+        public static string OverlayPage_CPULevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_CPULevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your CPU..
+        /// </summary>
+        public static string OverlayPage_CPULevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_CPULevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom Settings.
+        /// </summary>
+        public static string OverlayPage_CustomSettings {
+            get {
+                return ResourceManager.GetString("OverlayPage_CustomSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PlayStation DualSense.
         /// </summary>
         public static string OverlayPage_DualSenseController {
@@ -4641,6 +4830,42 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_FaceCameraDesc {
             get {
                 return ResourceManager.GetString("OverlayPage_FaceCameraDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FPS Level.
+        /// </summary>
+        public static string OverlayPage_FPSLevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_FPSLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your FPS..
+        /// </summary>
+        public static string OverlayPage_FPSLevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_FPSLevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPU Level.
+        /// </summary>
+        public static string OverlayPage_GPULevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_GPULevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your GPU..
+        /// </summary>
+        public static string OverlayPage_GPULevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_GPULevelDesc", resourceCulture);
             }
         }
         
@@ -4762,11 +4987,47 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayCustomLevel_Disabled {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayCustomLevel_Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayCustomLevel_Full {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayCustomLevel_Full", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimal.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayCustomLevel_Minimal {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayCustomLevel_Minimal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Overlay display level.
         /// </summary>
         public static string OverlayPage_OverlayDisplayLevel {
             get {
                 return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom.
+        /// </summary>
+        public static string OverlayPage_OverlayDisplayLevel_Custom {
+            get {
+                return ResourceManager.GetString("OverlayPage_OverlayDisplayLevel_Custom", resourceCulture);
             }
         }
         
@@ -4870,6 +5131,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RAM Level.
+        /// </summary>
+        public static string OverlayPage_RAMLevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_RAMLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your RAM..
+        /// </summary>
+        public static string OverlayPage_RAMLevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_RAMLevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Render settings.
         /// </summary>
         public static string OverlayPage_RenderSettings {
@@ -4960,6 +5239,24 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time Level.
+        /// </summary>
+        public static string OverlayPage_TimeLevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_TimeLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your time..
+        /// </summary>
+        public static string OverlayPage_TimeLevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_TimeLevelDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fisher-Price controller.
         /// </summary>
         public static string OverlayPage_ToyController {
@@ -4974,6 +5271,24 @@ namespace HandheldCompanion.Properties {
         public static string OverlayPage_TrackpadsOptions {
             get {
                 return ResourceManager.GetString("OverlayPage_TrackpadsOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VRAM Level.
+        /// </summary>
+        public static string OverlayPage_VRAMLevel {
+            get {
+                return ResourceManager.GetString("OverlayPage_VRAMLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The level of information for your VRAM..
+        /// </summary>
+        public static string OverlayPage_VRAMLevelDesc {
+            get {
+                return ResourceManager.GetString("OverlayPage_VRAMLevelDesc", resourceCulture);
             }
         }
         
@@ -5743,7 +6058,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Radeon Image Sharpening.
+        ///   Looks up a localized string similar to Image Sharpening.
         /// </summary>
         public static string ProfilesPage_ImageSharpening {
             get {
@@ -5991,6 +6306,42 @@ namespace HandheldCompanion.Properties {
         public static string ProfilesPage_ResolutionScaleDesc {
             get {
                 return ResourceManager.GetString("ProfilesPage_ResolutionScaleDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scaling type.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleType {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select scaling type to adapt the scaling aspect ratio.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleTypeDesc {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Integer Scaling.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleTypeInteger {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nearest Neighbor.
+        /// </summary>
+        public static string ProfilesPage_ResolutionScaleTypeNearest {
+            get {
+                return ResourceManager.GetString("ProfilesPage_ResolutionScaleTypeNearest", resourceCulture);
             }
         }
         
@@ -6402,15 +6753,6 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string ProfilesPage_WrapperDesc {
-            get {
-                return ResourceManager.GetString("ProfilesPage_WrapperDesc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Yaw.
         /// </summary>
         public static string ProfilesPage_Yaw {
@@ -6452,15 +6794,6 @@ namespace HandheldCompanion.Properties {
         public static string QuickDevicePage_Title {
             get {
                 return ResourceManager.GetString("QuickDevicePage_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string QuickHomePage_Desc {
-            get {
-                return ResourceManager.GetString("QuickHomePage_Desc", resourceCulture);
             }
         }
         
@@ -6542,15 +6875,6 @@ namespace HandheldCompanion.Properties {
         public static string QuickPerformancePage_CPUUnit {
             get {
                 return ResourceManager.GetString("QuickPerformancePage_CPUUnit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        public static string QuickPerformancePage_Desc {
-            get {
-                return ResourceManager.GetString("QuickPerformancePage_Desc", resourceCulture);
             }
         }
         
@@ -7910,6 +8234,24 @@ namespace HandheldCompanion.Properties {
         public static string SettingsPage_ToastNotificationDesc {
             get {
                 return ResourceManager.GetString("SettingsPage_ToastNotificationDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable UI sounds.
+        /// </summary>
+        public static string SettingsPage_UISounds {
+            get {
+                return ResourceManager.GetString("SettingsPage_UISounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable UI sounds on navigation.
+        /// </summary>
+        public static string SettingsPage_UISoundsDesc {
+            get {
+                return ResourceManager.GetString("SettingsPage_UISoundsDesc", resourceCulture);
             }
         }
         

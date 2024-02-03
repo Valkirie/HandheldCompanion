@@ -210,13 +210,13 @@
   <data name="ControllerPage_DeviceCloaking" xml:space="preserve">
     <value>Маскировка контроллера</value>
   </data>
-  <data name="ControllerPage_DeviceSettings" xml:space="preserve">
+  <data name="ControllerPage_VirtualDeviceSettings" xml:space="preserve">
     <value>Настойки контроллера</value>
   </data>
   <data name="ControllerPage_Disconnect" xml:space="preserve">
     <value>Отключить</value>
   </data>
-  <data name="ControllerPage_InputDevices" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDevices" xml:space="preserve">
     <value>Устройства ввода</value>
   </data>
   <data name="ControllerPage_UncloakOnClose" xml:space="preserve">
@@ -728,9 +728,6 @@
   </data>
   <data name="ProfilesPage_PowerSettings" xml:space="preserve">
     <value>Настройки электропитания</value>
-  </data>
-  <data name="ProfilesPage_PowerSettingsDesc" xml:space="preserve">
-    <value>Изменить параметры питания</value>
   </data>
   <data name="ProfilesPage_ProfileDetails" xml:space="preserve">
     <value>Информация о профиле</value>
@@ -1336,7 +1333,7 @@
   <data name="ControllerPage_SteamControllerMuteDesc" xml:space="preserve">
     <value>Временно отключает виртуальный контрллер в Steam приложених</value>
   </data>
-  <data name="ControllerPage_DeviceSpecificSettings" xml:space="preserve">
+  <data name="ControllerPage_PhysicalDeviceSettings" xml:space="preserve">
     <value>Настройки контроллера</value>
   </data>
   <data name="Enum.AYANEO2.ButtonFlags.OEM1" xml:space="preserve">
@@ -2209,18 +2206,6 @@
   <data name="QuickProfilesPage_PowerLimitTarget" xml:space="preserve">
     <value>Power limit target</value>
   </data>
-  <data name="SettingsPage_ForceVirtualControllerOrder" xml:space="preserve">
-    <value>Improve virtual controller detection</value>
-  </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderDesc" xml:space="preserve">
-    <value>Forces the virtual controller to be detected as first controller during Windows start. Enable this if your app/game doesn't detect your inputs (requires device reboot).</value>
-  </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderPrimary" xml:space="preserve">
-    <value>Yes</value>
-  </data>
-  <data name="SettingsPage_ForceVirtualControllerOrderSecondary" xml:space="preserve">
-    <value>No</value>
-  </data>
   <data name="Dialog_ForceRestartDesc" xml:space="preserve">
     <value>Your device must be restarted in order for the changes to take effect. Would you like to restart now?</value>
   </data>
@@ -2331,5 +2316,587 @@
   </data>
   <data name="IController_ControllerIndex" xml:space="preserve">
     <value>Gamepad: {0}</value>
+  </data>
+  <data name="InputsHotkey_previousSubProfile" xml:space="preserve">
+    <value>Select previous sub profile</value>
+  </data>
+  <data name="ProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>Add different profiles to the same game</value>
+  </data>
+  <data name="InputsHotkey_nextSubProfile" xml:space="preserve">
+    <value>Select next sub profile</value>
+  </data>
+  <data name="QuickProfilesPage_SubProfilesDesc" xml:space="preserve">
+    <value>Select a sub profile to apply</value>
+  </data>
+  <data name="ProfilesPage_SubProfiles" xml:space="preserve">
+    <value>Sub Profiles</value>
+  </data>
+  <data name="InputsHotkey_nextSubProfileDesc" xml:space="preserve">
+    <value>Apply next sub profile for the current game</value>
+  </data>
+  <data name="InputsHotkey_previousSubProfileDesc" xml:space="preserve">
+    <value>Apply previous sub profile for the current game</value>
+  </data>
+  <data name="ProfilesPage_DefaultDeviceProfile" xml:space="preserve">
+    <value>This is a default device preset and cannot be edited. These are comparable to the presets provided by the devices original software.</value>
+  </data>
+  <data name="DevicePage_FullFanSpeedText" xml:space="preserve">
+    <value>Fan max speed override</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheck" xml:space="preserve">
+    <value>Integer scaling is not available</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckAction" xml:space="preserve">
+    <value>Deploy integer scaling</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckDesc" xml:space="preserve">
+    <value>Integer scaling feature is not installed, therefore you won't be able to enable or disable it</value>
+  </data>
+  <data name="Hint_AMD_IntegerScalingCheckReadme" xml:space="preserve">
+    <value>We need to execute some script to deploy the integer scaling on your system</value>
+  </data>
+  <data name="QuickOverlayPage_Desc" xml:space="preserve">
+    <value>Manage on-screen overlay</value>
+  </data>
+  <data name="QuickOverlayPage_Title" xml:space="preserve">
+    <value>Overlay</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckReadme" xml:space="preserve">
+    <value>You might want to turn off core isolation and restart your system to enable TDP manipulations</value>
+  </data>
+  <data name="DevicePage_FullFanSpeedDesc" xml:space="preserve">
+    <value>Sets the fan to max speed</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckDesc" xml:space="preserve">
+    <value>Your system core isolation features are turned on, therefore TDP read/write and fan control might be disabled</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheck" xml:space="preserve">
+    <value>ASUS services are running</value>
+  </data>
+  <data name="Hint_CoreIsolationCheck" xml:space="preserve">
+    <value>Core isolation features are turned on</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDesc" xml:space="preserve">
+    <value>The emulated controller to be used when this profile is active</value>
+  </data>
+  <data name="ControllerPage_ControllerManagement" xml:space="preserve">
+    <value>Controller management</value>
+  </data>
+  <data name="ControllerPage_ControllerManagementDesc" xml:space="preserve">
+    <value>Automatically manage your controllers for greater compatibility</value>
+  </data>
+  <data name="ControllerPage_LegionGoPassthrough" xml:space="preserve">
+    <value>Touchpad passthrough</value>
+  </data>
+  <data name="ControllerPage_LegionGoPassthroughDesc" xml:space="preserve">
+    <value>Allows you to use your device’s touchpad as a regular mouse, without any software processing or mapping</value>
+  </data>
+  <data name="ControllerPage_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ControllerPage_TryAgain" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="PowerProfileLegionGoQuietName" xml:space="preserve">
+    <value>Legion Go - Quiet</value>
+  </data>
+  <data name="Hint_CoreIsolationCheckAction" xml:space="preserve">
+    <value>Disable Core isolation</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckReadme" xml:space="preserve">
+    <value>You should disable ASUS services, so that the application can run smoothly and without any conflicts</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckAction" xml:space="preserve">
+    <value>Disable ASUS services</value>
+  </data>
+  <data name="Hint_SteamNeptuneAction" xml:space="preserve">
+    <value>Restart Steam</value>
+  </data>
+  <data name="MainWindow_navNotifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="NotificationsPage_NothingToSee" xml:space="preserve">
+    <value>No notifications yet</value>
+  </data>
+  <data name="NotificationsPage_NothingToSeeDesc" xml:space="preserve">
+    <value>You have no notifications right now.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileAction" xml:space="preserve">
+    <value>Go to profiles settings to change per-game emulated controller type preference.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileDesc" xml:space="preserve">
+    <value>The emulated controller type is being managed by the currently applied game profile.</value>
+  </data>
+  <data name="ControllerPage_HIDManagedByProfileWarning" xml:space="preserve">
+    <value>Emulated controller is managed by profile</value>
+  </data>
+  <data name="Hint_RogAllyServiceCheckDesc" xml:space="preserve">
+    <value>ASUS services are already running on your device. This may interfere with the application</value>
+  </data>
+  <data name="PowerProfileLegionGoQuietDescription" xml:space="preserve">
+    <value>Preset similar to Quiet Mode in LS. TDP Limit: 8W</value>
+  </data>
+  <data name="PowerProfilesPage_DevicePresets" xml:space="preserve">
+    <value>Device presets</value>
+  </data>
+  <data name="PowerProfileLegionGoBalancedDescription" xml:space="preserve">
+    <value>Preset similar to Balanced Mode in LS. TDP Limit: 15W</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleDesc" xml:space="preserve">
+    <value>Resolution scale to which integer scaling will apply</value>
+  </data>
+  <data name="ProfilesPage_RSR" xml:space="preserve">
+    <value>Radeon Super Resolution</value>
+  </data>
+  <data name="ProfilesPage_RSRDesc" xml:space="preserve">
+    <value>In-driver-based upscaling feature for faster framerates</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode" xml:space="preserve">
+    <value>Scaling mode</value>
+  </data>
+  <data name="ProfilesPage_ScalingModeDesc" xml:space="preserve">
+    <value>Choose the method used to stretch and position images to fir the display</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_Center" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_FullPanel" xml:space="preserve">
+    <value>Full panel</value>
+  </data>
+  <data name="ProfilesPage_ScalingMode_PreserveAspectRatio" xml:space="preserve">
+    <value>Preserve aspect ratio</value>
+  </data>
+  <data name="ProfilesPage_Sharpen" xml:space="preserve">
+    <value>Sharpen effect</value>
+  </data>
+  <data name="QuickSettingsPage_ResScaleExclusiveFullscreen" xml:space="preserve">
+    <value>1/1 only supports Exclusive Fullscreen.</value>
+  </data>
+  <data name="SettingsPage_UISounds" xml:space="preserve">
+    <value>Enable UI sounds</value>
+  </data>
+  <data name="SettingsPage_UISoundsDesc" xml:space="preserve">
+    <value>Enable or disable UI sounds on navigation</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleType" xml:space="preserve">
+    <value>Scaling type</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeDesc" xml:space="preserve">
+    <value>Select scaling type to adapt the scaling aspect ratio</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeInteger" xml:space="preserve">
+    <value>Integer Scaling</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScaleTypeNearest" xml:space="preserve">
+    <value>Nearest Neighbor</value>
+  </data>
+  <data name="ControllerPage_PhysicalDevicesDesc" xml:space="preserve">
+    <value>connected to the computer</value>
+  </data>
+  <data name="ControllerPage_VirtualDevices" xml:space="preserve">
+    <value>Virtual controller</value>
+  </data>
+  <data name="ControllerPage_VirtualDevicesDesc" xml:space="preserve">
+    <value>is what the computer uses</value>
+  </data>
+  <data name="ControllerPage_VirtualStatus" xml:space="preserve">
+    <value>Controller status</value>
+  </data>
+  <data name="ControllerPage_VirtualStatusDesc" xml:space="preserve">
+    <value>Change virtual controller status</value>
+  </data>
+  <data name="ProfilesPage_ResolutionScale" xml:space="preserve">
+    <value>Resolution scale</value>
+  </data>
+  <data name="ProfilesPage_ISDesc" xml:space="preserve">
+    <value>Scales up resolution by multiplying each pixel by an integer</value>
+  </data>
+  <data name="ProfilesPage_IS" xml:space="preserve">
+    <value>Integer scaling</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpeningDesc" xml:space="preserve">
+    <value>Enhances visual detail</value>
+  </data>
+  <data name="PowerProfileLegionGoPerformanceName" xml:space="preserve">
+    <value>Legion Go - Performance</value>
+  </data>
+  <data name="PowerProfileLegionGoPerformanceDescription" xml:space="preserve">
+    <value>Preset similar to Performance Mode in LS. TDP Limit: 20W</value>
+  </data>
+  <data name="ProfilesPage_DefaultProfile" xml:space="preserve">
+    <value>This is the default preset, you cannot modify the fan curve on this preset.</value>
+  </data>
+  <data name="Hint_LegionGoServices" xml:space="preserve">
+    <value>Legion Space Tasks and Services are active</value>
+  </data>
+  <data name="Hint_LegionGoServicesAction" xml:space="preserve">
+    <value>Disable Legion Space</value>
+  </data>
+  <data name="Hint_LegionGoServicesDesc" xml:space="preserve">
+    <value>Legion Space Tasks and Services are already active on your console. This may cause compatibility issues with the application.</value>
+  </data>
+  <data name="Hint_LegionGoServicesReadme" xml:space="preserve">
+    <value>You should disable Legion Space Tasks and Services, so that the application can run properly and without any errors</value>
+  </data>
+  <data name="DevicePage_UseSecondColor" xml:space="preserve">
+    <value>Use second color</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSettings" xml:space="preserve">
+    <value>Graphics settings</value>
+  </data>
+  <data name="ProfilesPage_GraphicsSettingsDesc" xml:space="preserve">
+    <value>Change the graphics settings</value>
+  </data>
+  <data name="PowerProfileLegionGoBalancedName" xml:space="preserve">
+    <value>Legion Go - Balanced</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelection" xml:space="preserve">
+    <value>Preset selection</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerXbox" xml:space="preserve">
+    <value>Emulated XBOX 360 controller</value>
+  </data>
+  <data name="PowerProfilesPage_UserPresets" xml:space="preserve">
+    <value>User presets</value>
+  </data>
+  <data name="QuickSettingsPage_ResolutionOverrideWarning" xml:space="preserve">
+    <value>Resolution is currently overridden by profile</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="SettingsPage_QuickToolsWindowLocationRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayToggle" xml:space="preserve">
+    <value>On Screen Overlay</value>
+  </data>
+  <data name="InputsHotkey_OnScreenDisplayToggleDesc" xml:space="preserve">
+    <value>Toggle on screen overlay</value>
+  </data>
+  <data name="ProfilesPage_GPUScaling" xml:space="preserve">
+    <value>GPU Scaling</value>
+  </data>
+  <data name="ProfilesPage_GPUScalingDesc" xml:space="preserve">
+    <value>GPU will scale up lower resolutions to fit the display</value>
+  </data>
+  <data name="ProfilesPage_ImageSharpening" xml:space="preserve">
+    <value>Image Sharpening</value>
+  </data>
+  <data name="PowerProfilesPage_PresetSelectionDesc" xml:space="preserve">
+    <value>Select the preset you would like to edit</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDS4" xml:space="preserve">
+    <value>Emulated DualShock 4 controller</value>
+  </data>
+  <data name="XInputController_Warning_USB" xml:space="preserve">
+    <value>Please wait a moment while we power cycle your controller.</value>
+  </data>
+  <data name="ProfilesPage_EmulatedController" xml:space="preserve">
+    <value>Emulated controller type</value>
+  </data>
+  <data name="Hint_SteamXboxDriversDesc" xml:space="preserve">
+    <value>Steam Xbox Controller Enhanced Features Driver is installed and is breaking HidHide capacities to hide/unhide your physical controller</value>
+  </data>
+  <data name="Hint_SteamXboxDrivers" xml:space="preserve">
+    <value>Steam Xbox Controller Enhanced Features Driver is installed</value>
+  </data>
+  <data name="DevicePage_Device" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="MainWindow_navDevice" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="XInputController_Warning_BTH" xml:space="preserve">
+    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+  </data>
+  <data name="DevicePage_DynamicLighting" xml:space="preserve">
+    <value>Effects</value>
+  </data>
+  <data name="DevicePage_DynamicLightingDesc" xml:space="preserve">
+    <value>Choose color themes and effects for your lighting</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Ambilight" xml:space="preserve">
+    <value>Ambilight</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_SolidColor" xml:space="preserve">
+    <value>Solid Color</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Brightness" xml:space="preserve">
+    <value>Brightness</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_BrightnessDesc" xml:space="preserve">
+    <value>Change the brightness of your lights</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_MainColorSelection" xml:space="preserve">
+    <value>Main color</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="DevicePage_AmbilightVerticalBlackBarDetection" xml:space="preserve">
+    <value>Ambilight Vertical Blackbar detection</value>
+  </data>
+  <data name="DevicePage_AmbilightVerticalBlackBarDetectionDesc" xml:space="preserve">
+    <value>Vertical black bar detection for 4:3 aspect ratio games or videos</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Breathing" xml:space="preserve">
+    <value>Breathing</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Gradient" xml:space="preserve">
+    <value>Gradient</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Rainbow" xml:space="preserve">
+    <value>Rainbow</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Wave" xml:space="preserve">
+    <value>Wave</value>
+  </data>
+  <data name="Hint_SteamXboxDriversReadme" xml:space="preserve">
+    <value>You might want to uninstall Steam Xbox Controller Enhanced Features Driver</value>
+  </data>
+  <data name="Hint_SteamNeptuneDesktop" xml:space="preserve">
+    <value>Steam Desktop Layout is applied</value>
+  </data>
+  <data name="Hint_SteamNeptuneDesktopDesc" xml:space="preserve">
+    <value>Steam is already running and Steam Desktop Layout is applied. This may result in double input</value>
+  </data>
+  <data name="Hint_SteamNeptuneReadme" xml:space="preserve">
+    <value>You should restart Steam, so that Handheld Companion can automatically adjust Steam Desktop Layout and prevent double input</value>
+  </data>
+  <data name="ControllerPage_VirtualType" xml:space="preserve">
+    <value>Controller type</value>
+  </data>
+  <data name="OverlayPage_BATTLevelDesc" xml:space="preserve">
+    <value>The level of information for your battery.</value>
+  </data>
+  <data name="OverlayPage_BATTLevel" xml:space="preserve">
+    <value>Battery Level</value>
+  </data>
+  <data name="OverlayPage_VRAMLevelDesc" xml:space="preserve">
+    <value>The level of information for your VRAM.</value>
+  </data>
+  <data name="OverlayPage_VRAMLevel" xml:space="preserve">
+    <value>VRAM Level</value>
+  </data>
+  <data name="OverlayPage_GPULevelDesc" xml:space="preserve">
+    <value>The level of information for your GPU.</value>
+  </data>
+  <data name="OverlayPage_GPULevel" xml:space="preserve">
+    <value>GPU Level</value>
+  </data>
+  <data name="OverlayPage_RAMLevelDesc" xml:space="preserve">
+    <value>The level of information for your RAM.</value>
+  </data>
+  <data name="OverlayPage_RAMLevel" xml:space="preserve">
+    <value>RAM Level</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_Wheel" xml:space="preserve">
+    <value>Wheel</value>
+  </data>
+  <data name="OverlayPage_CPULevelDesc" xml:space="preserve">
+    <value>The level of information for your CPU.</value>
+  </data>
+  <data name="OverlayPage_FPSLevelDesc" xml:space="preserve">
+    <value>The level of information for your FPS.</value>
+  </data>
+  <data name="OverlayPage_FPSLevel" xml:space="preserve">
+    <value>FPS Level</value>
+  </data>
+  <data name="OverlayPage_TimeLevelDesc" xml:space="preserve">
+    <value>The level of information for your time.</value>
+  </data>
+  <data name="OverlayPage_TimeLevel" xml:space="preserve">
+    <value>Time Level</value>
+  </data>
+  <data name="OverlayPage_CustomSettings" xml:space="preserve">
+    <value>Custom Settings</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Minimal" xml:space="preserve">
+    <value>Minimal</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Full" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayCustomLevel_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="OverlayPage_OverlayDisplayLevel_Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="OverlayPage_CPULevel" xml:space="preserve">
+    <value>CPU Level</value>
+  </data>
+  <data name="ProfilesPage_EmulatedControllerDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_MatchAccentColor" xml:space="preserve">
+    <value>Match my Windows accent color</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_EffectSpeed" xml:space="preserve">
+    <value>Effect speed</value>
+  </data>
+  <data name="QuickSettingsPage_Title" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="QuickSuspenderPage_Desc" xml:space="preserve">
+    <value>Suspend and resume apps</value>
+  </data>
+  <data name="QuickSuspenderPage_Title" xml:space="preserve">
+    <value>Suspender</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayFrequency" xml:space="preserve">
+    <value>Refresh rate</value>
+  </data>
+  <data name="QuickSettingsPage_DisplayFrequencyDesc" xml:space="preserve">
+    <value>Adjust main refresh rate</value>
+  </data>
+  <data name="ProfilesPage_FanSettings" xml:space="preserve">
+    <value>Fan settings</value>
+  </data>
+  <data name="ProfilesPage_FanSettingsDesc" xml:space="preserve">
+    <value>Change the fan settings</value>
+  </data>
+  <data name="ProfilesPage_CreatePowerProfile" xml:space="preserve">
+    <value>Create a new power preset</value>
+  </data>
+  <data name="ProfilesPage_CreatePowerProfileButton" xml:space="preserve">
+    <value>Create power preset</value>
+  </data>
+  <data name="ProfilesPage_DeletePowerProfileButton" xml:space="preserve">
+    <value>Delete power preset</value>
+  </data>
+  <data name="MainWindow_Toggle" xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="Dialog_No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Dialog_Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ProfilesPage_PowerPreset" xml:space="preserve">
+    <value>Power preset</value>
+  </data>
+  <data name="ProfilesPage_PowerPresetDesc" xml:space="preserve">
+    <value>Change the selected power preset</value>
+  </data>
+  <data name="ProfilesPage_UMCMotionToggle" xml:space="preserve">
+    <value>Toggle between enabled or disabled with button(s)</value>
+  </data>
+  <data name="LayoutPage_SetAsDefault" xml:space="preserve">
+    <value>Make this the default layout</value>
+  </data>
+  <data name="InputsHotkey_shortcutChangeHIDMode" xml:space="preserve">
+    <value>Toggle emulated controller type</value>
+  </data>
+  <data name="InputsHotkey_shortcutChangeHIDModeDesc" xml:space="preserve">
+    <value>Toggle between Xbox 360 and Dualshock 4 emulated controllers</value>
+  </data>
+  <data name="QuickSettingsPage_Desc" xml:space="preserve">
+    <value>Preferred actions</value>
+  </data>
+  <data name="QuickProfilesPage_Title" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="QuickProfilesPage_Desc" xml:space="preserve">
+    <value>Performance, motion control, graphics</value>
+  </data>
+  <data name="QuickPerformancePage_Title" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_EffectDirection" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="MainWindow_navPerformance" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="PerformancePage_Device" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ProfilesPage_CPUMhz" xml:space="preserve">
+    <value>CPU Clock max frequency</value>
+  </data>
+  <data name="QuickPerformancePage_CPUControl" xml:space="preserve">
+    <value>Manual CPU Clock Control</value>
+  </data>
+  <data name="QuickPerformancePage_CPUControlDesc" xml:space="preserve">
+    <value>Sets the CPU to a fixed clock</value>
+  </data>
+  <data name="QuickPerformancePage_CPUUnit" xml:space="preserve">
+    <value> Mhz</value>
+  </data>
+  <data name="PowerProfileDefaultDescription" xml:space="preserve">
+    <value>Default power and fan speed for optimal performance, temperature, noise, and battery life.</value>
+  </data>
+  <data name="PowerProfileDefaultName" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="DevicePage_DynamicLighting_SecondColorSelection" xml:space="preserve">
+    <value>Second color</value>
+  </data>
+  <data name="PowerProfileManualDescription" xml:space="preserve">
+    <value>User-defined power and fan speed.</value>
+  </data>
+  <data name="PowerProfileROGAllyPerformanceDescription" xml:space="preserve">
+    <value>Balances performance, temperature and acoustic for any scenario.</value>
+  </data>
+  <data name="PowerProfileROGAllyPerformanceName" xml:space="preserve">
+    <value>ROG Ally - Performance</value>
+  </data>
+  <data name="PowerProfileROGAllySilentDescription" xml:space="preserve">
+    <value>Limits CPU and GPU power, but keeps noise levels quiet.</value>
+  </data>
+  <data name="PowerProfileROGAllySilentName" xml:space="preserve">
+    <value>ROG Ally - Silent</value>
+  </data>
+  <data name="PowerProfileROGAllyTurboDescription" xml:space="preserve">
+    <value>Maximizes power to the CPU and GPU for high-performance gaming and work, with maximum airflow from fans.</value>
+  </data>
+  <data name="PowerProfileROGAllyTurboName" xml:space="preserve">
+    <value>ROG Ally - Turbo</value>
+  </data>
+  <data name="QuickDevicePage_Desc" xml:space="preserve">
+    <value>Settings, display profile</value>
+  </data>
+  <data name="QuickDevicePage_Title" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="QuickHomePage_Title" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="PowerProfileManualName" xml:space="preserve">
+    <value>Manual mode: {0}</value>
+  </data>
+  <data name="ControllerPage_VirtualTypeDesc" xml:space="preserve">
+    <value>Change virtual controller type</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerAutoSleepTime" xml:space="preserve">
+    <value>Auto Sleep Time</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerJoystickDeadzone" xml:space="preserve">
+    <value>Joystick Deadzone</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeft" xml:space="preserve">
+    <value>Left Legion Controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerLeftDesc" xml:space="preserve">
+    <value>Change settings for the left legion controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRight" xml:space="preserve">
+    <value>Right Legion Controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerRightDesc" xml:space="preserve">
+    <value>Change settings for the right legion controller</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerDeadzone" xml:space="preserve">
+    <value>Trigger Deadzone</value>
+  </data>
+  <data name="DevicePage_Lenovo_ControllerTriggerMargin" xml:space="preserve">
+    <value>Trigger Margin</value>
+  </data>
+  <data name="DevicePage_Lenovo_Settings" xml:space="preserve">
+    <value>Lenovo Legion Go settings</value>
   </data>
 </root>

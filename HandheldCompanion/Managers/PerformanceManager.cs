@@ -1,4 +1,4 @@
-using HandheldCompanion.Controls;
+using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
 using HandheldCompanion.Views;
@@ -6,6 +6,7 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
@@ -48,7 +49,7 @@ public static class PerformanceManager
     private static bool autoLock;
     private static bool cpuLock;
     private static bool gfxLock;
-    private static bool powerLock;
+    private static object powerLock = new();
 
     // AutoTDP
     private static double AutoTDP;
@@ -64,10 +65,9 @@ public static class PerformanceManager
     private static bool cpuWatchdogPendingStop;
     private static uint currentEPP = 50;
     private static int currentCoreCount;
-    private static double CurrentGfxClock;
 
     // powercfg
-    private static bool currentPerfBoostMode;
+    private static uint currentPerfBoostMode;
     private static Guid currentPowerMode = new("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
     private static readonly double[] CurrentTDP = new double[5]; // used to store current TDP
 
@@ -76,7 +76,7 @@ public static class PerformanceManager
     private static readonly double[] FPSHistory = new double[6];
     private static bool gfxWatchdogPendingStop;
 
-    private static Processor processor = new();
+    private static Processor processor;
     private static double ProcessValueFPSPrevious;
     private static double StoredGfxClock;
 
@@ -104,22 +104,12 @@ public static class PerformanceManager
         autoWatchdog.Elapsed += AutoTDPWatchdog_Elapsed;
 
         // manage events
-        ProfileManager.Applied += ProfileManager_Applied;
-        ProfileManager.Discarded += ProfileManager_Discarded;
-        ProfileManager.Updated += ProfileManager_Updated;
         PowerProfileManager.Applied += PowerProfileManager_Applied;
         PowerProfileManager.Discarded += PowerProfileManager_Discarded;
-        PlatformManager.LibreHardwareMonitor.GPUClockChanged += LibreHardwareMonitor_GPUClockChanged;
         PlatformManager.RTSS.Hooked += RTSS_Hooked;
         PlatformManager.RTSS.Unhooked += RTSS_Unhooked;
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
-
-        // move me
-        SystemManager.StateChanged_RSR += SystemManager_StateChanged_RSR;
-        SystemManager.StateChanged_IntegerScaling += SystemManager_StateChanged_IntegerScaling;
-        SystemManager.StateChanged_ImageSharpening += SystemManager_StateChanged_ImageSharpening;
-        SystemManager.StateChanged_GPUScaling += SystemManager_StateChanged_GPUScaling;
 
         currentCoreCount = Environment.ProcessorCount;
         MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
@@ -176,156 +166,6 @@ public static class PerformanceManager
                 }
                 break;
         }
-    }
-
-    private static void ProfileManager_Applied(Profile profile, UpdateSource source)
-    {
-        try
-        {
-            // apply profile GPU Scaling
-            // apply profile scaling mode
-            if (profile.GPUScaling)
-            {
-                ADLXWrapper.SetGPUScaling(true);
-
-                var scalingMode = profile.ScalingMode;
-                 
-                // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
-                // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
-                if (profile.ScalingMode == 2 && profile.RSREnabled)
-                    scalingMode = 1;
-
-                ADLXWrapper.SetScalingMode(scalingMode);
-
-                // apply profile RSR
-                if (profile.RSREnabled)
-                {
-                    // mutually exclusive
-                    ADLXWrapper.SetIntegerScaling(false);
-                    ADLXWrapper.SetImageSharpening(false);
-
-                    ADLXWrapper.SetRSR(true);
-                    ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
-                }
-                else if (ADLXWrapper.GetRSR())
-                {
-                    ADLXWrapper.SetRSR(false);
-                    ADLXWrapper.SetRSRSharpness(20);
-                }
-
-                // apply profile Integer Scaling
-                if (profile.IntegerScalingEnabled)
-                {
-                    // mutually exclusive
-                    ADLXWrapper.SetRSR(false);
-
-                    ADLXWrapper.SetIntegerScaling(true);
-                }
-                else if (ADLXWrapper.GetIntegerScaling())
-                {
-                    ADLXWrapper.SetIntegerScaling(false);
-                }
-            }
-            else if (ADLXWrapper.GetGPUScaling())
-            {
-                ADLXWrapper.SetGPUScaling(false);
-            }
-
-            // apply profile image sharpening
-            if (profile.RISEnabled)
-            {
-                // mutually exclusive
-                ADLXWrapper.SetRSR(false);
-
-                ADLXWrapper.SetImageSharpening(profile.RISEnabled);
-                ADLXWrapper.SetImageSharpeningSharpness(profile.RISSharpness);
-            }
-            else if (ADLXWrapper.GetImageSharpening())
-            {
-                ADLXWrapper.SetImageSharpening(false);
-            }
-        }
-        catch { }
-    }
-
-    private static void ProfileManager_Discarded(Profile profile)
-    {
-        try
-        {
-            // restore default GPU Scaling
-            if (profile.GPUScaling && ADLXWrapper.GetGPUScaling())
-            {
-                ADLXWrapper.SetGPUScaling(false);
-            }
-
-            // restore default RSR
-            if (profile.RSREnabled && ADLXWrapper.GetRSR())
-            {
-                ADLXWrapper.SetRSR(false);
-                ADLXWrapper.SetRSRSharpness(20);
-            }
-            
-            // restore default integer scaling
-            if (profile.IntegerScalingEnabled && ADLXWrapper.GetIntegerScaling())
-            {
-                ADLXWrapper.SetIntegerScaling(false);
-            }
-
-            // restore default image sharpening
-            if (profile.RISEnabled && ADLXWrapper.GetImageSharpening())
-            {
-                ADLXWrapper.SetImageSharpening(false);
-            }
-        }
-        catch { }
-    }
-    
-    // todo: moveme
-    private static void ProfileManager_Updated(Profile profile, UpdateSource source, bool isCurrent)
-    {
-        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.DisabledMaximizedWindowedValue, !profile.FullScreenOptimization);
-        ProcessEx.SetAppCompatFlag(profile.Path, ProcessEx.HighDPIAwareValue, !profile.HighDPIAware);
-    }
-
-    private static void SystemManager_StateChanged_RSR(bool Supported, bool Enabled, int Sharpness)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.RSREnabled)
-            ADLXWrapper.SetRSR(profile.RSREnabled);
-        if (Sharpness != profile.RSRSharpness)
-            ADLXWrapper.SetRSRSharpness(profile.RSRSharpness);
-    }
-
-    private static void SystemManager_StateChanged_GPUScaling(bool Supported, bool Enabled, int Mode)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.GPUScaling)
-            ADLXWrapper.SetGPUScaling(profile.GPUScaling);
-        if (Mode != profile.ScalingMode)
-        {
-            // RSR + ScalingMode.Center not supported (stop applying center if it's somehow on a profile)
-            // Technically shouldn't occur and be stopped from UI, but could potentially be possible from older versions
-            if (profile.ScalingMode == 2 && profile.RSREnabled)
-                return;
-
-            ADLXWrapper.SetScalingMode(profile.ScalingMode);
-        }
-    }
-
-    private static void SystemManager_StateChanged_IntegerScaling(bool Supported, bool Enabled)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.IntegerScalingEnabled)
-            ADLXWrapper.SetIntegerScaling(profile.IntegerScalingEnabled);
-    }
-
-    private static void SystemManager_StateChanged_ImageSharpening(bool Enabled, int Sharpness)
-    {
-        Profile profile = ProfileManager.GetCurrent();
-        if (Enabled != profile.RISEnabled)
-            ADLXWrapper.SetImageSharpening(profile.RISEnabled);
-        if (Sharpness != profile.RISSharpness)
-            ADLXWrapper.SetImageSharpeningSharpness(Sharpness);
     }
 
     private static void PowerProfileManager_Applied(PowerProfile profile, UpdateSource source)
@@ -426,10 +266,22 @@ public static class PerformanceManager
         }
 
         // apply profile define CPU Boost
-        RequestPerfBoostMode(profile.CPUBoostEnabled);
+        RequestPerfBoostMode((uint)profile.CPUBoostLevel);
 
-        // apply profile Power Mode
+        // apply profile Power mode
         RequestPowerMode(profile.OSPowerMode);
+
+        // apply profile Fan mode
+        switch (profile.FanProfile.fanMode)
+        {
+            default:
+            case FanMode.Hardware:
+                MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
+                break;
+            case FanMode.Software:
+                MainWindow.CurrentDevice.SetFanControl(true);
+                break;
+        }
     }
 
     private static void PowerProfileManager_Discarded(PowerProfile profile)
@@ -475,14 +327,14 @@ public static class PerformanceManager
             RequestCPUCoreCount(MotherboardInfo.NumberOfCores);
         }
 
-        // (un)apply profile define CPU Boost
-        if (profile.CPUBoostEnabled)
-        {
-            RequestPerfBoostMode(false);
-        }
+        // restore profile define CPU Boost
+        RequestPerfBoostMode((uint)PerfBoostMode.Disabled);
 
         // restore OSPowerMode.BetterPerformance 
         RequestPowerMode(OSPowerMode.BetterPerformance);
+
+        // restore default Fan mode
+        MainWindow.CurrentDevice.SetFanControl(false, profile.OEMPowerMode);
     }
 
     private static void RestoreTDP(bool immediate)
@@ -622,28 +474,26 @@ public static class PerformanceManager
         return TDPDamping;
     }
 
+    // todo: update this function to force (re)apply profile settings
     private static void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        if (!powerLock)
+        if (Monitor.TryEnter(powerLock))
         {
-            // set lock
-            powerLock = true;
-
             // Checking if active power shceme has changed to reflect that
-            if (PowerGetEffectiveOverlayScheme(out var activeScheme) == 0)
+            if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
+            {
                 if (activeScheme != currentPowerMode)
                 {
                     currentPowerMode = activeScheme;
-                    var idx = Array.IndexOf(PowerModes, activeScheme);
+                    int idx = Array.IndexOf(PowerModes, activeScheme);
                     if (idx != -1)
                         PowerModeChanged?.Invoke(idx);
                 }
+            }
 
             // read perfboostmode
-            var result = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
-            var perfboostmode = result[(int)PowerIndexType.AC] == (uint)PerfBoostMode.Aggressive &&
-                                result[(int)PowerIndexType.DC] == (uint)PerfBoostMode.Aggressive;
-
+            uint[] result = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE);
+            uint perfboostmode = result[(int)PowerIndexType.AC];
             if (perfboostmode != currentPerfBoostMode)
             {
                 currentPerfBoostMode = perfboostmode;
@@ -651,8 +501,8 @@ public static class PerformanceManager
             }
 
             // Checking if current EPP value has changed to reflect that
-            var EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
-            var DCvalue = EPP[(int)PowerIndexType.DC];
+            uint[] EPP = PowerScheme.ReadPowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFEPP);
+            uint DCvalue = EPP[(int)PowerIndexType.DC];
 
             if (DCvalue != currentEPP)
             {
@@ -661,7 +511,7 @@ public static class PerformanceManager
             }
 
             // release lock
-            powerLock = false;
+            Monitor.Exit(powerLock);
         }
     }
 
@@ -763,6 +613,7 @@ public static class PerformanceManager
             gfxLock = true;
 
             var GPUdone = false;
+            var CurrentGfxClock = GPU.GetCurrent().GetClock();
 
             if (CurrentGfxClock != 0)
                 gfxWatchdog.Interval = INTERVAL_DEFAULT;
@@ -970,12 +821,11 @@ public static class PerformanceManager
             LogManager.LogWarning("Failed to set requested CPMAXCORES");
     }
 
-    private static void RequestPerfBoostMode(bool value)
+    private static void RequestPerfBoostMode(uint value)
     {
         currentPerfBoostMode = value;
 
-        var perfboostmode = value ? (uint)PerfBoostMode.Aggressive : (uint)PerfBoostMode.Enabled;
-        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, perfboostmode, perfboostmode);
+        PowerScheme.WritePowerCfg(PowerSubGroup.SUB_PROCESSOR, PowerSetting.PERFBOOSTMODE, value, value);
 
         LogManager.LogDebug("User requested perfboostmode: {0}", value);
     }
@@ -1092,7 +942,7 @@ public static class PerformanceManager
 
     public static event PerfBoostModeChangedEventHandler PerfBoostModeChanged;
 
-    public delegate void PerfBoostModeChangedEventHandler(bool value);
+    public delegate void PerfBoostModeChangedEventHandler(uint value);
 
     public static event EPPChangedEventHandler EPPChanged;
 
@@ -1101,48 +951,9 @@ public static class PerformanceManager
     #endregion
 
     #region events
-
-    private static void LibreHardwareMonitor_GPUClockChanged(float? value)
-    {
-        if (value is null) return;
-
-        CurrentGfxClock = (float) value;
-
-        LogManager.LogTrace("GPUClockChange: {0} Mhz", value);
-    }
-
     private static void Processor_StatusChanged(bool CanChangeTDP, bool CanChangeGPU)
     {
         ProcessorStatusChanged?.Invoke(CanChangeTDP, CanChangeGPU);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private static void Processor_ValueChanged(PowerType type, float value)
-    {
-        PowerValueChanged?.Invoke(type, value);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private static void Processor_LimitChanged(PowerType type, int limit)
-    {
-        var idx = (int)type;
-        CurrentTDP[idx] = limit;
-
-        // raise event
-        PowerLimitChanged?.Invoke(type, limit);
-    }
-
-    [Obsolete("Method is deprecated.")]
-    private static void Processor_MiscChanged(string misc, float value)
-    {
-        switch (misc)
-        {
-            case "gfx_clk":
-                {
-                    CurrentGfxClock = value;
-                }
-                break;
-        }
     }
 
     #endregion

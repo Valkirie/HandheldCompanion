@@ -276,7 +276,7 @@ public static class HotkeysManager
                     {
                         _ = Dialog.ShowAsync($"{Resources.SettingsPage_UpdateWarning}",
                             $"You can't pin more than {PIN_LIMIT} hotkeys",
-                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}");
+                            ContentDialogButton.Primary, string.Empty, $"{Resources.ProfilesPage_OK}", string.Empty, MainWindow.GetCurrent());
 
                         return;
                     }
@@ -527,7 +527,7 @@ public static class HotkeysManager
             LogManager.LogDebug("Executed Hotkey: {0}", listener);
 
             // play a tune to notify a command was executed
-            SystemManager.PlayWindowsMedia("Windows Navigation Start.wav");
+            MultimediaManager.PlayWindowsMedia("Windows Navigation Start.wav");
 
             // raise an event
             CommandExecuted?.Invoke(listener);
