@@ -31,6 +31,7 @@ public class DS4Controller : JSController
         SourceAxis.Add(AxisLayoutFlags.RightPad);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
 
+        // Additional controller specific target buttons
         TargetButtons.Add(ButtonFlags.LeftPadClick);
         TargetButtons.Add(ButtonFlags.LeftPadTouch);
         TargetButtons.Add(ButtonFlags.RightPadTouch);

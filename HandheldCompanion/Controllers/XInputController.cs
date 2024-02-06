@@ -33,6 +33,9 @@ public class XInputController : IController
         DrawUI();
         UpdateUI();
 
+        // Additional controller specific target buttons
+        TargetButtons.Add(ButtonFlags.LeftPadClick);
+
         string enumerator = Details.GetEnumerator();
         switch (enumerator)
         {

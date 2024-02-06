@@ -31,6 +31,9 @@ public class DInputController : IController
         // UI
         DrawUI();
         UpdateUI();
+
+        // Additional controller specific target buttons
+        TargetButtons.Add(ButtonFlags.LeftPadClick);
     }
 
     public override string ToString()

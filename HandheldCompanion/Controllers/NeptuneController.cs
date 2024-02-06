@@ -55,6 +55,7 @@ public class NeptuneController : SteamController
         SourceAxis.Add(AxisLayoutFlags.RightPad);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
 
+        // Additional controller specific target buttons
         TargetButtons.Add(ButtonFlags.LeftPadClick);
         TargetButtons.Add(ButtonFlags.RightPadClick);
         TargetButtons.Add(ButtonFlags.LeftPadTouch);

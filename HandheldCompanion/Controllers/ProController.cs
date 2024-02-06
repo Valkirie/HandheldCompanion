@@ -16,6 +16,9 @@ public class ProController : JSController
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.Special2);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
+
+        // Additional controller specific target buttons
+        TargetButtons.Add(ButtonFlags.LeftPadClick);
     }
 
     public override void UpdateInputs(long ticks)
