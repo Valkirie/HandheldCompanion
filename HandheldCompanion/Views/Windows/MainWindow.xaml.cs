@@ -183,7 +183,6 @@ public partial class MainWindow : GamepadWindow
         switch (currentDeviceType)
         {
             case "AYANEOAIRPlus":
-            case "ROGAlly":
                 {
                     LogManager.LogInformation("Restarting: {0}", CurrentDevice.InternalSensorName);
 
