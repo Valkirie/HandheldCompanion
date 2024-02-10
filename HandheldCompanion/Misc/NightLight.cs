@@ -24,8 +24,12 @@ namespace HandheldCompanion.Misc
 
                 byte[] data = new byte[43];
                 byte[] registry = _registryKey?.GetValue("Data") as byte[];
-                Array.Copy(registry, 0, data, 0, registry.Length); // copy the second array into the first array starting at index 5                
-                if (data == null) return false;
+                if (registry == null) return false;
+
+                if (registry.Length > data.Length)
+                    data = new byte[registry.Length];
+
+                Array.Copy(registry, 0, data, 0, registry.Length); // copy the second array into the first array starting at index 5
                 return data[18] == 0x15;
             }
             set
@@ -63,6 +67,9 @@ namespace HandheldCompanion.Misc
             byte[] data = new byte[43];
             byte[] newData = new byte[43];
             byte[] registry = _registryKey?.GetValue("Data") as byte[];
+            if (registry.Length > data.Length)
+                data = new byte[registry.Length];
+
             Array.Copy(registry, 0, data, 0, registry.Length); // copy the second array into the first array starting at index 5
 
             if (Enabled)
