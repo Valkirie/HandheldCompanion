@@ -105,6 +105,10 @@ public partial class App : Application
     {
         var ex = default(Exception);
         ex = (Exception)e.Exception;
+        if(ex.InnerException != null)
+        {
+            LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
+        }
         LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
     }
 
@@ -112,6 +116,10 @@ public partial class App : Application
     {
         var ex = default(Exception);
         ex = (Exception)e.ExceptionObject;
+        if (ex.InnerException != null)
+        {
+            LogManager.LogCritical(ex.InnerException.Message + "\t" + ex.InnerException.StackTrace);
+        }
         LogManager.LogCritical(ex.Message + "\t" + ex.StackTrace);
     }
 }
