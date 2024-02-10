@@ -87,6 +87,8 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 case "Intel Corporation":
                     gpu = new IntelGPU();
                     break;
+                default:
+                    throw new Exception($"Unexpected Manufacturer: {Manufacturer}");
             }
 
             return gpu;
