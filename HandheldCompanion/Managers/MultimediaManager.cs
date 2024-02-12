@@ -211,7 +211,7 @@ public static class MultimediaManager
         // raise event
         ScreenResolution screenResolution = desktopScreen.GetResolution(desktopScreen.devMode.dmPelsWidth, desktopScreen.devMode.dmPelsHeight);
         if (screenResolution is not null)
-            DisplaySettingsChanged?.Invoke(screenResolution);
+            DisplaySettingsChanged?.Invoke(desktopScreen, screenResolution);
 
         // raise event
         if (oldOrientation != screenOrientation.rotation)
@@ -579,7 +579,7 @@ public static class MultimediaManager
     #region events
 
     public static event DisplaySettingsChangedEventHandler DisplaySettingsChanged;
-    public delegate void DisplaySettingsChangedEventHandler(ScreenResolution resolution);
+    public delegate void DisplaySettingsChangedEventHandler(DesktopScreen screen, ScreenResolution resolution);
 
     public static event PrimaryScreenChangedEventHandler PrimaryScreenChanged;
     public delegate void PrimaryScreenChangedEventHandler(DesktopScreen screen);
