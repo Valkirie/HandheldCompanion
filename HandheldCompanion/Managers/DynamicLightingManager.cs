@@ -1,3 +1,4 @@
+using HandheldCompanion.Managers.Desktop;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Views;
 using SharpDX;
@@ -48,7 +49,7 @@ public static class DynamicLightingManager
         rightLedTracker = new ColorTracker();
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-        MultimediaManager.DisplaySettingsChanged += SystemManager_DisplaySettingsChanged;
+        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         MainWindow.CurrentDevice.PowerStatusChanged += CurrentDevice_PowerStatusChanged;
 
         ambilightThread = new Thread(ambilightThreadLoop);
@@ -83,7 +84,7 @@ public static class DynamicLightingManager
         LogManager.LogInformation("{0} has stopped", "DynamicLightingManager");
     }
 
-    private static void SystemManager_DisplaySettingsChanged(Desktop.ScreenResolution resolution)
+    private static void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // Update the screen width and height values when display changes
         // Get the primary screen dimensions
