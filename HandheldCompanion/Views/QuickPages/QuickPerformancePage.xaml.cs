@@ -49,7 +49,7 @@ public partial class QuickPerformancePage : Page
         PerformanceManager.Initialized += PerformanceManager_Initialized;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-        MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+        MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
 
         // device settings
         GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -71,7 +71,7 @@ public partial class QuickPerformancePage : Page
         RTSS_Updated(PlatformManager.RTSS.Status);
     }
 
-    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
+    private void MultimediaManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
     {
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>

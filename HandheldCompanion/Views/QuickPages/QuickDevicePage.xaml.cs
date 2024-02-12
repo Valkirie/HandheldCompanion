@@ -154,7 +154,7 @@ public partial class QuickDevicePage : Page
             ComboBoxResolution.Items.Add(resolution);
     }
 
-    private void DesktopManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void DesktopManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         // We don't want to change the combobox when it's changed from profile integer scaling
         var currentProfile = ProfileManager.GetCurrent();

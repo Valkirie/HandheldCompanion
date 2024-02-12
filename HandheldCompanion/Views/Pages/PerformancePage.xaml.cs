@@ -56,7 +56,7 @@ namespace HandheldCompanion.Views.Pages
             PerformanceManager.ProcessorStatusChanged += PerformanceManager_StatusChanged;
             PerformanceManager.EPPChanged += PerformanceManager_EPPChanged;
             PerformanceManager.Initialized += PerformanceManager_Initialized;
-            MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
 
             // device settings
             GPUSlider.Minimum = MainWindow.CurrentDevice.GfxClock[0];
@@ -79,7 +79,7 @@ namespace HandheldCompanion.Views.Pages
         {
         }
 
-        private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
+        private void MultimediaManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
         {
             // UI thread (async)
             Application.Current.Dispatcher.BeginInvoke(() =>

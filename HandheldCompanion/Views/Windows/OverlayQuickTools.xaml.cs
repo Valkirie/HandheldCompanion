@@ -147,7 +147,7 @@ public partial class OverlayQuickTools : GamepadWindow
         });
     }
 
-    private void SystemManager_DisplaySettingsChanged(ScreenResolution resolution)
+    private void SystemManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         int QuickToolsLocation = SettingsManager.GetInt("QuickToolsLocation");
         UpdateLocation(QuickToolsLocation);

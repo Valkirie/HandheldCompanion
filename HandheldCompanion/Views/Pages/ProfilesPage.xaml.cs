@@ -60,7 +60,7 @@ public partial class ProfilesPage : Page
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
-        MultimediaManager.PrimaryScreenChanged += SystemManager_PrimaryScreenChanged;
+        MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Initialized += GPUManager_Initialized;
 
@@ -184,7 +184,7 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private void SystemManager_PrimaryScreenChanged(DesktopScreen desktopScreen)
+    private void MultimediaManager_DisplaySettingsChanged(DesktopScreen desktopScreen, ScreenResolution resolution)
     {
         List<ScreenFramelimit> frameLimits = desktopScreen.GetFramelimits();
 
@@ -504,7 +504,6 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private DesktopScreen desktopScreen;
     private void UpdateUI()
     {
         if (selectedProfile is null)
@@ -577,7 +576,7 @@ public partial class ProfilesPage : Page
                 UpdateMotionControlsVisibility();
 
                 // Framerate limit
-                desktopScreen = MultimediaManager.GetDesktopScreen();
+                DesktopScreen? desktopScreen = MultimediaManager.GetDesktopScreen();
                 if (desktopScreen is not null)
                     cB_Framerate.SelectedItem = desktopScreen.GetClosest(selectedProfile.FramerateValue);
 
