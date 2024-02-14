@@ -697,7 +697,21 @@ public static class ControllerManager
                         {
                             Working?.Invoke(0);
                             ControllerManagementSuccess = false;
-                            ControllerManagementAttempts++;
+                            bool HasBusyWireless = false;
+                            bool HasCyclingController = false;
+
+                            // do we have a pending wireless controller ?
+                            XInputController wirelessController = GetPhysicalControllers().OfType<XInputController>().FirstOrDefault(controller => controller.IsWireless && controller.IsBusy);
+                            if (wirelessController is not null)
+                            {
+                                // update busy flag
+                                HasBusyWireless = true;
+
+                                // is the controller power cyclinc ?
+                                PowerCyclers.TryGetValue(wirelessController.Details.baseContainerDeviceInstanceId, out HasCyclingController);
+                                if (HasBusyWireless && !HasCyclingController && ControllerManagementAttempts != 0)
+                                    goto Exit;
+                            }
 
                             // suspend virtual controller
                             VirtualManager.Suspend();
@@ -720,6 +734,10 @@ public static class ControllerManager
                             // suspend and resume virtual controller
                             VirtualManager.Suspend();
                             VirtualManager.Resume();
+
+                            // increment attempt counter (if no wireless controller is power cycling)
+                            if (!HasCyclingController)
+                                ControllerManagementAttempts++;
                         }
                     }
                     else
@@ -741,6 +759,7 @@ public static class ControllerManager
                 }
             }
 
+            Exit:
             Thread.Sleep(2000);
         }
     }
@@ -993,7 +1012,6 @@ public static class ControllerManager
             }
         }
         catch { }
-
 
         return false;
     }

@@ -319,11 +319,11 @@ public static class DeviceManager
                 baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
                 isVirtual = parent.IsVirtual() || children.IsVirtual(),
                 isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
-                isExternal = IsDisableable || IsRemovable,
                 ProductID = ((Attributes)attributes).ProductID,
                 VendorID = ((Attributes)attributes).VendorID,
                 isXInput = children.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
             };
+            details.isExternal = IsDisableable || IsRemovable || details.isBluetooth;
 
             // get name
             string DeviceDesc = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
