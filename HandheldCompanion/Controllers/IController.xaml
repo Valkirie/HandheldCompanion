@@ -130,7 +130,7 @@
 
             <TextBlock
                 Name="ProgressBarWarning"
-                Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                Foreground="{DynamicResource AccentAAFillColorDefaultBrush}"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 TextAlignment="Center"
                 TextWrapping="Wrap" />

@@ -67,7 +67,7 @@ namespace HandheldCompanion.Controllers
             }
         }
 
-        public bool IsWireless
+        public override bool IsWireless
         {
             get
             {

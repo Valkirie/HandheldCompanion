@@ -88,18 +88,21 @@ namespace HandheldCompanion.Controllers
         private bool workingThreadRunning;
 
         public virtual bool IsReady => true;
+        public virtual bool IsWireless => false;
 
         public bool IsBusy
         {
             get
             {
+                bool isBusy = false;
+
                 // UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    return !IsEnabled;
+                    isBusy = !IsEnabled;
                 });
 
-                return false;
+                return isBusy;
             }
 
             set
@@ -217,7 +220,7 @@ namespace HandheldCompanion.Controllers
             // UI thread
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ControllerType.Glyph = details.isInternal ? "\uE990" : "\uECF0";
+                ControllerType.Glyph = details.isInternal ? "\uE990" : details.isBluetooth ? "\uE702" : "\uECF0";
             });
 
             /*

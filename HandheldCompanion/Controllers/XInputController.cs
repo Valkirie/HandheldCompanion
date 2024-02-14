@@ -198,6 +198,21 @@ public class XInputController : IController
         base.Unhide(powerCycle);
     }
 
+    public virtual new bool IsWireless
+    {
+        get
+        {
+            string enumerator = Details.GetEnumerator();
+            switch (enumerator)
+            {
+                default:
+                    return false;
+                case "BTHENUM":
+                    return true;
+            }
+        }
+    }
+
     public override void CyclePort()
     {
         string enumerator = Details.GetEnumerator();

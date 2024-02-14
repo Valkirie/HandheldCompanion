@@ -18,6 +18,8 @@ public class PnPDetails
 
     public bool isVirtual;
     public bool isPhysical => !isVirtual;
+    public bool isBluetooth => EnumeratorName.Equals("BTHENUM");
+    public bool isUSB => EnumeratorName.Equals("USB");
 
     public string devicePath;
     public string baseContainerDevicePath;
@@ -70,15 +72,9 @@ public class PnPDetails
         if (device is null)
             return null;
 
-        // is this a USB device
-        switch (EnumeratorName)
-        {
-            default:
-            case "BTHENUM":
-                return null;
-            case "USB":
-                break;
-        }
+        // skip if bluetooth
+        if (isBluetooth)
+            return null;
 
         return device.ToUsbPnPDevice();
     }
