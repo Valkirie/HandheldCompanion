@@ -8438,7 +8438,7 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing..
+        ///   Looks up a localized string similar to Please restart your controller by holding the Guide button to finalize pairing..
         /// </summary>
         public static string XInputController_Warning_BTH {
             get {
