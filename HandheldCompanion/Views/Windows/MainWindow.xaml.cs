@@ -95,36 +95,8 @@ public partial class MainWindow : GamepadWindow
         // used by gamepad navigation
         Tag = "MainWindow";
 
-        // get process
-        var process = Process.GetCurrentProcess();
-
         // fix touch support
         TabletDeviceCollection tabletDevices = Tablet.TabletDevices;
-        /*if (tabletDevices.Count > 0)
-        {
-            // Get the Type of InputManager.  
-            Type inputManagerType = typeof(System.Windows.Input.InputManager);
-
-            // Call the StylusLogic method on the InputManager.Current instance.  
-            object stylusLogic = inputManagerType.InvokeMember("StylusLogic",
-                        BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                        null, InputManager.Current, null);
-
-            if (stylusLogic != null)
-            {
-                //  Get the type of the stylusLogic returned from the call to StylusLogic.  
-                Type stylusLogicType = stylusLogic.GetType();
-
-                // Loop until there are no more devices to remove.  
-                while (tabletDevices.Count > 0)
-                {
-                    // Remove the first tablet device in the devices collection.  
-                    stylusLogicType.InvokeMember("OnTabletRemoved",
-                            BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
-                            null, stylusLogic, new object[] { (uint)0 });
-                }
-            }
-        }*/
 
         // get first start
         bool FirstStart = SettingsManager.GetBoolean("FirstStart");
@@ -162,6 +134,7 @@ public partial class MainWindow : GamepadWindow
         AddNotifyIconItem(Properties.Resources.MainWindow_Exit);
 
         // paths
+        Process process = Process.GetCurrentProcess();
         CurrentExe = process.MainModule.FileName;
         CurrentPath = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -179,6 +152,7 @@ public partial class MainWindow : GamepadWindow
         // todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
         // https://dlcdnets.asus.com/pub/ASUS/IOTHMD/Image/Driver/Chipset/34644/BoschG-sensor_ROG_Bosch_Z_V1.0.1.7_34644.exe?model=ROG%20Ally%20(2023)
 
+        /*
         string currentDeviceType = CurrentDevice.GetType().Name;
         switch (currentDeviceType)
         {
@@ -207,6 +181,7 @@ public partial class MainWindow : GamepadWindow
                 }
                 break;
         }
+        */
 
         // initialize splash screen on first start only
         if (FirstStart)
