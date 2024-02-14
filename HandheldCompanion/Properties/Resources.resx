@@ -2401,7 +2401,7 @@ Motion input toggle: press selected button(s) to switch motion state.</value>
     <value>Device</value>
   </data>
   <data name="XInputController_Warning_BTH" xml:space="preserve">
-    <value>Please switch your controller off and then on again by pressing and holding the Guide button to finalize pairing.</value>
+    <value>Please restart your controller by holding the Guide button to finalize pairing.</value>
   </data>
   <data name="DevicePage_DynamicLighting" xml:space="preserve">
     <value>Effects</value>
