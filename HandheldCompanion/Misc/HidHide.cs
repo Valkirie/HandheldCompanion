@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace HandheldCompanion;
 
@@ -21,8 +22,8 @@ public static class HidHide
         // verifying HidHide is installed
         if (!service.IsInstalled)
         {
-            LogManager.LogCritical("HidHide is missing. Please get it from: {0}",
-                "https://github.com/ViGEm/HidHide/releases");
+            LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+            MessageBox.Show("Please get it from: https://github.com/ViGEm/HidHide/releases", "HidHide is missing");
             throw new InvalidOperationException();
         }
 
