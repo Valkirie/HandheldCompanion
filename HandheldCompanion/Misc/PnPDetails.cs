@@ -1,5 +1,6 @@
 ﻿using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+using System;
 using System.Runtime.InteropServices;
 
 namespace HandheldCompanion;
@@ -12,6 +13,8 @@ public class PnPDetails
 
     public bool isGaming;
     public bool isHooked;
+    public bool isExternal;
+    public bool isInternal => !isExternal;
 
     public bool isVirtual;
     public bool isPhysical => !isVirtual;
@@ -21,7 +24,8 @@ public class PnPDetails
 
     public string Name;
     public string SymLink;
-    public string Enumerator;
+    public string EnumeratorName;
+    public DateTimeOffset FirstInstallDate;
 
     public ushort ProductID;
     public ushort VendorID;
@@ -57,7 +61,7 @@ public class PnPDetails
 
     public string GetEnumerator()
     {
-        return Enumerator;
+        return EnumeratorName;
     }
 
     public UsbPnPDevice GetUsbPnPDevice()
@@ -67,7 +71,7 @@ public class PnPDetails
             return null;
 
         // is this a USB device
-        switch (Enumerator)
+        switch (EnumeratorName)
         {
             default:
             case "BTHENUM":

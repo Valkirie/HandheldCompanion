@@ -25,10 +25,16 @@
 
                 <DockPanel>
                     <ui:FontIcon
+                        Name="ControllerIcon"
                         VerticalAlignment="Center"
                         FontFamily="PromptFont"
                         FontSize="30"
                         Glyph="&#x243C;" />
+                    <ui:FontIcon
+                        Name="ControllerType"
+                        Margin="6,0,0,0"
+                        VerticalAlignment="Center"
+                        Glyph="&#xECF1;" />
 
                     <ui:SimpleStackPanel
                         Margin="12,0,0,0"

@@ -302,8 +302,11 @@ public static class ControllerManager
 
     private static void DeviceManager_Initialized()
     {
+        // todo: we might need to rethink this function
+        return;
+
         // search for last known controller and connect
-        var path = SettingsManager.GetString("HIDInstancePath");
+        string path = SettingsManager.GetString("HIDInstancePath");
 
         if (Controllers.ContainsKey(path))
         {

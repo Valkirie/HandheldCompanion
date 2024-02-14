@@ -208,8 +208,24 @@ namespace HandheldCompanion.Controllers
 
         public virtual void AttachDetails(PnPDetails details)
         {
+            if (details is null)
+                return;
+
             this.Details = details;
             Details.isHooked = true;
+
+            // UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ControllerType.Glyph = details.isInternal ? "\uE990" : "\uECF0";
+            });
+
+            /*
+            // Retrieve the oldest device using LINQ
+            PnPDetails oldest = Details.isXInput ? DeviceManager.GetOldestXInput() : DeviceManager.GetOldestDInput();
+            if (oldest is not null)
+                IsInternal = oldest.deviceInstanceId == Details.deviceInstanceId;
+            */
         }
 
         public virtual void UpdateInputs(long ticks)

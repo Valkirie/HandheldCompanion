@@ -475,8 +475,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -514,8 +514,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -553,8 +553,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -591,8 +591,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -629,8 +629,8 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*" MinWidth="200" />
-                            <ColumnDefinition Width="5*" MinWidth="200" />
+                            <ColumnDefinition Width="8*" MinWidth="200" />
+                            <ColumnDefinition Width="2*" MinWidth="200" />
                         </Grid.ColumnDefinitions>
 
                         <DockPanel>
@@ -692,8 +692,8 @@
                         <ui:SimpleStackPanel Margin="30,0,0,0" Spacing="12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="8*" MinWidth="200" />
+                                    <ColumnDefinition Width="2*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock
@@ -716,8 +716,8 @@
                                 BorderThickness="0,1,0,0" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
-                                    <ColumnDefinition Width="5*" MinWidth="200" />
+                                    <ColumnDefinition Width="8*" MinWidth="200" />
+                                    <ColumnDefinition Width="2*" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock

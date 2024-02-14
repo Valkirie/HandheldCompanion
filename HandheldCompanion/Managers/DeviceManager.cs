@@ -1,4 +1,5 @@
-﻿using HandheldCompanion.Managers.Hid;
+﻿using HandheldCompanion.Controllers;
+using HandheldCompanion.Managers.Hid;
 using HandheldCompanion.Sensors;
 using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
@@ -175,7 +176,7 @@ public static class DeviceManager
     public static PnPDetails FindDeviceFromUSB(string InstanceId)
     {
         PnPDetails details = null;
-        while(details is null)
+        while (details is null)
         {
             details = PnPDevices.Values.FirstOrDefault(device => device.baseContainerDeviceInstanceId.Equals(InstanceId, StringComparison.InvariantCultureIgnoreCase));
 
@@ -215,6 +216,13 @@ public static class DeviceManager
                 return deviceIndex;
 
         return 0;
+    }
+
+    [Flags]
+    private enum DeviceStatus
+    {
+        DN_DISABLEABLE = 0x00002000,
+        DN_REMOVABLE = 0x00004000
     }
 
     private static PnPDetails GetDetails(string path)
@@ -273,17 +281,45 @@ public static class DeviceManager
                 parent = check;
             }
 
+            // get root
+            IPnPDevice? root = parent;
+            string rootId = root.InstanceId;
+            while (root.Parent is not null)
+            {
+                // update root
+                root = PnPDevice.GetDeviceByInstanceId(rootId);
+
+                string Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+
+                if (Name.Contains(@"USB Hub", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                if (rootId.Contains(@"USB\ROOT", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                if (rootId.Contains(@"ROOT\SYSTEM", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
+                // update parent InstanceId
+                rootId = root.Parent.InstanceId;
+            }
+
+            DeviceStatus Device_DevNodeStatus = (DeviceStatus)root.GetProperty<UInt32>(DevicePropertyKey.Device_DevNodeStatus);
+            bool IsDisableable = Device_DevNodeStatus.HasFlag(DeviceStatus.DN_DISABLEABLE);
+            bool IsRemovable = Device_DevNodeStatus.HasFlag(DeviceStatus.DN_REMOVABLE);
+
             // get details
             PnPDetails details = new PnPDetails
             {
                 devicePath = path,
                 SymLink = SymLink,
                 Name = parent.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc),
-                Enumerator = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
+                EnumeratorName = parent.GetProperty<string>(DevicePropertyKey.Device_EnumeratorName),
                 deviceInstanceId = children.InstanceId.ToUpper(),
                 baseContainerDeviceInstanceId = parent.InstanceId.ToUpper(),
                 isVirtual = parent.IsVirtual() || children.IsVirtual(),
                 isGaming = IsGaming((Attributes)attributes, (Capabilities)capabilities),
+                isExternal = IsDisableable || IsRemovable,
                 ProductID = ((Attributes)attributes).ProductID,
                 VendorID = ((Attributes)attributes).VendorID,
                 isXInput = children.InstanceId.Contains("IG_", StringComparison.InvariantCultureIgnoreCase),
@@ -312,6 +348,16 @@ public static class DeviceManager
     {
         return PnPDevices.Values.OrderBy(device => device.XInputDeviceIdx).Where(device =>
             device.VendorID == VendorId && device.ProductID == ProductId && !device.isHooked).ToList();
+    }
+
+    public static PnPDetails GetOldestXInput()
+    {
+        return PnPDevices.Values.Where(kv => !kv.isVirtual && kv.isGaming && kv.isXInput).OrderByDescending(kv => kv.FirstInstallDate).FirstOrDefault();
+    }
+
+    public static PnPDetails GetOldestDInput()
+    {
+        return PnPDevices.Values.Where(kv => kv.isVirtual && kv.isGaming && !kv.isXInput).OrderByDescending(kv => kv.FirstInstallDate).FirstOrDefault();
     }
 
     public static PnPDetails GetDeviceByInterfaceId(string path)
@@ -478,7 +524,7 @@ public static class DeviceManager
                     deviceEx.isXInput = true;
                     deviceEx.baseContainerDevicePath = obj.SymLink;
 
-                    if (deviceEx.Enumerator.Equals("USB"))
+                    if (deviceEx.EnumeratorName.Equals("USB"))
                         deviceEx.XInputUserIndex = GetXInputIndexAsync(obj.SymLink);
 
                     if (deviceEx.XInputUserIndex == byte.MaxValue)
