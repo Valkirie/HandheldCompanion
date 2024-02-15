@@ -148,14 +148,15 @@ public partial class MainWindow : GamepadWindow
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
 
-        // workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
-        // todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
-        // https://dlcdnets.asus.com/pub/ASUS/IOTHMD/Image/Driver/Chipset/34644/BoschG-sensor_ROG_Bosch_Z_V1.0.1.7_34644.exe?model=ROG%20Ally%20(2023)
-
-        /*
+        
         string currentDeviceType = CurrentDevice.GetType().Name;
         switch (currentDeviceType)
         {
+        /*
+         * workaround for Bosch BMI320/BMI323 (as of 06/20/2023)
+         * todo: check if still needed with Bosch G-sensor Driver V1.0.1.7
+         * https://dlcdnets.asus.com/pub/ASUS/IOTHMD/Image/Driver/Chipset/34644/BoschG-sensor_ROG_Bosch_Z_V1.0.1.7_34644.exe?model=ROG%20Ally%20(2023)
+
             case "AYANEOAIRPlus":
             case "ROGAlly":
                 {
@@ -172,6 +173,7 @@ public partial class MainWindow : GamepadWindow
                         LogManager.LogError("Failed to restart: {0}", CurrentDevice.InternalSensorName);
                 }
                 break;
+        */
 
             case "SteamDeck":
                 {
@@ -181,7 +183,6 @@ public partial class MainWindow : GamepadWindow
                 }
                 break;
         }
-        */
 
         // initialize splash screen on first start only
         if (FirstStart)
