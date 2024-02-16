@@ -1,4 +1,5 @@
 ﻿using HandheldCompanion.Views;
+using SharpDX.Direct3D9;
 using System.Collections.Generic;
 using System.Management;
 
@@ -29,24 +30,6 @@ public static class MotherboardInfo
         processorCollection = processorSearcher.Get();
         displayCollection = displaySearcher.Get();
         videoControllerCollection = videoControllerSearcher.Get();
-    }
-
-    public static string VideoController
-    {
-        get
-        {
-            string manufacturer = string.Empty;
-            foreach (ManagementObject videoController in videoControllerCollection)
-            {
-                manufacturer = videoController["AdapterCompatibility"].ToString();
-                if (manufacturer.Contains("Intel"))
-                    break;
-                else if (manufacturer.Contains("AMD"))
-                    break;
-            }
-
-            return manufacturer;
-        }
     }
 
     public static string Availability

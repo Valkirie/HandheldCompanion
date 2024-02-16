@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SharpDX.Direct3D9;
+using System;
 using System.Management;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
+using Task = System.Threading.Tasks.Task;
+using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {
@@ -18,8 +21,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public delegate void GPUScalingChangedEvent(bool Supported, bool Enabled, int Mode);
         #endregion
 
-        private static GPU gpu;
-        private static string Manufacturer;
+        protected AdapterInformation adapterInformation;
+        protected int deviceIdx = -1;
+        protected int displayIdx = -1;
 
         protected bool IsInitialized = false;
 
@@ -69,29 +73,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             }
         }
 
-        public GPU()
+        public bool IsBusy => !Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock);
+
+        public GPU(AdapterInformation adapterInformation)
         {
-            Manufacturer = MotherboardInfo.VideoController;
-        }
-
-        public static GPU GetCurrent()
-        {
-            if (gpu is not null)
-                return gpu;
-
-            switch (Manufacturer)
-            {
-                case "Advanced Micro Devices, Inc.":
-                    gpu = new AMDGPU();
-                    break;
-                case "Intel Corporation":
-                    gpu = new IntelGPU();
-                    break;
-                default:
-                    throw new Exception($"Unexpected Manufacturer: {Manufacturer}");
-            }
-
-            return gpu;
+            this.adapterInformation = adapterInformation;
         }
 
         public virtual void Start()
@@ -103,13 +89,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 TelemetryTimer.Start();
         }
 
-        public virtual void Stop()
+        public virtual async void Stop()
         {
             if (UpdateTimer != null)
                 UpdateTimer.Stop();
 
             if (TelemetryTimer != null)
                 TelemetryTimer.Stop();
+
+            while (IsBusy)
+                await Task.Delay(100);
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)

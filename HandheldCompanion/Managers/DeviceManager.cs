@@ -5,13 +5,17 @@ using HandheldCompanion.Utils;
 using Microsoft.Win32.SafeHandles;
 using Nefarius.Utilities.DeviceManagement.PnP;
 using PInvoke;
+using SharpDX.Direct3D9;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+using Capabilities = HandheldCompanion.Managers.Hid.Capabilities;
 
 namespace HandheldCompanion.Managers;
 
@@ -23,6 +27,8 @@ public static class DeviceManager
     private static readonly DeviceNotificationListener HidDeviceListener = new();
 
     private static readonly ConcurrentDictionary<string, PnPDetails> PnPDevices = new();
+
+    private static Timer adaptersTimer = new(2000) { AutoReset = false };
 
     const ulong GENERIC_READ = (0x80000000L);
     const ulong GENERIC_WRITE = (0x40000000L);
@@ -67,6 +73,8 @@ public static class DeviceManager
     {
         // initialize hid
         HidD_GetHidGuidMethod(out HidDevice);
+
+        adaptersTimer.Elapsed += (sender, e) => RefreshDisplayAdapters(true);
     }
 
     public static void Start()
@@ -88,6 +96,7 @@ public static class DeviceManager
 
         RefreshXInput();
         RefreshDInput();
+        RefreshDisplayAdapters(true);
 
         IsInitialized = true;
         Initialized?.Invoke();
@@ -664,6 +673,55 @@ public static class DeviceManager
         return XINPUT_LED_TO_PORT_MAP[ledState];
     }
 
+    private static Dictionary<Guid, AdapterInformation> displayAdapters = new();
+    public static void RefreshDisplayAdapters(bool elapsed = false)
+    {
+        if (elapsed)
+        {
+            // get the current list of adapters with Direct3D capabilities
+            AdapterCollection adapters = new Direct3D().Adapters;
+            List<Guid> adaptersGuids = adapters.Select(a => a.Details.DeviceIdentifier).ToList();
+
+            foreach (AdapterInformation adapterInformation in adapters)
+            {
+                if (displayAdapters.Keys.Contains(adapterInformation.Details.DeviceIdentifier))
+                {
+                    // known device
+                }
+                else
+                {
+                    // added device
+                    Debug.WriteLine("Adapter {0} was added", adapterInformation.Details.Description);
+                    DisplayAdapterArrived?.Invoke(adapterInformation);
+                }
+            }
+
+            foreach (Guid deviceIdentifier in displayAdapters.Keys)
+            {
+                if (adaptersGuids.Contains(deviceIdentifier))
+                {
+                    // known device
+                }
+                else
+                {
+                    // removed device
+                    AdapterInformation adapterInformation = displayAdapters[deviceIdentifier];
+                    Debug.WriteLine("Adapter {0} was removed", adapterInformation.Details.Description);
+                    DisplayAdapterRemoved?.Invoke(adapterInformation);
+                }
+            }
+
+            displayAdapters.Clear();
+            foreach (AdapterInformation adapterInformation in adapters)
+                displayAdapters.Add(adapterInformation.Details.DeviceIdentifier, adapterInformation);
+        }
+        else
+        {
+            adaptersTimer.Stop();
+            adaptersTimer.Start();
+        }
+    }
+
     public static string[]? GetDevices(Guid? classGuid)
     {
         string? filter = null;
@@ -924,6 +982,12 @@ public static class DeviceManager
 
     public static event DInputDeviceRemovedEventHandler HidDeviceRemoved;
     public delegate void DInputDeviceRemovedEventHandler(PnPDetails device, DeviceEventArgs obj);
+
+    public static event DisplayAdapterArrivedEventHandler DisplayAdapterArrived;
+    public delegate void DisplayAdapterArrivedEventHandler(AdapterInformation adapterInformation);
+
+    public static event DisplayAdapterRemovedEventHandler DisplayAdapterRemoved;
+    public delegate void DisplayAdapterRemovedEventHandler(AdapterInformation adapterInformation);
 
     public static event InitializedEventHandler Initialized;
     public delegate void InitializedEventHandler();

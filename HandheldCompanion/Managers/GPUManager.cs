@@ -1,5 +1,11 @@
-﻿using HandheldCompanion.Controls;
+﻿using HandheldCompanion.ADLX;
+using HandheldCompanion.Controls;
 using HandheldCompanion.GraphicsProcessingUnit;
+using HandheldCompanion.IGCL;
+using HandheldCompanion.Managers.Desktop;
+using SharpDX.Direct3D9;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HandheldCompanion.Managers
 {
@@ -7,17 +13,33 @@ namespace HandheldCompanion.Managers
     {
         #region events
         public static event InitializedEventHandler Initialized;
-        public delegate void InitializedEventHandler(GPU GPU);
+        public delegate void InitializedEventHandler(bool HasIGCL, bool HasADLX);
+
+        public static event HookedEventHandler Hooked;
+        public delegate void HookedEventHandler(GPU GPU);
         #endregion
 
         public static bool IsInitialized;
 
-        private static GPU currentGPU = new();
+        private static GPU currentGPU = null;
+        private static Dictionary<AdapterInformation, GPU> DisplayGPU = new();
         
         static GPUManager()
         {
-            // initialize processor
-            currentGPU = GPU.GetCurrent();
+            // manage events
+            ProfileManager.Applied += ProfileManager_Applied;
+            ProfileManager.Discarded += ProfileManager_Discarded;
+            ProfileManager.Updated += ProfileManager_Updated;
+            DeviceManager.DisplayAdapterArrived += DeviceManager_DisplayAdapterArrived;
+            DeviceManager.DisplayAdapterRemoved += DeviceManager_DisplayAdapterRemoved;
+            MultimediaManager.PrimaryScreenChanged += MultimediaManager_PrimaryScreenChanged;
+        }
+
+        private static void GPUConnect(GPU GPU)
+        {
+            // update current GPU
+            currentGPU = GPU;
+
             currentGPU.ImageSharpeningChanged += CurrentGPU_ImageSharpeningChanged;
             currentGPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
             currentGPU.IntegerScalingChanged += CurrentGPU_IntegerScalingChanged;
@@ -28,13 +50,78 @@ namespace HandheldCompanion.Managers
             }
             else if (currentGPU is IntelGPU)
             {
-
+                // do something
             }
 
-            // manage events
-            ProfileManager.Applied += ProfileManager_Applied;
-            ProfileManager.Discarded += ProfileManager_Discarded;
-            ProfileManager.Updated += ProfileManager_Updated;
+            currentGPU.Start();
+        }
+
+        private static void GPUDisconnect()
+        {
+            currentGPU.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
+            currentGPU.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
+            currentGPU.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
+
+            if (currentGPU is AMDGPU)
+            {
+                ((AMDGPU)currentGPU).RSRStateChanged -= CurrentGPU_RSRStateChanged;
+            }
+            else if (currentGPU is IntelGPU)
+            {
+                // do something
+            }
+
+            currentGPU.Stop();
+        }
+
+        private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
+        {
+            AdapterInformation key = DisplayGPU.Keys.Where(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName).FirstOrDefault();
+            if (DisplayGPU.TryGetValue(key, out GPU gpu))
+            {
+                // a new GPU was connected, disconnect from current gpu
+                if (currentGPU is not null && currentGPU != gpu)
+                    GPUDisconnect();
+
+                // connect to new gpu
+                GPUConnect(gpu);
+
+                Hooked?.Invoke(currentGPU);
+            }
+        }
+
+        private static void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        {
+            GPU currentGPU = null;
+
+            if (adapterInformation.Details.Description.Contains("Advanced Micro Devices") || adapterInformation.Details.Description.Contains("AMD"))
+            {
+                currentGPU = new AMDGPU(adapterInformation);
+            }
+            else if (adapterInformation.Details.Description.Contains("Intel"))
+            {
+                currentGPU = new IntelGPU(adapterInformation);
+            }
+
+            if (currentGPU is null)
+            {
+                LogManager.LogError("Unsupported DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
+                return;
+            }
+
+            DisplayGPU[adapterInformation] = currentGPU;
+        }
+
+        private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
+        {
+            if (DisplayGPU.TryGetValue(adapterInformation, out GPU gpu))
+                if (currentGPU is not null && currentGPU == gpu)
+                    GPUDisconnect();
+        }
+
+        public static GPU GetCurrent()
+        {
+            return currentGPU;
         }
 
         private static void CurrentGPU_RSRStateChanged(bool Supported, bool Enabled, int Sharpness)
@@ -82,10 +169,11 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            currentGPU.Start();
+            bool HasIGCL = IGCLBackend.Initialize();
+            bool HasADLX = ADLXBackend.IntializeAdlx();
 
             IsInitialized = true;
-            Initialized?.Invoke(currentGPU);
+            Initialized?.Invoke(HasIGCL, HasADLX);
 
             LogManager.LogInformation("{0} has started", "GPUManager");
         }
@@ -95,7 +183,12 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            currentGPU.Stop();
+            // wait until all GPUs are ready
+            foreach (GPU gpu in DisplayGPU.Values)
+                gpu.Stop();
+
+            IGCLBackend.Terminate();
+            ADLXBackend.CloseAdlx();
 
             IsInitialized = false;
 
@@ -104,6 +197,9 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Applied(Profile profile, UpdateSource source)
         {
+            if (currentGPU is null)
+                return;
+
             try
             {
                 // apply profile GPU Scaling
@@ -168,6 +264,9 @@ namespace HandheldCompanion.Managers
 
         private static void ProfileManager_Discarded(Profile profile)
         {
+            if (currentGPU is null)
+                return;
+
             try
             {
                 /*

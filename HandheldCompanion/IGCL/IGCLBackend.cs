@@ -394,7 +394,7 @@ namespace HandheldCompanion.IGCL
         public static extern uint GetAdapterCounts();
 
         [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr GetDevices(ref uint pAdapterCount);
+        private static extern IntPtr EnumerateDevices(ref uint pAdapterCount);
 
         [DllImport("IGCL_Wrapper.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern ctl_result_t GetDeviceProperties(ctl_device_adapter_handle_t hDevice, ref ctl_device_adapter_properties_t StDeviceAdapterProperties);
@@ -436,7 +436,6 @@ namespace HandheldCompanion.IGCL
         static extern IntPtr LocalFree(IntPtr mem);
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
-        public static nint deviceIdx = 0;
 
         public static bool Initialize()
         {
@@ -444,27 +443,28 @@ namespace HandheldCompanion.IGCL
 
             // Call Init and check the result
             Result = IntializeIgcl();
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
+            return Result == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
 
+        public static int GetDeviceIdx(string deviceName)
+        {
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             uint adapterCount = 0;
 
             // Get the number of Intel devices
-            IntPtr hDevices = GetDevices(ref adapterCount);
+            IntPtr hDevices = EnumerateDevices(ref adapterCount);
             if (hDevices == IntPtr.Zero)
-                return false;
+                return -1;
 
             // Convert the device handles to an array of IntPtr
             devices = new IntPtr[adapterCount];
             Marshal.Copy(hDevices, devices, 0, (int)adapterCount);
             if (devices.Length == 0)
-                return false;
+                return -1;
 
             for (int idx = 0; idx < devices.Length; idx++)
             {
                 ctl_device_adapter_properties_t StDeviceAdapterProperties = new();
-                ctl_adapter_properties_flag_t adapterFlag;
-
                 ctl_device_adapter_handle_t hDevice = new()
                 {
                     handle = devices[idx]
@@ -474,26 +474,11 @@ namespace HandheldCompanion.IGCL
                 if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                     continue;
 
-                switch (adapterCount)
-                {
-                    case 1:
-                        deviceIdx = idx;
-                        return true;
-
-                    default:
-                        {
-                            adapterFlag = StDeviceAdapterProperties.graphics_adapter_properties;
-                            if (!adapterFlag.HasFlag(ctl_adapter_properties_flag_t.CTL_ADAPTER_PROPERTIES_FLAG_INTEGRATED))
-                            {
-                                deviceIdx = idx;
-                                return true;
-                            }
-                        }
-                        break;
-                }
+                if (deviceName.Equals(StDeviceAdapterProperties.name))
+                    return idx;
             }
 
-            return false;
+            return -1;
         }
 
         public static void Terminate()
@@ -844,7 +829,7 @@ namespace HandheldCompanion.IGCL
             return RetroScalingSettings.Enable == enabled;
         }
 
-        internal static ctl_telemetry_data GetTelemetryData()
+        internal static ctl_telemetry_data GetTelemetryData(nint deviceIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_telemetry_data TelemetryData = new();

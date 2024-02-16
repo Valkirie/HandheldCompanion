@@ -81,6 +81,8 @@ public partial class MainWindow : GamepadWindow
     public static UISettings uiSettings;
 
     private const int WM_QUERYENDSESSION = 0x0011;
+    private const int WM_DISPLAYCHANGE = 0x007e;
+    private const int WM_DEVICECHANGE = 0x0219;
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
@@ -251,10 +253,14 @@ public partial class MainWindow : GamepadWindow
 
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        // windows shutting down event
-        if (msg == WM_QUERYENDSESSION)
+        switch(msg)
         {
-            // do something
+            case WM_DISPLAYCHANGE:
+            case WM_DEVICECHANGE:
+                DeviceManager.RefreshDisplayAdapters();
+                break;
+            case WM_QUERYENDSESSION:
+                break;
         }
 
         return IntPtr.Zero;
