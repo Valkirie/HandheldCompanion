@@ -126,8 +126,10 @@ public struct ScreenRotation
 
 public class DesktopScreen
 {
-    public Display devMode;
+    public DisplayDevice devMode;
     public Screen PrimaryScreen;
+    public string DevicePath;
+    public string FriendlyName;
     public List<ScreenResolution> screenResolutions = new();
     public List<ScreenDivider> screenDividers = new();
 
@@ -145,26 +147,22 @@ public class DesktopScreen
 
     public ScreenResolution GetResolution(int dmPelsWidth, int dmPelsHeight)
     {
-        // improve me
+        // todo: improve me
         int width = dmPelsWidth > dmPelsHeight ? dmPelsWidth : dmPelsHeight;
         int height = dmPelsWidth > dmPelsHeight ? dmPelsHeight : dmPelsWidth;
-
-        // unreliable !
-        /*
-        switch(SystemInformation.ScreenOrientation)
+        switch (SystemInformation.ScreenOrientation)
         {
             case ScreenOrientation.Angle0:
-            case ScreenOrientation.Angle180:
+            case ScreenOrientation.Angle270:
                 width = dmPelsWidth;
                 height = dmPelsHeight;
                 break;
             case ScreenOrientation.Angle90:
-            case ScreenOrientation.Angle270:
+            case ScreenOrientation.Angle180:
                 height = dmPelsWidth;
                 width = dmPelsHeight;
                 break;
         }
-        */
 
         return screenResolutions.FirstOrDefault(a => a.Width == width && a.Height == height);
     }

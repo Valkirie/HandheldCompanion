@@ -54,7 +54,7 @@ public partial class QuickProfilesPage : Page
         HotkeysManager.HotkeyCreated += TriggerCreated;
         InputsManager.TriggerUpdated += TriggerUpdated;
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        GPUManager.Initialized += GPUManager_Initialized;
+        GPUManager.Hooked += GPUManager_Hooked;
 
         foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
         {
@@ -174,7 +174,7 @@ public partial class QuickProfilesPage : Page
         });
     }
 
-    private void GPUManager_Initialized(GPU GPU)
+    private void GPUManager_Hooked(GPU GPU)
     {
         bool HasRSRSupport = false;
         if (GPU is AMDGPU amdGPU)

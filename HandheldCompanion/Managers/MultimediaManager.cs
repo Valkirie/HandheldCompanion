@@ -10,6 +10,8 @@ using System.Management;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using WindowsDisplayAPI;
+using WindowsDisplayAPI.DisplayConfig;
 
 namespace HandheldCompanion.Managers;
 
@@ -93,16 +95,16 @@ public static class MultimediaManager
         {
             case "NativeDisplayOrientation":
                 {
-                    var nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
+                    ScreenRotation.Rotations nativeOrientation = (ScreenRotation.Rotations)Convert.ToInt32(value);
 
                     if (!IsInitialized)
                         return;
 
-                    var oldOrientation = screenOrientation.rotation;
+                    ScreenRotation.Rotations oldOrientation = screenOrientation.rotation;
                     screenOrientation = new ScreenRotation(screenOrientation.rotationUnnormalized, nativeOrientation);
 
+                    // Though the real orientation didn't change, raise event because the interpretation of it changed
                     if (oldOrientation != screenOrientation.rotation)
-                        // Though the real orientation didn't change, raise event because the interpretation of it changed
                         DisplayOrientationChanged?.Invoke(screenOrientation);
                 }
                 break;
@@ -115,29 +117,29 @@ public static class MultimediaManager
         {
             case "increaseBrightness":
                 {
-                    var stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
-                    var brightness = stepRoundDn * 5 + 5;
+                    int stepRoundDn = (int)Math.Floor(GetBrightness() / 5.0d);
+                    int brightness = stepRoundDn * 5 + 5;
                     SetBrightness(brightness);
                 }
                 break;
             case "decreaseBrightness":
                 {
-                    var stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
-                    var brightness = stepRoundUp * 5 - 5;
+                    int stepRoundUp = (int)Math.Ceiling(GetBrightness() / 5.0d);
+                    int brightness = stepRoundUp * 5 - 5;
                     SetBrightness(brightness);
                 }
                 break;
             case "increaseVolume":
                 {
-                    var stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
-                    var volume = stepRoundDn * 5 + 5;
+                    int stepRoundDn = (int)Math.Floor(Math.Round(GetVolume() / 5.0d, 2));
+                    int volume = stepRoundDn * 5 + 5;
                     SetVolume(volume);
                 }
                 break;
             case "decreaseVolume":
                 {
-                    var stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
-                    var volume = stepRoundUp * 5 - 5;
+                    int stepRoundUp = (int)Math.Ceiling(Math.Round(GetVolume() / 5.0d, 2));
+                    int volume = stepRoundUp * 5 - 5;
                     SetVolume(volume);
                 }
                 break;
@@ -146,23 +148,60 @@ public static class MultimediaManager
 
     private static void onWMIEvent(object sender, EventArrivedEventArgs e)
     {
-        var brightness = Convert.ToInt32(e.NewEvent.Properties["Brightness"].Value);
+        int brightness = Convert.ToInt32(e.NewEvent.Properties["Brightness"].Value);
         BrightnessNotification?.Invoke(brightness);
+    }
+
+    public static string GetDisplayFriendlyName(string DeviceName)
+    {
+        string friendlyName = string.Empty;
+
+        Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
+        if (PrimaryDisplay is not null)
+        {
+            string DevicePath = PrimaryDisplay.DevicePath;
+            PathDisplayTarget? PrimaryTarget = GetDisplayTarget(DevicePath);
+            if (PrimaryTarget is not null)
+                friendlyName = PrimaryTarget.FriendlyName;
+        }
+
+        return friendlyName;
+    }
+
+    public static string GetDisplayPath(string DeviceName)
+    {
+        string DevicePath = string.Empty;
+
+        Display? PrimaryDisplay = Display.GetDisplays().Where(display => display.DisplayName.Equals(DeviceName)).FirstOrDefault();
+        if (PrimaryDisplay is not null)
+            DevicePath = PrimaryDisplay.DevicePath;
+
+        return DevicePath;
+    }
+
+    private static PathDisplayTarget? GetDisplayTarget(string DevicePath)
+    {
+        PathDisplayTarget PrimaryTarget;
+        PrimaryTarget = PathDisplayTarget.GetDisplayTargets().Where(target => target.DevicePath.Equals(DevicePath)).FirstOrDefault();
+        return PrimaryTarget;
     }
 
     private static void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
     {
+        // get primary screen
         Screen PrimaryScreen = Screen.PrimaryScreen;
 
         if (desktopScreen is null || desktopScreen.PrimaryScreen.DeviceName != PrimaryScreen.DeviceName)
         {
             // update current desktop screen
             desktopScreen = new DesktopScreen(PrimaryScreen);
-            desktopScreen.devMode = GetDisplay(desktopScreen.PrimaryScreen.DeviceName);
+            desktopScreen.devMode = GetDisplay(PrimaryScreen.DeviceName);
+            desktopScreen.FriendlyName = GetDisplayFriendlyName(PrimaryScreen.DeviceName);
+            desktopScreen.DevicePath = GetDisplayPath(PrimaryScreen.DeviceName);
 
             // pull resolutions details
-            List<Display> resolutions = GetResolutions(desktopScreen.PrimaryScreen.DeviceName);
-            foreach (Display mode in resolutions)
+            List<DisplayDevice> resolutions = GetResolutions(desktopScreen.PrimaryScreen.DeviceName);
+            foreach (DisplayDevice mode in resolutions)
             {
                 ScreenResolution res = new ScreenResolution(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmBitsPerPel);
 
@@ -193,19 +232,16 @@ public static class MultimediaManager
 
         if (!IsInitialized)
         {
-            var nativeScreenRotation = (ScreenRotation.Rotations)SettingsManager.GetInt("NativeDisplayOrientation");
-            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation,
-                nativeScreenRotation);
+            ScreenRotation.Rotations nativeScreenRotation = (ScreenRotation.Rotations)SettingsManager.GetInt("NativeDisplayOrientation");
+            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation, nativeScreenRotation);
             oldOrientation = ScreenRotation.Rotations.UNSET;
 
             if (nativeScreenRotation == ScreenRotation.Rotations.UNSET)
-                SettingsManager.SetProperty("NativeDisplayOrientation", (int)screenOrientation.rotationNativeBase,
-                    true);
+                SettingsManager.SetProperty("NativeDisplayOrientation", (int)screenOrientation.rotationNativeBase, true);
         }
         else
         {
-            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation,
-                screenOrientation.rotationNativeBase);
+            screenOrientation = new ScreenRotation((ScreenRotation.Rotations)desktopScreen.devMode.dmDisplayOrientation, screenOrientation.rotationNativeBase);
         }
 
         // raise event
@@ -245,7 +281,7 @@ public static class MultimediaManager
         while (true)
         {
             int height = nativeResolution.Height / idx;
-            var dividedRes = desktopScreen.screenResolutions.FirstOrDefault(r => r.Height == height);
+            ScreenResolution? dividedRes = desktopScreen.screenResolutions.FirstOrDefault(r => r.Height == height);
             if (dividedRes is null)
                 break;
 
@@ -279,15 +315,15 @@ public static class MultimediaManager
         if (!IsInitialized)
             return false;
 
-        var ret = false;
-        long RetVal = 0;
-        var dm = new Display();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
+        bool ret = false;
+        DisplayDevice dm = new DisplayDevice();
+        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
         dm.dmPelsWidth = width;
         dm.dmPelsHeight = height;
         dm.dmDisplayFrequency = displayFrequency;
-        dm.dmFields = Display.DM_PELSWIDTH | Display.DM_PELSHEIGHT | Display.DM_DISPLAYFREQUENCY;
-        RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
+        dm.dmFields = DisplayDevice.DM_PELSWIDTH | DisplayDevice.DM_PELSHEIGHT | DisplayDevice.DM_DISPLAYFREQUENCY;
+
+        long RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
         if (RetVal == 0)
         {
             RetVal = ChangeDisplaySettings(ref dm, 0);
@@ -302,16 +338,16 @@ public static class MultimediaManager
         if (!IsInitialized)
             return false;
 
-        var ret = false;
-        long RetVal = 0;
-        var dm = new Display();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
+        bool ret = false;
+        DisplayDevice dm = new DisplayDevice();
+        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
         dm.dmPelsWidth = width;
         dm.dmPelsHeight = height;
         dm.dmDisplayFrequency = displayFrequency;
         dm.dmBitsPerPel = bitsPerPel;
-        dm.dmFields = Display.DM_PELSWIDTH | Display.DM_PELSHEIGHT | Display.DM_DISPLAYFREQUENCY;
-        RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
+        dm.dmFields = DisplayDevice.DM_PELSWIDTH | DisplayDevice.DM_PELSHEIGHT | DisplayDevice.DM_DISPLAYFREQUENCY;
+
+        long RetVal = ChangeDisplaySettings(ref dm, CDS_TEST);
         if (RetVal == 0)
         {
             RetVal = ChangeDisplaySettings(ref dm, 0);
@@ -321,21 +357,20 @@ public static class MultimediaManager
         return ret;
     }
 
-    public static Display GetDisplay(string DeviceName)
+    public static DisplayDevice GetDisplay(string DeviceName)
     {
-        var dm = new Display();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
-        bool mybool;
-        mybool = EnumDisplaySettings(DeviceName, -1, ref dm);
+        DisplayDevice dm = new DisplayDevice();
+        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
+        EnumDisplaySettings(DeviceName, -1, ref dm);
         return dm;
     }
 
-    public static List<Display> GetResolutions(string DeviceName)
+    public static List<DisplayDevice> GetResolutions(string DeviceName)
     {
-        var allMode = new List<Display>();
-        var dm = new Display();
-        dm.dmSize = (short)Marshal.SizeOf(typeof(Display));
-        var index = 0;
+        List<DisplayDevice> allMode = new List<DisplayDevice>();
+        DisplayDevice dm = new DisplayDevice();
+        dm.dmSize = (short)Marshal.SizeOf(typeof(DisplayDevice));
+        int index = 0;
         while (EnumDisplaySettings(DeviceName, index, ref dm))
         {
             allMode.Add(dm);
@@ -347,7 +382,7 @@ public static class MultimediaManager
 
     public static void PlayWindowsMedia(string file)
     {
-        var path = Path.Combine(@"c:\Windows\Media\", file);
+        string path = Path.Combine(@"c:\Windows\Media\", file);
         if (File.Exists(path))
             new SoundPlayer(path).Play();
     }
@@ -385,10 +420,10 @@ public static class MultimediaManager
 
         try
         {
-            using (var mclass = new ManagementClass("WmiMonitorBrightnessMethods"))
+            using (ManagementClass mclass = new ManagementClass("WmiMonitorBrightnessMethods"))
             {
                 mclass.Scope = new ManagementScope(@"\\.\root\wmi");
-                using (var instances = mclass.GetInstances())
+                using (ManagementObjectCollection instances = mclass.GetInstances())
                 {
                     foreach (ManagementObject instance in instances)
                     {
@@ -407,10 +442,10 @@ public static class MultimediaManager
     {
         try
         {
-            using (var mclass = new ManagementClass("WmiMonitorBrightness"))
+            using (ManagementClass mclass = new ManagementClass("WmiMonitorBrightness"))
             {
                 mclass.Scope = new ManagementScope(@"\\.\root\wmi");
-                using (var instances = mclass.GetInstances())
+                using (ManagementObjectCollection instances = mclass.GetInstances())
                 {
                     foreach (ManagementObject instance in instances)
                         return (byte)instance.GetPropertyValue("CurrentBrightness");
@@ -467,7 +502,7 @@ public static class MultimediaManager
     public const int DISP_CHANGE_FAILED = -1;
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    public struct Display
+    public struct DisplayDevice
     {
         public const int DM_DISPLAYFREQUENCY = 0x400000;
         public const int DM_PELSWIDTH = 0x80000;
@@ -520,60 +555,10 @@ public static class MultimediaManager
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int ChangeDisplaySettings([In] ref Display lpDevMode, int dwFlags);
+    private static extern int ChangeDisplaySettings([In] ref DisplayDevice lpDevMode, int dwFlags);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern bool EnumDisplaySettings(string lpszDeviceName, int iModeNum, ref Display lpDevMode);
-
-    [Flags]
-    public enum DisplayDeviceStateFlags
-    {
-        /// <summary>The device is part of the desktop.</summary>
-        AttachedToDesktop = 0x1,
-        MultiDriver = 0x2,
-
-        /// <summary>The device is part of the desktop.</summary>
-        PrimaryDevice = 0x4,
-
-        /// <summary>Represents a pseudo device used to mirror application drawing for remoting or other purposes.</summary>
-        MirroringDriver = 0x8,
-
-        /// <summary>The device is VGA compatible.</summary>
-        VGACompatible = 0x16,
-
-        /// <summary>The device is removable; it cannot be the primary display.</summary>
-        Removable = 0x20,
-
-        /// <summary>The device has more display modes than its output devices support.</summary>
-        ModesPruned = 0x8000000,
-        Remote = 0x4000000,
-        Disconnect = 0x2000000
-    }
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DisplayDevice
-    {
-        [MarshalAs(UnmanagedType.U4)] public int cb;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-        public string DeviceName;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string DeviceString;
-
-        [MarshalAs(UnmanagedType.U4)] public DisplayDeviceStateFlags StateFlags;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string DeviceID;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string DeviceKey;
-    }
-
-    [DllImport("User32.dll")]
-    private static extern int EnumDisplayDevices(string lpDevice, int iDevNum, ref DisplayDevice lpDisplayDevice,
-        int dwFlags);
-
+    private static extern bool EnumDisplaySettings(string lpszDeviceName, int iModeNum, ref DisplayDevice lpDevMode);
     #endregion
 
     #region events

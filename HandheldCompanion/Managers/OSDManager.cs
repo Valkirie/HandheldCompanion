@@ -4,6 +4,7 @@ using RTSSSharedMemoryNET;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace HandheldCompanion.Managers;
 
@@ -136,7 +137,9 @@ public static class OSDManager
     public static string Draw(int processId)
     {
         Content = new List<string>();
-        GPU gpu = GPU.GetCurrent();
+        GPU gpu = GPUManager.GetCurrent();
+        if (gpu is null)
+            goto Exit;
 
         switch (OverlayLevel)
         {
@@ -268,6 +271,7 @@ public static class OSDManager
                 break;
         }
 
+        Exit:
         return string.Join("\n", Content);
     }
 

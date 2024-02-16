@@ -58,11 +58,10 @@ public partial class ProfilesPage : Page
         ProfileManager.Initialized += ProfileManagerLoaded;
         PowerProfileManager.Updated += PowerProfileManager_Updated;
         PowerProfileManager.Deleted += PowerProfileManager_Deleted;
-        SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MultimediaManager.Initialized += MultimediaManager_Initialized;
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
-        GPUManager.Initialized += GPUManager_Initialized;
+        GPUManager.Hooked += GPUManager_Hooked;
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
@@ -85,7 +84,7 @@ public partial class ProfilesPage : Page
         });
     }
 
-    private void GPUManager_Initialized(GPU GPU)
+    private void GPUManager_Hooked(GPU GPU)
     {
         bool HasRSRSupport = false;
         if (GPU is AMDGPU amdGPU)
@@ -169,17 +168,6 @@ public partial class ProfilesPage : Page
                     // StackProfileFramerate.IsEnabled = false;
                     // StackProfileAutoTDP.IsEnabled = false;
                     break;
-            }
-        });
-    }
-
-    public void SettingsManager_SettingValueChanged(string name, object value)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            switch (name)
-            {
             }
         });
     }
