@@ -265,6 +265,9 @@ public abstract class IDevice
                         case "KUN":
                             device = new AYANEOKUN();
                             break;
+                        case "AS01":
+                            device = new AYANEOSlide();
+                            break;
                         case "NEXT Pro":
                         case "NEXT Advance":
                         case "NEXT":
