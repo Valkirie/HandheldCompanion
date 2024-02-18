@@ -66,6 +66,7 @@
     <None Remove="Resources\device_aya_air.png" />
     <None Remove="Resources\device_aya_kun.png" />
     <None Remove="Resources\device_aya_next.png" />
+    <None Remove="Resources\device_aya_slide.png" />
     <None Remove="Resources\device_ayn_loki.png" />
     <None Remove="Resources\device_cncdan_nucdeck.png" />
     <None Remove="Resources\device_generic.png" />
@@ -108,6 +109,7 @@
   <ItemGroup>
     <Resource Include="Resources\device_aya_kun.png" />
     <Resource Include="Resources\device_cncdan_nucdeck.png" />
+    <Resource Include="Resources\device_aya_slide.png" />
     <Resource Include="Resources\device_gpd_winmini.png" />
     <Resource Include="Resources\device_legion_go.png" />
   </ItemGroup>
