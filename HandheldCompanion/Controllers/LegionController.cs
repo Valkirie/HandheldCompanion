@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Devices;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
 using HidLibrary;
 using System;
@@ -116,6 +117,24 @@ namespace HandheldCompanion.Controllers
 
             // get long press time from system settings
             SystemParametersInfo(0x006A, 0, ref LongPressTime, 0);
+
+            SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
+            UpdateSettings();
+        }
+
+        protected override void UpdateSettings()
+        {
+            SetPassthrough(SettingsManager.GetBoolean("LegionControllerPassthrough"));
+        }
+
+        private void SettingsManager_SettingValueChanged(string name, object value)
+        {
+            switch (name)
+            {
+                case "LegionControllerPassthrough":
+                    SetPassthrough(Convert.ToBoolean(value));
+                    break;
+            }
         }
 
         public override void AttachDetails(PnPDetails details)

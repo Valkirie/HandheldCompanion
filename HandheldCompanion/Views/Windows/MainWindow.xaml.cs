@@ -70,7 +70,6 @@ public partial class MainWindow : GamepadWindow
     public static string CurrentPageName = string.Empty;
 
     private bool appClosing;
-    private bool IsReady;
     private readonly NotifyIcon notifyIcon;
     private bool NotifyInTaskbar;
     private string preNavItemTag;
@@ -210,7 +209,6 @@ public partial class MainWindow : GamepadWindow
         DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
         ToastManager.Start();
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
@@ -437,9 +435,6 @@ public partial class MainWindow : GamepadWindow
 
     private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
     {
-        // todo: improve me
-        CurrentDevice.PullSensors();
-
         aboutPage.UpdateDevice(device);
         settingsPage.UpdateDevice(device);
     }
@@ -488,24 +483,20 @@ public partial class MainWindow : GamepadWindow
 
         HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
         source.AddHook(WndProc); // Hook into the window's message loop
+
+        // restore window state
+        WindowState = SettingsManager.GetBoolean("StartMinimized") ? WindowState.Minimized : (WindowState)SettingsManager.GetInt("MainWindowState");
+        prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
     }
 
     private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
     {
-        if (IsReady)
-            return;
-
         // hide splashscreen
         if (splashScreen is not null)
             splashScreen.Close();
 
-        // home page has loaded, display main window
-        WindowState = SettingsManager.GetBoolean("StartMinimized")
-            ? WindowState.Minimized
-            : (WindowState)SettingsManager.GetInt("MainWindowState");
-        prevWindowState = (WindowState)SettingsManager.GetInt("MainWindowPrevState");
-
-        IsReady = true;
+        // home page is ready, display main window
+        this.Visibility = Visibility.Visible;
     }
 
     private void NotificationsPage_LayoutUpdated(int status)
@@ -519,34 +510,6 @@ public partial class MainWindow : GamepadWindow
         });
     }
 
-    private void VirtualManager_ControllerSelected(HIDmode HIDmode)
-    {
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            overlayModel.UpdateHIDMode(HIDmode);
-        });
-        CurrentDevice.SetKeyPressDelay(HIDmode);
-    }
-
-    public void UpdateSettings(Dictionary<string, string> args)
-    {
-        foreach (var pair in args)
-        {
-            var name = pair.Key;
-            var property = pair.Value;
-
-            switch (name)
-            {
-                case "DSUEnabled":
-                    break;
-                case "DSUip":
-                    break;
-                case "DSUport":
-                    break;
-            }
-        }
-    }
-
     // no code from the cases inside this function will be called on program start
     private async void OnSystemStatusChanged(SystemManager.SystemStatus status, SystemManager.SystemStatus prevStatus)
     {
@@ -557,23 +520,21 @@ public partial class MainWindow : GamepadWindow
         {
             case SystemManager.SystemStatus.SystemReady:
                 {
-                    // resume from sleep
                     if (prevStatus == SystemManager.SystemStatus.SystemPending)
                     {
+                        // when device resumes from sleep
                         // use device-specific delay
                         await Task.Delay(CurrentDevice.ResumeDelay);
 
-                        // restore inputs manager
+                        // resume manager(s)
                         InputsManager.Start();
-
-                        // start timer manager
                         TimerManager.Start();
-
-                        // resume the virtual controller last
                         VirtualManager.Resume();
-
-                        // restart IMU
                         SensorsManager.Resume(true);
+                        GPUManager.Start();
+
+                        // resume platform(s)
+                        PlatformManager.LibreHardwareMonitor.Start();
                     }
 
                     // open device, when ready
@@ -590,22 +551,24 @@ public partial class MainWindow : GamepadWindow
                 break;
 
             case SystemManager.SystemStatus.SystemPending:
-                // sleep
                 {
-                    // stop the virtual controller
+                    // when device goes to sleep
+                    // suspend manager(s)
                     VirtualManager.Suspend();
-
-                    // stop timer manager
                     TimerManager.Stop();
-
-                    // stop sensors
                     SensorsManager.Stop();
-
-                    // pause inputs manager
                     InputsManager.Stop();
+                    GPUManager.Stop();
+
+                    // suspend platform(s)
+                    PlatformManager.LibreHardwareMonitor.Stop();
 
                     // close current device
                     CurrentDevice.Close();
+
+                    // Allow system to sleep
+                    SystemManager.SetThreadExecutionState(SystemManager.ES_CONTINUOUS);
+                    LogManager.LogDebug("Tasks completed. System can now suspend if needed.");
                 }
                 break;
         }

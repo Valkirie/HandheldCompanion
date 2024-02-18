@@ -6,6 +6,7 @@ using HandheldCompanion.Managers.Desktop;
 using SharpDX.Direct3D9;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HandheldCompanion.Managers
 {
@@ -20,6 +21,8 @@ namespace HandheldCompanion.Managers
         #endregion
 
         public static bool IsInitialized;
+        public static bool HasIGCL;
+        public static bool HasADLX;
 
         private static GPU currentGPU = null;
         private static Dictionary<AdapterInformation, GPU> DisplayGPU = new();
@@ -72,6 +75,7 @@ namespace HandheldCompanion.Managers
             }
 
             currentGPU.Stop();
+            currentGPU = null;
         }
 
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
@@ -169,8 +173,13 @@ namespace HandheldCompanion.Managers
 
         public static void Start()
         {
-            bool HasIGCL = IGCLBackend.Initialize();
-            bool HasADLX = ADLXBackend.IntializeAdlx();
+            HasIGCL = IGCLBackend.Initialize();
+            HasADLX = ADLXBackend.IntializeAdlx();
+
+            // todo: check if usefull on resume
+            // it could be DeviceManager_DisplayAdapterArrived is called already, making this redundant
+            if (currentGPU is not null)
+                currentGPU.Start();
 
             IsInitialized = true;
             Initialized?.Invoke(HasIGCL, HasADLX);
@@ -178,17 +187,23 @@ namespace HandheldCompanion.Managers
             LogManager.LogInformation("{0} has started", "GPUManager");
         }
 
-        public static void Stop()
+        public static async void Stop()
         {
             if (!IsInitialized)
                 return;
 
-            // wait until all GPUs are ready
             foreach (GPU gpu in DisplayGPU.Values)
                 gpu.Stop();
 
-            IGCLBackend.Terminate();
-            ADLXBackend.CloseAdlx();
+            // wait until all GPUs are ready
+            while (DisplayGPU.Values.Any(gpu => gpu.IsBusy))
+                await Task.Delay(100);
+
+            if (HasIGCL)
+                IGCLBackend.Terminate();
+
+            if (HasADLX)
+                ADLXBackend.CloseAdlx();
 
             IsInitialized = false;
 

@@ -1,4 +1,5 @@
-﻿using SharpDX.Direct3D9;
+﻿using HandheldCompanion.Utils;
+using SharpDX.Direct3D9;
 using System;
 using System.Management;
 using System.Threading;
@@ -46,31 +47,35 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         protected object updateLock = new();
         protected object telemetryLock = new();
+        protected CrossThreadLock wrapperLock = new();
 
-        protected static object wrapperLock = new();
-        protected static T Execute<T>(Func<T> func, T defaultValue)
+        protected T Execute<T>(Func<T> func, T defaultValue)
         {
-            lock (wrapperLock)
+            try
             {
-                try
+                Task<T> task = Task.Run(() =>
                 {
-                    Task<T> task = Task.Run(func);
-                    if (task.Wait(TimeSpan.FromSeconds(5)))
-                    {
-                        return task.Result;
-                    }
-                }
-                catch (AccessViolationException ex)
-                {
-                    // Handle or log the exception as needed
-                }
-                catch (Exception ex)
-                {
-                    // Handle other exceptions
-                }
+                    wrapperLock.Enter();
+                    return func();
+                });
 
-                return defaultValue;
+                if (task.Wait(TimeSpan.FromSeconds(5)))
+                    return task.Result;
             }
+            catch (AccessViolationException ex)
+            {
+                // Handle or log the exception as needed
+            }
+            catch (Exception ex)
+            {
+                // Handle other exceptions
+            }
+            finally
+            {
+                wrapperLock.Exit();
+            }
+
+            return defaultValue;
         }
 
         public bool IsBusy => !Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock);
@@ -82,6 +87,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public virtual void Start()
         {
+            // release halting flag
+            wrapperLock.Exit();
+
             if (UpdateTimer != null)
                 UpdateTimer.Start();
 
@@ -89,16 +97,16 @@ namespace HandheldCompanion.GraphicsProcessingUnit
                 TelemetryTimer.Start();
         }
 
-        public virtual async void Stop()
+        public virtual void Stop()
         {
+            // set halting flag
+            wrapperLock.Enter();
+
             if (UpdateTimer != null)
                 UpdateTimer.Stop();
 
             if (TelemetryTimer != null)
                 TelemetryTimer.Stop();
-
-            while (IsBusy)
-                await Task.Delay(100);
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)

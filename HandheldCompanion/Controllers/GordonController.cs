@@ -233,8 +233,6 @@ namespace HandheldCompanion.Controllers
             Controller.SetGyroscope(true);
             Controller.SetIdleTimeout(300);  // ~5 min
 
-            SetVirtualMuted(SettingsManager.GetBoolean("SteamControllerMute"));
-
             TimerManager.Tick += UpdateInputs;
 
             base.Plug();

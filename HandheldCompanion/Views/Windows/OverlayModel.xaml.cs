@@ -55,6 +55,7 @@ public partial class OverlayModel : OverlayWindow
 
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         MotionManager.OverlayModelUpdate += MotionManager_OverlayModelUpdate;
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
 
         // initialize timers
         UpdateTimer = new Timer(33);
@@ -62,6 +63,14 @@ public partial class OverlayModel : OverlayWindow
         UpdateTimer.Elapsed += DrawModel;
 
         UpdateModel();
+    }
+
+    private void VirtualManager_ControllerSelected(HIDmode mode)
+    {
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            UpdateHIDMode(mode);
+        });
     }
 
     private void SettingsManager_SettingValueChanged(string name, object value)

@@ -73,12 +73,11 @@ namespace HandheldCompanion.Targets
 
         public override void Disconnect()
         {
-            if (!IsConnected)
-                return;
-
             try
             {
-                virtualController.Disconnect();
+                if (virtualController != null)
+                    virtualController.Disconnect();
+
                 TimerManager.Tick -= UpdateReport;
 
                 base.Disconnect();

@@ -161,6 +161,20 @@ public abstract class IDevice
 
     public IDevice()
     {
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+    }
+
+    private void VirtualManager_ControllerSelected(HIDmode mode)
+    {
+        SetKeyPressDelay(mode);
+    }
+
+    private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    {
+        // todo: improve me
+        PullSensors();
     }
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();
@@ -264,6 +278,9 @@ public abstract class IDevice
                             break;
                         case "KUN":
                             device = new AYANEOKUN();
+                            break;
+                        case "AS01":
+                            device = new AYANEOSlide();
                             break;
                         case "NEXT Pro":
                         case "NEXT Advance":

@@ -220,6 +220,10 @@ public class RTSS : IPlatform
             if (GetTargetFPS() != RequestedFramerate)
                 SetTargetFPS(RequestedFramerate);
 
+            // force "Show On-Screen Display" to On
+            SetFlags(~RTSSHOOKSFLAG_OSD_VISIBLE, RTSSHOOKSFLAG_OSD_VISIBLE);
+
+            // force "On-Screen Display Support" to On
             if (GetEnableOSD() != true)
                 SetEnableOSD(true);
 

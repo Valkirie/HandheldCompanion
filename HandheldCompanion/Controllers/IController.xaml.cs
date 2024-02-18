@@ -209,6 +209,10 @@ namespace HandheldCompanion.Controllers
             MaxUserIndex = UserIndexPanel.Children.Count;
         }
 
+        protected virtual void UpdateSettings()
+        { 
+        }
+
         public virtual void AttachDetails(PnPDetails details)
         {
             if (details is null)
