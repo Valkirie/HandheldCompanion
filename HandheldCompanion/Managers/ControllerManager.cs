@@ -235,20 +235,6 @@ public static class ControllerManager
                     targetController?.SetVibrationStrength(VibrationStrength, MainWindow.GetCurrent().IsLoaded);
                     break;
 
-                case "SteamControllerMute":
-                    {
-                        IController target = GetTargetController();
-                        if (target is null)
-                            return;
-
-                        if (target is not SteamController)
-                            return;
-
-                        bool Muted = Convert.ToBoolean(value);
-                        ((SteamController)target).SetVirtualMuted(Muted);
-                    }
-                    break;
-
                 case "ControllerManagement":
                     {
                         ControllerManagement = Convert.ToBoolean(value);
@@ -280,20 +266,6 @@ public static class ControllerManager
                                 }
                                 break;
                         }
-                    }
-                    break;
-
-                case "LegionControllerPassthrough":
-                    {
-                        IController target = GetTargetController();
-                        if (target is null)
-                            return;
-
-                        if (target is not LegionController)
-                            return;
-
-                        bool enabled = Convert.ToBoolean(value);
-                        ((LegionController)target).SetPassthrough(enabled);
                     }
                     break;
             }

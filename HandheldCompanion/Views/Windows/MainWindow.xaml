@@ -12,6 +12,7 @@
     Height="720"
     MinWidth="700"
     MinHeight="500"
+    d:Visibility="Visible"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseAcrylicBackdrop="True"
@@ -24,6 +25,7 @@
     PreviewGotKeyboardFocus="GamepadWindow_PreviewGotKeyboardFocus"
     PreviewLostKeyboardFocus="GamepadWindow_PreviewLostKeyboardFocus"
     StateChanged="Window_StateChanged"
+    Visibility="Collapsed"
     WindowState="Minimized"
     mc:Ignorable="d">
 

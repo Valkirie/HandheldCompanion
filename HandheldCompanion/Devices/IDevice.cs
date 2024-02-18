@@ -161,6 +161,20 @@ public abstract class IDevice
 
     public IDevice()
     {
+        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
+        DeviceManager.UsbDeviceArrived += GenericDeviceUpdated;
+        DeviceManager.UsbDeviceRemoved += GenericDeviceUpdated;
+    }
+
+    private void VirtualManager_ControllerSelected(HIDmode mode)
+    {
+        SetKeyPressDelay(mode);
+    }
+
+    private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
+    {
+        // todo: improve me
+        PullSensors();
     }
 
     public IEnumerable<ButtonFlags> OEMButtons => OEMChords.SelectMany(a => a.state.Buttons).Distinct();

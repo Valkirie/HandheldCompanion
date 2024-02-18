@@ -318,8 +318,6 @@ public class NeptuneController : SteamController
         rumbleThread.IsBackground = true;
         rumbleThread.Start();
 
-        SetVirtualMuted(SettingsManager.GetBoolean("SteamControllerMute"));
-
         TimerManager.Tick += UpdateInputs;
 
         base.Plug();

@@ -59,7 +59,6 @@ namespace HandheldCompanion.Managers
             DSUServer = new DSUServer();
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
-            SettingsManager.Initialized += SettingsManager_Initialized;
             ProfileManager.Applied += ProfileManager_Applied;
         }
 
@@ -80,8 +79,7 @@ namespace HandheldCompanion.Managers
             if (!IsInitialized)
                 return;
 
-            ResetViGEm();
-            DSUServer.Stop();
+            Suspend();
 
             // unsubscrive events
             ProfileManager.Applied -= ProfileManager_Applied;
@@ -99,12 +97,28 @@ namespace HandheldCompanion.Managers
 
             // set controller mode
             SetControllerMode(HIDmode);
+
+            SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
         }
 
         public static void Suspend()
         {
-            // reset vigem
-            ResetViGEm();
+            // dispose virtual controller
+            if (vTarget is not null)
+            {
+                vTarget.Disconnect();
+                vTarget.Dispose();
+                vTarget = null;
+            }
+
+            // dispose ViGEm drivers
+            if (vClient is not null)
+            {
+                vClient.Dispose();
+                vClient = null;
+            }
+
+            DSUServer.Stop();
         }
 
         private static void SettingsManager_SettingValueChanged(string name, object value)
@@ -119,13 +133,7 @@ namespace HandheldCompanion.Managers
                     SetControllerStatus((HIDstatus)Convert.ToInt32(value));
                     break;
                 case "DSUEnabled":
-                    if (SettingsManager.IsInitialized)
-                        SetDSUStatus(Convert.ToBoolean(value));
-                    break;
-                case "DSUport":
-                    DSUServer.port = Convert.ToInt32(value);
-                    if (SettingsManager.IsInitialized)
-                        SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
+                    SetDSUStatus(Convert.ToBoolean(value));
                     break;
             }
         }
@@ -162,12 +170,6 @@ namespace HandheldCompanion.Managers
             }
         }
 
-
-        private static void SettingsManager_Initialized()
-        {
-            SetDSUStatus(SettingsManager.GetBoolean("DSUEnabled"));
-        }
-
         private static void SetDSUStatus(bool started)
         {
             if (started)
@@ -178,8 +180,8 @@ namespace HandheldCompanion.Managers
 
         public static void SetControllerMode(HIDmode mode)
         {
-            // do not disconnect if similar to previous mode
-            if (HIDmode == mode && vTarget is not null)
+            // do not disconnect if similar to previous mode and connected
+            if (HIDmode == mode && vTarget is not null && vTarget.IsConnected)
                 return;
 
             // disconnect current virtual controller
@@ -201,9 +203,11 @@ namespace HandheldCompanion.Managers
                         vTarget = null;
                     }
                     break;
+
                 case HIDmode.DualShock4Controller:
                     vTarget = new DualShock4Target();
                     break;
+
                 case HIDmode.Xbox360Controller:
                     // Generate a new random ProductId to help the controller pick empty slot rather than getting its previous one
                     VendorId = (ushort)new Random().Next(ushort.MinValue, ushort.MaxValue);
@@ -275,24 +279,6 @@ namespace HandheldCompanion.Managers
 
             vTarget?.UpdateInputs(controllerState);
             DSUServer?.UpdateInputs(controllerState);
-        }
-
-        private static void ResetViGEm()
-        {
-            // dispose virtual controller
-            if (vTarget is not null)
-            {
-                vTarget.Disconnect();
-                vTarget.Dispose();
-                vTarget = null;
-            }
-
-            // dispose ViGEm drivers
-            if (vClient is not null)
-            {
-                vClient.Dispose();
-                vClient = null;
-            }
         }
     }
 }

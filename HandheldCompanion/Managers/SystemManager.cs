@@ -9,6 +9,13 @@ namespace HandheldCompanion.Managers;
 
 public static class SystemManager
 {
+    // Import SetThreadExecutionState Win32 API and define flags
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern uint SetThreadExecutionState(uint esFlags);
+
+    public const uint ES_CONTINUOUS = 0x80000000;
+    public const uint ES_SYSTEM_REQUIRED = 0x00000001;
+
     public enum SystemStatus
     {
         SystemBooting = 0,
@@ -127,6 +134,10 @@ public static class SystemManager
                 break;
             case PowerModes.Suspend:
                 IsPowerSuspended = true;
+
+                // Prevent system sleep
+                SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+                LogManager.LogDebug("System is trying to suspend. Performing tasks...");
                 break;
             default:
             case PowerModes.StatusChange:
