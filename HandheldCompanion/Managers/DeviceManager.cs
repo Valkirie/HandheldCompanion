@@ -295,22 +295,22 @@ public static class DeviceManager
             string rootId = root.InstanceId;
             while (root.Parent is not null)
             {
-                // update root
-                root = PnPDevice.GetDeviceByInstanceId(rootId);
-
-                string Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
-
-                if (Name.Contains(@"USB Hub", StringComparison.InvariantCultureIgnoreCase))
-                    break;
-
                 if (rootId.Contains(@"USB\ROOT", StringComparison.InvariantCultureIgnoreCase))
                     break;
 
                 if (rootId.Contains(@"ROOT\SYSTEM", StringComparison.InvariantCultureIgnoreCase))
                     break;
 
+                // update root
+                root = PnPDevice.GetDeviceByInstanceId(rootId);
+
+                string Name = root.GetProperty<string>(DevicePropertyKey.Device_DeviceDesc);
+                if (!string.IsNullOrEmpty(Name) && Name.Contains(@"USB Hub", StringComparison.InvariantCultureIgnoreCase))
+                    break;
+
                 // update parent InstanceId
-                rootId = root.Parent.InstanceId;
+                if (root.Parent is not null)
+                    rootId = root.Parent.InstanceId;
             }
 
             DeviceStatus Device_DevNodeStatus = (DeviceStatus)root.GetProperty<UInt32>(DevicePropertyKey.Device_DevNodeStatus);
