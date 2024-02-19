@@ -69,6 +69,7 @@ public class NeptuneController : SteamController
         base.AttachDetails(details);
 
         Controller = new(details.VendorID, details.ProductID, details.GetMI());
+        UserIndex = 0;
 
         // open controller
         Open();

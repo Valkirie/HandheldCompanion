@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
+using SharpDX.XInput;
 using steam_hidapi.net.Hid;
 using System;
 
@@ -16,6 +17,11 @@ namespace HandheldCompanion.Controllers
 
             SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
             UpdateSettings();
+        }
+
+        public override void AttachDetails(PnPDetails details)
+        {
+            base.AttachDetails(details);
         }
 
         protected override void UpdateSettings()
