@@ -197,23 +197,22 @@ public static class ProcessUtils
         private const string UWPFrameHostApp = "ApplicationFrameHost.exe";
         private readonly byte UWPattempt;
 
-        public FindHostedProcess(IntPtr foregroundProcessID)
+        public FindHostedProcess(IntPtr hWnd)
         {
             try
             {
-                if (foregroundProcessID == IntPtr.Zero)
+                if (hWnd == IntPtr.Zero)
                     return;
 
-                _realProcess =
-                    ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(foregroundProcessID));
-
+                uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
+                _realProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
                 if (_realProcess is null)
                     return;
 
                 // Get real process
                 while (_realProcess.ExecutableFileName == UWPFrameHostApp && UWPattempt < 10)
                 {
-                    EnumChildWindows(foregroundProcessID, ChildWindowCallback, IntPtr.Zero);
+                    EnumChildWindows(hWnd, ChildWindowCallback, IntPtr.Zero);
                     UWPattempt++;
                     Thread.Sleep(250);
                 }
@@ -226,9 +225,10 @@ public static class ProcessUtils
 
         public ProcessDiagnosticInfo _realProcess { get; private set; }
 
-        private bool ChildWindowCallback(IntPtr hwnd, IntPtr lparam)
+        private bool ChildWindowCallback(IntPtr hWnd, IntPtr lparam)
         {
-            var childProcess = ProcessDiagnosticInfo.TryGetForProcessId((uint)WinAPI.GetWindowProcessId(hwnd));
+            uint processId = (uint)WinAPI.GetWindowProcessId(hWnd);
+            ProcessDiagnosticInfo childProcess = ProcessDiagnosticInfo.TryGetForProcessId(processId);
 
             if (childProcess.ExecutableFileName != UWPFrameHostApp)
                 _realProcess = childProcess;

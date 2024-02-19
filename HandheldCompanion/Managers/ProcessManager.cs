@@ -36,7 +36,7 @@ public static class ProcessManager
 
     private static readonly ConcurrentDictionary<int, ProcessEx> Processes = new();
     private static ProcessEx foregroundProcess;
-    private static ProcessEx previousProcess;
+    private static IntPtr foregroundWindow;
 
     private static bool IsInitialized;
 
@@ -57,7 +57,7 @@ public static class ProcessManager
             TreeScope.Children,
             OnWindowOpened);
 
-        ForegroundTimer = new Timer(1000);
+        ForegroundTimer = new Timer(2000);
         ForegroundTimer.Elapsed += ForegroundCallback;
 
         ProcessWatcher = new Timer(2000);
@@ -161,6 +161,11 @@ public static class ProcessManager
     private static void ForegroundCallback(object? sender, EventArgs e)
     {
         IntPtr hWnd = GetforegroundWindow();
+        if (foregroundWindow == hWnd)
+            return;
+        
+        // update current foreground window
+        foregroundWindow = hWnd;
 
         ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
         if (processInfo is null)
