@@ -65,6 +65,7 @@ namespace HandheldCompanion.Controllers
             base.AttachDetails(details);
 
             Controller = new(details.VendorID, details.ProductID, details.GetMI());
+            UserIndex = (byte)details.GetMI();
 
             // open controller
             Open();
