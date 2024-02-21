@@ -43,49 +43,52 @@ namespace HandheldCompanion.Managers
             // update current GPU
             currentGPU = GPU;
 
-            currentGPU.ImageSharpeningChanged += CurrentGPU_ImageSharpeningChanged;
-            currentGPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
-            currentGPU.IntegerScalingChanged += CurrentGPU_IntegerScalingChanged;
+            GPU.ImageSharpeningChanged += CurrentGPU_ImageSharpeningChanged;
+            GPU.GPUScalingChanged += CurrentGPU_GPUScalingChanged;
+            GPU.IntegerScalingChanged += CurrentGPU_IntegerScalingChanged;
 
-            if (currentGPU is AMDGPU)
+            if (GPU is AMDGPU)
             {
-                ((AMDGPU)currentGPU).RSRStateChanged += CurrentGPU_RSRStateChanged;
+                ((AMDGPU)GPU).RSRStateChanged += CurrentGPU_RSRStateChanged;
             }
-            else if (currentGPU is IntelGPU)
+            else if (GPU is IntelGPU)
             {
                 // do something
             }
 
-            currentGPU.Start();
+            GPU.Start();
         }
 
-        private static void GPUDisconnect()
+        private static void GPUDisconnect(GPU gpu)
         {
-            currentGPU.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
-            currentGPU.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
-            currentGPU.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
+            gpu.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
+            gpu.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
+            gpu.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
 
-            if (currentGPU is AMDGPU)
+            if (gpu is AMDGPU)
             {
-                ((AMDGPU)currentGPU).RSRStateChanged -= CurrentGPU_RSRStateChanged;
+                ((AMDGPU)gpu).RSRStateChanged -= CurrentGPU_RSRStateChanged;
             }
-            else if (currentGPU is IntelGPU)
+            else if (gpu is IntelGPU)
             {
                 // do something
             }
 
-            currentGPU.Stop();
-            currentGPU = null;
+            gpu.Stop();
+            gpu = null;
         }
 
         private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
+            if (DisplayGPU.Count == 0)
+                return;
+
             AdapterInformation key = DisplayGPU.Keys.Where(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName).FirstOrDefault();
             if (DisplayGPU.TryGetValue(key, out GPU gpu))
             {
                 // a new GPU was connected, disconnect from current gpu
                 if (currentGPU is not null && currentGPU != gpu)
-                    GPUDisconnect();
+                    GPUDisconnect(currentGPU);
 
                 // connect to new gpu
                 GPUConnect(gpu);
@@ -119,8 +122,7 @@ namespace HandheldCompanion.Managers
         private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
         {
             if (DisplayGPU.TryGetValue(adapterInformation, out GPU gpu))
-                if (currentGPU is not null && currentGPU == gpu)
-                    GPUDisconnect();
+                GPUDisconnect(gpu);
         }
 
         public static GPU GetCurrent()
