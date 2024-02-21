@@ -238,7 +238,7 @@ public static class WPFUtils
                     {
                         TextBox textBox = (TextBox)current;
                         if (!textBox.IsReadOnly)
-                            goto case "Button";
+                            goto case "Slider";
                     }
                     break;
 
@@ -248,12 +248,23 @@ public static class WPFUtils
                         if (!repeatButton.Name.StartsWith("PART_"))
                         {
                             // skip if repeat button is part of scrollbar
-                            goto case "Button";
+                            goto case "Slider";
                         }
                     }
                     break;
 
                 case "Button":
+                    {
+                        Button button = (Button)current;
+                        if (button.Name.Equals("NavigationViewBackButton"))
+                            break;
+                        else if (button.Name.Equals("TogglePaneButton"))
+                            break;
+                        else
+                            goto case "Slider";
+                    }
+                    break;
+
                 case "Slider":
                 case "ToggleSwitch":
                 case "NavigationViewItem":
