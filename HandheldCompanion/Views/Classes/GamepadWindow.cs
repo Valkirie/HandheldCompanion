@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HandheldCompanion.Views.Classes
 {
@@ -32,6 +33,20 @@ namespace HandheldCompanion.Views.Classes
                 controlElements.Remove((Control)visualRemoved);
 
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+        }
+
+        public ScrollViewer GetScrollViewer(DependencyObject depObj)
+        {
+            if (depObj is ScrollViewer) { return depObj as ScrollViewer; }
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+                var result = GetScrollViewer(child);
+                if (result != null && result.Name.Equals("scrollViewer"))
+                    return result;
+            }
+            return null;
         }
 
         private void OnLayoutUpdated(object? sender, EventArgs e)

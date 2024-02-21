@@ -33,6 +33,7 @@ namespace HandheldCompanion.Managers
         #endregion
 
         private GamepadWindow _currentWindow;
+        private ScrollViewer _currentScrollViewer;
         private Frame _gamepadFrame;
         private Page _gamepadPage;
         private Timer _gamepadTimer;
@@ -54,6 +55,7 @@ namespace HandheldCompanion.Managers
         {
             // set current window
             _currentWindow = gamepadWindow;
+            _currentScrollViewer = _currentWindow.GetScrollViewer(_currentWindow);
             _currentWindow.GotFocus += _currentWindow_GotFocus;
             _currentWindow.GotKeyboardFocus += _currentWindow_GotFocus;
             _currentWindow.LostFocus += _currentWindow_LostFocus;
@@ -649,6 +651,14 @@ namespace HandheldCompanion.Managers
                 else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.DPadRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftStickRight) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.LeftPadClickRight))
                 {
                     direction = WPFUtils.Direction.Right;
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickUp) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickUp))
+                {
+                    _currentScrollViewer?.ScrollToVerticalOffset(_currentScrollViewer.VerticalOffset - 50);
+                }
+                else if (controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightStickDown) || controllerState.ButtonState.Buttons.Contains(ButtonFlags.RightPadClickDown))
+                {
+                    _currentScrollViewer?.ScrollToVerticalOffset(_currentScrollViewer.VerticalOffset + 50);
                 }
 
                 // navigation
