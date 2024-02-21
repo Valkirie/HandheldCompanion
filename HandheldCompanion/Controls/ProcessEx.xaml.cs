@@ -245,6 +245,7 @@ public partial class ProcessEx : UserControl, IDisposable
 
                 T_FullScreenOptimization.IsOn = !FullScreenOptimization;
                 T_HighDPIAware.IsOn = !HighDPIAware;
+                MainWindowTitle = ProcessUtils.GetWindowTitle(MainWindowHandle);
             }
         });
     }

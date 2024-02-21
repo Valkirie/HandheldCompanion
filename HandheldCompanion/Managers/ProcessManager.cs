@@ -277,7 +277,6 @@ public static class ProcessManager
             {
                 // create process
                 processEx = new ProcessEx(proc, path, exec, filter);
-                // processEx.MainWindowTitle = ProcessUtils.GetWindowTitle(hWnd);
             });
 
             if (processEx is null)
