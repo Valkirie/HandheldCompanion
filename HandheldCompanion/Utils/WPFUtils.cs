@@ -242,6 +242,17 @@ public static class WPFUtils
                     }
                     break;
 
+                case "RepeatButton":
+                    {
+                        RepeatButton repeatButton = (RepeatButton)current;
+                        if (!repeatButton.Name.StartsWith("PART_"))
+                        {
+                            // skip if repeat button is part of scrollbar
+                            goto case "Button";
+                        }
+                    }
+                    break;
+
                 case "Button":
                 case "Slider":
                 case "ToggleSwitch":
@@ -252,7 +263,6 @@ public static class WPFUtils
                 case "ToggleButton":
                 case "CheckBox":
                 case "RadioButton":
-                case "RepeatButton":
                     {
                         FrameworkElement asType = (FrameworkElement)current;
                         if (asType.IsEnabled && asType.Focusable && asType.IsVisible)
