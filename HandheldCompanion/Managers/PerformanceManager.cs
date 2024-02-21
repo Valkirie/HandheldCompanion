@@ -1,6 +1,7 @@
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Misc;
 using HandheldCompanion.Processors;
+using HandheldCompanion.Utils;
 using HandheldCompanion.Views;
 using RTSSSharedMemoryNET;
 using System;
@@ -46,10 +47,10 @@ public static class PerformanceManager
     private static readonly Timer gfxWatchdog;
     private static readonly Timer powerWatchdog;
 
-    private static object autoLock = new();
-    private static object cpuLock = new();
-    private static object gfxLock = new();
-    private static object powerLock = new();
+    private static CrossThreadLock autoLock = new();
+    private static CrossThreadLock cpuLock = new();
+    private static CrossThreadLock gfxLock = new();
+    private static CrossThreadLock powerLock = new();
 
     // AutoTDP
     private static double AutoTDP;
@@ -370,7 +371,7 @@ public static class PerformanceManager
         if (AutoTDPProcessId == 0)
             return;
 
-        if (Monitor.TryEnter(autoLock))
+        if (autoLock.TryEnter())
         {
             // todo: Store fps for data gathering from multiple points (OSD, Performance)
             double processValueFPS = PlatformManager.RTSS.GetFramerate(AutoTDPProcessId);
@@ -405,11 +406,11 @@ public static class PerformanceManager
             }
             AutoTDPPrev = AutoTDP;
 
-            // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
+        // LogManager.LogTrace("TDPSet;;;;;{0:0.0};{1:0.000};{2:0.0000};{3:0.0000};{4:0.0000}", AutoTDPTargetFPS, AutoTDP, TDPAdjustment, ProcessValueFPS, TDPDamping);
 
-            // release lock
-            Exit:
-            Monitor.Exit(autoLock);
+        // release lock
+        Exit:
+            autoLock.Exit();
         }
     }
 
@@ -475,7 +476,7 @@ public static class PerformanceManager
     // todo: update this function to force (re)apply profile settings
     private static void powerWatchdog_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        if (Monitor.TryEnter(powerLock))
+        if (powerLock.TryEnter())
         {
             // Checking if active power shceme has changed to reflect that
             if (PowerGetEffectiveOverlayScheme(out Guid activeScheme) == 0)
@@ -508,9 +509,9 @@ public static class PerformanceManager
                 EPPChanged?.Invoke(DCvalue);
             }
 
-            // release lock
-            Exit:
-            Monitor.Exit(powerLock);
+        // release lock
+        Exit:
+            powerLock.Exit();
         }
     }
 
@@ -519,7 +520,7 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (Monitor.TryEnter(cpuLock))
+        if (cpuLock.TryEnter())
         {
             bool TDPdone = false;
             bool MSRdone = false;
@@ -593,9 +594,9 @@ public static class PerformanceManager
                 }
             }
 
-            // release lock
-            Exit:
-            Monitor.Exit(cpuLock);
+        // release lock
+        Exit:
+            cpuLock.Exit();
         }
     }
 
@@ -604,7 +605,7 @@ public static class PerformanceManager
         if (processor is null || !processor.IsInitialized)
             return;
 
-        if (Monitor.TryEnter(gfxLock))
+        if (gfxLock.TryEnter())
         {
             bool GPUdone = false;
             GPU GPU = GPUManager.GetCurrent();
@@ -656,9 +657,9 @@ public static class PerformanceManager
                 }
             }
 
-            // release lock
-            Exit:
-            Monitor.Exit(gfxLock);
+        // release lock
+        Exit:
+            gfxLock.Exit();
         }
     }
 
