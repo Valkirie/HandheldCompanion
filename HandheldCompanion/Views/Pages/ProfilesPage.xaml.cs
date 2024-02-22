@@ -62,6 +62,7 @@ public partial class ProfilesPage : Page
         MultimediaManager.DisplaySettingsChanged += MultimediaManager_DisplaySettingsChanged;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Hooked += GPUManager_Hooked;
+        GPUManager.Unhooked += GPUManager_Unhooked;
 
         UpdateTimer = new Timer(UpdateInterval);
         UpdateTimer.AutoReset = false;
@@ -111,6 +112,24 @@ public partial class ProfilesPage : Page
             StackProfileIS.IsEnabled = HasGPUScalingSupport && IsGPUScalingEnabled && HasIntegerScalingSupport;
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
             GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+        });
+    }
+
+    private void GPUManager_Unhooked(GPU GPU)
+    {
+        if (GPU is AMDGPU amdGPU)
+            amdGPU.RSRStateChanged -= OnRSRStateChanged;
+
+        GPU.IntegerScalingChanged -= OnIntegerScalingChanged;
+        GPU.GPUScalingChanged -= OnGPUScalingChanged;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileRSR.IsEnabled = false;
+            StackProfileIS.IsEnabled = false;
+            GPUScalingToggle.IsEnabled = false;
+            GPUScalingComboBox.IsEnabled = false;
         });
     }
 
