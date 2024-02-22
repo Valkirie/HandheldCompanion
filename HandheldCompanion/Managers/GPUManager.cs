@@ -84,17 +84,24 @@ namespace HandheldCompanion.Managers
             if (DisplayGPU.Count == 0)
                 return;
 
-            AdapterInformation key = DisplayGPU.Keys.Where(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName).FirstOrDefault();
-            if (DisplayGPU.TryGetValue(key, out GPU gpu))
+            try
             {
-                // a new GPU was connected, disconnect from current gpu
-                if (currentGPU is not null && currentGPU != gpu)
-                    GPUDisconnect(currentGPU);
+                AdapterInformation key = DisplayGPU.Keys.Where(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName).FirstOrDefault();
+                if (DisplayGPU.TryGetValue(key, out GPU gpu))
+                {
+                    // a new GPU was connected, disconnect from current gpu
+                    if (currentGPU is not null && currentGPU != gpu)
+                        GPUDisconnect(currentGPU);
 
-                // connect to new gpu
-                GPUConnect(gpu);
+                    // connect to new gpu
+                    GPUConnect(gpu);
 
-                Hooked?.Invoke(currentGPU);
+                    Hooked?.Invoke(currentGPU);
+                }
+            }
+            catch
+            {
+                // AdapterInformation can't be null
             }
         }
 
