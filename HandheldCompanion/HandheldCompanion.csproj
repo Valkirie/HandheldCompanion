@@ -148,6 +148,7 @@
     <PackageReference Include="dotnetCampus.WPF" Version="6.0.4-alpha07-test07" />
     <PackageReference Include="dotnetCampus.WPF.Dependencies" Version="6.0.4-alpha07-test07" />
     <PackageReference Include="dotnetCampus.WPF.Resource" Version="6.0.4-alpha07-test07" />
+    <PackageReference Include="Fastenshtein" Version="1.0.0.8" />
     <PackageReference Include="GregsStack.InputSimulatorStandard" Version="1.3.5" />
     <PackageReference Include="HelixToolkit.Core.Wpf" Version="2.24.0" />
     <PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.9.25.1" />
