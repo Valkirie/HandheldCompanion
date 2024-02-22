@@ -75,6 +75,7 @@ namespace HandheldCompanion.Managers
             }
 
             gpu.Stop();
+            gpu.Dispose();
             gpu = null;
         }
 
@@ -113,6 +114,12 @@ namespace HandheldCompanion.Managers
             if (currentGPU is null)
             {
                 LogManager.LogError("Unsupported DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
+                return;
+            }
+
+            if (!currentGPU.IsInitialized)
+            {
+                LogManager.LogError("Failed to initialize DisplayAdapter: {0}, VendorID:{1}, DeviceId:{2}", adapterInformation.Details.Description, adapterInformation.Details.VendorId, adapterInformation.Details.DeviceId);
                 return;
             }
 

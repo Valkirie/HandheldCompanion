@@ -283,6 +283,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override void Start()
         {
+            if (!IsInitialized)
+                return;
+
             base.Start();
         }
 
@@ -293,8 +296,6 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             // wait until the current ADLX tasks are completed
             while (!Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock))
                 await Task.Delay(100);
-
-            ADLXBackend.CloseAdlx();
         }
 
         private async void UpdateTimer_Elapsed(object? sender, ElapsedEventArgs e)

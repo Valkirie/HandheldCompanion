@@ -9,7 +9,7 @@ using Timer = System.Timers.Timer;
 
 namespace HandheldCompanion.GraphicsProcessingUnit
 {
-    public class GPU
+    public class GPU : IDisposable
     {
         #region
         public event IntegerScalingChangedEvent IntegerScalingChanged;
@@ -26,7 +26,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected int deviceIdx = -1;
         protected int displayIdx = -1;
 
-        protected bool IsInitialized = false;
+        public bool IsInitialized = false;
 
         protected const int UpdateInterval = 2000;
         protected Timer UpdateTimer;
@@ -226,6 +226,15 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             }
 
             return 0.0f;
+        }
+
+        public void Dispose()
+        {
+            if (TelemetryTimer != null)
+                TelemetryTimer.Dispose();
+
+            if (UpdateTimer != null)
+                UpdateTimer.Dispose();
         }
     }
 }
