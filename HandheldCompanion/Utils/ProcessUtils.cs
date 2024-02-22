@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Shell;
+﻿using Fastenshtein;
+using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
@@ -151,6 +153,44 @@ public static class ProcessUtils
 
         // Convert the list to an array and return it
         return matchingProcesses.ToArray();
+    }
+
+    // A function that receives a window name as a string and look for the process that has the closest processName and return it
+    public static Process FindProcessByWindowName(IntPtr hWnd)
+    {
+        // Get window name
+        string windowName = GetWindowTitle(hWnd);
+
+        // Remove non ASCII characters and set ToLower
+        windowName = Regex.Replace(windowName, "[^A-Za-z0-9 -]", "").ToLower();
+
+        // Get all the processes that have a window
+        IEnumerable<Process> processes = Process.GetProcesses(); //.Where(p => p.MainWindowHandle == IntPtr.Zero);
+
+        // Find the process that has the closest processName to the windowName
+        // Use the Levenshtein distance as a measure of similarity
+        // https://en.wikipedia.org/wiki/Levenshtein_distance
+        int minDistance = int.MaxValue;
+        Process closestProcess = null;
+
+        foreach (Process process in processes)
+        {
+            // Get the process name
+            string processName = process.ProcessName.ToLower();
+
+            // Calculate the Levenshtein distance between the windowName and the processName
+            int distance = Levenshtein.Distance(windowName, processName);
+
+            // Update the minimum distance and the closest process if needed
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestProcess = process;
+            }
+        }
+
+        // Return the closest process or null if none was found
+        return closestProcess;
     }
 
     public static List<Process> GetChildProcesses(Process process)

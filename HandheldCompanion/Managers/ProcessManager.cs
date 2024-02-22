@@ -163,18 +163,32 @@ public static class ProcessManager
         IntPtr hWnd = GetforegroundWindow();
         if (foregroundWindow == hWnd)
             return;
-        
+
+        int processId = 0;
+
         // update current foreground window
         foregroundWindow = hWnd;
 
         ProcessDiagnosticInfo processInfo = new ProcessUtils.FindHostedProcess(hWnd)._realProcess;
-        if (processInfo is null)
+        if (processInfo is not null)
+        {
+            processId = (int)processInfo.ProcessId;
+        }
+        else
+        {
+            // we couldn't find the hosted process
+            // use Levenshtein to find the process with closest name
+            Process process = ProcessUtils.FindProcessByWindowName(hWnd);
+            if (process is not null)
+                processId = process.Id;
+        }
+
+        // failed to retrieve process
+        if (processId == 0)
             return;
 
         try
         {
-            int processId = (int)processInfo.ProcessId;
-
             if (!Processes.TryGetValue(processId, out ProcessEx process))
             {
                 if (!CreateProcess(processId, (int)hWnd))
@@ -257,7 +271,14 @@ public static class ProcessManager
                 return true;
 
             // hook exited event
-            proc.EnableRaisingEvents = true;
+            try
+            {
+                proc.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                // access denied
+            }
             proc.Exited += ProcessHalted;
 
             // check process path
@@ -299,7 +320,7 @@ public static class ProcessManager
 
             return true;
         }
-        catch
+        catch (Exception ex)
         {
             // process has too high elevation
         }
