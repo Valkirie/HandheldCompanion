@@ -163,6 +163,9 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public override void Start()
         {
+            if (!IsInitialized)
+                return;
+
             base.Start();
         }
 
