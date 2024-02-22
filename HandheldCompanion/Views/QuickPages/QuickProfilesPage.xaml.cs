@@ -55,6 +55,7 @@ public partial class QuickProfilesPage : Page
         InputsManager.TriggerUpdated += TriggerUpdated;
         PlatformManager.RTSS.Updated += RTSS_Updated;
         GPUManager.Hooked += GPUManager_Hooked;
+        GPUManager.Unhooked += GPUManager_Unhooked;
 
         foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
         {
@@ -203,6 +204,24 @@ public partial class QuickProfilesPage : Page
             StackProfileRIS.IsEnabled = HasGPUScalingSupport; // check if processor is AMD should be enough
             GPUScalingToggle.IsEnabled = HasGPUScalingSupport;
             GPUScalingComboBox.IsEnabled = HasGPUScalingSupport && HasScalingModeSupport;
+        });
+    }
+
+    private void GPUManager_Unhooked(GPU GPU)
+    {
+        if (GPU is AMDGPU amdGPU)
+            amdGPU.RSRStateChanged -= OnRSRStateChanged;
+
+        GPU.IntegerScalingChanged -= OnIntegerScalingChanged;
+        GPU.GPUScalingChanged -= OnGPUScalingChanged;
+
+        // UI thread (async)
+        Application.Current.Dispatcher.BeginInvoke(() =>
+        {
+            StackProfileRSR.IsEnabled = false;
+            StackProfileIS.IsEnabled = false;
+            GPUScalingToggle.IsEnabled = false;
+            GPUScalingComboBox.IsEnabled = false;
         });
     }
 

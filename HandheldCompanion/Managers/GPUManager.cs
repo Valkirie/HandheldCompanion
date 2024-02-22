@@ -18,6 +18,9 @@ namespace HandheldCompanion.Managers
 
         public static event HookedEventHandler Hooked;
         public delegate void HookedEventHandler(GPU GPU);
+
+        public static event UnhookedEventHandler Unhooked;
+        public delegate void UnhookedEventHandler(GPU GPU);
         #endregion
 
         public static bool IsInitialized;
@@ -56,11 +59,18 @@ namespace HandheldCompanion.Managers
                 // do something
             }
 
-            GPU.Start();
+            if (GPU.IsInitialized)
+            {
+                GPU.Start();
+                Hooked?.Invoke(GPU);
+            }
         }
 
         private static void GPUDisconnect(GPU gpu)
         {
+            if (currentGPU == gpu)
+                Unhooked?.Invoke(gpu);
+
             gpu.ImageSharpeningChanged -= CurrentGPU_ImageSharpeningChanged;
             gpu.GPUScalingChanged -= CurrentGPU_GPUScalingChanged;
             gpu.IntegerScalingChanged -= CurrentGPU_IntegerScalingChanged;
@@ -86,7 +96,7 @@ namespace HandheldCompanion.Managers
 
             try
             {
-                AdapterInformation key = DisplayGPU.Keys.Where(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName).FirstOrDefault();
+                AdapterInformation key = DisplayGPU.Keys.FirstOrDefault(GPU => GPU.Details.DeviceName == screen.PrimaryScreen.DeviceName);
                 if (DisplayGPU.TryGetValue(key, out GPU gpu))
                 {
                     // a new GPU was connected, disconnect from current gpu
@@ -95,8 +105,6 @@ namespace HandheldCompanion.Managers
 
                     // connect to new gpu
                     GPUConnect(gpu);
-
-                    Hooked?.Invoke(currentGPU);
                 }
             }
             catch
