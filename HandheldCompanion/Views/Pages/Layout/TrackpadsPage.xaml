@@ -7,35 +7,42 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TrackpadsPageViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Grid Name="MainGrid">
-        <ui:SimpleStackPanel Spacing="6">
+    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-            <ui:SimpleStackPanel Name="gridLeftPad" Spacing="6">
-                <!--  LEFT TRACKPAD BUTTONS  -->
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
-                <ui:SimpleStackPanel Name="LeftTrackpadButtonsPanel" Spacing="6" />
+        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsLeftPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!--  LEFT TRACKPAD BUTTONS  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left_Buttons}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding LeftButtonsMappings}">
+                <ui:ItemsRepeater.Layout>
+                    <ui:StackLayout Spacing="6" />
+                </ui:ItemsRepeater.Layout>
+            </ui:ItemsRepeater>
 
-                <!--  LEFT TRACKPAD  -->
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
-                <ui:SimpleStackPanel Name="LeftTrackpadPanel" Spacing="6" />
-            </ui:SimpleStackPanel>
-
-            <ui:SimpleStackPanel Name="gridRightPad" Spacing="6">
-                <!--  RIGHT TRACKPAD BUTTONS  -->
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
-                <ui:SimpleStackPanel Name="RightTrackpadButtonsPanel" Spacing="6" />
-
-                <!--  RIGHT TRACKPAD  -->
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
-                <ui:SimpleStackPanel Name="RightTrackpadPanel" Spacing="6" />
-            </ui:SimpleStackPanel>
-
+            <!--  LEFT TRACKPAD  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Left}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding LeftAxisMappings}" />
         </ui:SimpleStackPanel>
-    </Grid>
+
+        <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsRightPadEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!--  RIGHT TRACKPAD BUTTONS  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right_Buttons}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding RightButtonsMappings}">
+                <ui:ItemsRepeater.Layout>
+                    <ui:StackLayout Spacing="6" />
+                </ui:ItemsRepeater.Layout>
+            </ui:ItemsRepeater>
+
+            <!--  RIGHT TRACKPAD  -->
+            <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.TrackPadsPage_Trackpad_Right}" />
+            <ui:ItemsRepeater ItemTemplate="{StaticResource AxisMappingTemplate}" ItemsSource="{Binding RightAxisMappings}" />
+        </ui:SimpleStackPanel>
+
+    </ui:SimpleStackPanel>
 </local:ILayoutPage>

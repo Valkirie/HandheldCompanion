@@ -9,14 +9,13 @@ public class ProController : JSController
 {
     public ProController()
     {
-    }
-
-    public ProController(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
-    {
         // Additional controller specific source buttons
         SourceButtons.Add(ButtonFlags.Special2);
         SourceAxis.Add(AxisLayoutFlags.Gyroscope);
     }
+
+    public ProController(JOY_SETTINGS settings, PnPDetails details) : base(settings, details)
+    { }
 
     public override void UpdateInputs(long ticks)
     {

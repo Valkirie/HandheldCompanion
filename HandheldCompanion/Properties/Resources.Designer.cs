@@ -241,6 +241,15 @@ namespace HandheldCompanion.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Oups, it appears your device is not supported yet. The software might not run as expected..
+        /// </summary>
+        public static string AboutPage_UnsupportedDevice {
+            get {
+                return ResourceManager.GetString("AboutPage_UnsupportedDevice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Version.
         /// </summary>
         public static string AboutPage_Version {

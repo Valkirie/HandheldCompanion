@@ -9,7 +9,7 @@ namespace HandheldCompanion.Inputs;
 [Serializable]
 public partial class ButtonState : ICloneable
 {
-    public ConcurrentDictionary<ButtonFlags, bool> State = new(Environment.ProcessorCount * 2, (int)ButtonFlags.Max);
+    public ConcurrentDictionary<ButtonFlags, bool> State = new();
 
     public ButtonState(ConcurrentDictionary<ButtonFlags, bool> State)
     {

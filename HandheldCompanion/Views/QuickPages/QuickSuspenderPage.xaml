@@ -6,14 +6,127 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Name="QuickSuspender"
     Title="{x:Static resx:Resources.QuickSuspenderPage_Title}"
     Margin="15,0,0,0"
     d:Background="White"
+    d:DataContext="{d:DesignInstance Type=viewmodels:QuickSuspenderPageViewModel}"
     d:DesignHeight="1200"
     d:DesignWidth="640"
     KeepAlive="True"
     mc:Ignorable="d">
 
-    <ui:SimpleStackPanel Name="CurrentProcesses" Spacing="6" />
+    <ui:ItemsRepeater ItemsSource="{Binding Processes}">
+        <ui:ItemsRepeater.ItemTemplate>
+            <DataTemplate>
+                <Expander
+                    Padding="20,12,12,12"
+                    HorizontalAlignment="Stretch"
+                    d:IsExpanded="True">
+                    <Expander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Image
+                                Grid.Column="0"
+                                Width="24"
+                                Height="24"
+                                Source="{Binding ProcessIcon}" />
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding Executable}" />
+                                <TextBlock
+                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Text="{Binding Title}"
+                                    TextWrapping="NoWrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Expander.Header>
+
+                    <Expander.Content>
+                        <ui:SimpleStackPanel Margin="0,-4,0,-4" Spacing="6">
+                            <!--  Suspend  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="0.2*" MinWidth="80" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Suspend process" />
+
+                                <ui:ToggleSwitch
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    IsOn="{Binding IsSuspended, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+
+                            <!--  FullScreenOptimization  -->
+                            <Grid IsEnabled="False">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="0.2*" MinWidth="80" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="Fullscreen optimizations" />
+
+                                <ui:ToggleSwitch
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    IsOn="{Binding FullScreenOptimization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+
+                            <!--  HighDPIAware  -->
+                            <Grid IsEnabled="False">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="0.2*" MinWidth="80" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="High DPI awareness" />
+
+                                <ui:ToggleSwitch
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    IsOn="{Binding HighDPIAware, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource InvertedToggleSwitchStyle}" />
+                            </Grid>
+
+                            <!--  Separator  -->
+                            <Separator Margin="-16,0,-16,0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+
+                            <!--  Kill Process  -->
+                            <Grid Height="40">
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding KillProcessCommand}"
+                                    Content="Kill process"
+                                    Style="{DynamicResource AccentButtonStyle}" />
+                            </Grid>
+                        </ui:SimpleStackPanel>
+                    </Expander.Content>
+                </Expander>
+            </DataTemplate>
+        </ui:ItemsRepeater.ItemTemplate>
+    </ui:ItemsRepeater>
 </Page>

@@ -7,19 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:HandheldCompanion.Properties"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+    xmlns:viewmodels="clr-namespace:HandheldCompanion.ViewModels"
     Title="{x:Static resx:Resources.ProfilesPage_ControllerSettings}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:DpadPageViewModel}"
     d:DesignHeight="1000"
     d:DesignWidth="1000"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Grid Name="MainGrid">
-        <ui:SimpleStackPanel Spacing="6">
-            <!--  DIRECTIONAL PAD  -->
-            <ui:SimpleStackPanel Name="gridDpad" Spacing="6">
-                <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DPadPage_DPad}" />
-                <ui:SimpleStackPanel Name="DpadStackPanel" Spacing="6" />
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
-    </Grid>
+    <!--  DIRECTIONAL PAD  -->
+    <ui:SimpleStackPanel Spacing="6" Visibility="{Binding IsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="{x:Static resx:Resources.DPadPage_DPad}" />
+        <ui:ItemsRepeater ItemTemplate="{StaticResource ButtonStackTemplate}" ItemsSource="{Binding ButtonStacks}">
+            <ui:ItemsRepeater.Layout>
+                <ui:StackLayout Spacing="6" />
+            </ui:ItemsRepeater.Layout>
+        </ui:ItemsRepeater>
+    </ui:SimpleStackPanel>
 </local:ILayoutPage>

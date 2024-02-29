@@ -38,7 +38,6 @@ public static class PerformanceManager
     private const short INTERVAL_DEFAULT = 3000; // default interval between value scans
     private const short INTERVAL_AUTO = 1010; // default interval between value scans
     private const short INTERVAL_DEGRADED = 5000; // degraded interval between value scans
-    public static int MaxDegreeOfParallelism = 4;
 
     public static readonly Guid[] PowerModes = new Guid[3] { OSPowerMode.BetterBattery, OSPowerMode.BetterPerformance, OSPowerMode.BestPerformance };
 
@@ -112,8 +111,7 @@ public static class PerformanceManager
         SettingsManager.SettingValueChanged += SettingsManagerOnSettingValueChanged;
         HotkeysManager.CommandExecuted += HotkeysManager_CommandExecuted;
 
-        currentCoreCount = Environment.ProcessorCount;
-        MaxDegreeOfParallelism = Convert.ToInt32(Environment.ProcessorCount / 2);
+        currentCoreCount = MotherboardInfo.NumberOfCores;
     }
 
     private static void SettingsManagerOnSettingValueChanged(string name, object value)

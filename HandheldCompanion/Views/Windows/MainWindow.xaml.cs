@@ -241,6 +241,10 @@ public partial class MainWindow : GamepadWindow
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         SettingsManager.Start();
 
+        // Load MVVM pages after the Models / data have been created.
+        overlayquickTools.LoadPages_MVVM();
+        LoadPages_MVVM();
+
         // update Position and Size
         Height = (int)Math.Max(MinHeight, SettingsManager.GetDouble("MainWindowHeight"));
         Width = (int)Math.Max(MinWidth, SettingsManager.GetDouble("MainWindowWidth"));
@@ -402,27 +406,39 @@ public partial class MainWindow : GamepadWindow
         controllerPage.Loaded += ControllerPage_Loaded;
 
         devicePage = new DevicePage("device");
-        performancePage = new PerformancePage("performance");
         profilesPage = new ProfilesPage("profiles");
         settingsPage = new SettingsPage("settings");
-        aboutPage = new AboutPage("about");
+        
         overlayPage = new OverlayPage("overlay");
         hotkeysPage = new HotkeysPage("hotkeys");
-        layoutPage = new LayoutPage("layout", navView);
+        
         notificationsPage = new NotificationsPage("notifications");
         notificationsPage.StatusChanged += NotificationsPage_LayoutUpdated;
 
         // store pages
         _pages.Add("ControllerPage", controllerPage);
         _pages.Add("DevicePage", devicePage);
-        _pages.Add("PerformancePage", performancePage);
+        
         _pages.Add("ProfilesPage", profilesPage);
-        _pages.Add("AboutPage", aboutPage);
+        
         _pages.Add("OverlayPage", overlayPage);
         _pages.Add("SettingsPage", settingsPage);
         _pages.Add("HotkeysPage", hotkeysPage);
-        _pages.Add("LayoutPage", layoutPage);
+        
         _pages.Add("NotificationsPage", notificationsPage);
+    }
+
+    private void LoadPages_MVVM()
+    {
+        layoutPage = new LayoutPage("layout", navView);
+        layoutPage.Initialize();
+
+        performancePage = new PerformancePage();
+        aboutPage = new AboutPage();
+
+        _pages.Add("LayoutPage", layoutPage);
+        _pages.Add("PerformancePage", performancePage);
+        _pages.Add("AboutPage", aboutPage);
     }
 
     private void loadWindows()
@@ -435,7 +451,9 @@ public partial class MainWindow : GamepadWindow
 
     private void GenericDeviceUpdated(PnPDevice device, DeviceEventArgs obj)
     {
-        aboutPage.UpdateDevice(device);
+        // todo: improve me
+        CurrentDevice.PullSensors();
+
         settingsPage.UpdateDevice(device);
     }
 

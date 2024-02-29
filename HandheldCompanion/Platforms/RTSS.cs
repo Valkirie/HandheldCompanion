@@ -156,7 +156,7 @@ public class RTSS : IPlatform
         // hook new process
         AppEntry appEntry = null;
 
-        var ProcessId = processEx.GetProcessId();
+        var ProcessId = processEx.ProcessId;
         if (ProcessId == 0)
             return;
 
@@ -198,7 +198,7 @@ public class RTSS : IPlatform
 
     private void ProcessManager_ProcessStopped(ProcessEx processEx)
     {
-        var ProcessId = processEx.GetProcessId();
+        var ProcessId = processEx.ProcessId;
         if (ProcessId == 0)
             return;
 

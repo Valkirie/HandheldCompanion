@@ -1,6 +1,7 @@
 ﻿using HandheldCompanion.Actions;
 using HandheldCompanion.Controllers;
 using HandheldCompanion.Inputs;
+using HandheldCompanion.Managers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,10 +25,16 @@ public partial class Layout : ICloneable, IDisposable
 
     public Layout(bool fill) : this()
     {
+        // reset layout(s)
+        Dispose();
+
+        // get current controller
+        var controller = ControllerManager.GetEmulatedController();
+
         // generic button mapping
         foreach (ButtonFlags button in Enum.GetValues(typeof(ButtonFlags)))
         {
-            if (!IController.TargetButtons.Contains(button))
+            if (!controller.GetTargetButtons().Contains(button))
                 continue;
 
             ButtonLayout[button] = new List<IActions>() { new ButtonActions() { Button = button } };
@@ -42,7 +49,7 @@ public partial class Layout : ICloneable, IDisposable
         // generic axis mapping
         foreach (AxisLayoutFlags axis in Enum.GetValues(typeof(AxisLayoutFlags)))
         {
-            if (!IController.TargetAxis.Contains(axis))
+            if (!controller.GetTargetAxis().Contains(axis))
                 continue;
 
             switch (axis)
