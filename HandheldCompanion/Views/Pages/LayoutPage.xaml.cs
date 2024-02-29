@@ -17,22 +17,29 @@ using Page = System.Windows.Controls.Page;
 
 namespace HandheldCompanion.Views.Pages;
 
-/// <summary>
-///     Interaction logic for ControllerSettings.xaml
-/// </summary>
+
 public partial class LayoutPage : Page
 {
+    // Event to update ViewModel
+    public event UpdatedLayoutHandler LayoutUpdated;
+    public delegate void UpdatedLayoutHandler(Layout layout);
+
+    // Getter to update layout in ViewModels
+    public Layout CurrentLayout => currentTemplate.Layout;
+
+
+
     private LayoutTemplate currentTemplate = new();
     protected LockObject updateLock = new();
 
     // page vars
     private Dictionary<string, (ILayoutPage, NavigationViewItem)> pages;
-    private readonly ButtonsPage buttonsPage = new();
-    private readonly DpadPage dpadPage = new();
-    private readonly GyroPage gyroPage = new();
-    private readonly JoysticksPage joysticksPage = new();
-    private readonly TrackpadsPage trackpadsPage = new();
-    private readonly TriggersPage triggersPage = new();
+    private ButtonsPage buttonsPage;
+    private DpadPage dpadPage;
+    private GyroPage gyroPage;
+    private JoysticksPage joysticksPage;
+    private TrackpadsPage trackpadsPage;
+    private TriggersPage triggersPage;
 
     private NavigationView parentNavView;
     private string preNavItemTag;
@@ -46,6 +53,17 @@ public partial class LayoutPage : Page
     {
         this.Tag = Tag;
         this.parentNavView = parent;
+    }
+
+    // Initialize pages later so the reference can be made to layoutPage from MainWindow
+    public void Initialize()
+    {
+        buttonsPage = new ButtonsPage();
+        dpadPage = new DpadPage();
+        gyroPage = new GyroPage();
+        joysticksPage = new JoysticksPage();
+        trackpadsPage = new TrackpadsPage();
+        triggersPage = new TriggersPage();
 
         // create controller related pages
         this.pages = new()
@@ -65,34 +83,15 @@ public partial class LayoutPage : Page
             { "GyroPage", ( gyroPage, navGyro ) },
         };
 
-        foreach (ButtonStack buttonStack in buttonsPage.ButtonStacks.Values.Union(dpadPage.ButtonStacks.Values).Union(triggersPage.ButtonStacks.Values).Union(joysticksPage.ButtonStacks.Values).Union(trackpadsPage.ButtonStacks.Values))
+        // TODO: Temporary until conversion to MVVM
+        foreach(var template in LayoutManager.Templates)
         {
-            buttonStack.Updated += (sender, actions) => ButtonMapping_Updated((ButtonFlags)sender, actions);
-            buttonStack.Deleted += (sender) => ButtonMapping_Deleted((ButtonFlags)sender);
-        }
-
-        foreach (TriggerMapping axisMapping in triggersPage.TriggerMappings.Values)
-        {
-            axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
-        }
-
-        foreach (AxisMapping axisMapping in joysticksPage.AxisMappings.Values.Union(trackpadsPage.AxisMappings.Values))
-        {
-            axisMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            axisMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
-        }
-
-        foreach (GyroMapping gyroMapping in gyroPage.GyroMappings.Values)
-        {
-            gyroMapping.Updated += (sender, action) => AxisMapping_Updated((AxisLayoutFlags)sender, action);
-            gyroMapping.Deleted += (sender) => AxisMapping_Deleted((AxisLayoutFlags)sender);
+            LayoutManager_Updated(template);
         }
 
         LayoutManager.Updated += LayoutManager_Updated;
         LayoutManager.Initialized += LayoutManager_Initialized;
         ControllerManager.ControllerSelected += ControllerManager_ControllerSelected;
-        VirtualManager.ControllerSelected += VirtualManager_ControllerSelected;
         SettingsManager.SettingValueChanged += SettingsManager_SettingValueChanged;
         DeviceManager.UsbDeviceArrived += DeviceManager_UsbDeviceUpdated;
         DeviceManager.UsbDeviceRemoved += DeviceManager_UsbDeviceUpdated;
@@ -111,7 +110,7 @@ public partial class LayoutPage : Page
             case UpdateSource.QuickProfilesPage:
                 {
                     if (currentTemplate.Executable.Equals(profile.Executable))
-                        MainWindow.layoutPage.UpdateLayout(profile.Layout);
+                        UpdateLayout(profile.Layout);
                 }
                 break;
         }
@@ -127,7 +126,6 @@ public partial class LayoutPage : Page
             // cascade update to (sub)pages
             foreach (var page in pages.Values)
             {
-                page.Item1.UpdateController(controller);
                 page.Item2.IsEnabled = page.Item1.IsEnabled();
             }
         });
@@ -140,18 +138,6 @@ public partial class LayoutPage : Page
         // lazy
         if (controller is not null)
             ControllerManager_ControllerSelected(controller);
-    }
-
-    // todo: fix me when migrated to NO-SERVICE
-    private void VirtualManager_ControllerSelected(HIDmode HID)
-    {
-        // UI thread (async)
-        Application.Current.Dispatcher.BeginInvoke(() =>
-        {
-            // cascade update to (sub)pages
-            foreach (var page in pages.Values)
-                page.Item1.UpdateSelections();
-        });
     }
 
     private void LayoutManager_Initialized()
@@ -251,38 +237,6 @@ public partial class LayoutPage : Page
         }
     }
 
-    private void ButtonMapping_Deleted(ButtonFlags button)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.RemoveLayout(button);
-    }
-
-    private void ButtonMapping_Updated(ButtonFlags button, List<IActions> actions)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.UpdateLayout(button, actions);
-    }
-
-    private void AxisMapping_Deleted(AxisLayoutFlags axis)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.RemoveLayout(axis);
-    }
-
-    private void AxisMapping_Updated(AxisLayoutFlags axis, IActions action)
-    {
-        if (updateLock)
-            return;
-
-        currentTemplate.Layout.UpdateLayout(axis, action);
-    }
-
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
     }
@@ -324,9 +278,8 @@ public partial class LayoutPage : Page
             // levels (pages and mappings) could potentially be blocked for optimization.
             using (new ScopedLock(updateLock))
             {
-                // cascade update to (sub)pages
-                foreach (var page in pages.Values)
-                    page.Item1.Update(currentTemplate.Layout);
+                // Invoke Layout Updated to trigger ViewModel updates
+                LayoutUpdated?.Invoke(currentTemplate.Layout);
 
                 // clear layout selection
                 cB_Layouts.SelectedValue = null;

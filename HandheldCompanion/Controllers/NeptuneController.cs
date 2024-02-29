@@ -28,28 +28,13 @@ public class NeptuneController : SteamController
     private Thread rumbleThread;
     private bool rumbleThreadRunning;
 
-    public NeptuneController(PnPDetails details) : base()
+    public NeptuneController()
     {
-        AttachDetails(details);
-
-        // UI
-        DrawUI();
-        UpdateUI();
-
         // Additional controller specific source buttons/axes
-        SourceButtons.AddRange(new List<ButtonFlags>
-            { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.L4, ButtonFlags.R4, ButtonFlags.L5, ButtonFlags.R5 });
         SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftStickTouch, ButtonFlags.RightStickTouch });
-        SourceButtons.AddRange(new List<ButtonFlags>
-        {
-            ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp,
-            ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight
-        });
-        SourceButtons.AddRange(new List<ButtonFlags>
-        {
-            ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp,
-            ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight
-        });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.LeftPadClick, ButtonFlags.LeftPadTouch, ButtonFlags.LeftPadClickUp, ButtonFlags.LeftPadClickDown, ButtonFlags.LeftPadClickLeft, ButtonFlags.LeftPadClickRight });
+        SourceButtons.AddRange(new List<ButtonFlags> { ButtonFlags.RightPadClick, ButtonFlags.RightPadTouch, ButtonFlags.RightPadClickUp, ButtonFlags.RightPadClickDown, ButtonFlags.RightPadClickLeft, ButtonFlags.RightPadClickRight });
 
         SourceAxis.Add(AxisLayoutFlags.LeftPad);
         SourceAxis.Add(AxisLayoutFlags.RightPad);
@@ -62,6 +47,15 @@ public class NeptuneController : SteamController
 
         TargetAxis.Add(AxisLayoutFlags.LeftPad);
         TargetAxis.Add(AxisLayoutFlags.RightPad);
+    }
+
+    public NeptuneController(PnPDetails details) : base()
+    {
+        AttachDetails(details);
+
+        // UI
+        DrawUI();
+        UpdateUI();
     }
 
     public override void AttachDetails(PnPDetails details)

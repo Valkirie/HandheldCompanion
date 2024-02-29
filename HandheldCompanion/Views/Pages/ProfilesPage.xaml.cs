@@ -470,7 +470,7 @@ public partial class ProfilesPage : Page
         if (radioButton.IsMouseOver)
             return;
 
-        MainWindow.performancePage.SelectionChanged(powerProfile.Guid);
+        MainWindow.performancePage.SelectionChanged(powerProfile);
         MainWindow.GetCurrent().NavView_Navigate("PerformancePage");
     }
 

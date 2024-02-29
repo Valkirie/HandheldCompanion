@@ -154,7 +154,7 @@ public static class XInputPlus
         }
         catch (Exception ex)
         {
-            LogManager.LogError("Error when injecting XInputPlus to {0}: {1}", processEx.Name, ex.Message);
+            LogManager.LogError("Error when injecting XInputPlus to {0}: {1}", processEx.Executable, ex.Message);
         }
     }
 

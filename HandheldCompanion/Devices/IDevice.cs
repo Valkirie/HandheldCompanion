@@ -845,6 +845,20 @@ public abstract class IDevice
         return EnumUtils.GetDescriptionFromEnumValue(button, GetType().Name);
     }
 
+    public GlyphIconInfo GetGlyphIconInfo(ButtonFlags button, int fontIconSize = 14)
+    {
+        var glyph = GetGlyph(button);
+        return new GlyphIconInfo
+        {
+            Name = GetButtonName(button),
+            Glyph = glyph,
+            FontSize = glyph is not null ? 28 : fontIconSize,
+            FontFamily = glyph is not null ? GlyphFontFamily : null,
+            Foreground = null
+        };
+    }
+
+    [Obsolete("GetFontIcon has dependencies on UI and should be avoided. Use GetGlyphIconInfo instead.")]
     public FontIcon GetFontIcon(ButtonFlags button, int FontIconSize = 14)
     {
         var FontIcon = new FontIcon

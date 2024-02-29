@@ -262,26 +262,25 @@ public partial class OverlayModel : OverlayWindow
         if (Visibility != Visibility.Visible)
             return;
 
-        Parallel.ForEach((ButtonFlags[])Enum.GetValues(typeof(ButtonFlags)),
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, button =>
+        foreach (var button in (ButtonFlags[])Enum.GetValues(typeof(ButtonFlags)))
+        {
+            if (!CurrentModel.ButtonMap.ContainsKey(button))
+                continue;
+
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                Application.Current.Dispatcher.BeginInvoke(() =>
+                foreach (Model3DGroup model3DGroup in CurrentModel.ButtonMap[button])
                 {
-                    if (!CurrentModel.ButtonMap.ContainsKey(button))
-                        return;
+                    GeometryModel3D model3D = (GeometryModel3D)model3DGroup.Children.FirstOrDefault();
+                    if (model3D is null || model3D.Material is not DiffuseMaterial)
+                        continue;
 
-                    foreach (Model3DGroup model3DGroup in CurrentModel.ButtonMap[button])
-                    {
-                        GeometryModel3D model3D = (GeometryModel3D)model3DGroup.Children.FirstOrDefault();
-                        if (model3D is null || model3D.Material is not DiffuseMaterial)
-                            continue;
-
-                        model3D.Material = Inputs.ButtonState[button]
-                            ? model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup]
-                            : model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
-                    }
-                });
+                    model3D.Material = Inputs.ButtonState[button]
+                        ? model3D.BackMaterial = CurrentModel.HighlightMaterials[model3DGroup]
+                        : model3D.BackMaterial = CurrentModel.DefaultMaterials[model3DGroup];
+                }
             });
+        }
 
         // UI thread (async)
         Application.Current.Dispatcher.BeginInvoke(() =>

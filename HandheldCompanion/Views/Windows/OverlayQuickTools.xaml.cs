@@ -107,17 +107,22 @@ public partial class OverlayQuickTools : GamepadWindow
         // create pages
         homePage = new("quickhome");
         devicePage = new("quickdevice");
-        performancePage = new("quickperformance");
         profilesPage = new("quickprofiles");
-        overlayPage = new("quickoverlay");
         suspenderPage = new("quicksuspender");
 
         _pages.Add("QuickHomePage", homePage);
         _pages.Add("QuickDevicePage", devicePage);
-        _pages.Add("QuickPerformancePage", performancePage);
         _pages.Add("QuickProfilesPage", profilesPage);
-        _pages.Add("QuickOverlayPage", overlayPage);
         _pages.Add("QuickSuspenderPage", suspenderPage);
+    }
+
+    public void LoadPages_MVVM()
+    {
+        overlayPage = new QuickOverlayPage();
+        performancePage = new QuickPerformancePage();
+
+        _pages.Add("QuickOverlayPage", overlayPage);
+        _pages.Add("QuickPerformancePage", performancePage);
     }
 
     public static OverlayQuickTools GetCurrent()

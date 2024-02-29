@@ -445,7 +445,7 @@ public static class ProcessManager
     private static void ProcessWatcher_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         Parallel.ForEach(Processes,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, process =>
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, process =>
             {
                 ProcessEx processEx = process.Value;
                 processEx.Refresh();
@@ -464,7 +464,7 @@ public static class ProcessManager
         processEx.RefreshChildProcesses();
 
         Parallel.ForEach(processEx.Children,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtResumeProcess(process.Handle);
@@ -489,7 +489,7 @@ public static class ProcessManager
         processEx.RefreshChildProcesses();
 
         Parallel.ForEach(processEx.Children,
-            new ParallelOptions { MaxDegreeOfParallelism = PerformanceManager.MaxDegreeOfParallelism }, childId =>
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, childId =>
             {
                 Process process = Process.GetProcessById(childId);
                 ProcessUtils.NtSuspendProcess(process.Handle);

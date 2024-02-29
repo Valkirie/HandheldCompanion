@@ -76,7 +76,7 @@ namespace HandheldCompanion.Misc
         public uint EPPOverrideValue { get; set; } = 50;
 
         public bool CPUCoreEnabled { get; set; }
-        public int CPUCoreCount { get; set; } = Environment.ProcessorCount;
+        public int CPUCoreCount { get; set; } = MotherboardInfo.NumberOfCores;
 
         public int CPUBoostLevel { get; set; } = 0;
 

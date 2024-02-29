@@ -2899,4 +2899,7 @@
   <data name="DevicePage_Lenovo_Settings" xml:space="preserve">
     <value>Lenovo Legion Go settings</value>
   </data>
+  <data name="AboutPage_UnsupportedDevice" xml:space="preserve">
+    <value>Oups, it appears your device is not supported yet. The software might not run as expected.</value>
+  </data>
 </root>

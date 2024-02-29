@@ -56,16 +56,20 @@
                 <ResourceDictionary Source="pack://Application:,,,/HandheldCompanion;component/Styles/ToggleSwitch.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/ColorPicker;component/Styles/DefaultColorPickerStyle.xaml" />
 
+                <ResourceDictionary Source="Views/TemplatesDictionary.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
 
             <!--  Other app resources here  -->
             <converters:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
             <converters:IndexToVisibilityConverter x:Key="IndexToVisibilityConverter" />
             <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
             <converters:PercentageConverter x:Key="PercentageConverter" />
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
             <converters:InvertPercentageConverter x:Key="InvertPercentageConverter" />
+            <converters:IsNullConverter x:Key="IsNullConverter" />
 
             <math:MathConverter x:Key="Math" />
 

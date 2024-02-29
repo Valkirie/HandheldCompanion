@@ -1,5 +1,6 @@
 using HandheldCompanion.Actions;
 using HandheldCompanion.Controls;
+using HandheldCompanion.Extensions;
 using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.Inputs;
 using HandheldCompanion.Managers;
@@ -57,7 +58,7 @@ public partial class QuickProfilesPage : Page
         GPUManager.Hooked += GPUManager_Hooked;
         GPUManager.Unhooked += GPUManager_Unhooked;
 
-        foreach (var mode in (MotionOuput[])Enum.GetValues(typeof(MotionOuput)))
+        foreach (var mode in Enum.GetValues<MotionOuput>())
         {
             // create panel
             ComboBoxItem comboBoxItem = new ComboBoxItem()
@@ -74,26 +75,7 @@ public partial class QuickProfilesPage : Page
             };
 
             // create icon
-            var icon = new FontIcon();
-
-            switch (mode)
-            {
-                case MotionOuput.Disabled:
-                    icon.Glyph = "\uE8D8";
-                    break;
-                case MotionOuput.RightStick:
-                    icon.Glyph = "\uF109";
-                    break;
-                case MotionOuput.LeftStick:
-                    icon.Glyph = "\uF108";
-                    break;
-                case MotionOuput.MoveCursor:
-                    icon.Glyph = "\uE962";
-                    break;
-                case MotionOuput.ScrollWheel:
-                    icon.Glyph = "\uEC8F";
-                    break;
-            }
+            var icon = new FontIcon() { Glyph = mode.ToGlyph() };
 
             if (!string.IsNullOrEmpty(icon.Glyph))
                 simpleStackPanel.Children.Add(icon);
@@ -125,24 +107,7 @@ public partial class QuickProfilesPage : Page
             };
 
             // create icon
-            var icon = new FontIcon();
-
-            switch (mode)
-            {
-                default:
-                case MotionInput.PlayerSpace:
-                    icon.Glyph = "\uF119";
-                    break;
-                case MotionInput.JoystickCamera:
-                    icon.Glyph = "\uE714";
-                    break;
-                case MotionInput.AutoRollYawSwap:
-                    icon.Glyph = "\uE7F8";
-                    break;
-                case MotionInput.JoystickSteering:
-                    icon.Glyph = "\uEC47";
-                    break;
-            }
+            var icon = new FontIcon() {  Glyph = mode.ToGlyph() };
 
             if (!string.IsNullOrEmpty(icon.Glyph))
                 simpleStackPanel.Children.Add(icon);
@@ -567,7 +532,7 @@ public partial class QuickProfilesPage : Page
             using (new ScopedLock(updateLock))
             {
                 ProfileToggle.IsOn = !realProfile.Default && realProfile.Enabled;
-                ProfileIcon.Source = processEx.imgSource;
+                ProfileIcon.Source = processEx.ProcessIcon;
 
                 if (processEx.MainWindowHandle != IntPtr.Zero)
                 {
