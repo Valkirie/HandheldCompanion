@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Windows.UI.ViewManagement;
 using static HandheldCompanion.Managers.InputsHotkey;
 using Application = System.Windows.Application;
@@ -85,16 +86,21 @@ public partial class MainWindow : GamepadWindow
 
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
+        // initialize splash screen
+        splashScreen = new SplashScreen();
+#if !DEBUG
+        splashScreen.Show();
+#endif
+        splashScreen.LoadingSequence.Text = "Preparing UI...";
+
         InitializeComponent();
+        this.Tag = "MainWindow";
 
         fileVersionInfo = _fileVersionInfo;
         CurrentWindow = this;
 
         // used by system manager, controller manager
         uiSettings = new UISettings();
-
-        // used by gamepad navigation
-        Tag = "MainWindow";
 
         // fix touch support
         TabletDeviceCollection tabletDevices = Tablet.TabletDevices;
@@ -146,9 +152,9 @@ public partial class MainWindow : GamepadWindow
         Title += $" ({fileVersionInfo.FileVersion})";
 
         // initialize device
+        splashScreen.LoadingSequence.Text = "Initializing device...";
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
-
         
         string currentDeviceType = CurrentDevice.GetType().Name;
         switch (currentDeviceType)
@@ -186,22 +192,24 @@ public partial class MainWindow : GamepadWindow
         }
 
         // initialize splash screen on first start only
-        if (FirstStart)
-        {
-            splashScreen = new SplashScreen();
-            splashScreen.Show();
-
-            SettingsManager.SetProperty("FirstStart", false);
-        }
+        SettingsManager.SetProperty("FirstStart", false);
 
         // initialize UI sounds board
         UISounds uiSounds = new UISounds();
 
         // load window(s)
-        loadWindows();
+        splashScreen.LoadingSequence.Text = "Drawing windows...";
+        Dispatcher.Invoke(new Action(() =>
+        {
+            loadWindows();
+        }), DispatcherPriority.Background); // Lower priority
 
         // load page(s)
-        loadPages();
+        splashScreen.LoadingSequence.Text = "Drawing pages...";
+        Dispatcher.Invoke(new Action(() =>
+        {
+            loadPages();
+        }), DispatcherPriority.Background); // Lower priority
 
         // manage events
         InputsManager.TriggerRaised += InputsManager_TriggerRaised;
@@ -214,21 +222,25 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         // start static managers in sequence
-        GPUManager.Start();
-        PowerProfileManager.Start();
-        ProfileManager.Start();
-        ControllerManager.Start();
-        HotkeysManager.Start();
-        DeviceManager.Start();
-        OSDManager.Start();
-        LayoutManager.Start();
-        SystemManager.Start();
-        DynamicLightingManager.Start();
-        MultimediaManager.Start();
-        VirtualManager.Start();
-        InputsManager.Start();
-        SensorsManager.Start();
-        TimerManager.Start();
+        splashScreen.LoadingSequence.Text = "Initializing managers...";
+        Dispatcher.Invoke(new Action(() =>
+        {
+            GPUManager.Start();
+            PowerProfileManager.Start();
+            ProfileManager.Start();
+            ControllerManager.Start();
+            HotkeysManager.Start();
+            DeviceManager.Start();
+            OSDManager.Start();
+            LayoutManager.Start();
+            SystemManager.Start();
+            DynamicLightingManager.Start();
+            MultimediaManager.Start();
+            VirtualManager.Start();
+            InputsManager.Start();
+            SensorsManager.Start();
+            TimerManager.Start();
+        }), DispatcherPriority.Background); // Lower priority
 
         // todo: improve overall threading logic
         new Thread(() => { PlatformManager.Start(); }).Start();
