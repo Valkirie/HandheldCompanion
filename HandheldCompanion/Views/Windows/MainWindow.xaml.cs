@@ -76,7 +76,7 @@ public partial class MainWindow : GamepadWindow
     private string preNavItemTag;
 
     private WindowState prevWindowState;
-    private SplashScreen splashScreen;
+    public static SplashScreen SplashScreen;
 
     public static UISettings uiSettings;
 
@@ -87,11 +87,11 @@ public partial class MainWindow : GamepadWindow
     public MainWindow(FileVersionInfo _fileVersionInfo, Assembly CurrentAssembly)
     {
         // initialize splash screen
-        splashScreen = new SplashScreen();
+        SplashScreen = new SplashScreen();
 #if !DEBUG
         splashScreen.Show();
 #endif
-        splashScreen.LoadingSequence.Text = "Preparing UI...";
+        SplashScreen.LoadingSequence.Text = "Preparing UI...";
 
         InitializeComponent();
         this.Tag = "MainWindow";
@@ -152,7 +152,7 @@ public partial class MainWindow : GamepadWindow
         Title += $" ({fileVersionInfo.FileVersion})";
 
         // initialize device
-        splashScreen.LoadingSequence.Text = "Initializing device...";
+        SplashScreen.LoadingSequence.Text = "Initializing device...";
         CurrentDevice = IDevice.GetDefault();
         CurrentDevice.PullSensors();
         
@@ -198,14 +198,14 @@ public partial class MainWindow : GamepadWindow
         UISounds uiSounds = new UISounds();
 
         // load window(s)
-        splashScreen.LoadingSequence.Text = "Drawing windows...";
+        SplashScreen.LoadingSequence.Text = "Drawing windows...";
         Dispatcher.Invoke(new Action(() =>
         {
             loadWindows();
         }), DispatcherPriority.Background); // Lower priority
 
         // load page(s)
-        splashScreen.LoadingSequence.Text = "Drawing pages...";
+        SplashScreen.LoadingSequence.Text = "Drawing pages...";
         Dispatcher.Invoke(new Action(() =>
         {
             loadPages();
@@ -222,7 +222,7 @@ public partial class MainWindow : GamepadWindow
         ToastManager.IsEnabled = SettingsManager.GetBoolean("ToastEnable");
 
         // start static managers in sequence
-        splashScreen.LoadingSequence.Text = "Initializing managers...";
+        SplashScreen.LoadingSequence.Text = "Initializing managers...";
         Dispatcher.Invoke(new Action(() =>
         {
             GPUManager.Start();
@@ -522,8 +522,8 @@ public partial class MainWindow : GamepadWindow
     private void ControllerPage_Loaded(object sender, RoutedEventArgs e)
     {
         // hide splashscreen
-        if (splashScreen is not null)
-            splashScreen.Close();
+        if (SplashScreen is not null)
+            SplashScreen.Close();
 
         // home page is ready, display main window
         this.Visibility = Visibility.Visible;
