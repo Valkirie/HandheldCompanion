@@ -1,5 +1,6 @@
 ﻿using HandheldCompanion.Managers;
 using HandheldCompanion.Utils;
+using HandheldCompanion.Views;
 using Nefarius.Drivers.HidHide;
 using Newtonsoft.Json;
 using System;
@@ -23,6 +24,8 @@ public static class HidHide
         if (!service.IsInstalled)
         {
             LogManager.LogCritical("HidHide is missing. Please get it from: {0}", "https://github.com/ViGEm/HidHide/releases");
+
+            MainWindow.SplashScreen.Close();
             MessageBox.Show("Please get it from: https://github.com/ViGEm/HidHide/releases", "HidHide is missing");
             throw new InvalidOperationException();
         }
