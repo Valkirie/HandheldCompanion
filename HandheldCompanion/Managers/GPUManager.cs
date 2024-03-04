@@ -4,6 +4,7 @@ using HandheldCompanion.GraphicsProcessingUnit;
 using HandheldCompanion.IGCL;
 using HandheldCompanion.Managers.Desktop;
 using SharpDX.Direct3D9;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace HandheldCompanion.Managers
         public static bool HasADLX;
 
         private static GPU currentGPU = null;
-        private static Dictionary<AdapterInformation, GPU> DisplayGPU = new();
+        private static ConcurrentDictionary<AdapterInformation, GPU> DisplayGPU = new();
         
         static GPUManager()
         {
@@ -85,14 +86,12 @@ namespace HandheldCompanion.Managers
             }
 
             gpu.Stop();
-            gpu.Dispose();
-            gpu = null;
         }
 
-        private static void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
+        private static async void MultimediaManager_PrimaryScreenChanged(DesktopScreen screen)
         {
-            if (DisplayGPU.Count == 0)
-                return;
+            while (!DeviceManager.IsInitialized)
+                await Task.Delay(250);
 
             try
             {
@@ -113,7 +112,7 @@ namespace HandheldCompanion.Managers
             }
         }
 
-        private static void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
+        private static async void DeviceManager_DisplayAdapterArrived(AdapterInformation adapterInformation)
         {
             GPU currentGPU = null;
 
@@ -138,13 +137,16 @@ namespace HandheldCompanion.Managers
                 return;
             }
 
-            DisplayGPU[adapterInformation] = currentGPU;
+            DisplayGPU.TryAdd(adapterInformation, currentGPU);
         }
 
         private static void DeviceManager_DisplayAdapterRemoved(AdapterInformation adapterInformation)
         {
-            if (DisplayGPU.TryGetValue(adapterInformation, out GPU gpu))
+            if (DisplayGPU.TryRemove(adapterInformation, out GPU gpu))
+            {
                 GPUDisconnect(gpu);
+                gpu.Dispose();
+            }
         }
 
         public static GPU GetCurrent()

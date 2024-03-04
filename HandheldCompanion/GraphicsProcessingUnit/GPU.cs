@@ -22,7 +22,7 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public delegate void GPUScalingChangedEvent(bool Supported, bool Enabled, int Mode);
         #endregion
 
-        protected AdapterInformation adapterInformation;
+        public AdapterInformation adapterInformation;
         protected int deviceIdx = -1;
         protected int displayIdx = -1;
 
@@ -45,17 +45,19 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         protected bool prevImageSharpening = false;
         protected int prevImageSharpeningSharpness = -1;
 
-        protected object updateLock = new();
-        protected object telemetryLock = new();
-        protected CrossThreadLock wrapperLock = new();
+        protected CrossThreadLock updateLock = new();
+        protected CrossThreadLock telemetryLock = new();
+        protected bool halting = false;
 
         protected T Execute<T>(Func<T> func, T defaultValue)
         {
+            if (halting)
+                return defaultValue;
+
             try
             {
                 Task<T> task = Task.Run(() =>
                 {
-                    wrapperLock.Enter();
                     return func();
                 });
 
@@ -70,15 +72,11 @@ namespace HandheldCompanion.GraphicsProcessingUnit
             {
                 // Handle other exceptions
             }
-            finally
-            {
-                wrapperLock.Exit();
-            }
 
             return defaultValue;
         }
 
-        public bool IsBusy => !Monitor.TryEnter(updateLock) || !Monitor.TryEnter(telemetryLock);
+        public bool IsBusy => (UpdateTimer is not null && UpdateTimer.Enabled) || (TelemetryTimer is not null && TelemetryTimer.Enabled);
 
         public GPU(AdapterInformation adapterInformation)
         {
@@ -88,25 +86,31 @@ namespace HandheldCompanion.GraphicsProcessingUnit
         public virtual void Start()
         {
             // release halting flag
-            wrapperLock.Exit();
+            halting = false;
 
-            if (UpdateTimer != null)
+            if (UpdateTimer != null && !UpdateTimer.Enabled)
                 UpdateTimer.Start();
 
-            if (TelemetryTimer != null)
+            if (TelemetryTimer != null && !TelemetryTimer.Enabled)
                 TelemetryTimer.Start();
         }
 
         public virtual void Stop()
         {
             // set halting flag
-            wrapperLock.Enter();
+            halting = true;
 
-            if (UpdateTimer != null)
-                UpdateTimer.Stop();
+            try
+            {
+                if (UpdateTimer != null && UpdateTimer.Enabled)
+                    UpdateTimer.Stop();
 
-            if (TelemetryTimer != null)
-                TelemetryTimer.Stop();
+                if (TelemetryTimer != null && TelemetryTimer.Enabled)
+                    TelemetryTimer.Stop();
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         protected virtual void OnIntegerScalingChanged(bool supported, bool enabled)
@@ -230,11 +234,13 @@ namespace HandheldCompanion.GraphicsProcessingUnit
 
         public void Dispose()
         {
+            if (UpdateTimer != null)
+                UpdateTimer.Dispose();
+
             if (TelemetryTimer != null)
                 TelemetryTimer.Dispose();
 
-            if (UpdateTimer != null)
-                UpdateTimer.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
